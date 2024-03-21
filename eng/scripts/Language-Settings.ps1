@@ -3,7 +3,6 @@ $LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.tar.gz"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
-$BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
 $PackageRepositoryUri = "https://pypi.org/project"
 
@@ -170,7 +169,12 @@ function Get-python-GithubIoDocIndex()
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
   # Get the artifacts name from blob storage
-  $artifacts =  Get-BlobStorage-Artifacts -blobStorageUrl $BlobStorageUrl -blobDirectoryRegex "^python/(.*)/$" -blobArtifactsReplacement '$1'
+  $artifacts = Get-BlobStorage-Artifacts `
+    -blobDirectoryRegex "^python/(.*)/$" `
+    -blobArtifactsReplacement '$1' `
+    -storageAccountName 'azuresdkdocs' `
+    -storageContainerName '$web' `
+    -storagePrefix 'python/'
   # Build up the artifact to service name mapping for GithubIo toc.
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
@@ -639,4 +643,49 @@ function Get-python-EmitterName() {
 
 function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
+}
+
+function Get-python-DirectoriesForGeneration () {
+  return Get-ChildItem "$RepoRoot/sdk" -Directory
+  | Get-ChildItem -Directory
+  | Where-Object { $_ -notmatch "-mgmt-" }
+  | Where-Object { (Test-Path "$_/tsp-location.yaml") }
+  # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+  # -or (Test-Path "$_/swagger/README.md")
+}
+
+function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
+  $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
+  
+  $directoriesWithErrors = @()
+
+  foreach ($directory in $packageDirectories) {
+    Push-Location $RepoRoot/sdk/$directory
+    try {
+      Write-Host "`n`n======================================================================"
+      Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
+      Write-Host "======================================================================`n"
+
+      $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
+      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
+    }
+    catch {
+      Write-Host "##[error]Error generating project under directory $directory"
+      Write-Host $_.Exception.Message
+      $directoriesWithErrors += $directory
+    }
+    finally {
+      Pop-Location
+    }
+  }
+
+  if($directoriesWithErrors.Count -gt 0) {
+    Write-Host "##[error]Generation errors found in $($directoriesWithErrors.Count) directories:"
+
+    foreach ($directory in $directoriesWithErrors) {
+      Write-Host "  $directory"
+    }
+
+    exit 1
+  }
 }

@@ -25,8 +25,9 @@ stages:
             environment: github
 
             pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
               name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+              os: linux
 
             strategy:
               runOnce:
@@ -46,6 +47,24 @@ stages:
                           PackageName: ${{artifact.name}}
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
+
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
+
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+
                     - pwsh: |
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                       workingDirectory: $(Pipeline.Workspace)
@@ -67,8 +86,9 @@ stages:
               dependsOn: TagRepository
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -141,7 +161,8 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: MMS2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               strategy:
                 runOnce:
@@ -172,8 +193,9 @@ stages:
                   dependsOn: PublishPackage
 
                   pool:
+                    image: azsdk-pool-mms-ubuntu-2004-1espt
                     name: azsdk-pool-mms-ubuntu-2004-general
-                    vmImage: MMSUbuntu20.04
+                    os: linux
 
                   strategy:
                     runOnce:
@@ -206,8 +228,9 @@ stages:
               dependsOn: PublishPackage
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -244,8 +267,9 @@ stages:
       displayName: "Publish package to daily feed"
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        os: linux
       steps:
       - checkout: none
       - download: current
@@ -282,8 +306,9 @@ stages:
       dependsOn: PublishPackages
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        os: linux
       steps:
         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
           parameters:

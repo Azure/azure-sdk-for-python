@@ -1,3 +1,10 @@
+resources:
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
 parameters:
   - name: ServiceDirectory
     type: string
@@ -92,136 +99,158 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: ToxTestEnv
+    type: string
+    default: 'whl'
+  - name: Packages
+    type: object
+    default: []
 
-stages:
-- ${{ each cloud in parameters.CloudConfig }}:
-  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
-    - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-      - stage: ${{ cloud.key }}_${{ parameters.JobName }}
-        dependsOn: []
-        jobs:
-        - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-          parameters:
-            SparseCheckoutPaths:
-              # Python recording files are implicit excluded here since they are using '.yaml' file extension.
-              - "sdk/${{ parameters.ServiceDirectory }}/**/*.json"
-            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
-            AdditionalParameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
-              PreSteps:
-                - ${{ parameters.PlatformPreSteps }}
-                - ${{ parameters.PreSteps }}
-              PostSteps:
-                - ${{ parameters.PlatformPostSteps }}
-                - ${{ parameters.PostSteps }}
-              EnvVars: ${{ parameters.EnvVars }}
-              MaxParallel: ${{ parameters.MaxParallel }}
-              BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-              AfterTestSteps: ${{ parameters.AfterTestSteps }}
-              AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
-              TestMarkArgument: ${{ parameters.TestMarkArgument }}
-              InjectedPackages: ${{ parameters.InjectedPackages }}
-              BuildDocs: ${{ parameters.BuildDocs }}
-              TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              TestProxy: ${{ parameters.TestProxy }}
-            MatrixConfigs:
-              # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
-              - ${{ each config in parameters.MatrixConfigs }}:
-                -  ${{ config }}
-              - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-                -  ${{ config }}
-            MatrixFilters:
-              - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
-                - ${{ cloudFilter }}
-              - ${{ parameters.MatrixFilters }}
-            MatrixReplace:
-              - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
-                - ${{ cloudReplace }}
-              - ${{ parameters.MatrixReplace }}
-            CloudConfig:
-              SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
-              SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
-              Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
-              Cloud: ${{ cloud.key }}
 
-- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
-  - stage:
-    displayName: 'Analyze_${{ parameters.JobName }}'
-    dependsOn: []
-    jobs:
-      - job: 'Analyze'
-        timeoutInMinutes: 90
+extends:
+  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  ${{ else }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      sdl:
+        sourceAnalysisPool:
+          name: azsdk-pool-mms-win-2022-general
+          image: azsdk-pool-mms-win-2022-1espt
+          os: windows
+        eslint:
+          enabled: false
+          justificationForDisabling: 'ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746'
+        codeql:
+          compiled:
+            enabled: false
+            justificationForDisabling: CodeQL times our pipelines out by running for 2+ hours before being force canceled.
+        psscriptanalyzer:
+          compiled: true
+          break: true
+        policy: M365
+        credscan:
+          suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
+          scanFolder: $(Build.SourcesDirectory)/credscan.tsv
+          toolVersion: 2.3.12.23
+          baselineFiles: $(Build.SourcesDirectory)/eng/<language>.gdnbaselines
 
-        variables:
-          PythonVersion: '3.8'
+    stages:
+      - ${{ if ne(length(parameters.Packages), 0) }}:
+        - ${{ each package in parameters.Packages }}:
+          - ${{ each cloud in parameters.CloudConfig }}:
+              - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+                  - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+                      - stage: ${{ cloud.key }}_${{ parameters.JobName }}_${{ replace(package, '-', '_') }}
+                        dependsOn: []
+                        jobs:
+                          - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml@self
+                            parameters:
+                              SparseCheckoutPaths:
+                                - sdk/${{ parameters.ServiceDirectory }}/**/*.json
+                              JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+                              OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                              Pool: azsdk-pool-mms-ubuntu-2004-general
+                              AdditionalParameters:
+                                ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                                TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
+                                PreSteps:
+                                  - ${{ parameters.PlatformPreSteps }}
+                                  - ${{ parameters.PreSteps }}
+                                PostSteps:
+                                  - ${{ parameters.PlatformPostSteps }}
+                                  - ${{ parameters.PostSteps }}
+                                EnvVars: ${{ parameters.EnvVars }}
+                                MaxParallel: ${{ parameters.MaxParallel }}
+                                BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+                                AfterTestSteps: ${{ parameters.AfterTestSteps }}
+                                AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+                                BuildTargetingString: ${{ package }}
+                                TestMarkArgument: ${{ parameters.TestMarkArgument }}
+                                InjectedPackages: ${{ parameters.InjectedPackages }}
+                                BuildDocs: ${{ parameters.BuildDocs }}
+                                TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+                                TestProxy: ${{ parameters.TestProxy }}
+                                ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                              MatrixConfigs:
+                                # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
+                                - ${{ each config in parameters.MatrixConfigs }}:
+                                    - ${{ config }}
+                                - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+                                    - ${{ config }}
+                              MatrixFilters:
+                                - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
+                                    - ${{ cloudFilter }}
+                                - ${{ parameters.MatrixFilters }}
+                              MatrixReplace:
+                                - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+                                    - ${{ cloudReplace }}
+                                - ${{ parameters.MatrixReplace }}
+                              CloudConfig:
+                                SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+                                SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
+                                Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
+                                Cloud: ${{ cloud.key }}
+      - ${{ else }}:
+        - ${{ each cloud in parameters.CloudConfig }}:
+            - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+                - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+                    - stage: ${{ cloud.key }}_${{ parameters.JobName }}
+                      dependsOn: []
+                      jobs:
+                        - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml@self
+                          parameters:
+                            SparseCheckoutPaths:
+                              - sdk/${{ parameters.ServiceDirectory }}/**/*.json
+                            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+                            OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                            Pool: azsdk-pool-mms-ubuntu-2004-general
+                            AdditionalParameters:
+                              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                              TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
+                              PreSteps:
+                                - ${{ parameters.PlatformPreSteps }}
+                                - ${{ parameters.PreSteps }}
+                              PostSteps:
+                                - ${{ parameters.PlatformPostSteps }}
+                                - ${{ parameters.PostSteps }}
+                              EnvVars: ${{ parameters.EnvVars }}
+                              MaxParallel: ${{ parameters.MaxParallel }}
+                              BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+                              AfterTestSteps: ${{ parameters.AfterTestSteps }}
+                              AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+                              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+                              TestMarkArgument: ${{ parameters.TestMarkArgument }}
+                              InjectedPackages: ${{ parameters.InjectedPackages }}
+                              BuildDocs: ${{ parameters.BuildDocs }}
+                              TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+                              TestProxy: ${{ parameters.TestProxy }}
+                              ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                            MatrixConfigs:
+                              # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
+                              - ${{ each config in parameters.MatrixConfigs }}:
+                                  - ${{ config }}
+                              - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+                                  - ${{ config }}
+                            MatrixFilters:
+                              - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
+                                  - ${{ cloudFilter }}
+                              - ${{ parameters.MatrixFilters }}
+                            MatrixReplace:
+                              - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+                                  - ${{ cloudReplace }}
+                              - ${{ parameters.MatrixReplace }}
+                            CloudConfig:
+                              SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+                              SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
+                              Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
+                              Cloud: ${{ cloud.key }}
+      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml@self
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          JobName: ${{ parameters.JobName }}
 
-        pool:
-          name: azsdk-pool-mms-ubuntu-2004-general
-          vmImage: MMSUbuntu20.04
-
-        steps:
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.8'
-            inputs:
-             versionSpec: '3.8'
-          - script: |
-              python -m pip install setuptools==58.3.0
-              python -m pip install -r eng/ci_tools.txt
-            displayName: 'Prep Environment'
-          - task: PythonScript@0
-            displayName: 'Run Pylint Next'
-            continueOnError: true
-            inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-              arguments: >-
-                ${{ parameters.BuildTargetingString }}
-                --mark_arg="${{ parameters.TestMarkArgument }}"
-                --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-pylint"
-                --disablecov
-                --filter-type="Omit_management"
-            env:
-              GH_TOKEN: $(azuresdk-github-pat)
-
-          - task: PythonScript@0
-            displayName: 'Run MyPy Next'
-            continueOnError: true
-            inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-              arguments: >-
-                ${{ parameters.BuildTargetingString }}
-                --mark_arg="${{ parameters.TestMarkArgument }}"
-                --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-mypy"
-                --disablecov
-            env:
-              GH_TOKEN: $(azuresdk-github-pat)
-
-          - task: PythonScript@0
-            displayName: 'Run Pyright Next'
-            continueOnError: true
-            inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-              arguments: >-
-                ${{ parameters.BuildTargetingString }}
-                --mark_arg="${{ parameters.TestMarkArgument }}"
-                --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="next-pyright"
-                --disablecov
-            env:
-              GH_TOKEN: $(azuresdk-github-pat)
-
-          - task: PythonScript@0
-            displayName: 'Run Ruff'
-            continueOnError: true
-            inputs:
-              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-              arguments: >-
-                ${{ parameters.BuildTargetingString }}
-                --mark_arg="${{ parameters.TestMarkArgument }}"
-                --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="ruff"
-                --disablecov
-            env: ${{ parameters.EnvVars }}

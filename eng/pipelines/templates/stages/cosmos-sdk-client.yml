@@ -5,13 +5,7 @@ parameters:
 - name: ServiceDirectory
   type: string
   default: not-specified
-- name: EmulatorMsiUrl
-  type: string
-  default: https://aka.ms/cosmosdb-emulator
 - name: InjectedPackages
-  type: string
-  default: ''
-- name: EmulatorStartParameters
   type: string
   default: ''
 - name: TestProxy
