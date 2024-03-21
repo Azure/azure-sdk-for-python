@@ -10,9 +10,9 @@ function Throw-InvalidOperatingSystem {
 
 if ($IsWindows -and $AgentImage -match "windows|win|MMS\d{4}") {
     $osName = "Windows"
-} elseif ($IsLinux -and $AgentImage -match "ubuntu|linux") {
+} elseif ($IsLinux -and $AgentImage -match "ubuntu") {
     $osName = "Linux"
-} elseif ($IsMacOs -and $AgentImage -match "macos|macOS") {
+} elseif ($IsMacOs -and $AgentImage -match "macos") {
     $osName = "macOS"
 } else {
     Throw-InvalidOperatingSystem
