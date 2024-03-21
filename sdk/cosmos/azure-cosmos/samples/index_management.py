@@ -640,8 +640,8 @@ def use_vector_embedding_policy(db):
         # Create a container with vector embedding policy and vector indexes
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector1", "type": "DiskANN"},
-                {"path": "/vector2", "type": "Flat"},
+                {"path": "/vector1", "type": "Flat"},
+                {"path": "/vector2", "type": "QuantizedFlat"},
                 {"path": "/vector3", "type": "DiskANN"}
             ]
         }
