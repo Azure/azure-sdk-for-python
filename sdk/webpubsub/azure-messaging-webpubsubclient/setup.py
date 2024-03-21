@@ -63,9 +63,9 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.24.0",
-        "websocket-client<2.0.0,>=1.4.2",
+        "isodate>=0.6.1",
+        "azure-core>=1.26.3",
+        "websocket-client>=1.4.2",
         "aiohttp>=3.0.0",
     ],
     python_requires=">=3.8",
