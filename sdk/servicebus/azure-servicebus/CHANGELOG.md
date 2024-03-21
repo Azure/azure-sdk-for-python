@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed incorrect dependency on typing-extensions ([34868](https://github.com/Azure/azure-sdk-for-python/issues/34868))
+
 ### Other Changes
 
 ## 7.12.1 (2024-03-20)
