@@ -14,7 +14,7 @@ from azure.mgmt.quantum import AzureQuantumMgmtClient
     pip install azure-identity
     pip install azure-mgmt-quantum
 # USAGE
-    python operations.py
+    python list_keys.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +26,16 @@ from azure.mgmt.quantum import AzureQuantumMgmtClient
 def main():
     client = AzureQuantumMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.workspace.list_keys(
+        resource_group_name="quantumResourcegroup",
+        workspace_name="quantumworkspace1",
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2023-11-13-preview/examples/operations.json
+# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2023-11-13-preview/examples/listKeys.json
 if __name__ == "__main__":
     main()
