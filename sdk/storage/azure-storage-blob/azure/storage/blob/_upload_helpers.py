@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from io import SEEK_SET, UnsupportedOperation
+from io import IOBase, SEEK_SET, UnsupportedOperation
 from typing import IO, TypeVar, Union, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
@@ -62,6 +62,30 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
     ])
 
 
+class LengthLimitingStream(IOBase):
+    def __init__(self, stream: IO[bytes], read_limit: int) -> None:
+        self.inner_stream = stream
+        self.read_limit = read_limit
+        self.offset = 0
+
+    def __len__(self):
+        return self.read_limit
+
+    def readable(self):
+        return True
+
+    def tell(self):
+        return self.offset
+
+    def read(self, size=-1) -> bytes:
+        if self.offset >= self.read_limit:
+            return b''
+        remaining = self.read_limit - self.offset
+        data = self.inner_stream.read((remaining if size < 0 else min(size, remaining)))
+        self.offset += len(data)
+        return data
+
+
 def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
         stream=None,
@@ -96,12 +120,11 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             if not isinstance(read_type, bytes):
                 raise TypeError('Blob data should be of type bytes.')
 
-            data: Union[bytes, IO[bytes]]
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(stream, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             else:
-                data = stream
+                data = LengthLimitingStream(stream, length)
 
             response = client.upload(
                 body=data,
