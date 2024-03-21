@@ -863,6 +863,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
+        loop: bool = True, # pylint: disable=unused-argument
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -879,6 +880,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: Whether the media should be repeated until stopped.
         :paramtype loop: bool
+        **DEPRECATED**: 'loop' has been deprecated and will be removed from future releases.
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :return: None
