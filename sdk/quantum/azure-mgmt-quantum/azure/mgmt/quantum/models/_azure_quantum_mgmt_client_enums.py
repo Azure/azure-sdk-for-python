@@ -19,6 +19,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyType."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+
+
 class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning status field."""
 
