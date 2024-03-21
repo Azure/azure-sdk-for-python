@@ -15,7 +15,8 @@ from azure.ai.ml._schema import (
     ArmStr,
     RegistryStr,
 )
-from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
+from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
+from azure.ai.ml._schema._deployment.batch.batch_deployment_base_model_schema import BatchDeploymentBaseModelSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
@@ -25,12 +26,30 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
+from ..code_configuration_schema import CodeConfigurationSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeploymentSchema(DeploymentSchema):
+class BatchDeploymentSchema(BatchDeploymentBaseModelSchema):
     compute = ComputeField(required=False)
+    tags = fields.Dict()
+    properties = fields.Dict()
+    code_configuration = NestedField(
+        CodeConfigurationSchema,
+        metadata={"description": "Code configuration for the endpoint deployment."},
+    )
+    environment = UnionField(
+        [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+            NestedField(EnvironmentSchema),
+            NestedField(AnonymousEnvironmentSchema),
+        ]
+    )
+    environment_variables = fields.Dict(
+        metadata={"description": "Environment variables configuration for the deployment."}
+    )
     error_threshold = fields.Int(
         metadata={
             "description": """Error threshold, if the error count for the entire input goes above this value,\r\n

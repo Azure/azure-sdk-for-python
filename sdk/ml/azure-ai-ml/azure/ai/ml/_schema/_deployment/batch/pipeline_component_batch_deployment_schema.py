@@ -15,17 +15,16 @@ from azure.ai.ml._schema import (
     RegistryStr,
     NestedField,
 )
-from azure.ai.ml._schema.core.fields import PipelineNodeNameStr, TypeSensitiveUnionField, PathAwareSchema
+from azure.ai.ml._schema.core.fields import PipelineNodeNameStr, TypeSensitiveUnionField
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
+from azure.ai.ml._schema._deployment.batch.batch_deployment_base_model_schema import BatchDeploymentBaseModelSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
 
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
-    name = fields.Str()
-    endpoint_name = fields.Str()
+class PipelineComponentBatchDeploymentSchema(BatchDeploymentBaseModelSchema):
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
@@ -34,16 +33,12 @@ class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
         ]
     )
     settings = fields.Dict()
-    name = fields.Str()
-    type = fields.Str()
     job_definition = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
             NestedField("PipelineSchema", unknown=INCLUDE),
         ]
     )
-    tags = fields.Dict()
-    description = fields.Str(metadata={"description": "Description of the endpoint deployment."})
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

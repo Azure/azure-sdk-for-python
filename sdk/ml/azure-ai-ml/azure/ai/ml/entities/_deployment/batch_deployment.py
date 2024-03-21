@@ -23,15 +23,16 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
-from .deployment import Deployment
+from .batch_deployment_base_model import BatchDeploymentBaseModel
 
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
+class BatchDeployment(BatchDeploymentBaseModel):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
@@ -92,9 +93,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         description: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, str]] = None,
-        model: Optional[Union[str, Model]] = None,
-        code_configuration: Optional[CodeConfiguration] = None,
-        environment: Optional[Union[str, Environment]] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Any = None,
+        environment: Optional[Union[str, "Environment"]] = None,
         compute: Optional[str] = None,
         resources: Optional[ResourceConfiguration] = None,
         output_file_name: Optional[str] = None,
@@ -113,6 +114,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         **kwargs: Any,
     ) -> None:
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
+        self._id : Optional[str] = kwargs.pop("id",None )
+        self._creation_context : Optional[SystemData] = kwargs.pop("creation_context", None)
+        
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -120,15 +124,17 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             properties=properties,
             tags=tags,
             description=description,
-            model=model,
-            code_configuration=code_configuration,
-            environment=environment,
-            environment_variables=environment_variables,
-            code_path=code_path,
-            scoring_script=scoring_script,
             **kwargs,
         )
 
+        self.model=model,
+        self.code_configuration = code_configuration
+        if not self.code_configuration and (code_path or scoring_script):
+            self.code_configuration = CodeConfiguration(code=code_path, scoring_script=scoring_script)
+        self.environment=environment
+        self.environment_variables=environment_variables
+        self.code_path=code_path
+        self.scoring_script=scoring_script
         self.compute = compute
         self.resources = resources
         self.output_action = output_action
