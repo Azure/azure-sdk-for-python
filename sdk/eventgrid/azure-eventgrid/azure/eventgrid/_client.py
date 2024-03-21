@@ -22,7 +22,10 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+
+class EventGridClient(
+    EventGridClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Messaging EventGrid Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -44,23 +47,41 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
         credential: Union[AzureKeyCredential, "TokenCredential"],
         **kwargs: Any
     ) -> None:
-        _endpoint = '{endpoint}'
-        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        _policies = kwargs.pop('policies', None)
+        _endpoint = "{endpoint}"
+        self._config = EventGridClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
+                self._config.http_logging_policy,
+            ]
+        self._client: PipelineClient = PipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
     def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
@@ -81,10 +102,14 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:

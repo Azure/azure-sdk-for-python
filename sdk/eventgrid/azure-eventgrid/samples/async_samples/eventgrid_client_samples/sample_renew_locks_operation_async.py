@@ -18,6 +18,7 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 # Create a client
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
+
 async def run():
     # Renew a lockToken
     try:
@@ -30,6 +31,7 @@ async def run():
         print(release_events)
     except HttpResponseError:
         raise
+
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(run())

@@ -15,6 +15,7 @@ from ._models import (
     BrokerProperties as InternalBrokerProperties,
 )
 
+
 class ReceiveDetails(InternalReceiveDetails):
     """Receive operation details per Cloud Event.
 
@@ -32,8 +33,7 @@ class ReceiveDetails(InternalReceiveDetails):
         *,
         broker_properties: "BrokerProperties",
         event: "CloudEvent",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -62,8 +62,7 @@ class ReceiveResult(InternalReceiveResult):
         self,
         *,
         value: List["ReceiveDetails"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -95,8 +94,7 @@ class BrokerProperties(InternalBrokerProperties):
         *,
         lock_token: str,
         delivery_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

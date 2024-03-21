@@ -12,8 +12,11 @@ def extract(definitions):
         return
     tups = []
     for event in definitions:
-        if event.endswith('Data') and event not in EXCEPTIONS:
-            key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
+        if event.endswith("Data") and event not in EXCEPTIONS:
+            key, txt = (
+                "Name".join(event.rsplit("Data", 1)),
+                definitions[event]["description"],
+            )
             try:
                 val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+.[a-zA-Z]+", txt)
                 if " event" in val[0]:
@@ -24,7 +27,9 @@ def extract(definitions):
                     val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", txt)
                     tups.append((key, val[0]))
                 except:
-                    warnings.warn("Unable to generate the event mapping for {}".format(event[0]))
+                    warnings.warn(
+                        "Unable to generate the event mapping for {}".format(event[0])
+                    )
                     sys.exit(1)
     return tups
 

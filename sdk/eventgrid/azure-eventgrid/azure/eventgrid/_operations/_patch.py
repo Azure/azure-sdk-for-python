@@ -5,13 +5,32 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import base64
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Protocol, TypeVar, Union, overload, TypedDict, TYPE_CHECKING, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    TypeVar,
+    Union,
+    overload,
+    TypedDict,
+    TYPE_CHECKING,
+    cast,
+)
 import datetime
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import PipelineResponse
@@ -19,7 +38,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
-from .._model_base import _deserialize 
+from .._model_base import _deserialize
 from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
 from functools import wraps
@@ -28,21 +47,24 @@ from .._legacy import EventGridEvent
 from .._legacy._helpers import _is_eventgrid_event
 
 from .._serialization import Serializer
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 if TYPE_CHECKING:
-    from cloudevents.http.event import CloudEvent as CNCFCloudEvent    
+    from cloudevents.http.event import CloudEvent as CNCFCloudEvent
 
-    
+
 class CloudEventDict(TypedDict):
     type: str
     specversion: str
@@ -53,6 +75,7 @@ class CloudEventDict(TypedDict):
     time: Optional[str]
     datacontenttype: Optional[str]
     extensions: Optional[Dict[str, Any]]
+
 
 class EventGridEventDict(TypedDict):
     id: str
@@ -69,31 +92,46 @@ EVENT_TYPES_BASIC = Union[
     List[CloudEvent],
     Dict[str, Any],
     List[Dict[str, Any]],
-    EventGridEventDict,
-    List[EventGridEventDict],
-    CloudEventDict,
-    List[CloudEventDict],
     EventGridEvent,
     List[EventGridEvent],
     "CNCFCloudEvent",
-    List["CNCFCloudEvent"]
+    List["CNCFCloudEvent"],
 ]
-EVENT_TYPES_STD = Union[CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]]
+EVENT_TYPES_STD = Union[
+    CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]],
+]
 CLOUD_EVENT_TYPES = [CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]]
-CLOUD_EVENT_TYPE_ALIAS = Union[CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]]
-EVENTGRID_EVENT_TYPES = [EventGridEvent, List[EventGridEvent], EventGridEventDict, List[EventGridEventDict]]
-EVENTGRID_EVENT_TYPE_ALIAS = Union[EventGridEvent, List[EventGridEvent], EventGridEventDict, List[EventGridEventDict]]
-CUSTOM_EVENT_TYPES = Union[Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"]]
+CLOUD_EVENT_TYPE_ALIAS = Union[
+    CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]
+]
+EVENTGRID_EVENT_TYPES = [
+    EventGridEvent,
+    List[EventGridEvent],
+    EventGridEventDict,
+    List[EventGridEventDict],
+]
+EVENTGRID_EVENT_TYPE_ALIAS = Union[
+    EventGridEvent, List[EventGridEvent], EventGridEventDict, List[EventGridEventDict]
+]
+CUSTOM_EVENT_TYPES = Union[
+    Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"]
+]
 CUSTOM_EVENT_TYPE_ALIAS = type(CUSTOM_EVENT_TYPES)
+
 
 def use_standard_only(func):
     """Use the standard client only."""
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._config.level == "Basic":
-            raise AttributeError("The basic client is not supported for this operation.")
+        if self._level == "Basic":
+            raise AttributeError(
+                "The basic client is not supported for this operation."
+            )
         return func(self, *args, **kwargs)
+
     return wrapper
+
 
 def validate_args(**kwargs: Any):
     args_mapping = kwargs.pop("args_mapping", None)
@@ -102,22 +140,27 @@ def validate_args(**kwargs: Any):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args: Any, **kwargs: Any) -> T:
-            selected_client_level = self._config.level
+            selected_client_level = self._level
 
             if kwargs_mapping:
                 unsupported_kwargs = {
                     arg: level
                     for level, arguments in kwargs_mapping.items()
                     for arg in arguments
-                    if arg in kwargs.keys()  # pylint: disable=consider-iterating-dictionary
+                    if arg
+                    in kwargs.keys()  # pylint: disable=consider-iterating-dictionary
                     and selected_client_level != level
                 }
                 try_alternative = {
                     arg: level
                     for level, arguments in kwargs_mapping.items()
                     for arg in kwargs.keys()
-                    if arg not in arguments  # pylint: disable=consider-iterating-dictionary
-                    and (selected_client_level == level and arg not in unsupported_kwargs.keys())
+                    if arg
+                    not in arguments  # pylint: disable=consider-iterating-dictionary
+                    and (
+                        selected_client_level == level
+                        and arg not in unsupported_kwargs.keys()
+                    )
                 }
 
                 error_strings = []
@@ -129,11 +172,11 @@ def validate_args(**kwargs: Any):
                     ]
                 if try_alternative:
                     error_strings += [
-                        f"Unsupported kwarg {e}, did you mean to pass this as an argument?\n" for e in try_alternative.keys()
+                        f"Unsupported kwarg {e}, did you mean to pass this as an argument?\n"
+                        for e in try_alternative.keys()
                     ]
                 if len(error_strings) > 0:
                     raise ValueError("".join(error_strings))
-                
 
             return func(self, *args, **kwargs)
 
@@ -143,7 +186,7 @@ def validate_args(**kwargs: Any):
 
 
 class EventGridClientOperationsMixin(OperationsMixin):
- 
+
     @overload
     def send(
         self,
@@ -151,20 +194,20 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         channel_name: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
-        """ Send events to the Event Grid Service. 
+        """Send events to the Event Grid Service.
 
         :param event: The event to send.
         :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
-         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent] 
+         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
          or CloudEventDict or List[CloudEventDict] or EventGridEventDict or List[EventGridEventDict]
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
          "application/cloudevents+json; charset=utf-8".
         :paramtype content_type: str or None
-    
+
         :return: None
         :rtype: None
         """
@@ -178,10 +221,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         binary_mode: bool = False,
         content_type: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
-        """ Send events to the Event Grid Service.
-        
+        """Send events to the Event Grid Service.
+
         :param event: The event to send.
         :type event: CloudEvent or List[CloudEvent] or CloudEventDict or List[CloudEventDict]
         :keyword topic_name: The name of the topic to send the event to.
@@ -192,25 +235,22 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: The content type of the event. If not specified, the default value is
          "application/cloudevents+json; charset=utf-8".
         :paramtype content_type: str or None
-        
+
         :return: None
         :rtype: None
         """
         ...
 
     @validate_args(
-        kwargs_mapping={"Basic": ["channel_name", "content_type"], 
-                       "Standard": ["binary_mode", "content_type"]}
+        kwargs_mapping={
+            "Basic": ["channel_name", "content_type"],
+            "Standard": ["binary_mode", "content_type"],
+        }
     )
     @distributed_trace
-    def send(
-        self,
-        *args: Any,
-        **kwargs: Any
-    ) -> None:
-        """ Send events to the Event Grid Service.
-        """
-        if len(args) > 1: 
+    def send(self, *args: Any, **kwargs: Any) -> None:
+        """Send events to the Event Grid Service."""
+        if len(args) > 1:
             topic_name = args[0]
             event = args[1]
         else:
@@ -220,19 +260,25 @@ class EventGridClientOperationsMixin(OperationsMixin):
         channel_name = kwargs.pop("channel_name", None)
         binary_mode = kwargs.pop("binary_mode", False)
 
-        if self._config.level == "Standard" and topic_name is None:
+        if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
 
-
         # If type is a dict, try to map to an event
-        if isinstance(event, dict) or isinstance(event, list) and isinstance(event[0], dict):
+        if (
+            isinstance(event, dict)
+            or isinstance(event, list)
+            and isinstance(event[0], dict)
+        ):
             if isinstance(event, list):
                 try:
                     event = [CloudEvent.from_dict(e) for e in event]
                 except:
                     try:
                         if _is_eventgrid_event(event[0]):
-                            event = [cast(EventGridEvent, EventGridEvent.from_dict(e)) for e in event]
+                            event = [
+                                cast(EventGridEvent, EventGridEvent.from_dict(e))
+                                for e in event
+                            ]
                     except:
                         pass
             else:
@@ -241,85 +287,137 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 except:
                     try:
                         if _is_eventgrid_event(event):
-                            event = cast(EventGridEvent, EventGridEvent.from_dict(event)) 
+                            event = cast(
+                                EventGridEvent, EventGridEvent.from_dict(event)
+                            )
                     except:
                         pass
 
-
         # Both
         # Binary Mode will be called off of this if binary mode is True
-        if isinstance(event, CloudEvent) or isinstance(event, list) and isinstance(event[0], CloudEvent):
-            self._send_cloud_event(topic_name, event, binary_mode=binary_mode, channel_name=channel_name, **kwargs)
+        if (
+            isinstance(event, CloudEvent)
+            or isinstance(event, list)
+            and isinstance(event[0], CloudEvent)
+        ):
+            self._send_cloud_event(
+                topic_name,
+                event,
+                binary_mode=binary_mode,
+                channel_name=channel_name,
+                **kwargs,
+            )
             return
 
         # Send EventGridEvent
-        if isinstance(event, EventGridEvent) or isinstance(event, list) and isinstance(event[0], EventGridEvent):
+        if (
+            isinstance(event, EventGridEvent)
+            or isinstance(event, list)
+            and isinstance(event[0], EventGridEvent)
+        ):
             self._send_eventgrid_event(event, channel_name=channel_name, **kwargs)
             return
-        
+
         # Allow for custom events/cncf events
         else:
             self._send_custom_event(event, channel_name=channel_name, **kwargs)
             return
-        
-    def _send_cloud_event(self, topic_name: str, event: CLOUD_EVENT_TYPE_ALIAS, binary_mode, channel_name, **kwargs: Any) -> None:
+
+    def _send_cloud_event(
+        self,
+        topic_name: str,
+        event: CLOUD_EVENT_TYPE_ALIAS,
+        binary_mode,
+        channel_name,
+        **kwargs: Any,
+    ) -> None:
         # Send CloudEvent to the Event Grid Service
-        if self._config.level == "Standard":
+        if self._level == "Standard":
             try:
-                if isinstance(event, dict) or (isinstance(event, list) and isinstance(event[0], dict)):
+                if isinstance(event, dict) or (
+                    isinstance(event, list) and isinstance(event[0], dict)
+                ):
                     if isinstance(event, list):
                         event = [CloudEvent.from_dict(e) for e in event]
                     else:
                         event = CloudEvent.from_dict(event)
             except AttributeError:
-                raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                                " list of CloudEvents, dict, or list of dicts."
-                                " If dict passed, must follow the CloudEvent format.")
-
+                raise TypeError(
+                    "Incorrect type for body. Expected CloudEvent,"
+                    " list of CloudEvents, dict, or list of dicts."
+                    " If dict passed, must follow the CloudEvent format."
+                )
 
             if isinstance(event, CloudEvent):
                 kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-                self._publish(topic_name, event, self._config.api_version, binary_mode, **kwargs)
+                self._publish(
+                    topic_name, event, self._config.api_version, binary_mode, **kwargs
+                )
             elif isinstance(event, list):
-                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-                self._publish(topic_name, event, self._config.api_version, binary_mode, **kwargs)
+                kwargs["content_type"] = (
+                    "application/cloudevents-batch+json; charset=utf-8"
+                )
+                self._publish(
+                    topic_name, event, self._config.api_version, binary_mode, **kwargs
+                )
             else:
-                raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                                " list of CloudEvents, dict, or list of dicts."
-                                " If dict passed, must follow the CloudEvent format.")
+                raise TypeError(
+                    "Incorrect type for body. Expected CloudEvent,"
+                    " list of CloudEvents, dict, or list of dicts."
+                    " If dict passed, must follow the CloudEvent format."
+                )
         else:
             self._client.send(event, channel_name=channel_name, **kwargs)
 
-    def _send_eventgrid_event(self, event: EVENTGRID_EVENT_TYPE_ALIAS, channel_name, **kwargs: Any) -> None:
+    def _send_eventgrid_event(
+        self, event: EVENTGRID_EVENT_TYPE_ALIAS, channel_name, **kwargs: Any
+    ) -> None:
         # Send EventGridEvent to the Event Grid Service
-        if self._config.level == "Standard":
-            raise ValueError("EventGridEvent is not supported for standard level client.")
+        if self._level == "Standard":
+            raise ValueError(
+                "EventGridEvent is not supported for standard level client."
+            )
         self._client.send(event, channel_name=channel_name, **kwargs)
 
-    def _send_custom_event(self, event: CUSTOM_EVENT_TYPES, channel_name, **kwargs: Any) -> None:
+    def _send_custom_event(
+        self, event: CUSTOM_EVENT_TYPES, channel_name, **kwargs: Any
+    ) -> None:
         # Send Custom Event to the Event Grid Service
-        if self._config.level == "Standard":
+        if self._level == "Standard":
             raise ValueError("Custom Event is not supported for standard level client.")
         self._client.send(event, channel_name=channel_name, **kwargs)
 
-    def _publish(self, topic_name: str, event: Any, api_version: str, binary_mode: Optional[bool] = False, **kwargs: Any) -> None:
+    def _publish(
+        self,
+        topic_name: str,
+        event: Any,
+        api_version: str,
+        binary_mode: Optional[bool] = False,
+        **kwargs: Any,
+    ) -> None:
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
+
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
         )
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = _to_http_request(            
+        http_request = _to_http_request(
             topic_name=topic_name,
             api_version=api_version,
             headers=_headers,
@@ -327,29 +425,35 @@ class EventGridClientOperationsMixin(OperationsMixin):
             content_type=content_type,
             event=event,
             binary_mode=binary_mode,
-            **kwargs
+            **kwargs,
         )
 
         _stream = kwargs.pop("stream", False)
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
 
         # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            http_request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                http_request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                    response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+                response.read()  # Load the body in memory and close the socket
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -357,13 +461,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         else:
             deserialized = _deserialize(
                 _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
+                response.json(),
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
     @use_standard_only
     @distributed_trace
@@ -374,7 +478,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
 
@@ -404,7 +508,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             event_subscription_name,
             max_events=max_events,
             max_wait_time=max_wait_time,
-            **kwargs
+            **kwargs,
         )
         for detail_item in received_result.value:
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
@@ -425,15 +529,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AcknowledgeResult:
         return self.acknowledge_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             acknowledge_options=acknowledge_options,
-            **kwargs
+            **kwargs,
         )
-    
+
     @use_standard_only
     @distributed_trace
     def release_cloud_events(
@@ -443,16 +547,16 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_options: Union[_models.ReleaseOptions, JSON, IO],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ReleaseResult:
         return self.release_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             release_options=release_options,
             release_delay_in_seconds=release_delay_in_seconds,
-            **kwargs
+            **kwargs,
         )
-    
+
     @use_standard_only
     @distributed_trace
     def reject_cloud_events(
@@ -460,15 +564,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         reject_options: Union[_models.RejectOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RejectResult:
         return self.reject_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             reject_options=reject_options,
-            **kwargs
+            **kwargs,
         )
-    
+
     @use_standard_only
     @distributed_trace
     def renew_cloud_event_locks(
@@ -476,17 +580,17 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
         return self.renew_cloud_event_locks(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             renew_lock_options=renew_lock_options,
-            **kwargs
+            **kwargs,
         )
-    
-    
-def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:   
+
+
+def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     # Create a HTTP request for a binary mode CloudEvent
 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -495,69 +599,90 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     event = kwargs.pop("event")
     binary_mode = kwargs.pop("binary_mode", False)
 
-    
     if binary_mode:
         # Content of the request is the data, if already in binary - no work needed
         try:
             if isinstance(event.data, bytes):
                 _content = event.data
             else:
-                raise TypeError("CloudEvent data must be bytes when in binary mode." 
-                                "Did you forget to call `json.dumps()` and/or `encode()` on CloudEvent data?")
+                raise TypeError(
+                    "CloudEvent data must be bytes when in binary mode."
+                    "Did you forget to call `json.dumps()` and/or `encode()` on CloudEvent data?"
+                )
         except AttributeError:
-            raise TypeError("Binary mode is not supported for batch CloudEvents. Set `binary_mode` to False when passing in a batch of CloudEvents.")
+            raise TypeError(
+                "Binary mode is not supported for batch CloudEvents. Set `binary_mode` to False when passing in a batch of CloudEvents."
+            )
     else:
         # Content of the request is the serialized CloudEvent or serialized List[CloudEvent]
         _content = _serialize_cloud_events(event)
-    
-    # content_type must be CloudEvent DataContentType when in binary mode
-    default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-    content_type: str = event.datacontenttype if (binary_mode and event.datacontenttype) else default_content_type
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    # content_type must be CloudEvent DataContentType when in binary mode
+    default_content_type = kwargs.pop(
+        "content_type",
+        _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
+    )
+    content_type: str = (
+        event.datacontenttype
+        if (binary_mode and event.datacontenttype)
+        else default_content_type
+    )
+
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-10-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     if binary_mode:
         # Cloud Headers
-        _headers['ce-source'] = _SERIALIZER.header('ce-source', event.source, 'str')
-        _headers['ce-type'] = _SERIALIZER.header('ce-type', event.type, 'str')
+        _headers["ce-source"] = _SERIALIZER.header("ce-source", event.source, "str")
+        _headers["ce-type"] = _SERIALIZER.header("ce-type", event.type, "str")
         if event.specversion:
-            _headers['ce-specversion'] = _SERIALIZER.header('ce-specversion', event.specversion, 'str')
+            _headers["ce-specversion"] = _SERIALIZER.header(
+                "ce-specversion", event.specversion, "str"
+            )
         if event.id:
-            _headers['ce-id'] = _SERIALIZER.header('ce-id', event.id, 'str')
+            _headers["ce-id"] = _SERIALIZER.header("ce-id", event.id, "str")
         if event.time:
-            _headers['ce-time'] = _SERIALIZER.header('ce-time', event.time, 'str')
+            _headers["ce-time"] = _SERIALIZER.header("ce-time", event.time, "str")
         if event.dataschema:
-            _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
+            _headers["ce-dataschema"] = _SERIALIZER.header(
+                "ce-dataschema", event.dataschema, "str"
+            )
         if event.subject:
-            _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
+            _headers["ce-subject"] = _SERIALIZER.header(
+                "ce-subject", event.subject, "str"
+            )
         if event.extensions:
             for extension, value in event.extensions.items():
-                _headers[f'ce-{extension}'] = _SERIALIZER.header('ce-extensions', value, 'str')
+                _headers[f"ce-{extension}"] = _SERIALIZER.header(
+                    "ce-extensions", value, "str"
+                )
 
     return HttpRequest(
         method="POST",
         url=_url,
         params=_params,
         headers=_headers,
-        content=_content, # pass through content
-        **kwargs
+        content=_content,  # pass through content
+        **kwargs,
     )
+
 
 def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None:
     # Serialize CloudEvent or List[CloudEvent] into a JSON string
@@ -567,14 +692,14 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
     for event in events if isinstance(events, list) else [events]:
         # CloudEvent required fields but validate they are not set to None
         if event.type:
-            data["type"] =  _SERIALIZER.body(event.type, "str")
+            data["type"] = _SERIALIZER.body(event.type, "str")
         if event.specversion:
             data["specversion"] = _SERIALIZER.body(event.specversion, "str")
         if event.source:
             data["source"] = _SERIALIZER.body(event.source, "str")
         if event.id:
             data["id"] = _SERIALIZER.body(event.id, "str")
-        
+
         # Check if data is bytes and serialize to base64
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)

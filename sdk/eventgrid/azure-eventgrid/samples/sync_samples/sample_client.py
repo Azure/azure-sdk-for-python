@@ -43,22 +43,32 @@ client_channel_basic.send(TOPIC_NAME, event, channel_name=channel_name)
 
 
 # Create a Cloud Event Topic client
-client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
+client_basic = EventGridClient(
+    EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA)
+)
 
 # Create a Cloud Event and publish it to the topic
-event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
+event = CloudEvent(
+    data={"key": "value"},
+    type="Contoso.Items.ItemReceived",
+    source="https://contoso.com/items",
+)
 client_basic.send(TOPIC_NAME, event)
 
 # Try Acknowledge the Cloud Event
 try:
-    client_basic.acknowledge_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"]))
+    client_basic.acknowledge_cloud_events(
+        TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"])
+    )
 except AttributeError as e:
     print(e)
 
 
-
 # Create an EventGridEvent Topic client
-client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT))
+client_basic = EventGridClient(
+    EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT,
+    AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT),
+)
 
 # Create an EventGridEvent and publish it to the topic
 eventgrid_event = EventGridEvent(
@@ -66,17 +76,17 @@ eventgrid_event = EventGridEvent(
     subject="MySubject",
     data={"key": "value"},
     event_type="Contoso.Items.ItemReceived",
-    data_version="2.0"
+    data_version="2.0",
 )
 client_basic.send(TOPIC_NAME, [eventgrid_event])
 
 # Try Acknowledge the EventGridEvent
 try:
-    client_basic.acknowledge_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"]))
+    client_basic.acknowledge_cloud_events(
+        TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"])
+    )
 except AttributeError as e:
     print(e)
-
-
 
 
 # Create a Namespace client
@@ -101,12 +111,13 @@ except Exception as e:
 try:
     client_standard.send(TOPIC_NAME, event, channel_name=channel_name)
 except Exception as e:
-    print(e)   
-
+    print(e)
 
 
 # Create an EventGridPublisherClient
-publisher_client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
+publisher_client = EventGridPublisherClient(
+    EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA)
+)
 
 # Create a Cloud Event and publish it to the topic
 publisher_client.send(event)

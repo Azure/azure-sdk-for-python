@@ -26,12 +26,20 @@
 import os
 import pytest
 from urllib.parse import urlparse
-from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer, add_body_regex_sanitizer
+from devtools_testutils import (
+    add_general_string_sanitizer,
+    test_proxy,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    add_oauth_response_sanitizer,
+    add_body_regex_sanitizer,
+)
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
     set_custom_default_matcher,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -61,12 +69,20 @@ def add_sanitizers(test_proxy):
     # Need to santize namespace for eventgrid_topic:
     try:
         eventgrid_hostname = urlparse(eventgrid_topic_endpoint).hostname
-        add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
+        add_general_string_sanitizer(
+            target=eventgrid_hostname.upper(),
+            value="sanitized.eastus-1.eventgrid.azure.net",
+        )
     except:
         pass
-    add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(
+        target=client_id, value="00000000-0000-0000-0000-000000000000"
+    )
     add_general_string_sanitizer(target=client_secret, value="sanitized")
-    add_general_string_sanitizer(target=eventgrid_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(
+        target=eventgrid_client_id, value="00000000-0000-0000-0000-000000000000"
+    )
     add_general_string_sanitizer(target=eventgrid_client_secret, value="sanitized")
-    add_general_string_sanitizer(target=tenant_id, value="00000000-0000-0000-0000-000000000000")
-
+    add_general_string_sanitizer(
+        target=tenant_id, value="00000000-0000-0000-0000-000000000000"
+    )

@@ -7,7 +7,9 @@ from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
 
 # Cloud Event Topic
 EVENTGRID_KEY_GA_CLOUDEVENT: str = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
-EVENTGRID_ENDPOINT_GA_CLOUDEVENT: str = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
+EVENTGRID_ENDPOINT_GA_CLOUDEVENT: str = os.environ[
+    "EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"
+]
 
 # EventGridEvent Topic
 EVENTGRID_KEY_GA_EVENTGRIDEVENT: str = os.environ["EVENTGRID_TOPIC_KEY"]
@@ -25,25 +27,62 @@ TOPIC_NAME: str = os.environ["EVENTGRID_NAMESPACE_TOPIC_NAME"]
 EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_NAMESPACE_SUBSCRIPTION_NAME"]
 
 
-# Make the events 
-cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
-cloud_event_dict = {"type": "Contoso.Items.ItemReceived", "source": "/contoso/items", "data": {"itemSku": "Contoso Item SKU #1"}, "subject": "Door1", "specversion": "1.0", "id": "randomclouduuid11"}
+# Make the events
+cloud_event = CloudEvent(
+    data=json.dumps({"hello": "data"}).encode("utf-8"),
+    source="https://example.com",
+    type="example",
+    datacontenttype="application/json",
+)
+cloud_event_dict = {
+    "type": "Contoso.Items.ItemReceived",
+    "source": "/contoso/items",
+    "data": {"itemSku": "Contoso Item SKU #1"},
+    "subject": "Door1",
+    "specversion": "1.0",
+    "id": "randomclouduuid11",
+}
 list_cloud_event = [cloud_event, cloud_event]
 list_cloud_event_dict = [cloud_event_dict, cloud_event_dict]
-eventgrid_event = EventGridEvent(event_type="Contoso.Items.ItemReceived", data={"itemSku": "Contoso Item SKU #1"}, subject="Door1", data_version="2.0", id="randomeventgriduuid11")
-eventgrid_event_dict = {"eventType": "Contoso.Items.ItemReceived", "data": {"itemSku": "Contoso Item SKU #1"}, "subject": "Door1", "dataVersion": "2.0", "id": "randomeventgriduuid11", "eventTime": "2021-01-20T00:00:00.000000Z"}
+eventgrid_event = EventGridEvent(
+    event_type="Contoso.Items.ItemReceived",
+    data={"itemSku": "Contoso Item SKU #1"},
+    subject="Door1",
+    data_version="2.0",
+    id="randomeventgriduuid11",
+)
+eventgrid_event_dict = {
+    "eventType": "Contoso.Items.ItemReceived",
+    "data": {"itemSku": "Contoso Item SKU #1"},
+    "subject": "Door1",
+    "dataVersion": "2.0",
+    "id": "randomeventgriduuid11",
+    "eventTime": "2021-01-20T00:00:00.000000Z",
+}
 list_eventgrid_event = [eventgrid_event, eventgrid_event]
 list_eventgrid_event_dict = [eventgrid_event_dict, eventgrid_event_dict]
 
-broken_eventgrid_event = {"data": {"itemSku": "Contoso Item SKU #1"}, "subject": "Door1", "dataVersion": "2.0", "id": "randomeventgriduuid11",}
-broken_cloud_event = {"type": "Contoso.Items.ItemReceived", "subject": "Door1", "specversion": "1.0", "id": "randomclouduuid11"}
-
-
+broken_eventgrid_event = {
+    "data": {"itemSku": "Contoso Item SKU #1"},
+    "subject": "Door1",
+    "dataVersion": "2.0",
+    "id": "randomeventgriduuid11",
+}
+broken_cloud_event = {
+    "type": "Contoso.Items.ItemReceived",
+    "subject": "Door1",
+    "specversion": "1.0",
+    "id": "randomclouduuid11",
+}
 
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-    client = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client = EventGridClient(
+        EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT,
+        credential=credential,
+        level=ClientLevel.BASIC,
+    )
     client.send(eventgrid_event)
     print("Success \n ")
 except Exception as e:
@@ -61,7 +100,9 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
-    client = EventGridClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client = EventGridClient(
+        EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.BASIC
+    )
     client.send(cloud_event, binary_mode=True)
     print("Success \n")
 except Exception as e:
@@ -93,7 +134,11 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-    client = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client = EventGridClient(
+        EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT,
+        credential=credential,
+        level=ClientLevel.BASIC,
+    )
     client.send(broken_eventgrid_event)
     print("Success \n ")
 except Exception as e:
@@ -101,7 +146,9 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
-    client = EventGridClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client = EventGridClient(
+        EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.BASIC
+    )
     client.send(broken_cloud_event)
     print("Success \n")
 except Exception as e:
@@ -109,7 +156,9 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-    client = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential)
+    client = EventGridClient(
+        EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential
+    )
     client.send(TOPIC_NAME, broken_eventgrid_event)
     print("Success \n ")
 except Exception as e:
@@ -127,9 +176,12 @@ except Exception as e:
 
 
 from azure.eventgrid import EventGridPublisherClient
+
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-    client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential)
+    client = EventGridPublisherClient(
+        EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential
+    )
     client.send(eventgrid_event_dict, binary_mode=True)
     print("Success \n ")
 except Exception as e:
@@ -137,7 +189,9 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-    client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential)
+    client = EventGridPublisherClient(
+        EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential
+    )
     client.send(broken_eventgrid_event)
     print("Success \n ")
 except Exception as e:
@@ -145,7 +199,9 @@ except Exception as e:
 
 try:
     credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
-    client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential)
+    client = EventGridPublisherClient(
+        EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential
+    )
     client.send(broken_cloud_event)
     print("Success \n")
 except Exception as e:

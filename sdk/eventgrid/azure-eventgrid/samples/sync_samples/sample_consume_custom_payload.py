@@ -27,7 +27,9 @@ cloud_custom_dict = """[{
     "specversion":"1.0"
 }]"""
 
-deserialized_dict_events: List[CloudEvent] = [CloudEvent(**msg) for msg in json.loads(cloud_custom_dict)]
+deserialized_dict_events: List[CloudEvent] = [
+    CloudEvent(**msg) for msg in json.loads(cloud_custom_dict)
+]
 
 for event in deserialized_dict_events:
     print(event.data)

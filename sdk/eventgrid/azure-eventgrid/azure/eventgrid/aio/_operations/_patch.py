@@ -8,7 +8,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar, IO
 import sys
 from azure.core.messaging import CloudEvent
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
@@ -19,13 +26,17 @@ from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ..._legacy import EventGridEvent
 from ... import models as _models
 from ..._model_base import _deserialize
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
+
 
 class EventGridClientOperationsMixin(OperationsMixin):
 
@@ -217,7 +228,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def send(
         self,
         topic_name: str,
-        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any], EventGridEvent, List[EventGridEvent]],
+        body: Union[
+            List[CloudEvent],
+            CloudEvent,
+            List[Dict[str, Any]],
+            Dict[str, Any],
+            EventGridEvent,
+            List[EventGridEvent],
+        ],
         *,
         binary_mode: bool = False,
         **kwargs
@@ -247,28 +265,39 @@ class EventGridClientOperationsMixin(OperationsMixin):
             self._client.send(body, **kwargs)
         else:
             # Check that the body is a CloudEvent or list of CloudEvents even if dict
-            if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
+            if isinstance(body, dict) or (
+                isinstance(body, list) and isinstance(body[0], dict)
+            ):
                 try:
                     if isinstance(body, list):
                         body = [CloudEvent.from_dict(event) for event in body]
                     else:
                         body = CloudEvent.from_dict(body)
                 except AttributeError:
-                    raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                                    " list of CloudEvents, dict, or list of dicts."
-                                    " If dict passed, must follow the CloudEvent format.")
-
+                    raise TypeError(
+                        "Incorrect type for body. Expected CloudEvent,"
+                        " list of CloudEvents, dict, or list of dicts."
+                        " If dict passed, must follow the CloudEvent format."
+                    )
 
             if isinstance(body, CloudEvent):
                 kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-                await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+                await self._publish(
+                    topic_name, body, self._config.api_version, binary_mode, **kwargs
+                )
             elif isinstance(body, list):
-                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-                await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+                kwargs["content_type"] = (
+                    "application/cloudevents-batch+json; charset=utf-8"
+                )
+                await self._publish(
+                    topic_name, body, self._config.api_version, binary_mode, **kwargs
+                )
             else:
-                raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                                " list of CloudEvents, dict, or list of dicts."
-                                " If dict passed, must follow the CloudEvent format.")
+                raise TypeError(
+                    "Incorrect type for body. Expected CloudEvent,"
+                    " list of CloudEvents, dict, or list of dicts."
+                    " If dict passed, must follow the CloudEvent format."
+                )
 
     @use_standard_only
     @distributed_trace_async
@@ -323,7 +352,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-
     @use_standard_only
     @distributed_trace_async
     async def acknowledge_cloud_events(
@@ -334,12 +362,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
         return await self._acknowledge_cloud_events(
-            topic_name,
-            event_subscription_name,
-            acknowledge_options,
-            **kwargs
+            topic_name, event_subscription_name, acknowledge_options, **kwargs
         )
-    
+
     @use_standard_only
     @distributed_trace_async
     async def release_cloud_events(
@@ -369,12 +394,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         **kwargs: Any
     ) -> _models.RejectResult:
         return await self._reject_cloud_events(
-            topic_name,
-            event_subscription_name,
-            reject_options,
-            **kwargs
+            topic_name, event_subscription_name, reject_options, **kwargs
         )
-    
+
     @use_standard_only
     @distributed_trace_async
     async def renew_cloud_event_locks(
@@ -385,30 +407,35 @@ class EventGridClientOperationsMixin(OperationsMixin):
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
         return await self._renew_cloud_event_locks(
-            topic_name,
-            event_subscription_name,
-            renew_lock_options,
-            **kwargs
+            topic_name, event_subscription_name, renew_lock_options, **kwargs
         )
 
-    async def _publish(self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any) -> None:
+    async def _publish(
+        self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any
+    ) -> None:
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
+
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
         )
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = _to_http_request(            
+        http_request = _to_http_request(
             topic_name=topic_name,
             api_version=api_version,
             headers=_headers,
@@ -422,23 +449,27 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _stream = kwargs.pop("stream", False)
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            http_request,
-            stream=_stream,
-            **kwargs
+            http_request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+                await response.read()  # Load the body in memory and close the socket
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -446,13 +477,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         else:
             deserialized = _deserialize(
                 _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
+                response.json(),
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 __all__: List[str] = [

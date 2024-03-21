@@ -150,7 +150,8 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
+
+def _from_cncf_events(event):  # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
 
@@ -175,13 +176,17 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
 def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
     header_parameters: Dict[str, Any] = {}
-    header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+    header_parameters["Content-Type"] = serialize.header(
+        "content_type", content_type, "str"
+    )
 
     if channel_name:
         header_parameters["aeg-channel-name"] = channel_name
 
     query_parameters: Dict[str, Any] = {}
-    query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
+    query_parameters["api-version"] = serialize.query(
+        "api_version", "2018-01-01", "str"
+    )
 
     body = serialize.body(events, "[object]")
     if body is None:

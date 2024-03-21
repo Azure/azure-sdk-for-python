@@ -24,25 +24,40 @@ EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT: str = os.environ["EVENTGRID_TOPIC_ENDPOINT
 
 
 # Create a NameSpace client
-namespace_client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
+namespace_client = EventGridClient(
+    EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY)
+)
 
 # Create a client using publisherClient naming, will create a PublisherClient and fail on operations
-publisher_client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
+publisher_client = EventGridPublisherClient(
+    EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA)
+)
 
 # Create a standard client using EventGridClient
 try:
-    client_standard = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
+    client_standard = EventGridClient(
+        EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY)
+    )
 except ValueError as e:
     print(e)
 
 # Create a Basic Client with the correct endpoint
-client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
+client_basic = EventGridClient(
+    EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA)
+)
 
 # Create a Basic Client with the correct endpoint for EventGridEvent
-client_basic_eventgrid_event = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT))
+client_basic_eventgrid_event = EventGridClient(
+    EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT,
+    AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT),
+)
 
 # Publish an event to a topic using basic client
-event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
+event = CloudEvent(
+    data={"key": "value"},
+    type="Contoso.Items.ItemReceived",
+    source="https://contoso.com/items",
+)
 client_basic.send(TOPIC_NAME, event)
 
 # Publish an event to a topic using NameSpace client
@@ -58,7 +73,7 @@ event = EventGridEvent(
     subject="MySubject",
     data={"key": "value"},
     event_type="Contoso.Items.ItemReceived",
-    data_version="2.0"
+    data_version="2.0",
 )
 client_basic_eventgrid_event.send(TOPIC_NAME, event)
 
