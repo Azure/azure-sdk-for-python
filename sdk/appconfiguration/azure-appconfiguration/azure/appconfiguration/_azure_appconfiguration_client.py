@@ -356,9 +356,9 @@ class AzureAppConfigurationClient:
             Will use the value from param configuration_setting if not set.
         :return: The ConfigurationSetting returned from the service
         :rtype: ~azure.appconfiguration.ConfigurationSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
-            :class:`~azure.core.exceptions.ResourceReadOnlyError`, \
             :class:`~azure.core.exceptions.ResourceModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -411,7 +411,7 @@ class AzureAppConfigurationClient:
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs,
-    ) -> ConfigurationSetting:
+    ) -> Union[None, ConfigurationSetting]:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -423,9 +423,9 @@ class AzureAppConfigurationClient:
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: ~azure.appconfiguration.ConfigurationSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
-            :class:`~azure.core.exceptions.ResourceReadOnlyError`, \
             :class:`~azure.core.exceptions.ResourceModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -457,7 +457,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs,
             )
-            return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
+            if key_value_deleted:
+                return ConfigurationSetting._from_generated(key_value_deleted)
+            return None
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 

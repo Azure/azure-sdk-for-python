@@ -71,27 +71,22 @@ class ConfigurationSetting(Model):
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> PolymorphicConfigurationSetting:
-        if key_value is None:
-            return key_value
+        # pylint:disable=protected-access
         if key_value.content_type is not None:
             try:
                 if key_value.content_type.startswith(
-                    FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
+                    FeatureFlagConfigurationSetting._feature_flag_content_type
                 ) and key_value.key.startswith(  # type: ignore
-                    FeatureFlagConfigurationSetting._key_prefix  # pylint: disable=protected-access
+                    FeatureFlagConfigurationSetting._key_prefix
                 ):
-                    config_setting = FeatureFlagConfigurationSetting._from_generated(
-                        key_value
-                    )  # pylint: disable=protected-access
-                    if key_value.value:
+                    config_setting = FeatureFlagConfigurationSetting._from_generated(key_value)
+                    if key_value.value and not config_setting:
                         config_setting.value = key_value.value
                     return config_setting
                 if key_value.content_type.startswith(
-                    SecretReferenceConfigurationSetting._secret_reference_content_type  # pylint:disable=protected-access
+                    SecretReferenceConfigurationSetting._secret_reference_content_type
                 ):
-                    return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
-                        key_value
-                    )
+                    return SecretReferenceConfigurationSetting._from_generated(key_value)
             except (KeyError, AttributeError):
                 pass
 
@@ -128,7 +123,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """The identity of the configuration setting."""
     key: str
     """The key of the configuration setting."""
-    enabled: Optional[bool]
+    enabled: bool
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
     filters: Optional[List[Dict[str, Any]]]
@@ -167,7 +162,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self,
         feature_id: str,
         *,
-        enabled: Optional[bool] = False,
+        enabled: bool = False,
         filters: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> None:
@@ -240,16 +235,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> "FeatureFlagConfigurationSetting":
-        if key_value is None:
-            return key_value
-        enabled = None
+        enabled = False
         filters = None
         display_name = None
         description = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
-                enabled = temp.get("enabled")
+                enabled = temp.get("enabled", False)
                 display_name = temp.get("display_name")
                 description = temp.get("description")
                 if "conditions" in temp.keys():
@@ -362,8 +355,6 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> "SecretReferenceConfigurationSetting":
-        if key_value is None:
-            return key_value
         secret_uri = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
