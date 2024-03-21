@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: disable=client-method-missing-tracing-decorator-async,too-many-lines,networking-import-outside-azure-core-transport
 import asyncio
 import inspect
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal, Awaitable

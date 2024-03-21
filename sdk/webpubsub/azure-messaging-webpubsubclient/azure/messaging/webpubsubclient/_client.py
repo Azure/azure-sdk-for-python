@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: disable=client-method-missing-tracing-decorator,too-many-lines
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal
 import time
 import logging
