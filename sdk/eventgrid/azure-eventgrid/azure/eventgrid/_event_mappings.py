@@ -138,6 +138,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
 
+    AcsRouterWorkerUpdatedEventName = 'Microsoft.Communication.RouterWorkerUpdated'
+
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
