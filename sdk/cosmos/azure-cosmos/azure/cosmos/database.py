@@ -173,6 +173,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -199,6 +200,7 @@ class DatabaseProxy(object):
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. TODO: develop this
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -239,8 +241,10 @@ class DatabaseProxy(object):
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
         computed_properties = kwargs.pop('computed_properties', None)
-        if computed_properties:
+        if computed_properties is not None:
             definition["computedProperties"] = computed_properties
+        if vector_embedding_policy is not None:
+            definition["vectorEmbeddingPolicy"] = vector_embedding_policy
 
         if session_token is not None:
             kwargs['session_token'] = session_token

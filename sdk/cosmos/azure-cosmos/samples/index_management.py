@@ -633,6 +633,59 @@ def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
+def use_vector_embedding_policy(db):
+    try:
+        delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with vector embedding policy and vector indexes
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector1", "type": "DiskANN"},
+                {"path": "/vector2", "type": "Flat"},
+                {"path": "/vector3", "type": "DiskANN"}
+            ]
+        }
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 1200,
+                    "distanceFunction": "Euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "imt8",
+                    "dimensions": 400,
+                    "distanceFunction": "DotProduct"
+                }
+            ]
+        }
+
+        created_container = db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        properties = created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n9. Container created with vector embedding policy and vector indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["vectorEmbeddingPolicy"])
+
+        # TODO: Add logic creating items and running queries
+
+        # Cleanup
+        db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 def run_sample():
     try:
         client = obtain_client()
@@ -662,6 +715,9 @@ def run_sample():
 
         # 8. Perform Multi Orderby queries using composite indexes
         perform_multi_orderby_query(created_db)
+
+        #9. Create and use a vector embedding policy
+        use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e
