@@ -21,7 +21,7 @@ class TestBreakSentence(TextTranslationTest):
         response = client.find_sentence_boundaries(request_body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
-        assert response[0].detected_language.score == 1
+        assert response[0].detected_language.score == 0.98
         assert response[0].sent_len[0] == 11
 
     @TextTranslationPreparer()

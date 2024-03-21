@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.text.models import TextType, ProfanityAction, ProfanityMarker
@@ -304,3 +305,24 @@ class TestTranslation(TextTranslationTest):
         assert len(response[0].translations) == 1
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.score == 1
+
+    @pytest.mark.live_test_only
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_translate_aad(self, **kwargs):
+        aadRegion = "westus2"
+        aadResourceId = kwargs.get("text_translation_aadresourceid")
+        token_credential = self.get_mt_credential(False)
+        client = self.create_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
+
+        source_language = "es"
+        target_languages = ["cs"]
+        input_text_elements = ["Hola mundo"]
+        response = client.translate(
+            request_body=input_text_elements, to=target_languages, from_parameter=source_language
+        )
+
+        assert len(response) == 1
+        assert len(response[0].translations) == 1
+        assert response[0].translations[0].to == "cs"
+        assert response[0].translations[0].text is not None
