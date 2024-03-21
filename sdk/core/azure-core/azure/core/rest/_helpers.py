@@ -227,6 +227,11 @@ class HttpRequestBackcompatMixin:
         attr = _pad_attr_name(attr, backcompat_attrs)
         super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
 
+    def __add_default_headers(self, default_headers: MutableMapping[str, str]) -> None:
+        for key, value in default_headers.items():
+            if key not in self.headers:
+                self.headers[key] = value
+
     @property
     def _multipart_mixed_info(self) -> Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]:
         """DEPRECATED: Information used to make multipart mixed requests.
@@ -303,9 +308,9 @@ class HttpRequestBackcompatMixin:
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
-        headers = self._set_body(content=data)
+        default_headers = self._set_body(content=data)
         self._files = None
-        self.headers.update(headers)
+        self.__add_default_headers(default_headers)
 
     def _set_text_body(self, data):
         """DEPRECATED: Set the text body
@@ -314,8 +319,8 @@ class HttpRequestBackcompatMixin:
 
         :param str data: Text data
         """
-        headers = self._set_body(content=data)
-        self.headers.update(headers)
+        default_headers = self._set_body(content=data)
+        self.__add_default_headers(default_headers)
         self._files = None
 
     def _set_xml_body(self, data):
@@ -326,8 +331,8 @@ class HttpRequestBackcompatMixin:
         :param data: XML data
         :type data: xml.etree.ElementTree.Element
         """
-        headers = self._set_body(content=data)
-        self.headers.update(headers)
+        default_headers = self._set_body(content=data)
+        self.__add_default_headers(default_headers)
         self._files = None
 
     def _set_json_body(self, data):
@@ -338,8 +343,8 @@ class HttpRequestBackcompatMixin:
         :param data: JSON data
         :type data: dict
         """
-        headers = self._set_body(json=data)
-        self.headers.update(headers)
+        default_headers = self._set_body(json=data)
+        self.__add_default_headers(default_headers)
         self._files = None
 
     def _set_formdata_body(self, data=None):
@@ -355,12 +360,12 @@ class HttpRequestBackcompatMixin:
         content_type = self.headers.pop("Content-Type", None) if self.headers else None
 
         if content_type and content_type.lower() == "application/x-www-form-urlencoded":
-            headers = self._set_body(data=data)
+            default_headers = self._set_body(data=data)
             self._files = None
         else:  # Assume "multipart/form-data"
-            headers = self._set_body(files=data)
+            default_headers = self._set_body(files=data)
             self._data = None
-        self.headers.update(headers)
+        self.__add_default_headers(default_headers)
 
     def _set_bytes_body(self, data):
         """DEPRECATED: Set the bytes request body.
@@ -369,12 +374,12 @@ class HttpRequestBackcompatMixin:
 
         :param bytes data: Bytes data
         """
-        headers = self._set_body(content=data)
+        default_headers = self._set_body(content=data)
         # we don't want default Content-Type
         # in 2.7, byte strings are still strings, so they get set with text/plain content type
 
-        headers.pop("Content-Type", None)
-        self.headers.update(headers)
+        default_headers.pop("Content-Type", None)
+        self.__add_default_headers(default_headers)
         self._files = None
 
     def _set_multipart_mixed(self, *requests: HttpRequest, **kwargs: Any) -> None:
