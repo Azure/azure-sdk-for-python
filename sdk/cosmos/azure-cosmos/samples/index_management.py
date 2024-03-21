@@ -655,7 +655,7 @@ def use_vector_embedding_policy(db):
                 },
                 {
                     "path": "/vector2",
-                    "dataType": "imt8",
+                    "dataType": "int8",
                     "dimensions": 400,
                     "distanceFunction": "DotProduct"
                 }
