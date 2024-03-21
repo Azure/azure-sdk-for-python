@@ -59,7 +59,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+    :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -144,7 +144,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -176,7 +176,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -209,7 +209,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         If a queue with the same name already exists, the operation fails with
         a `ResourceExistsError`.
 
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str, str] metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
@@ -359,7 +359,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of access policies associated with the queue.
-        :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
+        :rtype: Dict[str, ~azure.storage.queue.AccessPolicy]
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -712,8 +712,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
 
         :param message:
             The message object or id identifying the message to update.
-        :type message: str or ~azure.storage.queue.QueueMessage
-        :param str pop_receipt:
+        :type message: Union[str, ~azure.storage.queue.QueueMessage]
+        :param Optional[str] pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
         :param Optional[object] content:
@@ -837,7 +837,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         If the key-encryption-key or resolver field is set on the local service object,
         the messages will be decrypted before being returned.
 
-        :param int max_messages:
+        :param Optional[int] max_messages:
             A nonzero integer value that specifies the number of
             messages to peek from the queue, up to a maximum of 32. By default,
             a single message is peeked from the queue with this operation.
@@ -935,8 +935,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
 
         :param message:
             The message object or id identifying the message to delete.
-        :type message: str or ~azure.storage.queue.QueueMessage
-        :param str pop_receipt:
+        :type message: Union[str, ~azure.storage.queue.QueueMessage]
+        :param Optional[str] pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.
         :keyword int timeout:
