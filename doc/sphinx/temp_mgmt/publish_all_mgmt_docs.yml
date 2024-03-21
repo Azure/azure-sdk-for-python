@@ -44,7 +44,6 @@ jobs:
 
   - job: PublishGitHubIODocs
     displayName: Publish Docs to GitHubIO Blob Storage
-    environment: githubio
 
     pool:
       name: azsdk-pool-mms-win-2022-general
