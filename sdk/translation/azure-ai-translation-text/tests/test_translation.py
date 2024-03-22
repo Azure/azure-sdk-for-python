@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.text.models import TextType, ProfanityAction, ProfanityMarker
