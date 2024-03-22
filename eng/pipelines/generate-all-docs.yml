@@ -1,7 +1,7 @@
 trigger: none
 
 variables:
-  PythonVersion: '3.6'
+  PythonVersion: '3.11'
 
 jobs:
   - job: 'Generate_Individual_Package_Documentation'

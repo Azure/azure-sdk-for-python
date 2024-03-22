@@ -14,20 +14,30 @@ parameters:
   - name: DevFeedName
     type: string
     default: 'public/azure-sdk-for-python'
+  - name: ArtifactSuffix
+    type: string
+    default: ''
+
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
 #     eng/pipelines/templates/jobs/ci.yml
 #     eng/pipelines/templates/jobs/live.test.yml
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+
+# The variable '$(ArtifactName)' is set at runtime by the strategy for the `Build` job.
+# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
+
+# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
+# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
 steps:
-  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
-  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
@@ -44,7 +54,7 @@ steps:
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - template: set-dev-build.yml
+  - template: set-dev-build.yml@self
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
@@ -60,10 +70,20 @@ steps:
     displayName: Update package properties with dev version
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y qemu-user-static
+      sudo update-binfmts --enable qemu-aarch64
+    displayName: 'Install QEMU Dependencies'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
   - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()
+    timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
 
   - script: |
       pip install twine==4.0.2
@@ -71,31 +91,16 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
 
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
-
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'packages'
-
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: 'build_logs'
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-      displayName: 'Generate BOM'
-      condition: succeededOrFailed()
-      inputs:
-        BuildDropPath: $(Build.ArtifactStagingDirectory)
-
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - ${{ if eq(parameters.ArtifactSuffix, '') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
-        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-        ArtifactName: 'packages_manifest'
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'packages'
+
+  - ${{ if ne(parameters.ArtifactSuffix, '') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'

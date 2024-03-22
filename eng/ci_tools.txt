@@ -13,6 +13,7 @@ wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.15.0; python_version >= '3.11'
 typing-extensions<=4.6.3
 pyproject-api<1.6
+cibuildwheel==2.16.5
 
 # requirements leveraged for testing
 pytest==7.3.1
@@ -23,14 +24,11 @@ coverage==7.2.5
 Jinja2==3.1.2
 MarkupSafe==2.1.3
 json-delta==2.0
-readme_renderer==37.3; python_version <= '3.7'
-readme_renderer==42.0; python_version > '3.7'
-pyopenssl==23.2.0
-python-dotenv==0.21.1; python_version <= '3.7'
+readme_renderer==42.0;
+pyopenssl==24.0.0
 python-dotenv==1.0.0; python_version > '3.7'
 pyyaml==6.0.1
 urllib3==1.26.9
-PyGithub==1.59.1
 ConfigArgParse==1.2.3
 six==1.16.0
 

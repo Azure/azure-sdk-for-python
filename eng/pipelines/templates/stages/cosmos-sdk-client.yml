@@ -5,13 +5,7 @@ parameters:
 - name: ServiceDirectory
   type: string
   default: not-specified
-- name: EmulatorMsiUrl
-  type: string
-  default: https://aka.ms/cosmosdb-emulator
 - name: InjectedPackages
-  type: string
-  default: ''
-- name: EmulatorStartParameters
   type: string
   default: ''
 - name: TestProxy
@@ -21,37 +15,20 @@ parameters:
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    # Skip emulator tests in the CI run
-    TestMarkArgument: not cosmosEmulator
-    InjectedPackages: ${{parameters.InjectedPackages}}
-    Artifacts: ${{parameters.Artifacts}}
-
-#  - stage: Test_Emulator
-#    dependsOn: []
-#    jobs:
-#    - job: Emulator
-#      strategy:
-#        matrix:
-#          Windows_Python36:
-#            OSVmImage: 'windows-2022'
-#            PythonVersion: '3.6'
-#      pool:
-#        vmImage: $(OSVmImage)
-#
-#      steps:
-#        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-#          parameters:
-#            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-#            StartParameters: ${{ parameters.EmulatorStartParameters }}
-#
-#        - template: /eng/pipelines/templates/steps/build-test.yml
-#          parameters:
-#            TestMarkArgument: not globaldb
-#            EnvVars:
-#              ACCOUNT_HOST: https://localhost:8081/
-#            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-#            PythonVersion: $(PythonVersion)
-#            OSVmImage: $(OSVmImage)
-#            ToxTestEnv: 'whl,sdist'
-#            InjectedPackages: ${{parameters.InjectedPackages}}
+    # Run only emulator tests in Emulator CI
+    TestMarkArgument: cosmosEmulator
+    ServiceDirectory: cosmos
+    BeforeTestSteps:
+      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+        parameters:
+          StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
+    MatrixConfigs:
+      - Name: Python_cosmos_emulator
+        Path: sdk/cosmos/cosmos-emulator-matrix.json
+        Selection: all
+        GenerateVMJobs: true
+    Artifacts:
+    - name: azure-cosmos
+      safeName: azurecosmos
+    - name: azure-mgmt-cosmosdb
+      safeName: azuremgmtcosmosdb
