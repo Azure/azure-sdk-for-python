@@ -8,78 +8,148 @@
 
 from ._models_py3 import AdmCredential
 from ._models_py3 import ApnsCredential
+from ._models_py3 import Availability
 from ._models_py3 import BaiduCredential
+from ._models_py3 import BrowserCredential
 from ._models_py3 import CheckAvailabilityParameters
 from ._models_py3 import CheckAvailabilityResult
+from ._models_py3 import ConnectionDetails
 from ._models_py3 import DebugSendResponse
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import FcmV1Credential
 from ._models_py3 import GcmCredential
+from ._models_py3 import GroupConnectivityInformation
+from ._models_py3 import IpRule
+from ._models_py3 import LogSpecification
+from ._models_py3 import MetricSpecification
 from ._models_py3 import MpnsCredential
-from ._models_py3 import NamespaceCreateOrUpdateParameters
 from ._models_py3 import NamespaceListResult
 from ._models_py3 import NamespacePatchParameters
+from ._models_py3 import NamespaceProperties
 from ._models_py3 import NamespaceResource
-from ._models_py3 import NotificationHubCreateOrUpdateParameters
+from ._models_py3 import NetworkAcls
 from ._models_py3 import NotificationHubListResult
 from ._models_py3 import NotificationHubPatchParameters
 from ._models_py3 import NotificationHubResource
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import OperationProperties
+from ._models_py3 import PnsCredentials
 from ._models_py3 import PnsCredentialsResource
-from ._models_py3 import PolicykeyResource
+from ._models_py3 import PolicyKeyResource
+from ._models_py3 import PrivateEndpointConnectionProperties
+from ._models_py3 import PrivateEndpointConnectionResource
+from ._models_py3 import PrivateEndpointConnectionResourceListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkResourceProperties
+from ._models_py3 import PrivateLinkServiceConnection
+from ._models_py3 import ProxyResource
+from ._models_py3 import PublicInternetAuthorizationRule
+from ._models_py3 import RegistrationResult
+from ._models_py3 import RemotePrivateEndpointConnection
+from ._models_py3 import RemotePrivateLinkServiceConnectionState
 from ._models_py3 import Resource
 from ._models_py3 import ResourceListKeys
-from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+from ._models_py3 import ServiceSpecification
 from ._models_py3 import SharedAccessAuthorizationRuleListResult
 from ._models_py3 import SharedAccessAuthorizationRuleProperties
 from ._models_py3 import SharedAccessAuthorizationRuleResource
 from ._models_py3 import Sku
-from ._models_py3 import SubResource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
 from ._models_py3 import WnsCredential
+from ._models_py3 import XiaomiCredential
 
 from ._notification_hubs_management_client_enums import AccessRights
+from ._notification_hubs_management_client_enums import CreatedByType
+from ._notification_hubs_management_client_enums import NamespaceStatus
 from ._notification_hubs_management_client_enums import NamespaceType
+from ._notification_hubs_management_client_enums import OperationProvisioningState
+from ._notification_hubs_management_client_enums import PolicyKeyType
+from ._notification_hubs_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._notification_hubs_management_client_enums import PrivateLinkConnectionStatus
+from ._notification_hubs_management_client_enums import PublicNetworkAccess
+from ._notification_hubs_management_client_enums import ReplicationRegion
 from ._notification_hubs_management_client_enums import SkuName
+from ._notification_hubs_management_client_enums import ZoneRedundancyPreference
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AdmCredential",
     "ApnsCredential",
+    "Availability",
     "BaiduCredential",
+    "BrowserCredential",
     "CheckAvailabilityParameters",
     "CheckAvailabilityResult",
+    "ConnectionDetails",
     "DebugSendResponse",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
+    "FcmV1Credential",
     "GcmCredential",
+    "GroupConnectivityInformation",
+    "IpRule",
+    "LogSpecification",
+    "MetricSpecification",
     "MpnsCredential",
-    "NamespaceCreateOrUpdateParameters",
     "NamespaceListResult",
     "NamespacePatchParameters",
+    "NamespaceProperties",
     "NamespaceResource",
-    "NotificationHubCreateOrUpdateParameters",
+    "NetworkAcls",
     "NotificationHubListResult",
     "NotificationHubPatchParameters",
     "NotificationHubResource",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "OperationProperties",
+    "PnsCredentials",
     "PnsCredentialsResource",
-    "PolicykeyResource",
+    "PolicyKeyResource",
+    "PrivateEndpointConnectionProperties",
+    "PrivateEndpointConnectionResource",
+    "PrivateEndpointConnectionResourceListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkResourceProperties",
+    "PrivateLinkServiceConnection",
+    "ProxyResource",
+    "PublicInternetAuthorizationRule",
+    "RegistrationResult",
+    "RemotePrivateEndpointConnection",
+    "RemotePrivateLinkServiceConnectionState",
     "Resource",
     "ResourceListKeys",
-    "SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+    "ServiceSpecification",
     "SharedAccessAuthorizationRuleListResult",
     "SharedAccessAuthorizationRuleProperties",
     "SharedAccessAuthorizationRuleResource",
     "Sku",
-    "SubResource",
+    "SystemData",
+    "TrackedResource",
     "WnsCredential",
+    "XiaomiCredential",
     "AccessRights",
+    "CreatedByType",
+    "NamespaceStatus",
     "NamespaceType",
+    "OperationProvisioningState",
+    "PolicyKeyType",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateLinkConnectionStatus",
+    "PublicNetworkAccess",
+    "ReplicationRegion",
     "SkuName",
+    "ZoneRedundancyPreference",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

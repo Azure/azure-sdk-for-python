@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +78,6 @@ class ApiExportOperations:
         :type format: str or ~azure.mgmt.apimanagement.models.ExportFormat
         :param export: Query parameter required to export the API details. "true" Required.
         :type export: str or ~azure.mgmt.apimanagement.models.ExportApi
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApiExportResult or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.ApiExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -97,7 +96,7 @@ class ApiExportOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApiExportResult] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             api_id=api_id,
@@ -105,16 +104,15 @@ class ApiExportOperations:
             format=format,
             export=export,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -127,10 +125,6 @@ class ApiExportOperations:
         deserialized = self._deserialize("ApiExportResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}"
-    }
+        return deserialized  # type: ignore

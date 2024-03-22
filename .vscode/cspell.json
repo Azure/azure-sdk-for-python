@@ -1689,6 +1689,12 @@
       ]
     },
     {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
+      "words": [
+        "adfsasdfzsd"
+      ]
+    },
+    {
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"

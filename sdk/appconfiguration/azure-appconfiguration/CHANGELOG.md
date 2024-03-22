@@ -1,5 +1,21 @@
 # Release History
 
+## 1.6.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.0b2 (2024-03-21)
+
+### Bugs Fixed
+- Changed invalid default value `None` to `False` for property `enabled` in `FeatureFlagConfigurationSetting`.
+- Fixed the issue that `description`, `display_name` and other customer fields are missing when de/serializing `FeatureFlagConfigurationSetting` objects.
+
 ## 1.6.0b1 (2024-03-14)
 
 ### Features Added
