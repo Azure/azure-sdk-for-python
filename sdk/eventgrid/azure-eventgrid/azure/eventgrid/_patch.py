@@ -103,13 +103,11 @@ class EventGridClient(InternalEventGridClient):
             ]
 
         if level == ClientLevel.BASIC:
-            self._client = EventGridPublisherClient(endpoint, credential, **kwargs) # type:ignore[assignment]
-            self._level = ClientLevel.BASIC
+            self._client = EventGridPublisherClient(endpoint, credential, api_version=self._config.api_version) # type:ignore[assignment]
         elif level == ClientLevel.STANDARD:
             self._client = PipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
-            self._level = ClientLevel.STANDARD
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
