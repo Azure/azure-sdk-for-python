@@ -17,7 +17,7 @@ LOGGER = logging.getLogger(__name__)
 
 NODE_LIST_BY_TASK = {
     "qa": ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"],
-    "chat": ["evaluate_chat_rag", "evaluate_coherence_fluency"],
+    "chat": ["evaluate_chat_rag", "evaluate_coherence_fluency", "fallback_groundedness_evaluation"],
 }
 
 
@@ -136,6 +136,9 @@ class MetricHandler(object):
                     if col.replace("outputs.", "").startswith(metric):
                         is_col_to_delete = False
                         break
+            # keep the column "evaluation_per_turn" in the output
+            if "evaluation_per_turn" in col:
+                is_col_to_delete = False
             if is_col_to_delete:
                 columns_to_drop.append(col)
         result_df.drop(columns_to_drop, axis=1, inplace=True)
