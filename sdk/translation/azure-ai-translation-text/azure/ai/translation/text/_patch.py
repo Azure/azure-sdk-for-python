@@ -76,6 +76,7 @@ class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
     :param credential: Translator AAD Credentials used to access Translator Resource for global Translator endpoint.
+    :type tokenCredential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, credential: TranslatorAADCredential, **kwargs: Any)-> None:
