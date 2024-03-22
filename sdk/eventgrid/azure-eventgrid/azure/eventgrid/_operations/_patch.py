@@ -262,17 +262,25 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         else:
             # If no binary_mode is set, send whatever event is passed
-            if self._level == "Standard":# and isinstance(event, CloudEvent) or (isinstance(event, list) and isinstance(event[0], CloudEvent)):
+            if self._level == "Standard": 
+                
+                try:
+                    if isinstance(event, dict):
+                        event = CloudEvent.from_dict(event)
+                    if isinstance(event, list) and isinstance(event[0], dict):
+                        event = [CloudEvent.from_dict(e) for e in event]
+                except Exception:
+                    pass
+
+                if isinstance(event, CloudEvent) or isinstance(event, list) and isinstance(event[0], CloudEvent):
                     kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
                     if not isinstance(event, list):
                         event = [event]
                     self._publish_cloud_events(topic_name, _serialize_events(event), **kwargs)
+                else:
+                    raise TypeError(f"Incorrect type for event. Expected CloudEvent, list of CloudEvents, dict, or list of dicts. Dicts must be in CloudEvent format.")
             else:
-                # figure out how to let this work for both clients self.client.send =self._publish_cloud_event
-                try:
-                    self._client.send(event, channel_name=channel_name, **kwargs)
-                except AttributeError:
-                    raise TypeError("Incorrect type for body. Expected CloudEvent, list of CloudEvents, EventGrid Event, list of EventGrid Events, dict, or list of dicts.")
+                self._client.send(event, channel_name=channel_name, **kwargs)
 
     def _publish(
         self,

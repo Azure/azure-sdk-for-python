@@ -46,7 +46,7 @@ list_cloud_event = [cloud_event, cloud_event]
 list_cloud_event_dict = [cloud_event_dict, cloud_event_dict]
 eventgrid_event = EventGridEvent(
     event_type="Contoso.Items.ItemReceived",
-    data={"itemSku": "Contoso Item SKU #1"},
+    data="hello",
     subject="Door1",
     data_version="2.0",
     id="randomeventgriduuid11",
@@ -75,7 +75,73 @@ broken_cloud_event = {
     "id": "randomclouduuid11",
 }
 
+try:
+    # Get resource not found error because wrong endpoint for basic client
+    credential = AzureKeyCredential(EVENTGRID_KEY)
+    client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential, level=ClientLevel.BASIC)
+    client.send(cloud_event_dict)
+except Exception as e:
+    print(f"Basic Client Created with wrong endpoint: {e} \n \n")
 
-credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
-client = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential)
-client.send(eventgrid_event)
+try:
+    # Get resource not found error (with a description) because wrong endpoint for standard client
+    credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
+    client = EventGridClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.STANDARD)
+    client.send(cloud_event_dict, topic_name=TOPIC_NAME)
+except Exception as e:
+    print(f"Standard Client Created with wrong endpoint: {e} \n \n")
+
+try:
+    # Create a Standard Client but pass an eventgrid event
+    credential = AzureKeyCredential(EVENTGRID_KEY)
+    client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential, level=ClientLevel.STANDARD)
+    client.send(eventgrid_event, topic_name=TOPIC_NAME)
+except Exception as e:
+    print(" Get from service: Standard Client Created with EventGridEvent: (BadRequest) Cannot deserialize input event"
+        "Code: BadRequest "
+        "Message: Cannot deserialize input event \n ")
+    print(f"Standard Client Created with EventGridEvent: {e} \n \n")
+
+try:
+    # Create a Standard Client but pass an eventgrid event dict
+    credential = AzureKeyCredential(EVENTGRID_KEY)
+    client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential, level=ClientLevel.STANDARD)
+    client.send(eventgrid_event_dict, topic_name=TOPIC_NAME)
+except Exception as e:
+    print("Get from service: Standard Client Created with EventGrid Event Dict:"
+        "(BadRequest) CloudEvents attribute names MUST consist of lower-case letters ('a' to 'z') or digits ('0' to '9') from the ASCII character set."
+        "Code: BadRequest "
+        "Message: CloudEvents attribute names MUST consist of lower-case letters ('a' to 'z') or digits ('0' to '9') from the ASCII character set. \n ")
+    print(f"Standard Client Created with EventGrid Event Dict: {e} \n \n")
+
+try:
+    # Send a broken eventgrid event to Basic Client
+    credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
+    client = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client.send(broken_eventgrid_event)
+except Exception as e:
+    print(f"Basic Client Sent Broken EventGrid Event: {e} \n \n")
+
+try:
+    # Send a broken cloud event to Basic Client
+    credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
+    client = EventGridClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential, level=ClientLevel.BASIC)
+    client.send(broken_cloud_event)
+except Exception as e:
+    print(f"Basic Client Sent Broken Cloud Event: {e} \n \n")
+
+try:
+    # Send a broken cloud event to Standard Client
+    credential = AzureKeyCredential(EVENTGRID_KEY)
+    client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential, level=ClientLevel.STANDARD)
+    client.send(broken_cloud_event, topic_name=TOPIC_NAME)
+except Exception as e:
+    print(f"Standard Client Sent Broken Cloud Event: {e} \n \n")
+
+try:
+    # Send a broken eventgrid event to Standard Client
+    credential = AzureKeyCredential(EVENTGRID_KEY)
+    client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential, level=ClientLevel.STANDARD)
+    client.send(broken_eventgrid_event, topic_name=TOPIC_NAME)
+except Exception as e:
+    print(f"Standard Client Sent Broken EventGrid Event: {e} \n \n")
