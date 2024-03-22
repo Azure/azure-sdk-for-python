@@ -23,5 +23,5 @@ key: str = os.environ["EVENTGRID_KEY"]
 endpoint: str = os.environ["EVENTGRID_ENDPOINT"]
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 # [END client_auth_with_key_cred]

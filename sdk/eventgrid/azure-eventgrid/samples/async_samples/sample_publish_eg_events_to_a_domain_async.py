@@ -18,7 +18,7 @@ USAGE:
 import os
 import asyncio
 from azure.eventgrid import EventGridEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
@@ -27,7 +27,7 @@ domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(domain_key)
-    client = EventGridPublisherClient(domain_hostname, credential)
+    client = EventGridClient(domain_hostname, credential)
 
     await client.send(
         [

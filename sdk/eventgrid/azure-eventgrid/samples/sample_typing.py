@@ -2,7 +2,7 @@ import os
 import json
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
+from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel, EventGridPublisherClient
 
 
 # Cloud Event Topic
@@ -145,3 +145,20 @@ try:
     client.send(broken_eventgrid_event, topic_name=TOPIC_NAME)
 except Exception as e:
     print(f"Standard Client Sent Broken EventGrid Event: {e} \n \n")
+
+
+try:
+    # Send a broken eventgrid event to Basic Client
+    credential = AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT)
+    client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, credential=credential,)
+    client.send(broken_eventgrid_event)
+except Exception as e:
+    print(f"Publisher Client Sent Broken EventGrid Event: {e} \n \n")
+
+try:
+    # Send a broken cloud event to Basic Client
+    credential = AzureKeyCredential(EVENTGRID_KEY_GA_CLOUDEVENT)
+    client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA_CLOUDEVENT, credential=credential)
+    client.send(broken_cloud_event)
+except Exception as e:
+    print(f"Publisher Client Sent Broken Cloud Event: {e} \n \n")
