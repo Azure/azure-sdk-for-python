@@ -13,7 +13,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 configure_azure_monitor()
 
 # The OpenAI Instrumation is not officially part of the OpenTelemetry community.
-# Therefore, we cannot atest to its stability. Use with appropiate caution.
+# Therefore, we cannot atest to its stability. Use with appropiate caution to capture additional telemetry.
 OpenAIInstrumentor().instrument()
 
 client = OpenAI() # For openai==1.x
