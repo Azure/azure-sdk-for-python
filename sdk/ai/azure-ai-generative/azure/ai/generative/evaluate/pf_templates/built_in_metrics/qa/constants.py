@@ -1,4 +1,3 @@
-import sys
 from enum import Enum
 
 
@@ -22,9 +21,9 @@ class Metric:
     QUALITY_METRICS = {
         "gpt_groundedness",
         "gpt_similarity",
-        "gpt_fluency", 
+        "gpt_fluency",
         "gpt_coherence",
-        "gpt_relevance", 
+        "gpt_relevance",
         "f1_score"
         }
 

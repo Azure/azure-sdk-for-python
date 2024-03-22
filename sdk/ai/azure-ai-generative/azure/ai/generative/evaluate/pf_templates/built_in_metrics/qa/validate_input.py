@@ -5,7 +5,7 @@ from utils import is_valid_string
 def is_input_valid_for_safety_metrics(
         question: str, answer: str):
     if is_valid_string(question) and is_valid_string(answer):
-        return True 
+        return True
     else:
         print("Input is not valid for safety metrics evaluation")
         return False
@@ -50,7 +50,7 @@ def validate_input(question: str,
                 data_validation[metric] = True
             else:
                 print("input for %s is not valid" % metric)
-    
+
     safety_metrics = is_input_valid_for_safety_metrics(question, answer)
     data_validation["safety_metrics"] = safety_metrics
     return data_validation

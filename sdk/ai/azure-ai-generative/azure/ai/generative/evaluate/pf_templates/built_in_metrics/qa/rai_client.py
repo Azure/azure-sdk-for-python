@@ -2,6 +2,8 @@ from mlflow.utils.rest_utils import http_request
 import time
 from utils import get_cred
 from constants import RAIService
+import numpy as np
+import json
 
 
 class RAIServiceHandler:
@@ -9,7 +11,7 @@ class RAIServiceHandler:
         self.cred = get_cred()
 
     def submit_annotation(self, request_body):
-        try:        
+        try:
             response = http_request(
                 host_creds=self.cred,
                 endpoint="/submitannotation",
@@ -18,13 +20,13 @@ class RAIServiceHandler:
             )
 
             if response.status_code != 202:
-                print("Fail evaluating '%s' with error message: %s" 
-                    %(request_body["UserTextList"], response.text))
+                print("Fail evaluating '%s' with error message: %s"
+                      % (request_body["UserTextList"], response.text))
                 response.raise_for_status()
         except AttributeError as e:
             response = None
             print("Fail evaluating '%s' with error message: %s"
-                % (request_body["UserTextList"], e))
+                  % (request_body["UserTextList"], e))
         if response is not None:
             json_obj = response.json()
         else:
@@ -33,14 +35,14 @@ class RAIServiceHandler:
 
     def _check_status(self, request_id):
         print("RAI service: check request_id: %s"
-            % request_id)
+              % request_id)
         try:
             response = http_request(
-                host_creds = self.cred,
+                host_creds=self.cred,
                 endpoint="/operations/" + request_id,
                 method="GET"
             )
-        except AttributeError as e:
+        except AttributeError:
             response = None
         return response
 
@@ -61,26 +63,36 @@ class RAIServiceHandler:
                     annotation_result = request_status.json()
                     break
                 if request_status_code >= 400:
-                    raw_annotation_result = request.status.json()
-                    generic_groundedness_output = {"label": np.nan, "reasoning": ""}
-                    if isinstance(raw_annotation_result, dict) and "error" in raw_annotation_result:
-                        generic_groundedness_output["reasoning"] = raw_annotation_result["error"]["message"]
+                    raw_annotation_result = request_status.json()
+                    generic_groundedness_output = {"label": np.nan,
+                                                   "reasoning": ""}
+                    if isinstance(raw_annotation_result, dict)\
+                       and "error" in raw_annotation_result:
+                        generic_groundedness_output["reasoning"] =\
+                            raw_annotation_result["error"]["message"]
                     annotation_result = [
-                        {"generic_groundedness": json.dumps(generic_groundedness_output)}]
+                        {"generic_groundedness":
+                         json.dumps(generic_groundedness_output)}]
                     break
             else:
-                print("Failed to retrieve the status of RequestID: %s" % request_id)
+                print("Failed to retrieve the status of RequestID: %s"
+                      % request_id)
             request_count += 1
-            sleep_time = RAIService.SLEEPTIME ** request_count
+            sleep_time = RAIService.SLEEPTIME * request_count
             time.sleep(sleep_time)
             time_elapsed = time.time() - start
-    
+
         if time_elapsed > RAIService.TIMEOUT:
-            raise TimeoutError("Request times out after %d seconds" % RAIService.TIMEOUT)
-    
+            raise TimeoutError("Request times out after %d seconds"
+                               % RAIService.TIMEOUT)
+
         return annotation_result
 
     def get_annotation(self, request_body):
-        submitannotation_response = self.submit_annotation(request_body)
-        annotation_result = self.retrieve_annotation_result(submitannotation_response)
+        try:
+            submitannotation_response = self.submit_annotation(request_body)
+            annotation_result = self.retrieve_annotation_result(
+                submitannotation_response)
+        except Exception:
+            annotation_result = None
         return annotation_result

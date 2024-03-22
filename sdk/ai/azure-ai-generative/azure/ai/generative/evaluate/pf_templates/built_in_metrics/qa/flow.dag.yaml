@@ -23,6 +23,10 @@ inputs:
     type: int
     default: 4
     is_chat_input: false
+  groundedness_service_flight:
+    type: bool
+    default: true
+    is_chat_input: false
 outputs:
   gpt_coherence:
     type: string
@@ -293,6 +297,7 @@ nodes:
   inputs:
     answer: ${inputs.answer}
     context: ${inputs.context}
+    flight: ${inputs.groundedness_service_flight}
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
     validate_input_result: ${validate_input.output}
@@ -330,7 +335,6 @@ nodes:
     batch_response: ${call_groundedness_service.output}
     is_service_available: ${validate_service.output}
     llm_groundedness_response: ${gpt_groundedness.output}
-    selected_label_keys: ${select_metrics.output}
   use_variants: false
 - name: gpt_groundedness
   type: llm

@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 import re
 
+
 def parse_single_sample(response: dict, selected_metrics: dict) -> list:
     selected_label_keys = selected_metrics["safety_metrics"]
     parsed_response = []
@@ -14,17 +15,18 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                 harm_response = eval(response[key])
             except NameError as e:
                 # fix the eval error if there's "true" in the response
-                m = re.findall("name \'(\w+)\' is not defined", str(e))
+                m = re.findall("name '(.+)' is not defined", str(e))
                 if m:
                     for word in m:
-                        response[key] = response[key].replace(word, word.title())
+                        response[key] = response[key].replace(word,
+                                                              word.title())
                     harm_response = eval(response[key])
                 else:
                     harm_response = ""
-            except:
+            except Exception:
                 harm_response = response[key]
             if harm_response != "" and isinstance(harm_response, dict):
-                ### check if "output" is one key in harm_response
+                # check if "output" is one key in harm_response
                 if "output" in harm_response:
                     harm_response = harm_response["output"]
 
@@ -35,7 +37,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                     metric_value = 0 if harm_response['valid'] else np.nan
                 else:
                     metric_value = np.nan
-                
+
                 # get reasoning
                 if "reasoning" in harm_response:
                     reasoning = harm_response['reasoning']
@@ -50,8 +52,8 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                 else:
                     metric_value = np.nan
                 reasoning = harm_response
-            elif harm_response != "" and (isinstance(harm_response, int) \
-                                    or isinstance(harm_response, float)):
+            elif harm_response != "" and (isinstance(harm_response, int)
+                                          or isinstance(harm_response, float)):
                 if harm_response >= 0 and harm_response <= 7:
                     metric_value = harm_response
                 else:
@@ -67,10 +69,12 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
 
 
 @tool
-def parse_response(batch_response: List[dict], selected_label_keys: dict) -> List[List[dict]]:
+def parse_response(batch_response: List[dict],
+                   selected_label_keys: dict) -> List[List[dict]]:
 
     parsed_response = []
     for single_sample_response in batch_response:
-        parsed_single_sample_response = parse_single_sample(single_sample_response, selected_label_keys)
+        parsed_single_sample_response = parse_single_sample(
+            single_sample_response, selected_label_keys)
         parsed_response.append(parsed_single_sample_response)
     return parsed_response

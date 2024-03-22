@@ -4,19 +4,17 @@ import numpy as np
 import re
 
 
-def parse_single_sample(response: dict, selected_metrics: dict) -> list:
-    selected_label_keys = selected_metrics["quality_metrics"]
+def parse_single_sample(response: dict) -> list:
     parsed_response = []
     for key in response:
-        #if selected_label_keys[key]:
         harm_type = key.replace("generic", "gpt")
         parsed_harm_response = {}
         try:
             harm_response = eval(response[key])
-        except:
+        except Exception:
             harm_response = response[key]
         if harm_response != "" and isinstance(harm_response, dict):
-            ### check if "output" is one key in harm_response
+            # check if "output" is one key in harm_response
             if "output" in harm_response:
                 harm_response = harm_response["output"]
 
@@ -25,7 +23,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                 metric_value = harm_response['label']
             else:
                 metric_value = np.nan
-            
+
             # get reasoning
             if "reasoning" in harm_response:
                 reasoning = harm_response['reasoning']
@@ -40,7 +38,8 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
             else:
                 metric_value = np.nan
             reasoning = harm_response
-        elif harm_response != "" and (isinstance(harm_response, int) or isinstance(harm_response, float)):
+        elif harm_response != "" and (isinstance(harm_response, int)
+                                      or isinstance(harm_response, float)):
             if harm_response >= 0 and harm_response <= 7:
                 metric_value = harm_response
             else:
@@ -55,8 +54,8 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
     return parsed_response
 
 
-def parse_groundedness_llm_response(llm_groundedness_response = None) -> dict:
-    item = {'name': 'gpt_groundedness', 
+def parse_groundedness_llm_response(llm_groundedness_response=None) -> dict:
+    item = {'name': 'gpt_groundedness',
             'score': llm_groundedness_response}
     if item['score']:
         try:
@@ -66,26 +65,16 @@ def parse_groundedness_llm_response(llm_groundedness_response = None) -> dict:
                 score = float(match.group())
             else:
                 score = np.nan
-        except Exception as e:
+        except Exception:
             score = np.nan
-            errors.append({
-                "name": item["name"], 
-                "msg":   str(e), "data": item["score"]})
     else:
         score = np.nan
     return {"gpt_groundedness": score,
             "gpt_groundedness_reason": np.nan}
-    
 
 
-# The inputs section will change based on the arguments
-# of the tool function, after you save the code
-# Adding type to arguments and return value will help
-# the system show the types properly
-# Please update the function name/signature per need
 @tool
-def parse_response(selected_label_keys: dict,
-                   is_service_available: dict,
+def parse_response(is_service_available: dict,
                    llm_groundedness_response: dict = None,
                    batch_response: List[dict] = None):
     parsed_single_sample_response = None
@@ -93,9 +82,9 @@ def parse_response(selected_label_keys: dict,
         if batch_response:
             single_sample_response = batch_response[0]
             parsed_single_sample_response = parse_single_sample(
-                single_sample_response,
-                selected_label_keys)[0]
+                single_sample_response)[0]
     else:
-        parsed_single_sample_response = parse_groundedness_llm_response(llm_groundedness_response)
+        parsed_single_sample_response = \
+            parse_groundedness_llm_response(llm_groundedness_response)
 
     return parsed_single_sample_response

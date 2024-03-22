@@ -4,7 +4,7 @@ from mlflow.utils.rest_utils import http_request
 from utils import get_cred, is_valid_string
 
 
-def is_service_available():
+def is_service_available(flight: bool):
     content_harm_service = False
     groundedness_service = False
     try:
@@ -17,15 +17,15 @@ def is_service_available():
         )
 
         if response.status_code != 200:
-            print("status_code not 200. Fail to get RAI service availability in this region.")
+            print("Fail to get RAI service availability in this region.")
             print(response.status_code)
         else:
             available_service = response.json()
             if "content harm" in available_service:
                 content_harm_service = True
             else:
-                print("RAI content harm service is not available in this region.")
-            if "groundedness" in available_service:
+                print("Content harm service is not available in this region.")
+            if "groundedness" in available_service and flight:
                 groundedness_service = True
             else:
                 print("AACS service is not available in this region.")
@@ -59,40 +59,39 @@ def is_groundedness_metric_selected(selected_metrics: dict) -> bool:
 
 def is_input_valid_for_safety_metrics(question: str, answer: str):
     if is_valid_string(question) and is_valid_string(answer):
-        return True 
+        return True
     else:
         print("Input is not valid for safety metrics evaluation")
-        return False 
+        return False
 
 
 # check if RAI service is avilable in this region. If not, return False.
 # check if tracking_uri is set. If not, return False
-# if tracking_rui is set, check if any safety metric is selected. 
+# if tracking_rui is set, check if any safety metric is selected.
 # if no safety metric is selected, return False
 @tool
 def validate_safety_metric_input(
         selected_metrics: dict,
         validate_input_result: dict,
-        question: str, 
+        question: str,
         answer: str,
+        flight: bool = True,
         context: str = None) -> dict:
-    service_available = is_service_available()
+    service_available = is_service_available(flight)
     tracking_uri_set = is_tracking_uri_set()
-    input_valid_for_safety_metrics = is_input_valid_for_safety_metrics(
-        question, answer)
 
     content_harm_service = is_safety_metric_selected(selected_metrics) \
         and service_available["content_harm_service"] and tracking_uri_set \
         and validate_input_result["safety_metrics"]
-    
-    groundedness_service = is_groundedness_metric_selected(selected_metrics) \
+
+    groundedness_service = is_groundedness_metric_selected(selected_metrics)\
         and validate_input_result["gpt_groundedness"] and tracking_uri_set \
         and service_available["groundedness_service"]
 
     groundedness_prompt = is_groundedness_metric_selected(selected_metrics) \
         and validate_input_result["gpt_groundedness"] and tracking_uri_set\
         and (not service_available["groundedness_service"])
-    
+
     return {"content_harm_service": content_harm_service,
             "groundedness_service": groundedness_service,
             "groundedness_prompt": groundedness_prompt

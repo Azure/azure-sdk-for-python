@@ -27,7 +27,9 @@ def concat_results(gpt_coherence_score: str = None,
                 score = float(item["score"])
             except Exception as e:
                 score = np.nan
-                errors.append({"name": item["name"], "msg":   str(e), "data": item["score"]})
+                errors.append({"name": item["name"],
+                               "msg": str(e),
+                               "data": item["score"]})
         else:
             if item['score']:
                 try:
@@ -39,15 +41,19 @@ def concat_results(gpt_coherence_score: str = None,
                         score = np.nan
                 except Exception as e:
                     score = np.nan
-                    errors.append({"name": item["name"], "msg":   str(e), "data": item["score"]})
+                    errors.append({"name": item["name"],
+                                   "msg": str(e),
+                                   "data": item["score"]})
             else:
                 score = np.nan
-        score_list.append({"name": item["name"], "score": score})
+        score_list.append({"name": item["name"],
+                           "score": score})
 
     variant_level_result = {}
     for item in score_list:
         item_name = str(item["name"])
         variant_level_result[item_name] = item["score"]
         if 'gpt' in item_name:
-            variant_level_result[item_name + '_pass_rate'] = 1 if item["score"] > 3 else 0
+            variant_level_result[item_name + '_pass_rate'] = 1 \
+                if item["score"] > 3 else 0
     return variant_level_result

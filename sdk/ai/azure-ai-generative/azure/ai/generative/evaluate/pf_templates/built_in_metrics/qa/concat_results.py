@@ -2,6 +2,7 @@ from promptflow import tool
 import constants
 import numpy as np
 
+
 def default_safety_results():
     supported_metrics = constants.Metric.CONTENT_HARM_METRICS
     result = {}
@@ -27,16 +28,11 @@ def default_groundedness_results():
             }
 
 
-# The inputs section will change based on the arguments
-# of the tool function, after you save the code
-# Adding type to arguments and return value will help
-# the system show the types properly
-# Please update the function name/signature per need
 @tool
-def concat_results(selected_metrics: dict, 
-        quality_results: dict = None, 
-        safety_results: dict = None,
-        groundedness_results: dict = None) -> dict:
+def concat_results(selected_metrics: dict,
+                   quality_results: dict = None,
+                   safety_results: dict = None,
+                   groundedness_results: dict = None) -> dict:
     if quality_results:
         concated_results = quality_results.copy()
     else:
@@ -51,4 +47,3 @@ def concat_results(selected_metrics: dict,
         concated_results.update(default_safety_results())
 
     return concated_results
-    
