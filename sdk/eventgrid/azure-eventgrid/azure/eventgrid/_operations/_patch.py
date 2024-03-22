@@ -272,13 +272,16 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 except Exception:
                     pass
 
-                if isinstance(event, CloudEvent) or isinstance(event, list) and isinstance(event[0], CloudEvent):
+                try:
                     kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
                     if not isinstance(event, list):
                         event = [event]
                     self._publish_cloud_events(topic_name, _serialize_events(event), **kwargs)
-                else:
-                    raise TypeError(f"Incorrect type for event. Expected CloudEvent, list of CloudEvents, dict, or list of dicts. Dicts must be in CloudEvent format.")
+                except HttpResponseError as e:
+                    if e.status_code == 400:
+                        raise HttpResponseError("Invalid event data. Please check the data and try again.") from e
+                    else:
+                        raise e
             else:
                 self._client.send(event, channel_name=channel_name, **kwargs)
 
