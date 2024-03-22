@@ -194,8 +194,8 @@ nodes:
     type: code
     path: f1_score.py
   inputs:
-    ground_truth: ${inputs.ground_truth}
     answer: ${inputs.answer}
+    ground_truth: ${inputs.ground_truth}
   activate:
     when: ${validate_input.output.f1_score}
     is: true

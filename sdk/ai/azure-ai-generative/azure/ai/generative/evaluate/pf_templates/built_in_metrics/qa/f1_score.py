@@ -50,6 +50,7 @@ def compute_f1_score(ground_truth: str, answer: str) -> str:
         precision = 1.0 * num_common_tokens / len(prediction_tokens)
         recall = 1.0 * num_common_tokens / len(reference_tokens)
 
-        f1 = (2.0 * precision * recall) / (precision + recall)
+        f1 = round(
+            (2.0 * precision * recall) / (precision + recall), 2)
 
     return f1
