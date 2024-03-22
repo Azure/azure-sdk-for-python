@@ -1,8 +1,6 @@
 from promptflow import tool
-#from azureml.metrics.common import _validation
-#from azureml.metrics.common.contract import Contract
-#from azureml.metrics.common.exceptions import InvalidOperationException
-from utils import filter_metrics, is_conversation_valid, is_conversation_valid_with_context
+from utils import is_conversation_valid, is_conversation_valid_with_context
+
 
 def is_metric_group_selected(selected_metrics: dict) -> dict:
     group_selected = {}
@@ -14,40 +12,50 @@ def is_metric_group_selected(selected_metrics: dict) -> dict:
                 break
     return group_selected
 
-                
-# The inputs section will change based on the arguments of the tool function, after you save the code
-# Adding type to arguments and return value will help the system show the types properly
-# Please update the function name/signature per need
-@tool
-def validate_conversation(chat: [], selected_metrics: dict) -> bool:
-    is_group_selected = is_metric_group_selected(selected_metrics)
 
-    # no quality metrics are selected
-    if (not is_group_selected['rag_metrics']) and (not is_group_selected['non_rag_metrics']):
+@tool
+def validate_conversation(chat: list[dict],
+                          selected_metrics: dict) -> dict:
+    is_group_selected = is_metric_group_selected(selected_metrics)
+    num_turns = len(chat) / 2
+    chat_validation = {
+                "non_rag_metrics": False,
+                "rag_metrics": False,
+                "parse_chat": False,
+                "num_turns": num_turns}
+
+    # if no quality metrics are selected,
+    # set both metric groups to False
+    # set parse_chat to False
+    if (not is_group_selected['rag_metrics']) \
+            and (not is_group_selected['non_rag_metrics']):
         print("no quality metrics selected. ")
-        return {"non_rag_metrics": False,
-            "rag_metrics": False}
-    
+        return chat_validation
+
     # check if chat format is valid
-    #is_valid_chat = is_conversation_valid(chat)
     try:
         is_valid_chat = is_conversation_valid(chat)
-    except:
+    except Exception:
         is_valid_chat = False
-    
+
     # chat format is not valid
     if not is_valid_chat:
         print("chat format is not valid")
-        return {"non_rag_metrics": False,
-            "rag_metrics": False}
+        return chat_validation
 
     non_rag_node = is_group_selected['non_rag_metrics'] and is_valid_chat
     rag_node = False
     if is_group_selected['rag_metrics'] and is_valid_chat:
         try:
             rag_node = is_conversation_valid_with_context(chat)
-        except:
+        except Exception:
             rag_node = False
-    print("non_rag_metrics:", non_rag_node, "rag_metrics:", rag_node)
+    parse_chat = non_rag_node \
+        or (rag_node and selected_metrics['rag_metrics']["gpt_groundedness"])
 
-    return {"non_rag_metrics": non_rag_node, "rag_metrics": rag_node}
+    num_turns = len(chat)
+    chat_validation["non_rag_metrics"] = non_rag_node
+    chat_validation["rag_metrics"] = rag_node
+    chat_validation["parse_chat"] = parse_chat
+
+    return chat_validation
