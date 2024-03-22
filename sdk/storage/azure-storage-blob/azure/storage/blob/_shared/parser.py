@@ -22,7 +22,7 @@ else:
 
 
 def _to_utc_datetime(value: datetime) -> str:
-    return value.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 def _rfc_1123_to_datetime(rfc_1123: str) -> Optional[datetime]:
     """Converts an RFC 1123 date string to a UTC datetime.
