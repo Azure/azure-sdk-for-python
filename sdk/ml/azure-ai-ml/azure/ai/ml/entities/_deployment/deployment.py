@@ -48,7 +48,7 @@ class Deployment(Resource, RestTranslatableMixin):
     :keyword model: The Model entity, defaults to None
     :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
     :keyword code_configuration: Code Configuration, defaults to None
-    :paramtype code_configuration: typing.Optional[CodeConfiguration]
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
     :keyword environment: The Environment entity, defaults to None
     :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
@@ -96,7 +96,7 @@ class Deployment(Resource, RestTranslatableMixin):
         :keyword model: The Model entity, defaults to None
         :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
         :keyword code_configuration: Code Configuration, defaults to None
-        :paramtype code_configuration: typing.Optional[CodeConfiguration]
+        :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
         :keyword environment: The Environment entity, defaults to None
         :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
         :keyword environment_variables: Environment variables that will be set in deployment, defaults to None

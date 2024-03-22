@@ -45,11 +45,11 @@ class ModelBatchDeployment(Deployment):
     :param compute: Compute target
     :type compute: typing.Optional[str]
     :param settings: Settings for model batch deployment.
-    :type settings: typing.Optional[ModelBatchDeploymentSettings]
+    :type settings: typing.Optional[~azure.ai.ml.entities.ModelBatchDeploymentSettings]
     :param resources: Resource configuration for model batch deployment.
-    :type resources: typing.Optional[ResourceConfiguration]
+    :type resources: typing.Optional[~azure.ai.ml.entities.ResourceConfiguration]
     :keyword code_configuration: Code Configuration, defaults to None
-    :paramtype code_configuration: typing.Optional[CodeConfiguration]
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
         , defaults to None
     :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]

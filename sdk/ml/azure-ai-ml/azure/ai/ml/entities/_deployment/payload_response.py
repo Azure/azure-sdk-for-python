@@ -12,7 +12,7 @@ class PayloadResponse:
     """Response deployment entity
 
     :param enabled: Is response logging enabled.
-    :type enabled: str
+    :type enabled: typing.Optional[str]
 
     .. admonition:: Example:
 

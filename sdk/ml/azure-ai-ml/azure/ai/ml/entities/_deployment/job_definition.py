@@ -20,9 +20,9 @@ class JobDefinition:
     :param name: Job name
     :type name: typing.Optional[str]
     :param job: Job definition
-    :type job: typing.Optional[Union[Job, str]]
+    :type job: typing.Optional[Union[~azure.ai.ml.entities.Job, str]]
     :param component: Component definition
-    :type component: typing.Optional[Union[Component, str]]
+    :type component: typing.Optional[Union[~azure.ai.ml.entities.Component, str]]
     :param settings: Job settings
     :type settings: typing.Optional[Dict[str, Any]]
     :param description: Job description.

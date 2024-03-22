@@ -80,13 +80,13 @@ class OnlineDeployment(Deployment):
     :keyword app_insights_enabled: Is appinsights enabled, defaults to False
     :paramtype app_insights_enabled: typing.Optional[bool]
     :keyword scale_settings: How the online deployment will scale, defaults to None
-    :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
+    :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.scale_settings.OnlineScaleSettings]
     :keyword request_settings: Online Request Settings, defaults to None
-    :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
+    :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.OnlineRequestSettings]
     :keyword liveness_probe: Liveness probe settings, defaults to None
-    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
     :keyword readiness_probe: Readiness probe settings, defaults to None
-    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
     :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
     :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
     :keyword instance_count: The instance count used for this deployment, defaults to None
@@ -153,11 +153,11 @@ class OnlineDeployment(Deployment):
         :keyword scale_settings: How the online deployment will scale, defaults to None
         :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
         :keyword request_settings: Online Request Settings, defaults to None
-        :paramtype request_settings: typing.Optional[OnlineRequestSettings]
+        :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.OnlineRequestSettings]
         :keyword liveness_probe: Liveness probe settings, defaults to None
-        :paramtype liveness_probe: typing.Optional[ProbeSettings]
+        :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.deployment.settings.ProbeSettings]
         :keyword readiness_probe: Readiness probe settings, defaults to None
-        :paramtype readiness_probe: typing.Optional[ProbeSettings]
+        :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
         :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
         :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
         :keyword instance_count: The instance count used for this deployment, defaults to None

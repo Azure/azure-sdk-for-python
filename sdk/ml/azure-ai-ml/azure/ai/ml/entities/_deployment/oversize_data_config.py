@@ -12,7 +12,7 @@ class OversizeDataConfig:
     """Oversize Data Config deployment entity.
 
     :param path: Blob path for Model Data Collector file.
-    :type path: str
+    :type path: typing.Optional[str]
 
     .. admonition:: Example:
 

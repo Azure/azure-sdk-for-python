@@ -15,7 +15,7 @@ class RequestLogging:
     """Request Logging deployment entity.
 
     :param capture_headers: Request payload header.
-    :type capture_headers: list[str]
+    :type capture_headers: typing.Optional[list[str]]
 
     .. admonition:: Example:
 

@@ -45,9 +45,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     :param model: Model entity for the endpoint deployment. If not set, model defaults to None.
     :type model: typing.Optional[Union[str, Model]]
     :param code_configuration: Code configuration for the endpoint deployment. If not set, code_configuration defaults to None
-    :type code_configuration: typing.Optional[CodeConfiguration]
+    :type code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
     :param environment: Environment entity for the endpoint deployment. If not set, environment defaults to None.
-    :type environment: Union[str, Environment]
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param compute: Compute target for batch inference operation. If not set, compute defaults to None.
     :type compute: typing.Optional[str]
     :param output_action: Indicates how the output will be organized. Possible values include:
@@ -65,7 +65,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         For TabularDataset, this is the count of record failures, defaults to -1
     :type error_threshold: typing.Optional[int]
     :param retry_settings: Retry settings for a batch inference operation. If not set, retry_settings defaults to None.
-    :type retry_settings: typing.Optional[BatchRetrySettings]
+    :type retry_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.BatchRetrySettings]
     :param resources: Indicates compute configuration for the job.
     :type resources: typing.Optional[~azure.mgmt.machinelearningservices.models.ResourceConfiguration]
     :param logging_level: Logging level for batch inference operation. If not set, logging_level defaults to "info".

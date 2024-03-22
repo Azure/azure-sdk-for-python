@@ -37,7 +37,7 @@ class PipelineComponentBatchDeployment(Resource):
     :param description: Description of the deployment resource.
     :type description: Optional[str]
     :param component: Component definition.
-    :type component: Optional[Union[Component, str]]
+    :type component: Optional[Union[~azure.ai.ml.entities.Component, str]]
     :param settings: Run-time settings for the pipeline job.
     :type settings: Optional[Dict[str, Any]]
     :param tags: A set of tags. The tags which will be applied to the job.

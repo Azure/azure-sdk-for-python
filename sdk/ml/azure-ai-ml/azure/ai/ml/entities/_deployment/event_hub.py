@@ -15,7 +15,7 @@ class EventHub:
     :param namespace: Name space of eventhub, provided in format of "{namespace}.{name}". If not set, namespace defaults to None.
     :type namespace: typing.Optional[str]
     :param oversize_data_config: Oversized payload body configurations. If not set, oversize_data_config defaults to None.
-    :type oversize_data_config: typing.Optional[OversizeDataConfig]
+    :type oversize_data_config: typing.Optional[~azure.ai.ml.entities.oversize_data_config.OversizeDataConfig]
 
     """
 

@@ -67,7 +67,8 @@ class OnlineEndpoint(Endpoint):
         "creating", "deleting", "succeeded", "failed", "updating", "canceled".
         If not set, provisioning_state defaults to None
     :paramtype provisioning_state: typing.Optional[str]
-    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
+    :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
+        resources of the same type. If not set, kind defaults to None.
     :paramtype kind: typing.Optional[str]
     """
 
@@ -121,7 +122,8 @@ class OnlineEndpoint(Endpoint):
             "creating", "deleting", "succeeded", "failed", "updating", "canceled".
             If not set, provisioning_state defaults to None
         :paramtype provisioning_state: typing.Optional[str]
-        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
+        :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
+            resources of the same type. If not set, kind defaults to None.
         :paramtype kind: typing.Optional[str]
         """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -347,7 +349,8 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     :paramtype compute: typing.Optional[str]
     :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned.
     :paramtype identity: typing.Optional[IdentityConfiguration]
-    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
+    :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
+        resources of the same type. If not set, kind defaults to None.
     :paramtype kind: typing.Optional[str]
 
     .. admonition:: Example:

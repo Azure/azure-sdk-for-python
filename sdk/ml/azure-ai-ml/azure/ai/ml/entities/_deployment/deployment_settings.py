@@ -69,12 +69,13 @@ class BatchRetrySettings(RestTranslatableMixin):
 class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
-    :param request_timeout_ms: The scoring timeout. If not set, request_timeout_ms defaults to 5000.
+    :param request_timeout_ms: The scoring timeout (in milliseconds). If not set, request_timeout_ms defaults to 5000.
     :type request_timeout_ms: typing.Optional[int]
     :param max_concurrent_requests_per_instance:  The number of maximum concurrent requests per node
-     allowed per deployment. If not set, max_concurrent_requests_per_instance defaults to 1.
+        allowed per deployment. If not set, max_concurrent_requests_per_instance defaults to 1.
     :type max_concurrent_requests_per_instance: typing.Optional[int]
-    :param max_queue_wait_ms: The maximum amount of time a request will stay in the queue. If not set, max_queue_wait_ms defaults to 500.
+    :param max_queue_wait_ms: The maximum amount of time (in milliseconds) a request will stay in the queue.
+        If not set, max_queue_wait_ms defaults to 500.
     :type max_queue_wait_ms: typing.Optional[int]
 
     .. admonition:: Example:
