@@ -31,14 +31,14 @@ if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import (
-        PhoneNumberCapabilities,
         PhoneNumberCountry,
         PhoneNumberOffering,
         PhoneNumberLocality,
         PhoneNumberSearchResult,
     )
     from models.models import(
-        PurchasedPhoneNumber
+        PhoneNumberCapabilities,
+        PurchasedPhoneNumber,
     )
 
 PhoneNumberSearchType = Union[
