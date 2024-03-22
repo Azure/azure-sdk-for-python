@@ -92,12 +92,12 @@ def create_chat_scoring_script(
     model_dir_name: Optional[str] = None,
 ) -> None:
     score_file_path = f"{str(directory)}/score.py"
-    with open(score_file_path, "w+") as f:
+    with open(score_file_path, "w+", encoding="utf-8") as f:
         f.write(CHAT_SCORING_SCRIPT_TEMPLATE.format(model_dir_name if model_dir_name else "", chat_module))
 
 
 def create_mlmodel_file(model: Model):
-    with open(f"{model.path}/MLmodel", "w+") as f:
+    with open(f"{model.path}/MLmodel", "w+", encoding="utf-8") as f:
         now = datetime.datetime.utcnow()
         mlmodel_dict = {
             "flavors": {
@@ -105,10 +105,10 @@ def create_mlmodel_file(model: Model):
                     "code": ".",
                     "data": ".",
                     "env": model.conda_file,
-                    "loader_module": model.loader_module
+                    "loader_module": model.loader_module,
                 }
             },
             "model_uuid": str(uuid.uuid4()).replace("-", ""),
-            "utc_time_created": now.strftime("%Y-%m-%d %H:%M:%S.%f")
+            "utc_time_created": now.strftime("%Y-%m-%d %H:%M:%S.%f"),
         }
         yaml.safe_dump(mlmodel_dict, f)

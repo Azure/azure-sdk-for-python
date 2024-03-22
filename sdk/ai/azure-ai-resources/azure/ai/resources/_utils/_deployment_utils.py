@@ -19,9 +19,7 @@ def get_empty_deployment_arm_template():
                 "defaultValue": {
                     "authMode": "Key",
                     "publicNetworkAccess": "Enabled",
-                    "properties": {
-                        "enforce_access_to_default_secret_stores": "enabled"
-                    },
+                    "properties": {"enforce_access_to_default_secret_stores": "enabled"},
                 },
                 "type": "Object",
             },
@@ -30,9 +28,7 @@ def get_empty_deployment_arm_template():
                     "traffic": {"[parameters('onlineDeploymentName')]": 100},
                     "authMode": "Key",
                     "publicNetworkAccess": "Enabled",
-                    "properties": {
-                        "enforce_access_to_default_secret_stores": "enabled"
-                    },
+                    "properties": {"enforce_access_to_default_secret_stores": "enabled"},
                 },
                 "type": "Object",
             },
@@ -50,7 +46,7 @@ def get_empty_deployment_arm_template():
             {
                 "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints/deployments",
                 "apiVersion": "2023-04-01-Preview",
-                "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'), '/', parameters('onlineDeploymentName'))]",
+                "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'), '/', parameters('onlineDeploymentName'))]",  # pylint: disable=line-too-long
                 "location": "[parameters('location')]",
                 "dependsOn": [
                     "onlineEndpointCopy",
@@ -97,7 +93,7 @@ def get_empty_deployment_arm_template():
     }
 
 
-def get_default_allowed_instance_type_for_hugging_face(
+def get_default_allowed_instance_type_for_hugging_face(  # pylint: disable=name-too-long
     model_details: Model, credential: Any
 ) -> Tuple[Optional[Any], List[Any]]:
     hf_engines = model_details.properties.get("skuBasedEngineIds", None)
@@ -113,9 +109,7 @@ def get_default_allowed_instance_type_for_hugging_face(
                 (
                     instance_type,
                     instance_type_list,
-                ) = get_default_allowed_instance_type_from_model_engine(
-                    engine_id, credential
-                )
+                ) = get_default_allowed_instance_type_from_model_engine(engine_id, credential)
                 if "cpu" in engine_id:
                     default_instance_type = instance_type
                 allowed_instance_types.append(instance_type_list)
@@ -125,29 +119,25 @@ def get_default_allowed_instance_type_for_hugging_face(
             (
                 default_instance_type,
                 allowed_instance_types,
-            ) = get_default_allowed_instance_type_from_model_engine(
-                hf_engines[0], credential
-            )
+            ) = get_default_allowed_instance_type_from_model_engine(hf_engines[0], credential)
     else:
-        default_instance_type, allowed_instance_types = parse_deployment_config(
-            deployment_config
-        )
+        default_instance_type, allowed_instance_types = parse_deployment_config(deployment_config)
     return (default_instance_type, allowed_instance_types)
 
 
 def parse_deployment_config(deployment_config: str):
     deployment_config_dict: Dict[str, Any] = json.loads(deployment_config)
-    allowed_instance_types = deployment_config_dict["PipelineMetadata"][
-        "PipelineDefinition"
-    ]["ec"]["AllowedInstanceTypes"]
-    default_instance_type = deployment_config_dict["PipelineMetadata"]["PipelineDefinition"][
-        "ec"
-    ]["DefaultInstanceType"]
+    allowed_instance_types = deployment_config_dict["PipelineMetadata"]["PipelineDefinition"]["ec"][
+        "AllowedInstanceTypes"
+    ]
+    default_instance_type = deployment_config_dict["PipelineMetadata"]["PipelineDefinition"]["ec"][
+        "DefaultInstanceType"
+    ]
 
     return (default_instance_type, allowed_instance_types)
 
 
-def get_default_allowed_instance_type_from_model_engine(
+def get_default_allowed_instance_type_from_model_engine(  # pylint: disable=name-too-long
     engine_id: str, credential: Any
 ):
     model_details = get_registry_model(credential, id=engine_id)

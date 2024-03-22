@@ -257,23 +257,67 @@ def enable_appinsights_logging():
 
 
 def get_logger(name, level=logging.INFO):
-    """Get a logger with the given name and level."""
+    """
+    Get a logger with the given name and level.
+
+    :param name: The name of the logger.
+    :type name: str
+    :param level: The logging level of the logger. Default is logging.INFO.
+    :type level: int, optional
+    :return: The logger object.
+    :rtype: logging.Logger
+    """
     return _logger_factory.get_logger(name, level)
 
 
 def track_activity(logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions={}):
-    """Track the activity with given logger."""
+    """
+    Track an activity with the given logger.
+
+    :param logger: The logger object to be used for tracking the activity.
+    :type logger: logging.Logger
+    :param name: The name of the activity.
+    :type name: str
+    :param activity_type: The type of the activity. Default is DEFAULT_ACTIVITY_TYPE.
+    :type activity_type: str, optional
+    :param custom_dimensions: Custom dimensions associated with the activity event. Default is an empty dictionary.
+    :type custom_dimensions: dict, optional
+    :return: None
+    :rtype: None
+    """
     enable_appinsights_logging()
     return _logger_factory.track_activity(logger, name, activity_type, custom_dimensions)
 
 
 def track_info(logger, message, custom_dimensions={}):
-    """Track info with given logger."""
+    """
+    Track information with the given logger.
+
+    :param logger: The logger object to be used for tracking the information.
+    :type logger: logging.Logger
+    :param message: The information message to be tracked.
+    :type message: str
+    :param custom_dimensions: Custom dimensions associated with the information event. Default is an empty dictionary.
+    :type custom_dimensions: dict, optional
+    :return: None
+    :rtype: None
+    """
     return _logger_factory.telemetry_info(logger, message, custom_dimensions)
 
 
 def track_error(logger, message, custom_dimensions={}):
-    """Track error with given logger."""
+    """
+    Track error with the given logger.
+
+    :param logger: The logger object to be used for tracking the error.
+    :type logger: logging.Logger
+    :param message: The error message to be tracked.
+    :type message: str
+    :param custom_dimensions: Custom dimensions associated with the error event. Default is an empty dictionary.
+    :type custom_dimensions: dict, optional
+    :return: None
+    :rtype: None
+    """
     return _logger_factory.telemetry_error(logger, message, custom_dimensions)
 
 
@@ -288,18 +332,32 @@ def disable_mlflow():
 
 
 def mlflow_enabled():
-    """Check if mlflow logging is enabled."""
+    """
+    Check if MLFlow logging is enabled.
+
+    :return: True if MLFlow logging is enabled, False otherwise.
+    :rtype: bool
+    """
     return _logger_factory.mlflow
 
 
 def safe_mlflow_log_metric(*args, logger, **kwargs):
-    """Log metric to mlflow if enabled."""
+    """
+    Log metric to mlflow if enabled.
+    
+    :keyword *args
+    :keyword logger: The logger to be used for logging messages.
+    :paramtype logger: logging.Logger
+    :keyword **kwargs
+    :return: None
+    :rtype: None
+    """
     if mlflow_enabled():
         import mlflow
         try:
             if mlflow.active_run():
                 mlflow.log_metric(*args, **kwargs)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             message = str(e)
             if "Max retries exceeded" in message:
                 logger.warning("MLFlow endpoint is not available right now, skipping log_metrics.")
@@ -308,14 +366,23 @@ def safe_mlflow_log_metric(*args, logger, **kwargs):
 
 
 @contextmanager
-def safe_mlflow_start_run(*args, logger, **kwargs):
-    """Start mlflow run if enabled."""
+def safe_mlflow_start_run(*args, logger, **kwargs):  # pylint: disable=unused-argument
+    """
+    Start mlflow run if enabled.
+    
+    :keyword *args
+    :keyword logger: The logger to be used for logging messages.
+    :paramtype logger: logging.Logger
+    :keyword **kwargs
+    :return: Generator that yields an active MLFlow run or None if MLFlow is disabled or if an error occurs.
+    :rtype: Generator
+    """
     if mlflow_enabled():
         import mlflow
         try:
             with mlflow.start_run() as run:
                 yield run
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             message = str(e)
             if "Max retries exceeded" in message:
                 logger.warning("MLFlow endpoint is not available right now, skipping start_run.")
