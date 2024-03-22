@@ -74,6 +74,8 @@ class WebSocketAppAsync:
         self.header = header
         self.session: Optional[aiohttp.ClientSession] = None
         self.sock: Optional[aiohttp.client._WSRequestContextManager] = None
+        self.event: asyncio.Event = asyncio.Event()
+        self.close_timeout = 10.0
 
     async def receive(self) -> aiohttp.WSMessage:
         return await self.sock.receive()  # type: ignore
@@ -91,6 +93,8 @@ class WebSocketAppAsync:
     async def close(self):
         try:
             await self.sock.close()
+            # wait for on_close triggered
+            await asyncio.wait_for(self.event.wait(), self.close_timeout)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.info("Fail to close websocket connection: %s", e)
         finally:
@@ -801,9 +805,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
                     _LOGGER.debug("WebSocket is closed")
                     await on_close(msg.data, msg.extra)
+                    self._ws.event.set()
                     break
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     await on_close(1008, "unexpected WebSocket error")
+                    self._ws.event.set()
                     break
                 else:
                     _LOGGER.debug("Unknown message: %s", msg)
@@ -884,9 +890,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
         self._is_stopping = True
+        old_tasks = [self._task_listen, self._task_seq_ack]
 
         await self._ws.close()  # type: ignore
-        for task in [self._task_listen, self._task_seq_ack]:
+        for task in old_tasks:
             self._cancel_task(task)
         _LOGGER.info("close client successfully")
 

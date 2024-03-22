@@ -17,7 +17,6 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_auto_connect(self, webpubsubclient_connection_string):
-        assert isinstance(asyncio.get_event_loop_policy(), asyncio.WindowsSelectorEventLoopPolicy) 
         client = self.create_client(
             connection_string=webpubsubclient_connection_string,
             protocol_type=WebPubSubProtocolType.JSON,
