@@ -65,7 +65,7 @@ setup(
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.26.3",
-        "websocket-client>=1.4.2",
+        "websocket-client>=1.6.0",
         "aiohttp>=3.8.0",
     ],
     python_requires=">=3.8",

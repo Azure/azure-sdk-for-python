@@ -63,6 +63,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             # open client again after close
             client.subscribe("stopped", on_stop)
+            time.sleep(0.1)
             assert client._is_connected()
             client.close()
             time.sleep(1.0)

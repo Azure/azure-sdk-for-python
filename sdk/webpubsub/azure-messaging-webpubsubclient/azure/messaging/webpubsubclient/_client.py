@@ -49,6 +49,8 @@ from .models._enums import (
 )
 from ._util import format_user_agent, raise_for_empty_message_ack, NO_ACK_MESSAGE_ERROR
 
+_THREAD_JOIN_TIME_OUT = 0.1
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -799,6 +801,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
 
+        # when reconnect or recovery, _thread will come here then stop by itself so don't join it
+        self._threads_join([self._thread_seq_ack])
+
         self._ws = websocket.WebSocketApp(
             url=url,
             on_open=on_open,
@@ -809,7 +814,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         )
 
         # set thread to start listen to server
-        self._thread = threading.Thread(target=self._ws.run_forever, daemon=True)
+        self._thread = threading.Thread(target=self._ws.run_forever)
         self._thread.start()
         with self._cv:
             self._cv.wait(timeout=self._start_timeout)
@@ -817,9 +822,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise OpenClientError("Fail to open client")
 
         # set thread to check sequence id if needed
-        if self._protocol.is_reliable_sub_protocol and (
-            (self._thread_seq_ack and not self._thread_seq_ack.is_alive()) or (self._thread_seq_ack is None)
-        ):
+        if self._protocol.is_reliable_sub_protocol:
 
             def sequence_id_ack_periodically():
                 while self._is_connected():
@@ -830,7 +833,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     finally:
                         time.sleep(1.0)
 
-            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
+            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically)
             self._thread_seq_ack.start()
 
         _LOGGER.info("connected successfully")
@@ -872,24 +875,19 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
         self._is_stopping = True
+        old_threads = [self._thread, self._thread_seq_ack]
 
-        old_thread = self._thread
-        old_thread_seq_ack = self._thread_seq_ack
+        if self._ws:
+            self._ws.close()
 
-        # we can't use self._ws.close otherwise on_close may not be triggered
-        # (realted issue: https://github.com/websocket-client/websocket-client/issues/899)
-        if self._ws and self._ws.sock:
-            self._ws.sock.close()
-
-        # users may open the client again after close so we need to wait for old thread join
-        if old_thread_seq_ack and old_thread_seq_ack.is_alive():
-            _LOGGER.debug("wait for seq thread stop")
-            old_thread_seq_ack.join()
-        if old_thread and old_thread.is_alive():
-            _LOGGER.debug("wait for listener thread stop")
-            old_thread.join()
-
+        self._threads_join(old_threads)
         _LOGGER.info("close client successfully")
+
+    @staticmethod
+    def _threads_join(old_threads: List[Optional[threading.Thread]]):
+        for t in old_threads:
+            if t and t.is_alive():
+                t.join(_THREAD_JOIN_TIME_OUT)
 
     @overload
     def subscribe(
