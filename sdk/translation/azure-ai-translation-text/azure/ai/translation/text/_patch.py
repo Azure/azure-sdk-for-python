@@ -62,7 +62,7 @@ class TranslatorAADCredential:
         :mod:`azure.identity`
     :type tokenCredential: ~azure.core.credentials.TokenCredential
     :param str resourceId: Azure Resource Id of the Translation Resource.
-    :param region: Azure Region of the Translation Resource.
+    :param str region: Azure Region of the Translation Resource.
     """
 
     def __init__(self, tokenCredential: TokenCredential, resourceId: str, region: str) -> None:
