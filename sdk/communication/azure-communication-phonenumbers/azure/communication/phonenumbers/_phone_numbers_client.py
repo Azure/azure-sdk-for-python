@@ -34,13 +34,11 @@ if TYPE_CHECKING:
         PurchasedPhoneNumber,
     )
     from ._generated.models import (
-        PhoneNumberCapabilities,
         PhoneNumberCapabilityType,
         PhoneNumberCountry,
         PhoneNumberOffering,
         PhoneNumberLocality,
         PhoneNumberSearchResult,
-        PurchasedPhoneNumber,
     )
 
 PhoneNumberSearchType = Union[

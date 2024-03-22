@@ -6,9 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional, Union
 
 from azure.core.pipeline import policies
+
+from .. import models as _models
 
 VERSION = "unknown"
 
@@ -22,18 +24,51 @@ class PhoneNumbersClientConfiguration:  # pylint: disable=too-many-instance-attr
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
+    :param search_id: The search Id. Required.
+    :type search_id: str
+    :param phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
+     "geographic" and "tollFree". Required.
+    :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+    :param assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
+     "person" and "application". Default value is None.
+    :type assignment_type: str or
+     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+    :param locality: The name of locality or town in which to search for the area code. This is
+     required if the number type is Geographic. Default value is None.
+    :type locality: str
+    :param administrative_division: The name of the state or province in which to search for the
+     area code. Default value is None.
+    :type administrative_division: str
     :keyword api_version: Api Version. Default value is "2024-01-31-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        search_id: str,
+        phone_number_type: Union[str, _models.PhoneNumberType],
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
+        locality: Optional[str] = None,
+        administrative_division: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2024-01-31-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if search_id is None:
+            raise ValueError("Parameter 'search_id' must not be None.")
+        if phone_number_type is None:
+            raise ValueError("Parameter 'phone_number_type' must not be None.")
 
         self.endpoint = endpoint
+        self.search_id = search_id
+        self.phone_number_type = phone_number_type
+        self.assignment_type = assignment_type
+        self.locality = locality
+        self.administrative_division = administrative_division
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "phonenumbersclient/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

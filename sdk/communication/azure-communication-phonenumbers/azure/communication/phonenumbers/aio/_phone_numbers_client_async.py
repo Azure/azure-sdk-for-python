@@ -36,7 +36,9 @@ if TYPE_CHECKING:
         PhoneNumberOffering,
         PhoneNumberLocality,
         PhoneNumberSearchResult,
-        PurchasedPhoneNumber,
+    )
+    from models.models import(
+        PurchasedPhoneNumber
     )
 
 PhoneNumberSearchType = Union[
