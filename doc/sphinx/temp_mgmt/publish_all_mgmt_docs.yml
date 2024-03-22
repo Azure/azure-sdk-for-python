@@ -42,31 +42,29 @@ jobs:
           ArtifactPath: '$(Build.SourcesDirectory)/_docs'
           ArtifactName: 'documentation'
 
-  - job: PublishGitHubIODocs
-    displayName: Publish Docs to GitHubIO Blob Storage
+  - ${{ each pkg in parameters.MgmtPackages }}:
+    - job: PublishGitHubIODocs
+      displayName: Publish Docs to GitHubIO Blob Storage
 
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      image: azsdk-pool-mms-win-2022-1espt
-      os: windows
+      pool:
+        name: azsdk-pool-mms-win-2022-general
+        image: azsdk-pool-mms-win-2022-1espt
+        os: windows
 
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - checkout: self
+      steps:
+        - checkout: self
 
-              - pwsh: |
-                  Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{pkg.key}}
-                workingDirectory: $(Pipeline.Workspace)
-                displayName: Output Visible Artifacts
+        - pwsh: |
+            Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{pkg.key}}
+          workingDirectory: $(Pipeline.Workspace)
+          displayName: Output Visible Artifacts
 
-                  # - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
-                  #   parameters:
-                  #     FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                  #     BlobSASKey: '$(azure-sdk-docs-prod-sas)'
-                  #     BlobName: '$(azure-sdk-docs-prod-blob-name)'
-                  #     TargetLanguage: 'python'
-                  #     ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
-                  #     # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-                  #     ScriptPath: 'doc/sphinx/temp_mgmt/copydocs.ps1'
+                    # - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
+                    #   parameters:
+                    #     FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
+                    #     BlobSASKey: '$(azure-sdk-docs-prod-sas)'
+                    #     BlobName: '$(azure-sdk-docs-prod-blob-name)'
+                    #     TargetLanguage: 'python'
+                    #     ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
+                    #     # we override the regular script path because we have cloned the build tools repo as a separate artifact.
+                    #     ScriptPath: 'doc/sphinx/temp_mgmt/copydocs.ps1'
