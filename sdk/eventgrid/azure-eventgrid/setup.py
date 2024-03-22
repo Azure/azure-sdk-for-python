@@ -68,5 +68,4 @@ setup(
         "isodate>=0.6.1",
         'azure-core>=1.24.0',
     ],
-    python_requires=">=3.8",
 )
