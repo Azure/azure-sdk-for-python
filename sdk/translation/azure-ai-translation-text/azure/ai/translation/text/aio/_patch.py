@@ -30,8 +30,8 @@ class AsyncTranslatorAADCredential:
     :param tokenCredential: An object which can provide an access token for the Translator Resource, such as a credential from
         :mod:`azure.identity`
     :type tokenCredential: ~azure.core.credentials.TokenCredential
-    :param resourceId: Azure Resource Id of the Translation Resource.
-    :param region: Azure Region of the Translation Resource.
+    :param str resourceId: Azure Resource Id of the Translation Resource.
+    :param str region: Azure Region of the Translation Resource.
     """
 
     def __init__(self, tokenCredential: AsyncTokenCredential, resourceId: str, region: str) -> None:
@@ -45,6 +45,7 @@ class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
     :param credential: Translator AAD Credentials used to access Translator Resource for global Translator endpoint.
+    :type tokenCredential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, credential: AsyncTranslatorAADCredential, **kwargs: Any)-> None:
