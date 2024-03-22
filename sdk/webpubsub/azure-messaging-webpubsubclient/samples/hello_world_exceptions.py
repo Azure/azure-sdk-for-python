@@ -8,6 +8,9 @@ import logging
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.messaging.webpubsubclient.models import OpenClientError, SendMessageError
+from dotenv import load_dotenv
+
+load_dotenv()
 
 _LOGGER = logging.getLogger(__name__)
 

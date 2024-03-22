@@ -822,11 +822,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
-            self._cancel_task(self._task_listen)
             self._task_listen = asyncio.create_task(_listen())
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
+        self._cancel_task(self._task_seq_ack)
 
         self._ws = WebSocketAppAsync(
             url=url,
@@ -848,7 +848,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     finally:
                         await asyncio.sleep(1.0)
 
-            self._cancel_task(self._task_seq_ack)
             self._task_seq_ack = asyncio.create_task(sequence_id_ack_periodically())
 
         _LOGGER.info("connected successfully")
