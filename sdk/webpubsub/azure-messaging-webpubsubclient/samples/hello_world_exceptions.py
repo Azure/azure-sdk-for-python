@@ -7,7 +7,7 @@ import os
 import logging
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-from azure.messaging.webpubsubservice.models import OpenClientError, SendMessageError
+from azure.messaging.webpubsubclient.models import OpenClientError, SendMessageError
 
 _LOGGER = logging.getLogger(__name__)
 
