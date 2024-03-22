@@ -61,7 +61,7 @@ class TranslatorAADCredential:
     :param tokenCredential: An object which can provide an access token for the Translator Resource, such as a credential from
         :mod:`azure.identity`
     :type tokenCredential: ~azure.core.credentials.TokenCredential
-    :param resourceId: Azure Resource Id of the Translation Resource.
+    :param str resourceId: Azure Resource Id of the Translation Resource.
     :param region: Azure Region of the Translation Resource.
     """
 
