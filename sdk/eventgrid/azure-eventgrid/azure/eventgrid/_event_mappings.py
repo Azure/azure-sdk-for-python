@@ -56,6 +56,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
     # Aliases end here
+    AcsAdvancedMessageDeliveryStatusUpdatedEventName = 'Microsoft.Communication.AdvancedMessageDeliveryStatusUpdated'
+
+    AcsAdvancedMessageReceivedEventName = 'Microsoft.Communication.AdvancedMessageReceived'
+
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
