@@ -75,6 +75,9 @@ from ._models_py3 import ServicesPatchDescription
 from ._models_py3 import ServicesProperties
 from ._models_py3 import ServicesResource
 from ._models_py3 import ServicesResourceIdentity
+from ._models_py3 import SmartIdentityProviderApplication
+from ._models_py3 import SmartIdentityProviderConfiguration
+from ._models_py3 import StorageConfiguration
 from ._models_py3 import SystemData
 from ._models_py3 import TaggedResource
 from ._models_py3 import UserAssignedIdentity
@@ -98,6 +101,7 @@ from ._healthcare_apis_management_client_enums import PublicNetworkAccess
 from ._healthcare_apis_management_client_enums import ServiceEventState
 from ._healthcare_apis_management_client_enums import ServiceManagedIdentityType
 from ._healthcare_apis_management_client_enums import ServiceNameUnavailabilityReason
+from ._healthcare_apis_management_client_enums import SmartDataActions
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -172,6 +176,9 @@ __all__ = [
     "ServicesProperties",
     "ServicesResource",
     "ServicesResourceIdentity",
+    "SmartIdentityProviderApplication",
+    "SmartIdentityProviderConfiguration",
+    "StorageConfiguration",
     "SystemData",
     "TaggedResource",
     "UserAssignedIdentity",
@@ -194,6 +201,7 @@ __all__ = [
     "ServiceEventState",
     "ServiceManagedIdentityType",
     "ServiceNameUnavailabilityReason",
+    "SmartDataActions",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
