@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `resource` parameter
+    ([#34900](https://github.com/Azure/azure-sdk-for-python/pull/34900))
+
 ### Breaking Changes
 
 ### Bugs Fixed
