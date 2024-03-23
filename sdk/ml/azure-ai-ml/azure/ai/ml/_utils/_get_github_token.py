@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import requests
 import time
+import requests
 
 def get_github_token(client_id):
     device_url = 'https://github.com/login/device/code'
@@ -11,7 +11,8 @@ def get_github_token(client_id):
         'client_id': client_id
     }
     headers = {'Accept': 'application/json'}
-    response = requests.post(device_url, data=data, headers=headers)
+    timeout = 5
+    response = requests.post(device_url, data=data, headers=headers, timeout=timeout)
 
     if response.status_code == 200:
         response_json = response.json()
@@ -28,19 +29,20 @@ def get_github_token(client_id):
         data = {
             'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
             'client_id': client_id,
-            'device_code': device_code           
+            'device_code': device_code
         }
-        
-        while True:           
-            token_response = requests.post(token_url, data=data)
+
+        while True:
+            token_response = requests.post(token_url, data=data, timeout=timeout)
             token_data = token_response.text
             result_dict = parse_string_to_dict(token_data)
-    
+
             if 'access_token' in token_data:
                 access_token = result_dict['access_token']
                 print("Access Token:", access_token)
                 return access_token
-            elif 'error=authorization_pending' in token_data:
+            
+            if 'error=authorization_pending' in token_data:
                 error = result_dict['error']
                 print(f"{error}")
                 time.sleep(response_json['interval'])
@@ -49,11 +51,12 @@ def get_github_token(client_id):
                 return None
     else:
         print("Failed to request device code.")
+        return None
 
 def parse_string_to_dict(token_text):
     pairs = token_text.split('&')
     result_dict = {}
     for pair in pairs:
         key, value = pair.split('=')
-        result_dict[key] = value    
+        result_dict[key] = value
     return result_dict
