@@ -42,7 +42,7 @@ def download_blob_to_local(blob_sas_url, local_folder):
             blobDirectory = os.path.dirname(blob_prop.name)
             blobFileName = os.path.basename(blob_prop.name)
             destinationFolder = os.path.join(local_folder, blobDirectory)
-            print(f"blobDirectory: {blobDirectory}, blobFileName: {blobFileName}, destinationFolder: {destinationFolder}")
+            print(f"blobDirectory: {blobDirectory}, blobFileName: {blobFileName}")
             if not os.path.exists(destinationFolder):
                 os.makedirs(destinationFolder)
 
@@ -56,8 +56,6 @@ def download_blob_to_local(blob_sas_url, local_folder):
         print(f"Resource not found: {e}")
     except ServiceResponseError as e:
         print(f"Service response error: {e}")
-    except Exception as e:
-        print(f"Error copying blob to local folder: {e}")
 
 # sample parameters
 # modelAssetId = "azureml://registries/testFeed/models/testModel/versions/13"

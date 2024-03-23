@@ -41,7 +41,7 @@ def get_github_token(client_id):
                 access_token = result_dict['access_token']
                 print("Access Token:", access_token)
                 return access_token
-            
+
             if 'error=authorization_pending' in token_data:
                 error = result_dict['error']
                 print(f"{error}")
