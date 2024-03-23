@@ -58,6 +58,7 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
 
 class TranslatorAADCredential:
     """Credential for Translator Service when using AAD authentication.
+
     :param tokenCredential: An object which can provide an access token for the Translator Resource, such as a credential from
         :mod:`azure.identity`
     :type tokenCredential: ~azure.core.credentials.TokenCredential
