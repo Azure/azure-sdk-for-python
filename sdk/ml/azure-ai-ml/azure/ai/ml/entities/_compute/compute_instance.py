@@ -167,9 +167,9 @@ class ComputeInstance(Compute):
     :type enable_sso: bool
     :param enable_root_access: Enable or disable root access. Defaults to True.
     :type enable_root_access: bool
-    :param release_quota_on_stop: Release quota on stop. Defaults to False.
+    :param release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
     :type release_quota_on_stop: bool
-    :param enable_os_patching: Enable or disable OS patching. Defaults to False.
+    :param enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
     :type enable_os_patching: bool
 
     .. admonition:: Example:
