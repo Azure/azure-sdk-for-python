@@ -257,7 +257,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         if hasattr(deployment.properties, "deployment_configuration"):
             settings = deployment.properties.deployment_configuration.settings
             deployment_comp_settings = {
-                "deployment_configuration_type": deployment.properties.deployment_configuration.deployment_configuration_type,
+                "deployment_configuration_type": deployment.properties.deployment_configuration.deployment_configuration_type,  # pylint: disable=line-too-long
                 "componentDeployment.Settings.continue_on_step_failure": settings.get(
                     "ComponentDeployment.Settings.continue_on_step_failure", None
                 ),
