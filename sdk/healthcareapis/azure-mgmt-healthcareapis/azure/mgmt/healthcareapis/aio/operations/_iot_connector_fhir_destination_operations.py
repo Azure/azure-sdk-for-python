@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -77,7 +77,6 @@ class IotConnectorFhirDestinationOperations:
         :type iot_connector_name: str
         :param fhir_destination_name: The name of IoT Connector FHIR destination resource. Required.
         :type fhir_destination_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotFhirDestination or the result of cls(response)
         :rtype: ~azure.mgmt.healthcareapis.models.IotFhirDestination
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -96,23 +95,22 @@ class IotConnectorFhirDestinationOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.IotFhirDestination] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             iot_connector_name=iot_connector_name,
             fhir_destination_name=fhir_destination_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -125,13 +123,9 @@ class IotConnectorFhirDestinationOperations:
         deserialized = self._deserialize("IotFhirDestination", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations/{fhirDestinationName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
@@ -139,7 +133,7 @@ class IotConnectorFhirDestinationOperations:
         workspace_name: str,
         iot_connector_name: str,
         fhir_destination_name: str,
-        iot_fhir_destination: Union[_models.IotFhirDestination, IO],
+        iot_fhir_destination: Union[_models.IotFhirDestination, IO[bytes]],
         **kwargs: Any
     ) -> _models.IotFhirDestination:
         error_map = {
@@ -165,7 +159,7 @@ class IotConnectorFhirDestinationOperations:
         else:
             _json = self._serialize.body(iot_fhir_destination, "IotFhirDestination")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             iot_connector_name=iot_connector_name,
@@ -175,16 +169,15 @@ class IotConnectorFhirDestinationOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -207,10 +200,6 @@ class IotConnectorFhirDestinationOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations/{fhirDestinationName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -241,14 +230,6 @@ class IotConnectorFhirDestinationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IotFhirDestination or the result of
          cls(response)
         :rtype:
@@ -263,7 +244,7 @@ class IotConnectorFhirDestinationOperations:
         workspace_name: str,
         iot_connector_name: str,
         fhir_destination_name: str,
-        iot_fhir_destination: IO,
+        iot_fhir_destination: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -281,18 +262,10 @@ class IotConnectorFhirDestinationOperations:
         :type fhir_destination_name: str
         :param iot_fhir_destination: The parameters for creating or updating an IoT Connector FHIR
          destination resource. Required.
-        :type iot_fhir_destination: IO
+        :type iot_fhir_destination: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IotFhirDestination or the result of
          cls(response)
         :rtype:
@@ -307,7 +280,7 @@ class IotConnectorFhirDestinationOperations:
         workspace_name: str,
         iot_connector_name: str,
         fhir_destination_name: str,
-        iot_fhir_destination: Union[_models.IotFhirDestination, IO],
+        iot_fhir_destination: Union[_models.IotFhirDestination, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IotFhirDestination]:
         """Creates or updates an IoT Connector FHIR destination resource with the specified parameters.
@@ -322,19 +295,8 @@ class IotConnectorFhirDestinationOperations:
         :param fhir_destination_name: The name of IoT Connector FHIR destination resource. Required.
         :type fhir_destination_name: str
         :param iot_fhir_destination: The parameters for creating or updating an IoT Connector FHIR
-         destination resource. Is either a IotFhirDestination type or a IO type. Required.
-        :type iot_fhir_destination: ~azure.mgmt.healthcareapis.models.IotFhirDestination or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         destination resource. Is either a IotFhirDestination type or a IO[bytes] type. Required.
+        :type iot_fhir_destination: ~azure.mgmt.healthcareapis.models.IotFhirDestination or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either IotFhirDestination or the result of
          cls(response)
         :rtype:
@@ -369,7 +331,7 @@ class IotConnectorFhirDestinationOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("IotFhirDestination", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -379,17 +341,15 @@ class IotConnectorFhirDestinationOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.IotFhirDestination].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations/{fhirDestinationName}"
-    }
+        return AsyncLROPoller[_models.IotFhirDestination](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -413,23 +373,22 @@ class IotConnectorFhirDestinationOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             iot_connector_name=iot_connector_name,
             fhir_destination_name=fhir_destination_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -440,11 +399,7 @@ class IotConnectorFhirDestinationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations/{fhirDestinationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -466,14 +421,6 @@ class IotConnectorFhirDestinationOperations:
         :type iot_connector_name: str
         :param fhir_destination_name: The name of IoT Connector FHIR destination resource. Required.
         :type fhir_destination_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -502,7 +449,7 @@ class IotConnectorFhirDestinationOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -511,14 +458,10 @@ class IotConnectorFhirDestinationOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations/{fhirDestinationName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
