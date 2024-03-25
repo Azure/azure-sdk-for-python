@@ -16,7 +16,7 @@ You must have an [Azure subscription](https://azure.microsoft.com/free/python) a
 [Azure Key Vault](https://azure.microsoft.com/services/key-vault/) to run
 these samples. You can create a Key Vault in the
 [Azure Portal](https://portal.azure.com/#create/Microsoft.KeyVault) or with the
-[Azure CLI](https://docs.microsoft.com/azure/key-vault/secrets/quick-create-cli).
+[Azure CLI](https://learn.microsoft.com/azure/key-vault/secrets/quick-create-cli).
 
 Azure Key Vault is used only to demonstrate authentication. Azure Identity has
 the same API for all compatible client libraries.

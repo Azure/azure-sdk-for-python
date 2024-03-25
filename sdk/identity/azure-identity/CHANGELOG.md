@@ -140,7 +140,7 @@
 ### Features Added
 
 - Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
-- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Microsoft Entra ID that your application can handle CAE claims challenges.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/entra/identity/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Microsoft Entra ID that your application can handle CAE claims challenges.
 
 ## 1.13.0b2 (2023-02-07)
 
@@ -869,7 +869,7 @@ its use in national clouds
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Microsoft Entra's
-[authorization code documentation](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[authorization code documentation](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known
