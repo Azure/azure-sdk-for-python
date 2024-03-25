@@ -910,8 +910,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None
-    ): ...
+        batchable: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
 
     @overload
     async def settle_messages_async(
@@ -920,8 +922,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None
-    ): ...
+        batchable: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
 
     @overload
     async def settle_messages_async(
@@ -931,8 +935,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None
-    ): ...
+        batchable: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
 
     @overload
     async def settle_messages_async(
@@ -944,8 +950,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None
-    ): ...
+        batchable: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
 
     @overload
     async def settle_messages_async(
@@ -956,14 +964,15 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None
-    ): ...
-
-    async def settle_messages_async(
-        self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
+        batchable: Optional[bool] = None,
+        **kwargs
     ):
-        batchable = kwargs.pop("batchable", None)
-        if outcome.lower() == "accepted":
+        ...
+
+    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+        batchable = kwargs.pop('batchable', None)
+        message = kwargs.pop('message', None)
+        if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
             state = Released()
@@ -987,5 +996,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             settled=False, # True 
             delivery_state=state,
             batchable=batchable,
-            wait=True
+            wait=True,
+            message=message,
         )
