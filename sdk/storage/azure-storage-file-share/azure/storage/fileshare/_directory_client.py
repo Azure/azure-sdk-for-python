@@ -622,10 +622,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
         try:
+            kwargs.update({'recursive': None})
             response = self._client.directory.force_close_handles(
                 handle_id,
                 marker=None,
-                recursive=None,
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs
