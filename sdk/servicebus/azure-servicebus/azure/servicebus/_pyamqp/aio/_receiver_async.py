@@ -43,11 +43,12 @@ class ReceiverLink(Link):
     async def _process_incoming_message(self, frame, message, **kwargs):
         try:
             # If we are waiting on an incoming disposition, we should not process any new messages
-            if kwargs.get("performative", None) == 21:
-                _LOGGER.info("Waiting on incoming disposition. Skipping message processing", extra=self.network_trace_params)
-                return await self._outgoing_disposition(first=frame[1], last=None, settled=False, state=Released(), batchable=None)
-            else:
-                return await self._on_transfer(frame, message)
+            # if kwargs.get("performative", None) == 21:
+            #     print("Waiting on incoming disposition. Skipping message processing")
+            #     _LOGGER.info("Waiting on incoming disposition. Skipping message processing", extra=self.network_trace_params)
+            #     return await self._outgoing_disposition(first=frame[1], last=None, settled=False, state=Released(), batchable=None)
+            # else:
+            return await self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
@@ -85,11 +86,11 @@ class ReceiverLink(Link):
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
-            while not self.incoming_disposition:
-                await self._session._connection.listen(wait=False, performative=21) # pylint: disable=protected-access
-                if self.state == LinkState.ERROR:
-                    if self._error:
-                        raise self._error
+            # while not self.incoming_disposition:
+            await self._session._connection.listen(wait=False, performative=21) # pylint: disable=protected-access
+            if self.state == LinkState.ERROR:
+                if self._error:
+                    raise self._error
         elif wait:
             await self._session._connection.listen(wait=wait) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
@@ -116,10 +117,16 @@ class ReceiverLink(Link):
     async def _incoming_disposition(self, frame):
         disposition_frame = DispositionFrame(*frame)
         if disposition_frame[1] in self._pending_receipts:
+            print("Removing from pending receipts")
             self._pending_receipts.remove(disposition_frame[1])
+            self.incoming_disposition = True
+
+        # print("Received Disposition Frame: ", disposition_frame)
+        print(f"Pending Receipts: {self._pending_receipts}")
+
 
         # need to do something to differentiate by state accepted/released/rejected to determine settle state
-        self.incoming_disposition = True
+        
         # print("Sent back out Disposition Frame: ", disposition_frame)
         # await self._outgoing_disposition(disposition_frame.first, None, disposition_frame.settled, Accepted(), disposition_frame.batchable) # pylint: disable=protected-access
 
@@ -140,5 +147,5 @@ class ReceiverLink(Link):
         if self._is_closed:
             raise ValueError("Link already closed.")
         await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
-        if not settled and isinstance(delivery_state, Accepted):
+        if not settled:
             await self._wait_for_response(wait)
