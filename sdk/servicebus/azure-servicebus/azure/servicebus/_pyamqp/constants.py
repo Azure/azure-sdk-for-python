@@ -323,6 +323,24 @@ MESSAGE_DELIVERY_DONE_STATES = (
     MessageDeliveryState.Cancelled
 )
 
+
+class DispositionDeliveryState(object):
+
+    WaitingToBeSent = 0
+    WaitingForSendAck = 1
+    Ok = 2
+    Error = 3
+    Timeout = 4
+    Cancelled = 5
+
+
+DISPOSITION_DELIVERY_DONE_STATES = (
+    DispositionDeliveryState.Ok,
+    DispositionDeliveryState.Error,
+    DispositionDeliveryState.Timeout,
+    DispositionDeliveryState.Cancelled
+)
+
 class TransportType(Enum):
     """Transport type
     The underlying transport protocol type:

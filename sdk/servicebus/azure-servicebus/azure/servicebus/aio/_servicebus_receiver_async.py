@@ -484,16 +484,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        # The following condition check is a hot fix for settling a message received for non-session queue after
-        # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-        if not self._session and message._lock_expired:
-            raise MessageLockLostError(
-                message="The lock on the message lock has expired.",
-                error=message.auto_renew_error,
-            )
         link = get_span_link_from_message(message)
         trace_links = [link] if link else []
         with settle_trace_context_manager(self, settle_operation, links=trace_links):
@@ -505,6 +495,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 dead_letter_reason=dead_letter_reason,
                 dead_letter_error_description=dead_letter_error_description,
             )
+
+            # We can't set this here because the message may not have been settled
             message._settled = True
 
     async def _settle_message(  # type: ignore

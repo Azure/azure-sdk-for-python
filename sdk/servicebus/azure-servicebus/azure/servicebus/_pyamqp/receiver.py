@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
+import time
 import logging
 from typing import Optional, Union
 
@@ -17,6 +18,30 @@ from .outcomes import Received, Accepted, Rejected, Released, Modified
 
 _LOGGER = logging.getLogger(__name__)
 
+class PendingDisposition(object):
+    def __init__(self, **kwargs):
+        self.message = kwargs.get("message")
+        self.sent = False
+        self.frame = None
+        self.on_delivery_settled = kwargs.get("on_delivery_settled")
+        self.start = time.time()
+        self.transfer_state = None
+        self.timeout = kwargs.get("timeout")
+        self.settled = kwargs.get("settled", False)
+        self._network_trace_params = kwargs.get('network_trace_params')
+
+    def on_settled(self, reason, state):
+        # TODO: ADD in error functionality
+        # if self.on_delivery_settled and not self.settled:
+        #     try:
+        #         self.on_delivery_settled(reason, state)
+        #     except Exception as e:  # pylint:disable=broad-except
+        #         _LOGGER.warning(
+        #             "Message 'on_send_complete' callback failed: %r",
+        #             e,
+        #             extra=self._network_trace_params
+        #         )
+        self.settled = True
 
 class ReceiverLink(Link):
     def __init__(self, session, handle, source_address, **kwargs):
