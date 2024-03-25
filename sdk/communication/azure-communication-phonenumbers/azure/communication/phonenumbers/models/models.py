@@ -11,8 +11,7 @@ import datetime
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from azure.communication.phonenumbers._generated import models
-
-from .. import _serialization
+from azure.communication.phonenumbers._generated import _serialization
 
 class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Represents a purchased phone number.
