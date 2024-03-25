@@ -21,7 +21,7 @@ from ._generated.models import (
     OperatorInformationResult
 )
 
-from models import (
+from .models import (
     PurchasedPhoneNumber,
     PhoneNumberCapabilities
 )
