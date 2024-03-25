@@ -39,6 +39,7 @@ class EventGridClient(InternalEventGridClient):
      behavior.
     :paramtype api_version: str
     :keyword level: The level of the event grid service. Known values include: "Basic", "Standard". Default value is "Standard".
+     `Standard` is used for sending events to a namespace topic. `Basic` is used for sending events to a basic topic.
     :paramtype level: str
     """
 
@@ -78,11 +79,11 @@ class EventGridClient(InternalEventGridClient):
                 self._config.http_logging_policy,
             ]
 
-        if level == ClientLevel.BASIC or endpoint.endswith("/api/events"):
+        if level == ClientLevel.BASIC:
             self._client = EventGridPublisherClient( # type: ignore[assignment]
                 endpoint, credential, api_version=api_version, **kwargs
             )
-        elif level == ClientLevel.STANDARD or not endpoint.endswith("/api/events"):
+        elif level == ClientLevel.STANDARD:
             self._client: AsyncPipelineClient = AsyncPipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )

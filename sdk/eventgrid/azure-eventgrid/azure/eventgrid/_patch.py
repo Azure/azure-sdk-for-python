@@ -62,6 +62,7 @@ class EventGridClient(InternalEventGridClient):
      behavior.
     :paramtype api_version: str
     :keyword level: The level of Client to use. Known values are `Standard` and `Basic`. Default value is `Standard`.
+     `Standard` is used for sending events to a namespace topic. `Basic` is used for sending events to a basic topic.
     :keywordtype level: str
     """
 
