@@ -18,14 +18,13 @@ from ._generated.models import (
     PhoneNumberCountry,
     PhoneNumberLocality,
     PhoneNumberOffering,
-    OperatorInformationResult,
+    OperatorInformationResult
 )
 
-from .models.models import (
-  PhoneNumberCapabilities,
-  PurchasedPhoneNumber,
+from models import (
+    PurchasedPhoneNumber,
+    PhoneNumberCapabilities
 )
-
 __all__ = [
     'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',
