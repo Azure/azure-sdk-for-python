@@ -224,6 +224,8 @@ class PhoneNumbersClient(object):
             phone_number,  # type: str
             sms=None,  # type: str or PhoneNumberCapabilityType
             calling=None,  # type: str or PhoneNumberCapabilityType
+            ten_dlc_campaign_brief_id=None,  # type: str
+
             **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[PurchasedPhoneNumber]
@@ -236,6 +238,8 @@ class PhoneNumbersClient(object):
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :param ten_dlc_campaign_brief_id: The campaign brief id for 10DLC registration.
+        :type ten_dlc_campaign_brief_id: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -246,7 +250,7 @@ class PhoneNumbersClient(object):
         """
 
         capabilities_request = PhoneNumberCapabilitiesRequest(
-            calling=calling, sms=sms)
+            calling=calling, sms=sms, ten_dlc_campaign_brief_id=ten_dlc_campaign_brief_id)
 
         polling_interval = kwargs.pop(
             'polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
