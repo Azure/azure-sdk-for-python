@@ -79,14 +79,14 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        # if 'Etag' in created_collection.client_connection.last_response_headers:
-        #     assert created_collection.client_connection.last_response_headers['Etag'] != ''
-        if 'etag' in created_collection.client_connection.last_response_headers:
-            assert created_collection.client_connection.last_response_headers['etag'] != ''
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        # if 'etag' in created_collection.client_connection.last_response_headers:
+        #     assert created_collection.client_connection.last_response_headers['etag'] != ''
         else:
             e1 = created_collection.client_connection.last_response_headers.get("etag", None)
             e2 = created_collection.client_connection.last_response_headers.get("Etag", None)
-            self.fail("No etag found in last response headers, found {} for etag and {} for Etag".format(e1, e2))
+            self.fail("No Etag found in last response headers, found {} for etag and {} for Etag".format(e1, e2))
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
@@ -95,6 +95,14 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        # if 'etag' in created_collection.client_connection.last_response_headers:
+        #     assert created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            e1 = created_collection.client_connection.last_response_headers.get("etag", None)
+            e2 = created_collection.client_connection.last_response_headers.get("Etag", None)
+            self.fail("No Etag found in last response headers, found {} for etag and {} for Etag".format(e1, e2))
         if 'Etag' in created_collection.client_connection.last_response_headers:
             continuation1 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
@@ -113,6 +121,14 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        # if 'etag' in created_collection.client_connection.last_response_headers:
+        #     assert created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            e1 = created_collection.client_connection.last_response_headers.get("etag", None)
+            e2 = created_collection.client_connection.last_response_headers.get("Etag", None)
+            self.fail("No etag found in last response headers, found {} for etag and {} for Etag".format(e1, e2))
         if 'Etag' in created_collection.client_connection.last_response_headers:
             continuation2 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
