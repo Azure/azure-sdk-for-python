@@ -81,15 +81,7 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            delivery_state = await self._process_incoming_message(self._first_frame, message, **kwargs)
-            if not frame[4] and delivery_state:  # settled
-                await self._outgoing_disposition(
-                    first=self._first_frame[1],
-                    last=self._first_frame[1],
-                    settled=True,
-                    state=delivery_state,
-                    batchable=None
-                )
+            await self._process_incoming_message(self._first_frame, message, **kwargs)
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:

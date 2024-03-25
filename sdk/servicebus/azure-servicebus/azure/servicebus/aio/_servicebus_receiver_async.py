@@ -170,7 +170,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
-        self._message_count = 1
         self._session_id = None
         self._message_iter: Optional[AsyncIteratorType[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
@@ -407,7 +406,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
-            self._message_count = max_message_count or 1
             self._receive_context.set()
             await self._open()
 
