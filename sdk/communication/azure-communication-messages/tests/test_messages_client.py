@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 
 import os
-import asyncio
 from typing import List
-from devtools_testutils.aio import recorded_by_proxy_async
-from _decorators_async import MessagesPreparersAsync
+from devtools_testutils import recorded_by_proxy
+from _decorators import MessagesPreparers
 from azure.core.credentials import AccessToken
-from azure.communication.messages.aio import NotificationMessagesClient
+from azure.communication.messages import NotificationMessagesClient
 from azure.communication.messages.models import (
     TextNotificationContent,
     ImageNotificationContent,
@@ -24,14 +23,14 @@ from azure.communication.messages.models import (
     WhatsAppMessageTemplateBindingsComponent
     )
 from _shared.utils import get_http_logging_policy
-from _messages_test_case_async import AsyncMessagesRecordedTestCase
+from _messages_test_case import MessagesRecordedTestCase
 from azure.communication.messages._shared.utils import parse_connection_str
     
-class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
+class TestNotificationMessageClientForText(MessagesRecordedTestCase):
 
-    @MessagesPreparersAsync.messages_test_decorator_async  
-    @recorded_by_proxy_async 
-    async def test_text_send_message_async(self):
+    @MessagesPreparers.messages_test_decorator
+    @recorded_by_proxy 
+    def test_text_send_message(self):
         phone_number: str = "+14254360097"
         raised = False
 
@@ -44,8 +43,8 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
-            async with message_client:
-                message_responses = await message_client.send(text_options)
+            with message_client:
+                message_responses = message_client.send(text_options)
                 message_response = message_responses.receipts[0]
         except:
             raised = True
@@ -55,9 +54,9 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         assert message_response.to is not None
 
 
-    @MessagesPreparersAsync.messages_test_decorator_async
-    @recorded_by_proxy_async 
-    async def test_template_send_message_async(self):
+    @MessagesPreparers.messages_test_decorator
+    @recorded_by_proxy 
+    def test_template_send_message(self):
         phone_number: str = "+14254360097"
         input_template: MessageTemplate = MessageTemplate(
             name="gathering_invitation",
@@ -74,8 +73,8 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         message_response : MessageReceipt = None
 
         try:
-            async with message_client:
-                message_responses = await message_client.send(template_options)
+            with message_client:
+                message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
         except:
             raised = True
@@ -85,9 +84,9 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         assert message_response.to is not None
     
 
-    @MessagesPreparersAsync.messages_test_decorator_async
-    @recorded_by_proxy_async  
-    async def test_template_with_parameters_send_message_async(self):
+    @MessagesPreparers.messages_test_decorator
+    @recorded_by_proxy  
+    def test_template_with_parameters_send_message(self):
         
         phone_number: str = "+14254360097"
         parammeter1 = MessageTemplateText (
@@ -115,8 +114,8 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
-            async with message_client:
-                message_responses = await message_client.send(template_options)
+            with message_client:
+                message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
         except:
             raised = True
@@ -125,9 +124,9 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         assert message_response.message_id is not None
         assert message_response.to is not None
 
-    @MessagesPreparersAsync.messages_test_decorator_async
-    @recorded_by_proxy_async 
-    async def test_image_send_message_async(self):
+    @MessagesPreparers.messages_test_decorator
+    @recorded_by_proxy 
+    def test_image_send_message(self):
         phone_number: str = "+14254360097"
         input_media_uri: str = "https://aka.ms/acsicon1"
         raised = False
@@ -141,8 +140,8 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
-            async with message_client:
-                message_responses = await message_client.send(template_options)
+            with message_client:
+                message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
         except:
             raised = True
@@ -152,16 +151,16 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         assert message_response.to is not None
     
 
-    @MessagesPreparersAsync.messages_test_decorator_async
-    @recorded_by_proxy_async 
-    async def test_download_media_async(self):
+    @MessagesPreparers.messages_test_decorator
+    @recorded_by_proxy 
+    def test_download_media(self):
         phone_number: str = "+14254360097"
         input_media_id: str = "8f8c29b2-c2e4-4340-bb28-3009c8a57283"
         raised = False
         message_client: NotificationMessagesClient = self.create_notification_message_client()
         try:
-            async with message_client:
-                media_stream = await message_client.download_media(input_media_id)
+            with message_client:
+                media_stream = message_client.download_media(input_media_id)
         except:
             raised = True
             raise
