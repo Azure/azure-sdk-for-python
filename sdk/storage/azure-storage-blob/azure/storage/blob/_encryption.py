@@ -738,11 +738,7 @@ def _decrypt_message(
     return decrypted_data
 
 
-def encrypt_blob(
-    blob_data: Union[bytes, IO[bytes]],
-    key_encryption_key: KeyEncryptionKey,
-    version: str
-) -> Tuple[str, bytes]:
+def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str) -> Tuple[str, bytes]:
     """
     Encrypts the given blob using the given encryption protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -750,8 +746,8 @@ def encrypt_blob(
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
     is done as a part of the upload_data_chunks method.
 
-    :param Union[bytes, IO[bytes]] blob_data:
-        The blob stream to be encrypted.
+    :param bytes blob:
+        The blob to be encrypted.
     :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)
@@ -765,7 +761,7 @@ def encrypt_blob(
     :rtype: (str, bytes)
     """
 
-    _validate_not_none('blob_data', blob_data)
+    _validate_not_none('blob', blob)
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
 
@@ -773,11 +769,6 @@ def encrypt_blob(
         # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
         content_encryption_key = os.urandom(32)
         initialization_vector = os.urandom(16)
-        blob: bytes
-        if hasattr(blob_data, 'read'):
-            blob = blob_data.read()
-        else:
-            blob = blob_data
 
         cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
 
@@ -794,13 +785,9 @@ def encrypt_blob(
         content_encryption_key = os.urandom(32)
         initialization_vector = None
 
-        stream: IO[bytes]
-        if hasattr(blob_data, 'read'):
-            stream = blob_data
-        else:
-            stream = BytesIO(blob_data)
+        data = BytesIO(blob)
+        encryption_stream = GCMBlobEncryptionStream(content_encryption_key, data)
 
-        encryption_stream = GCMBlobEncryptionStream(content_encryption_key, stream)
         encrypted_data = encryption_stream.read()
 
     else:

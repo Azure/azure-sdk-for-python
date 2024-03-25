@@ -601,6 +601,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
         content = b'Hello World Encrypted!'
+        length = len(content)
         byte_io = BytesIO(content)
         async_stream = AsyncStream(content)
 
@@ -623,7 +624,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         for data in data_list:
-            await blob.upload_blob(data, overwrite=True)
+            await blob.upload_blob(data, length=length, overwrite=True)
             result = await (await blob.download_blob()).readall()
 
             # Assert
