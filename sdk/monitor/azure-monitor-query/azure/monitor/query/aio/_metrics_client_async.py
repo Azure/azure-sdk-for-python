@@ -28,8 +28,6 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword str audience: The audience to use when requesting a token. If not provided, the public cloud audience
-        will be assumed. Defaults to 'https://metrics.monitor.azure.com'.
     """
 
     def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -51,7 +49,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     async def query_resources(
         self,
         *,
-        resource_uris: Sequence[str],
+        resource_ids: Sequence[str],
         metric_namespace: str,
         metric_names: Sequence[str],
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
@@ -65,8 +63,8 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
-        :keyword resource_uris: A list of resource URIs to query metrics for. Required.
-        :paramtype resource_uris: list[str]
+        :keyword resource_ids: A list of resource IDs to query metrics for. Required.
+        :paramtype resource_ids: list[str]
         :keyword metric_namespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metric_namespace: str
         :keyword metric_names: The names of the metrics (comma separated) to retrieve. Required.
@@ -117,15 +115,15 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Get a response for a batch metrics query.
         """
-        if not resource_uris:
-            raise ValueError("resource_uris must be provided and must not be empty.")
+        if not resource_ids:
+            raise ValueError("resource_ids must be provided and must not be empty.")
 
         # Metric names with commas need to be encoded.
         metric_names = [x.replace(",", "%2") for x in metric_names]
 
         start_time, end_time = get_timespan_iso8601_endpoints(timespan)
-        resource_id_json: JSON = {"resourceids": list(resource_uris)}
-        subscription_id = get_subscription_id_from_resource(resource_uris[0])
+        resource_id_json: JSON = {"resourceids": list(resource_ids)}
+        subscription_id = get_subscription_id_from_resource(resource_ids[0])
 
         generated = await self._batch_metrics_op.batch(
             subscription_id,

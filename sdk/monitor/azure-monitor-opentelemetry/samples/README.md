@@ -8,7 +8,7 @@ products:
 urlFragment: azure-template-samples
 ---
 
-# Azure Template samples
+# Azure Monitor OpenTelemetry distro samples
 
 Provide an overview of all the samples and explain how to run them.
 

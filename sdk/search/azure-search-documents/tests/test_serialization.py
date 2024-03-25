@@ -77,3 +77,32 @@ def test_serialize_search_indexer_skillset():
     serialized_skillset = skillset.serialize()
     skillset = SearchIndexerSkillset.deserialize(serialized_skillset)
     assert skillset
+
+
+def test_serialize_search_index_dict():
+    new_index_name = "hotels"
+    fields = [
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.String),
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="state", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
+    ]
+    cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+    scoring_profile = ScoringProfile(name="MyProfile")
+    scoring_profiles = []
+    scoring_profiles.append(scoring_profile)
+    index = SearchIndex(
+        name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+    )
+    search_index_serialized_dict = index.as_dict()
+    search_index = SearchIndex.from_dict(search_index_serialized_dict)
+    assert search_index
