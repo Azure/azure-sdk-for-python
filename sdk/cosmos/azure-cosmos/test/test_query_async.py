@@ -84,7 +84,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         if 'etag' in created_collection.client_connection.last_response_headers:
             assert created_collection.client_connection.last_response_headers['etag'] != ''
         else:
-            self.fail("No etag found in last response headers")
+            e1 = created_collection.client_connection.last_response_headers.get("etag", None)
+            e2 = created_collection.client_connection.last_response_headers.get("Etag", None)
+            self.fail("No etag found in last response headers, found {} for etag and {} for Etag".format(e1, e2))
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
