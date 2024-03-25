@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, Union
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -28,21 +28,6 @@ class PhoneNumbersClient:  # pylint: disable=client-accepts-api-version-keyword
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :param search_id: The search Id. Required.
-    :type search_id: str
-    :param phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
-     "geographic" and "tollFree". Required.
-    :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
-    :param assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
-     "person" and "application". Default value is None.
-    :type assignment_type: str or
-     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-    :param locality: The name of locality or town in which to search for the area code. This is
-     required if the number type is Geographic. Default value is None.
-    :type locality: str
-    :param administrative_division: The name of the state or province in which to search for the
-     area code. Default value is None.
-    :type administrative_division: str
     :keyword api_version: Api Version. Default value is "2024-01-31-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -51,25 +36,10 @@ class PhoneNumbersClient:  # pylint: disable=client-accepts-api-version-keyword
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self,
-        endpoint: str,
-        search_id: str,
-        phone_number_type: Union[str, _models.PhoneNumberType],
-        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
-        locality: Optional[str] = None,
-        administrative_division: Optional[str] = None,
-        **kwargs: Any
+        self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = PhoneNumbersClientConfiguration(
-            endpoint=endpoint,
-            search_id=search_id,
-            phone_number_type=phone_number_type,
-            assignment_type=assignment_type,
-            locality=locality,
-            administrative_division=administrative_division,
-            **kwargs
-        )
+        self._config = PhoneNumbersClientConfiguration(endpoint=endpoint, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

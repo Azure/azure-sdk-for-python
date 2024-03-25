@@ -42,10 +42,10 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     phone_number_type: Union[str, _models.PhoneNumberType],
     skip: int = 0,
     max_page_size: int = 100,
-    accept_language: Optional[str] = None,
     assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
     locality: Optional[str] = None,
     administrative_division: Optional[str] = None,
+    accept_language: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -116,8 +116,8 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     *,
     skip: int = 0,
     max_page_size: int = 100,
-    accept_language: Optional[str] = None,
     administrative_division: Optional[str] = None,
+    accept_language: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -154,11 +154,11 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
 def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     country_code: str,
     *,
-    phone_number_type: Union[str, _models.PhoneNumberType],
     skip: int = 0,
     max_page_size: int = 100,
-    accept_language: Optional[str] = None,
+    phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
     assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
+    accept_language: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -180,7 +180,8 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
     if max_page_size is not None:
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
-    _params["phoneNumberType"] = _SERIALIZER.query("phone_number_type", phone_number_type, "str")
+    if phone_number_type is not None:
+        _params["phoneNumberType"] = _SERIALIZER.query("phone_number_type", phone_number_type, "str")
     if assignment_type is not None:
         _params["assignmentType"] = _SERIALIZER.query("assignment_type", assignment_type, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -640,8 +641,12 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         self,
         country_code: str,
         *,
+        phone_number_type: Union[str, _models.PhoneNumberType],
         skip: int = 0,
         max_page_size: int = 100,
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
+        locality: Optional[str] = None,
+        administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberAreaCode"]:
@@ -651,12 +656,25 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
+         "geographic" and "tollFree". Required.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
+        :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword locality: The name of locality or town in which to search for the area code. This is
+         required if the number type is Geographic. Default value is None.
+        :paramtype locality: str
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. Default value is None.
+        :paramtype administrative_division: str
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
@@ -683,13 +701,13 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_phone_numbers_list_area_codes_request(
                     country_code=country_code,
-                    phone_number_type=self._config.phone_number_type,
+                    phone_number_type=phone_number_type,
                     skip=skip,
                     max_page_size=max_page_size,
+                    assignment_type=assignment_type,
+                    locality=locality,
+                    administrative_division=administrative_division,
                     accept_language=accept_language,
-                    assignment_type=self._config.assignment_type,
-                    locality=self._config.locality,
-                    administrative_division=self._config.administrative_division,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -863,6 +881,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         *,
         skip: int = 0,
         max_page_size: int = 100,
+        administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberLocality"]:
@@ -878,6 +897,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. Default value is None.
+        :paramtype administrative_division: str
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
@@ -908,8 +930,8 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                     country_code=country_code,
                     skip=skip,
                     max_page_size=max_page_size,
+                    administrative_division=administrative_division,
                     accept_language=accept_language,
-                    administrative_division=self._config.administrative_division,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -979,6 +1001,8 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         *,
         skip: int = 0,
         max_page_size: int = 100,
+        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberOffering"]:
@@ -994,6 +1018,13 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
+         "geographic" and "tollFree". Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+        :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
@@ -1020,11 +1051,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_phone_numbers_list_offerings_request(
                     country_code=country_code,
-                    phone_number_type=self._config.phone_number_type,
                     skip=skip,
                     max_page_size=max_page_size,
+                    phone_number_type=phone_number_type,
+                    assignment_type=assignment_type,
                     accept_language=accept_language,
-                    assignment_type=self._config.assignment_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1418,11 +1449,13 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_search_result(self, **kwargs: Any) -> _models.PhoneNumberSearchResult:
+    def get_search_result(self, search_id: str, **kwargs: Any) -> _models.PhoneNumberSearchResult:
         """Gets a phone number search result by search id.
 
         Gets a phone number search result by search id.
 
+        :param search_id: The search Id. Required.
+        :type search_id: str
         :return: PhoneNumberSearchResult
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1441,7 +1474,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.PhoneNumberSearchResult] = kwargs.pop("cls", None)
 
         _request = build_phone_numbers_get_search_result_request(
-            search_id=self._config.search_id,
+            search_id=search_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

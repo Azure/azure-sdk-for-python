@@ -6,11 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, Union
+from typing import Any
 
 from azure.core.pipeline import policies
-
-from . import models as _models
 
 VERSION = "unknown"
 
