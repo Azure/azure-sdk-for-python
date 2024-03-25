@@ -9,7 +9,6 @@ import inspect
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal, Awaitable
 import time
 import logging
-import urllib.parse
 import aiohttp
 from azure.core.pipeline.policies import RetryMode
 
@@ -18,10 +17,6 @@ from ..models._models import (
     OnDisconnectedArgs,
     OnServerDataMessageArgs,
     OnGroupDataMessageArgs,
-    WebPubSubJsonProtocol,
-    WebPubSubJsonReliableProtocol,
-    SequenceId,
-    RetryPolicy,
     WebPubSubGroup,
     SendMessageErrorOptionsAsync,
     WebPubSubMessage,
@@ -49,6 +44,7 @@ from ..models._enums import (
     WebPubSubProtocolType,
 )
 from .._client import (
+    _WebPubSubClient,
     WebPubSubClientCredential,
     _RETRY_TOTAL,
     _RETRY_BACKOFF_FACTOR,
@@ -64,27 +60,58 @@ from .._util import format_user_agent, raise_for_empty_message_ack, NO_ACK_MESSA
 _LOGGER = logging.getLogger(__name__)
 
 
-class WebSocketAppAsync:
+class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
     def __init__(
-        self, url, on_open=None, subprotocols: Optional[List[str]] = None, header: Optional[Dict[str, str]] = None
+        self,
+        url,
+        on_open=None,
+        on_message=None,
+        on_close=None,
+        subprotocols: Optional[List[str]] = None,
+        header: Optional[Dict[str, str]] = None,
     ) -> None:
         self.url = url
         self.on_open = on_open
+        self.on_message = on_message
+        self.on_close = on_close
         self.subprotocols = subprotocols
         self.header = header
         self.session: Optional[aiohttp.ClientSession] = None
         self.sock: Optional[aiohttp.client._WSRequestContextManager] = None
         self.event: asyncio.Event = asyncio.Event()
-        self.close_timeout = 10.0
-
-    async def receive(self) -> aiohttp.WSMessage:
-        return await self.sock.receive()  # type: ignore
+        self.close_timeout = 1.0
+        self.keep_running = True
 
     async def send(self, message: str) -> None:
         await self.sock.send_str(message)  # type: ignore
 
     async def run_forever(self):
+        try:
+            self.session = aiohttp.ClientSession()
+            self.sock = await self.session.ws_connect(self.url, protocols=self.subprotocols, headers=self.header)
+        except aiohttp.ClientConnectorError as e:
+            await self.close()
+            raise OpenClientError("Fail to open client") from e
         await self.on_open()
+
+        self.keep_running = True
+        while self.keep_running:
+            msg: aiohttp.WSMessage = await self.sock.receive()  # type: ignore
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                await self.on_message(msg.data)
+            elif msg.type == aiohttp.WSMsgType.CLOSING:
+                _LOGGER.debug("WebSocket is closing")
+            elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
+                _LOGGER.debug("WebSocket is closed")
+                await self.on_close(msg.data, msg.extra)
+                self.event.set()
+                break
+            elif msg.type == aiohttp.WSMsgType.ERROR:
+                await self.on_close(1008, "unexpected WebSocket error")
+                self.event.set()
+                break
+            else:
+                _LOGGER.debug("Unknown message: %s", msg)
 
     async def connect(self):
         self.session = aiohttp.ClientSession()
@@ -96,19 +123,22 @@ class WebSocketAppAsync:
             # wait for on_close triggered
             await asyncio.wait_for(self.event.wait(), self.close_timeout)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.info("Fail to close websocket connection: %s", e)
+            _LOGGER.warning("Fail to close websocket connection: %s", e)
         finally:
             try:
                 await self.session.close()
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.info("Fail to close websocket connection: %s", e)
+                _LOGGER.warning("Fail to close websocket connection: %s", e)
+        self.keep_running = False
 
     @property
     def closed(self):
         return self.sock.closed
 
 
-class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class WebPubSubClient(
+    _WebPubSubClient
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
 
     :param credential: The url to connect or credential to use when connecting. Required.
@@ -161,62 +191,29 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        if isinstance(credential, WebPubSubClientCredential):
-            self._credential = credential
-        elif isinstance(credential, str):
-            self._credential = WebPubSubClientCredential(credential)
-        else:
-            raise TypeError("type of credential must be str or WebPubSubClientCredential")
-        self._auto_reconnect = reconnect_retry_total > 0
-        self._auto_rejoin_groups = auto_rejoin_groups
-        protocol_map = {
-            WebPubSubProtocolType.JSON: WebPubSubJsonProtocol,
-            WebPubSubProtocolType.JSON_RELIABLE: WebPubSubJsonReliableProtocol,
-        }
-        if protocol_type in protocol_map:
-            self._protocol = protocol_map[protocol_type]()
-        else:
-            self._protocol = WebPubSubJsonReliableProtocol()
-
-        self._reconnect_retry_policy = RetryPolicy(
-            retry_total=reconnect_retry_total,
-            retry_backoff_factor=reconnect_retry_backoff_factor,
-            retry_backoff_max=reconnect_retry_backoff_max,
-            mode=reconnect_retry_mode,
+        super().__init__(
+            credential=credential,
+            message_retry_backoff_factor=message_retry_backoff_factor,
+            message_retry_backoff_max=message_retry_backoff_max,
+            message_retry_mode=message_retry_mode,
+            message_retry_total=message_retry_total,
+            protocol_type=protocol_type,
+            reconnect_retry_backoff_factor=reconnect_retry_backoff_factor,
+            reconnect_retry_backoff_max=reconnect_retry_backoff_max,
+            reconnect_retry_mode=reconnect_retry_mode,
+            reconnect_retry_total=reconnect_retry_total,
+            auto_rejoin_groups=auto_rejoin_groups,
+            logging_enable=logging_enable,
+            ack_timeout=ack_timeout,
+            start_timeout=start_timeout,
+            user_agent=user_agent,
+            **kwargs,
         )
-        self._message_retry_policy = RetryPolicy(
-            retry_total=message_retry_total,
-            retry_backoff_factor=message_retry_backoff_factor,
-            retry_backoff_max=message_retry_backoff_max,
-            mode=message_retry_mode,
-        )
-        self._group_map: Dict[str, WebPubSubGroup] = {}
         self._ack_map: AckMapAsync = AckMapAsync()
-        self._sequence_id = SequenceId()
-        self._state = WebPubSubClientState.STOPPED
-        self._ack_id = 0
-        self._url = None
         self._ws: Optional[WebSocketAppAsync] = None
-        self._handler: Dict[str, List[Callable]] = {
-            CallbackType.CONNECTED: [],
-            CallbackType.DISCONNECTED: [],
-            CallbackType.REJOIN_GROUP_FAILED: [],
-            CallbackType.GROUP_MESSAGE: [],
-            CallbackType.SERVER_MESSAGE: [],
-            CallbackType.STOPPED: [],
-        }
-        self._last_disconnected_message: Optional[DisconnectedMessage] = None
-        self._connection_id: Optional[str] = None
-        self._is_initial_connected = False
-        self._is_stopping = False
-        self._last_close_event: Optional[CloseEvent] = None
-        self._reconnection_token: Optional[str] = None
+        self._event: asyncio.Event = asyncio.Event()
         self._task_seq_ack: Optional[asyncio.Task] = None
-        self._task_listen: Optional[asyncio.Task] = None
-        self._ack_timeout: float = ack_timeout
-        self._start_timeout: float = start_timeout
-        self._user_agent: Optional[str] = user_agent
-        self._logging_enable: bool = logging_enable
+        self._task_run_forever: Optional[asyncio.Task] = None
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
@@ -624,21 +621,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         else:
             await self._handle_connection_stopped()
 
-    def _build_recovery_url(self) -> Union[str, None]:
-        if self._connection_id and self._reconnection_token and self._url:
-            params = {
-                "awps_connection_id": self._connection_id,
-                "awps_reconnection_token": self._reconnection_token,
-            }
-            url_parse = urllib.parse.urlparse(self._url)
-            url_dict = dict(urllib.parse.parse_qsl(url_parse.query))
-            url_dict.update(params)
-            new_query = urllib.parse.urlencode(url_dict)
-            url_parse = url_parse._replace(query=new_query)
-            new_url = urllib.parse.urlunparse(url_parse)
-            return str(new_url)
-        return None
-
     def _is_connected(self) -> bool:
         """check whether the client is still connected to server after open
 
@@ -648,7 +630,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         return self._state == WebPubSubClientState.CONNECTED and not self._ws.closed  # type: ignore
 
     async def _rejoin_group(self, group_name: str):
-        async def _rejoin_group():
+        async def _rejoin_group_func():
             try:
                 await self._join_group_core(group_name)
                 _LOGGER.debug("rejoin group %s successfully", group_name)
@@ -659,60 +641,20 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     OnRejoinGroupFailedArgs(group=group_name, error=e),
                 )
 
-        await _rejoin_group()
-
-    @staticmethod
-    def _cancel_task(task: Optional[asyncio.Task]) -> None:
-        if task and not task.done():
-            task.cancel()
+        await _rejoin_group_func()
 
     async def _connect(self, url: str):  # pylint: disable=too-many-statements
-        async def on_close(close_status_code: int, close_msg: Optional[str] = None):
-            if self._state == WebPubSubClientState.CONNECTED:
-                _LOGGER.info(
-                    "WebSocket connection closed. Code: %s, Reason: %s",
-                    close_status_code,
-                    close_msg,
-                )
+        async def on_open():
+            if self._is_stopping:
+                try:
+                    if self._ws:
+                        await self._ws.close()
+                finally:
+                    raise OpenClientError("Can't open a client during stopping")
 
-                self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
-                # clean ack cache
-                self._ack_map.clear()
-
-                if self._is_stopping:
-                    _LOGGER.warning("The client is stopping state. Stop recovery.")
-                    await self._handle_connection_close_and_no_recovery()
-                    return
-
-                if self._last_close_event and self._last_close_event.close_status_code == 1008:
-                    _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
-                    await self._handle_connection_close_and_no_recovery()
-                    return
-
-                if not self._protocol.is_reliable_sub_protocol:
-                    _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
-                    await self._handle_connection_close_and_no_recovery()
-                    return
-
-                recovery_url = self._build_recovery_url()
-                if not recovery_url:
-                    _LOGGER.warning("Connection id or reconnection token is not available")
-                    await self._handle_connection_close_and_no_recovery()
-                    return
-
-                self._state = WebPubSubClientState.RECOVERING
-                recovery_start = time.time()
-                while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
-                    try:
-                        await self._connect(recovery_url)
-                        _LOGGER.debug("Recovery succeeded")
-                        return
-                    except:  # pylint: disable=bare-except
-                        _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
-                        await asyncio.sleep(_RECOVERY_RETRY_INTERVAL)
-
-                _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
-                await self._handle_connection_close_and_no_recovery()
+            _LOGGER.debug("WebSocket connection has opened")
+            self._state = WebPubSubClientState.CONNECTED
+            self._event.set()
 
         async def on_message(data: str):
             async def handle_ack_message(message: AckMessage):
@@ -795,46 +737,73 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             else:
                 _LOGGER.warning("unknown message type: %s", parsed_message.kind)
 
-        async def _listen():
-            while self._is_connected():
-                msg: aiohttp.WSMessage = await self._ws.receive()  # type: ignore
-                if msg.type == aiohttp.WSMsgType.TEXT:
-                    await on_message(msg.data)
-                elif msg.type == aiohttp.WSMsgType.CLOSING:
-                    _LOGGER.debug("WebSocket is closing")
-                elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
-                    _LOGGER.debug("WebSocket is closed")
-                    await on_close(msg.data, msg.extra)
-                    self._ws.event.set()
-                    break
-                elif msg.type == aiohttp.WSMsgType.ERROR:
-                    await on_close(1008, "unexpected WebSocket error")
-                    self._ws.event.set()
-                    break
-                else:
-                    _LOGGER.debug("Unknown message: %s", msg)
+        async def on_close(close_status_code: int, close_msg: Optional[str] = None):
+            if self._state == WebPubSubClientState.CONNECTED:
+                _LOGGER.info(
+                    "WebSocket connection closed. Code: %s, Reason: %s",
+                    close_status_code,
+                    close_msg,
+                )
 
-        async def on_open():
-            try:
-                await self._ws.connect()
-            except aiohttp.ClientConnectorError as e:
-                raise OpenClientError("Fail to open client") from e
+                self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
+                # clean ack cache
+                self._ack_map.clear()
 
-            _LOGGER.debug("WebSocket connection has opened")
-            self._state = WebPubSubClientState.CONNECTED
-            self._task_listen = asyncio.create_task(_listen())
+                if self._is_stopping:
+                    _LOGGER.warning("The client is stopping state. Stop recovery.")
+                    await self._handle_connection_close_and_no_recovery()
+                    return
+
+                if self._last_close_event and self._last_close_event.close_status_code == 1008:
+                    _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
+                    await self._handle_connection_close_and_no_recovery()
+                    return
+
+                if not self._protocol.is_reliable_sub_protocol:
+                    _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
+                    await self._handle_connection_close_and_no_recovery()
+                    return
+
+                recovery_url = self._build_recovery_url()
+                if not recovery_url:
+                    _LOGGER.warning("Connection id or reconnection token is not available")
+                    await self._handle_connection_close_and_no_recovery()
+                    return
+
+                self._state = WebPubSubClientState.RECOVERING
+                recovery_start = time.time()
+                while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
+                    try:
+                        await self._connect(recovery_url)
+                        _LOGGER.debug("Recovery succeeded")
+                        return
+                    except:  # pylint: disable=bare-except
+                        _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
+                        await asyncio.sleep(_RECOVERY_RETRY_INTERVAL)
+
+                _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
+                await self._handle_connection_close_and_no_recovery()
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
-        self._cancel_task(self._task_seq_ack)
+        await self._wait_for_tasks([self._task_seq_ack])
+        self._event.clear()
 
         self._ws = WebSocketAppAsync(
             url=url,
             on_open=on_open,
+            on_message=on_message,
+            on_close=on_close,
             subprotocols=[self._protocol.name] if self._protocol else [],
             header={_USER_AGENT: format_user_agent(self._user_agent)},
         )
-        await self._ws.run_forever()
+        self._task_run_forever = asyncio.create_task(self._ws.run_forever(), name="run_forever")
+        try:
+            await asyncio.wait_for(self._event.wait(), timeout=self._start_timeout)
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Timeout when waiting for websocket connection to open")
+        if not self._is_connected():
+            raise OpenClientError("Fail to open client")
 
         # set coroutine to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol:
@@ -848,7 +817,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     finally:
                         await asyncio.sleep(1.0)
 
-            self._task_seq_ack = asyncio.create_task(sequence_id_ack_periodically())
+            self._task_seq_ack = asyncio.create_task(
+                sequence_id_ack_periodically(), name="sequence_id_ack_periodically"
+            )
 
         _LOGGER.info("connected successfully")
 
@@ -889,12 +860,20 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
         self._is_stopping = True
-        old_tasks = [self._task_listen, self._task_seq_ack]
+        old_tasks = [self._task_run_forever, self._task_seq_ack]
 
         await self._ws.close()  # type: ignore
-        for task in old_tasks:
-            self._cancel_task(task)
+        await self._wait_for_tasks(old_tasks)
         _LOGGER.info("close client successfully")
+
+    @staticmethod
+    async def _wait_for_tasks(tasks: List[Optional[asyncio.Task]]) -> None:
+        for task in tasks:
+            if task and not task.done():
+                try:
+                    await asyncio.wait_for(task, timeout=1.0)
+                except asyncio.TimeoutError:
+                    _LOGGER.warning("Task %s is not done after 1s, cancel it", task.get_name())
 
     @overload
     async def subscribe(

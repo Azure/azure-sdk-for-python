@@ -87,8 +87,8 @@ _ACK_TIMEOUT = 30.0
 _START_TIMEOUT = 30.0
 
 
-class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """WebPubSubClient
+class _WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """_WebPubSubClient
 
     :param credential: The url to connect or credential to use when connecting. Required.
     :type credential: str or WebPubSubClientCredential
@@ -169,15 +169,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             retry_backoff_max=message_retry_backoff_max,
             mode=message_retry_mode,
         )
-        self._group_map: Dict[str, WebPubSubGroup] = {}
-        self._group_map_lock = threading.Lock()
-        self._ack_map: AckMap = AckMap()
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
         self._ack_id = 0
-        self._ack_id_lock = threading.Lock()
         self._url = None
-        self._ws: Optional[websocket.WebSocketApp] = None
         self._handler: Dict[str, List[Callable]] = {
             CallbackType.CONNECTED: [],
             CallbackType.DISCONNECTED: [],
@@ -192,13 +187,108 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._is_stopping = False
         self._last_close_event: Optional[CloseEvent] = None
         self._reconnection_token: Optional[str] = None
-        self._cv: threading.Condition = threading.Condition()
-        self._thread_seq_ack: Optional[threading.Thread] = None
-        self._thread: Optional[threading.Thread] = None
         self._ack_timeout: float = ack_timeout
         self._start_timeout: float = start_timeout
         self._user_agent: Optional[str] = user_agent
         self._logging_enable: bool = logging_enable
+        self._group_map: Dict[str, WebPubSubGroup] = {}
+
+    def _build_recovery_url(self) -> Union[str, None]:
+        if self._connection_id and self._reconnection_token and self._url:
+            params = {
+                "awps_connection_id": self._connection_id,
+                "awps_reconnection_token": self._reconnection_token,
+            }
+            url_parse = urllib.parse.urlparse(self._url)
+            url_dict = dict(urllib.parse.parse_qsl(url_parse.query))
+            url_dict.update(params)
+            new_query = urllib.parse.urlencode(url_dict)
+            url_parse = url_parse._replace(query=new_query)
+            new_url = urllib.parse.urlunparse(url_parse)
+            return str(new_url)
+        return None
+
+
+class WebPubSubClient(
+    _WebPubSubClient
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """WebPubSubClient
+
+    :param credential: The url to connect or credential to use when connecting. Required.
+    :type credential: str or WebPubSubClientCredential
+    :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
+    :keyword azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
+     reconnect. Default is 3.
+    :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
+     sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
+     "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
+     retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
+    :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
+    :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
+     sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
+     "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
+     retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float message_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
+    :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
+    :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+    :keyword float ack_timeout: Time limit to wait for ack message from server. The default value is 30.0 seconds.
+    :keyword float start_timeout: Time limit to wait for successful client open. The default value is 30.0 seconds.
+    :keyword str user_agent: The user agent to be used for the request. If specified, this will be added in front of
+     the default user agent string.
+    """
+
+    # pylint: disable=unused-argument
+    def __init__(
+        self,
+        credential: Union[WebPubSubClientCredential, str],
+        *,
+        message_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
+        message_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
+        message_retry_mode: RetryMode = RetryMode.Exponential,
+        message_retry_total: int = _RETRY_TOTAL,
+        protocol_type: WebPubSubProtocolType = WebPubSubProtocolType.JSON_RELIABLE,
+        reconnect_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
+        reconnect_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
+        reconnect_retry_mode: RetryMode = RetryMode.Exponential,
+        reconnect_retry_total: int = _RETRY_TOTAL,
+        auto_rejoin_groups: bool = True,
+        logging_enable: bool = False,
+        ack_timeout: float = _ACK_TIMEOUT,
+        start_timeout: float = _START_TIMEOUT,
+        user_agent: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            credential=credential,
+            message_retry_backoff_factor=message_retry_backoff_factor,
+            message_retry_backoff_max=message_retry_backoff_max,
+            message_retry_mode=message_retry_mode,
+            message_retry_total=message_retry_total,
+            protocol_type=protocol_type,
+            reconnect_retry_backoff_factor=reconnect_retry_backoff_factor,
+            reconnect_retry_backoff_max=reconnect_retry_backoff_max,
+            reconnect_retry_mode=reconnect_retry_mode,
+            reconnect_retry_total=reconnect_retry_total,
+            auto_rejoin_groups=auto_rejoin_groups,
+            logging_enable=logging_enable,
+            ack_timeout=ack_timeout,
+            start_timeout=start_timeout,
+            user_agent=user_agent,
+            **kwargs,
+        )
+        self._group_map_lock = threading.Lock()
+        self._ack_map: AckMap = AckMap()
+        self._ws: Optional[websocket.WebSocketApp] = None
+        self._cv: threading.Condition = threading.Condition()
+        self._thread_seq_ack: Optional[threading.Thread] = None
+        self._thread: Optional[threading.Thread] = None
+        self._ack_id_lock = threading.Lock()
 
     def _next_ack_id(self) -> int:
         with self._ack_id_lock:
@@ -611,21 +701,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         else:
             self._handle_connection_stopped()
 
-    def _build_recovery_url(self) -> Union[str, None]:
-        if self._connection_id and self._reconnection_token and self._url:
-            params = {
-                "awps_connection_id": self._connection_id,
-                "awps_reconnection_token": self._reconnection_token,
-            }
-            url_parse = urllib.parse.urlparse(self._url)
-            url_dict = dict(urllib.parse.parse_qsl(url_parse.query))
-            url_dict.update(params)
-            new_query = urllib.parse.urlencode(url_dict)
-            url_parse = url_parse._replace(query=new_query)
-            new_url = urllib.parse.urlunparse(url_parse)
-            return str(new_url)
-        return None
-
     def _is_connected(self) -> bool:
         """check whether the client is still connected to server after open
 
@@ -641,7 +716,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         )
 
     def _rejoin_group(self, group_name: str):
-        def _rejoin_group():
+        def _rejoin_group_func():
             try:
                 self._join_group_core(group_name)
                 _LOGGER.debug("rejoin group %s successfully", group_name)
@@ -652,7 +727,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     OnRejoinGroupFailedArgs(group=group_name, error=e),
                 )
 
-        threading.Thread(target=_rejoin_group, daemon=True).start()
+        threading.Thread(target=_rejoin_group_func, daemon=True).start()
 
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
