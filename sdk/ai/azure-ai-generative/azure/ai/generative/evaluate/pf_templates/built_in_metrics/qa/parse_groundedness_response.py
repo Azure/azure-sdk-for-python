@@ -20,7 +20,10 @@ def parse_single_sample(response: dict) -> list:
 
             # get content harm metric_value
             if 'label' in harm_response:
-                metric_value = harm_response['label']
+                try:
+                    metric_value = int(harm_response['label'])
+                except Exception:
+                    metric_value = harm_response['label']
             else:
                 metric_value = np.nan
 
