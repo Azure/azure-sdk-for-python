@@ -491,6 +491,7 @@ class Simulator:
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 1,
+        max_simulation_results: int = 3,
     ):
         if parameters is None:
             parameters = []
@@ -503,6 +504,7 @@ class Simulator:
                 api_call_retry_limit=api_call_retry_limit,
                 api_call_retry_sleep_sec=api_call_retry_sleep_sec,
                 api_call_delay_sec=api_call_delay_sec,
+                max_simulation_results=max_simulation_results,
                 concurrent_async_task=concurrent_async_task,
             )
         )
@@ -517,6 +519,7 @@ class Simulator:
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
+        max_simulation_results: int = 3,
     ):
         """
         Simulates a conversation using a predefined template with customizable parameters and control over API behavior.
@@ -536,6 +539,8 @@ class Simulator:
         :param api_call_delay_sec: The number of seconds to wait
                before making a new API call to simulate conversation delay.
         :type api_call_delay_sec: float, optional
+        :keyword max_simulation_results: The maximum number of simulation results to return. Defaults to 3.
+        :paramtype max_simulation_results: int, optional
         :return: The outcome of the simulated conversations as a list.
         :rtype: List[Dict]
         """
@@ -555,6 +560,7 @@ class Simulator:
                 api_call_retry_limit,
                 api_call_retry_sleep_sec,
                 api_call_delay_sec,
+                max_simulation_results,
                 concurrent_async_task,
             ),
         )
