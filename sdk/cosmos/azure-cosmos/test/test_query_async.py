@@ -79,12 +79,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        if 'Etag' in created_collection.client_connection.last_response_headers:
-            assert created_collection.client_connection.last_response_headers['Etag'] != ''
-        elif 'etag' in created_collection.client_connection.last_response_headers:
+        # if 'Etag' in created_collection.client_connection.last_response_headers:
+        #     assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        if 'etag' in created_collection.client_connection.last_response_headers:
             assert created_collection.client_connection.last_response_headers['etag'] != ''
         else:
-            self.fail("No Etag or etag found in last response headers")
+            self.fail("No etag found in last response headers")
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
