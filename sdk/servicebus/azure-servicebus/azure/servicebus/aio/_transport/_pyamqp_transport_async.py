@@ -307,6 +307,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
+        print("Calling Settle Message")
+        print(settle_operation)
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:

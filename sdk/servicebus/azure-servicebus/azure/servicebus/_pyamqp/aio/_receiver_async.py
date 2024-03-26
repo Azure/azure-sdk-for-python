@@ -63,7 +63,7 @@ class ReceiverLink(Link):
         self._received_delivery_tags = set()
         self.incoming_disposition = False
         self._pending_receipts = []
-        self._on_disposition_received = kwargs.pop("on_disposition")
+        # self._on_disposition_received = kwargs.pop("on_disposition")
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -142,7 +142,8 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
-        message = None
+        message = None,
+        on_disposition = None,
     ):
         self.incoming_disposition = False
         disposition_frame = DispositionFrame(
@@ -154,7 +155,7 @@ class ReceiverLink(Link):
         # Create Pending Disposition once sent for a message
         delivery = PendingDisposition(
             message = message,
-            on_delivery_settled = partial(self._on_disposition_received, message)
+            on_delivery_settled = on_disposition,
         )
         delivery.frame = disposition_frame
         delivery.settled = settled
@@ -167,9 +168,9 @@ class ReceiverLink(Link):
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
         delivery.start = time.time()
         delivery.sent = True
-        delivery.message.state = MessageDeliveryState.WaitingForSendAck
 
         self._pending_receipts.append(delivery)
+        print(f"Sending Outgoing Disp - Add to Pending Receipts: {first}")
 
     async def _incoming_disposition(self, frame):
         disposition_frame = DispositionFrame(*frame)
@@ -184,22 +185,16 @@ class ReceiverLink(Link):
         settled_ids = list(range(frame[1], range_end))
         unsettled = []
         for delivery in self._pending_receipts:
-            print(delivery)
             if delivery.sent and delivery.frame[1] in settled_ids:
                 # TODO: await error here
+                print("Calling On Settlement For Disposition")
                 await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                 continue
             unsettled.append(delivery)
         self._pending_receipts = unsettled
 
-
-        if disposition_frame[1] in self._pending_receipts:
-            print("Removing from pending receipts")
-            self._pending_receipts.remove(disposition_frame[1])
-            self.incoming_disposition = True
-
         # print("Received Disposition Frame: ", disposition_frame)
-        print(f"Pending Receipts: {self._pending_receipts}")
+        print(f"Pending Receipts: {[e.frame[1] for e in self._pending_receipts]}")
 
 
         # need to do something to differentiate by state accepted/released/rejected to determine settle state
@@ -222,9 +217,10 @@ class ReceiverLink(Link):
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
         message_delivery = None,
+        on_disposition = None,
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery)
+        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
         if not settled:
             await self._wait_for_response(wait)
