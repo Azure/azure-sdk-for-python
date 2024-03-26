@@ -326,7 +326,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[frame[0]]._incoming_transfer(frame, **kwargs)  # pylint: disable=protected-access
+            await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
             _LOGGER.error(
                 "Received Transfer frame on unattached link. Ending session.", extra=self.network_trace_params
