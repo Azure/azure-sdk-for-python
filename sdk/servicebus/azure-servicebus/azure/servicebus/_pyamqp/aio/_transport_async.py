@@ -188,7 +188,6 @@ class AsyncTransportMixin:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
 
             context = ssl.SSLContext(ssl_version)
-            context.keylog_filename = "/home/llawrence/repos/azure-sdk-for-python/sdk/servicebus/azure-servicebus/keylog.txt"
 
             purpose = ssl.Purpose.SERVER_AUTH
 
