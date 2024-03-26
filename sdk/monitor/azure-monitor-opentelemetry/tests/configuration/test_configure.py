@@ -273,7 +273,7 @@ class TestConfigure(unittest.TestCase):
         set_logger_provider_mock,
         get_logger_provider_mock,
         log_exporter_mock,
-        azlrp_mock,
+        processor_mock,
         logging_handler_mock,
         get_logger_mock,
     ):
@@ -282,8 +282,8 @@ class TestConfigure(unittest.TestCase):
         get_logger_provider_mock.return_value = lp_init_mock
         log_exp_init_mock = Mock()
         log_exporter_mock.return_value = log_exp_init_mock
-        azlrp_init_mock = Mock()
-        azlrp_mock.return_value = azlrp_init_mock
+        processor_init_mock = Mock()
+        processor_mock.return_value = processor_init_mock
         logging_handler_init_mock = Mock()
         logging_handler_mock.return_value = logging_handler_init_mock
         logger_mock = Mock()
@@ -300,11 +300,11 @@ class TestConfigure(unittest.TestCase):
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
-        azlrp_mock.assert_called_once_with(
+        processor_mock.assert_called_once_with(
             log_exp_init_mock,
         )
         lp_init_mock.add_log_record_processor.assert_called_once_with(
-            azlrp_init_mock
+            processor_init_mock
         )
         logging_handler_mock.assert_called_once_with(
             logger_provider=lp_init_mock

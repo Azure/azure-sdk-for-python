@@ -21,8 +21,8 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         log_record.span_id = 123
         log_record.trace_flags = TraceFlags(TraceFlags.SAMPLED)
         log_data.log_record = log_record
-        azmlrp = _AzureMonitorLogRecordProcessor(exporter)
-        azmlrp.emit(log_data)
+        proc = _AzureMonitorLogRecordProcessor(exporter)
+        proc.emit(log_data)
         emit_mock.assert_called_once_with(log_data)
 
     @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
@@ -33,8 +33,8 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         log_record.span_id = 123
         log_record.trace_flags = TraceFlags(TraceFlags.DEFAULT)
         log_data.log_record = log_record
-        azmlrp = _AzureMonitorLogRecordProcessor(exporter)
-        azmlrp.emit(log_data)
+        proc = _AzureMonitorLogRecordProcessor(exporter)
+        proc.emit(log_data)
         emit_mock.assert_not_called()
 
     @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
@@ -45,6 +45,6 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         log_record.span_id = 123
         log_record.trace_flags = TraceFlags(TraceFlags.DEFAULT)
         log_data.log_record = log_record
-        azmlrp = _AzureMonitorLogRecordProcessor(exporter, disable_trace_based_sampling=True)
-        azmlrp.emit(log_data)
+        proc = _AzureMonitorLogRecordProcessor(exporter, disable_trace_based_sampling=True)
+        proc.emit(log_data)
         emit_mock.assert_called_once_with(log_data)
