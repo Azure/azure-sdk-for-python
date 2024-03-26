@@ -926,7 +926,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     
     @staticmethod
     def _process_receive_error(message_delivery, condition, description=None, info=None):
-        # what should these errors be? Do we raise here
         try:
             amqp_condition = ErrorCondition(condition)
         except ValueError:
