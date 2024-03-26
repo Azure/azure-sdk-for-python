@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, Callable, Dict, IO, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Callable, Dict, IO, Optional, Tuple, TYPE_CHECKING
 from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
