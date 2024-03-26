@@ -10,6 +10,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AvailablePhoneNumberStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AvailablePhoneNumberStatus."""
+
+    AVAILABLE = "available"
+    RESERVED = "reserved"
+    EXPIRED = "expired"
+    ERROR = "error"
+    PURCHASED = "purchased"
+
+
 class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The frequency with which the cost gets billed."""
 
@@ -19,7 +29,7 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of service associated with the phone number."""
 
-    UNAVAILABLE = "unavailable"
+    UNKNOWN = "unknown"
     OTHER = "other"
     GEOGRAPHIC = "geographic"
     MOBILE = "mobile"
@@ -57,12 +67,8 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
 
-class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Source of the number, e.g. Cloud or OperatorConnect."""
-
-    CLOUD = "cloud"
-    OPERATOR_CONNECT = "operatorConnect"
 
 class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mapping Error Messages to Codes."""
@@ -86,8 +92,24 @@ class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     UNKNOWN_SEARCH_ERROR = "UnknownSearchError"
 
 
+class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the number, e.g. Cloud or OperatorConnect."""
+
+    CLOUD = "cloud"
+    OPERATOR_CONNECT = "operatorConnect"
+
+
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the number type of the offering."""
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
+
+
+class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReservationStatus."""
+
+    ACTIVE = "active"
+    SUBMITTED = "submitted"
+    COMPLETED = "completed"
+    EXPIRED = "expired"

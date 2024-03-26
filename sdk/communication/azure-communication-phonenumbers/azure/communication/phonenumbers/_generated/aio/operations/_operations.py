@@ -29,9 +29,14 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ...operations._operations import (
+    build_phone_numbers_browse_available_numbers_request,
     build_phone_numbers_cancel_operation_request,
+    build_phone_numbers_create_or_update_reservation_request,
+    build_phone_numbers_delete_reservation_request,
     build_phone_numbers_get_by_number_request,
     build_phone_numbers_get_operation_request,
+    build_phone_numbers_get_reservation_request,
+    build_phone_numbers_get_reservations_request,
     build_phone_numbers_get_search_result_request,
     build_phone_numbers_list_area_codes_request,
     build_phone_numbers_list_available_countries_request,
@@ -42,6 +47,7 @@ from ...operations._operations import (
     build_phone_numbers_purchase_phone_numbers_request,
     build_phone_numbers_release_phone_number_request,
     build_phone_numbers_search_available_phone_numbers_request,
+    build_phone_numbers_start_reservation_purchase_request,
     build_phone_numbers_update_capabilities_request,
 )
 
@@ -49,7 +55,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class PhoneNumbersOperations:
+class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -329,8 +335,8 @@ class PhoneNumbersOperations:
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
-        :keyword administrative_division: An optional parameter for the name of the state or province
-         in which to search for the area code. Default value is None.
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. Default value is None.
         :paramtype administrative_division: str
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
@@ -676,9 +682,6 @@ class PhoneNumbersOperations:
         :param body: The phone number search request. Is either a PhoneNumberSearchRequest type or a
          IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -747,6 +750,141 @@ class PhoneNumbersOperations:
         return AsyncLROPoller[_models.PhoneNumberSearchResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+    @overload
+    async def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: _models.PhoneNumbersBrowseRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Required.
+        :type phone_numbers_browse_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersBrowseRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Required.
+        :type phone_numbers_browse_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: Union[_models.PhoneNumbersBrowseRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Is either a PhoneNumbersBrowseRequest type or a IO[bytes]
+         type. Required.
+        :type phone_numbers_browse_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersBrowseRequest or IO[bytes]
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumbersBrowseResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(phone_numbers_browse_request, (IOBase, bytes)):
+            _content = phone_numbers_browse_request
+        else:
+            _json = self._serialize.body(phone_numbers_browse_request, "PhoneNumbersBrowseRequest")
+
+        _request = build_phone_numbers_browse_available_numbers_request(
+            country_code=country_code,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("PhoneNumbersBrowseResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_search_result(self, search_id: str, **kwargs: Any) -> _models.PhoneNumberSearchResult:
@@ -912,9 +1050,6 @@ class PhoneNumbersOperations:
         :param body: The phone number purchase request. Is either a PhoneNumberPurchaseRequest type or
          a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberPurchaseRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -930,6 +1065,537 @@ class PhoneNumbersOperations:
         if cont_token is None:
             raw_result = await self._purchase_phone_numbers_initial(  # type: ignore
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def get_reservations(
+        self, *, skip: int = 0, top: int = 100, **kwargs: Any
+    ) -> AsyncIterable["_models.PhoneNumbersReservation"]:
+        """Get all reservations.
+
+        Get all reservations.
+
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword top: An optional parameter for how many entries to return, for pagination purposes.
+         The default value is 100. Default value is 100.
+        :paramtype top: int
+        :return: An iterator like instance of PhoneNumbersReservation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumbersReservation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.PhoneNumbersReservations] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_phone_numbers_get_reservations_request(
+                    skip=skip,
+                    top=top,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.PhoneNumbersReservations, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.reservations
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def create_or_update_reservation(
+        self,
+        reservation_id: str,
+        reservation: _models.PhoneNumbersReservation,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Required.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_reservation(
+        self,
+        reservation_id: str,
+        reservation: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Required.
+        :type reservation: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_reservation(
+        self, reservation_id: str, reservation: Union[_models.PhoneNumbersReservation, IO[bytes]], **kwargs: Any
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Is either a PhoneNumbersReservation type or a IO[bytes] type. Required.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         IO[bytes]
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(reservation, (IOBase, bytes)):
+            _content = reservation
+        else:
+            _json = self._serialize.body(reservation, "PhoneNumbersReservation")
+
+        _request = build_phone_numbers_create_or_update_reservation_request(
+            reservation_id=reservation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_reservation(self, reservation_id: str, **kwargs: Any) -> _models.PhoneNumbersReservation:
+        """Gets a reservation by its ID.
+
+        Gets a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
+
+        _request = build_phone_numbers_get_reservation_request(
+            reservation_id=reservation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_reservation(  # pylint: disable=inconsistent-return-statements
+        self, reservation_id: str, **kwargs: Any
+    ) -> None:
+        """Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
+
+        Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_phone_numbers_delete_reservation_request(
+            reservation_id=reservation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    async def _start_reservation_purchase_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(reservation_purchase_request, (IOBase, bytes)):
+            _content = reservation_purchase_request
+        else:
+            if reservation_purchase_request is not None:
+                _json = self._serialize.body(reservation_purchase_request, "PhoneNumbersReservationPurchaseRequest")
+            else:
+                _json = None
+
+        _request = build_phone_numbers_start_reservation_purchase_request(
+            reservation_id=reservation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["operation-id"] = self._deserialize("str", response.headers.get("operation-id"))
+        response_headers["reservation-purchase-id"] = self._deserialize(
+            "str", response.headers.get("reservation-purchase-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    async def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[_models.PhoneNumbersReservationPurchaseRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Default value is None.
+        :type reservation_purchase_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersReservationPurchaseRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Default value is None.
+        :type reservation_purchase_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Is either a PhoneNumbersReservationPurchaseRequest type or
+         a IO[bytes] type. Default value is None.
+        :type reservation_purchase_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersReservationPurchaseRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._start_reservation_purchase_initial(  # type: ignore
+                reservation_id=reservation_id,
+                reservation_purchase_request=reservation_purchase_request,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
         kwargs.pop("error_map", None)
 
@@ -1159,8 +1825,8 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Default value is None.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest
@@ -1186,8 +1852,8 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Default value is None.
         :type body: IO[bytes]
@@ -1211,16 +1877,13 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Is either a
          PhoneNumberCapabilitiesRequest type or a IO[bytes] type. Default value is None.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1403,7 +2066,8 @@ class PhoneNumbersOperations:
 
         Releases a purchased phone number.
 
-        :param phone_number: Phone number to be released, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -1554,12 +2218,11 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Required.
+        :param body: The phone number(s) whose operator information should be searched. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1573,12 +2236,11 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Required.
+        :param body: The phone number(s) whose operator information should be searched. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1592,16 +2254,13 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Is either a OperatorInformationRequest type or a IO[bytes] type. Required.
+        :param body: The phone number(s) whose operator information should be searched. Is either a
+         OperatorInformationRequest type or a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: OperatorInformationResult
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         :raises ~azure.core.exceptions.HttpResponseError:

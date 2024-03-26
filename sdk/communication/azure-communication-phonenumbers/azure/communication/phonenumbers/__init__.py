@@ -7,8 +7,6 @@
 from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (
-    PurchasedPhoneNumber,
-    PhoneNumberCapabilities,
     PhoneNumberCost,
     PhoneNumberSearchResult,
     BillingFrequency,
@@ -20,9 +18,13 @@ from ._generated.models import (
     PhoneNumberCountry,
     PhoneNumberLocality,
     PhoneNumberOffering,
-    OperatorInformationResult,
+    OperatorInformationResult
 )
 
+from .models import (
+    PurchasedPhoneNumber,
+    PhoneNumberCapabilities
+)
 __all__ = [
     'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',

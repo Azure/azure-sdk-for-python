@@ -10,8 +10,8 @@ autorest ./PHONE_NUMBER_SWAGGER.md
 
 ### Settings
 ``` yaml
-tag: package-phonenumber-2023-10-01-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bd44f2d98fdc14c674b542cc64ce7df33ddfaf76/specification/communication/data-plane/PhoneNumbers/readme.md
+tag: package-preview-2024-01
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/9cdbbefb7f5c024d0c54977669018ec310100ffa/specification/communication/data-plane/PhoneNumbers/readme.md
 output-folder: ../azure/communication/phonenumbers/_generated
 namespace: azure.communication.phonenumbers
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -38,19 +38,4 @@ directive:
   where: $.parameters.Endpoint
   transform: >
     $["format"] = "";
-```
-
-# Removed Models
-``` yaml
-directive:
-  - remove-operation-match: /.*Reservation.*/i
-  - remove-operation: PhoneNumbers_BrowseAvailableNumbers
-  - remove-model: PhoneNumbersReservation
-  - remove-model: PhoneNumbersReservations
-  - remove-model: PhoneNumbersBrowseRequest
-  - remove-model: PhoneNumbersBrowseResult
-  - remove-model: PhoneNumberBrowseCapabilitiesRequest
-  - remove-model: PhoneNumbersReservationPurchaseRequest
-  - remove-model: AvailablePhoneNumber
-  - remove-model: AvailablePhoneNumberCost
 ```

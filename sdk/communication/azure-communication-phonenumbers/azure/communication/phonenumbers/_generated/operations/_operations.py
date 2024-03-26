@@ -51,7 +51,7 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +90,7 @@ def build_phone_numbers_list_available_countries_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +123,7 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +164,7 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,11 +201,40 @@ def build_phone_numbers_search_available_phone_numbers_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/availablePhoneNumbers/countries/{countryCode}/:search"
+    path_format_arguments = {
+        "countryCode": _SERIALIZER.url("country_code", country_code, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_browse_available_numbers_request(  # pylint: disable=name-too-long
+    country_code: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/countries/{countryCode}/:browse"
     path_format_arguments = {
         "countryCode": _SERIALIZER.url("country_code", country_code, "str"),
     }
@@ -229,7 +258,7 @@ def build_phone_numbers_get_search_result_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,11 +283,146 @@ def build_phone_numbers_purchase_phone_numbers_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/availablePhoneNumbers/:purchase"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_get_reservations_request(  # pylint: disable=name-too-long
+    *, skip: int = 0, top: int = 100, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_create_or_update_reservation_request(  # pylint: disable=name-too-long
+    reservation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    path_format_arguments = {
+        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_get_reservation_request(  # pylint: disable=name-too-long
+    reservation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    path_format_arguments = {
+        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_delete_reservation_request(  # pylint: disable=name-too-long
+    reservation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    path_format_arguments = {
+        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_phone_numbers_start_reservation_purchase_request(  # pylint: disable=name-too-long
+    reservation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations/{reservationId}/:purchase"
+    path_format_arguments = {
+        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -277,7 +441,7 @@ def build_phone_numbers_get_operation_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -303,7 +467,7 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -330,7 +494,7 @@ def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +522,7 @@ def build_phone_numbers_get_by_number_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -384,7 +548,7 @@ def build_phone_numbers_release_phone_number_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -410,7 +574,7 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -436,7 +600,7 @@ def build_phone_numbers_operator_information_search_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -453,7 +617,7 @@ def build_phone_numbers_operator_information_search_request(  # pylint: disable=
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class PhoneNumbersOperations:
+class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -733,8 +897,8 @@ class PhoneNumbersOperations:
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
-        :keyword administrative_division: An optional parameter for the name of the state or province
-         in which to search for the area code. Default value is None.
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. Default value is None.
         :paramtype administrative_division: str
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
@@ -1080,9 +1244,6 @@ class PhoneNumbersOperations:
         :param body: The phone number search request. Is either a PhoneNumberSearchRequest type or a
          IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -1151,6 +1312,141 @@ class PhoneNumbersOperations:
         return LROPoller[_models.PhoneNumberSearchResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+    @overload
+    def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: _models.PhoneNumbersBrowseRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Required.
+        :type phone_numbers_browse_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersBrowseRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Required.
+        :type phone_numbers_browse_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def browse_available_numbers(
+        self,
+        country_code: str,
+        phone_numbers_browse_request: Union[_models.PhoneNumbersBrowseRequest, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.PhoneNumbersBrowseResult:
+        """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        Searches for available phone numbers to purchase. Note that this does not reserves the numbers
+        in the response.
+
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :param phone_numbers_browse_request: Is either a PhoneNumbersBrowseRequest type or a IO[bytes]
+         type. Required.
+        :type phone_numbers_browse_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersBrowseRequest or IO[bytes]
+        :return: PhoneNumbersBrowseResult
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumbersBrowseResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(phone_numbers_browse_request, (IOBase, bytes)):
+            _content = phone_numbers_browse_request
+        else:
+            _json = self._serialize.body(phone_numbers_browse_request, "PhoneNumbersBrowseRequest")
+
+        _request = build_phone_numbers_browse_available_numbers_request(
+            country_code=country_code,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("PhoneNumbersBrowseResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_search_result(self, search_id: str, **kwargs: Any) -> _models.PhoneNumberSearchResult:
@@ -1316,9 +1612,6 @@ class PhoneNumbersOperations:
         :param body: The phone number purchase request. Is either a PhoneNumberPurchaseRequest type or
          a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberPurchaseRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1334,6 +1627,536 @@ class PhoneNumbersOperations:
         if cont_token is None:
             raw_result = self._purchase_phone_numbers_initial(  # type: ignore
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def get_reservations(
+        self, *, skip: int = 0, top: int = 100, **kwargs: Any
+    ) -> Iterable["_models.PhoneNumbersReservation"]:
+        """Get all reservations.
+
+        Get all reservations.
+
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword top: An optional parameter for how many entries to return, for pagination purposes.
+         The default value is 100. Default value is 100.
+        :paramtype top: int
+        :return: An iterator like instance of PhoneNumbersReservation
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumbersReservation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.PhoneNumbersReservations] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_phone_numbers_get_reservations_request(
+                    skip=skip,
+                    top=top,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.PhoneNumbersReservations, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.reservations
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create_or_update_reservation(
+        self,
+        reservation_id: str,
+        reservation: _models.PhoneNumbersReservation,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any,
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Required.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_reservation(
+        self,
+        reservation_id: str,
+        reservation: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any,
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Required.
+        :type reservation: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update_reservation(
+        self, reservation_id: str, reservation: Union[_models.PhoneNumbersReservation, IO[bytes]], **kwargs: Any
+    ) -> _models.PhoneNumbersReservation:
+        """Creates or updates a reservation by its ID.
+
+        Creates or updates a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Is either a PhoneNumbersReservation type or a IO[bytes] type. Required.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         IO[bytes]
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(reservation, (IOBase, bytes)):
+            _content = reservation
+        else:
+            _json = self._serialize.body(reservation, "PhoneNumbersReservation")
+
+        _request = build_phone_numbers_create_or_update_reservation_request(
+            reservation_id=reservation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_reservation(self, reservation_id: str, **kwargs: Any) -> _models.PhoneNumbersReservation:
+        """Gets a reservation by its ID.
+
+        Gets a reservation by its ID.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
+
+        _request = build_phone_numbers_get_reservation_request(
+            reservation_id=reservation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_reservation(  # pylint: disable=inconsistent-return-statements
+        self, reservation_id: str, **kwargs: Any
+    ) -> None:
+        """Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
+
+        Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_phone_numbers_delete_reservation_request(
+            reservation_id=reservation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    def _start_reservation_purchase_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
+        **kwargs: Any,
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(reservation_purchase_request, (IOBase, bytes)):
+            _content = reservation_purchase_request
+        else:
+            if reservation_purchase_request is not None:
+                _json = self._serialize.body(reservation_purchase_request, "PhoneNumbersReservationPurchaseRequest")
+            else:
+                _json = None
+
+        _request = build_phone_numbers_start_reservation_purchase_request(
+            reservation_id=reservation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["operation-id"] = self._deserialize("str", response.headers.get("operation-id"))
+        response_headers["reservation-purchase-id"] = self._deserialize(
+            "str", response.headers.get("reservation-purchase-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[_models.PhoneNumbersReservationPurchaseRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Default value is None.
+        :type reservation_purchase_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersReservationPurchaseRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Default value is None.
+        :type reservation_purchase_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_start_reservation_purchase(
+        self,
+        reservation_id: str,
+        reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        Starts the purchase of all phone numbers in the reservation. This is a long running operation.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation_purchase_request: Is either a PhoneNumbersReservationPurchaseRequest type or
+         a IO[bytes] type. Default value is None.
+        :type reservation_purchase_request:
+         ~azure.communication.phonenumbers.models.PhoneNumbersReservationPurchaseRequest or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._start_reservation_purchase_initial(  # type: ignore
+                reservation_id=reservation_id,
+                reservation_purchase_request=reservation_purchase_request,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
@@ -1562,8 +2385,8 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Default value is None.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest
@@ -1589,8 +2412,8 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Default value is None.
         :type body: IO[bytes]
@@ -1614,16 +2437,13 @@ class PhoneNumbersOperations:
 
         Updates the capabilities of a phone number.
 
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Is either a
          PhoneNumberCapabilitiesRequest type or a IO[bytes] type. Default value is None.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1806,7 +2626,8 @@ class PhoneNumbersOperations:
 
         Releases a purchased phone number.
 
-        :param phone_number: Phone number to be released, e.g. +11234567890. Required.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890. Required.
         :type phone_number: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1956,12 +2777,11 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Required.
+        :param body: The phone number(s) whose operator information should be searched. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1975,12 +2795,11 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Required.
+        :param body: The phone number(s) whose operator information should be searched. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1994,16 +2813,13 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for number format and operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
-        Searches for number format and operator information for a given list of phone numbers.
+        Searches for operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose number format and operator information should be
-         searched. Is either a OperatorInformationRequest type or a IO[bytes] type. Required.
+        :param body: The phone number(s) whose operator information should be searched. Is either a
+         OperatorInformationRequest type or a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: OperatorInformationResult
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         :raises ~azure.core.exceptions.HttpResponseError:
