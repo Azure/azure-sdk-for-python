@@ -253,7 +253,7 @@ function Get-python-UpdatedDocsMsToc($toc) {
   # (e.g. "Functions"), sorting the resulting list, then re-adding the ultimate
   # item to the end. This ensures that the "Other" service is at the bottom as
   # intended.
-  $sortableServices = $services[0..($services.Length - 2)] + $functionService + $networkService
+  $sortableServices = $services[0..($services.Length - 2)] + $functionService
   $toc[0].items = ($sortableServices | Sort-Object -Property name) + $services[-1]
 
   # PowerShell outputs a single object if the output is an array with only one
