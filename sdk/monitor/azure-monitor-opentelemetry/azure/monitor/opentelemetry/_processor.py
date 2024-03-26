@@ -15,7 +15,7 @@ class _AzureMonitorLogRecordProcessor(BatchLogRecordProcessor):
     def emit(self, log_data: LogData) -> None:
         # Trace based sampling for logs
         if not self._disable_trace_based_sampling:
-            if log_data.log_record.span_id and log_data.log_record.trace_flags and \
+            if log_data.log_record.span_id and log_data.log_record.trace_flags is not None and \
                 not log_data.log_record.trace_flags.sampled:
                 # Do not export log for spans that were sampled out
                 return
