@@ -87,7 +87,6 @@ def validate_safety_metric_input(
         and valid_chat and validate_chat_result['rag_metrics']
     groundedness_prompt = groundedness_selected \
         and (not service_available["groundedness_service"]) \
-        and tracking_uri_set\
         and valid_chat and validate_chat_result['rag_metrics']
     return {"content_harm_service": content_harm_service,
             "groundedness_service": groundedness_service,
