@@ -334,8 +334,10 @@
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
-# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
+# AzureSdkOwners: @xiangyan99
+# ServiceOwners:  @mattgotteiner
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -829,9 +831,6 @@
 
 # ServiceLabel: %Scheduler %Service Attention
 #/<NotInRepo>/          @derek1ee
-
-# ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
 
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
