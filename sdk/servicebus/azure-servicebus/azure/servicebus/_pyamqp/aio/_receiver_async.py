@@ -67,7 +67,7 @@ class ReceiverLink(Link):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError("Pending")
 
-    async def _process_incoming_message(self, frame, message, **kwargs):
+    async def _process_incoming_message(self, frame, message):
         try:
             return await self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
@@ -83,7 +83,7 @@ class ReceiverLink(Link):
         self.current_link_credit = self.link_credit
         await self._outgoing_flow()
 
-    async def _incoming_transfer(self, frame, **kwargs):
+    async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.received_delivery_id = frame[1] # delivery_id
@@ -103,7 +103,7 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            await self._process_incoming_message(self._first_frame, message, **kwargs)
+            await self._process_incoming_message(self._first_frame, message)
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
