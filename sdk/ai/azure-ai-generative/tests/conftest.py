@@ -1,3 +1,4 @@
+from __openai_patcher import TestProxyConfig, TestProxyHttpxClient # isort: split
 import asyncio
 import base64
 import os
@@ -6,7 +7,6 @@ from typing import Dict
 import pytest
 from azure.ai.generative.synthetic.qa import QADataGenerator
 
-import pytest
 from packaging import version
 from devtools_testutils import (
     FakeTokenCredential,
@@ -17,6 +17,8 @@ from devtools_testutils import (
     is_live,
     set_custom_default_matcher,
 )
+from devtools_testutils.config import PROXY_URL
+from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_fixtures import EnvironmentVariableSanitizer
 
 from azure.ai.resources.client import AIClient
@@ -24,6 +26,18 @@ from azure.ai.ml import MLClient
 from azure.core.credentials import TokenCredential
 from azure.identity import AzureCliCredential, ClientSecretCredential
 
+
+@pytest.fixture()
+def recorded_test(recorded_test):
+    """Route requests from the openai package to the test proxy."""
+
+    config = TestProxyConfig(
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+    )
+
+
+    with TestProxyHttpxClient.record_with_proxy(config):
+        yield recorded_test
 
 @pytest.fixture()
 def ai_client(
@@ -123,6 +137,8 @@ def sanitized_environment_variables(
             "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
             "AI_RESOURCE_GROUP": "00000",
             "AI_WORKSPACE_NAME": "00000",
+            "AI_PROJECT_NAME": "00000",
+            "AI_TEAM_NAME": "00000",
             "AI_FEATURE_STORE_NAME": "00000",
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,

@@ -1,5 +1,10 @@
 # Release History
 
+## 4.0.1 (2024-03-19)
+
+### Other Changes
+  - Regenerate samples
+
 ## 4.0.0 (2023-04-20)
 
 ### Features Added

@@ -7,17 +7,18 @@ import time
 import logging
 import asyncio
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
+from msal import ConfidentialClientApplication
 from azure.keyvault.secrets import SecretClient
 from azure.identity import ManagedIdentityCredential, AzureCliCredential
-from msal import ConfidentialClientApplication
 
 http_logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
 
 AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
+
 
 class TokenScope(Enum):
     AZURE_ENDPOINT = "https://ml.azure.com"
@@ -29,7 +30,7 @@ def build_token_manager(
     endpoint_type: str,
     keyvault: Optional[str] = None,
     keyvault_secret_identifier: Optional[str] = None,
-    logger: logging.Logger = logging.getLogger("TokenManager")
+    logger: logging.Logger = logging.getLogger("TokenManager"),
 ):
     authorization_header = "Bearer"
 
@@ -42,7 +43,7 @@ def build_token_manager(
             auth_header=authorization_header,
             logger=logger,
         )
-    elif authorization_type == "managed_identity":
+    if authorization_type == "managed_identity":
         if endpoint_type == "azure_endpoint":
             token_scope = TokenScope.AZURE_ENDPOINT
         elif endpoint_type == "azure_openai_api":
@@ -54,19 +55,17 @@ def build_token_manager(
             auth_header=authorization_header,
             logger=logger,
         )
-    elif authorization_type == "compliant":
+    if authorization_type == "compliant":
         return CompliantTokenManager(
             keyvault=keyvault,
             auth_header=authorization_header,
             logger=logger,
         )
-    else:
-        raise ValueError(f"Unknown authorization_type: {authorization_type}")
+    raise ValueError(f"Unknown authorization_type: {authorization_type}")
 
 
 class APITokenManager(ABC):
-
-    def __init__(self, logger, auth_header="Bearer", **kwargs):
+    def __init__(self, logger, auth_header="Bearer"):
         self.logger = logger
         self.auth_header = auth_header
         self.lock = asyncio.Lock()
@@ -89,8 +88,8 @@ class APITokenManager(ABC):
     async def get_token(self):
         pass
 
-class ManagedIdentityAPITokenManager(APITokenManager):
 
+class ManagedIdentityAPITokenManager(APITokenManager):
     def __init__(self, token_scope, logger, **kwargs):
         super().__init__(logger, **kwargs)
         self.token_scope = token_scope
@@ -98,9 +97,9 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     async def get_token(self):
         async with self.lock:  # prevent multiple threads from refreshing the token at the same time
             if (
-                self.token is None or
-                self.last_refresh_time is None or
-                time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
+                self.token is None
+                or self.last_refresh_time is None
+                or time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
             ):
                 self.last_refresh_time = time.time()
                 self.token = self.credential.get_token(self.token_scope.value).token
@@ -109,16 +108,14 @@ class ManagedIdentityAPITokenManager(APITokenManager):
         return self.token
 
 
-
 class KeyVaultAPITokenManager(APITokenManager):
-
     def __init__(self, secret_identifier, logger, **kwargs):
         super().__init__(logger, **kwargs)
 
         # Parse secret identifier to get Key Vault URL and secret name
         parsed_uri = urlparse(secret_identifier)
         keyvault_url = "{uri.scheme}://{uri.netloc}/".format(uri=parsed_uri)
-        secret_name = parsed_uri.path.split('/')[2]
+        secret_name = parsed_uri.path.split("/")[2]
 
         # Get Open AI API key from Key Vault and set it
         secret_client = SecretClient(vault_url=keyvault_url, credential=self.credential)
@@ -137,10 +134,14 @@ class CompliantTokenManager(APITokenManager):
         client_id = keyvault.get_secret(name="approvalClientId")
         client_secret = keyvault.get_secret(name="approvalClientSecret")
         tenant_id = keyvault.get_secret(name="approvalTenantId")
-        resource = keyvault.get_secret(name="approvalResource")
+        self.resource = keyvault.get_secret(name="approvalResource")
 
-        self.app = ConfidentialClientApplication(client_id=client_id, authority="https://login.microsoftonline.com/" + tenant_id, client_credential=client_secret)
+        self.app = ConfidentialClientApplication(
+            client_id=client_id,
+            authority="https://login.microsoftonline.com/" + tenant_id,
+            client_credential=client_secret,
+        )
 
     async def get_token(self):
-        result = app.acquire_token_for_client(scopes=[resource + "/.default"])
+        result = self.app.acquire_token_for_client(scopes=[self.resource + "/.default"])
         return result["access_token"]

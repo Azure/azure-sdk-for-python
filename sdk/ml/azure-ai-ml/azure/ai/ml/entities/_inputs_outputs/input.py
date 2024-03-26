@@ -103,20 +103,6 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: Literal["uri_folder"] = "uri_folder",
-        path: Optional[str] = None,
-        mode: Optional[str] = None,
-        path_on_compute: Optional[str] = None,
-        optional: Optional[bool] = None,
-        description: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """"""
-
-    @overload
-    def __init__(
-        self,
-        *,
         type: Literal["number"] = "number",
         default: Optional[float] = None,
         min: Optional[float] = None,
@@ -133,10 +119,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[float]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[float]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -165,10 +151,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[int]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[int]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input

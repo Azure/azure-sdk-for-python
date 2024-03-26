@@ -921,7 +921,6 @@ class TestDSLPipeline:
         omit_fields = ["componentId", "properties"]
         assert pydash.omit(component_from_dsl._to_rest_object(), *omit_fields) == expected_component
         assert pydash.omit(component_from_sdk._to_rest_object(), *omit_fields) == expected_component
-        expected_component.update({"_source": "REMOTE.WORKSPACE.COMPONENT"})
         assert pydash.omit(component_from_rest._to_rest_object(), *omit_fields) == expected_component
         expected_component.update({"_source": "YAML.JOB"})
         assert pydash.omit(component_from_yaml._to_rest_object(), *omit_fields) == expected_component
@@ -1983,7 +1982,7 @@ class TestDSLPipeline:
 
         assert actual_dict["jobs"] == {
             "node1": {
-                "identity": {"type": "aml_token"},
+                "identity": {"identity_type": "AMLToken"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
@@ -1992,7 +1991,7 @@ class TestDSLPipeline:
                 "type": "command",
             },
             "node2": {
-                "identity": {"type": "user_identity"},
+                "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
@@ -2001,7 +2000,7 @@ class TestDSLPipeline:
                 "type": "command",
             },
             "node3": {
-                "identity": {"type": "managed_identity"},
+                "identity": {"identity_type": "Managed"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},

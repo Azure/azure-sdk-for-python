@@ -88,15 +88,18 @@ def _local_scoring_script_is_valid(deployment: OnlineDeployment):
 def _code_configuration_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.code_configuration.code is a string, then it is the cloud code artifact name or full arm ID
 
-    return isinstance(deployment.code_configuration.code, str) and (
-        is_url(deployment.code_configuration.code) or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+    return isinstance(deployment.code_configuration.code, str) and (  # type: ignore[union-attr]
+        is_url(deployment.code_configuration.code)  # type: ignore[union-attr]
+        or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
     )
 
 
 def _get_local_code_configuration_artifacts(
     deployment: OnlineDeployment,
 ) -> Path:
-    return Path(deployment._base_path, deployment.code_configuration.code).resolve()
+    return Path(
+        deployment._base_path, deployment.code_configuration.code  # type: ignore[union-attr, arg-type]
+    ).resolve()
 
 
 def _get_cloud_code_configuration_artifacts(code: str, code_operations: CodeOperations, download_path: str) -> str:
