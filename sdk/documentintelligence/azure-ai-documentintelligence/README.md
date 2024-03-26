@@ -26,6 +26,7 @@ This table shows the relationship between SDK versions and supported API service
 |SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
+|1.0.0b2 | 2024-02-29-preview
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -435,31 +436,40 @@ if result.documents:
                     f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
                 )
 
-# iterate over tables, lines, and selection marks on each page
-for page in result.pages:
-    print(f"\nLines found on page {page.page_number}")
-    if page.lines:
-        for line in page.lines:
-            print(f"...Line '{line.content}'")
-    if page.words:
-        for word in page.words:
-            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
-    if page.selection_marks:
-        print(f"\nSelection marks found on page {page.page_number}")
-        for selection_mark in page.selection_marks:
-            print(
-                f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
-            )
+    # Extract table cell values
+    SYMBOL_OF_TABLE_TYPE = "array"
+    KEY_OF_VALUE_OBJECT = "valueObject"
+    KEY_OF_CELL_CONTENT = "content"
 
-if result.tables:
-    for i, table in enumerate(result.tables):
-        print(f"\nTable {i + 1} can be found on page:")
-        if table.bounding_regions:
-            for region in table.bounding_regions:
-                print(f"...{region.page_number}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-print("-----------------------------------")
+    for doc in result.documents:
+        if not doc.fields is None:
+            for field_name, field_value in doc.fields.items():
+                # "MaintenanceLog" is the table field name which you labeled. Table cell information store as array in document field.
+                if (
+                    field_name == "MaintenanceLog"
+                    and field_value.type == SYMBOL_OF_TABLE_TYPE
+                    and field_value.value_array
+                ):
+                    col_names = []
+                    sample_obj = field_value.value_array[0]
+                    if KEY_OF_VALUE_OBJECT in sample_obj:
+                        col_names = list(sample_obj[KEY_OF_VALUE_OBJECT].keys())
+                    print("----Extracting Table Cell Values----")
+                    table_rows = []
+                    for obj in field_value.value_array:
+                        if KEY_OF_VALUE_OBJECT in obj:
+                            value_obj = obj[KEY_OF_VALUE_OBJECT]
+                            extract_value_by_col_name = lambda key: (
+                                value_obj[key].get(KEY_OF_CELL_CONTENT)
+                                if key in value_obj
+                                and KEY_OF_CELL_CONTENT in value_obj[key]
+                                else "None"
+                            )
+                            row_data = list(map(extract_value_by_col_name, col_names))
+                            table_rows.append(row_data)
+                    print_table(col_names, table_rows)
+
+print("------------------------------------")
 ```
 
 <!-- END SNIPPET -->
@@ -575,6 +585,10 @@ print(f"\nModel ID: {my_model.model_id}")
 print(f"Description: {my_model.description}")
 print(f"Model created on: {my_model.created_date_time}")
 print(f"Model expires on: {my_model.expiration_date_time}")
+if my_model.warnings:
+    print("Warnings encountered while building the model:")
+    for warning in my_model.warnings:
+        print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
 ```
 
 <!-- END SNIPPET -->

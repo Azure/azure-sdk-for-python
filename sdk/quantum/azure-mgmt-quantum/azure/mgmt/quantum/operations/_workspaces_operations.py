@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,7 +45,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,12 +54,16 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+        "workspaceName": _SERIALIZER.url(
+            "workspace_name", workspace_name, "str", pattern=r"^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$"
+        ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -76,7 +80,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -86,12 +90,16 @@ def build_create_or_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+        "workspaceName": _SERIALIZER.url(
+            "workspace_name", workspace_name, "str", pattern=r"^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$"
+        ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -110,7 +118,7 @@ def build_update_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -120,12 +128,16 @@ def build_update_tags_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+        "workspaceName": _SERIALIZER.url(
+            "workspace_name", workspace_name, "str", pattern=r"^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$"
+        ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -144,7 +156,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,12 +165,16 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+        "workspaceName": _SERIALIZER.url(
+            "workspace_name", workspace_name, "str", pattern=r"^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$"
+        ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -173,7 +189,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -182,7 +198,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -197,7 +213,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-01-10-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-13-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -206,11 +222,13 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -227,7 +245,7 @@ class WorkspacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.quantum.AzureQuantumManagementClient`'s
+        :class:`~azure.mgmt.quantum.AzureQuantumMgmtClient`'s
         :attr:`workspaces` attribute.
     """
 
@@ -244,7 +262,8 @@ class WorkspacesOperations:
     def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> _models.QuantumWorkspace:
         """Returns the Workspace resource associated with the given name.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -386,7 +405,8 @@ class WorkspacesOperations:
     ) -> LROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -421,7 +441,8 @@ class WorkspacesOperations:
     ) -> LROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -454,7 +475,8 @@ class WorkspacesOperations:
     ) -> LROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -539,7 +561,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -566,7 +589,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -591,7 +615,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -719,7 +744,8 @@ class WorkspacesOperations:
     def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a Workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -760,7 +786,9 @@ class WorkspacesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -863,7 +891,8 @@ class WorkspacesOperations:
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.QuantumWorkspace"]:
         """Gets the list of Workspaces within a resource group.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either QuantumWorkspace or the result of cls(response)

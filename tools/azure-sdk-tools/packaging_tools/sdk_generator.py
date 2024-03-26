@@ -268,7 +268,6 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        is_typespec = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
             update_metadata_for_multiapi_package(spec_folder, input_readme)
@@ -286,7 +285,6 @@ def main(generate_input, generate_output):
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
             config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
-            is_typespec = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -309,7 +307,7 @@ def main(generate_input, generate_output):
                 result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
-            init_new_service(package_name, folder_name, is_typespec)
+            init_new_service(package_name, folder_name)
             format_samples(sdk_code_path)
 
             # Update metadata

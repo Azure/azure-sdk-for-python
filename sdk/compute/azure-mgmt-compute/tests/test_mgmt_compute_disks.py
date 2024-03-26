@@ -62,7 +62,6 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
             self.mgmt_client._PROFILE_TAG + " test"
         )
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_disks_multi(self, resource_group):
@@ -257,7 +256,6 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.disk_encryption_sets.begin_delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
         result = result.result()
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_shot(self, resource_group):
@@ -370,7 +368,6 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.snapshots.begin_delete(resource_group.name, SNAPSHOT_NAME)
         result = result.result()
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_disks(self, resource_group):

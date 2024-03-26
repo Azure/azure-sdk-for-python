@@ -13,7 +13,7 @@ USAGE:
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
     For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-    In this example, storage account resource URIs are queried for metrics.
+    In this example, storage account resources are queried for metrics.
 """
 import asyncio
 
@@ -33,14 +33,14 @@ async def query_metrics_batch():
     credential = DefaultAzureCredential()
     client = MetricsClient(endpoint, credential)
 
-    resource_uris = [
+    resource_ids = [
         '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-1>',
         '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-2>'
     ]
     async with client:
         try:
             response = await client.query_resources(
-                resource_uris=resource_uris,
+                resource_ids=resource_ids,
                 metric_namespace="Microsoft.Storage/storageAccounts",
                 metric_names=["Ingress"],
                 timespan=timedelta(hours=2),

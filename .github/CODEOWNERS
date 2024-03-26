@@ -33,7 +33,7 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
@@ -62,7 +62,7 @@
 
 # ServiceLabel: %Storage
 # PRLabel: %Storage
-/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %App Configuration
@@ -106,6 +106,9 @@
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                           @DimaKolomiiets @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
+# PRLabel: %Communication - Messages
+/sdk/communication/azure-communication-messages/                      @shamkh
+
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
@@ -122,6 +125,10 @@
 # ServiceLabel: %Content Safety
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
+
+# ServiceLabel: %Cognitive - Health Insights
+# PRLabel: %Cognitive - Health Insights
+/sdk/healthinsights/                                                 @tomsft
 
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
@@ -237,9 +244,9 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230
+/sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/automl/                      @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
@@ -461,7 +468,7 @@
 #/<NotInRepo>/          @antcp @AzureAppServiceCLI
 
 # ServiceLabel: %App Configuration %Service Attention
-#/<NotInRepo>/          @shenmuxiaosen @avanigupta
+#/<NotInRepo>/          @albertofori @avanigupta @mrm9084
 
 # ServiceLabel: %ARO %Service Attention
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
@@ -680,7 +687,7 @@
 #/<NotInRepo>/          @NarayanThiru
 
 # ServiceLabel: %Azure Data Explorer %Service Attention
-#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft @sagivf @Aviv-Yaniv
+#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft @sagivf
 
 # ServiceLabel: %Lab Services %Service Attention
 #/<NotInRepo>/          @Tanmayeekamath
@@ -947,7 +954,7 @@
 #/<NotInRepo>/          @shivanissambare
 
 # ServiceLabel: %ML-Jobs
-#/<NotInRepo>/          @DouglasXiaoMS @TonyJ1 @wangchao1230
+#/<NotInRepo>/          @TonyJ1 @wangchao1230
 
 # ServiceLabel: %ML-Local Endpoints
 #/<NotInRepo>/          @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
@@ -1008,6 +1015,8 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp

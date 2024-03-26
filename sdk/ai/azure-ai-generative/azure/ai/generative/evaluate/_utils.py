@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: skip-file
+
 import os.path
 import json
 import pathlib
@@ -10,11 +12,9 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, List
 
+import tempfile
 import mlflow
 import pandas as pd
-import tempfile
-
-from pydash import flow
 
 _SUB_ID = "sub-id"
 _RES_GRP = "res-grp"
@@ -23,14 +23,13 @@ _EXP_NAME = "experiment"
 _RUN_ID = "runid"
 
 def load_jsonl(path):
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return [json.loads(line) for line in f.readlines()]
 
 def load_jsonl_to_df(path):
     if os.path.exists(path) and os.path.isfile(path):
         return pd.read_json(path, lines=True)
-    else:
-        raise Exception("File not found: {}".format(path))
+    raise Exception("File not found: {}".format(path))
 
 def df_to_dict_list(df, extra_kwargs: Optional[Dict] = None):
     if extra_kwargs is not None:
@@ -47,7 +46,7 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_path = os.path.join(tmpdir, "test_data.jsonl")
-        with open(tmp_path, "w") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             for line in data:
                 f.write(json.dumps(line) + "\n")
 
@@ -86,26 +85,23 @@ def _has_column(data, column_name):
     if data is None:
         return False
     for d in data:
-        return False if d.get(column_name) is None else True
+        return d.get(column_name) is not None
 
 
 def _is_flow(asset):
-    if _is_flow_local(asset):
-        return True
-    else:
-        return False
+    return _is_flow_local(asset)
 
 
 def _is_flow_local(path):
     try:
         if os.path.isdir(path):
             return os.path.isfile(os.path.join(path, "flow.dag.yaml"))
-    except Exception as ex:
+        return False
+    except Exception:  # pylint: disable=broad-except
         return False
 
 
 def _get_artifact_dir_path(path):
-    import mlflow
     from mlflow.tracking.artifact_utils import get_artifact_repository
 
     _WORKSPACE_INFO_REGEX = r".*/subscriptions/(.+)/resourceGroups/(.+)" \
@@ -126,7 +122,7 @@ def _get_artifact_dir_path(path):
 
     artifact_repo = get_artifact_repository(artifact_uri=artifact_uri)
 
-    content_info = artifact_repo.artifacts._client.run_artifacts.get_by_id(
+    content_info = artifact_repo.artifacts._client.run_artifacts.get_by_id(  # pylint: disable=protected-access
         subscription_id=run_info_dict[_SUB_ID], resource_group_name=run_info_dict[_RES_GRP],
         workspace_name=run_info_dict[_WS_NAME], run_id=run_info_dict[_RUN_ID], experiment_name=run_info_dict[_EXP_NAME],
         path=path)
@@ -138,7 +134,6 @@ def _get_artifact_dir_path(path):
 
 
 def _write_properties_to_run_history(properties: dict, logger) -> None:
-    import mlflow
     from mlflow.tracking import MlflowClient
     from mlflow.utils.rest_utils import http_request
 
@@ -173,7 +168,7 @@ def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
 
     pattern = re.compile(_PROJECT_INFO_REGEX)
 
-    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)
+    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)  # pylint: disable=unsubscriptable-object
 
     ret = {}
     ret[_SUB_ID] = mo.group(1) if mo else mo
@@ -189,9 +184,14 @@ def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
     return studio_url
 
 
-def _copy_artifact(source, destination):
+def _copy_artifact(source: str, destination: str):
     """
     Copies files from source to destination.If destination does not exists creates it.
+
+    :keyword source: The source path of copied files.
+    :paramtype source: str
+    :keyword destination: The destination path of copied files.
+    :paramtype destination: str
     """
 
     pathlib.Path(destination).mkdir(exist_ok=True, parents=True)

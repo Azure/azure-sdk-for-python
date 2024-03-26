@@ -17,6 +17,7 @@ from azure.ai.ml._schema.job.data_transfer_job import (
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._component import DataTransferBuiltinComponentUri, DataTransferTaskType, ExternalDataType
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -152,16 +153,16 @@ class DataTransferCopyJob(DataTransferJob):
     def __init__(
         self,
         *,
-        inputs: Optional[Dict] = None,
-        outputs: Optional[Dict] = None,
+        inputs: Optional[Dict[str, Union[Input, str]]] = None,
+        outputs: Optional[Dict[str, Union[Output]]] = None,
         data_copy_mode: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(**kwargs)
 
-        self.outputs = outputs
-        self.inputs = inputs
+        self.outputs = outputs  # type: ignore[assignment]
+        self.inputs = inputs  # type: ignore[assignment]
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
@@ -217,8 +218,8 @@ class DataTransferCopyJob(DataTransferJob):
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
-            inputs=self.inputs,
-            outputs=self.outputs,
+            inputs=self.inputs,  # type: ignore[arg-type]
+            outputs=self.outputs,  # type: ignore[arg-type]
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
@@ -229,14 +230,14 @@ class DataTransferImportJob(DataTransferJob):
     def __init__(
         self,
         *,
-        outputs: Optional[Dict] = None,
+        outputs: Optional[Dict[str, Union[Output]]] = None,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(**kwargs)
 
-        self.outputs = outputs
+        self.outputs = outputs  # type: ignore[assignment]
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
@@ -285,7 +286,7 @@ class DataTransferImportJob(DataTransferJob):
             component=component,
             compute=self.compute,
             source=self.source,
-            outputs=self.outputs,
+            outputs=self.outputs,  # type: ignore[arg-type]
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
@@ -297,14 +298,14 @@ class DataTransferExportJob(DataTransferJob):
     def __init__(
         self,
         *,
-        inputs: Optional[Dict] = None,
+        inputs: Optional[Dict[str, Union[Input]]] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(**kwargs)
 
-        self.inputs = inputs
+        self.inputs = inputs  # type: ignore[assignment]
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
@@ -357,7 +358,7 @@ class DataTransferExportJob(DataTransferJob):
             component=component,
             compute=self.compute,
             sink=self.sink,
-            inputs=self.inputs,
+            inputs=self.inputs,  # type: ignore[arg-type]
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,

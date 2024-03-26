@@ -1,5 +1,44 @@
 # Release History
 
+## 3.1.0b1 (2024-03-18)
+
+### Features Added
+
+  - Added operation ContainerAppsAPIClientOperationsMixin.get_custom_domain_verification_id
+  - Added operation JobsOperations.get_detector
+  - Added operation JobsOperations.list_detectors
+  - Added operation JobsOperations.proxy_get
+  - Added operation group AppResiliencyOperations
+  - Added operation group BuildAuthTokenOperations
+  - Added operation group BuildersOperations
+  - Added operation group BuildsByBuilderResourceOperations
+  - Added operation group BuildsOperations
+  - Added operation group DaprComponentResiliencyPoliciesOperations
+  - Added operation group DaprSubscriptionsOperations
+  - Added operation group DotNetComponentsOperations
+  - Added operation group JavaComponentsOperations
+  - Added operation group ManagedEnvironmentUsagesOperations
+  - Added operation group UsagesOperations
+  - Model AuthConfig has a new parameter encryption_settings
+  - Model AvailableWorkloadProfileProperties has a new parameter gpus
+  - Model CertificateProperties has a new parameter certificate_key_vault_properties
+  - Model CertificateProperties has a new parameter certificate_type
+  - Model CustomDomainConfiguration has a new parameter certificate_key_vault_properties
+  - Model DaprComponent has a new parameter service_component_bind
+  - Model GithubActionConfiguration has a new parameter build_environment_variables
+  - Model Ingress has a new parameter additional_port_mappings
+  - Model Ingress has a new parameter target_port_http_scheme
+  - Model Job has a new parameter extended_location
+  - Model JobPatchProperties has a new parameter extended_location
+  - Model LogAnalyticsConfiguration has a new parameter dynamic_json_columns
+  - Model Login has a new parameter token_store
+  - Model ManagedEnvironment has a new parameter app_insights_configuration
+  - Model ManagedEnvironment has a new parameter identity
+  - Model ManagedEnvironment has a new parameter open_telemetry_configuration
+  - Model ManagedEnvironmentStorageProperties has a new parameter nfs_azure_file
+  - Model ServiceBind has a new parameter client_type
+  - Model ServiceBind has a new parameter customized_keys
+
 ## 3.0.0 (2023-08-18)
 
 ### Features Added

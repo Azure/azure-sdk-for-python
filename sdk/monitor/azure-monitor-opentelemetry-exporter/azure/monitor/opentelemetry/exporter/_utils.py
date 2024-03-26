@@ -116,7 +116,7 @@ azure_monitor_context = {
 }
 
 
-def ns_to_duration(nanoseconds: int):
+def ns_to_duration(nanoseconds: int) -> str:
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
     value, microseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)

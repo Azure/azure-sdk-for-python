@@ -96,6 +96,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
             response = await self.next.send(request)
         except Exception:  # pylint:disable=broad-except
