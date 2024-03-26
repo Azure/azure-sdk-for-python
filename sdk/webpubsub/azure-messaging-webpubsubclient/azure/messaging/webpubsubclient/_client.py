@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator,too-many-lines
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal
+import sys
 import time
 import logging
 import threading
@@ -77,6 +78,7 @@ class WebPubSubClientCredential:
         return self._client_access_url_provider()
 
 
+_RETRY_RECONNECT_TOTAL = sys.maxsize
 _RETRY_TOTAL = 3
 _RETRY_BACKOFF_FACTOR = 0.8
 _RETRY_BACKOFF_MAX = 120.0
@@ -132,7 +134,7 @@ class _WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,to
         reconnect_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
         reconnect_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
         reconnect_retry_mode: RetryMode = RetryMode.Exponential,
-        reconnect_retry_total: int = _RETRY_TOTAL,
+        reconnect_retry_total: int = _RETRY_RECONNECT_TOTAL,
         auto_rejoin_groups: bool = True,
         logging_enable: bool = False,
         ack_timeout: float = _ACK_TIMEOUT,

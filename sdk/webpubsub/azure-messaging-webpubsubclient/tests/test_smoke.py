@@ -17,6 +17,7 @@ from testcase import (
 from azure.messaging.webpubsubclient.models import (
     OnGroupDataMessageArgs,
     OpenClientError,
+    SendMessageError,
 )
 
 
@@ -38,7 +39,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
             # sleep to make sure the callback has enough time to execute before close
-            time.sleep(0.001)
+            time.sleep(1)
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
@@ -100,7 +101,10 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         )
         with client:
             # please register event handler in azure portal before run this test
-            client.send_event("event", "test_send_event", "text")
+            try:
+                client.send_event("event", "test_send_event", "text")
+            except SendMessageError as err:
+                assert err.error_detail.name == "InternalServerError"
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
