@@ -11,7 +11,7 @@ from typing import Optional, Union
 
 from ._decode import decode_payload
 from .link import Link
-from .constants import LinkState, Role
+from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
 
@@ -125,13 +125,46 @@ class ReceiverLink(Link):
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
+        *,
+        message = None,
+        on_disposition = None,
     ):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
+
+        # Create Pending Disposition once sent for a message
+        delivery = PendingDisposition(
+            message = message,
+            on_delivery_settled = on_disposition,
+        )
+        delivery.frame = disposition_frame
+        delivery.settled = settled
+        delivery.transfer_state = state
+
+
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        delivery.start = time.time()
+        delivery.sent = True
+
+        self._pending_receipts.append(delivery)
+
+    def _incoming_disposition(self, frame):
+    
+        # If delivery_id is not settled, return
+        if not frame[3]:  # settled
+            return
+        range_end = (frame[2] or frame[1]) + 1  # first or last
+        settled_ids = list(range(frame[1], range_end))
+        unsettled = []
+        for delivery in self._pending_receipts:
+            if delivery.sent and delivery.frame[1] in settled_ids:
+                delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
+                continue
+            unsettled.append(delivery)
+        self._pending_receipts = unsettled
 
     def attach(self):
         super().attach()
@@ -145,10 +178,12 @@ class ReceiverLink(Link):
         last_delivery_id: Optional[int] = None,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        message_delivery = None,
+        on_disposition = None,
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
+        self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
         if not settled:
             self._wait_for_response(wait)

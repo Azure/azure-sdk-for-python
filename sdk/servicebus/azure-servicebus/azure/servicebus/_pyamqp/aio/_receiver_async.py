@@ -12,7 +12,7 @@ from typing import Optional, Union
 
 from .._decode import decode_payload
 from ._link_async import Link
-from ..constants import LinkState, Role
+from ..constants import LinkState, Role, LinkDeliverySettleReason
 from ..performatives import (
     TransferFrame,
     DispositionFrame,
@@ -58,7 +58,6 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
-        self.incoming_disposition = False
         self._pending_receipts = []
 
     @classmethod
@@ -107,7 +106,6 @@ class ReceiverLink(Link):
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
-            # while not self.incoming_disposition:
             await self._session._connection.listen(wait=False) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 if self._error:
@@ -129,7 +127,6 @@ class ReceiverLink(Link):
         message = None,
         on_disposition = None,
     ):
-        self.incoming_disposition = False
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
@@ -152,8 +149,6 @@ class ReceiverLink(Link):
         self._pending_receipts.append(delivery)
 
     async def _incoming_disposition(self, frame):
-        from ..constants import LinkDeliverySettleReason
-
         # If delivery_id is not settled, return
         if not frame[3]:  # settled
             return
