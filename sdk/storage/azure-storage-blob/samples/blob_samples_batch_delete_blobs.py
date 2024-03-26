@@ -21,9 +21,9 @@ def batch_delete_blobs_sample(local_path):
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     if connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: batch_delete_blobs_sample")
-            sys.exit(1)
+        print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+              "Test: batch_delete_blobs_sample")
+        sys.exit(1)
 
     blob_service_client = BlobServiceClient.from_connection_string(conn_str=connection_string)
     # Create a ContainerClient to use the batch_delete function on a Blob Container
