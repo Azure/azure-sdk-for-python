@@ -254,7 +254,10 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     ) -> BatchDeploymentData:
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
 
-        if hasattr(deployment.properties, "deployment_configuration"):
+        if (
+            hasattr(deployment.properties, "deployment_configuration")
+            and deployment.properties.deployment_configuration is not None
+        ):
             settings = deployment.properties.deployment_configuration.settings
             deployment_comp_settings = {
                 "deployment_configuration_type": deployment.properties.deployment_configuration.deployment_configuration_type,  # pylint: disable=line-too-long
