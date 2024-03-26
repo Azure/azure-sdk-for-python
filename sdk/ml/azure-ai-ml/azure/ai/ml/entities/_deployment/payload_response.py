@@ -12,7 +12,16 @@ class PayloadResponse:
     """Response deployment entity
 
     :param enabled: Is response logging enabled.
-    :type enabled: str
+    :type enabled: typing.Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START payload_response_entity_create]
+            :end-before: [END payload_response_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PayloadResponse entity.
 
     """
 

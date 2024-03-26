@@ -34,54 +34,63 @@ module_logger = logging.getLogger(__name__)
 class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
-    :param name: the name of the batch deployment
+    :param name: The name of the batch deployment
     :type name: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model]
-    :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration
-    :param environment: Environment entity for the endpoint deployment., defaults to None
-    :type environment: Union[str, Environment]
-    :param compute: Compute target for batch inference operation.
-    :type compute: str
+    :param description: Description of the resource. If not set, description defaults to None.
+    :type description: typing.Optional[str]
+    :param tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None.
+    :type tags: typing.Optional[Dict[str, str]]
+    :param properties: The asset property dictionary. If not set, properties defaults to None.
+    :type properties: typing.Optional[Dict[str, str]]
+    :param model: Model entity for the endpoint deployment. If not set, model defaults to None.
+    :type model: typing.Optional[Union[str, Model]]
+    :param code_configuration: Code configuration for the endpoint deployment. If not set, code_configuration defaults to None
+    :type code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+    :param environment: Environment entity for the endpoint deployment. If not set, environment defaults to None.
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :param compute: Compute target for batch inference operation. If not set, compute defaults to None.
+    :type compute: typing.Optional[str]
     :param output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
-    :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
-    :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
-    :type output_file_name: str
-    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
-    :type max_concurrency_per_instance: int
+    :type output_action: typing.Optional[~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction]
+    :param output_file_name: Customized output file name for append_row output action. If not set, output_file_name defaults to "predictions.csv".
+    :type output_file_name: typing.Optional[str]
+    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance. If not set, max_concurrency_per_instance defaults to 1.
+    :type max_concurrency_per_instance: typing.Optional[int]
     :param error_threshold: Error threshold, if the error count for the entire input goes above
         this value,
         the batch inference will be aborted. Range is [-1, int.MaxValue]
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int
-    :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings
+    :type error_threshold: typing.Optional[int]
+    :param retry_settings: Retry settings for a batch inference operation. If not set, retry_settings defaults to None.
+    :type retry_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.BatchRetrySettings]
     :param resources: Indicates compute configuration for the job.
-    :type resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
-    :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str
-    :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int
+    :type resources: typing.Optional[~azure.mgmt.machinelearningservices.models.ResourceConfiguration]
+    :param logging_level: Logging level for batch inference operation. If not set, logging_level defaults to "info".
+    :type logging_level: typing.Optional[str]
+    :param mini_batch_size: Size of the mini-batch passed to each batch invocation. If not set, mini_batch_size defaults to 10.
+    :type mini_batch_size: typing.Optional[int]
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict
+    :type environment_variables: typing.Optional[Dict[str,str]]
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike]
+    :type code_path: typing.Optional[Union[str, PathLike]]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike]
+    :type scoring_script: typing.Optional[Union[str, PathLike]]
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int
+    :type instance_count: typing.Optional[int]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START model_batch_deployment_config]
+            :end-before: [END model_batch_deployment_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a batch deployment.
     """
 
     def __init__(
@@ -153,7 +162,12 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             self.resources = ResourceConfiguration(instance_count=instance_count)
 
     @property
-    def instance_count(self) -> Optional[int]:
+    def instance_count(self) -> int:
+        """The number of instances in use for the job, readonly.
+
+        :return: The number of instances in use for the job.
+        :rtype: int
+        """
         return self.resources.instance_count if self.resources else None
 
     @instance_count.setter
@@ -171,6 +185,18 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         :rtype: Optional[str]
         """
         return self._provisioning_state
+
+    @instance_count.setter
+    def instance_count(self, value: int) -> None:
+        """Set the number of instances in use for the job.
+
+        :param value: The number of instances in use for the job.
+        :type value: int
+        """
+        if not self.resources:
+            self.resources = ResourceConfiguration()
+
+        self.resources.instance_count = value
 
     def _to_dict(self) -> Dict:
         res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member

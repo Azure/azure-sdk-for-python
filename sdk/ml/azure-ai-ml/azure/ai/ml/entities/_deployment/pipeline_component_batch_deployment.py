@@ -37,7 +37,7 @@ class PipelineComponentBatchDeployment(Resource):
     :param description: Description of the deployment resource.
     :type description: Optional[str]
     :param component: Component definition.
-    :type component: Optional[Union[Component, str]]
+    :type component: Optional[Union[~azure.ai.ml.entities.Component, str]]
     :param settings: Run-time settings for the pipeline job.
     :type settings: Optional[Dict[str, Any]]
     :param tags: A set of tags. The tags which will be applied to the job.
@@ -46,6 +46,15 @@ class PipelineComponentBatchDeployment(Resource):
     :type job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
     :param endpoint_name: Name of the Endpoint resource, defaults to None.
     :type endpoint_name: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START create_pipeline_component_batch_deployment]
+            :end-before: [END create_pipeline_component_batch_deployment]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PipelineComponentBatchDeployment entity.
     """
 
     def __init__(

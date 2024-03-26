@@ -14,17 +14,26 @@ class RunSettings:
     """Run Settings entity.
 
     :param name: Run settings name
-    :type name: str
+    :type name: typing.Optional[str]
     :param display_name: Run settings display name
-    :type display_name: str
+    :type display_name: typing.Optional[str]
     :param experiment_name: Run settings experiment name
-    :type experiment_name: str
+    :type experiment_name: typing.Optional[str]
     :param description: Run settings description
-    :type description: str
+    :type description: typing.Optional[str]
     :param tags: Run settings tags
-    :type tags: Dict[str, Any]
+    :type tags: typing.Optional[Dict[str, Any]]
     :param settings: Run settings - settings
-    :type settings: Dict[str, Any]
+    :type settings: typing.Optional[Dict[str, Any]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START run_settings_entity_create]
+            :end-before: [END run_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a RunSettings entity.
     """
 
     def __init__(
