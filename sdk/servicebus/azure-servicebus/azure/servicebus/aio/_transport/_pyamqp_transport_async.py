@@ -320,7 +320,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         try:
             if settle_operation == MESSAGE_COMPLETE:
                 await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
-                return True
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
