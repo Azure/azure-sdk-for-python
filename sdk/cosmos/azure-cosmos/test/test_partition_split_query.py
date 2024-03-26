@@ -81,7 +81,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.database.get_throughput()
         while True:
-            if time.time() - start_time > 60 * 20:  # timeout test at 20 minutes
+            if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
                 raise CosmosClientTimeoutError()
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(10)
