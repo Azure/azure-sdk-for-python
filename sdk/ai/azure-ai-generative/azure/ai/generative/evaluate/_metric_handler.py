@@ -68,7 +68,7 @@ class MetricHandler(object):
         dict_list = self._get_data_for_pf_by_task_type(metrics)
 
         flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics", self.task_type)
-
+        # pylint: disable=E0611
         from promptflow import PFClient
         from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
