@@ -65,7 +65,7 @@ def is_input_valid_for_safety_metrics(question: str, answer: str):
         return False
 
 
-# check if RAI service is avilable in this region. If not, return False.
+# check if RAI service is available in this region. If not, return False.
 # check if tracking_uri is set. If not, return False
 # if tracking_rui is set, check if any safety metric is selected.
 # if no safety metric is selected, return False
@@ -89,7 +89,7 @@ def validate_safety_metric_input(
         and service_available["groundedness_service"]
 
     groundedness_prompt = is_groundedness_metric_selected(selected_metrics) \
-        and validate_input_result["gpt_groundedness"] and tracking_uri_set\
+        and validate_input_result["gpt_groundedness"]  \
         and (not service_available["groundedness_service"])
 
     return {"content_harm_service": content_harm_service,
