@@ -7,6 +7,7 @@ from typing import Dict, Union
 QA = "qa"
 CHAT = "chat"
 
+
 SUPPORTED_TASK_TYPE = [QA, CHAT]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
