@@ -910,9 +910,6 @@
 # ServiceLabel: %Network - Bastion %Service Attention
 #/<NotInRepo>/          @bastionsuppgithub
 
-# ServiceLabel: %Azure.Spring - Cosmos
-#/<NotInRepo>/          @kushagraThapar
-
 # ServiceLabel: %Network - Private Link %Service Attention
 #/<NotInRepo>/          @privlinksuppgithub
 
