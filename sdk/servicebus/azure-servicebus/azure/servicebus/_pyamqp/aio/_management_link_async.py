@@ -184,6 +184,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             )
 
     async def _on_receive_complete(self, message_delivery, reason, state):
+        print("IN MGMT ON RECEIVE COMPLETE")
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
