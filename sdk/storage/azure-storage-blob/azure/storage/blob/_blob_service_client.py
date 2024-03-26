@@ -38,10 +38,10 @@ from ._shared.response_handlers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._generated.models import CorsRule
     from ._lease import BlobLeaseClient
     from ._models import (
         BlobAnalyticsLogging,
+        CorsRule,
         FilteredBlob,
         Metrics,
         PublicAccess,
