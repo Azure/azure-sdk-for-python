@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, Union
 
 from azure.communication.phonenumbers._generated import models
 from azure.communication.phonenumbers._generated import _serialization
