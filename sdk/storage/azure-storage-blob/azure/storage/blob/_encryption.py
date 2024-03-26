@@ -857,7 +857,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     :param key_resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
-    :paramtype key_resolver: Optional[Callable[[str], KeyEncryptionKey]]
+    :type key_resolver: Optional[Callable[[str], KeyEncryptionKey]]
     :param bytes content:
         The encrypted blob content.
     :param int start_offset:
