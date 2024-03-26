@@ -118,7 +118,7 @@ class Output(_InputOutputBase):
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
         self.path = path
-        self.path_on_compute = path_on_compute
+        self.path_on_compute = kwargs.pop("path_on_compute", None)
         self.mode = mode
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
