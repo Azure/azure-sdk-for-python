@@ -128,6 +128,31 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   }
 }
 
+# This is the GetDocsMsDevLanguageSpecificPackageInfoFn implementation
+function Get-python-DocsMsDevLanguageSpecificPackageInfo($packageInfo, $packageSourceOverride) {
+  # If the default namespace isn't in the package info then it needs to be added
+  # Can't check if (!$packageInfo.Namespaces) in strict mode because Namespaces won't exist
+  # at all.
+  if (!($packageInfo | Get-Member Namespaces)) {
+    # If the Version is INGORE that means it's a source install and those
+    # ones need to be done by hand
+    if ($packageInfo.Version -ine "IGNORE") {
+      $version = $packageInfo.Version
+      # If the dev version is set, use that
+      if ($packageInfo.DevVersion) {
+        $version = $packageInfo.DevVersion
+      }
+      $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version $packageSourceOverride
+      if ($namespaces.Count -gt 0) {
+        $packageInfo | Add-Member -Type NoteProperty -Name "Namespaces" -Value $namespaces
+      } else {
+        LogWarning "Unable to find namespaces $($packageInfo.Name):$version"
+      }
+    }
+  }
+  return $packageInfo
+}
+
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
@@ -618,8 +643,8 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
 
   $allSucceeded = $true
   foreach ($item in $PackageInfos) {
-    # Some packages 
-    if ($item.Version -eq 'IGNORE') { 
+    # If the Version is INGORE that means it's a source install and those aren't run through ValidatePackage
+    if ($item.Version -eq 'IGNORE') {
       continue
     }
 
@@ -656,7 +681,7 @@ function Get-python-DirectoriesForGeneration () {
 
 function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
   $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
-  
+
   $directoriesWithErrors = @()
 
   foreach ($directory in $packageDirectories) {
