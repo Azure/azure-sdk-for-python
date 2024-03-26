@@ -53,6 +53,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             target_address=endpoint,
             on_link_state_change=self._on_receiver_state_change,
             on_transfer=self._on_message_received,
+            on_disposition=self._on_receive_complete,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First,
             network_trace=kwargs.get("network_trace", False)
@@ -159,6 +160,30 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             self._pending_operations.remove(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
+            # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
+            to_remove_operation = None
+            for operation in self._pending_operations:
+                if message_delivery.message == operation.message:
+                    to_remove_operation = operation
+                    break
+            self._pending_operations.remove(to_remove_operation)
+            # TODO: better error handling
+            #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
+            #  or should there an error mapping which maps the condition to the error type
+            to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
+                ManagementExecuteOperationResult.ERROR,
+                None,
+                None,
+                message_delivery.message,
+                error=AMQPException(
+                    condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
+                    description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
+                    info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
+                )
+            )
+
+    def _on_receive_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None

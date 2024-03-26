@@ -6,6 +6,8 @@
 
 import uuid
 import logging
+import time
+from functools import partial
 from typing import Optional, Union
 
 from .._decode import decode_payload
@@ -16,11 +18,35 @@ from ..performatives import (
     DispositionFrame,
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
-from ..receiver import PendingDisposition
+from ..constants import MessageDeliveryState
 
 
 _LOGGER = logging.getLogger(__name__)
 
+class PendingDisposition(object):
+    def __init__(self, **kwargs):
+        self.message = kwargs.get("message")
+        self.sent = False
+        self.frame = None
+        self.on_delivery_settled = kwargs.get("on_delivery_settled")
+        self.start = time.time()
+        self.transfer_state = None
+        self.timeout = kwargs.get("timeout")
+        self.settled = kwargs.get("settled", False)
+        self._network_trace_params = kwargs.get('network_trace_params')
+
+    async def on_settled(self, reason, state):
+        # TODO: ADD in error functionality
+        if self.on_delivery_settled and not self.settled:
+            try:
+                await self.on_delivery_settled(reason, state)
+            except Exception as e:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "Message 'on_delivery_settled' callback failed: %r",
+                    e,
+                    extra=self._network_trace_params
+                )
+        self.settled = True
 
 class ReceiverLink(Link):
     def __init__(self, session, handle, source_address, **kwargs):
@@ -34,6 +60,7 @@ class ReceiverLink(Link):
         self._first_frame = None
         self.incoming_disposition = False
         self._pending_receipts = []
+        self._on_disposition_received = kwargs.pop("on_disposition")
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -107,10 +134,10 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
 
-        import time
         # Create Pending Disposition once sent for a message
         delivery = PendingDisposition(
             message = message,
+            on_delivery_settled = partial(self._on_disposition_received, message)
         )
         delivery.frame = disposition_frame
         delivery.settled = settled
@@ -121,6 +148,7 @@ class ReceiverLink(Link):
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
         delivery.start = time.time()
         delivery.sent = True
+        delivery.message.state = MessageDeliveryState.WaitingForSendAck
 
         self._pending_receipts.append(delivery)
 
@@ -139,6 +167,7 @@ class ReceiverLink(Link):
         for delivery in self._pending_receipts:
             print(delivery)
             if delivery.sent and delivery.frame[1] in settled_ids:
+                # TODO: await error here
                 await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                 continue
             unsettled.append(delivery)
@@ -172,11 +201,10 @@ class ReceiverLink(Link):
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
-        message = None,
+        message_delivery = None,
     ):
-        print(message is None)
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message)
+        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery)
         if not settled:
             await self._wait_for_response(wait)

@@ -341,6 +341,15 @@ DISPOSITION_DELIVERY_DONE_STATES = (
     DispositionDeliveryState.Cancelled
 )
 
+class _DispositionDelivery:
+    def __init__(self, message, state=DispositionDeliveryState.WaitingToBeSent, expiry=None):
+        self.message = message
+        self.state = state
+        self.expiry = expiry
+        self.reason = None
+        self.delivery = None
+        self.error = None
+
 class TransportType(Enum):
     """Transport type
     The underlying transport protocol type:

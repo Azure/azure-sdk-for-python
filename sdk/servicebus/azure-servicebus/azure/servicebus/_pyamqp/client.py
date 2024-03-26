@@ -923,6 +923,20 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             except queue.Empty:
                 break
         return batch
+    
+    @staticmethod
+    def _process_receive_error(message_delivery, condition, description=None, info=None):
+        # what should these errors be?
+        try:
+            amqp_condition = ErrorCondition(condition)
+        except ValueError:
+            error = MessageException(condition, description=description, info=info)
+        else:
+            error = MessageSendFailed(
+                amqp_condition, description=description, info=info
+            )
+        message_delivery.state = MessageDeliveryState.Error
+        message_delivery.error = error
 
     def close(self):
         self._received_messages = queue.Queue()

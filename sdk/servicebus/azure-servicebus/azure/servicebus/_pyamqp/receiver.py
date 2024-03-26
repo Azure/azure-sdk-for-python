@@ -32,15 +32,15 @@ class PendingDisposition(object):
 
     def on_settled(self, reason, state):
         # TODO: ADD in error functionality
-        # if self.on_delivery_settled and not self.settled:
-        #     try:
-        #         self.on_delivery_settled(reason, state)
-        #     except Exception as e:  # pylint:disable=broad-except
-        #         _LOGGER.warning(
-        #             "Message 'on_send_complete' callback failed: %r",
-        #             e,
-        #             extra=self._network_trace_params
-        #         )
+        if self.on_delivery_settled and not self.settled:
+            try:
+                self.on_delivery_settled(reason, state)
+            except Exception as e:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "Message 'on_delivery_settled' callback failed: %r",
+                    e,
+                    extra=self._network_trace_params
+                )
         self.settled = True
 
 class ReceiverLink(Link):
