@@ -495,9 +495,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 dead_letter_reason=dead_letter_reason,
                 dead_letter_error_description=dead_letter_error_description,
             )
-
-            # We can't set this here because the message may not have been settled
-            # message._settled = True
+            message._settled = True
 
     async def _settle_message(  # type: ignore
         self,
@@ -510,7 +508,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         try:
             if not message._is_deferred_message:
                 try:
-                    message._settled = await self._amqp_transport.settle_message_via_receiver_link_async(
+                    await self._amqp_transport.settle_message_via_receiver_link_async(
                         self._handler,
                         message,
                         settle_operation,
