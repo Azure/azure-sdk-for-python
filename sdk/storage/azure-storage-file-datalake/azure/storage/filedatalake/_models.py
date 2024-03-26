@@ -656,9 +656,8 @@ class AccessPolicy(BlobAccessPolicy):
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. Azure will always interpret all
+        dates specified to be UTC.
     :paramtype start: ~datetime.datetime or str
     """
 
