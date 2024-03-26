@@ -46,12 +46,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from ._generated.models import CorsRule
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
         PublicAccess,
         BlobAnalyticsLogging,
+        CorsRule,
         FilteredBlob,
         Metrics,
         RetentionPolicy,

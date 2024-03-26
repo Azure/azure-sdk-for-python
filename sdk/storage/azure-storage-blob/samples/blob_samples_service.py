@@ -15,6 +15,7 @@ USAGE: python blob_samples_service.py
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 import os
+import sys
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
 class BlobServiceSamples(object):
@@ -22,6 +23,10 @@ class BlobServiceSamples(object):
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def get_storage_account_information(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_storage_account_information")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -33,6 +38,10 @@ class BlobServiceSamples(object):
         # [END get_blob_service_account_info]
 
     def blob_service_properties(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_properties")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -63,6 +72,10 @@ class BlobServiceSamples(object):
         # [END get_blob_service_properties]
 
     def blob_service_stats(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_stats")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -73,6 +86,10 @@ class BlobServiceSamples(object):
         # [END get_blob_service_stats]
 
     def container_operations(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: container_operations")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -109,6 +126,10 @@ class BlobServiceSamples(object):
             # [END bsc_delete_container]
 
     def get_blob_and_container_clients(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_blob_and_container_clients")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -140,6 +161,11 @@ class BlobServiceSamples(object):
             blob_service_client.delete_container("containertest")
 
     def get_blob_service_client_from_container_client(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_blob_service_client_from_container_client")
+            sys.exit(1)
+
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import ContainerClient
         container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
