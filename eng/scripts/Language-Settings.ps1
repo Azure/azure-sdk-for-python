@@ -131,7 +131,9 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 # This is the GetDocsMsDevLanguageSpecificPackageInfoFn implementation
 function Get-python-DocsMsDevLanguageSpecificPackageInfo($packageInfo, $packageSourceOverride) {
   # If the default namespace isn't in the package info then it needs to be added
-  if (!$packageInfo.Namespaces) {
+  # Can't check if (!$packageInfo.Namespaces) in strict mode because Namespaces won't exist
+  # at all.
+  if (!($packageInfo | Get-Member Namespaces)) {
     # If the Version is INGORE that means it's a source install and those
     # ones need to be done by hand
     if ($packageInfo.Version -ine "IGNORE") {
