@@ -15,7 +15,6 @@ from opentelemetry.instrumentation.instrumentor import ( # type: ignore
 )
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
@@ -37,6 +36,7 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
 )
+from azure.monitor.opentelemetry._processor import _AzureMonitorLogRecordProcessor
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
@@ -69,6 +69,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
      will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
      instrumentations enabled.
+    :keyword list[~opentelemetry.sdk.resources.Resource] resource: OpenTelemetry `Resource` used for the SDK.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
@@ -124,7 +125,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
-    log_record_processor = BatchLogRecordProcessor(
+    log_record_processor = _AzureMonitorLogRecordProcessor(
         log_exporter,
     )
     get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
