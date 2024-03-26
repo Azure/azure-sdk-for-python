@@ -11,8 +11,8 @@ The `arm-templates` directory contains Azure resource templates for creating the
 > **Note:** All Azure resources used in the sample should be in the same region & resource group.
 
 - This sample requires access to an Azure subscription and required privileges to create resources.
-- [An SSH key pair is required.](https://docs.microsoft.com/azure/virtual-machines/linux/mac-create-ssh-keys#provide-an-ssh-public-key-when-deploying-a-vm)
-- [Azure CLI is used to deploy resources and applications.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
+- [An SSH key pair is required.](https://learn.microsoft.com/azure/virtual-machines/linux/mac-create-ssh-keys#provide-an-ssh-public-key-when-deploying-a-vm)
+- [Azure CLI is used to deploy resources and applications.](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - Docker is needed to build and push the sample containerized services. Docker should be using Linux containers for building the application images that are provided.
 
 ### Clone this repository
@@ -67,7 +67,7 @@ Create your key vault:
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME -l $LOCATION --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
-After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com). You'll need to insert some of this certificate's properties into the cluster template later on.
+After creating the vault, [create a self-signed certificate](https://learn.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com). You'll need to insert some of this certificate's properties into the cluster template later on.
 
 ### Create an Azure Container Registry
 
@@ -196,7 +196,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id 
 ### Connect to your cluster on Service Fabric Explorer
 
 Instructions on connecting to the Explorer can be found
-[here](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+[here](https://learn.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
 Adding a certificate to your local machine's browser is the recommended method of easily connecting to the Explorer;
 instructions are below.
 
