@@ -151,12 +151,8 @@ class ReceiverLink(Link):
         delivery.sent = True
 
         self._pending_receipts.append(delivery)
-        print(f"Sending Outgoing Disp - Add to Pending Receipts: {first}")
 
     async def _incoming_disposition(self, frame):
-        disposition_frame = DispositionFrame(*frame)
-        print("Received Disposition Frame: ", disposition_frame)
-
         from ..constants import LinkDeliverySettleReason
 
         # If delivery_id is not settled, return
@@ -167,21 +163,10 @@ class ReceiverLink(Link):
         unsettled = []
         for delivery in self._pending_receipts:
             if delivery.sent and delivery.frame[1] in settled_ids:
-                # TODO: await error here
-                print("Calling On Settlement For Disposition")
                 await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                 continue
             unsettled.append(delivery)
         self._pending_receipts = unsettled
-
-        # print("Received Disposition Frame: ", disposition_frame)
-        print(f"Pending Receipts: {[e.frame[1] for e in self._pending_receipts]}")
-
-
-        # need to do something to differentiate by state accepted/released/rejected to determine settle state
-        
-        # print("Sent back out Disposition Frame: ", disposition_frame)
-        # await self._outgoing_disposition(disposition_frame.first, None, disposition_frame.settled, Accepted(), disposition_frame.batchable) # pylint: disable=protected-access
 
     async def attach(self):
         await super().attach()

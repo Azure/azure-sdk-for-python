@@ -904,17 +904,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 await self.close_async()
 
     async def _on_disposition_received_async(self, message_delivery, reason, state):
-        print("IN ON DISP RECEIVED")
-        print(f"Message Delivery State: {state}")
         # state is a dictionary with a key and a value
         state_reason = state.get(list(state.keys())[0])
         state = list(state.keys())[0]
         
-
-        print(state)
-        print(state_reason)
-        print(f"Message Delivery Reason: {reason}")
-
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -945,7 +938,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             message_delivery.state = MessageDeliveryState.Timeout
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
-            print("Other unknown errors")
             # NotDelivered and other unknown errors
             self._process_receive_error(
                 message_delivery,
@@ -1041,7 +1033,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             last = None
 
         # this is where you do the equivalent of creating the delivery etc like we do with send transfer 
-        
 
         message_delivery = _MessageDelivery(
             message,
@@ -1049,8 +1040,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             expire_time
         )
         on_disposition_received = partial(self._on_disposition_received_async, message_delivery)
-
-        print("Created Message Delivery, now sending disposition")
 
         await self._link.send_disposition(
             first_delivery_id=first,
@@ -1063,17 +1052,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             on_disposition = on_disposition_received,
         )
 
-        print("Sent disposition now we waits")
-        print(message_delivery.state)
-
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = await self.do_work_async()
 
-        print(message_delivery.state)
-        print("Done Waiting")
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            print("Message not done state")
             raise MessageException(
                 condition=ErrorCondition.ClientError,
                 description="Settlement failed - connection not running."
@@ -1084,7 +1067,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             MessageDeliveryState.Cancelled,
             MessageDeliveryState.Timeout
         ):
-            print("In Error state")
             try:
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:

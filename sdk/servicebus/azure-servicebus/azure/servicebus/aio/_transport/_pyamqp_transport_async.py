@@ -316,12 +316,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
-        print("Calling Settle Message")
-        print(settle_operation)
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                print("Settling Message")
                 await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
                 return True
             if settle_operation == MESSAGE_ABANDON:
