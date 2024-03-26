@@ -319,6 +319,8 @@
 
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
+# ServiceOwners: @trrwilson
+
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
