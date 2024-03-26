@@ -167,7 +167,6 @@ class ServiceBusReceiver(
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> None:
-        self._message_count = 1
         self._session_id = None
         self._message_iter: Optional[Iterator[ServiceBusReceivedMessage]] = None
         self._amqp_transport: "AmqpTransport"
@@ -413,7 +412,6 @@ class ServiceBusReceiver(
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
-            self._message_count = max_message_count or 1
             self._receive_context.set()
             self._open()
 
