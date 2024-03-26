@@ -60,7 +60,6 @@ class ReceiverLink(Link):
         self._first_frame = None
         self.incoming_disposition = False
         self._pending_receipts = []
-        # self._on_disposition_received = kwargs.pop("on_disposition")
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -109,7 +108,7 @@ class ReceiverLink(Link):
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
             # while not self.incoming_disposition:
-            await self._session._connection.listen(wait=False, performative=21) # pylint: disable=protected-access
+            await self._session._connection.listen(wait=False) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 if self._error:
                     raise self._error

@@ -26,13 +26,11 @@ from ..client import (
 from ..message import _MessageDelivery
 from ..constants import (
     MessageDeliveryState,
-    DispositionDeliveryState,
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     LinkDeliverySettleReason,
     MESSAGE_DELIVERY_DONE_STATES,
     AUTH_TYPE_CBS,
-    _DispositionDelivery,
     SEND_DISPOSITION_MODIFY,
     SEND_DISPOSITION_RELEASE,
     SEND_DISPOSITION_RECEIVED,
@@ -905,8 +903,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
     async def _on_disposition_received_async(self, message_delivery, reason, state):
         # state is a dictionary with a key and a value
-        state_reason = state.get(list(state.keys())[0])
-        state = list(state.keys())[0]
         
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
@@ -920,7 +916,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
-                    error_info = state_reason
+                    error_info = state[SEND_DISPOSITION_REJECT]
                     self._process_receive_error(
                         message_delivery,
                         condition=error_info[0][0],
