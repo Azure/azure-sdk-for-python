@@ -54,13 +54,13 @@ def generate_account_sas(
     :type permission: str or ~azure.storage.filedatalake.AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Azure will always interpret all dates specified to be UTC.
+        The provided datetime will always be interpreted as UTC.
     :type expiry: ~datetime.datetime or str
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always interpret all
-        dates specified to be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :paramtype start: ~datetime.datetime or str
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
@@ -135,8 +135,8 @@ def generate_file_system_sas(
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always interpret all
-        dates specified to be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :paramtype start: datetime or str
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
@@ -242,8 +242,8 @@ def generate_directory_sas(
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always interpret all
-        dates specified to be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :paramtype start: ~datetime.datetime or str
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
@@ -356,8 +356,8 @@ def generate_file_sas(
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always interpret all
-        dates specified to be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :paramtype start: ~datetime.datetime or str
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
