@@ -1013,3 +1013,11 @@ class AckMapAsync:
 
 class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""
+
+
+class ReconnectError(AzureError):
+    """Exception raised when fail to reconnect"""
+
+
+class RecoverError(AzureError):
+    """Exception raised when fail to reconnect or recover the client"""

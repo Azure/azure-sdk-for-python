@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0 (2024-03-27)
+
+### Features Added
+
+- Add Async API
+
+### Other Changes
+
+- Change default reconnect times to unlimited
+
 ## 1.0.0 (2024-01-31)
 
 ### Features Added
