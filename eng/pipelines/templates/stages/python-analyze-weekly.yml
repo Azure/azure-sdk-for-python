@@ -13,19 +13,20 @@ stages:
 - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
+    variables:
+      - template: /eng/pipelines/templates/variables/image.yml
     dependsOn: []
     jobs:
       - job: 'Analyze'
         timeoutInMinutes: 90
 
         variables:
-          - template: /eng/pipelines/templates/variables/image.yml
           - name: PythonVersion
             value: '3.8' 
 
         pool:
           name: $(LINUXPOOL)
-          vmImage: $(LINUXVMIMAGE)
+          image: $(LINUXVMIMAGE)
           os: linux
 
         steps:

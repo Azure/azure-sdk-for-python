@@ -417,9 +417,3 @@ class AsyncDatumReader(object):
     async def skip_record(self, writer_schema, decoder):
         for field in writer_schema.fields:
             await self.skip_data(field.type, decoder)
-
-
-# ------------------------------------------------------------------------------
-
-if __name__ == '__main__':
-    raise Exception('Not a standalone module')

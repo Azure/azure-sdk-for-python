@@ -149,6 +149,7 @@
         "azureDocTranslationUrl": "[if(parameters('useStaticStorageResource'), concat('https://', variables('docTranslationBaseName'), '.ppe', parameters('cognitiveServicesEndpointSuffix')), concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix')))]",
         "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "txtAadResourceIdValue": "[parameters('text_translation_aadResourceId')]",
         "encryption": {
             "services": {
                 "blob": {
@@ -379,6 +380,10 @@
         "TEXT_TRANSLATION_REGION": {
             "type": "string",
             "value": "[variables('txtRegionValue')]"
+        },
+        "TEXT_TRANSLATION_AAD_RESOURCE_ID": {
+            "type": "string",
+            "value": "[variables('txtAadResourceIdValue')]"
         }
     }
 }
