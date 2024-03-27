@@ -449,7 +449,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
-            kwargs['data'] = data
         elif blob_type == BlobType.PageBlob:
             if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
                 raise ValueError("Encryption version 2.0 does not currently support page blobs.")
@@ -615,7 +614,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def upload_blob(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
             metadata: Optional[Dict[str, str]] = None,

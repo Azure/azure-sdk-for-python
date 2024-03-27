@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Callable, Dict, IO, Optional, Tuple, TYPE_CHECKING
 from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
@@ -220,11 +220,11 @@ class GCMBlobEncryptionStream:
     """
     def __init__(
         self, content_encryption_key: bytes,
-        data_stream: BinaryIO,
+        data_stream: IO[bytes],
     ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
-        :param BinaryIO data_stream: The data stream to read data from.
+        :param IO[bytes] data_stream: The data stream to read data from.
         """
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream
@@ -261,28 +261,30 @@ class GCMBlobEncryptionStream:
                     # No more data to read
                     break
 
-                self.current = self._encrypt_region(data)
+                self.current = encrypt_data_v2(data, self.nonce_counter, self.content_encryption_key)
+                # IMPORTANT: Must increment the nonce each time.
+                self.nonce_counter += 1
 
         return result.getvalue()
 
-    def _encrypt_region(self, data: bytes) -> bytes:
-        """
-        Encrypt the given region of data using AES-GCM. The result
-        includes the data in the form: nonce + ciphertext + tag.
 
-        :param bytes data: The data to encrypt.
-        :return: The encrypted bytes.
-        :rtype: bytes
-        """
-        # Each region MUST use a different nonce
-        nonce = self.nonce_counter.to_bytes(_GCM_NONCE_LENGTH, 'big')
-        self.nonce_counter += 1
+def encrypt_data_v2(data: bytes, nonce: int, key: bytes) -> bytes:
+    """
+    Encrypts the given data using the given nonce and key using AES-GCM.
+    The result includes the data in the form: nonce + ciphertext + tag.
 
-        aesgcm = AESGCM(self.content_encryption_key)
+    :param bytes data: The raw data to encrypt.
+    :param int nonce: The nonce to use for encryption.
+    :param bytes key: The encryption key to use for encryption.
+    :return: The encrypted bytes in the form: nonce + ciphertext + tag.
+    :rtype: bytes
+    """
+    nonce_bytes = nonce.to_bytes(_GCM_NONCE_LENGTH, 'big')
+    aesgcm = AESGCM(key)
 
-        # Returns ciphertext + tag
-        ciphertext_with_tag = aesgcm.encrypt(nonce, data, None)
-        return nonce + ciphertext_with_tag
+    # Returns ciphertext + tag
+    ciphertext_with_tag = aesgcm.encrypt(nonce_bytes, data, None)
+    return nonce_bytes + ciphertext_with_tag
 
 
 def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
