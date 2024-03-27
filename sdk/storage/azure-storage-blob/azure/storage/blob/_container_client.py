@@ -186,7 +186,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -235,7 +235,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -270,9 +270,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param metadata:
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
-        :type metadata: dict[str, str]
-        :param ~azure.storage.blob.PublicAccess public_access:
+        :type metadata: Optional[Dict[str, str]]
+        :param public_access:
             Possible values include: 'container', 'blob'.
+        :type public_access: Optional[Union[~azure.storage.blob.PublicAccess, str]]
         :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
@@ -424,7 +425,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param str lease_id:
+        :param Optional[str] lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns
             400 (Invalid request) if the proposed lease ID is not in the correct format.
         :keyword ~datetime.datetime if_modified_since:
@@ -476,7 +477,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
         :returns: A dict of account information (SKU and account type).
-        :rtype: dict(str, str)
+        :rtype: Dict[str, str]
         """
         try:
             return self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
@@ -529,7 +530,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         Returns True if a container exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
@@ -560,7 +561,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param metadata:
             A dict containing name-value pairs to associate with the container as
             metadata. Example: {'category':'test'}
-        :type metadata: dict[str, str]
+        :type metadata: Optional[Dict[str, str]]
         :keyword lease:
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
@@ -587,7 +588,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or datetime]
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -664,7 +665,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Access policy information in a dict.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -705,9 +706,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             A dictionary of access policies to associate with the container. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
-        :type signed_identifiers: dict[str, ~azure.storage.blob.AccessPolicy]
-        :param ~azure.storage.blob.PublicAccess public_access:
+        :type signed_identifiers: Dict[str, ~azure.storage.blob.AccessPolicy]
+        :param public_access:
             Possible values include: 'container', 'blob'.
+        :type public_access: Optional[Union[str, ~azure.storage.blob.PublicAccess]]
         :keyword lease:
             Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -731,7 +733,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or datetime]
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -779,14 +781,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        :param str name_starts_with:
+        :param Optional[str] name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :type include: list[str] or str
+        :type include: Optional[Union[str, List[str]]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -872,14 +874,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         the service. This operation will list blobs in accordance with a hierarchy,
         as delimited by the specified delimiter character.
 
-        :param str name_starts_with:
+        :param Optional[str] name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :type include: list[str] or str
+        :type include: Optional[Union[List[str], str]]
         :param str delimiter:
             When the request includes this parameter, the operation returns a BlobPrefix
             element in the response body that acts as a placeholder for all blobs whose
@@ -959,14 +961,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :param str name: The blob with which to interact.
         :param data: The blob data to upload.
-        :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
-            either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
-        :param int length:
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :param blob_type: The type of the blob. This can be either BlockBlob,
+            PageBlob or AppendBlob. The default value is BlockBlob.
+        :type blob_type: Union[str, ~azure.storage.blob.BlobType]
+        :param Optional[int] length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -1108,7 +1112,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
         :param str blob: The blob with which to interact.
-        :param str delete_snapshots:
+        :param Optional[str] delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
@@ -1204,10 +1208,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param str blob: The blob with which to interact.
-        :param int offset:
+        :param Optional[int] offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
-        :param int length:
+        :param Optional[int] length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword str version_id:
@@ -1423,7 +1427,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
-        :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+        :type standard_blob_tier: Optional[Union[str, ~azure.storage.blob.StandardBlobTier]]
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
@@ -1448,7 +1452,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :type blobs: Union[str, Dict[str, Any], ~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
@@ -1498,7 +1502,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
-        :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
+        :type premium_page_blob_tier: Optional[Union[str, ~azure.storage.blob.PremiumPageBlobTier]]
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
@@ -1515,7 +1519,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :type blobs: Union[str, Dict[str, Any], ~azure.storage.blob.BlobProperties]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1550,7 +1554,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :param str blob:
             The blob with which to interact.
-        :param str snapshot:
+        :param Optional[str] snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,

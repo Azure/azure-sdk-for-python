@@ -293,7 +293,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         When a lease is successfully broken, the response indicates the interval
         in seconds until a new lease can be acquired.
 
-        :param int lease_break_period:
+        :param Optional[int] lease_break_period:
             This is the proposed duration of seconds that the lease
             should continue before it is broken, between 0 and 60 seconds. This
             break period is only used if it is shorter than the time remaining
