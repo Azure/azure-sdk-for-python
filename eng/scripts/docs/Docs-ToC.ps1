@@ -6,15 +6,16 @@ function Get-WhlFile {
       [Parameter(Mandatory=$true)] [string]$Destination,
       [Parameter(Mandatory=$false)] [string]$ExtraIndexUrl = ""
   )
-  $pipCommandArgs = ""
-  if ($ExtraIndexUrl) {
-      $pipCommandArgs += "--extra-index-url=$ExtraIndexUrl "
-  }
-  $pipCommandArgs += "$Library==$Version"
 
-  # download the whl file
-  Write-Host "python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $pipCommandArgs"
-  python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $pipCommandArgs
+  $LibArg= "$Library==$Version"
+  if ($ExtraIndexUrl) {
+    $ExtraIndexArg = "--extra-index-url=$ExtraIndexUrl"
+    Write-Host "python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $ExtraIndexArg $LibArg"
+    python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $ExtraIndexArg $LibArg
+  } else {
+    Write-Host "python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $LibArg"
+    python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $LibArg
+  }
   if($LASTEXITCODE -ne 0) {
       return $false
   }
