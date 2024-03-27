@@ -66,7 +66,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
     :keyword bool disable_trace_based_sampling_for_logs: Boolean value to determine whether to turn off
-    trace based sampling for correlated logs.
+     trace based sampling for correlated logs.
     :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :keyword dict instrumentation_options: A nested dictionary that determines which instrumentations
      to enable or disable.  Instrumentations are referred to by their Library Names. For example,
