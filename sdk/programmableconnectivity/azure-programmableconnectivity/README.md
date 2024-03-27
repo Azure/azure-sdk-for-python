@@ -1,21 +1,22 @@
 
 
-# Azure Programmableconnectivity client library for Python
+# Azure Programmable Connectivity client library for Python
 Azure Programmable Connectivity (APC) is a cloud service that simplifies access to programmable networks across various operators and regions. With APC, developers can seamlessly integrate network API services from multiple mobile operators into their applications, ensuring a consistent Azure experience despite underlying network changes.
 
 ## Getting started
 
-### Installating the package
+### Prequisites
+
+- Python 3.8 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- An existing Azure Programmableconnectivity instance. Follow this [doc](https://learn.microsoft.com/en-us/azure/programmable-connectivity/azure-programmable-connectivity-create-gateway) for instructions.
+
+### Installing the package
 
 ```bash
 python -m pip install azure-programmableconnectivity
 ```
 
-#### Prequisites
-
-- Python 3.8 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Programmableconnectivity instance.
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
@@ -28,8 +29,6 @@ As an example, [DefaultAzureCredential][default_azure_credential] can be used to
 
 Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
-
-Set you Apc Gateway Id as `APC_GATEWAY_ID`.
 
 Use the returned token credential to authenticate the client:
 
@@ -53,7 +52,10 @@ client = ProgrammableConnectivityClient(endpoint='<endpoint>', credential=creden
 
 ## Examples
 
-### Pre-requisites
+### Set up APC client
+
+For each example, you'll need to have the following code to have created an APC client that you can call. Replace `APC_GATEWAY_ID` and `endpoint` with your specific strings.
+
 ```python
 from azure.programmableconnectivity import ProgrammableConnectivityClient
 from azure.identity import DefaultAzureCredential
@@ -142,7 +144,6 @@ client.number_verification.verify_with_code(
     apc_gateway_id=APC_GATEWAY_ID
 )
 ```
-
 
 ## Contributing
 

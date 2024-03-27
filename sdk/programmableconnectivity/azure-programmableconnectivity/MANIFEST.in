@@ -4,3 +4,4 @@ include azure/programmableconnectivity/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
+include azure/programmableconnectivity/init.py

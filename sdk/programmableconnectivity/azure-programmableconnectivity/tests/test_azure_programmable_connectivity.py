@@ -1,17 +1,10 @@
 import os
-
+import pytest
+import logging
 from azure.programmableconnectivity import ProgrammableConnectivityClient
 from azure.identity import ClientSecretCredential
-import time
-import functools
-import pytest
 from azure.core.exceptions import HttpResponseError
-
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-
-import os
-
-import logging
 
 # logging.basicConfig(level=logging.DEBUG)
 
