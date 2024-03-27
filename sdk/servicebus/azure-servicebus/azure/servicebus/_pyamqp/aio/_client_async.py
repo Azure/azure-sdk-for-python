@@ -745,7 +745,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit <= 0:
+            if self._link.current_link_credit <= 0 and kwargs.get("flow", True):
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -903,14 +903,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def _on_disposition_received_async(self, message_delivery, reason, state):        
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
-            if state and SEND_DISPOSITION_ACCEPT in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_RELEASE in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_MODIFY in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_RECEIVED in state:
-                message_delivery.state = MessageDeliveryState.Ok
+            if state and (SEND_DISPOSITION_ACCEPT in state or
+                SEND_DISPOSITION_RELEASE in state or
+                SEND_DISPOSITION_MODIFY in state or
+                SEND_DISPOSITION_RECEIVED in state):
+                    message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -1050,12 +1047,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             # TODO: Confirm if this is the correct way to handle the do_work call
             # calling do_work directly triggers Flow() calls which is not what we want
-            if self._shutdown:
-                running = False
-            if not await self.client_ready_async():
-                running = True
-            if running:
-                await self._connection.listen(wait=self._socket_timeout, **kwargs)
+            await self.do_work_async(flow=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
