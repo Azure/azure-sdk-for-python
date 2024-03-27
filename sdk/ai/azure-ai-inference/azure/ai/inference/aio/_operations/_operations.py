@@ -42,7 +42,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
     @overload
     async def get_chat_completions(
         self,
-        chat_completion_options: _models.ChatCompletionsOptions,
+        chat_completions_options: _models.ChatCompletionsOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53,8 +53,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completion_options: The JSON payload containing chat completion options. Required.
-        :type chat_completion_options: ~azure.ai.inference.models.ChatCompletionsOptions
+        :param chat_completions_options: The JSON payload containing chat completion options. Required.
+        :type chat_completions_options: ~azure.ai.inference.models.ChatCompletionsOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79,7 +79,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                 }
 
                 # JSON input template you can fill out and use as your body input.
-                chat_completion_options = {
+                chat_completions_options = {
                     "messages": [
                         chat_request_message
                     ],
@@ -165,7 +165,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     async def get_chat_completions(
-        self, chat_completion_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, chat_completions_options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -173,8 +173,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completion_options: The JSON payload containing chat completion options. Required.
-        :type chat_completion_options: JSON
+        :param chat_completions_options: The JSON payload containing chat completion options. Required.
+        :type chat_completions_options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -231,7 +231,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     async def get_chat_completions(
-        self, chat_completion_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, chat_completions_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -239,8 +239,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completion_options: The JSON payload containing chat completion options. Required.
-        :type chat_completion_options: IO[bytes]
+        :param chat_completions_options: The JSON payload containing chat completion options. Required.
+        :type chat_completions_options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -297,7 +297,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @distributed_trace_async
     async def get_chat_completions(
-        self, chat_completion_options: Union[_models.ChatCompletionsOptions, JSON, IO[bytes]], **kwargs: Any
+        self, chat_completions_options: Union[_models.ChatCompletionsOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -305,9 +305,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completion_options: The JSON payload containing chat completion options. Is one of
+        :param chat_completions_options: The JSON payload containing chat completion options. Is one of
          the following types: ChatCompletionsOptions, JSON, IO[bytes] Required.
-        :type chat_completion_options: ~azure.ai.inference.models.ChatCompletionsOptions or JSON or
+        :type chat_completions_options: ~azure.ai.inference.models.ChatCompletionsOptions or JSON or
          IO[bytes]
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
@@ -330,7 +330,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                 }
 
                 # JSON input template you can fill out and use as your body input.
-                chat_completion_options = {
+                chat_completions_options = {
                     "messages": [
                         chat_request_message
                     ],
@@ -429,10 +429,10 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(chat_completion_options, (IOBase, bytes)):
-            _content = chat_completion_options
+        if isinstance(chat_completions_options, (IOBase, bytes)):
+            _content = chat_completions_options
         else:
-            _content = json.dumps(chat_completion_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(chat_completions_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_chat_completions_request(
             content_type=content_type,
