@@ -8,7 +8,7 @@ import uuid
 import logging
 import time
 from functools import partial
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from .._decode import decode_payload
 from ._link_async import Link
@@ -21,6 +21,9 @@ from ..outcomes import Received, Accepted, Rejected, Released, Modified
 from ..error import AMQPException, ErrorCondition
 from ..receiver import PendingDisposition
 from ..constants import MessageDeliveryState
+
+if TYPE_CHECKING:
+    from ..message import _MessageDelivery
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -38,13 +41,12 @@ class PendingDisposition(object):
         self._network_trace_params = kwargs.get('network_trace_params')
 
     async def on_settled(self, reason, state):
-        # TODO: ADD in error functionality
         if self.on_delivery_settled and not self.settled:
             try:
                 await self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Message 'on_delivery_settled' callback failed: %r",
+                    "Disposition 'on_delivery_settled' callback failed: %r",
                     e,
                     extra=self._network_trace_params
                 )
@@ -108,7 +110,7 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            delivery_state = await self._process_incoming_message(self._first_frame, message, **kwargs)
+            delivery_state = await self._process_incoming_message(self._first_frame, message)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -140,8 +142,8 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
-        message = None,
-        on_disposition = None,
+        message: Optional["_MessageDelivery"] = None,
+        on_disposition: Optional[callable] = None,
     ):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
@@ -155,8 +157,8 @@ class ReceiverLink(Link):
         self._received_delivery_tags.remove(delivery_tag)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
+        # If trying to settle a message, keep track of the disposition
         if message:
-            # Create Pending Disposition once sent for a message
             delivery = PendingDisposition(
                 message = message,
                 on_delivery_settled = on_disposition,
@@ -197,8 +199,8 @@ class ReceiverLink(Link):
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
-        message_delivery = None,
-        on_disposition = None,
+        message_delivery: Optional["_MessageDelivery"] = None,
+        on_disposition: Optional[callable] = None,
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
