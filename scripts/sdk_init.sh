@@ -18,6 +18,8 @@ echo "$PATH"
 python3.10 -m venv $TMPDIR/venv-sdk
 python -m pip install -U pip
 python scripts/dev_setup.py -p azure-core
+python -m pip install PyGithub
+python -m pip install GitPython
 
 if [ x"$1" = x ]; then
         echo "[Generate] init success!!!"
