@@ -15,6 +15,7 @@ from opentelemetry.instrumentation.instrumentor import ( # type: ignore
 )
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
@@ -31,6 +32,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
+    DISABLE_TRACE_BASED_SAMPLING_FOR_LOGS_ARGS,
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
@@ -63,13 +65,14 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :paramtype credential: ~azure.core.credentials.TokenCredential or None
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
+    :keyword bool disable_trace_based_sampling_for_logs: Boolean value to determine whether to turn off
+    trace based sampling for correlated logs.
     :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :keyword dict instrumentation_options: A nested dictionary that determines which instrumentations
      to enable or disable.  Instrumentations are referred to by their Library Names. For example,
      `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
      will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
      instrumentations enabled.
-    :keyword list[~opentelemetry.sdk.resources.Resource] resource: OpenTelemetry `Resource` used for the SDK.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
@@ -125,9 +128,12 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
-    log_record_processor = _AzureMonitorLogRecordProcessor(
-        log_exporter,
-    )
+    if configurations.get(DISABLE_TRACE_BASED_SAMPLING_FOR_LOGS_ARGS):
+        log_record_processor = BatchLogRecordProcessor(log_exporter)
+    else:
+        log_record_processor = _AzureMonitorLogRecordProcessor(
+            log_exporter,
+        )
     get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
     logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore

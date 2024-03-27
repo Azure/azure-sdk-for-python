@@ -48,3 +48,15 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         proc = _AzureMonitorLogRecordProcessor(exporter, disable_trace_based_sampling=True)
         proc.emit(log_data)
         emit_mock.assert_called_once_with(log_data)
+
+    @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
+    def test_emit_missing_trace_flags(self, emit_mock):
+        exporter = Mock()
+        log_data = Mock()
+        log_record = Mock()
+        log_record.span_id = 123
+        log_record.trace_flags = None
+        log_data.log_record = log_record
+        proc = _AzureMonitorLogRecordProcessor(exporter, disable_trace_based_sampling=True)
+        proc.emit(log_data)
+        emit_mock.assert_called_once_with(log_data)
