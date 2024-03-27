@@ -745,7 +745,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit <= 0 and kwargs.get("flow", True):
+            if self._link.current_link_credit <= 0 and kwargs.pop("flow", True):
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
