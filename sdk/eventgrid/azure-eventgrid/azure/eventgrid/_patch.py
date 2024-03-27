@@ -11,11 +11,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Union,
-    Optional,
-    Generic,
-    Dict,
-    TypedDict,
-    TypeVar,
 )
 from ._legacy import (
     EventGridPublisherClient,
@@ -30,10 +25,8 @@ from ._client import EventGridClient as InternalEventGridClient
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import EventGridClientConfiguration
-from ._operations import EventGridClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 
@@ -105,10 +98,12 @@ class EventGridClient(InternalEventGridClient):
 
         if level == ClientLevel.BASIC:
             self._client = EventGridPublisherClient(endpoint, credential, api_version=self._config.api_version) # type:ignore[assignment]
+            self._send = self._client.send
         elif level == ClientLevel.STANDARD:
             self._client = PipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
+            self._send = self._publish_cloud_events
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

@@ -19,7 +19,6 @@ from typing import (
     overload,
     TypedDict,
     TYPE_CHECKING,
-    cast,
 )
 import datetime
 
@@ -134,7 +133,6 @@ def use_standard_only(func):
 
 
 def validate_args(**kwargs: Any):
-    args_mapping = kwargs.pop("args_mapping", None)
     kwargs_mapping = kwargs.pop("kwargs_mapping", None)
 
     def decorator(func):
@@ -185,7 +183,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param event: The event to send.
         :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
          or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
-         or CloudEventDict or List[CloudEventDict] or EventGridEventDict or List[EventGridEventDict]
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
@@ -210,7 +207,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """Send events to the Event Grid Service.
 
         :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or CloudEventDict or List[CloudEventDict]
+        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword topic_name: The name of the topic to send the event to.
         :paramtype topic_name: str
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
@@ -261,7 +258,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 raise TypeError("Binary mode is only supported for type CloudEvent.")   
 
         else:
-            # If no binary_mode is set, send whatever event is passed
+            # If not binary_mode send whatever event is passed
             if self._level == "Standard": 
                 
                 try:
@@ -276,14 +273,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
                     if not isinstance(event, list):
                         event = [event]
-                    self._publish_cloud_events(topic_name, _serialize_events(event), **kwargs)
+                    self._send(topic_name, _serialize_events(event), **kwargs)
                 except HttpResponseError as e:
                     if e.status_code == 400:
                         raise HttpResponseError("Invalid event data. Please check the data and try again.") from e
                     else:
                         raise e
             else:
-                self._client.send(event, channel_name=channel_name, **kwargs)
+                self._send(event, channel_name=channel_name, **kwargs)
 
     def _publish(
         self,
@@ -570,14 +567,17 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     )
 
 def _serialize_events(events):
-    serialize = Serializer()
-    body = serialize.body(events, "[object]")
-    if body is None:
-        data = None
-    else:
-        data = json.dumps(body)
-    
-    return data
+    try:
+        serialize = Serializer()
+        body = serialize.body(events, "[object]")
+        if body is None:
+            data = None
+        else:
+            data = json.dumps(body)
+        
+        return data
+    except AttributeError:
+        return events
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
