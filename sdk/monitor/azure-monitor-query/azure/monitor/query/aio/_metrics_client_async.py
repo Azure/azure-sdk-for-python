@@ -85,17 +85,17 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
             Only one order can be specified. Examples: 'sum asc', 'maximum desc'.
         :paramtype order_by: Optional[str]
-        :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
+        :keyword filter: The **filter** is used to reduce the set of metric data returned. Example:
             Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
-            b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
-            eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
+            b2: **filter="A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'"** - Invalid variant: **filter="A
+            eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'"**. This is invalid because the logical or
             operator cannot separate two different metadata names. - Return all time series where A = a1,
-            B = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
-            where A = a1 **$filter=A eq 'a1' and B eq '*' and C eq '*'**. Special case: When dimension
-            name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
-            Instead of using **$filter= "dim (test) 1 eq '*'"** use **$filter= "dim %2528test%2529 1 eq '*'"**.
+            B = b1 and C = c1: **filter="A eq 'a1' and B eq 'b1' and C eq 'c1'"** - Return all time series
+            where A = a1: **filter="A eq 'a1' and B eq '*' and C eq '*'"**. Special case: When dimension
+            name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**,
+            instead of using **filter="dim (test) 1 eq '*'"** use **filter="dim %2528test%2529 1 eq '*'"**.
             When dimension name is **dim (test) 3** and dimension value is **dim3 (test) val**, instead of using
-            **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
+            **filter="dim (test) 3 eq 'dim3 (test) val'"**, use **filter="dim
             %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
         :paramtype filter: str
         :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
