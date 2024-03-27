@@ -131,7 +131,6 @@ def use_standard_only(func):
 
     return wrapper
 
-
 def validate_args(**kwargs: Any):
     kwargs_mapping = kwargs.pop("kwargs_mapping", None)
 
@@ -231,6 +230,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @distributed_trace
     def send(self, /, event, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
         """Send events to the Event Grid Service."""
+        # TODO: type hints + docstrings
         
         channel_name = kwargs.pop("channel_name", None)
         binary_mode = kwargs.pop("binary_mode", False)
@@ -259,28 +259,41 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         else:
             # If not binary_mode send whatever event is passed
-            if self._level == "Standard": 
-                
-                try:
-                    if isinstance(event, dict):
-                        event = CloudEvent.from_dict(event)
-                    if isinstance(event, list) and isinstance(event[0], dict):
-                        event = [CloudEvent.from_dict(e) for e in event]
-                except Exception:
-                    pass
 
+            # If a cloud event dict, convert to CloudEvent for serializing    
+            try:
+                if isinstance(event, dict):
+                    event = CloudEvent.from_dict(event)
+                if isinstance(event, list) and isinstance(event[0], dict):
+                    event = [CloudEvent.from_dict(e) for e in event]
+            except Exception:
+                pass
+
+            try:
+                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
+                if not isinstance(event, list):
+                    event = [event]
                 try:
-                    kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-                    if not isinstance(event, list):
-                        event = [event]
+                    # Try to send via namespace
                     self._send(topic_name, _serialize_events(event), **kwargs)
-                except HttpResponseError as e:
-                    if e.status_code == 400:
-                        raise HttpResponseError("Invalid event data. Please check the data and try again.") from e
+                except Exception as exception:
+                    if isinstance(exception, HttpResponseError):
+                        self._http_response_error_handler(exception, "namespace")
                     else:
-                        raise e
+                        # If that fails, try to send via basic
+                        self._send(event, channel_name=channel_name, **kwargs)
+            except Exception as exception:
+                self._http_response_error_handler(exception, "basic")
+                raise Exception
+
+    def _http_response_error_handler(self, exception, level):
+        if isinstance(exception, HttpResponseError):
+            if exception.status_code == 400:
+                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
+            elif exception.status_code == 404:
+                raise HttpResponseError(f"Resource not found. Please check the {level} endpoint and try again.") from exception
             else:
-                self._send(event, channel_name=channel_name, **kwargs)
+                raise exception
 
     def _publish(
         self,
@@ -426,6 +439,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.AcknowledgeResult:
+        # TODO: docstring
         return self.acknowledge_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,

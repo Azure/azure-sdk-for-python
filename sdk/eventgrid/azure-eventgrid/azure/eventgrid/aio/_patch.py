@@ -80,9 +80,9 @@ class EventGridClient(InternalEventGridClient):
             ]
 
         if level == ClientLevel.BASIC:
-            api_version = api_version or DEFAULT_BASIC_API_VERSION
+            self._config.api_version = api_version or DEFAULT_BASIC_API_VERSION
             self._client = EventGridPublisherClient( # type: ignore[assignment]
-                endpoint, credential, api_version=api_version, **kwargs
+                endpoint, credential, api_version=self._config.api_version, **kwargs
             )
         elif level == ClientLevel.STANDARD:
             self._client: AsyncPipelineClient = AsyncPipelineClient(
