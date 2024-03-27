@@ -525,7 +525,7 @@ def upload_file(
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
         if in_directory:
             storage_client.temp_sub_directory_client = None
-            file_name_tail = str(dest).rsplit(os.path.sep, maxsplit=1)[-1]
+            file_name_tail = dest.split(os.path.sep)[-1]  # type: ignore[union-attr]
             # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
             all_sub_folders = str(dest).split(os.path.sep)[2:-1]
 

@@ -113,8 +113,8 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorTarget, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorTarget, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         self._error_category = error_category
@@ -181,8 +181,8 @@ class DeploymentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(DeploymentException, self).__init__(
@@ -216,11 +216,13 @@ class ComponentException(MlException):
         error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        super(ComponentException, self).__init__(
+        super(ComponentException, self).__init__(  # type: ignore[misc]
             message=message,
-            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
+            no_personal_data_message=no_personal_data_message,
+            *args,
+            **kwargs,
         )
 
 
@@ -274,8 +276,8 @@ class ModelException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ModelException, self).__init__(
@@ -305,8 +307,8 @@ class AssetException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetException, self).__init__(
@@ -336,8 +338,8 @@ class ScheduleException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ScheduleException, self).__init__(
@@ -355,8 +357,8 @@ class ValidationException(MlException):
         no_personal_data_message: str,
         *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.USER_ERROR,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
         """Class for all exceptions raised as part of client-side schema validation.
@@ -423,8 +425,8 @@ class AssetPathException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
@@ -442,8 +444,8 @@ class EmptyDirectoryError(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
     ):
         self.message = message
         super(EmptyDirectoryError, self).__init__(

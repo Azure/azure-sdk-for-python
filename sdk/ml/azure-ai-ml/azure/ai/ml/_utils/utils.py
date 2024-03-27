@@ -773,7 +773,7 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
     :return: The converted duration
     :rtype: str
     """
-    return str(duration).split(".", maxsplit=1)[0].replace("PT", "").replace("M", "m ") + "s"
+    return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"  # type: ignore[union-attr]
 
 
 def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None) -> str:
