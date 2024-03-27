@@ -83,6 +83,7 @@ from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
 from ._deployment.code_configuration import CodeConfiguration
 from ._deployment.container_resource_settings import ResourceSettings
+from ._deployment.data_asset import DataAsset
 from ._deployment.data_collector import DataCollector
 from ._deployment.deployment_collection import DeploymentCollection
 from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
@@ -449,6 +450,7 @@ __all__ = [
     "ModelPerformanceRegressionThresholds",
     "DataCollector",
     "IntellectualProperty",
+    "DataAsset",
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",

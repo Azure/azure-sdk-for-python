@@ -14,7 +14,7 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 
 # Overview
 
-This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-devtools`][azure_devtools] package, which in turn rests upon on a HTTP recording system ([testproxy][testproxy]) that enables tests dependent on network interaction to be run offline.
+This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-sdk-tools`][azure_sdk_tools] package, which in turn rests upon on a HTTP recording system ([testproxy][testproxy]) that enables tests dependent on network interaction to be run offline.
 
 In this document, we will describe:
 -   [How to run the tests online (by authenticating with Azure to record new HTTP interactions)](#running-tests-in-live-mode)
@@ -260,9 +260,9 @@ Notes:
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 
-from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer
 from devtools_testutils import (
-    AzureMgmtRecordedTestCase, recorded_by_proxy,
+    AzureMgmtRecordedTestCase,
+    recorded_by_proxy,
     ResourceGroupPreparer,
     StorageAccountPreparer
 )
@@ -271,8 +271,6 @@ AZURE_ARM_ENDPOINT = "https://centraluseuap.management.azure.com"
 AZURE_LOCATION = 'eastus'
 
 class TestMgmtBatch(AzureMgmtRecordedTestCase):
-    scrubber = GeneralNameReplacer()
-
     def setup_method(self, method):
         self.mgmt_batch_client = self.create_mgmt_client(
             azure.mgmt.batch.BatchManagementClient,
@@ -353,7 +351,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
 <!-- LINKS -->
 [arm_apis]: https://docs.microsoft.com/rest/api/resources/
-[azure_devtools]: https://pypi.org/project/azure-devtools/
+[azure_sdk_tools]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
 [dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md

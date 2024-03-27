@@ -2,6 +2,6 @@ trigger: none
 
 # NOTE: Service live tests are NOT enabled. This file only enables the analyze stage currently.
 extends:
-    template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+    template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
     parameters:
       ServiceDirectory: servicefabric

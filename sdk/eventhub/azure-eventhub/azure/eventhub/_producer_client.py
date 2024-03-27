@@ -576,7 +576,8 @@ class EventHubProducerClient(
         :keyword float timeout: The maximum wait time to send the event data in non-buffered mode or the
          maximum wait time to enqueue the event data into the buffer in buffered mode.
          In non-buffered mode, the default wait time specified when the producer
-         was created will be used. In buffered mode, the default wait time is None.
+         was created will be used. In buffered mode, the default wait time is None indicating that the event will be
+         scheduled to send immediately.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
          A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because

@@ -108,7 +108,7 @@ class TestSimulator:
         conv = simulator.simulate(
             template=conv_template,
             parameters=[task_parameters],
-            max_conversation_turns=2)
+            max_conversation_turns=1)
 
         expected_keys = set(["messages", "$schema", "template_parameters"])
         assert issubclass(type(conv), list)
@@ -165,7 +165,7 @@ class TestSimulator:
         conv = sim.simulate(
             template=conv_template,
             parameters=[task_parameters],
-            max_conversation_turns=2)
+            max_conversation_turns=1)
 
         oai_mock.assert_called_once()
         assert(len(conv) == 1)
@@ -201,7 +201,7 @@ class TestSimulator:
         conv = sim.simulate(
             template=conv_template,
             parameters=[task_parameters],
-            max_conversation_turns=2)
+            max_conversation_turns=1)
 
         assert(len(conv) == 1)
         assert(conv[0]["messages"][1]["content"] == content)
@@ -226,7 +226,7 @@ class TestSimulator:
         conv = sim.simulate(
             template=conv_template,
             parameters=[task_parameters],
-            max_conversation_turns=2)
+            max_conversation_turns=1)
 
         assert(len(conv) == 1)
         assert(conv[0]["messages"][1]["content"] == content)
@@ -242,7 +242,7 @@ class TestSimulator:
             asyncio.set_event_loop(loop)
             loop.run_until_complete(simulator.simulate_async(
                 template="wrong template type",
-                max_conversation_turns=2,
+                max_conversation_turns=1,
                 parameters=[task_parameters]
                 )
             )

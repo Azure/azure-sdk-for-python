@@ -29,6 +29,7 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py

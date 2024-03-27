@@ -87,7 +87,9 @@ class AppConfigTestCase(AzureRecordedTestCase):
         assert key1.value == key2.value
         if isinstance(key1, FeatureFlagConfigurationSetting):
             assert key1.enabled == key2.enabled
-            assert len(key1.filters) == len(key2.filters)
+            if key1.filters and key2.filters:
+                assert len(key1.filters) == len(key2.filters)
+            assert key1.description == key2.description
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.secret_id == key2.secret_id
 
