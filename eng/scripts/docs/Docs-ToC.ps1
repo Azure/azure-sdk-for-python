@@ -8,7 +8,7 @@ function Get-WhlFile {
   )
   $pipCommandArgs = ""
   if ($ExtraIndexUrl) {
-      $pipCommandArgs += "--extra-index-url $ExtraIndexUrl "
+      $pipCommandArgs += "--extra-index-url=$ExtraIndexUrl "
   }
   $pipCommandArgs += "$Library==$Version"
 
