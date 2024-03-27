@@ -86,7 +86,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        result = self.client.get_chat_completions(options=options, params=query_params)
+        result = self.client.get_chat_completions(chat_completions_options=options, params=query_params)
 
         # Optional: console printout of all results
         if ModelInferenceTestBase.PRINT_CHAT_COMPLETION_RESULTS:
@@ -128,7 +128,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = self.client.get_chat_completions(options=options)
+            result = self.client.get_chat_completions(chat_completions_options=options)
 
         except AzureError as e:
             print(e)
@@ -147,7 +147,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = await self.async_client.get_chat_completions(options=options)
+            result = await self.async_client.get_chat_completions(chat_completions_options=options)
 
         except AzureError as e:
             print(e)
