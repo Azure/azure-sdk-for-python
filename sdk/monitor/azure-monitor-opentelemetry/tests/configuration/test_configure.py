@@ -482,7 +482,7 @@ class TestConfigure(unittest.TestCase):
         is_attach_enabled_mock.return_value = True
         _detect_attach()
         mock_diagnostics.warning.assert_called_once_with(
-            "Distro detected that automatic attach may have occured.",
+            "Distro detected that automatic attach may have occurred.",
             _DISTRO_DETECTS_ATTACH,
         )
 
