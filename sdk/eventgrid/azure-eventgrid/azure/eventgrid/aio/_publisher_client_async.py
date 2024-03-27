@@ -42,6 +42,7 @@ from .._helpers import (
     _get_authentication_policy,
     _from_cncf_events,
 )
+from .._constants import DEFAULT_API_VERSION
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
 
@@ -102,14 +103,14 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
             "AsyncTokenCredential", AzureKeyCredential, AzureSasCredential
         ],
         *,
-        api_version: str = "2018-01-01",
+        api_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
         self._endpoint = endpoint
-        self._api_version = api_version
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
 
     @staticmethod
     def _policies(
