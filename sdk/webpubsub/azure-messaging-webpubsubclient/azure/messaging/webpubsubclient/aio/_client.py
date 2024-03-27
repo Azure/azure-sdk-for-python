@@ -837,10 +837,11 @@ class WebPubSubClient(
         except asyncio.TimeoutError:
             _LOGGER.warning("Timeout when waiting for websocket connection to open")
         if not self._is_connected():
-            if reconnect_tried_times:
-                raise ReconnectError("Fail to reconnect after waiting for a while")
-            if recover_start_time:
-                raise RecoverError("Fail to recover after waiting for a while")
+            if not self._task_run_forever.done():
+                if reconnect_tried_times:
+                    raise ReconnectError("Fail to reconnect after waiting for a while")
+                if recover_start_time:
+                    raise RecoverError("Fail to recover after waiting for a while")
             raise OpenClientError(f"Client state is not {WebPubSubClientState.CONNECTED}")
 
         # set coroutine to check sequence id if needed
