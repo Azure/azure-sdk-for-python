@@ -2898,7 +2898,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
         else:
 
-            async def _hack_amqp_message_complete(cls, _, _unused, settlement):
+            async def _hack_amqp_message_complete(cls, _, _unused, settlement, **kwargs):
                 if settlement == "completed":
                     raise RuntimeError()
 
