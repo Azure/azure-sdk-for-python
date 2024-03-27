@@ -12,6 +12,11 @@ function Get-WhlFile {
   }
   $pipCommandArgs += "$Library==$Version"
 
+  # JRS-REMOVE-START
+  pip --version
+  pip install --upgrade pip
+  # JRS-REMOVE-END
+
   # download the whl file
   Write-Host "pip download --quiet --only-binary :all: --dest $Destination --no-cache --no-deps $pipCommandArgs"
   pip download --quiet --only-binary :all: --dest $Destination --no-cache --no-deps $pipCommandArgs
