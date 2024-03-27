@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.frontdoor import FrontDoorManagementClient
 
 """
@@ -29,11 +30,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.front_doors.begin_delete(
+    client.front_doors.begin_delete(
         resource_group_name="rg1",
         front_door_name="frontDoor1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2021-06-01/examples/FrontdoorDelete.json
