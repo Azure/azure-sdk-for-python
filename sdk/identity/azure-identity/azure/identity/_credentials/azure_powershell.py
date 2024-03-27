@@ -89,6 +89,7 @@ class AzurePowerShellCredential:
         *scopes: str,
         claims: Optional[str] = None,  # pylint:disable=unused-argument
         tenant_id: Optional[str] = None,
+        enable_cae: bool = False,  # pylint:disable=unused-argument
         **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
@@ -101,6 +102,8 @@ class AzurePowerShellCredential:
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Not supported by this credential.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken

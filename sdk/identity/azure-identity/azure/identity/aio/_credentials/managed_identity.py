@@ -115,7 +115,12 @@ class ManagedIdentityCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,  # pylint:disable=unused-argument
+        **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
@@ -126,6 +131,8 @@ class ManagedIdentityCredential(AsyncContextManager):
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: not used by this credential; any value provided will be ignored.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Not supported by this credential.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken

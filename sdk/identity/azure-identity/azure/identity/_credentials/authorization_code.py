@@ -62,7 +62,12 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self.__exit__()
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -78,6 +83,8 @@ class AuthorizationCodeCredential(GetTokenMixin):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -87,7 +94,12 @@ class AuthorizationCodeCredential(GetTokenMixin):
         """
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(
-            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
+            *scopes,
+            claims=claims,
+            tenant_id=tenant_id,
+            enable_cae=enable_cae,
+            client_secret=self._client_secret,
+            **kwargs
         )
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:

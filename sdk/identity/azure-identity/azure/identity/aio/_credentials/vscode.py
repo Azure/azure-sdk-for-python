@@ -48,7 +48,12 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,  # pylint:disable=unused-argument
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
@@ -60,6 +65,8 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Not supported by this credential.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
