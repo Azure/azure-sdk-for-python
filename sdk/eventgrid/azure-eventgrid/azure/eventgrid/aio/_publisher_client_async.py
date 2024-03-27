@@ -73,6 +73,9 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
      SAS key authentication or SAS token authentication or an AsyncTokenCredential.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :rtype: None
 
     .. admonition:: Example:
@@ -98,12 +101,15 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         credential: Union[
             "AsyncTokenCredential", AzureKeyCredential, AzureSasCredential
         ],
+        *,
+        api_version: str = "2018-01-01",
         **kwargs: Any
     ) -> None:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
         self._endpoint = endpoint
+        self._api_version = api_version
 
     @staticmethod
     def _policies(
@@ -221,7 +227,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
+            _build_request(self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version), **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:

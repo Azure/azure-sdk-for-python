@@ -79,6 +79,9 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
      implements SAS key authentication or SAS token authentication or a TokenCredential.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :rtype: None
 
     .. admonition:: Example:
@@ -98,12 +101,19 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
+    def __init__(
+            self,
+            endpoint: str,
+            credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
+            *,
+            api_version: str ="2018-01-01",
+            **kwargs: Any
+        ):
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
+        self._api_version = api_version
 
     @staticmethod
     def _policies(credential, **kwargs):
@@ -221,7 +231,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
+            _build_request(self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version), **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:
