@@ -320,7 +320,7 @@ event = custom_schema_event = {
     }
 
 credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASCI)
+client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 
 client.send(event)
 ```

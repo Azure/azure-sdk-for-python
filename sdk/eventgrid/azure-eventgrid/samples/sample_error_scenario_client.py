@@ -84,28 +84,28 @@ def send_eventgrid_to_namespace():
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
         client.send(eventgrid_event, topic_name=TOPIC_NAME, binary_mode=True)
     except Exception as e:
-        print(f"Error occured: {e} \n")
+        print(f"Error occurred: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
         client.send(list_eventgrid_event, topic_name=TOPIC_NAME)
     except Exception as e:
-        print(f"Error occured: {e} \n")
+        print(f"Error occurred: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
         client.send(eventgrid_event_dict, topic_name=TOPIC_NAME)
     except Exception as e:
-        print(f"Error occured: {e} \n")
+        print(f"Error occurred: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
         client.send(list_eventgrid_event_dict, topic_name=TOPIC_NAME)
     except Exception as e:
-        print(f"Error occured: {e} \n")
+        print(f"Error occurred: {e} \n")
 
 
 def send_partner_to_namespace():
@@ -115,7 +115,7 @@ def send_partner_to_namespace():
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
         client.send(cloud_event, topic_name=TOPIC_NAME, channel_name=CHANNEL_NAME)
     except Exception as e:
-        print(f"Error occured: {e} \n")
+        print(f"Error occurred: {e} \n")
 
 
 send_eventgrid_to_namespace()
