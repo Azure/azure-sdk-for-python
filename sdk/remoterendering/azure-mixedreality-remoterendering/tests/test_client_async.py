@@ -210,8 +210,10 @@ class TestRemoteRenderingClientAsync(AzureRecordedTestCase):
             await conversion_poller.result()
 
         error_details = excinfo.value
-        assert "invalid input" in error_details.error.message.lower()
-        assert "logs" in error_details.error.message.lower()
+        assert "InputContainerError" == error_details.code
+        # Message: "Could not find the asset file in the storage account. Please make sure all paths and names are correct and the file is uploaded to storage."
+        assert None != error_details.message
+        assert "could not find the asset file in the storage account" in error_details.message
 
     @pytest.mark.asyncio
     async def test_simple_session(self, recorded_test, account_info, async_arr_client):
