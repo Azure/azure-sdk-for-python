@@ -169,7 +169,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
@@ -231,7 +231,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
@@ -337,7 +337,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
@@ -346,7 +346,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: Directory-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -613,7 +613,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :returns:
             The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
-        :rtype: dict[str, int]
+        :rtype: Dict[str, int]
         """
         try:
             handle_id = handle.id # type: ignore
@@ -655,7 +655,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :returns: The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
-        :rtype: dict[str, int]
+        :rtype: Dict[str, int]
         """
         timeout = kwargs.pop('timeout', None)
         start_time = time.time()
@@ -725,7 +725,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         :param metadata:
             Name-value pairs associated with the directory as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -733,7 +733,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: Directory-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
@@ -786,7 +786,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :type file_attributes: str or NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
         :type file_creation_time: str or datetime
@@ -818,7 +818,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
@@ -847,7 +847,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         :param str directory_name:
             The name of the subdirectory.
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str, str] metadata:
             Name-value pairs associated with the subdirectory as metadata.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
@@ -918,9 +918,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The name of the file.
         :param data:
             Content of the file.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
