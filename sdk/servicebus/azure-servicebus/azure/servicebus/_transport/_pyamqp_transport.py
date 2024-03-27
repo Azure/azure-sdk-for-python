@@ -767,7 +767,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        link_credit_needed = link_credit - handler._link.current_link_credit # pylint: disable=protected-access
+        if handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit # pylint: disable=protected-access
         if link_credit_needed > 0:
             handler._link.flow(link_credit=link_credit_needed) # pylint: disable=protected-access
 

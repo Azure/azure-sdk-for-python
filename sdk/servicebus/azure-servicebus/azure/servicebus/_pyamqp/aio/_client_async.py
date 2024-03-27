@@ -726,7 +726,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
                 on_transfer=self._message_received_async,
-                on_disposition=self._on_disposition_received_async,
                 properties=self._link_properties,
                 desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
@@ -1050,7 +1049,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            running = await self.do_work_async()
+            if self._shutdown:
+                running = False
+            if not await self.client_ready_async():
+                running = True
+            if running:
+                await self._connection.listen(wait=self._socket_timeout, **kwargs)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(

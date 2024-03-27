@@ -319,7 +319,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
+                return await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,

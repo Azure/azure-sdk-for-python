@@ -1017,7 +1017,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
     def _on_disposition_received(self, message_delivery, reason, state):
         # state is a dictionary with a key and a value
-        
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -1126,8 +1125,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
-        self.open()
-
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -1156,7 +1153,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         )
         on_disposition_received = partial(self._on_disposition_received, message_delivery)
 
-
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
@@ -1170,7 +1166,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            running = self.do_work()
+            if self._shutdown:
+                running = False
+            if not self.client_ready():
+                running = True
+            if running:
+                self._connection.listen(wait=self._socket_timeout, **kwargs)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(

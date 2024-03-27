@@ -53,6 +53,7 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self._pending_receipts = []
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -82,7 +83,7 @@ class ReceiverLink(Link):
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
-        self.delivery_count += 1
+            self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
         if self.received_delivery_id is not None:
             self._first_frame = frame
@@ -133,23 +134,23 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
 
-        # Create Pending Disposition once sent for a message
-        delivery = PendingDisposition(
-            message = message,
-            on_delivery_settled = on_disposition,
-        )
-        delivery.frame = disposition_frame
-        delivery.settled = settled
-        delivery.transfer_state = state
-
-
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
-        delivery.start = time.time()
-        delivery.sent = True
 
-        self._pending_receipts.append(delivery)
+        # Create Pending Disposition once sent for a message
+        if message:
+            delivery = PendingDisposition(
+                message = message,
+                on_delivery_settled = on_disposition,
+            )
+            delivery.frame = disposition_frame
+            delivery.settled = settled
+            delivery.transfer_state = state
+
+            delivery.start = time.time()
+            delivery.sent = True
+            self._pending_receipts.append(delivery)
 
     def _incoming_disposition(self, frame):
     
@@ -165,6 +166,15 @@ class ReceiverLink(Link):
                 continue
             unsettled.append(delivery)
         self._pending_receipts = unsettled
+
+
+    def _remove_pending_deliveries(self):
+        pass
+        # TODO: Add in error handling
+        # for delivery in self._pending_deliveries:
+        #     if not delivery.settled:
+                
+        # self._pending_deliveries = []
 
     def attach(self):
         super().attach()
