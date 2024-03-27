@@ -43,8 +43,6 @@ from .. import models as _models
 from functools import wraps
 
 from .._legacy import EventGridEvent
-from .._legacy._helpers import _is_eventgrid_event, _is_cloud_event
-
 from .._serialization import Serializer
 
 if sys.version_info >= (3, 9):
@@ -63,29 +61,6 @@ _SERIALIZER.client_side_validation = False
 if TYPE_CHECKING:
     from cloudevents.http.event import CloudEvent as CNCFCloudEvent
 
-
-class CloudEventDict(TypedDict):
-    type: str
-    specversion: str
-    source: str
-    id: str
-    data: Any
-    subject: Optional[str]
-    time: Optional[str]
-    datacontenttype: Optional[str]
-    extensions: Optional[Dict[str, Any]]
-
-
-class EventGridEventDict(TypedDict):
-    id: str
-    subject: str
-    data: Any
-    event_type: str
-    event_time: datetime.datetime
-    data_version: str
-    topic: Optional[str]
-
-
 EVENT_TYPES_BASIC = Union[
     CloudEvent,
     List[CloudEvent],
@@ -99,24 +74,6 @@ EVENT_TYPES_BASIC = Union[
 EVENT_TYPES_STD = Union[
     CloudEvent, List[CloudEvent], Dict[str, Any], List[Dict[str, Any]],
 ]
-CLOUD_EVENT_TYPES = [CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]]
-CLOUD_EVENT_TYPE_ALIAS = Union[
-    CloudEvent, List[CloudEvent], CloudEventDict, List[CloudEventDict]
-]
-EVENTGRID_EVENT_TYPES = [
-    EventGridEvent,
-    List[EventGridEvent],
-    EventGridEventDict,
-    List[EventGridEventDict],
-]
-EVENTGRID_EVENT_TYPE_ALIAS = Union[
-    EventGridEvent, List[EventGridEvent], EventGridEventDict, List[EventGridEventDict]
-]
-CUSTOM_EVENT_TYPES = Union[
-    Dict[str, Any], List[Dict[str, Any]], "CNCFCloudEvent", List["CNCFCloudEvent"]
-]
-CUSTOM_EVENT_TYPE_ALIAS = type(CUSTOM_EVENT_TYPES)
-
 
 def use_standard_only(func):
     """Use the standard client only."""
