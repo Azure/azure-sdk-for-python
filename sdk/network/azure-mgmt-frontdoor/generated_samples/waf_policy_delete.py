@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.frontdoor import FrontDoorManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.policies.begin_delete(
+    client.policies.begin_delete(
         resource_group_name="rg1",
         policy_name="Policy1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2022-05-01/examples/WafPolicyDelete.json
+# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2024-02-01/examples/WafPolicyDelete.json
 if __name__ == "__main__":
     main()

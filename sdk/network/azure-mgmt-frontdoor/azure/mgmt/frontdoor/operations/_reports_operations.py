@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,7 +26,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -73,7 +73,7 @@ def build_get_latency_scorecards_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -130,7 +130,7 @@ def build_get_timeseries_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -199,7 +199,6 @@ class ReportsOperations:
         :param country: The country associated with the Latency Scorecard. Values are country ISO codes
          as specified here- https://www.iso.org/iso-3166-country-codes.html. Default value is None.
         :type country: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LatencyScorecard or the result of cls(response)
         :rtype: ~azure.mgmt.frontdoor.models.LatencyScorecard
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -218,7 +217,7 @@ class ReportsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
         cls: ClsType[_models.LatencyScorecard] = kwargs.pop("cls", None)
 
-        request = build_get_latency_scorecards_request(
+        _request = build_get_latency_scorecards_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             experiment_name=experiment_name,
@@ -227,16 +226,15 @@ class ReportsOperations:
             end_date_time_utc=end_date_time_utc,
             country=country,
             api_version=api_version,
-            template_url=self.get_latency_scorecards.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -249,13 +247,9 @@ class ReportsOperations:
         deserialized = self._deserialize("LatencyScorecard", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_latency_scorecards.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_timeseries(
@@ -296,7 +290,6 @@ class ReportsOperations:
         :param country: The country associated with the Timeseries. Values are country ISO codes as
          specified here- https://www.iso.org/iso-3166-country-codes.html. Default value is None.
         :type country: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Timeseries or the result of cls(response)
         :rtype: ~azure.mgmt.frontdoor.models.Timeseries
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -315,7 +308,7 @@ class ReportsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
         cls: ClsType[_models.Timeseries] = kwargs.pop("cls", None)
 
-        request = build_get_timeseries_request(
+        _request = build_get_timeseries_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             experiment_name=experiment_name,
@@ -327,16 +320,15 @@ class ReportsOperations:
             endpoint=endpoint,
             country=country,
             api_version=api_version,
-            template_url=self.get_timeseries.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -349,10 +341,6 @@ class ReportsOperations:
         deserialized = self._deserialize("Timeseries", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_timeseries.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/Timeseries"
-    }
+        return deserialized  # type: ignore

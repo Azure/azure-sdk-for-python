@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.frontdoor import FrontDoorManagementClient
 
 """
@@ -29,11 +30,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_experiment_profiles.begin_delete(
+    client.network_experiment_profiles.begin_delete(
         resource_group_name="MyResourceGroup",
         profile_name="MyProfile",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2019-11-01/examples/NetworkExperimentDeleteProfile.json
