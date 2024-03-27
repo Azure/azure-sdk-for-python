@@ -13,8 +13,8 @@ function Get-WhlFile {
   $pipCommandArgs += "$Library==$Version"
 
   # download the whl file
-  Write-Host "pip download --quiet --only-binary :all: --dest $Destination --no-cache --no-deps $pipCommandArgs"
-  pip download --quiet --only-binary :all: --dest $Destination --no-cache --no-deps $pipCommandArgs
+  Write-Host "python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $pipCommandArgs"
+  python -m pip download --quiet --only-binary=:all: --dest $Destination --no-deps $pipCommandArgs
   if($LASTEXITCODE -ne 0) {
       return $false
   }
