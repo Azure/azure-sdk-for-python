@@ -48,7 +48,7 @@ from .models._enums import (
     CallbackType,
     WebPubSubProtocolType,
 )
-from ._util import format_user_agent, raise_for_empty_message_ack, NO_ACK_MESSAGE_ERROR
+from ._util import format_user_agent, raise_for_empty_message_ack
 
 _THREAD_JOIN_TIME_OUT = 0.1
 
@@ -629,12 +629,10 @@ class WebPubSubClient(
             try:
                 func()
                 return
-            except (Exception, SendMessageError) as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
                 delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
-                if delay_seconds is None or (
-                    isinstance(e, SendMessageError) and e.error_detail and e.error_detail.name == NO_ACK_MESSAGE_ERROR
-                ):
+                if delay_seconds is None:
                     raise e
                 _LOGGER.debug(
                     "will retry %sth times after %s seconds",

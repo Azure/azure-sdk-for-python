@@ -55,7 +55,7 @@ from .._client import (
     _ACK_TIMEOUT,
     _START_TIMEOUT,
 )
-from .._util import format_user_agent, raise_for_empty_message_ack, NO_ACK_MESSAGE_ERROR
+from .._util import format_user_agent, raise_for_empty_message_ack
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,10 +76,9 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
         self.on_close = on_close
         self.subprotocols = subprotocols
         self.header = header
+        self.event = asyncio.Event()
         self.session: Optional[aiohttp.ClientSession] = None
         self.sock: Optional[aiohttp.client._WSRequestContextManager] = None
-        self.event: asyncio.Event = asyncio.Event()
-        self.close_timeout = 1.0
         self.keep_running = True
 
     async def send(self, message: str) -> None:
@@ -93,6 +92,7 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
             await self.close()
             raise OpenClientError("Fail to open client") from e
         await self.on_open()
+        self.event.set()
 
         self.keep_running = True
         while self.keep_running:
@@ -104,14 +104,14 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
             elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
                 _LOGGER.debug("WebSocket is closed")
                 await self.on_close(msg.data, msg.extra)
-                self.event.set()
                 break
             elif msg.type == aiohttp.WSMsgType.ERROR:
                 await self.on_close(1008, "unexpected WebSocket error")
-                self.event.set()
                 break
             else:
                 _LOGGER.debug("Unknown message: %s", msg)
+
+        await self.session.close()
 
     async def connect(self):
         self.session = aiohttp.ClientSession()
@@ -120,20 +120,18 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
     async def close(self):
         try:
             await self.sock.close()
-            # wait for on_close triggered
-            await asyncio.wait_for(self.event.wait(), self.close_timeout)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.warning("Fail to close websocket connection: %s", e)
         finally:
             try:
                 await self.session.close()
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("Fail to close websocket connection: %s", e)
+                _LOGGER.warning("Fail to close session: %s", e)
         self.keep_running = False
 
     @property
     def closed(self):
-        return self.sock.closed
+        return not self.sock or self.sock.closed
 
 
 class WebPubSubClient(
@@ -549,12 +547,10 @@ class WebPubSubClient(
             try:
                 await func()
                 return
-            except (Exception, SendMessageError) as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
                 delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
-                if delay_seconds is None or (
-                    isinstance(e, SendMessageError) and e.error_detail and e.error_detail.name == NO_ACK_MESSAGE_ERROR
-                ):
+                if delay_seconds is None:
                     raise e
                 _LOGGER.debug(
                     "will retry %sth times after %s seconds",
@@ -588,7 +584,7 @@ class WebPubSubClient(
                 success = True
                 break
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("An attempt to reconnect connection failed %s", e)
+                _LOGGER.warning("An attempt to reconnect connection failed: %s", e)
                 attempt = attempt + 1
                 delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
                 if not delay_seconds:
@@ -627,7 +623,7 @@ class WebPubSubClient(
         :return: True if the client is connected to server, otherwise False
         :rtype: bool
         """
-        return self._state == WebPubSubClientState.CONNECTED and not self._ws.closed  # type: ignore
+        return self._state == WebPubSubClientState.CONNECTED and self._ws and not self._ws.closed  # type: ignore
 
     async def _rejoin_group(self, group_name: str):
         async def _rejoin_group_func():
@@ -654,7 +650,6 @@ class WebPubSubClient(
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
-            self._event.set()
 
         async def on_message(data: str):
             async def handle_ack_message(message: AckMessage):
@@ -787,9 +782,8 @@ class WebPubSubClient(
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
         await self._wait_for_tasks([self._task_seq_ack])
-        self._event.clear()
 
-        self._ws = WebSocketAppAsync(
+        ws = WebSocketAppAsync(
             url=url,
             on_open=on_open,
             on_message=on_message,
@@ -797,11 +791,14 @@ class WebPubSubClient(
             subprotocols=[self._protocol.name] if self._protocol else [],
             header={_USER_AGENT: format_user_agent(self._user_agent)},
         )
-        self._task_run_forever = asyncio.create_task(self._ws.run_forever(), name="run_forever")
+        self._task_run_forever = asyncio.create_task(ws.run_forever(), name="run_forever")
         try:
-            await asyncio.wait_for(self._event.wait(), timeout=self._start_timeout)
-        except asyncio.TimeoutError:
+            await asyncio.wait_for(ws.event.wait(), timeout=self._start_timeout)
+        except asyncio.TimeoutError as e:
             _LOGGER.warning("Timeout when waiting for websocket connection to open")
+            raise OpenClientError("Fail to open client") from e
+        else:
+            self._ws = ws
         if not self._is_connected():
             raise OpenClientError("Fail to open client")
 
@@ -872,7 +869,7 @@ class WebPubSubClient(
             if task and not task.done():
                 try:
                     await asyncio.wait_for(task, timeout=1.0)
-                except asyncio.TimeoutError:
+                except Exception: # pylint: disable=broad-except
                     _LOGGER.warning("Task %s is not done after 1s, cancel it", task.get_name())
 
     @overload
