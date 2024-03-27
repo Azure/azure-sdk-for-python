@@ -1983,8 +1983,9 @@ class VectorQuery(_serialization.Model):
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
     :vartype k_nearest_neighbors: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
+    :ivar fields: The comma-separated list of field names to be included in the vector search.
+     Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+     fields are given, the vector will be used to find the closest matches across all fields.
     :vartype fields: str
     :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
      vectors within the vector index. Useful for scenarios where exact matches are critical, such as
@@ -2023,8 +2024,9 @@ class VectorQuery(_serialization.Model):
         """
         :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
         :paramtype k_nearest_neighbors: int
-        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-         searched.
+        :keyword fields: The comma-separated list of field names to be included in the vector search.
+         Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+         fields are given, the vector will be used to find the closest matches across all fields.
         :paramtype fields: str
         :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
          vectors within the vector index. Useful for scenarios where exact matches are critical, such as
@@ -2055,8 +2057,9 @@ class VectorizableTextQuery(VectorQuery):
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
     :vartype k_nearest_neighbors: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
+    :ivar fields: The comma-separated list of field names to be included in the vector search.
+     Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+     fields are given, the vector will be used to find the closest matches across all fields.
     :vartype fields: str
     :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
      vectors within the vector index. Useful for scenarios where exact matches are critical, such as
@@ -2098,8 +2101,9 @@ class VectorizableTextQuery(VectorQuery):
         """
         :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
         :paramtype k_nearest_neighbors: int
-        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-         searched.
+        :keyword fields: The comma-separated list of field names to be included in the vector search.
+         Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+         fields are given, the vector will be used to find the closest matches across all fields.
         :paramtype fields: str
         :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
          vectors within the vector index. Useful for scenarios where exact matches are critical, such as
@@ -2134,8 +2138,9 @@ class VectorizedQuery(VectorQuery):
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
     :vartype k_nearest_neighbors: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
+    :ivar fields: The comma-separated list of field names to be included in the vector search.
+     Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+     fields are given, the vector will be used to find the closest matches across all fields.
     :vartype fields: str
     :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
      vectors within the vector index. Useful for scenarios where exact matches are critical, such as
@@ -2177,8 +2182,9 @@ class VectorizedQuery(VectorQuery):
         """
         :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
         :paramtype k_nearest_neighbors: int
-        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-         searched.
+        :keyword fields: The comma-separated list of field names to be included in the vector search.
+         Each of the fields must be a valid vector type, such as Collection(Edm.Single). If multiple
+         fields are given, the vector will be used to find the closest matches across all fields.
         :paramtype fields: str
         :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
          vectors within the vector index. Useful for scenarios where exact matches are critical, such as
