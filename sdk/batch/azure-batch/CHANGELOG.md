@@ -1,5 +1,13 @@
 # Release History
 
+## 14.2.0 (2024-02-01)
+
+### Features Added
+
+- Added `UpgradePolicy` to `CloudPool` definition for pool creation
+  - Added `AutomaticOSUpgradePolicy` to include configuration parameters for automatic OS upgrades
+  - Added `RollingUpgradePolicy` to include configuration parameters for rolling upgrades
+
 ## 14.1.0 (2023-11-01)
 
 ### Features Added

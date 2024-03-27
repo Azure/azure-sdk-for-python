@@ -49,7 +49,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net|\.test)", value=".sanitized.com")
     
-    add_general_regex_sanitizer(regex=r"[%2B\d]{10,15}", value="sanitized")
+    add_general_regex_sanitizer(regex=r"(?:(?:%2B)|\+)\d{10,15}", value="sanitized")
 
     add_general_regex_sanitizer(
         regex=r"phoneNumbers/[%2B\d]{10,15}", value="phoneNumbers/sanitized")

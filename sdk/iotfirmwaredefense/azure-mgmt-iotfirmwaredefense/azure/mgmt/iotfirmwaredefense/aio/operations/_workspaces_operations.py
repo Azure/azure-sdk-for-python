@@ -504,21 +504,17 @@ class WorkspacesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Workspace", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("Workspace", pipeline_response)
+        deserialized = self._deserialize("Workspace", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     update.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}"
@@ -586,7 +582,7 @@ class WorkspacesOperations:
     }
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> Optional[_models.Workspace]:
+    async def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> _models.Workspace:
         """Get firmware analysis workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -595,8 +591,8 @@ class WorkspacesOperations:
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Workspace or None or the result of cls(response)
-        :rtype: ~azure.mgmt.iotfirmwaredefense.models.Workspace or None
+        :return: Workspace or the result of cls(response)
+        :rtype: ~azure.mgmt.iotfirmwaredefense.models.Workspace
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -611,7 +607,7 @@ class WorkspacesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Optional[_models.Workspace]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Workspace] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -632,14 +628,12 @@ class WorkspacesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("Workspace", pipeline_response)
+        deserialized = self._deserialize("Workspace", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

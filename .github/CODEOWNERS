@@ -334,8 +334,10 @@
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
-# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
+# AzureSdkOwners: @xiangyan99
+# ServiceOwners:  @mattgotteiner
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -468,7 +470,7 @@
 #/<NotInRepo>/          @antcp @AzureAppServiceCLI
 
 # ServiceLabel: %App Configuration %Service Attention
-#/<NotInRepo>/          @shenmuxiaosen @avanigupta
+#/<NotInRepo>/          @albertofori @avanigupta @mrm9084
 
 # ServiceLabel: %ARO %Service Attention
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
@@ -830,9 +832,6 @@
 # ServiceLabel: %Scheduler %Service Attention
 #/<NotInRepo>/          @derek1ee
 
-# ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
-
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
 
@@ -910,9 +909,6 @@
 
 # ServiceLabel: %Network - Bastion %Service Attention
 #/<NotInRepo>/          @bastionsuppgithub
-
-# ServiceLabel: %Azure.Spring - Cosmos
-#/<NotInRepo>/          @kushagraThapar
 
 # ServiceLabel: %Network - Private Link %Service Attention
 #/<NotInRepo>/          @privlinksuppgithub
