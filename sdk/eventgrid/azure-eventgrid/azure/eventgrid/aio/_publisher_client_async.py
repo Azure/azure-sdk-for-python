@@ -227,7 +227,9 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version), **kwargs
+            _build_request(self._endpoint, content_type, events,
+                           channel_name=channel_name, api_version=self._api_version),
+            **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:

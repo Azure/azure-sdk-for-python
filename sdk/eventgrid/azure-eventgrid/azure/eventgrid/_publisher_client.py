@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, cast, Dict, List, Any, Union, Optional
-
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
@@ -49,8 +49,6 @@ from ._version import VERSION
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import (
-        AzureKeyCredential,
-        AzureSasCredential,
         TokenCredential,
     )
 
@@ -104,11 +102,11 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     def __init__(
             self,
             endpoint: str,
-            credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
+            credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
             *,
             api_version: str ="2018-01-01",
             **kwargs: Any
-        ):
+        ) -> None:
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -231,7 +229,9 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version), **kwargs
+            _build_request(
+                self._endpoint,content_type, events, channel_name=channel_name, api_version=self._api_version),
+                **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:
