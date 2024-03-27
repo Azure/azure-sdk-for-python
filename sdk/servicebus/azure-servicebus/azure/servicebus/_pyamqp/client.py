@@ -929,6 +929,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     
     @staticmethod
     def _process_receive_error(message_delivery, condition, description=None, info=None):
+        # TODO: Do we want to raise MessageSendFailed/MessageException here?
         try:
             amqp_condition = ErrorCondition(condition)
         except ValueError:
@@ -1016,7 +1017,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 self.close()
 
     def _on_disposition_received(self, message_delivery, reason, state):
-        # state is a dictionary with a key and a value
+
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -1143,8 +1144,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             first = delivery_id
             last = None
 
-
-        # this is where you do the equivalent of creating the delivery etc like we do with send transfer 
 
         message_delivery = _MessageDelivery(
             message,

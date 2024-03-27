@@ -7,13 +7,16 @@
 import uuid
 import time
 import logging
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from ._decode import decode_payload
 from .link import Link
 from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
+
+if TYPE_CHECKING:
+    from .message import _MessageDelivery
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,13 +34,12 @@ class PendingDisposition(object):
         self._network_trace_params = kwargs.get('network_trace_params')
 
     def on_settled(self, reason, state):
-        # TODO: ADD in error functionality
         if self.on_delivery_settled and not self.settled:
             try:
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Message 'on_delivery_settled' callback failed: %r",
+                    "Disposition 'on_delivery_settled' callback failed: %r",
                     e,
                     extra=self._network_trace_params
                 )
@@ -108,6 +110,7 @@ class ReceiverLink(Link):
                 )
 
     def _wait_for_response(self, wait: Union[bool, float]) -> None:
+        # TODO: Can we remove this method?
         if wait is True:
             self._session._connection.listen(wait=False) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
@@ -127,8 +130,8 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
-        message = None,
-        on_disposition = None,
+        message: Optional["_MessageDelivery"] = None,
+        on_disposition: Optional[callable] = None,
     ):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
@@ -138,7 +141,7 @@ class ReceiverLink(Link):
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
-        # Create Pending Disposition once sent for a message
+        # Track dispositions for settling messages
         if message:
             delivery = PendingDisposition(
                 message = message,
@@ -153,7 +156,6 @@ class ReceiverLink(Link):
             self._pending_receipts.append(delivery)
 
     def _incoming_disposition(self, frame):
-    
         # If delivery_id is not settled, return
         if not frame[3]:  # settled
             return
@@ -171,10 +173,6 @@ class ReceiverLink(Link):
     def _remove_pending_deliveries(self):
         pass
         # TODO: Add in error handling
-        # for delivery in self._pending_deliveries:
-        #     if not delivery.settled:
-                
-        # self._pending_deliveries = []
 
     def attach(self):
         super().attach()
@@ -189,8 +187,8 @@ class ReceiverLink(Link):
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
-        message_delivery = None,
-        on_disposition = None,
+        message_delivery: Optional["_MessageDelivery"] = None,
+        on_disposition: Optional[callable] = None,
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")

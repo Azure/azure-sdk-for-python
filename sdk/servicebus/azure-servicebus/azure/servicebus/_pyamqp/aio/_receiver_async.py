@@ -115,6 +115,7 @@ class ReceiverLink(Link):
                 )
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
+        # TODO: Can we remove this method?
         if wait is True:
             await self._session._connection.listen(wait=False) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
