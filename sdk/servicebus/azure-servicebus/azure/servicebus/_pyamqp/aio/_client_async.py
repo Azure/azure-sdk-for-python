@@ -900,9 +900,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             if self._shutdown:
                 await self.close_async()
 
-    async def _on_disposition_received_async(self, message_delivery, reason, state):
-        # state is a dictionary with a key and a value
-        
+    async def _on_disposition_received_async(self, message_delivery, reason, state):        
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -927,11 +925,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
+        # TODO: Confirm if the following statements below are needed, do we want a TimeOut to be set?
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
             message_delivery.state = MessageDeliveryState.Timeout
-            message_delivery.error = TimeoutError("Sending message timed out.")
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
             self._process_receive_error(
@@ -1027,8 +1026,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             first = delivery_id
             last = None
 
-        # this is where you do the equivalent of creating the delivery etc like we do with send transfer 
-
+        # Create a Message Delivery object for the Disposition
         message_delivery = _MessageDelivery(
             message,
             MessageDeliveryState.WaitingToBeSent,
@@ -1047,8 +1045,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             on_disposition = on_disposition_received,
         )
 
+        # Wait for the message to be settled
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            # TODO: Confirm if this is the correct way to handle the do_work call
+            # calling do_work directly triggers Flow() calls which is not what we want
             if self._shutdown:
                 running = False
             if not await self.client_ready_async():
