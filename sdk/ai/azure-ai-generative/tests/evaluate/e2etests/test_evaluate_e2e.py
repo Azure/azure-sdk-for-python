@@ -74,7 +74,7 @@ class TestEvaluate(AzureRecordedTestCase):
                                                         e2e_openai_completion_deployment_name, tmpdir):
         test_data = [
             {"context": "Some are reported as not having been wanted at all.",
-             "question": "are all reported as being wanted?",
+             "question": "",
              "answer": "All are reported as being completely and fully wanted."
             },
             {"question": "How do you log a model?",
@@ -315,6 +315,7 @@ class TestEvaluate(AzureRecordedTestCase):
         assert "gpt_groundedness" in columns_in_tabular_data
         assert "gpt_retrieval_score" in columns_in_tabular_data
         assert "evaluation_per_turn" in columns_in_tabular_data
+        assert "messages" in columns_in_tabular_data
 
     def test_task_type_chat_fallback_groundedness(self, ai_client, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
         data_path = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
