@@ -146,7 +146,10 @@ function Get-python-DocsMsDevLanguageSpecificPackageInfo($packageInfo, $packageS
       if ($namespaces.Count -gt 0) {
         $packageInfo | Add-Member -Type NoteProperty -Name "Namespaces" -Value $namespaces
       } else {
-        LogWarning "Unable to find namespaces $($packageInfo.Name):$version"
+        LogWarning "Unable to find namespaces for $($packageInfo.Name):$version, using the package name."
+        $tempNamespaces = @()
+        $tempNamespaces += $packageInfo.Name
+        $packageInfo | Add-Member -Type NoteProperty -Name "Namespaces" -Value $tempNamespaces
       }
     }
   }
