@@ -74,7 +74,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
      SAS key authentication or SAS token authentication or an AsyncTokenCredential.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is the most recent api version. Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :rtype: None
