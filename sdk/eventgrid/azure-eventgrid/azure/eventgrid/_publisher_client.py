@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, cast, Dict, List, Any, Union, Optional
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
@@ -49,6 +49,8 @@ from ._version import VERSION
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import (
+        AzureKeyCredential,
+        AzureSasCredential,
         TokenCredential,
     )
 
@@ -102,7 +104,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     def __init__(
             self,
             endpoint: str,
-            credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
+            credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
             *,
             api_version: str ="2018-01-01",
             **kwargs: Any
