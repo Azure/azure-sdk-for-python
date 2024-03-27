@@ -854,7 +854,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            if self._link.current_link_credit <= 0 and kwargs.get("flow", True):
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -1036,14 +1036,11 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
 
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
-            if state and SEND_DISPOSITION_ACCEPT in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_RELEASE in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_MODIFY in state:
-                message_delivery.state = MessageDeliveryState.Ok
-            elif state and SEND_DISPOSITION_RECEIVED in state:
-                message_delivery.state = MessageDeliveryState.Ok
+            if state and (SEND_DISPOSITION_ACCEPT in state or
+                SEND_DISPOSITION_RELEASE in state or
+                SEND_DISPOSITION_MODIFY in state or
+                SEND_DISPOSITION_RECEIVED in state):
+                    message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -1062,7 +1059,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
             message_delivery.state = MessageDeliveryState.Timeout
-            message_delivery.error = TimeoutError("Sending message timed out.")
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
             self._process_receive_error(
@@ -1185,12 +1182,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            if self._shutdown:
-                running = False
-            if not self.client_ready():
-                running = True
-            if running:
-                self._connection.listen(wait=self._socket_timeout, **kwargs)
+            self.do_work(flow=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
