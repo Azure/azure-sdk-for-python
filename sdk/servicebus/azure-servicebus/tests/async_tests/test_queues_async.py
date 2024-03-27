@@ -2277,7 +2277,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
                 raise uamqp.errors.AMQPError()
         else:
-            async def _hack_amqp_message_complete(cls, _, settlement):
+            async def _hack_amqp_message_complete(cls, _, settlement, **kwargs):
                 if settlement == 'completed':
                     raise RuntimeError()
 
