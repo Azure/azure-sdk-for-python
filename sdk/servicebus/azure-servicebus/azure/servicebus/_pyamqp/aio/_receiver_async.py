@@ -149,24 +149,25 @@ class ReceiverLink(Link):
         if delivery_tag not in self._received_delivery_tags:
             raise AMQPException(condition=ErrorCondition.IllegalState, description="Delivery tag not found.")
 
-        # Create Pending Disposition once sent for a message
-        delivery = PendingDisposition(
-            message = message,
-            on_delivery_settled = on_disposition,
-        )
-        delivery.frame = disposition_frame
-        delivery.settled = settled
-        delivery.transfer_state = state
-
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
         self._received_delivery_tags.remove(delivery_tag)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
-        delivery.start = time.time()
-        delivery.sent = True
 
-        self._pending_receipts.append(delivery)
+        if message:
+            # Create Pending Disposition once sent for a message
+            delivery = PendingDisposition(
+                message = message,
+                on_delivery_settled = on_disposition,
+            )
+            delivery.frame = disposition_frame
+            delivery.settled = settled
+            delivery.transfer_state = state
+            delivery.start = time.time()
+            delivery.sent = True
+
+            self._pending_receipts.append(delivery)
 
     async def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return

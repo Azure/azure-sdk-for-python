@@ -55,6 +55,7 @@ class ReceiverLink(Link):
         self._received_payload = bytearray()
         self._first_frame = None
         self._received_delivery_tags = set()
+        self._pending_receipts = []
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -144,16 +145,6 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
 
-        # Create Pending Disposition once sent for a message
-        delivery = PendingDisposition(
-            message = message,
-            on_delivery_settled = on_disposition,
-        )
-        delivery.frame = disposition_frame
-        delivery.settled = settled
-        delivery.transfer_state = state
-
-
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
@@ -161,7 +152,19 @@ class ReceiverLink(Link):
         delivery.start = time.time()
         delivery.sent = True
 
-        self._pending_receipts.append(delivery)
+        # Create Pending Disposition once sent for a message
+        if message:
+            delivery = PendingDisposition(
+                message = message,
+                on_delivery_settled = on_disposition,
+            )
+            delivery.frame = disposition_frame
+            delivery.settled = settled
+            delivery.transfer_state = state
+
+            delivery.start = time.time()
+            delivery.sent = True
+            self._pending_receipts.append(delivery)
 
     def _incoming_disposition(self, frame):
     
@@ -177,6 +180,15 @@ class ReceiverLink(Link):
                 continue
             unsettled.append(delivery)
         self._pending_receipts = unsettled
+
+
+    def _remove_pending_deliveries(self):
+        pass
+        # TODO: Add in error handling
+        # for delivery in self._pending_deliveries:
+        #     if not delivery.settled:
+                
+        # self._pending_deliveries = []
 
     def attach(self):
         super().attach()
