@@ -921,7 +921,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :keyword Dict[str,str] metadata:
+        :keyword Dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
