@@ -33,10 +33,6 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-        python scripts/dev_setup.py -p azure-core
-        python -m pip install PyGithub
-        python -m pip install GitPython
-        
         cd ..
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "$(USR_NAME)"
