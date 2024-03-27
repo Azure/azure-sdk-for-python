@@ -598,6 +598,7 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
         content = b'Hello World Encrypted!'
+        length = len(content)
         byte_io = BytesIO(content)
 
         def generator():
@@ -614,7 +615,7 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Act
         for data in data_list:
-            blob.upload_blob(data, overwrite=True)
+            blob.upload_blob(data, length=length, overwrite=True)
             result = blob.download_blob().readall()
 
             # Assert
