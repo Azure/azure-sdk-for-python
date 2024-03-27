@@ -67,10 +67,10 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype resource_ids: list[str]
         :keyword metric_namespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metric_namespace: str
-        :keyword metric_names: The names of the metrics (comma separated) to retrieve. Required.
+        :keyword metric_names: The names of the metrics to retrieve. Required.
         :paramtype metric_names: list[str]
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
-            a tuple of a start datetime with timedelta, or a tuple with start datetime and end datetime.
+            a tuple of a start datetime with timedelta, or a tuple with start and end datetimes.
         :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
             tuple[~datetime.datetime, ~datetime.datetime]]]
         :keyword granularity: The granularity (i.e. timegrain) of the query.
