@@ -20,14 +20,14 @@ from random import randint, sample
 import time
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 
 key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 services = [
     "EventGrid",
     "ServiceBus",

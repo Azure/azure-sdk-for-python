@@ -10,23 +10,30 @@ from azure.eventgrid._operations._patch import _to_http_request
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 
+
 class MyTestClass(object):
     def __init__(self, name):
         self.name = name
+
     def __str__(self):
         return self.name
-    
-class TestEGClientExceptions():
-    
+
+
+class TestEGClientExceptions:
+
     def test_binary_request_format(self):
         event = CloudEvent(
             type="Contoso.Items.ItemReceived",
             source="source",
             subject="MySubject",
-            data=b'this is binary data',
+            data=b"this is binary data",
         )
 
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
+        request = _to_http_request(
+            "https://eg-topic.westus2-1.eventgrid.azure.net/api/events",
+            event=event,
+            binary_mode=True,
+        )
 
         assert request.data == b"this is binary data"
         assert request.headers.get("ce-source") == "source"
@@ -38,12 +45,16 @@ class TestEGClientExceptions():
             type="Contoso.Items.ItemReceived",
             source="source",
             subject="MySubject",
-            data=b'this is my data',
+            data=b"this is my data",
             datacontenttype="application/json",
-            extensions={"extension1": "value1", "extension2": "value2"}
+            extensions={"extension1": "value1", "extension2": "value2"},
         )
 
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
+        request = _to_http_request(
+            "https://eg-topic.westus2-1.eventgrid.azure.net/api/events",
+            event=event,
+            binary_mode=True,
+        )
 
         assert request.data == b"this is my data"
         assert request.headers.get("ce-source") == "source"
@@ -59,9 +70,12 @@ class TestEGClientExceptions():
             subject="MySubject",
             data=test_class,
             datacontenttype="application/json",
-            extensions={"extension1": "value1", "extension2": "value2"}
+            extensions={"extension1": "value1", "extension2": "value2"},
         )
 
         with pytest.raises(TypeError):
-            _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
-
+            _to_http_request(
+                "https://eg-topic.westus2-1.eventgrid.azure.net/api/events",
+                event=event,
+                binary_mode=True,
+            )

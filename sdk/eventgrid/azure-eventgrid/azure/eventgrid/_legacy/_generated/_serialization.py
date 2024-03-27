@@ -799,9 +799,11 @@ class Serializer(object):
             if data_type.startswith("["):
                 internal_data_type = data_type[1:-1]
                 data = [
-                    self.serialize_data(d, internal_data_type, **kwargs)
-                    if d is not None
-                    else ""
+                    (
+                        self.serialize_data(d, internal_data_type, **kwargs)
+                        if d is not None
+                        else ""
+                    )
                     for d in data
                 ]
                 if not kwargs.get("skip_quote", False):

@@ -93,9 +93,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_str_async(
-        self, eventgrid_topic_endpoint
-    ):
+    async def test_send_event_grid_event_data_str_async(self, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
         eg_event = EventGridEvent(
             subject="sample",
@@ -147,23 +145,24 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         cloud_event = CloudEvent(
-                source = "http://samplesource.dev",
-                data = {"sample": "cloudevent"},
-                type="Sample.Cloud.Event"
-                )
+            source="http://samplesource.dev",
+            data={"sample": "cloudevent"},
+            type="Sample.Cloud.Event",
+        )
         await client.send(cloud_event)
-
 
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_str(self, eventgrid_cloud_event_topic_endpoint):
+    async def test_send_cloud_event_data_str(
+        self, eventgrid_cloud_event_topic_endpoint
+    ):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         cloud_event = CloudEvent(
-                source = "http://samplesource.dev",
-                data = "cloudevent",
-                type="Sample.Cloud.Event"
-                )
+            source="http://samplesource.dev",
+            data="cloudevent",
+            type="Sample.Cloud.Event",
+        )
         await client.send(cloud_event)
 
     @EventGridPreparer()
@@ -377,7 +376,12 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
-    async def test_send_partner_namespace_async(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_namespace_topic_key, eventgrid_partner_channel_name):
+    async def test_send_partner_namespace_async(
+        self,
+        eventgrid_partner_namespace_topic_endpoint,
+        eventgrid_partner_namespace_topic_key,
+        eventgrid_partner_channel_name,
+    ):
         credential = AzureKeyCredential(eventgrid_partner_namespace_topic_key)
         client = EventGridPublisherClient(
             eventgrid_partner_namespace_topic_endpoint, credential
@@ -393,5 +397,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
             assert req.get("aeg-channel-name") == eventgrid_partner_channel_name
 
         await client.send(
-            cloud_event, channel_name=eventgrid_partner_channel_name, raw_request_hook=callback
+            cloud_event,
+            channel_name=eventgrid_partner_channel_name,
+            raw_request_hook=callback,
         )

@@ -21,14 +21,14 @@ import time
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 
 key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 
 services = [
     "EventGrid",
