@@ -295,10 +295,7 @@ nodes:
     type: code
     path: validate_groundedness_service.py
   inputs:
-    answer: ${inputs.answer}
-    context: ${inputs.context}
     flight: ${inputs.groundedness_service_flight}
-    question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
     validate_input_result: ${validate_input.output}
   use_variants: false
