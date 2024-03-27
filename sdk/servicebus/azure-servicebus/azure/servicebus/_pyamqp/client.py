@@ -1024,7 +1024,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             if state and (SEND_DISPOSITION_ACCEPT in state or
                 SEND_DISPOSITION_RELEASE in state or
                 SEND_DISPOSITION_MODIFY in state or
-                SEND_DISPOSITION_RECEIVED in state):
+                SEND_DISPOSITION_RECEIVED in state or
+                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] == None)):
                     message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
