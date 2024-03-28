@@ -42,6 +42,8 @@
 # Service team
 ####
 
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceLabel: %AI
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
 
