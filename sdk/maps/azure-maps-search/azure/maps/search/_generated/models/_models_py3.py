@@ -97,7 +97,7 @@ class Address(msrest.serialization.Model):
         'street': {'key': 'street', 'type': 'str'},
         'cross_street': {'key': 'crossStreet', 'type': 'str'},
         'street_number': {'key': 'streetNumber', 'type': 'str'},
-        'route_numbers': {'key': 'routeNumbers', 'type': '[int]'},
+        'route_numbers': {'key': 'routeNumbers', 'type': '[str]'},
         'street_name': {'key': 'streetName', 'type': 'str'},
         'street_name_and_number': {'key': 'streetNameAndNumber', 'type': 'str'},
         'municipality': {'key': 'municipality', 'type': 'str'},
