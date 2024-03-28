@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator-async,too-many-lines,networking-import-outside-azure-core-transport
 import asyncio
+from functools import partial
 import inspect
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal, Awaitable
 import time
@@ -70,38 +71,42 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
         on_open=None,
         on_message=None,
         on_close=None,
+        on_error=None,
         subprotocols: Optional[List[str]] = None,
         header: Optional[Dict[str, str]] = None,
+        reconnect_tried_times: Optional[int] = None,
+        recover_start_time: Optional[float] = None,
     ) -> None:
         self.url = url
         self.on_open = on_open
         self.on_message = on_message
-        self.on_close = on_close
+        self.on_close = partial(
+            on_close, ws_reconnect_tried_times=reconnect_tried_times, ws_recover_start_time=recover_start_time
+        )
+        self.on_error = on_error
         self.subprotocols = subprotocols
         self.header = header
         self.event = asyncio.Event()
         self.session: Optional[aiohttp.ClientSession] = None
         self.sock: Optional[aiohttp.client.ClientWebSocketResponse] = None
         self.keep_running = False
-        self.reconnect_tried_times: Optional[int] = None
-        self.recover_start_time: Optional[float] = None
+        self.close_event: Optional[CloseEvent] = None
+        self.error_happened: Optional[Exception] = None
 
     async def send(self, message: str) -> None:
         await self.sock.send_str(message)  # type: ignore
 
-    async def run_forever(
-        self, reconnect_tried_times: Optional[int] = None, recover_start_time: Optional[float] = None
-    ):
+    async def run_forever(self):
         try:
             self.session = aiohttp.ClientSession()
             self.sock = await self.session.ws_connect(self.url, protocols=self.subprotocols, headers=self.header)
-        except aiohttp.ClientConnectorError as e:
-            await self.close()
-            raise OpenClientError("Fail to open client") from e
+        except Exception as e:  # pylint: disable=broad-except
+            await self.on_error(self, e)
+            await self.session_close()
+            self.event.set()
+            return
         await self.on_open()
         self.event.set()
-        self.reconnect_tried_times = reconnect_tried_times
-        self.recover_start_time = recover_start_time
 
         self.keep_running = True
         while self.keep_running:
@@ -112,22 +117,27 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
                 _LOGGER.debug("WebSocket is closing")
             elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
                 _LOGGER.debug("WebSocket is closed")
-                await self.on_close(msg.data, msg.extra, self.reconnect_tried_times, self.recover_start_time)
+                await self.on_close(self, msg.data, msg.extra)
                 break
             elif msg.type == aiohttp.WSMsgType.ERROR:
-                await self.on_close(
-                    1008, "unexpected WebSocket error", self.reconnect_tried_times, self.recover_start_time
-                )
+                await self.on_close(self, 1008, "unexpected WebSocket error")
                 break
             else:
                 _LOGGER.debug("Unknown message: %s", msg)
 
         self.keep_running = False
-        await self.session.close()
+        await self.session_close()
 
     async def connect(self):
         self.session = aiohttp.ClientSession()
         self.sock = await self.session.ws_connect(self.url, protocols=self.subprotocols, headers=self.header)
+
+    async def session_close(self):
+        try:
+            if self.session and not self.session.closed:
+                await self.session.close()
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.warning("Fail to close session: %s", e)
 
     async def close(self):
         try:
@@ -135,10 +145,7 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.warning("Fail to close websocket connection: %s", e)
         finally:
-            try:
-                await self.session.close()
-            except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("Fail to close session: %s", e)
+            await self.session_close()
         self.keep_running = False
 
     @property
@@ -589,28 +596,24 @@ class WebPubSubClient(
     async def _handle_auto_reconnect(self, reconnect_tried_times: Optional[int] = None):
         _LOGGER.debug("start auto reconnect")
         success = False
-        attempt = 0 if reconnect_tried_times is None else reconnect_tried_times
+        attempt = -1 if reconnect_tried_times is None else reconnect_tried_times
         while not self._is_stopping:
             try:
-                if reconnect_tried_times is not None:
-                    attempt = attempt + 1
+                attempt = attempt + 1
+                if attempt > 0:
                     delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
                     if not delay_seconds:
                         break
+                    _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
                     await asyncio.sleep(delay_seconds)
                 await self._start_from_restarting(attempt)
                 success = True
                 break
             except ReconnectError:
                 _LOGGER.debug("fail to reconnect, and will retry in another task")
+                break
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed: %s", e)
-                attempt = attempt + 1
-                delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
-                if not delay_seconds:
-                    break
-                _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
-                await asyncio.sleep(delay_seconds)
         if not success:
             await self._handle_connection_stopped()
         else:
@@ -758,6 +761,7 @@ class WebPubSubClient(
                 _LOGGER.warning("unknown message type: %s", parsed_message.kind)
 
         async def on_close(
+            ws_instance: WebSocketAppAsync,
             close_status_code: int,
             close_msg: Optional[str] = None,
             ws_reconnect_tried_times: Optional[int] = None,
@@ -797,9 +801,10 @@ class WebPubSubClient(
 
                 self._state = WebPubSubClientState.RECOVERING
                 recovery_start = time.time() if ws_recover_start_time is None else ws_recover_start_time
+                first_time = True
                 while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
                     try:
-                        if ws_recover_start_time is not None:
+                        if ws_recover_start_time is not None or not first_time:
                             await asyncio.sleep(_RECOVERY_RETRY_INTERVAL)
                         await self._connect(recovery_url, None, recovery_start)
                         _LOGGER.debug("Recovery succeeded")
@@ -808,12 +813,20 @@ class WebPubSubClient(
                         _LOGGER.debug("Fail to recover, and will try in another task")
                         return
                     except Exception as e:  # pylint: disable=broad-except
+                        first_time = False
                         _LOGGER.debug("Fail to recover: %s", e)
                         _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
-                        await asyncio.sleep(_RECOVERY_RETRY_INTERVAL)
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+            else:
+                if close_status_code or close_msg:
+                    ws_instance.close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
+                ws_instance.event.set()
+
+        async def on_error(ws_instance: WebSocketAppAsync, error: Exception):
+            _LOGGER.warning("error happened when trying to connect: %s", error)
+            ws_instance.error_happened = error
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
@@ -824,25 +837,31 @@ class WebPubSubClient(
             on_open=on_open,
             on_message=on_message,
             on_close=on_close,
+            on_error=on_error,
             subprotocols=[self._protocol.name] if self._protocol else [],
             header={_USER_AGENT: format_user_agent(self._user_agent)},
+            reconnect_tried_times=reconnect_tried_times,
+            recover_start_time=recover_start_time,
         )
         task_name = f"run_forever_{uuid.uuid4()}"
-        self._task_run_forever = asyncio.create_task(
-            self._ws.run_forever(reconnect_tried_times, recover_start_time), name=task_name
-        )
+        self._task_run_forever = asyncio.create_task(self._ws.run_forever(), name=task_name)
         _LOGGER.debug("create task %s successfully", task_name)
+        start_time = time.time()
         try:
             await asyncio.wait_for(self._ws.event.wait(), timeout=self._start_timeout)
         except asyncio.TimeoutError:
-            _LOGGER.warning("Timeout when waiting for websocket connection to open")
-        if not self._is_connected():
-            if not self._task_run_forever.done():
-                if reconnect_tried_times:
-                    raise ReconnectError("Fail to reconnect after waiting for a while")
-                if recover_start_time:
-                    raise RecoverError("Fail to recover after waiting for a while")
-            raise OpenClientError(f"Client state is not {WebPubSubClientState.CONNECTED}")
+            _LOGGER.warning("Timeout when waiting for connection")
+        finally:
+            cost_time = time.time() - start_time
+            if not self._is_connected():
+                if not self._task_run_forever.done():
+                    if reconnect_tried_times is not None:
+                        raise ReconnectError("Fail to reconnect after waiting for a while")
+                    if recover_start_time is not None:
+                        raise RecoverError("Fail to recover after waiting for a while")
+                raise OpenClientError(
+                    " ".join(self._error_info(cost_time, self._ws.error_happened, self._ws.close_event))
+                )
 
         # set coroutine to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol:

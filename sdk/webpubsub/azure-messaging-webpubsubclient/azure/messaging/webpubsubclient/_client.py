@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator,too-many-lines
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal
+from functools import partial
 import sys
 import time
 import logging
@@ -41,6 +42,8 @@ from .models._models import (
     AckMessageError,
     AckMap,
     OpenClientError,
+    ReconnectError,
+    RecoverError,
 )
 from .models._enums import (
     WebPubSubDataType,
@@ -53,6 +56,35 @@ from ._util import format_user_agent, raise_for_empty_message_ack
 _THREAD_JOIN_TIME_OUT = 0.1
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class WebSocketAppSync(websocket.WebSocketApp):  # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        url,
+        on_open=None,
+        on_message=None,
+        on_close=None,
+        on_error=None,
+        subprotocols: Optional[List[str]] = None,
+        header: Optional[Dict[str, str]] = None,
+        reconnect_tried_times: Optional[int] = None,
+        recover_start_time: Optional[float] = None,
+    ) -> None:
+        super().__init__(
+            url,
+            on_open=on_open,
+            on_message=on_message,
+            on_close=partial(
+                on_close, ws_reconnect_tried_times=reconnect_tried_times, ws_recover_start_time=recover_start_time
+            ),
+            on_error=on_error,
+            subprotocols=subprotocols,
+            header=header,
+        )
+        self.cv = threading.Condition()
+        self.close_event: Optional[CloseEvent] = None
+        self.error_happened: Optional[Exception] = None
 
 
 class WebPubSubClientCredential:
@@ -210,6 +242,20 @@ class _WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,to
             return str(new_url)
         return None
 
+    def _error_info(
+        self, cost_time: float, error: Optional[Exception] = None, close_event: Optional[CloseEvent] = None
+    ) -> List[str]:
+        return [
+            "Fail to open client.",
+            f"It costed {int(cost_time)} seconds to open client but still failed."
+            if cost_time > self._start_timeout
+            else "",
+            f"During the process, error happened: {error}." if error else "",
+            f"Server ever sent close event, close code: {close_event.close_status_code}, reason: {close_event.close_reason}."
+            if close_event
+            else "",
+        ]
+
 
 class WebPubSubClient(
     _WebPubSubClient
@@ -287,7 +333,6 @@ class WebPubSubClient(
         self._group_map_lock = threading.Lock()
         self._ack_map: AckMap = AckMap()
         self._ws: Optional[websocket.WebSocketApp] = None
-        self._cv: threading.Condition = threading.Condition()
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
         self._ack_id_lock = threading.Lock()
@@ -647,7 +692,7 @@ class WebPubSubClient(
             # in new thread to avoid dead lock
             threading.Thread(target=func, args=args, daemon=True).start()
 
-    def _start_from_restarting(self):
+    def _start_from_restarting(self, reconnect_tried_times: Optional[int] = None):
         if self._state != WebPubSubClientState.DISCONNECTED:
             _LOGGER.warning("Client can be only restarted when it's Disconnected")
             return
@@ -658,23 +703,27 @@ class WebPubSubClient(
             self._state = WebPubSubClientState.DISCONNECTED
             raise e
 
-    def _handle_auto_reconnect(self):
+    def _handle_auto_reconnect(self, reconnect_tried_times: Optional[int] = None):
         _LOGGER.debug("start auto reconnect")
         success = False
-        attempt = 0
+        attempt = -1 if reconnect_tried_times is None else reconnect_tried_times
         while not self._is_stopping:
             try:
-                self._start_from_restarting()
+                attempt = attempt + 1
+                if attempt > 0:
+                    delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
+                    if not delay_seconds:
+                        break
+                    _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
+                    time.sleep(delay_seconds)
+                self._start_from_restarting(reconnect_tried_times)
                 success = True
+                break
+            except ReconnectError:
+                _LOGGER.debug("fail to reconnect, and will retry in another thread")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed %s", e)
-                attempt = attempt + 1
-                delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
-                if not delay_seconds:
-                    break
-                _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
-                time.sleep(delay_seconds)
         if not success:
             self._handle_connection_stopped()
         else:
@@ -686,7 +735,7 @@ class WebPubSubClient(
         self._state = WebPubSubClientState.STOPPED
         self._call_back(CallbackType.STOPPED)
 
-    def _handle_connection_close_and_no_recovery(self):
+    def _handle_connection_close_and_no_recovery(self, reconnect_tried_times: Optional[int] = None):
         _LOGGER.debug("Connection closed and no recovery")
         self._state = WebPubSubClientState.DISCONNECTED
         self._call_back(
@@ -697,7 +746,7 @@ class WebPubSubClient(
             ),
         )
         if self._auto_reconnect:
-            self._handle_auto_reconnect()
+            self._handle_auto_reconnect(reconnect_tried_times)
         else:
             self._handle_connection_stopped()
 
@@ -729,8 +778,10 @@ class WebPubSubClient(
 
         threading.Thread(target=_rejoin_group_func, daemon=True).start()
 
-    def _connect(self, url: str):  # pylint: disable=too-many-statements
-        def on_open(_: Any):
+    def _connect(
+        self, url: str, reconnect_tried_times: Optional[int] = None, recover_start_time: Optional[float] = None
+    ):  # pylint: disable=too-many-statements
+        def on_open(ws_instance: WebSocketAppSync):
             if self._is_stopping:
                 try:
                     if self._ws:
@@ -740,8 +791,8 @@ class WebPubSubClient(
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
-            with self._cv:
-                self._cv.notify()
+            with ws_instance.cv:
+                ws_instance.cv.notify()
 
         def on_message(_: Any, data: str):
             def handle_ack_message(message: AckMessage):
@@ -826,7 +877,13 @@ class WebPubSubClient(
             else:
                 _LOGGER.warning("unknown message type: %s", parsed_message.kind)
 
-        def on_close(_: Any, close_status_code: int, close_msg: str):
+        def on_close(
+            ws_instance: WebSocketAppSync,
+            close_status_code: int,
+            close_msg: str,
+            ws_reconnect_tried_times: Optional[int] = None,
+            ws_recover_start_time: Optional[float] = None,
+        ):
             if self._state == WebPubSubClientState.CONNECTED:
                 _LOGGER.info(
                     "WebSocket connection closed. Code: %s, Reason: %s",
@@ -840,38 +897,56 @@ class WebPubSubClient(
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
-                    self._handle_connection_close_and_no_recovery()
+                    self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
                     return
 
                 if self._last_close_event and self._last_close_event.close_status_code == 1008:
                     _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
-                    self._handle_connection_close_and_no_recovery()
+                    self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
                     return
 
                 if not self._protocol.is_reliable_sub_protocol:
                     _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
-                    self._handle_connection_close_and_no_recovery()
+                    self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
                     return
 
                 recovery_url = self._build_recovery_url()
                 if not recovery_url:
                     _LOGGER.warning("Connection id or reconnection token is not available")
-                    self._handle_connection_close_and_no_recovery()
+                    self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
                     return
 
                 self._state = WebPubSubClientState.RECOVERING
-                recovery_start = time.time()
+                recovery_start = time.time() if ws_recover_start_time is None else ws_recover_start_time
+                first_time = True
                 while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
                     try:
-                        self._connect(recovery_url)
+                        if ws_recover_start_time is not None or not first_time:
+                            time.sleep(_RECOVERY_RETRY_INTERVAL)
+                        self._connect(recovery_url, None, recovery_start)
                         _LOGGER.debug("Recovery succeeded")
                         return
-                    except:  # pylint: disable=bare-except
+                    except RecoverError:
+                        _LOGGER.debug("Fail to recover, and will try in another thread")
+                        return
+                    except Exception as e:  # pylint: disable=broad-except
+                        first_time = False
+                        _LOGGER.debug("Fail to recover: %s", e)
                         _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
-                        time.sleep(_RECOVERY_RETRY_INTERVAL)
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
-                self._handle_connection_close_and_no_recovery()
+                self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+            else:
+                with ws_instance.cv:
+                    if close_status_code or close_msg:
+                        ws_instance.close_event = CloseEvent(
+                            close_status_code=close_status_code, close_reason=close_msg
+                        )
+                    ws_instance.cv.notify()
+
+        def on_error(ws_instance: WebSocketAppSync, error: Exception):
+            _LOGGER.warning("error happened when trying to connect: %s", error)
+            ws_instance.error_happened = error
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
@@ -879,22 +954,32 @@ class WebPubSubClient(
         # when reconnect or recovery, _thread will come here then stop by itself so don't join it
         self._threads_join([self._thread_seq_ack])
 
-        self._ws = websocket.WebSocketApp(
+        self._ws = WebSocketAppSync(
             url=url,
             on_open=on_open,
             on_message=on_message,
             on_close=on_close,
+            on_error=on_error,
             subprotocols=[self._protocol.name] if self._protocol else [],
             header={_USER_AGENT: format_user_agent(self._user_agent)},
+            reconnect_tried_times=reconnect_tried_times,
+            recover_start_time=recover_start_time,
         )
 
         # set thread to start listen to server
         self._thread = threading.Thread(target=self._ws.run_forever)
         self._thread.start()
-        with self._cv:
-            self._cv.wait(timeout=self._start_timeout)
+        start_time = time.time()
+        with self._ws.cv:
+            self._ws.cv.wait(timeout=self._start_timeout)
+        cost_time = time.time() - start_time
         if not self._is_connected():
-            raise OpenClientError("Fail to open client")
+            if self._thread.is_alive():
+                if reconnect_tried_times is not None:
+                    raise ReconnectError("Fail to reconnect after waiting for a while")
+                if recover_start_time is not None:
+                    raise RecoverError("Fail to recover after waiting for a while")
+            raise OpenClientError(" ".join(self._error_info(cost_time, self._ws.error_happened, self._ws.close_event)))
 
         # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol:
@@ -913,7 +998,7 @@ class WebPubSubClient(
 
         _LOGGER.info("connected successfully")
 
-    def _start_core(self):
+    def _start_core(self, reconnect_tried_times: Optional[int] = None):
         self._state = WebPubSubClientState.CONNECTING
         _LOGGER.info("Staring a new connection")
 
