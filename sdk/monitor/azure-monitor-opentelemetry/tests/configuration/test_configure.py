@@ -96,7 +96,8 @@ class TestConfigure(unittest.TestCase):
                 "requests": {
                     "enabled": False
                 },
-            }
+            },
+            "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
@@ -133,6 +134,7 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": True,
             "disable_metrics": False,
+            "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
@@ -169,6 +171,7 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": False,
             "disable_metrics": True,
+            "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
