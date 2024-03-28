@@ -93,6 +93,8 @@ class AzureRecordedTestCase(object):
 
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
+        use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
+        use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
         is_async = kwargs.pop("is_async", False)
 
         # Return live credentials only in live mode
@@ -107,7 +109,7 @@ class AzureRecordedTestCase(object):
                 if is_async:
                     from azure.identity.aio import AzurePowerShellCredential
                 return AzurePowerShellCredential()
-            # User-based authentication through Azure CLI, if requested
+            # User-based authentication through Azure CLI (az), if requested
             if use_cli.lower() == "true":
                 _LOGGER.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
                 from azure.identity import AzureCliCredential
@@ -115,6 +117,26 @@ class AzureRecordedTestCase(object):
                 if is_async:
                     from azure.identity.aio import AzureCliCredential
                 return AzureCliCredential()
+            # User-based authentication through Visual Studio Code, if requested
+            if use_vscode.lower() == "true":
+                _LOGGER.info(
+                    "Environment variable AZURE_TEST_USE_VSCODE_AUTH set to 'true'. Using VisualStudioCodeCredential."
+                )
+                from azure.identity import VisualStudioCodeCredential
+
+                if is_async:
+                    from azure.identity.aio import VisualStudioCodeCredential
+                return VisualStudioCodeCredential()
+            # User-based authentication through Azure Developer CLI (azd), if requested
+            if use_azd.lower() == "true":
+                _LOGGER.info(
+                    "Environment variable AZURE_TEST_USE_AZD_AUTH set to 'true'. Using AzureDeveloperCliCredential."
+                )
+                from azure.identity import AzureDeveloperCliCredential
+
+                if is_async:
+                    from azure.identity.aio import AzureDeveloperCliCredential
+                return AzureDeveloperCliCredential()
 
             # Service principal authentication
             if tenant_id and client_id and secret:

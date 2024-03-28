@@ -7,9 +7,9 @@ def normalize_user_text(user_text):
 
 
 @tool
-def construct_request(question: str,
-                      answer: str,
-                      context: str) -> dict:
+def construct_request(answer: str,
+                      context: str,
+                      question: str = "") -> dict:
     metrics = ["generic_groundedness"]
     user_text = json.dumps({"question": question,
                             "answer": answer,

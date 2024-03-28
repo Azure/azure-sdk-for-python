@@ -239,7 +239,7 @@ def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
 
 
 def find_tools_packages(root_path):
-    """Find packages in tools directory. For e.g. azure-sdk-tools, azure-devtools"""
+    """Find packages in tools directory. For e.g. azure-sdk-tools"""
     glob_string = os.path.join(root_path, "tools", "*", "setup.py")
     pkgs = [os.path.basename(os.path.dirname(p)) for p in glob.glob(glob_string)]
     logging.info("Packages in tools: {}".format(pkgs))
