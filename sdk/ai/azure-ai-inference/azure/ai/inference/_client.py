@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,18 +18,12 @@ from ._configuration import ModelClientConfiguration
 from ._operations import ModelClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
-
 
 class ModelClient(ModelClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ModelClient.
 
-    :param credential: Credential needed for the client to connect to Azure. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword endpoint: Service host. Required.
     :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
@@ -38,9 +32,7 @@ class ModelClient(ModelClientOperationsMixin):  # pylint: disable=client-accepts
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, credential: Union[AzureKeyCredential, "TokenCredential"], *, endpoint: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: AzureKeyCredential, *, endpoint: str, **kwargs: Any) -> None:
         self._config = ModelClientConfiguration(credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:

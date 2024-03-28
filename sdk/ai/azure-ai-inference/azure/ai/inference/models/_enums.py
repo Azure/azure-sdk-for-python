@@ -15,10 +15,12 @@ class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SYSTEM = "system"
     """The role that instructs or sets the behavior of the assistant."""
-    ASSISTANT = "assistant"
-    """The role that provides responses to system-instructed, user-prompted input."""
     USER = "user"
     """The role that provides input for chat completions."""
+    ASSISTANT = "assistant"
+    """The role that provides responses to system-instructed, user-prompted input."""
+    TOOL = "tool"
+    """The role that represents extension tool activity within a chat completions operation."""
 
 
 class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

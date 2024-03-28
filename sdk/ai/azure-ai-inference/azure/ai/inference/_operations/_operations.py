@@ -45,7 +45,7 @@ def build_model_get_chat_completions_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -56,9 +56,9 @@ def build_model_get_chat_completions_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -153,19 +153,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                               "stop", "length", and "content_filter".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
-                            "delta": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
-                            },
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
                                 "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
+                                  message. Required. Known values are: "system", "user", "assistant",
+                                  and "tool".
                             }
                         }
                     ],
@@ -219,19 +212,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                               "stop", "length", and "content_filter".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
-                            "delta": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
-                            },
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
                                 "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
+                                  message. Required. Known values are: "system", "user", "assistant",
+                                  and "tool".
                             }
                         }
                     ],
@@ -285,19 +271,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                               "stop", "length", and "content_filter".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
-                            "delta": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
-                            },
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
                                 "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
+                                  message. Required. Known values are: "system", "user", "assistant",
+                                  and "tool".
                             }
                         }
                     ],
@@ -404,19 +383,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                               "stop", "length", and "content_filter".
                             "index": 0,  # The ordered index associated with this chat
                               completions choice. Required.
-                            "delta": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
-                            },
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
                                 "role": "str"  # The chat role associated with the
-                                  message. Required. Known values are: "system", "assistant", and
-                                  "user".
+                                  message. Required. Known values are: "system", "user", "assistant",
+                                  and "tool".
                             }
                         }
                     ],
@@ -449,7 +421,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ChatCompletions] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"

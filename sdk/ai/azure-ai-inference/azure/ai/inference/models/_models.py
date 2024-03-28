@@ -34,8 +34,6 @@ class ChatChoice(_model_base.Model):
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
      Required. Known values are: "stop", "length", and "content_filter".
     :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
-    :ivar delta: The delta message content for a streaming response.
-    :vartype delta: ~azure.ai.inference.models.ChatResponseMessage
     """
 
     message: Optional["_models.ChatResponseMessage"] = rest_field()
@@ -45,8 +43,6 @@ class ChatChoice(_model_base.Model):
     finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", and \"content_filter\"."""
-    delta: Optional["_models.ChatResponseMessage"] = rest_field()
-    """The delta message content for a streaming response."""
 
     @overload
     def __init__(
@@ -55,7 +51,6 @@ class ChatChoice(_model_base.Model):
         index: int,
         finish_reason: Union[str, "_models.CompletionsFinishReason"],
         message: Optional["_models.ChatResponseMessage"] = None,
-        delta: Optional["_models.ChatResponseMessage"] = None,
     ):
         ...
 
@@ -346,14 +341,14 @@ class ChatRequestMessage(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar role: The chat role associated with this message. Required. Known values are: "system",
-     "assistant", and "user".
+     "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     role: str = rest_discriminator(name="role")
-    """The chat role associated with this message. Required. Known values are: \"system\",
-     \"assistant\", and \"user\"."""
+    """The chat role associated with this message. Required. Known values are: \"system\", \"user\",
+     \"assistant\", and \"tool\"."""
 
     @overload
     def __init__(
@@ -511,15 +506,15 @@ class ChatResponseMessage(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
-     "assistant", and "user".
+     "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
     :ivar content: The content of the message. Required.
     :vartype content: str
     """
 
     role: Union[str, "_models.ChatRole"] = rest_field()
-    """The chat role associated with the message. Required. Known values are: \"system\",
-     \"assistant\", and \"user\"."""
+    """The chat role associated with the message. Required. Known values are: \"system\", \"user\",
+     \"assistant\", and \"tool\"."""
     content: str = rest_field()
     """The content of the message. Required."""
 
