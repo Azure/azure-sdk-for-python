@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add trace based sampling for logs
+    ([#34932](https://github.com/Azure/azure-sdk-for-python/pull/34932))
+
 ### Breaking Changes
 
 ### Bugs Fixed
