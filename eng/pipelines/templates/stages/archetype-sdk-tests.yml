@@ -1,10 +1,3 @@
-resources:
-  repositories:
-    - repository: 1ESPipelineTemplates
-      type: git
-      name: 1ESPipelineTemplates/1ESPipelineTemplates
-      ref: refs/tags/release
-
 parameters:
   - name: ServiceDirectory
     type: string
@@ -108,36 +101,9 @@ parameters:
 
 
 extends:
-  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-    template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
-  ${{ else }}:
-    template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
-    settings:
-      skipBuildTagsForGitHubPullRequests: true
-    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      sdl:
-        sourceAnalysisPool:
-          name: azsdk-pool-mms-win-2022-general
-          image: azsdk-pool-mms-win-2022-1espt
-          os: windows
-        eslint:
-          enabled: false
-          justificationForDisabling: 'ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746'
-        codeql:
-          compiled:
-            enabled: false
-            justificationForDisabling: CodeQL times our pipelines out by running for 2+ hours before being force canceled.
-        psscriptanalyzer:
-          compiled: true
-          break: true
-        policy: M365
-        credscan:
-          suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
-          scanFolder: $(Build.SourcesDirectory)/credscan.tsv
-          toolVersion: 2.3.12.23
-          baselineFiles: $(Build.SourcesDirectory)/eng/<language>.gdnbaselines
-
+    Use1ESOfficial: false
     stages:
       - ${{ if ne(length(parameters.Packages), 0) }}:
         - ${{ each package in parameters.Packages }}:
@@ -147,7 +113,7 @@ extends:
                       - stage: ${{ cloud.key }}_${{ parameters.JobName }}_${{ replace(package, '-', '_') }}
                         dependsOn: []
                         jobs:
-                          - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml@self
+                          - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
                             parameters:
                               SparseCheckoutPaths:
                                 - sdk/${{ parameters.ServiceDirectory }}/**/*.json
@@ -201,7 +167,7 @@ extends:
                     - stage: ${{ cloud.key }}_${{ parameters.JobName }}
                       dependsOn: []
                       jobs:
-                        - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml@self
+                        - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
                           parameters:
                             SparseCheckoutPaths:
                               - sdk/${{ parameters.ServiceDirectory }}/**/*.json
@@ -248,7 +214,7 @@ extends:
                               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                               Cloud: ${{ cloud.key }}
-      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml@self
+      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
