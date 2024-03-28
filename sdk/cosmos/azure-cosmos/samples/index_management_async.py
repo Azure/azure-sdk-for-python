@@ -628,6 +628,65 @@ async def perform_multi_orderby_query(db):
         print("Entity doesn't exist")
 
 
+async def use_vector_embedding_policy(db):
+    try:
+        await delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with vector embedding policy and vector indexes
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector1", "type": "flat"},
+                {"path": "/vector2", "type": "quantizedFlat"},
+                {"path": "/vector3", "type": "diskANN"}
+            ]
+        }
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 1000,
+                    "distanceFunction": "euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
+                },
+                {
+                    "path": "/vector3",
+                    "dataType": "uint8",
+                    "dimensions": 400,
+                    "distanceFunction": "cosine"
+                }
+            ]
+        }
+
+        created_container = await db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        properties = await created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n9. Container created with vector embedding policy and vector indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["vectorEmbeddingPolicy"])
+
+        # TODO: add rest of sample once query work is done
+
+        # Cleanup
+        await db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 async def run_sample():
     try:
         async with obtain_client() as client:
@@ -658,8 +717,8 @@ async def run_sample():
             # 8. Perform Multi Orderby queries using composite indexes
             await perform_multi_orderby_query(created_db)
 
-            print('Sample done, cleaning up sample-generated data')
-            await client.delete_database(DATABASE_ID)
+            # 9. Create and use a vector embedding policy
+            await use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e
