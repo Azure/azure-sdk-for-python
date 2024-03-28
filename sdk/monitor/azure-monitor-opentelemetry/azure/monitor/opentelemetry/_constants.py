@@ -24,7 +24,6 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
-DISABLE_TRACE_BASED_SAMPLING_FOR_LOGS_ARGS = "disable_trace_based_sampling_for_logs"
 DISTRO_VERSION_ARG = _AZURE_MONITOR_DISTRO_VERSION_ARG
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"

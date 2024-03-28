@@ -8,12 +8,12 @@ import unittest
 from unittest.mock import Mock, patch
 
 from opentelemetry.trace import TraceFlags
-from azure.monitor.opentelemetry._processor import _AzureMonitorLogRecordProcessor
+from azure.monitor.opentelemetry.exporter._processor import _AzureMonitorLogRecordProcessor
 
 
 class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
 
-    @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
+    @patch('azure.monitor.opentelemetry.exporter._processor.BatchLogRecordProcessor.emit')
     def test_emit(self, emit_mock):
         exporter = Mock()
         log_data = Mock()
@@ -25,19 +25,24 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         proc.emit(log_data)
         emit_mock.assert_called_once_with(log_data)
 
-    @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
+    @patch('azure.monitor.opentelemetry.exporter._processor.BatchLogRecordProcessor.emit')
     def test_emit_sampled_out(self, emit_mock):
         exporter = Mock()
         log_data = Mock()
         log_record = Mock()
+        log_record.attributes = {}
         log_record.span_id = 123
         log_record.trace_flags = TraceFlags(TraceFlags.DEFAULT)
         log_data.log_record = log_record
-        proc = _AzureMonitorLogRecordProcessor(exporter)
+        proc = _AzureMonitorLogRecordProcessor(
+            exporter,
+            sampling_ratio=0.5,
+        )
         proc.emit(log_data)
         emit_mock.assert_not_called()
+        self.assertEqual(log_record.attributes["microsoft.sample_rate"], 50)
 
-    @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
+    @patch('azure.monitor.opentelemetry.exporter._processor.BatchLogRecordProcessor.emit')
     def test_emit_disabled(self, emit_mock):
         exporter = Mock()
         log_data = Mock()
@@ -49,7 +54,7 @@ class TestAzureMonitorLogRecordProcessor(unittest.TestCase):
         proc.emit(log_data)
         emit_mock.assert_called_once_with(log_data)
 
-    @patch('azure.monitor.opentelemetry._processor.BatchLogRecordProcessor.emit')
+    @patch('azure.monitor.opentelemetry.exporter._processor.BatchLogRecordProcessor.emit')
     def test_emit_missing_trace_flags(self, emit_mock):
         exporter = Mock()
         log_data = Mock()

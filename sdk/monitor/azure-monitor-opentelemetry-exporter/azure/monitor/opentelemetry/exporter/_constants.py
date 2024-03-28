@@ -190,6 +190,10 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 # sampleRate
 
+# Sample rate key used by ApplicationInsightsSampler
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+
+# Sample rate key stamped on log telemetry when sampled using trace based sampling
+_LOGS_SAMPLE_RATE_KEY = "microsoft.sample_rate"
 
 # cSpell:disable

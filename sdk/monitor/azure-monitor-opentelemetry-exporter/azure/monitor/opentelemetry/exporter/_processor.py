@@ -4,12 +4,15 @@
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExporter
 
+from azure.monitor.opentelemetry.exporter._constants import _LOGS_SAMPLE_RATE_KEY
+
 
 # pylint: disable=protected-access
 class _AzureMonitorLogRecordProcessor(BatchLogRecordProcessor):
 
-    def __init__(self, exporter: LogExporter, disable_trace_based_sampling=False) -> None:
+    def __init__(self, exporter: LogExporter, disable_trace_based_sampling = False, sampling_ratio = 1.0) -> None:
         self._disable_trace_based_sampling = disable_trace_based_sampling
+        self._sampling_ratio = sampling_ratio
         super().__init__(exporter)
 
     def emit(self, log_data: LogData) -> None:
@@ -17,6 +20,8 @@ class _AzureMonitorLogRecordProcessor(BatchLogRecordProcessor):
         if not self._disable_trace_based_sampling:
             if log_data.log_record.span_id and log_data.log_record.trace_flags is not None and \
                 not log_data.log_record.trace_flags.sampled:
+                # Stamp sample_rate on log attributes
+                log_data.log_record.attributes[_LOGS_SAMPLE_RATE_KEY] = self._sampling_ratio * 100
                 # Do not export log for spans that were sampled out
                 return
         super().emit(log_data)

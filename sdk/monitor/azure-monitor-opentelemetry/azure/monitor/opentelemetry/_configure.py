@@ -32,13 +32,11 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISABLE_TRACE_BASED_SAMPLING_FOR_LOGS_ARGS,
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
-)
-from azure.monitor.opentelemetry._processor import _AzureMonitorLogRecordProcessor
+) 
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
@@ -65,8 +63,6 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :paramtype credential: ~azure.core.credentials.TokenCredential or None
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
-    :keyword bool disable_trace_based_sampling_for_logs: Boolean value to determine whether to turn off
-     trace based sampling for correlated logs.
     :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :keyword dict instrumentation_options: A nested dictionary that determines which instrumentations
      to enable or disable.  Instrumentations are referred to by their Library Names. For example,
@@ -128,12 +124,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
-    if configurations.get(DISABLE_TRACE_BASED_SAMPLING_FOR_LOGS_ARGS):
-        log_record_processor = BatchLogRecordProcessor(log_exporter)
-    else:
-        log_record_processor = _AzureMonitorLogRecordProcessor(
-            log_exporter,
-        )
+    log_record_processor = BatchLogRecordProcessor(log_exporter)
     get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
     logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
