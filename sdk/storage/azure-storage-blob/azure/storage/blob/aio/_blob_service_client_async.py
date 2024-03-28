@@ -43,7 +43,7 @@ from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from .._generated.models import CorsRule
+    from .._generated.models import CorsRule as GenCorsRule
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -53,6 +53,7 @@ if TYPE_CHECKING:
     from .._models import (
         PublicAccess,
         BlobAnalyticsLogging,
+        CorsRule,
         FilteredBlob,
         Metrics,
         RetentionPolicy,
@@ -393,7 +394,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=cast(Optional[List[GenCorsRule]], cors),
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
