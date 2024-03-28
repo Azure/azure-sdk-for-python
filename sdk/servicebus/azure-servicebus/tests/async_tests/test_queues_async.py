@@ -1728,7 +1728,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
         assert receiver._config.http_proxy == http_proxy
         assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
 
-    @pytest.skip("Disable Until Accurate Link Detach Handling Implemented")
+    @pytest.mark.skip("Disable Until Accurate Link Detach Handling Implemented")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
