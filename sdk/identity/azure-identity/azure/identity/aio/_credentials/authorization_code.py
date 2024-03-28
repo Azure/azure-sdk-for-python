@@ -69,7 +69,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         super().__init__()
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -85,6 +90,8 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -92,7 +99,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
-        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

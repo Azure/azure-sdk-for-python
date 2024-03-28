@@ -55,16 +55,21 @@ class SilentAuthenticationCredential:
         self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
-        token_cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
+        token_cache = self._cae_cache if enable_cae else self._cache
 
         # Try to load the cache if it is None.
         if not token_cache:
-            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+            token_cache = self._initialize_cache(is_cae=enable_cae)
 
             # If the cache is still None, raise an error.
             if not token_cache:
@@ -72,7 +77,7 @@ class SilentAuthenticationCredential:
                     raise CredentialUnavailableError(message="Shared token cache unavailable")
                 raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     def _initialize_cache(self, is_cae: bool = False) -> Optional[TokenCache]:
 
