@@ -102,7 +102,9 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 # Autoinstrumentation
 
 def _is_attach_enabled():
-    return isdir("/agents/python/")
+    if _IS_ON_APP_SERVICE:
+        return isdir("/agents/python/")
+    return False
 
 _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
 _AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"

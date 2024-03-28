@@ -28,6 +28,7 @@ _logger = logging.getLogger(__name__)
 _logger.propagate = False
 _logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+_DISTRO_DETECTS_ATTACH = "4100"
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
 _ATTACH_FAILURE_DISTRO = "4400"

@@ -135,6 +135,7 @@ class TestConstants(TestCase):
         return_value=True,
     )
     def test_attach_enabled(self, mock_isdir):
+        _constants._IS_ON_APP_SERVICE = True
         self.assertEqual(
             _constants._is_attach_enabled(), True
         )
@@ -143,7 +144,18 @@ class TestConstants(TestCase):
         "azure.monitor.opentelemetry._constants.isdir",
         return_value=False,
     )
-    def test_attach_disabled(self, mock_isdir):
+    def test_attach_app_service_disabled(self, mock_isdir):
+        _constants._IS_ON_APP_SERVICE = True
+        self.assertEqual(
+            _constants._is_attach_enabled(), False
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry._constants.isdir",
+        return_value=True,
+    )
+    def test_attach_off_app_service_with_agent(self, mock_isdir):
+        _constants._IS_ON_APP_SERVICE = False
         self.assertEqual(
             _constants._is_attach_enabled(), False
         )
