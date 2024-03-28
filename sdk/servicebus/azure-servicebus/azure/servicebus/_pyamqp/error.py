@@ -88,9 +88,6 @@ class ErrorCondition(bytes, Enum):
     VendorError = b"amqp:vendor-error"
     SocketError = b"amqp:socket-error"
 
-    # Message Lock Related Errors
-    MessageLockLost = b"amqp:message-lock-lost"
-
 
 class RetryMode(str, Enum):  # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     EXPONENTIAL = 'exponential'
@@ -120,7 +117,6 @@ class RetryPolicy:
         ErrorCondition.SessionHandleInUse,
         ErrorCondition.SessionErrantLink,
         ErrorCondition.SessionWindowViolation,
-        ErrorCondition.MessageLockLost
     ]
 
     def __init__(
