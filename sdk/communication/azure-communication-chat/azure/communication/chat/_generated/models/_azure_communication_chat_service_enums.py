@@ -14,6 +14,7 @@ class ChatAttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of attachment."""
 
     IMAGE = "image"
+    FILE = "file"
 
 
 class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,3 +42,4 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
