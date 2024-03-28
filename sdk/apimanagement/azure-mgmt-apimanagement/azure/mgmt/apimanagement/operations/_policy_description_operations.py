@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,7 +25,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import ApiManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import ApiManagementClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -68,7 +68,7 @@ def build_list_by_service_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if scope is not None:
@@ -118,7 +118,6 @@ class PolicyDescriptionOperations:
         :param scope: Policy scope. Known values are: "Tenant", "Product", "Api", "Operation", and
          "All". Default value is None.
         :type scope: str or ~azure.mgmt.apimanagement.models.PolicyScopeContract
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyDescriptionCollection or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.PolicyDescriptionCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -137,22 +136,21 @@ class PolicyDescriptionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.PolicyDescriptionCollection] = kwargs.pop("cls", None)
 
-        request = build_list_by_service_request(
+        _request = build_list_by_service_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             subscription_id=self._config.subscription_id,
             scope=scope,
             api_version=api_version,
-            template_url=self.list_by_service.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -165,10 +163,6 @@ class PolicyDescriptionOperations:
         deserialized = self._deserialize("PolicyDescriptionCollection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_by_service.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyDescriptions"
-    }
+        return deserialized  # type: ignore

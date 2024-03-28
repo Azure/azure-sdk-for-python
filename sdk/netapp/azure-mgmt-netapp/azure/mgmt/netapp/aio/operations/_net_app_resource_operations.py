@@ -128,7 +128,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -201,7 +202,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -283,7 +285,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -343,7 +346,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RegionInfo", pipeline_response)
 
@@ -536,8 +540,8 @@ class NetAppResourceOperations:
         :param network_sibling_set_state_id: Network sibling set state Id identifying the current state
          of the sibling set. Required.
         :type network_sibling_set_state_id: str
-        :param network_features: Network features available to the volume. Known values are: "Basic",
-         "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
+        :param network_features: Network features available to the volume, some such. Known values are:
+         "Basic", "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
         :type network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
