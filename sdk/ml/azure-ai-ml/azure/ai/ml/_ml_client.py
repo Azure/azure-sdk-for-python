@@ -78,6 +78,7 @@ from azure.ai.ml.operations import (
     EnvironmentOperations,
     JobOperations,
     ModelOperations,
+    EvaluatorOperations,
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
@@ -512,6 +513,25 @@ class MLClient:
             registry_reference=registry_reference,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
+        # Evaluators
+        self._evaluators = EvaluatorOperations(
+            self._operation_scope,
+            self._operation_config,
+            (
+                self._service_client_10_2021_dataplanepreview
+                if registry_name or registry_reference
+                else self._service_client_08_2023_preview
+            ),
+            self._datastores,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
+            control_plane_client=self._service_client_08_2023_preview,
+            workspace_rg=self._ws_rg,
+            workspace_sub=self._ws_sub,
+            registry_reference=registry_reference,
+            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+        )
+
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
@@ -908,6 +928,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ModelOperations
         """
         return self._models
+
+    @property
+    def evaluators(self) -> EvaluatorOperations:
+        """A collection of model related operations.
+
+        :return: Model operations
+        :rtype: ~azure.ai.ml.operations.ModelOperations
+        """
+        return self._evaluators
 
     @property
     def online_endpoints(self) -> OnlineEndpointOperations:
