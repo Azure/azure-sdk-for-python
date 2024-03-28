@@ -53,7 +53,7 @@ def convert_to_and_from_dict():
 
     # save the dictionary as JSON content in a JSON file
     with open("data.json", "w") as output_file:
-        json.dump(analyze_result_dict, output_file)
+        json.dump(analyze_result_dict, output_file, indent=4)
 
 
 if __name__ == "__main__":
