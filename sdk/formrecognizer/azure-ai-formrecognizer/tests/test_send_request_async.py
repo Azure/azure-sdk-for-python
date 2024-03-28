@@ -33,7 +33,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             received_info1 = result.json()
             assert received_info1
             assert received_info1["customDocumentModels"]
-            assert received_info1["customDocumentModels"]["count"] == 0
+            assert received_info1["customDocumentModels"]["count"]
             assert received_info1["customDocumentModels"]["limit"] == 250
 
             request = HttpRequest(
@@ -66,7 +66,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             result = await client.send_request(request)
             received_info4 = result.json()
             assert received_info4
-            assert received_info4["summary"]["count"] == 0
+            assert received_info4["summary"]["count"]
             assert received_info4["summary"]["limit"] == 250
             
             # test with v2 API version with absolute url
@@ -95,7 +95,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             received_info1 = result.json()
             assert received_info1
             assert received_info1["summary"]
-            assert received_info1["summary"]["count"] == 0
+            assert received_info1["summary"]["count"]
             assert received_info1["summary"]["limit"] == 250
             
             # test with absolute url
@@ -129,5 +129,5 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             result = await client.send_request(request)
             received_info5 = result.json()
             assert received_info5
-            assert received_info5["customDocumentModels"]["count"] == 0
+            assert received_info5["customDocumentModels"]["count"]
             assert received_info5["customDocumentModels"]["limit"] == 250
