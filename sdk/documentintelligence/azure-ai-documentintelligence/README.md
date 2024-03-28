@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## _Disclaimer_
 
-_The API version 2023-10-31-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-2023-10-31-preview-available-regions]._
+_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -690,7 +690,7 @@ additional questions or comments.
 [python-di-product-docs]: https://learn.microsoft.com/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0&viewFallbackFrom=form-recog-3.0.0
 [python-di-ref-docs]: https://aka.ms/azsdk/python/documentintelligence/docs
 [python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
-[python-di-2023-10-31-preview-available-regions]: https://aka.ms/azsdk/documentintelligence/2023-10-31-preview-supported-regions
+[python-di-available-regions]: https://aka.ms/azsdk/documentintelligence/available-regions
 [azure_portal]: https://ms.portal.azure.com/
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
