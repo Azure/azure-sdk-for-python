@@ -260,6 +260,7 @@ class HttpSpanMixin:
     _HTTP_STATUS_CODE = "http.status_code"
     _NET_PEER_NAME = "net.peer.name"
     _NET_PEER_PORT = "net.peer.port"
+    _ERROR_TYPE = "error.type"
 
     def set_http_attributes(
         self: AbstractSpan, request: HttpRequestType, response: Optional[HttpResponseType] = None
@@ -289,8 +290,11 @@ class HttpSpanMixin:
             self.add_attribute(HttpSpanMixin._HTTP_USER_AGENT, user_agent)
         if response and response.status_code:
             self.add_attribute(HttpSpanMixin._HTTP_STATUS_CODE, response.status_code)
+            if response.status_code >= 400:
+                self.add_attribute(HttpSpanMixin._ERROR_TYPE, str(response.status_code))
         else:
             self.add_attribute(HttpSpanMixin._HTTP_STATUS_CODE, 504)
+            self.add_attribute(HttpSpanMixin._ERROR_TYPE, "504")
 
 
 class Link:

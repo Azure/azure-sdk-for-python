@@ -369,3 +369,10 @@ class TestOpentelemetryWrapper:
 
             with pytest.raises(ValueError):
                 wrapped_class.kind = "somethingstuid"
+
+    def test_error_type_attribute(self, tracer):
+        with tracer.start_as_current_span("Root") as parent:
+            with pytest.raises(ValueError):
+                with OpenTelemetrySpan() as wrapped_class:
+                    raise ValueError("This is a test error")
+            assert wrapped_class.span_instance.attributes.get("error.type") == "ValueError"
