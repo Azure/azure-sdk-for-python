@@ -460,6 +460,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         dead_letter_error_description: Optional[str] = None,
     ):
         # pylint: disable=protected-access
+        # TODO: Fix error handling here, only supports uamqp
         try:
             if not message._is_deferred_message:
                 try:
