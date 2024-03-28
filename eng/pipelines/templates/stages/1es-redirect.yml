@@ -4,10 +4,10 @@ resources:
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/release
-    - repository: azure-sdk-build-tools
+    - repository: 1ESPipelineTemplatesCanary
       type: git
-      name: internal/azure-sdk-build-tools
-      ref: refs/tags/azure-sdk-build-tools_20240320.1
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/canary
 
 parameters:
 - name: stages
@@ -16,9 +16,16 @@ parameters:
 - name: Use1ESOfficial
   type: boolean
   default: true
+- name: oneESTemplateTag
+  type: string
+  default: release
 
 extends:
-  ${{ if and(parameters.Use1ESOfficial, eq(variables['System.TeamProject'], 'internal')) }}:
+  ${{ if and(parameters.Use1ESOfficial, eq(parameters.oneESTemplateTag, 'canary')) }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplatesCanary
+  ${{ elseif eq(parameters.oneESTemplateTag, 'canary') }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplatesCanary
+  ${{ elseif and(parameters.Use1ESOfficial, eq(variables['System.TeamProject'], 'internal')) }}:
     template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   ${{ else }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
@@ -30,9 +37,6 @@ extends:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt
         os: windows
-      sourceRepositoriesToScan:
-        exclude:
-          - repository: azure-sdk-build-tools
       credscan:
         suppressionsFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
         toolVersion: '2.3.12.23'
@@ -44,4 +48,5 @@ extends:
         compiled: true
         break: true
       policy: M365
+
     stages: ${{ parameters.stages }}
