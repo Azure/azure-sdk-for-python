@@ -15,7 +15,7 @@ def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> No
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.INFO)
     handler.terminator = terminator
-    handler.flush = sys.stderr.flush
+    handler.flush = sys.stderr.flush  # type: ignore[method-assign]
     module_logger.addHandler(handler)
 
 
@@ -25,7 +25,7 @@ class OpsLogger:
         self.package_logger.propagate = False
         self.package_tracer = None
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: Dict = {}
 
     def update_info(self, data: Dict) -> None:
         if "app_insights_handler" in data:

@@ -281,7 +281,7 @@ class RecurrenceTrigger(TriggerBase):
     @classmethod
     def _from_rest_object(cls, obj: RestRecurrenceTrigger) -> "RecurrenceTrigger":
         return cls(
-            frequency=camel_to_snake(obj.frequency),
+            frequency=str(camel_to_snake(obj.frequency)),
             interval=obj.interval,
             schedule=RecurrencePattern._from_rest_object(obj.schedule) if obj.schedule else None,
             start_time=obj.start_time,

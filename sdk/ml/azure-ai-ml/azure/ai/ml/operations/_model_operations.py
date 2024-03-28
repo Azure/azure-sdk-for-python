@@ -140,7 +140,7 @@ class ModelOperations(_ScopeDependentOperations):
             name = model.name
             if not model.version and model._auto_increment_version:
                 model.version = _get_next_version_from_container(
-                    name=model.name,
+                    name=str(model.name),
                     container_operation=self._model_container_operation,
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -193,7 +193,9 @@ class ModelOperations(_ScopeDependentOperations):
                     version=model.version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name, "models", str(model.name), str(model.version)
+                    ),
                 )
 
             model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
@@ -305,7 +307,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         if label:
-            return _resolve_label_to_asset(self, name, label)
+            return cast(Model, _resolve_label_to_asset(self, name, label))
 
         if not version:
             msg = "Must provide either version or label"

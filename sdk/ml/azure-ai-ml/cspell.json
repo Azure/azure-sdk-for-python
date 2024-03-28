@@ -3,5 +3,8 @@
     "ignoreWords": [
         "kwoa",
         "rslex"
+    ],
+    "words": [
+        "redef"
     ]
 }

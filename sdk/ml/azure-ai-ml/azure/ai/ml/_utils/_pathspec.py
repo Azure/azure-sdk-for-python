@@ -16,7 +16,7 @@ from typing import Any, AnyStr, Iterable
 from typing import Match as MatchHint
 from typing import Optional
 from typing import Pattern as PatternHint
-from typing import Tuple, Union
+from typing import Tuple, Union, cast
 
 NORMALIZE_PATH_SEPS = [sep for sep in [os.sep, os.altsep] if sep and sep != posixpath.sep]
 
@@ -114,12 +114,12 @@ class RegexPattern(Pattern):
             .. NOTE:: Subclasses do not need to support the *include*
                 parameter.
         """
-
+        regex: Any
         if isinstance(pattern, (str, bytes)):
             assert include is None, ("include:{!r} must be null when pattern:{!r} is a string.").format(
                 include, pattern
             )
-            regex, include = self.pattern_to_regex(pattern)
+            regex, include = self.pattern_to_regex(str(pattern))
             # NOTE: Make sure to allow a null regular expression to be
             # returned for a null-operation.
             if include is not None:
@@ -146,7 +146,7 @@ class RegexPattern(Pattern):
         pattern.
         """
 
-    def __eq__(self, other: "RegexPattern") -> bool:
+    def __eq__(self, other: "RegexPattern") -> bool:  # type: ignore[override]
         """Tests the equality of this regex pattern with *other*
 
         :param other: The regex pattern to test against
@@ -227,7 +227,7 @@ class GitWildMatchPattern(RegexPattern):
 
     @classmethod
     # pylint: disable=too-many-branches,too-many-statements
-    def pattern_to_regex(
+    def pattern_to_regex(  # type: ignore[override]
         cls,
         pattern: AnyStr,
     ) -> Tuple[Optional[AnyStr], Optional[bool]]:
@@ -246,14 +246,15 @@ class GitWildMatchPattern(RegexPattern):
             return_type = str
         elif isinstance(pattern, bytes):
             return_type = bytes
-            pattern = pattern.decode(_BYTES_ENCODING)
+            pattern = pattern.decode(_BYTES_ENCODING)  # type: ignore[assignment]
         else:
             raise TypeError(f"pattern:{pattern!r} is not a unicode or byte string.")
 
         original_pattern = pattern
         pattern = pattern.strip()
+        regex: Any
 
-        if pattern.startswith("#"):
+        if str(pattern).startswith("#"):
             # A pattern starting with a hash ('#') serves as a comment
             # (neither includes nor excludes files). Escape the hash with a
             # back-slash to match a literal hash (i.e., '\#').
@@ -267,7 +268,7 @@ class GitWildMatchPattern(RegexPattern):
             include = None
 
         elif pattern:
-            if pattern.startswith("!"):
+            if str(pattern).startswith("!"):
                 # A pattern starting with an exclamation mark ('!') negates the
                 # pattern (exclude instead of include). Escape the exclamation
                 # mark with a back-slash to match a literal exclamation mark
@@ -283,7 +284,7 @@ class GitWildMatchPattern(RegexPattern):
             override_regex = None
 
             # Split pattern into segments.
-            pattern_segs = pattern.split("/")
+            pattern_segs = str(pattern).split("/")
 
             # Normalize pattern to make processing easier.
 
@@ -386,7 +387,7 @@ class GitWildMatchPattern(RegexPattern):
                             output.append("/")
 
                         try:
-                            output.append(cls._translate_segment_glob(seg))
+                            output.append(cls._translate_segment_glob(str(seg)))
                         except ValueError as e:
                             raise GitWildMatchPatternError(f"Invalid git pattern: {original_pattern!r}") from e
 
@@ -414,7 +415,7 @@ class GitWildMatchPattern(RegexPattern):
         if regex is not None and return_type is bytes:
             regex = regex.encode(_BYTES_ENCODING)
 
-        return regex, include
+        return cast(Tuple[Optional[AnyStr], Optional[bool]], (regex, include))
 
     @staticmethod
     def _translate_segment_glob(pattern: str) -> str:
@@ -526,7 +527,7 @@ class GitWildMatchPattern(RegexPattern):
         return regex
 
     @staticmethod
-    def escape(s: AnyStr) -> AnyStr:
+    def escape(s: AnyStr) -> Union[str, bytes]:
         """Escape special characters in the given string.
 
         :param s:  a filename or a string that you want to escape, usually before adding it to a ".gitignore".

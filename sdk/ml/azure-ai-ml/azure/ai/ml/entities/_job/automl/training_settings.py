@@ -94,8 +94,8 @@ class TrainingSettings(RestTranslatableMixin):
     def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]) -> None:
         if value is None or value is TabularTrainingMode:
             self._training_mode = value
-        elif hasattr(TabularTrainingMode, camel_to_snake(value).upper()):
-            self._training_mode = TabularTrainingMode[camel_to_snake(value).upper()]
+        elif hasattr(TabularTrainingMode, str(camel_to_snake(value)).upper()):
+            self._training_mode = TabularTrainingMode[str(camel_to_snake(value)).upper()]
         else:
             supported_values = ", ".join([f'"{camel_to_snake(mode.value)}"' for mode in TabularTrainingMode])
             msg = (

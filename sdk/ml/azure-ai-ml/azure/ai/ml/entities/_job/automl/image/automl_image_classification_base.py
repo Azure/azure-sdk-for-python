@@ -327,7 +327,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
             learning_rate if learning_rate is not None else self._training_parameters.learning_rate
         )
         self._training_parameters.learning_rate_scheduler = (
-            LearningRateScheduler[camel_to_snake(learning_rate_scheduler).upper()]
+            LearningRateScheduler[str(camel_to_snake(learning_rate_scheduler)).upper()]
             if learning_rate_scheduler is not None
             else self._training_parameters.learning_rate_scheduler
         )
@@ -343,7 +343,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
             number_of_workers if number_of_workers is not None else self._training_parameters.number_of_workers
         )
         self._training_parameters.optimizer = (
-            StochasticOptimizer[camel_to_snake(optimizer).upper()]
+            StochasticOptimizer[str(camel_to_snake(optimizer)).upper()]
             if optimizer is not None
             else self._training_parameters.optimizer
         )

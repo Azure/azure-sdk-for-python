@@ -10,7 +10,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
@@ -37,7 +37,7 @@ _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
 EXPIRE_TIME_IN_SECONDS = 60 * 60 * 24 * 7  # 7 days
 
-_node_resolution_lock = defaultdict(threading.Lock)
+_node_resolution_lock: defaultdict = defaultdict(threading.Lock)
 
 
 @dataclass
@@ -167,7 +167,7 @@ class CachedNodeResolver(object):
         if component._source_path:  # pylint: disable=protected-access
             object_hash = hashlib.sha256()
             object_hash.update(component._get_anonymous_hash().encode("utf-8"))  # pylint: disable=protected-access
-            object_hash.update(component._source_path.encode("utf-8"))  # pylint: disable=protected-access
+            object_hash.update(str(component._source_path).encode("utf-8"))  # pylint: disable=protected-access
             return _YAML_SOURCE_PREFIX + object_hash.hexdigest()
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
@@ -293,9 +293,11 @@ class CachedNodeResolver(object):
         """
 
         def _map_func(_cache_content: _CacheContent):
-            _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
+            _cache_content.arm_id = cast(
+                Optional[str], resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
+            )
             if is_on_disk_cache_enabled() and is_private_preview_enabled():
-                self._save_to_on_disk_cache(_cache_content.on_disk_hash, _cache_content.arm_id)
+                self._save_to_on_disk_cache(str(_cache_content.on_disk_hash), str(_cache_content.arm_id))
 
         if (
             len(cache_contents_to_resolve) > 1
@@ -364,7 +366,7 @@ class CachedNodeResolver(object):
         left_cache_contents_to_resolve = []
         # need to deduplicate disk hash first if concurrent resolution is enabled
         for cache_content in cache_contents_to_resolve:
-            cache_content.arm_id = self._load_from_on_disk_cache(cache_content.on_disk_hash)
+            cache_content.arm_id = self._load_from_on_disk_cache(str(cache_content.on_disk_hash))
             if not cache_content.arm_id:
                 left_cache_contents_to_resolve.append(cache_content)
 
@@ -406,7 +408,8 @@ class CachedNodeResolver(object):
         # directly resolve node and skip registration if the resolution involves no remote call
         # so that all node will be skipped when resolving a subgraph recursively
         if isinstance(component, str):
-            node._component = self._resolver(  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            node._component = self._resolver(  # type: ignore[call-arg]
                 component, azureml_type=AzureMLResourceType.COMPONENT
             )
             return

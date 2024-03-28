@@ -9,9 +9,11 @@ import concurrent.futures
 import logging
 import time
 from concurrent.futures import Future
+from os import PathLike
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union, cast
 
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
@@ -19,7 +21,6 @@ from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
@@ -147,15 +148,21 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
         and not is_ARM_id_for_resource(deployment.code_configuration.code, AzureMLResourceType.CODE)
         and not is_registry_id_for_resource(deployment.code_configuration.code)
     ):
-        if deployment.code_configuration.code.startswith(ARM_ID_PREFIX):
-            deployment.code_configuration.code = orchestrators.get_asset_arm_id(
-                deployment.code_configuration.code[len(ARM_ID_PREFIX) :],
-                azureml_type=AzureMLResourceType.CODE,
+        if str(deployment.code_configuration.code).startswith(ARM_ID_PREFIX):
+            deployment.code_configuration.code = cast(
+                Optional[Union[str, PathLike]],
+                orchestrators.get_asset_arm_id(
+                    str(deployment.code_configuration.code)[len(ARM_ID_PREFIX) :],
+                    azureml_type=AzureMLResourceType.CODE,
+                ),
             )
         else:
-            deployment.code_configuration.code = orchestrators.get_asset_arm_id(
-                Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
-                azureml_type=AzureMLResourceType.CODE,
+            deployment.code_configuration.code = cast(
+                Optional[Union[str, PathLike]],
+                orchestrators.get_asset_arm_id(
+                    Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
+                    azureml_type=AzureMLResourceType.CODE,
+                ),
             )
 
     if not is_registry_id_for_resource(deployment.environment):

@@ -58,6 +58,7 @@ from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
 from azure.ai.ml.exceptions import (
     AssetPathException,
     EmptyDirectoryError,
@@ -87,8 +88,8 @@ class IgnoreFile(object):
         :param file_path: Relative path, or absolute path to the ignore file.
         """
         path = Path(file_path).resolve() if file_path else None
-        self._path = path
-        self._path_spec = None
+        self._path: Any = path
+        self._path_spec: Any = None
 
     def exists(self) -> bool:
         """Checks if ignore file exists.
@@ -101,7 +102,7 @@ class IgnoreFile(object):
         return self._path and self._path.exists()
 
     @property
-    def base_path(self) -> Path:
+    def base_path(self) -> Union[str, Path]:
         return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
@@ -141,7 +142,7 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
-    def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, Path, os.PathLike]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
@@ -154,7 +155,7 @@ class IgnoreFile(object):
             self._path_spec = self._create_pathspec()
         if not self._path_spec:
             return False
-        file_path = self._get_rel_path(file_path)
+        file_path = str(self._get_rel_path(file_path))
         if file_path is None:
             return True
 
@@ -169,22 +170,22 @@ class IgnoreFile(object):
 
     @property
     def path(self) -> Union[Path, str]:
-        return self._path
+        return cast(Union[Path, str], self._path)
 
 
 class AmlIgnoreFile(IgnoreFile):
-    def __init__(self, directory_path: Union[Path, str]):
+    def __init__(self, directory_path: Union[Path, str, os.PathLike]):
         file_path = Path(directory_path).joinpath(AML_IGNORE_FILE_NAME)
         super(AmlIgnoreFile, self).__init__(file_path)
 
 
 class GitIgnoreFile(IgnoreFile):
-    def __init__(self, directory_path: Union[Path, str]):
+    def __init__(self, directory_path: Union[Path, str, os.PathLike]):
         file_path = Path(directory_path).joinpath(GIT_IGNORE_FILE_NAME)
         super(GitIgnoreFile, self).__init__(file_path)
 
 
-def get_ignore_file(directory_path: Union[Path, str]) -> IgnoreFile:
+def get_ignore_file(directory_path: Union[Path, str, os.PathLike]) -> IgnoreFile:
     """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
@@ -228,26 +229,28 @@ def _parse_name_version(
     token_list = name.split(":")
     if len(token_list) == 1:
         return name, None
-    *name, version = token_list
+    *name, version = token_list  # type: ignore[assignment]
     if version_as_int:
-        version = int(version)
+        version = int(version)  # type: ignore[assignment]
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:  # type: ignore[valid-type]
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
-            _hash.update(chunk)
+            _hash.update(chunk)  # type: ignore[attr-defined]
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(
+    directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile  # type: ignore[valid-type]
+) -> hash_type:  # type: ignore[valid-type]
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
         if ignore_file.is_file_excluded(path):
             continue
-        _hash.update(path.name.encode())
+        _hash.update(path.name.encode())  # type: ignore[attr-defined]
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(path)
         if path.is_file():
@@ -288,6 +291,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
     _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
+    object_hash: Any
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -356,7 +360,7 @@ def get_upload_files_from_folder(
                 ignore_file=ignore_file,
             )
         )
-    return upload_paths
+    return cast(List[str], upload_paths)
 
 
 def _get_file_list_content_hash(file_list) -> str:
@@ -413,14 +417,14 @@ def traverse_directory(  # pylint: disable=unused-argument
     # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
     # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
     # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
-    root = Path(root).resolve().absolute()
+    root = Path(root).resolve().absolute()  # type: ignore[assignment]
 
     # filter out files excluded by the ignore file
     # TODO: inner ignore file won't take effect. A merged IgnoreFile need to be generated in code resolution.
     origin_file_paths = [
-        root.joinpath(filename)
+        root.joinpath(filename)  # type: ignore[attr-defined]
         for filename in files
-        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())
+        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())  # type: ignore[attr-defined]
     ]
 
     result = []
@@ -464,7 +468,7 @@ def get_directory_size(
     """
     total_size = 0
     size_list = {}
-    for dirpath, _, filenames in os.walk(root, followlinks=True):
+    for dirpath, _, filenames in os.walk(root, followlinks=True):  # type: ignore[type-var]
         for name in filenames:
             full_path = os.path.join(dirpath, name)
             # Don't count files that are excluded by an ignore file
@@ -483,7 +487,7 @@ def get_directory_size(
 
 
 def upload_file(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: str,
     dest: Optional[str] = None,
     msg: Optional[str] = None,
@@ -521,9 +525,9 @@ def upload_file(
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
         if in_directory:
             storage_client.temp_sub_directory_client = None
-            file_name_tail = dest.split(os.path.sep)[-1]
+            file_name_tail = dest.split(os.path.sep)[-1]  # type: ignore[union-attr]
             # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
-            all_sub_folders = dest.split(os.path.sep)[2:-1]
+            all_sub_folders = str(dest).split(os.path.sep)[2:-1]
 
             # Create remote directories for each nested directory if file is in a nested directory
             for sub_folder in all_sub_folders:
@@ -536,11 +540,14 @@ def upload_file(
                         sub_folder
                     )
 
-            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(file_name_tail)
+            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(  # type: ignore
+                file_name_tail
+            )
         else:
             storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
 
     with open(source, "rb") as data:
+        cntx_manager: Any = None
         if show_progress and not in_directory:
             file_size, _ = get_directory_size(source)
             file_size_in_mb = file_size / 10**6
@@ -577,7 +584,7 @@ def upload_file(
 
 
 def upload_directory(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: Union[str, os.PathLike],
     dest: str,
     msg: str,
@@ -623,15 +630,15 @@ def upload_directory(
     total_size = 0
 
     # Get each file's size for progress bar tracking
-    for path, _ in upload_paths:
+    for path, _ in upload_paths:  # type: ignore[misc]
         # TODO: symbol links are already resolved
-        if os.path.islink(path):
+        if os.path.islink(path):  # type: ignore[has-type]
             path_size = os.path.getsize(
-                os.readlink(convert_windows_path_to_unix(path))
+                os.readlink(convert_windows_path_to_unix(path))  # type: ignore[has-type]
             )  # ensure we're counting the size of the linked file
         else:
-            path_size = os.path.getsize(path)
-        size_dict[path] = path_size
+            path_size = os.path.getsize(path)  # type: ignore[has-type]
+        size_dict[path] = path_size  # type: ignore[has-type]
         total_size += path_size
 
     upload_paths = sorted(upload_paths)
@@ -657,16 +664,19 @@ def upload_directory(
     # Submit paths to workers for upload
     num_cores = int(cpu_count()) * PROCESSES_PER_CORE
     with ThreadPoolExecutor(max_workers=num_cores) as ex:
-        futures_dict = {
+        futures_dict = {  # type: ignore[misc]
             ex.submit(
                 upload_file,
                 storage_client=storage_client,
-                source=src,
-                dest=dest,
-                size=size_dict.get(src),
+                source=src,  # type: ignore[has-type]
+                dest=dest,  # type: ignore[has-type]
+                size=size_dict.get(src),  # type: ignore
                 in_directory=True,
                 show_progress=show_progress,
-            ): (src, dest)
+            ): (
+                src,  # type: ignore[has-type]
+                dest,  # type: ignore[has-type]
+            )
             for (src, dest) in upload_paths
         }
         if show_progress:
@@ -723,7 +733,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str = None,
+    registry_name: Optional[str] = None,
     **kwargs,
 ) -> str:
     try:
@@ -802,7 +812,9 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    order_by: Literal[  # type: ignore[valid-type]
+        OrderString.CREATED_AT, OrderString.CREATED_AT_DESC
+    ] = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -1020,8 +1032,8 @@ def _check_or_modify_auto_delete_setting(
 
 def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
     # block cumtomer specified path on managed datastore
-    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
-        path = path.rstrip("/")
+    if str(path).startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+        path = str(path).rstrip("/")
 
         if path != WORKSPACE_MANAGED_DATASTORE:
             raise AssetPathException(

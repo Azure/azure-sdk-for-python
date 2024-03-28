@@ -6,21 +6,17 @@
 
 import logging
 
-
-from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    PackageRequest,
-    CodeConfiguration,
-    BaseEnvironmentId,
-    AzureMLOnlineInferencingServer,
     AzureMLBatchInferencingServer,
+    AzureMLOnlineInferencingServer,
+    BaseEnvironmentId,
+    CodeConfiguration,
+    PackageRequest,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    PackageRequest as DataPlanePackageRequest,
-)
-from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
-
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
+from azure.ai.ml.entities import BatchDeployment, Deployment, OnlineDeployment
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -74,9 +70,9 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
         else:
             package_request.base_environment_source.resource_id = deployment.environment
     if deployment.code_configuration:
-        if not deployment.code_configuration.code.startswith(REGISTRY_URI_FORMAT):
-            package_request.inferencing_server.code_configuration.code_id = (
-                "azureml:/" + deployment.code_configuration.code
+        if not str(deployment.code_configuration.code).startswith(REGISTRY_URI_FORMAT):
+            package_request.inferencing_server.code_configuration.code_id = "azureml:/" + str(
+                deployment.code_configuration.code
             )
         else:
             package_request.inferencing_server.code_configuration.code_id = deployment.code_configuration.code

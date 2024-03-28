@@ -280,9 +280,9 @@ class OperationOrchestrator(object):
                 return str(code_asset.id)
             sas_info = get_storage_info_for_non_registry_asset(
                 service_client=self._code_assets._service_client,  # type: ignore[attr-defined]
-                workspace_name=self._operation_scope.workspace_name,
-                name=code_asset.name,
-                version=code_asset.version,
+                workspace_name=str(self._operation_scope.workspace_name),
+                name=str(code_asset.name),
+                version=str(code_asset.version),
                 resource_group=self._operation_scope.resource_group_name,
             )
             uploaded_code_asset, _ = _check_and_upload_path(
@@ -296,8 +296,8 @@ class OperationOrchestrator(object):
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,
                 AzureMLResourceType.CODE,
-                code_asset.name,
-                code_asset.version,
+                str(code_asset.name),
+                str(code_asset.version),
             )
             return uploaded_code_asset
         except (MlException, HttpResponseError) as e:
@@ -325,8 +325,8 @@ class OperationOrchestrator(object):
         environment._id = get_arm_id_with_version(
             self._operation_scope,
             AzureMLResourceType.ENVIRONMENT,
-            environment.name,
-            environment.version,
+            str(environment.name),
+            str(environment.version),
         )
         return environment
 
@@ -347,8 +347,8 @@ class OperationOrchestrator(object):
             uploaded_model._id = get_arm_id_with_version(
                 self._operation_scope,
                 AzureMLResourceType.MODEL,
-                model.name,
-                model.version,
+                str(model.name),
+                str(model.version),
             )
             return uploaded_model
         except (MlException, HttpResponseError) as e:
@@ -459,7 +459,7 @@ class OperationOrchestrator(object):
         :return: AzureML id
         :rtype: str
         """
-
+        arm_id_obj: Any = None
         if arm_id:
             if not isinstance(arm_id, str):
                 msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))  # type: ignore

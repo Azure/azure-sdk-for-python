@@ -89,7 +89,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         self._primary_metric = (
             TextClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else ClassificationMultilabelPrimaryMetrics[camel_to_snake(value).upper()]
+            else ClassificationMultilabelPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     def _to_rest_object(self) -> JobBase:

@@ -283,7 +283,7 @@ class MLClient:
         self._operation_container = OperationsContainer()
 
         # kwargs related to operations alone not all kwargs passed to MLClient are needed by operations
-        ops_kwargs = app_insights_handler_kwargs
+        ops_kwargs: dict = app_insights_handler_kwargs
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 

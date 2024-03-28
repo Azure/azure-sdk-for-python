@@ -61,7 +61,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         all_operations: OperationsContainer,
         local_endpoint_helper: _LocalEndpointHelper,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)

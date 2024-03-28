@@ -129,7 +129,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             **kwargs,
         )
 
-        self.compute = compute
+        self.compute: Any = compute
         self.resources = resources
         self.output_action = output_action
         self.output_file_name = output_file_name

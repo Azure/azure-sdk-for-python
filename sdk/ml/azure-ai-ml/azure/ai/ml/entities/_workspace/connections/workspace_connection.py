@@ -274,7 +274,7 @@ class WorkspaceConnection(Resource):
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
         # Check for alternative name for custom connection type (added for client clarity).
-        if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
+        if rest_kwargs["type"].lower() == str(camel_to_snake(ConnectionCategory.CUSTOM_KEYS)).lower():
             rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
         workspace_connection = conn_class(**rest_kwargs)
         return cast(Optional["WorkspaceConnection"], workspace_connection)
@@ -347,7 +347,7 @@ class WorkspaceConnection(Resource):
 
         for name in popped_tags:
             if name in tags:
-                rest_kwargs[camel_to_snake(name)] = tags[name]
+                rest_kwargs[str(camel_to_snake(name))] = tags[name]
         return rest_kwargs
 
     @classmethod

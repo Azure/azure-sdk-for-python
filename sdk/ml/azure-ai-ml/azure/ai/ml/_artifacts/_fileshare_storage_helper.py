@@ -89,7 +89,7 @@ class FileStorageClient:
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version"], str]
         """
-        asset_id = generate_asset_id(asset_hash, include_directory=False)
+        asset_id = generate_asset_id(str(asset_hash), include_directory=False)
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
 
@@ -231,21 +231,22 @@ class FileStorageClient:
             subdir = subdir.create_subdirectory(trunc_root)
 
         if show_progress:
-            with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
-                for src, destination in upload_paths:
+            _dir_size = get_directory_size(source_path)
+            with DirectoryUploadProgressBar(dir_size=_dir_size, msg=msg) as pbar:  # type: ignore[arg-type]
+                for src, destination in upload_paths:  # type: ignore[misc]
                     self.upload_file(
-                        src,
-                        destination,
+                        src,  # type: ignore[has-type]
+                        destination,  # type: ignore[has-type]
                         in_directory=True,
                         subdirectory_client=subdir,
                         show_progress=show_progress,
                         callback=pbar.update_to,
                     )
         else:
-            for src, destination in upload_paths:
+            for src, destination in upload_paths:  # type: ignore[misc]
                 self.upload_file(
-                    src,
-                    destination,
+                    src,  # type: ignore[has-type]
+                    destination,  # type: ignore[has-type]
                     in_directory=True,
                     subdirectory_client=subdir,
                     show_progress=show_progress,

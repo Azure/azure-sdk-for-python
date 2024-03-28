@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from colorama import Fore
 from typing_extensions import Literal
@@ -45,10 +45,10 @@ class Gen2StorageClient:
         except ResourceExistsError:
             pass
 
-        self.directory_client = None
+        self.directory_client: Any = None
         self.sub_directory_client = None
         self.temp_sub_directory_client = None
-        self.file_client = None
+        self.file_client: Any = None
         self.total_file_count = 1
         self.uploaded_file_count = 0
         self.name = None
@@ -83,7 +83,7 @@ class Gen2StorageClient:
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
-        asset_id = generate_asset_id(asset_hash, include_directory=True)
+        asset_id = generate_asset_id(str(asset_hash), include_directory=True)
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
 

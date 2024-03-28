@@ -557,8 +557,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         # if it is an ARM ID, don't process it
         if not is_ARM_id_for_parented_resource(
-            target.endpoint_deployment_id,
-            snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
+            str(target.endpoint_deployment_id),
+            str(snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT)),
             AzureMLResourceType.DEPLOYMENT,
         ):
             endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")  # type: ignore
