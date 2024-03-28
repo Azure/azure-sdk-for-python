@@ -523,7 +523,8 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
-  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
+  $packageName = $artifactName.Replace("_","-")
+  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $packageName)
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
   $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
@@ -537,6 +538,19 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
+  }
+
+  # Python requires pregenerated token file in addition to wheel to generate API review.
+  # Make sure that token file exists in same path as wheel file.
+  $tokenFile = Join-Path -Path $whlDirectory -ChildPath "${packageName}_Python.json"
+  if (!(Test-Path $tokenFile))
+  {
+    Write-Host "API review token file for $($artifactName) does not exist in path $($whlDirectory). Skipping API review for $packageName"
+    return $null
+  }
+  else
+  {
+    Write-Host "Found API review token file for $($tokenFile)"
   }
 
   $packages = @{
