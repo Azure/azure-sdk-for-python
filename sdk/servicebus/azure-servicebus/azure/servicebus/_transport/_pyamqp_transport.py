@@ -764,10 +764,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
+        if handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit # pylint: disable=protected-access
+        if link_credit_needed > 0:
+            handler._link.flow(link_credit=link_credit_needed) # pylint: disable=protected-access
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -780,13 +785,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, 'accepted')
+                return handler.settle_messages(message._delivery_id, 'accepted', message=message)
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=False
+                    undeliverable_here=False,
+                    message=message
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
@@ -799,14 +805,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                             RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         }
-                    )
+                    ),
+                    message=message,
                 )
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=True
+                    undeliverable_here=True,
+                    message=message,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae

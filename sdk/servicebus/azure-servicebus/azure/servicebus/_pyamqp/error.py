@@ -116,7 +116,7 @@ class RetryPolicy:
         ErrorCondition.SessionUnattachedHandle,
         ErrorCondition.SessionHandleInUse,
         ErrorCondition.SessionErrantLink,
-        ErrorCondition.SessionWindowViolation
+        ErrorCondition.SessionWindowViolation,
     ]
 
     def __init__(

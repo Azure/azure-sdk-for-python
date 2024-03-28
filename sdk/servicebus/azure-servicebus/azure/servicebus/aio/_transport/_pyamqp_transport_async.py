@@ -301,10 +301,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        await handler._link.flow(link_credit=link_credit)   # pylint: disable=protected-access
+        if handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit # pylint: disable=protected-access
+        if link_credit_needed > 0:
+            await handler._link.flow(link_credit=link_credit_needed) # pylint: disable=protected-access
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
@@ -317,13 +322,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return await handler.settle_messages_async(message._delivery_id, 'accepted')
+                return await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=False
+                    undeliverable_here=False,
+                    message=message,
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return await handler.settle_messages_async(
@@ -336,14 +342,16 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         }
-                    )
+                    ),
+                    message=message,
                 )
             if settle_operation == MESSAGE_DEFER:
                 return await handler.settle_messages_async(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=True
+                    undeliverable_here=True,
+                    message=message,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
