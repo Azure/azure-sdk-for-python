@@ -1,0 +1,4 @@
+directory: specification/ai/ModelInference
+commit: 1b950ebcf6b58804a387e17641b1c933aeb13f4b
+repo: Azure/azure-rest-api-specs
+additionalDirectories:
