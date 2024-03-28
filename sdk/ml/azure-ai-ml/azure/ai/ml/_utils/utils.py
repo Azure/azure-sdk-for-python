@@ -1418,3 +1418,14 @@ def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
         "name": name,
         "version": version,
     }
+
+
+def _get_evaluator_properties():
+    return {
+        "is-promptflow": "true",
+        "is-evaluator": "true"
+    }
+
+
+def _is_evaluator(properties: Dict[str, str]) -> bool:
+    return properties.get("is-evaluator") == "true" and properties.get("is-promptflow") == "true"
