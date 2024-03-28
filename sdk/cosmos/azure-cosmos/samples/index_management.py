@@ -640,9 +640,9 @@ def use_vector_embedding_policy(db):
         # Create a container with vector embedding policy and vector indexes
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector1", "type": "Flat"},
-                {"path": "/vector2", "type": "QuantizedFlat"},
-                {"path": "/vector3", "type": "DiskANN"}
+                {"path": "/vector1", "type": "flat"},
+                {"path": "/vector2", "type": "quantizedFlat"},
+                {"path": "/vector3", "type": "diskANN"}
             ]
         }
         vector_embedding_policy = {
@@ -650,14 +650,20 @@ def use_vector_embedding_policy(db):
                 {
                     "path": "/vector1",
                     "dataType": "float32",
-                    "dimensions": 1200,
-                    "distanceFunction": "Euclidean"
+                    "dimensions": 1000,
+                    "distanceFunction": "euclidean"
                 },
                 {
                     "path": "/vector2",
                     "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
+                },
+                {
+                    "path": "/vector3",
+                    "dataType": "uint8",
                     "dimensions": 400,
-                    "distanceFunction": "DotProduct"
+                    "distanceFunction": "cosine"
                 }
             ]
         }
@@ -675,7 +681,7 @@ def use_vector_embedding_policy(db):
         print_dictionary_items(properties["indexingPolicy"])
         print_dictionary_items(properties["vectorEmbeddingPolicy"])
 
-        # TODO: Add logic creating items and running queries
+        # TODO: add rest of sample once query work is done
 
         # Cleanup
         db.delete_container(created_container)
@@ -716,7 +722,7 @@ def run_sample():
         # 8. Perform Multi Orderby queries using composite indexes
         perform_multi_orderby_query(created_db)
 
-        #9. Create and use a vector embedding policy
+        # 9. Create and use a vector embedding policy
         use_vector_embedding_policy(created_db)
 
     except exceptions.AzureError as e:
