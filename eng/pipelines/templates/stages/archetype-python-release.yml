@@ -251,6 +251,14 @@ stages:
                           CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+          
+          - template: /eng/common/pipelines/templates/jobs/mark-as-shipped.yml
+            parameters:
+              Artifacts: ${{parameters.Artifacts}}
+              ArtifactName: ${{parameters.ArtifactName}}
+              PackageName: ${{artifact.name}}
+              DependsOn: PublishPackage
+
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
               parameters:
