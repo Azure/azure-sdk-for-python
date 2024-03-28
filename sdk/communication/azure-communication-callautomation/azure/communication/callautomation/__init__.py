@@ -26,6 +26,8 @@ from ._models import (
     CallInvite,
     ServerCallLocator,
     GroupCallLocator,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -61,6 +63,8 @@ __all__ = [
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
+    'AzureBlobContainerRecordingStorage',
+    'AzureCommunicationsRecordingStorage',
 
     # models for output
     "CallConnectionProperties",
