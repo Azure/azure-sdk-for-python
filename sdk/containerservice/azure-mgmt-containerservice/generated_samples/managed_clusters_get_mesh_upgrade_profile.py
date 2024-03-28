@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservice import ContainerServiceClient
 
 """
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-01-01/examples/ManagedClustersGet_MeshUpgradeProfile.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-02-01/examples/ManagedClustersGet_MeshUpgradeProfile.json
 if __name__ == "__main__":
     main()

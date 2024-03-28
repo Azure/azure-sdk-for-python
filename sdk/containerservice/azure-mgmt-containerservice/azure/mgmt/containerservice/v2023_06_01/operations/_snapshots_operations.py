@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -281,7 +281,6 @@ class SnapshotsOperations:
 
         Gets a list of snapshots in the specified subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Snapshot or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2023_06_01.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -303,15 +302,14 @@ class SnapshotsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -322,14 +320,14 @@ class SnapshotsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SnapshotListResult", pipeline_response)
@@ -339,11 +337,11 @@ class SnapshotsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -354,8 +352,6 @@ class SnapshotsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/snapshots"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Snapshot"]:
@@ -366,7 +362,6 @@ class SnapshotsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Snapshot or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2023_06_01.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -388,16 +383,15 @@ class SnapshotsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -408,14 +402,14 @@ class SnapshotsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SnapshotListResult", pipeline_response)
@@ -425,11 +419,11 @@ class SnapshotsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -440,10 +434,6 @@ class SnapshotsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots"
-    }
 
     @distributed_trace
     def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.Snapshot:
@@ -456,7 +446,6 @@ class SnapshotsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -475,21 +464,20 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-06-01"))
         cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -501,13 +489,9 @@ class SnapshotsOperations:
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -533,7 +517,6 @@ class SnapshotsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -544,7 +527,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -559,11 +542,10 @@ class SnapshotsOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: The snapshot to create or update. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -571,7 +553,11 @@ class SnapshotsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.Snapshot, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.Snapshot, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Snapshot:
         """Creates or updates a snapshot.
 
@@ -582,13 +568,9 @@ class SnapshotsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param parameters: The snapshot to create or update. Is either a Snapshot type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The snapshot to create or update. Is either a Snapshot type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot or IO[bytes]
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -616,7 +598,7 @@ class SnapshotsOperations:
         else:
             _json = self._serialize.body(parameters, "Snapshot")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -624,16 +606,15 @@ class SnapshotsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -652,10 +633,6 @@ class SnapshotsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
-    }
 
     @overload
     def update_tags(
@@ -681,7 +658,6 @@ class SnapshotsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -692,7 +668,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -707,11 +683,10 @@ class SnapshotsOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update snapshot Tags operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -719,7 +694,11 @@ class SnapshotsOperations:
 
     @distributed_trace
     def update_tags(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.TagsObject, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.TagsObject, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Snapshot:
         """Updates tags on a snapshot.
 
@@ -731,12 +710,8 @@ class SnapshotsOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update snapshot Tags operation. Is either a
-         TagsObject type or a IO type. Required.
-        :type parameters: ~azure.mgmt.containerservice.v2023_06_01.models.TagsObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.containerservice.v2023_06_01.models.TagsObject or IO[bytes]
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2023_06_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -764,7 +739,7 @@ class SnapshotsOperations:
         else:
             _json = self._serialize.body(parameters, "TagsObject")
 
-        request = build_update_tags_request(
+        _request = build_update_tags_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -772,16 +747,15 @@ class SnapshotsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -793,13 +767,9 @@ class SnapshotsOperations:
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update_tags.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -814,7 +784,6 @@ class SnapshotsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -833,21 +802,20 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-06-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -857,8 +825,4 @@ class SnapshotsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

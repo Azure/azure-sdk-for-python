@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -77,7 +77,6 @@ class ManagedClustersOperations:
         Gets a list of managed clusters in the specified subscription. The operation returns properties
         of each managed cluster.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2019_06_01.models.ManagedCluster]
@@ -100,15 +99,14 @@ class ManagedClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -119,14 +117,14 @@ class ManagedClustersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedClusterListResult", pipeline_response)
@@ -136,11 +134,11 @@ class ManagedClustersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -151,8 +149,6 @@ class ManagedClustersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/managedClusters"}
 
     @distributed_trace
     def list_by_resource_group(
@@ -165,7 +161,6 @@ class ManagedClustersOperations:
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2019_06_01.models.ManagedCluster]
@@ -188,16 +183,15 @@ class ManagedClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -208,14 +202,14 @@ class ManagedClustersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedClusterListResult", pipeline_response)
@@ -225,11 +219,11 @@ class ManagedClustersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -240,10 +234,6 @@ class ManagedClustersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters"
-    }
 
     @distributed_trace_async
     async def get_upgrade_profile(
@@ -258,7 +248,6 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedClusterUpgradeProfile or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedClusterUpgradeProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -277,21 +266,20 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[_models.ManagedClusterUpgradeProfile] = kwargs.pop("cls", None)
 
-        request = build_get_upgrade_profile_request(
+        _request = build_get_upgrade_profile_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_upgrade_profile.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -303,13 +291,9 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("ManagedClusterUpgradeProfile", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_upgrade_profile.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/upgradeProfiles/default"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_access_profile(
@@ -326,7 +310,6 @@ class ManagedClustersOperations:
         :type resource_name: str
         :param role_name: The name of the role for managed cluster accessProfile resource. Required.
         :type role_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedClusterAccessProfile or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedClusterAccessProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -345,22 +328,21 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[_models.ManagedClusterAccessProfile] = kwargs.pop("cls", None)
 
-        request = build_get_access_profile_request(
+        _request = build_get_access_profile_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             role_name=role_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_access_profile.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -372,13 +354,9 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("ManagedClusterAccessProfile", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_access_profile.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/accessProfiles/{roleName}/listCredential"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_cluster_admin_credentials(
@@ -392,7 +370,6 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CredentialResults or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.CredentialResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -411,21 +388,20 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[_models.CredentialResults] = kwargs.pop("cls", None)
 
-        request = build_list_cluster_admin_credentials_request(
+        _request = build_list_cluster_admin_credentials_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_cluster_admin_credentials.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -437,13 +413,9 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("CredentialResults", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_cluster_admin_credentials.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/listClusterAdminCredential"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_cluster_user_credentials(
@@ -457,7 +429,6 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CredentialResults or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.CredentialResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -476,21 +447,20 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[_models.CredentialResults] = kwargs.pop("cls", None)
 
-        request = build_list_cluster_user_credentials_request(
+        _request = build_list_cluster_user_credentials_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_cluster_user_credentials.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -502,13 +472,9 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("CredentialResults", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_cluster_user_credentials.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/listClusterUserCredential"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.ManagedCluster:
@@ -520,7 +486,6 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedCluster or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedCluster
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -539,21 +504,20 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[_models.ManagedCluster] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -565,16 +529,16 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("ManagedCluster", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.ManagedCluster, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.ManagedCluster, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ManagedCluster:
         error_map = {
             401: ClientAuthenticationError,
@@ -599,7 +563,7 @@ class ManagedClustersOperations:
         else:
             _json = self._serialize.body(parameters, "ManagedCluster")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -607,16 +571,15 @@ class ManagedClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -635,10 +598,6 @@ class ManagedClustersOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -665,14 +624,6 @@ class ManagedClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -685,7 +636,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -701,18 +652,10 @@ class ManagedClustersOperations:
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update a Managed Cluster operation.
          Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -722,7 +665,11 @@ class ManagedClustersOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.ManagedCluster, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.ManagedCluster, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedCluster]:
         """Creates or updates a managed cluster.
 
@@ -734,19 +681,8 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update a Managed Cluster operation. Is
-         either a ManagedCluster type or a IO type. Required.
-        :type parameters: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedCluster or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a ManagedCluster type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedCluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -779,7 +715,7 @@ class ManagedClustersOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ManagedCluster", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -789,20 +725,22 @@ class ManagedClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ManagedCluster].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+        return AsyncLROPoller[_models.ManagedCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _update_tags_initial(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.TagsObject, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.TagsObject, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ManagedCluster:
         error_map = {
             401: ClientAuthenticationError,
@@ -827,7 +765,7 @@ class ManagedClustersOperations:
         else:
             _json = self._serialize.body(parameters, "TagsObject")
 
-        request = build_update_tags_request(
+        _request = build_update_tags_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -835,16 +773,15 @@ class ManagedClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_tags_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -856,13 +793,9 @@ class ManagedClustersOperations:
         deserialized = self._deserialize("ManagedCluster", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_tags_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_tags(
@@ -887,14 +820,6 @@ class ManagedClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -907,7 +832,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -921,18 +846,10 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update Managed Cluster Tags operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -942,7 +859,11 @@ class ManagedClustersOperations:
 
     @distributed_trace_async
     async def begin_update_tags(
-        self, resource_group_name: str, resource_name: str, parameters: Union[_models.TagsObject, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: Union[_models.TagsObject, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedCluster]:
         """Updates tags on a managed cluster.
 
@@ -953,19 +874,8 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update Managed Cluster Tags operation. Is either
-         a TagsObject type or a IO type. Required.
-        :type parameters: ~azure.mgmt.containerservice.v2019_06_01.models.TagsObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.containerservice.v2019_06_01.models.TagsObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of
          cls(response)
         :rtype:
@@ -998,7 +908,7 @@ class ManagedClustersOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ManagedCluster", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1008,17 +918,15 @@ class ManagedClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ManagedCluster].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_tags.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+        return AsyncLROPoller[_models.ManagedCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -1037,21 +945,20 @@ class ManagedClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-06-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1061,11 +968,7 @@ class ManagedClustersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -1077,14 +980,6 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1111,7 +1006,7 @@ class ManagedClustersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1120,23 +1015,19 @@ class ManagedClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _reset_service_principal_profile_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.ManagedClusterServicePrincipalProfile, IO],
+        parameters: Union[_models.ManagedClusterServicePrincipalProfile, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1162,7 +1053,7 @@ class ManagedClustersOperations:
         else:
             _json = self._serialize.body(parameters, "ManagedClusterServicePrincipalProfile")
 
-        request = build_reset_service_principal_profile_request(
+        _request = build_reset_service_principal_profile_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -1170,16 +1061,15 @@ class ManagedClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._reset_service_principal_profile_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1189,11 +1079,7 @@ class ManagedClustersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _reset_service_principal_profile_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_reset_service_principal_profile(
@@ -1220,14 +1106,6 @@ class ManagedClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1238,7 +1116,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1253,18 +1131,10 @@ class ManagedClustersOperations:
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset Service Principal Profile operation for a
          Managed Cluster. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1275,7 +1145,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.ManagedClusterServicePrincipalProfile, IO],
+        parameters: Union[_models.ManagedClusterServicePrincipalProfile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Reset Service Principal Profile of a managed cluster.
@@ -1287,20 +1157,11 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset Service Principal Profile operation for a
-         Managed Cluster. Is either a ManagedClusterServicePrincipalProfile type or a IO type. Required.
+         Managed Cluster. Is either a ManagedClusterServicePrincipalProfile type or a IO[bytes] type.
+         Required.
         :type parameters:
-         ~azure.mgmt.containerservice.v2019_06_01.models.ManagedClusterServicePrincipalProfile or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.containerservice.v2019_06_01.models.ManagedClusterServicePrincipalProfile or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1330,7 +1191,7 @@ class ManagedClustersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1339,23 +1200,19 @@ class ManagedClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_reset_service_principal_profile.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _reset_aad_profile_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.ManagedClusterAADProfile, IO],
+        parameters: Union[_models.ManagedClusterAADProfile, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1381,7 +1238,7 @@ class ManagedClustersOperations:
         else:
             _json = self._serialize.body(parameters, "ManagedClusterAADProfile")
 
-        request = build_reset_aad_profile_request(
+        _request = build_reset_aad_profile_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -1389,16 +1246,15 @@ class ManagedClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._reset_aad_profile_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1408,11 +1264,7 @@ class ManagedClustersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _reset_aad_profile_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetAADProfile"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_reset_aad_profile(
@@ -1438,14 +1290,6 @@ class ManagedClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1456,7 +1300,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1471,18 +1315,10 @@ class ManagedClustersOperations:
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset AAD Profile operation for a Managed
          Cluster. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1493,7 +1329,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.ManagedClusterAADProfile, IO],
+        parameters: Union[_models.ManagedClusterAADProfile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Reset AAD Profile of a managed cluster.
@@ -1505,20 +1341,9 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset AAD Profile operation for a Managed
-         Cluster. Is either a ManagedClusterAADProfile type or a IO type. Required.
+         Cluster. Is either a ManagedClusterAADProfile type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2019_06_01.models.ManagedClusterAADProfile or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1548,7 +1373,7 @@ class ManagedClustersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1557,14 +1382,10 @@ class ManagedClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_reset_aad_profile.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetAADProfile"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

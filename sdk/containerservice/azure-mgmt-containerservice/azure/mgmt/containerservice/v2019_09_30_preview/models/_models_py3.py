@@ -113,7 +113,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -162,7 +162,7 @@ class OpenShiftManagedCluster(Resource):  # pylint: disable=too-many-instance-at
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -302,13 +302,13 @@ class OpenShiftManagedCluster(Resource):  # pylint: disable=too-many-instance-at
         self.monitor_profile = monitor_profile
 
 
-class OpenShiftManagedClusterBaseIdentityProvider(_serialization.Model):
+class OpenShiftManagedClusterBaseIdentityProvider(_serialization.Model):  # pylint: disable=name-too-long
     """Structure for any Identity provider.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OpenShiftManagedClusterAADIdentityProvider
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The kind of the provider. Required.
     :vartype kind: str
@@ -330,10 +330,12 @@ class OpenShiftManagedClusterBaseIdentityProvider(_serialization.Model):
         self.kind: Optional[str] = None
 
 
-class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIdentityProvider):
+class OpenShiftManagedClusterAADIdentityProvider(
+    OpenShiftManagedClusterBaseIdentityProvider
+):  # pylint: disable=name-too-long
     """Defines the Identity provider for MS AAD.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The kind of the provider. Required.
     :vartype kind: str
@@ -389,7 +391,7 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
 class OpenShiftManagedClusterAgentPoolProfile(_serialization.Model):
     """Defines the configuration of the OpenShift cluster VMs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Unique name of the pool profile in the context of the subscription and resource
      group. Required.
@@ -573,7 +575,7 @@ class OpenShiftManagedClusterListResult(_serialization.Model):
 class OpenShiftManagedClusterMasterPoolProfile(_serialization.Model):
     """OpenShiftManagedClusterMaterPoolProfile contains configuration for OpenShift master VMs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Unique name of the master pool profile in the context of the subscription and
      resource group.
