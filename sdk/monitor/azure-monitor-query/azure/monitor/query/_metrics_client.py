@@ -13,6 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.metrics.batch import MonitorBatchMetricsClient
 from ._models import MetricsQueryResult
+from ._enums import MetricAggregationType
 from ._helpers import get_authentication_policy, get_timespan_iso8601_endpoints, get_subscription_id_from_resource
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -53,7 +54,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         metric_names: Sequence[str],
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
-        aggregations: Optional[Sequence[str]] = None,
+        aggregations: Optional[Sequence[Union[MetricAggregationType, str]]] = None,
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
@@ -66,22 +67,22 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype resource_ids: list[str]
         :keyword metric_namespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metric_namespace: str
-        :keyword metric_names: The names of the metrics (comma separated) to retrieve. Required.
+        :keyword metric_names: The names of the metrics to retrieve. Required.
         :paramtype metric_names: list[str]
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
-            a timedelta and a start datetime, or a start datetime/end datetime.
+            a tuple of a start datetime with timedelta, or a tuple with start and end datetimes.
         :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
             tuple[~datetime.datetime, ~datetime.datetime]]]
         :keyword granularity: The granularity (i.e. timegrain) of the query.
         :paramtype granularity: Optional[~datetime.timedelta]
         :keyword aggregations: The list of aggregation types to retrieve. Use
             `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
-        :paramtype aggregations: Optional[list[str]]
+        :paramtype aggregations: Optional[list[Union[~azure.monitor.query.MetricAggregationType, str]]]
         :keyword max_results: The maximum number of records to retrieve.
-            Valid only if $filter is specified. Defaults to 10.
+            Valid only if 'filter' is specified. Defaults to 10.
         :paramtype max_results: Optional[int]
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
-            Only one order can be specified. Examples: sum asc.
+            Only one order can be specified. Examples: 'sum asc', 'maximum desc'.
         :paramtype order_by: Optional[str]
         :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
             Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or

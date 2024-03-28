@@ -206,6 +206,8 @@ class CodegenTestPR:
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
+        print_exec('pip install PyGithub')
+        print_exec('pip install GitPython')
         print_check(f'python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
@@ -393,7 +395,6 @@ class CodegenTestPR:
         file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
         content = [
             "-e ../../../tools/azure-sdk-tools\n",
-            "-e ../../../tools/azure-devtools\n",
             "../../identity/azure-identity\n"
         ]
         if not file.exists():
