@@ -168,6 +168,8 @@ from ._models_py3 import PostArgsMatchConditionParameters
 from ._models_py3 import Profile
 from ._models_py3 import ProfileChangeSkuWafMapping
 from ._models_py3 import ProfileListResult
+from ._models_py3 import ProfileLogScrubbing
+from ._models_py3 import ProfileScrubbingRules
 from ._models_py3 import ProfileUpdateParameters
 from ._models_py3 import ProfileUpgradeParameters
 from ._models_py3 import ProxyResource
@@ -338,6 +340,7 @@ from ._cdn_management_client_enums import PrivateEndpointStatus
 from ._cdn_management_client_enums import ProbeProtocol
 from ._cdn_management_client_enums import ProfileProvisioningState
 from ._cdn_management_client_enums import ProfileResourceState
+from ._cdn_management_client_enums import ProfileScrubbingState
 from ._cdn_management_client_enums import ProtocolType
 from ._cdn_management_client_enums import ProvisioningState
 from ._cdn_management_client_enums import QueryStringBehavior
@@ -366,6 +369,9 @@ from ._cdn_management_client_enums import RouteConfigurationOverrideActionParame
 from ._cdn_management_client_enums import RuleCacheBehavior
 from ._cdn_management_client_enums import RuleIsCompressionEnabled
 from ._cdn_management_client_enums import RuleQueryStringCachingBehavior
+from ._cdn_management_client_enums import ScrubbingRuleEntryMatchOperator
+from ._cdn_management_client_enums import ScrubbingRuleEntryMatchVariable
+from ._cdn_management_client_enums import ScrubbingRuleEntryState
 from ._cdn_management_client_enums import SecretType
 from ._cdn_management_client_enums import SecurityPolicyType
 from ._cdn_management_client_enums import ServerPortMatchConditionParametersTypeName
@@ -567,6 +573,8 @@ __all__ = [
     "Profile",
     "ProfileChangeSkuWafMapping",
     "ProfileListResult",
+    "ProfileLogScrubbing",
+    "ProfileScrubbingRules",
     "ProfileUpdateParameters",
     "ProfileUpgradeParameters",
     "ProxyResource",
@@ -736,6 +744,7 @@ __all__ = [
     "ProbeProtocol",
     "ProfileProvisioningState",
     "ProfileResourceState",
+    "ProfileScrubbingState",
     "ProtocolType",
     "ProvisioningState",
     "QueryStringBehavior",
@@ -764,6 +773,9 @@ __all__ = [
     "RuleCacheBehavior",
     "RuleIsCompressionEnabled",
     "RuleQueryStringCachingBehavior",
+    "ScrubbingRuleEntryMatchOperator",
+    "ScrubbingRuleEntryMatchVariable",
+    "ScrubbingRuleEntryState",
     "SecretType",
     "SecurityPolicyType",
     "ServerPortMatchConditionParametersTypeName",
