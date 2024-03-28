@@ -214,9 +214,6 @@ class ChatOperations:
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Default value is None.
         :type repeatability_request_id: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: CreateChatThreadResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
         :raises ~azure.core.exceptions.HttpResponseError:

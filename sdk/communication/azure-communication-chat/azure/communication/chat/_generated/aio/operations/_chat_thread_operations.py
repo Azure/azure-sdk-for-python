@@ -248,9 +248,6 @@ class ChatThreadOperations:
          or a IO[bytes] type. Required.
         :type send_read_receipt_request: ~azure.communication.chat.models.SendReadReceiptRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -385,9 +382,6 @@ class ChatThreadOperations:
          SendChatMessageRequest type or a IO[bytes] type. Required.
         :type send_chat_message_request: ~azure.communication.chat.models.SendChatMessageRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: SendChatMessageResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.SendChatMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -720,9 +714,6 @@ class ChatThreadOperations:
          UpdateChatMessageRequest type or a IO[bytes] type. Required.
         :type update_chat_message_request: ~azure.communication.chat.models.UpdateChatMessageRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1041,9 +1032,6 @@ class ChatThreadOperations:
          thread. Is either a CommunicationIdentifierModel type or a IO[bytes] type. Required.
         :type participant_communication_identifier:
          ~azure.communication.chat.models.CommunicationIdentifierModel or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1179,9 +1167,6 @@ class ChatThreadOperations:
          a AddChatParticipantsRequest type or a IO[bytes] type. Required.
         :type add_chat_participants_request:
          ~azure.communication.chat.models.AddChatParticipantsRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: AddChatParticipantsResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.AddChatParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1320,9 +1305,6 @@ class ChatThreadOperations:
          UpdateChatThreadRequest type or a IO[bytes] type. Required.
         :type update_chat_thread_request: ~azure.communication.chat.models.UpdateChatThreadRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1527,9 +1509,6 @@ class ChatThreadOperations:
          a SendTypingNotificationRequest type or a IO[bytes] type. Default value is None.
         :type send_typing_notification_request:
          ~azure.communication.chat.models.SendTypingNotificationRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
