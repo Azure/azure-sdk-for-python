@@ -3,9 +3,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import sys
+import asyncio
 import logging
-from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict
+from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict, Literal
 import json
 import math
 import threading
@@ -20,10 +22,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _LOGGER = logging.getLogger(__name__)
@@ -632,7 +630,7 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
         self.name = "json.reliable.webpubsub.azure.v1"
 
 
-class SendMessageErrorOptions:
+class _SendMessageErrorOptions:
     """Options for send message error
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
@@ -647,7 +645,40 @@ class SendMessageErrorOptions:
     ) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
+
+
+class SendMessageErrorOptions(_SendMessageErrorOptions):
+    """Options for send message error
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
+    """
+
+    def __init__(
+        self,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
+    ) -> None:
+        super().__init__(ack_id, error_detail)
         self.cv = threading.Condition()
+
+
+class SendMessageErrorOptionsAsync(_SendMessageErrorOptions):
+    """Async Options for send message error
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
+    """
+
+    def __init__(
+        self,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
+    ) -> None:
+        super().__init__(ack_id, error_detail)
+        self.event = asyncio.Event()
 
 
 class SendMessageError(AzureError):
@@ -936,5 +967,57 @@ class AckMap:
             self.ack_map.clear()
 
 
+class AckMapAsync:
+    """Async Ack map"""
+
+    def __init__(self) -> None:
+        self.ack_map: Dict[int, SendMessageErrorOptionsAsync] = {}
+
+    def add(self, ack_id: int, options: SendMessageErrorOptionsAsync) -> None:
+        """Add ack id to ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :param options: The options. Required.
+        :type options: SendMessageErrorOptions
+        """
+        self.ack_map[ack_id] = options
+
+    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+        """Pop ack id from ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
+        """
+        return self.ack_map.pop(ack_id, None)
+
+    def get(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+        """Get ack id from ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
+        """
+        return self.ack_map.get(ack_id)
+
+    def clear(self) -> None:
+        """Clear ack map"""
+        for key, value in self.ack_map.items():
+            _LOGGER.debug("clear ack map with ack id: %s", key)
+            value.event.set()
+        self.ack_map.clear()
+
+
 class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""
+
+
+class ReconnectError(AzureError):
+    """Exception raised when fail to reconnect"""
+
+
+class RecoverError(AzureError):
+    """Exception raised when fail to reconnect or recover the client"""

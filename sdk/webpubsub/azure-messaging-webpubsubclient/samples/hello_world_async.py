@@ -4,7 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 import os
-from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
+import asyncio
+from azure.messaging.webpubsubclient.aio import WebPubSubClient
+from azure.messaging.webpubsubclient import WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
@@ -16,17 +18,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def on_connected(msg: OnConnectedArgs):
+async def on_connected(msg: OnConnectedArgs):
     print("======== connected ===========")
     print(f"Connection {msg.connection_id} is connected")
 
 
-def on_disconnected(msg: OnDisconnectedArgs):
+async def on_disconnected(msg: OnDisconnectedArgs):
     print("========== disconnected =========")
     print(f"connection is disconnected: {msg.message}")
 
 
-def on_group_message(msg: OnGroupDataMessageArgs):
+async def on_group_message(msg: OnGroupDataMessageArgs):
     print("========== group message =========")
     if isinstance(msg.data, memoryview):
         print(f"Received message from {msg.group}: {bytes(msg.data).decode()}")
@@ -34,8 +36,8 @@ def on_group_message(msg: OnGroupDataMessageArgs):
         print(f"Received message from {msg.group}: {msg.data}")
 
 
-def main():
-    service_client = WebPubSubServiceClient.from_connection_string( # type: ignore
+async def main():
+    service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
     client = WebPubSubClient(
@@ -46,23 +48,25 @@ def main():
         ),
     )
 
-    with client:
-        client.subscribe("connected", on_connected)
-        client.subscribe("disconnected", on_disconnected)
-        client.subscribe("group-message", on_group_message)
+    async with client:
+        await client.subscribe("connected", on_connected)
+        await client.subscribe("disconnected", on_disconnected)
+        await client.subscribe("group-message", on_group_message)
         group_name = "test"
-        client.join_group(group_name)
-        client.send_to_group(group_name, "hello text", "text", no_echo=False, ack=False)
-        client.send_to_group(group_name, {"hello": "json"}, "json")
-        client.send_to_group(group_name, "hello text", "text")
+        await client.join_group(group_name)
+        await client.send_to_group(
+            group_name, "hello text", "text", no_echo=False, ack=False
+        )
+        await client.send_to_group(group_name, {"hello": "json"}, "json")
+        await client.send_to_group(group_name, "hello text", "text")
         content = memoryview("hello binary".encode())
-        client.send_to_group(group_name, content, "binary")
+        await client.send_to_group(group_name, content, "binary")
 
     # If you can't run client in context, please open/close client manually like:
-    # client.open()
+    # await client.open()
     # ...
-    # client.close()
+    # await client.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
