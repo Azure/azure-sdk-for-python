@@ -1,17 +1,66 @@
 # Release History
 
-## 1.0.0b22 (Unreleased)
+## 1.0.0b24 (Unreleased)
+
+### Features Added
+
+- Add live metrics collection of requests/dependencies/exceptions
+    ([#34673](https://github.com/Azure/azure-sdk-for-python/pull/34673))
+- Add live metrics collection of cpu time/process memory
+    ([#34735](https://github.com/Azure/azure-sdk-for-python/pull/34735))
+- Add live metrics collection feature detection to statsbeat
+    ([#34752](https://github.com/Azure/azure-sdk-for-python/pull/34752))
+
+### Breaking Changes
+
+- Rename Statbeat environments variables to use `APPLICATIONINSIGHTS_*`
+    ([#34742](https://github.com/Azure/azure-sdk-for-python/pull/34742))
+
+### Bugs Fixed
+
+### Other Changes
+
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+
+## 1.0.0b23 (2024-02-28)
+
+### Features Added
+
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
+- Add live metrics exporting functionality
+    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
+- Add application.ver to part A fields
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34463](https://github.com/Azure/azure-sdk-for-python/pull/34463))
+
+### Other Changes
+
+- Add attachType character to sdkVersion prefix
+    ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+- Add AKS scenarios to statsbeat metric and sdkVersion prefix
+    ([#34427](https://github.com/Azure/azure-sdk-for-python/pull/34427))
+
+## 1.0.0b22 (2024-02-01)
 
 ### Features Added
 
 - Add live metrics skeleton + swagger definitions
     ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
-
-### Breaking Changes
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
 
 ### Bugs Fixed
 
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
 ### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
 
 ## 1.0.0b21 (2024-01-16)
 

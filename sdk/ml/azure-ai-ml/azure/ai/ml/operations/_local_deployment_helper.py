@@ -47,9 +47,9 @@ class _LocalDeploymentHelper(object):
         operation_container: OperationsContainer,
     ):
         self._docker_client = DockerClient()
-        self._model_operations = operation_container.all_operations.get(AzureMLResourceType.MODEL)
-        self._code_operations = operation_container.all_operations.get(AzureMLResourceType.CODE)
-        self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
+        self._model_operations: Any = operation_container.all_operations.get(AzureMLResourceType.MODEL)
+        self._code_operations: Any = operation_container.all_operations.get(AzureMLResourceType.CODE)
+        self._environment_operations: Any = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
     def create_or_update(  # type: ignore
         self,
@@ -74,7 +74,9 @@ class _LocalDeploymentHelper(object):
             endpoint_metadata: Any = None
             try:
                 self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
-                endpoint_metadata = json.dumps(self._docker_client.get_endpoint(endpoint_name=deployment.endpoint_name))
+                endpoint_metadata = json.dumps(
+                    self._docker_client.get_endpoint(endpoint_name=str(deployment.endpoint_name))
+                )
                 operation_message = "Updating local deployment"
             except LocalEndpointNotFoundError:
                 operation_message = "Creating local deployment"
@@ -201,7 +203,7 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path,) = get_model_artifacts(
+        (model_name, model_version, model_directory_path,) = get_model_artifacts(  # type: ignore[misc]
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -218,20 +220,20 @@ class _LocalDeploymentHelper(object):
             downloaded_build_context,
             yaml_dockerfile,
             inference_config,
-        ) = get_environment_artifacts(
+        ) = get_environment_artifacts(  # type: ignore[misc]
             endpoint_name=endpoint_name,
             deployment=deployment,
             environment_operations=self._environment_operations,
-            download_path=deployment_directory,
+            download_path=deployment_directory,  # type: ignore[arg-type]
         )
         # Retrieve AzureML specific information
         # - environment variables required for deployment
         # - volumes to mount into container
         image_context = AzureMlImageContext(
             endpoint_name=endpoint_name,
-            deployment_name=deployment_name,
-            yaml_code_directory_path=code_directory_path,
-            yaml_code_scoring_script_file_name=deployment.code_configuration.scoring_script
+            deployment_name=str(deployment_name),
+            yaml_code_directory_path=str(code_directory_path),
+            yaml_code_scoring_script_file_name=deployment.code_configuration.scoring_script  # type: ignore
             if code_directory_path
             else None,
             model_directory_path=model_directory_path,
@@ -293,11 +295,11 @@ class _LocalDeploymentHelper(object):
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
         self._docker_client.create_deployment(
             endpoint_name=endpoint_name,
-            deployment_name=deployment_name,
-            endpoint_metadata=endpoint_metadata,
-            deployment_metadata=deployment_metadata,
+            deployment_name=str(deployment_name),
+            endpoint_metadata=endpoint_metadata,  # type: ignore[arg-type]
+            deployment_metadata=deployment_metadata,  # type: ignore[arg-type]
             build_directory=str(build_directory),
-            dockerfile_path=None if is_byoc else dockerfile.local_path,
+            dockerfile_path=None if is_byoc else dockerfile.local_path,  # type: ignore[arg-type]
             conda_source_path=yaml_env_conda_file_path,
             conda_yaml_contents=yaml_env_conda_file_contents,
             volumes=volumes,
@@ -351,7 +353,7 @@ def _write_conda_file(conda_contents: str, directory_path: Union[str, os.PathLik
     p.write_text(conda_contents, encoding=DefaultOpenEncoding.WRITE)
 
 
-def _convert_json_to_deployment(deployment_json: dict, **kwargs: Any) -> OnlineDeployment:
+def _convert_json_to_deployment(deployment_json: Optional[dict], **kwargs: Any) -> OnlineDeployment:
     """Converts metadata json and kwargs to OnlineDeployment entity.
 
     :param deployment_json: dictionary representation of OnlineDeployment entity.

@@ -2,7 +2,7 @@
 ####These files are used to extract the enums - update this list as necessary
 #############################################################################
 files = [
-
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AVS/stable/2018-01-01/PrivateCloud.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AppConfiguration/stable/2018-01-01/AppConfiguration.json",
@@ -28,6 +28,7 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Storage/stable/2018-01-01/Storage.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.HealthcareApis/stable/2018-01-01/HealthcareApis.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiCenter/stable/2018-01-01/ApiCenter.json",
     ]
 
 
@@ -65,4 +66,5 @@ additional_events = {
 
 EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData',
               'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData', 'HealthResourcesResourceEventData', 'AcsRouterJobEventData', 'AcsRouterWorkerEventData', 'AcsRouterEventData',
+              'AvsClusterEventData', 'AvsPrivateCloudEventData', 'AvsScriptExecutionEventData',
               ]

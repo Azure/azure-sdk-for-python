@@ -24,7 +24,7 @@ class JobLimits(RestTranslatableMixin, ABC):
     def __init__(
         self,
     ) -> None:
-        self.type = None
+        self.type: Any = None
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, JobLimits):

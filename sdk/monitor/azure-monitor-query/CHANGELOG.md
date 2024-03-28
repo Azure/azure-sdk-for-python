@@ -1,20 +1,29 @@
 # Release History
 
-## 1.3.0 (Unreleased)
+## 1.3.0 (2024-03-28)
 
 ### Features Added
 
-- Added `roll_up_by` keyword argument to `MetricsBatchQueryClient.query_batch` to support rolling up metrics by dimension. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
+- Added `roll_up_by` keyword argument to `MetricsClient.query_resources` to support rolling up metrics by dimension. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
 
 ### Breaking Changes
 
 - The following changes are breaking against the previous preview release (i.e. `1.3.0b2`/`1.3.0b1`):
-  - Reordered the arguments for the async `MetricsBatchQueryClient` constructor so that `endpoint` is now the first positional argument. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
-  - Reordered the `metric_names` and `metric_namespace` positional arguments in `MetricsBatchQueryClient.query_batch`. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
+  - `MetricsBatchQueryClient` has been renamed to `MetricsClient`. ([#33958](https://github.com/Azure/azure-sdk-for-python/pull/33958))
+  - Reordered the arguments for the async `MetricsClient` constructor so that `endpoint` is now the first positional argument. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
+  - Positional arguments in `MetricsClient.query_resources` are now required keyword-only arguments. ([#33958](https://github.com/Azure/azure-sdk-for-python/pull/33958))
+  - The `resource_uris` argument in `MetricsClient.query_resources` has been renamed to `resource_ids`. ([#34760](https://github.com/Azure/azure-sdk-for-python/pull/34760))
+
+## 1.2.1 (2024-01-31)
 
 ### Bugs Fixed
 
+- Fixed certain keyword arguments from not being propagated when using `MetricsQueryClient`.
+
 ### Other Changes
+
+- Internal updates to generated code.
+- Bumped minimum dependency on `azure-core` to `>=1.28.0`.
 
 ## 1.3.0b2 (2023-11-20)
 

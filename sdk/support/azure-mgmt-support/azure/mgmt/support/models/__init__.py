@@ -10,6 +10,7 @@ from ._models_py3 import ChatTranscriptDetails
 from ._models_py3 import ChatTranscriptsListResult
 from ._models_py3 import CheckNameAvailabilityInput
 from ._models_py3 import CheckNameAvailabilityOutput
+from ._models_py3 import ClassificationService
 from ._models_py3 import CommunicationDetails
 from ._models_py3 import CommunicationsListResult
 from ._models_py3 import ContactProfile
@@ -19,11 +20,16 @@ from ._models_py3 import ErrorResponse
 from ._models_py3 import FileDetails
 from ._models_py3 import FileWorkspaceDetails
 from ._models_py3 import FilesListResult
+from ._models_py3 import LookUpResourceIdRequest
+from ._models_py3 import LookUpResourceIdResponse
 from ._models_py3 import MessageProperties
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationsListResult
 from ._models_py3 import ProblemClassification
+from ._models_py3 import ProblemClassificationsClassificationInput
+from ._models_py3 import ProblemClassificationsClassificationOutput
+from ._models_py3 import ProblemClassificationsClassificationResult
 from ._models_py3 import ProblemClassificationsListResult
 from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaChangeRequest
@@ -32,6 +38,9 @@ from ._models_py3 import Resource
 from ._models_py3 import SecondaryConsent
 from ._models_py3 import SecondaryConsentEnabled
 from ._models_py3 import Service
+from ._models_py3 import ServiceClassificationAnswer
+from ._models_py3 import ServiceClassificationOutput
+from ._models_py3 import ServiceClassificationRequest
 from ._models_py3 import ServiceLevelAgreement
 from ._models_py3 import ServicesListResult
 from ._models_py3 import SupportEngineer
@@ -47,6 +56,7 @@ from ._microsoft_support_enums import CommunicationDirection
 from ._microsoft_support_enums import CommunicationType
 from ._microsoft_support_enums import Consent
 from ._microsoft_support_enums import CreatedByType
+from ._microsoft_support_enums import IsTemporaryTicket
 from ._microsoft_support_enums import PreferredContactMethod
 from ._microsoft_support_enums import SeverityLevel
 from ._microsoft_support_enums import Status
@@ -62,6 +72,7 @@ __all__ = [
     "ChatTranscriptsListResult",
     "CheckNameAvailabilityInput",
     "CheckNameAvailabilityOutput",
+    "ClassificationService",
     "CommunicationDetails",
     "CommunicationsListResult",
     "ContactProfile",
@@ -71,11 +82,16 @@ __all__ = [
     "FileDetails",
     "FileWorkspaceDetails",
     "FilesListResult",
+    "LookUpResourceIdRequest",
+    "LookUpResourceIdResponse",
     "MessageProperties",
     "Operation",
     "OperationDisplay",
     "OperationsListResult",
     "ProblemClassification",
+    "ProblemClassificationsClassificationInput",
+    "ProblemClassificationsClassificationOutput",
+    "ProblemClassificationsClassificationResult",
     "ProblemClassificationsListResult",
     "ProxyResource",
     "QuotaChangeRequest",
@@ -84,6 +100,9 @@ __all__ = [
     "SecondaryConsent",
     "SecondaryConsentEnabled",
     "Service",
+    "ServiceClassificationAnswer",
+    "ServiceClassificationOutput",
+    "ServiceClassificationRequest",
     "ServiceLevelAgreement",
     "ServicesListResult",
     "SupportEngineer",
@@ -98,6 +117,7 @@ __all__ = [
     "CommunicationType",
     "Consent",
     "CreatedByType",
+    "IsTemporaryTicket",
     "PreferredContactMethod",
     "SeverityLevel",
     "Status",

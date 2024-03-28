@@ -140,7 +140,14 @@ class Sweep(ParameterizedSweep, BaseNode):
         early_termination: Optional[
             Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
         ] = None,
-        search_space: Optional[Dict] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
@@ -176,7 +183,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             resources=resources,
         )
 
-        self.identity = identity
+        self.identity: Any = identity
         self._init = False
 
     @property
@@ -191,7 +198,12 @@ class Sweep(ParameterizedSweep, BaseNode):
     @property
     def search_space(
         self,
-    ) -> Optional[Dict]:
+    ) -> Optional[
+        Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ]
+    ]:
         """Dictionary of the hyperparameter search space.
 
         Each key is the name of a hyperparameter and its value is the parameter expression.
@@ -210,7 +222,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         :param values: The search space to set.
         :type values: Dict[str, Dict[str, Union[str, int, float, dict]]]
         """
-        search_space = {}
+        search_space: Dict = {}
         for name, value in values.items():
             # If value is a SearchSpace object, directly pass it to job.search_space[name]
             search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
@@ -341,7 +353,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             sampling_algorithm=self.sampling_algorithm,
             search_space=self.search_space,
             limits=self.limits,
-            early_termination=self.early_termination,
+            early_termination=self.early_termination,  # type: ignore[arg-type]
             objective=self.objective,
             inputs=self._job_inputs,
             outputs=self._job_outputs,
@@ -415,12 +427,12 @@ class Sweep(ParameterizedSweep, BaseNode):
             # only one of slack_amount and slack_factor can be specified but default value is 0.0.
             # Need to keep track of which one is null.
             if self.early_termination.slack_amount == 0.0:
-                self.early_termination.slack_amount = None
+                self.early_termination.slack_amount = None  # type: ignore[assignment]
             if self.early_termination.slack_factor == 0.0:
-                self.early_termination.slack_factor = None
+                self.early_termination.slack_factor = None  # type: ignore[assignment]
 
     @property
-    def early_termination(self) -> Optional[EarlyTerminationPolicy]:
+    def early_termination(self) -> Optional[Union[str, EarlyTerminationPolicy]]:
         """The early termination policy for the sweep job.
 
         :rtype: Union[str, ~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
@@ -429,7 +441,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Optional[EarlyTerminationPolicy]) -> None:
+    def early_termination(self, value: Optional[Union[str, EarlyTerminationPolicy]]) -> None:
         """Sets the early termination policy for the sweep job.
 
         :param value: The early termination policy for the sweep job.
@@ -439,4 +451,4 @@ class Sweep(ParameterizedSweep, BaseNode):
         if isinstance(value, dict):
             early_termination_schema = EarlyTerminationField()
             value = early_termination_schema._deserialize(value=value, attr=None, data=None)
-        self._early_termination = value
+        self._early_termination = value  # type: ignore[assignment]

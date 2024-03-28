@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.tag.detach_from_product(
+    client.tag.detach_from_product(
         resource_group_name="rg1",
         service_name="apimService1",
         product_id="59d5b28d1f7fab116c282650",
         tag_id="59d5b28e1f7fab116402044e",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteProductTag.json

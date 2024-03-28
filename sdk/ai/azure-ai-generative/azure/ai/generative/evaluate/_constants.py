@@ -11,8 +11,19 @@ SUPPORTED_TASK_TYPE = [QA, CHAT]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     QA: "qa",
-    CHAT: "rag-evaluation",
+    CHAT: "chat",
 }
+
+
+class ContentSafetyMetrics:
+    """
+    Evaluation metrics supported by evaluation in azure-ai-generative sdk
+    """
+
+    HATE_FAIRNESS = "hate_unfairness"
+    VIOLENCE = "violence"
+    SELF_HARM = "self_harm"
+    SEXUAL = "sexual"
 
 
 class EvaluationMetrics:
@@ -26,9 +37,6 @@ class EvaluationMetrics:
     GPT_FLUENCY = "gpt_fluency"
     GPT_SIMILARITY = "gpt_similarity"
     F1_SCORE = "f1_score"
-    EXACT_MATCH = "exact_match"
-    ADA_SIMILARITY = "ada_similarity"
-    BERTSCORE = "bertscore"
     GPT_RETRIEVAL_SCORE = "gpt_retrieval_score"
     # These are temporary until names are fixed in metrics package
     RETRIEVAL_SCORE = "retrieval_score"
@@ -49,9 +57,10 @@ class QaMetrics:
         EvaluationMetrics.GPT_FLUENCY,
         EvaluationMetrics.GPT_SIMILARITY,
         EvaluationMetrics.F1_SCORE,
-        EvaluationMetrics.EXACT_MATCH,
-        EvaluationMetrics.ADA_SIMILARITY,
-        EvaluationMetrics.BERTSCORE
+        ContentSafetyMetrics.HATE_FAIRNESS,
+        ContentSafetyMetrics.VIOLENCE,
+        ContentSafetyMetrics.SELF_HARM,
+        ContentSafetyMetrics.SEXUAL
     ]
 
 
@@ -62,9 +71,15 @@ class ChatMetrics:
         EvaluationMetrics.GPT_RETRIEVAL_SCORE
     ]
     SUPPORTED_LIST = [
+        EvaluationMetrics.GPT_COHERENCE,
+        EvaluationMetrics.GPT_FLUENCY,
         EvaluationMetrics.GPT_GROUNDEDNESS,
         EvaluationMetrics.GPT_RELEVANCE,
-        EvaluationMetrics.GPT_RETRIEVAL_SCORE
+        EvaluationMetrics.GPT_RETRIEVAL_SCORE,
+        ContentSafetyMetrics.HATE_FAIRNESS,
+        ContentSafetyMetrics.VIOLENCE,
+        ContentSafetyMetrics.SELF_HARM,
+        ContentSafetyMetrics.SEXUAL
     ]
 
 
@@ -77,3 +92,10 @@ SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
     QA: QaMetrics,
     CHAT: ChatMetrics
 }
+
+CONTENT_SAFETY_METRICS_LIST = [
+    ContentSafetyMetrics.SEXUAL,
+    ContentSafetyMetrics.SELF_HARM,
+    ContentSafetyMetrics.VIOLENCE,
+    ContentSafetyMetrics.HATE_FAIRNESS
+]

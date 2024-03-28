@@ -76,7 +76,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
         path: Optional[Union[str, PathLike]] = None,
         utc_time_created: Optional[str] = None,
-        flavors: Optional[Dict] = None,
+        flavors: Optional[Dict[str, Dict[str, Any]]] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
@@ -198,9 +198,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 asset_artifact.relative_path,
             )
 
-    def _to_arm_resource_param(
-        self, **kwargs: Any  # pylint: disable=unused-argument
-    ) -> ArmConstants.MODEL_VERSION_TYPE:
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

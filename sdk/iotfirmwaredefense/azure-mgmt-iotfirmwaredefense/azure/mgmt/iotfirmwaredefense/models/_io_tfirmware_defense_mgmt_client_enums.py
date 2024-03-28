@@ -16,13 +16,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
-class CanaryFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Canary flag."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -30,48 +23,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
-
-
-class IsExpired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if the certificate is expired."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
-class IsSelfSigned(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if the certificate was self-signed."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
-class IsShortKeySize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the key size is considered too small to be secure for the algorithm."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
-class IsUpdateAvailable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag if new update is available for the component."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
-class IsWeakSignature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the signature algorithm used is insecure."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
-class NxFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NX flag."""
-
-    TRUE = "True"
-    FALSE = "False"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,13 +35,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class PieFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PIE flag."""
-
-    TRUE = "True"
-    FALSE = "False"
-
-
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the resource."""
 
@@ -98,13 +42,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
-
-
-class RelroFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RELRO flag."""
-
-    TRUE = "True"
-    FALSE = "False"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -117,8 +54,21 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
-class StrippedFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Stripped flag."""
+class SummaryName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SummaryName."""
 
-    TRUE = "True"
-    FALSE = "False"
+    FIRMWARE = "Firmware"
+    CVE = "CVE"
+    BINARY_HARDENING = "BinaryHardening"
+    CRYPTO_CERTIFICATE = "CryptoCertificate"
+    CRYPTO_KEY = "CryptoKey"
+
+
+class SummaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the type of summary."""
+
+    FIRMWARE = "Firmware"
+    CVE = "CVE"
+    BINARY_HARDENING = "BinaryHardening"
+    CRYPTO_CERTIFICATE = "CryptoCertificate"
+    CRYPTO_KEY = "CryptoKey"

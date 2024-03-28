@@ -164,9 +164,6 @@ class WorkspaceOperationsBase(ABC):
                     workspace.storage_account,
                     workspace.container_registry,
                     workspace.key_vault,
-                    workspace.public_network_access,
-                    workspace.managed_network,
-                    workspace.customer_managed_key,
                 ]
             ):
                 msg = (
@@ -786,6 +783,7 @@ class WorkspaceOperationsBase(ABC):
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
         _set_val(param["resource_group_name"], resource_group)
+        _set_val(param["location"], workspace.location)
 
         update_workspace_role_assignment = kwargs.get("update_workspace_role_assignment", None)
         if update_workspace_role_assignment:

@@ -44,6 +44,7 @@ from typing import (
 )
 import xml.etree.ElementTree as ET
 from ..serialization import CoreJSONEncoder
+from ..utils._utils import get_file_items
 
 
 ################################### TYPES SECTION #########################
@@ -54,7 +55,14 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
-FileType = Tuple[Optional[str], FileContent]
+FileType = Union[
+    # file (or bytes)
+    FileContent,
+    # (filename, file (or bytes))
+    Tuple[Optional[str], FileContent],
+    # (filename, file (or bytes), content_type)
+    Tuple[Optional[str], FileContent, Optional[str]],
+]
 
 FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
@@ -73,7 +81,7 @@ def _verify_data_object(name, value):
         raise TypeError("Invalid type for data value. Expected primitive type, got {}: {}".format(type(name), name))
 
 
-def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+def _format_data_helper(data: FileType) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -84,16 +92,34 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
     :rtype: tuple[str, IO, str] or tuple[None, str]
     :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
-    if hasattr(data, "read"):
-        data = cast(IO, data)
-        data_name = None
-        try:
-            if data.name[0] != "<" and data.name[-1] != ">":
-                data_name = os.path.basename(data.name)
-        except (AttributeError, TypeError):
-            pass
-        return (data_name, data, "application/octet-stream")
-    return (None, cast(str, data))
+    content_type: Optional[str] = None
+    filename: Optional[str] = None
+    if isinstance(data, tuple):
+        if len(data) == 2:
+            # Filename and file bytes are included
+            filename, file_bytes = cast(Tuple[Optional[str], FileContent], data)
+        elif len(data) == 3:
+            # Filename, file object, and content_type are included
+            filename, file_bytes, content_type = cast(Tuple[Optional[str], FileContent, str], data)
+        else:
+            raise ValueError(
+                "Unexpected data format. Expected file, or tuple of (filename, file_bytes) or "
+                "(filename, file_bytes, content_type)."
+            )
+    else:
+        # here we just get the file content
+        if hasattr(data, "read"):
+            data = cast(IO, data)
+            try:
+                if data.name[0] != "<" and data.name[-1] != ">":
+                    filename = os.path.basename(data.name)
+            except (AttributeError, TypeError):
+                pass
+            content_type = "application/octet-stream"
+        file_bytes = data
+    if content_type:
+        return (filename, file_bytes, content_type)
+    return (filename, cast(str, file_bytes))
 
 
 def set_urlencoded_body(data, has_files):
@@ -115,9 +141,9 @@ def set_urlencoded_body(data, has_files):
     return default_headers, body
 
 
-def set_multipart_body(files):
-    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
-    return {}, formatted_files
+def set_multipart_body(files: FilesType):
+    formatted_files = [(f, _format_data_helper(d)) for f, d in get_file_items(files) if d is not None]
+    return {}, dict(formatted_files) if isinstance(files, Mapping) else formatted_files
 
 
 def set_xml_body(content):

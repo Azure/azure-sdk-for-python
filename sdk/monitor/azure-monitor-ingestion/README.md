@@ -69,7 +69,12 @@ logs_client = LogsIngestionClient(endpoint, credential)
 By default, `LogsIngestionClient` is configured to connect to the public Azure cloud. To connect to non-public Azure clouds, some additional configuration is required. The appropriate scope for authentication must be provided using the `credential_scopes` keyword argument. The following example shows how to configure the client to connect to Azure US Government:
 
 ```python
-logs_client = LogsIngestionClient(endpoint, credential_scopes=["https://monitor.azure.us//.default"])
+from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
+
+# Authority can also be set via the AZURE_AUTHORITY_HOST environment variable.
+credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+logs_client = LogsIngestionClient(endpoint, credential, credential_scopes=["https://monitor.azure.us/.default"])
 ```
 
 ## Key concepts
@@ -102,6 +107,7 @@ The logs that were uploaded using this library can be queried using the [Azure M
 ## Examples
 
 - [Upload custom logs](#upload-custom-logs)
+- [Upload data from JSON file or string](#upload-data-from-json-file-or-string)
 - [Upload with custom error handling](#upload-with-custom-error-handling)
 
 ### Upload custom logs
@@ -116,11 +122,12 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
-credential = DefaultAzureCredential()
+rule_id = os.environ['LOGS_DCR_RULE_ID']
+stream_name = os.environ['LOGS_DCR_STREAM_NAME']
 
+credential = DefaultAzureCredential()
 client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
-rule_id = os.environ['LOGS_DCR_RULE_ID']
 body = [
       {
         "Time": "2021-12-08T23:51:14.1104269Z",
@@ -135,7 +142,44 @@ body = [
     ]
 
 try:
-    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+    client.upload(rule_id=rule_id, stream_name=stream_name, logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")
+```
+
+### Upload data from JSON file or string
+
+This example shows uploading when the data is in a JSON file or string.
+
+```python
+import json
+import os
+
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
+
+endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
+rule_id = os.environ['LOGS_DCR_RULE_ID']
+stream_name = os.environ["LOGS_DCR_STREAM_NAME"]
+
+credential = DefaultAzureCredential()
+client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
+
+# If you have a JSON file containing an array of JSON objects
+file_path = "./test-logs.json"
+with open(file_path, "r") as f:
+    logs = json.load(f)
+    try:
+        client.upload(rule_id=rule_id, stream_name=stream_name, logs=logs)
+    except HttpResponseError as e:
+        print(f"Upload failed: {e}")
+
+# If you have a JSON string representing an array of JSON objects
+string = '[{"Time": "2023-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "context-2"}]'
+logs = json.loads(string)
+try:
+    client.upload(rule_id=rule_id, stream_name=stream_name, logs=logs)
 except HttpResponseError as e:
     print(f"Upload failed: {e}")
 ```
@@ -155,7 +199,7 @@ def on_error(error):
 def on_error_pass(error):
     pass
 
-client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
+client.upload(rule_id=rule_id, stream_name=stream_name, logs=body, on_error=on_error)
 ```
 
 ## Troubleshooting

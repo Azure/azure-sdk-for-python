@@ -1327,3 +1327,43 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     messages = receiver.receive_messages(max_wait_time=10)
                     assert len(messages) == 1
                     assert messages[0].session_id == session_id
+    
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()  
+    def test_next_available_session_timeout_value(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp_transport:
+            pytest.skip("This test is for pyamqp only")
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport, retry_total=1) as sb_client:
+            
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10,)
+            
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time < 65  # Default service operation timeout is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                for msg in receiver:
+                    pass
+
+            assert time.time() - start_time2 < 65  # Default service operation timeout is 65 seconds
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=70)
+            
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time > 65  # Default service operation timeout is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                for msg in receiver:
+                    pass
+
+            assert time.time() - start_time2 > 65  # Default service operation timeout is 65 seconds

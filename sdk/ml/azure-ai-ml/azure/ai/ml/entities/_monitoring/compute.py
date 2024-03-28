@@ -4,11 +4,9 @@
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_06_01_preview.models import AmlTokenComputeIdentity, MonitorServerlessSparkCompute
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
-@experimental
 class ServerlessSparkCompute:
     """Serverless Spark compute.
 
@@ -28,7 +26,7 @@ class ServerlessSparkCompute:
         self.instance_type = instance_type
 
     def _to_rest_object(self) -> MonitorServerlessSparkCompute:
-        self.validate()
+        self._validate()
         return MonitorServerlessSparkCompute(
             runtime_version=self.runtime_version,
             instance_type=self.instance_type,
@@ -44,7 +42,7 @@ class ServerlessSparkCompute:
             instance_type=obj.instance_type,
         )
 
-    def validate(self) -> None:
+    def _validate(self) -> None:
         if self.runtime_version != "3.3":
             msg = "Compute runtime version must be 3.3"
             err = ValidationException(

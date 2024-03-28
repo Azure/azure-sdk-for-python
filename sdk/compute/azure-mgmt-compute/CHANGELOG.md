@@ -1,5 +1,15 @@
 # Release History
 
+## 30.6.0 (2024-03-15)
+
+### Features Added
+
+  - Model GalleryArtifactVersionFullSource has a new parameter virtual_machine_id
+
+### Bugs Fixed
+
+  - Fix api_version in next_link for paging operation
+
 ## 30.5.0 (2024-01-22)
 
 ### Features Added

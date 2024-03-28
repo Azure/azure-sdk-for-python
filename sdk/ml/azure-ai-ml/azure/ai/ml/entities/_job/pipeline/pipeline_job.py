@@ -12,8 +12,8 @@ from typing import Any, Dict, Generator, List, Optional, Union, cast
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2024_01_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -140,8 +140,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         ]:
             self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
             # for pipeline component created pipeline jobs,
-            # it's output should have same value with the component outputs
-            self._outputs = self._build_pipeline_outputs_dict(component.outputs)
+            # it's output should have same value with the component outputs,
+            # then override it with given outputs (filter out None value)
+            pipeline_outputs = {k: v for k, v in (outputs or {}).items() if v}
+            self._outputs = self._build_pipeline_outputs_dict({**component.outputs, **pipeline_outputs})
         else:
             # Build inputs/outputs dict without meta when definition not available
             self._inputs = self._build_inputs_dict(inputs)
@@ -228,6 +230,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
     @settings.setter
     def settings(self, value: Union[Dict, PipelineJobSettings]) -> None:
+        """Set the pipeline job settings.
+
+        :param value: The pipeline job settings.
+        :type value: Union[dict, ~azure.ai.ml.entities.PipelineJobSettings]
+        """
         if value is not None:
             if isinstance(value, PipelineJobSettings):
                 # since PipelineJobSettings inherit _AttrDict, we need add this branch to distinguish with dict

@@ -67,7 +67,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
-        stored_procedure_params: Optional[List] = None,
+        stored_procedure_params: Optional[List[Dict]] = None,
         connection: Optional[str] = None,
     ) -> None:
         # As an annotation, it is not allowed to initialize the name.

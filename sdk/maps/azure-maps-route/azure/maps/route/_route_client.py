@@ -153,7 +153,9 @@ class MapsRouteClient(MapsRouteClientBase):
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -191,7 +193,7 @@ class MapsRouteClient(MapsRouteClientBase):
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
@@ -600,7 +602,9 @@ class MapsRouteClient(MapsRouteClientBase):
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -733,7 +737,9 @@ class MapsRouteClient(MapsRouteClientBase):
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",

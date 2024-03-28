@@ -9,11 +9,11 @@ import datetime
 
 from azure.servicebus.management import ServiceBusAdministrationClient, TopicProperties, ApiVersion
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from utilities import get_logger
+from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from sb_env_loader import (
+from tests.sb_env_loader import (
     ServiceBusPreparer
 )
 

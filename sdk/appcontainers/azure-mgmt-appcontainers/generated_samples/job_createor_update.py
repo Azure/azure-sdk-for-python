@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.appcontainers import ContainerAppsAPIClient
 
 """
@@ -59,6 +62,10 @@ def main():
                                     "type": "Liveness",
                                 }
                             ],
+                            "volumeMounts": [
+                                {"mountPath": "/mnt/path1", "subPath": "subPath1", "volumeName": "azurefile"},
+                                {"mountPath": "/mnt/path2", "subPath": "subPath2", "volumeName": "nfsazurefile"},
+                            ],
                         }
                     ],
                     "initContainers": [
@@ -77,6 +84,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/Job_CreateorUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/Job_CreateorUpdate.json
 if __name__ == "__main__":
     main()

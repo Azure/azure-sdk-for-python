@@ -3,46 +3,37 @@
 # ---------------------------------------------------------
 import json
 import logging
-import re
-from json import JSONDecodeError
+from typing import Union
 
-import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ScoreReasonParser(object):
-
+class JsonParser(object):
     @staticmethod
-    def parse(value, metric):
+    def parse(value: Union[str, bytes, bytearray]):
+        """
+        Parse input value as json. Returns empty dict in case value cannot be parsed as valid json
+
+        :keyword value: Value to be parsed.
+        :paramtype value: Union[str, bytes, bytearray]
+        """
+        value_as_json = None
         try:
-            value_json = json.loads(value)
-            score = value_json.get("score")
-            reason = value_json.get("reason")
-        except JSONDecodeError as json_parse_error:
-            LOGGER.debug(
-                f"Error parsing metric {metric.name} value as returned json from LLM is not a valid json : {value}")
-            if score is not None:
-                reason = f"Error parsing reason. Output from LLM : {value}"
-            if score is None:
-                score = np.NaN
-                reason = f"Error parsing LLM response. Output from LLM : {value}"
-        except Exception as ex:
-            score = np.NaN
-            reason = str(value)
+            value_as_json = json.loads(value)
+        except json.JSONDecodeError:
+            LOGGER.debug("Error parsing as a valid json : %s", value)
 
-        return {metric.name: score, f"{metric.name}_reason": reason}
+        return value_as_json
 
 
-class ScoreParser(object):
+class NumberParser(object):
     @staticmethod
-    def parse(value, metric):
+    def parse(value):
+        value_as_number = None
         try:
-            match = re.search(r'\d', value)
-            if match:
-                score = match.group()
-            score = float(score)
-        except Exception as ex:
-            score = np.NaN
+            value_as_number = int(value)
+        except ValueError:
+            LOGGER.debug("Error parsing as a valid number : %s", value)
 
-        return {metric.name: score}
+        return value_as_number

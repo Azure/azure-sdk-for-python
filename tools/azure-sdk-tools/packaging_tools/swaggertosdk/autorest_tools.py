@@ -144,7 +144,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info which will be displayed in swagger pr
-            for i in range(-min(len(output_buffer), 7), 0):
+            for i in range(-min(len(output_buffer), 20), 0):
                 print(f"[Autorest] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output

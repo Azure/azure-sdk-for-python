@@ -38,6 +38,14 @@ Microsoft Entra applications rely on redirect URIs to determine where to send th
 ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
 ```
 
+## Use the default account for sign-in
+
+When the `use_default_broker_account` argument is set to `True`, the credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
+
+```
+cred = new InteractiveBrowserBrokerCredential(use_default_broker_account=True)
+```
+
 ## Examples
 
 ### Authenticate with `InteractiveBrowserBrokerCredential`
@@ -53,7 +61,7 @@ from azure.storage.blob import BlobServiceClient
 current_window_handle = win32gui.GetForegroundWindow()
 
 credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
-client = BlobServiceClient(account_url, credential=default_credential)
+client = BlobServiceClient(account_url, credential=credential)
 ```
 
 ## Troubleshooting

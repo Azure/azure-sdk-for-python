@@ -144,6 +144,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
 
+    ApiCenterApiDefinitionAddedEventName = 'Microsoft.ApiCenter.ApiDefinitionAdded'
+
+    ApiCenterApiDefinitionUpdatedEventName = 'Microsoft.ApiCenter.ApiDefinitionUpdated'
+
     ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.APICreated'
 
     ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.APIDeleted'
@@ -203,6 +207,30 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
 
     AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
+    AvsClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
+
+    AvsClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
+
+    AvsClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
+
+    AvsClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+
+    AvsClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+
+    AvsPrivateCloudFailedEventName = 'Microsoft.AVS.PrivateCloudFailed'
+
+    AvsPrivateCloudUpdatedEventName = 'Microsoft.AVS.PrivateCloudUpdated'
+
+    AvsPrivateCloudUpdatingEventName = 'Microsoft.AVS.PrivateCloudUpdating'
+
+    AvsScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
+
+    AvsScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
+
+    AvsScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
+
+    AvsScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
 
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
@@ -419,6 +447,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageTaskAssignmentCompletedEventName = 'Microsoft.Storage.StorageTaskAssignmentCompleted'
+
+    StorageTaskAssignmentQueuedEventName = 'Microsoft.Storage.StorageTaskAssignmentQueued'
 
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 

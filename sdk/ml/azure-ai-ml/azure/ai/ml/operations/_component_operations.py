@@ -14,8 +14,8 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -91,7 +91,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient012024, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
@@ -112,7 +112,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _code_operations(self) -> CodeOperations:
-        res: CodeOperations = self._all_operations.get_operation(
+        res: CodeOperations = self._all_operations.get_operation(  # type: ignore[misc]
             AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)
         )
         return res
@@ -121,7 +121,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _environment_operations(self) -> EnvironmentOperations:
         return cast(
             EnvironmentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ENVIRONMENT,
                 lambda x: isinstance(x, EnvironmentOperations),
             ),
@@ -131,7 +131,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _workspace_operations(self) -> WorkspaceOperations:
         return cast(
             WorkspaceOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.WORKSPACE,
                 lambda x: isinstance(x, WorkspaceOperations),
             ),
@@ -141,9 +141,11 @@ class ComponentOperations(_ScopeDependentOperations):
     def _job_operations(self) -> Any:
         from ._job_operations import JobOperations
 
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return self._all_operations.get_operation(  # type: ignore[misc]
+            AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+        )
 
-    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -212,7 +214,7 @@ class ComponentOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
     def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
         """Returns ComponentVersion information about the specified component name and version.
 
@@ -242,7 +244,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return result
 
-    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
@@ -308,7 +310,7 @@ class ComponentOperations(_ScopeDependentOperations):
         parent.environment = environment
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: Optional[str] = None) -> None:
         """Download the specified component and its dependencies to local. Local component can be used to create
         the component in another workspace or for offline development.
@@ -369,7 +371,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Validate", ActivityType.PUBLICAPI)
     def validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -393,7 +395,7 @@ class ComponentOperations(_ScopeDependentOperations):
             skip_remote_validation=kwargs.pop("skip_remote_validation", True),
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -650,7 +652,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return component
 
-    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -687,7 +689,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,

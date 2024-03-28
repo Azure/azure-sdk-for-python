@@ -23,6 +23,7 @@ from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, Sans
 from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
 from azure.core import PipelineClient
+from utils import NamedIo
 
 
 @pytest.fixture
@@ -550,16 +551,16 @@ def test_multipart_incorrect_tuple_entry(filebytes):
 def test_multipart_tuple_input_single(filebytes):
     request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes)])
 
-    assert request.content == {"file": ("conftest.py", filebytes, "application/octet-stream")}
+    assert request.content == [("file", ("conftest.py", filebytes, "application/octet-stream"))]
 
 
 def test_multipart_tuple_input_multiple(filebytes):
     request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes), ("file2", filebytes)])
 
-    assert request.content == {
-        "file": ("conftest.py", filebytes, "application/octet-stream"),
-        "file2": ("conftest.py", filebytes, "application/octet-stream"),
-    }
+    assert request.content == [
+        ("file", ("conftest.py", filebytes, "application/octet-stream")),
+        ("file2", ("conftest.py", filebytes, "application/octet-stream")),
+    ]
 
 
 def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes):
@@ -569,35 +570,41 @@ def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes
         files=[("file", ("first file", filebytes, "image/pdf")), ("file2", ("second file", filebytes, "image/png"))],
     )
 
-    assert request.content == {
-        "file": ("first file", filebytes, "image/pdf"),
-        "file2": ("second file", filebytes, "image/png"),
-    }
+    assert request.content == [
+        ("file", ("first file", filebytes, "image/pdf")),
+        ("file2", ("second file", filebytes, "image/png")),
+    ]
 
 
-# NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
-# def test_multipart_multiple_files_single_input_content():
-#     files = [
-#         ("file", io.BytesIO(b"<file content 1>")),
-#         ("file", io.BytesIO(b"<file content 2>")),
-#     ]
-#     request = HttpRequest("POST", url="http://example.org", files=files)
-#     assert request.headers == {
-#         "Content-Length": "271",
-#         "Content-Type": "multipart/form-data; boundary=+++",
-#     }
-#     assert request.content == b"".join(
-#         [
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content 1>\r\n",
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content 2>\r\n",
-#             b"--+++--\r\n",
-#         ]
-#     )
+def test_multipart_tuple_input_multiple_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/tuple-input-multiple-same-name",
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
+    )
+    client.send_request(request).raise_for_status()
+
+
+def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/tuple-input-multiple-same-name-with-tuple-file-value",
+        files=[("images", ("foo.png", NamedIo("notMyName.pdf"), "image/png")), ("images", NamedIo("foo.png"))],
+    )
+    client.send_request(request).raise_for_status()
+
+
+def test_data_and_file_input_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/data-and-file-input-same-name",
+        data={"message": "Hello, world!"},
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
+    )
+    client.send_request(request).raise_for_status()

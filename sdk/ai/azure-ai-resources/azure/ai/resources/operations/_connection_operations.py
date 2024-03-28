@@ -16,11 +16,16 @@ logger, module_logger = activity_logger.package_logger, activity_logger.module_l
 
 
 class ConnectionOperations:
-    """ConnectionOperations.
+    """Operations class for Connection objects
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param resource_ml_client: The Azure Machine Learning client for the AI resource
+    :type resource_ml_client: ~azure.ai.ml.MLClient
+    :param project_ml_client: The Azure Machine Learning client for the project
+    :type project_ml_client: ~azure.ai.ml.MLClient
     """
 
     def __init__(self, *, resource_ml_client: MLClient = None, project_ml_client: MLClient = None, **kwargs: Any):
@@ -30,20 +35,34 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)
-    def list(self, connection_type: Optional[str] = None, scope: str = OperationScope.AI_RESOURCE) -> Iterable[BaseConnection]:
+    def list(
+        self,
+        connection_type: Optional[str] = None,
+        scope: str = OperationScope.AI_RESOURCE,
+        include_data_connections: bool = False,
+    ) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
 
         :param connection_type: If set, return only connections of the specified type.
         :type connection_type: str
+        :param scope: The scope of the operation, which determines if the operation will list all connections
+            that are available to the AI Client's AI Resource or just those available to the project.
+            Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
+        :param include_data_connections: If true, also return data connections. Defaults to False.
+        :type include_data_connections: bool
 
-        :return: An iterator like instance of connection objects
+        :return: An iterator of connection objects
         :rtype: Iterable[Connection]
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
-        return [
-            BaseConnection._from_v2_workspace_connection(conn)
-            for conn in client._workspace_connections.list(connection_type=connection_type)
-        ]
+
+        operation_result = client._workspace_connections.list(
+            connection_type=connection_type,
+            include_data_connections=include_data_connections
+        )
+
+        return [BaseConnection._from_v2_workspace_connection(conn) for conn in operation_result]
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
@@ -52,6 +71,10 @@ class ConnectionOperations:
 
         :param name: Name of the connection.
         :type name: str
+        :param scope: The scope of the operation, which determines if the operation will search among 
+            all connections that are available to the AI Client's AI Resource or just those available to the project.
+            Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
 
         :return: The connection with the provided name.
         :rtype: Connection
@@ -62,7 +85,7 @@ class ConnectionOperations:
 
         # It's by design that both API and V2 SDK don't include the secrets from API response, the following
         # code fills the gap when possible
-        if not connection.credentials.key:
+        if not (connection.credentials and connection.credentials.key):
             list_secrets_response = client.connections._operation.list_secrets(
                 connection_name=name,
                 resource_group_name=client.resource_group_name,
@@ -100,6 +123,10 @@ class ConnectionOperations:
 
         :param name: Name of the connection to delete.
         :type name: str
+        :param scope: The scope of the operation, which determines if the operation should search amongst
+            the connections available to the AI Client's AI Resource for the target connection, or through
+            the connections available to the project. Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
         return client._workspace_connections.delete(name=name)

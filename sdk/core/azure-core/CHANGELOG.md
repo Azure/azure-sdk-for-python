@@ -1,16 +1,27 @@
 # Release History
 
-## 1.29.8 (Unreleased)
+## 1.30.2 (Unreleased)
 
 ### Features Added
-
-- Support tuple input for files to `azure.core.rest.HttpRequest`  #33948
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.30.1 (2024-02-29)
+
+### Other Changes
+
+- Accept float for `retry_after` header.  #34203
+
+## 1.30.0 (2024-02-01)
+
+### Features Added
+
+- Support tuple input for file values  to `azure.core.rest.HttpRequest`  #33948
+- Support tuple input to `files` with duplicate field names  `azure.core.rest.HttpRequest`  #34021
 
 ## 1.29.7 (2024-01-18)
 

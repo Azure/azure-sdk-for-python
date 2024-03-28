@@ -92,7 +92,7 @@ class SystemCreatedStorageAccount:
         self,
         *,
         storage_account_hns: bool,
-        storage_account_type: StorageAccountType,
+        storage_account_type: Optional[StorageAccountType],
         arm_resource_id: Optional[str] = None,
         replicated_ids: Optional[List[str]] = None,
         replication_count: int = 1,
@@ -127,7 +127,7 @@ class RegistryRegionDetails:
     def __init__(
         self,
         *,
-        acr_config: Optional[List] = None,
+        acr_config: Optional[List[Union[str, SystemCreatedAcrAccount]]] = None,
         location: Optional[str] = None,
         storage_config: Optional[Union[List[str], SystemCreatedStorageAccount]] = None,
     ):
@@ -161,7 +161,9 @@ class RegistryRegionDetails:
             storages = cls._storage_config_from_rest_object(rest_obj.storage_account_details)
 
         return RegistryRegionDetails(
-            acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
+            acr_config=converted_acr_details,  # type: ignore[arg-type]
+            location=rest_obj.location,
+            storage_config=storages,
         )
 
     def _to_rest_object(self) -> RestRegistryRegionArmDetails:

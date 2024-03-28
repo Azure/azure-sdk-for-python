@@ -62,6 +62,15 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
     :ivar pipeline: The Pipeline object associated with the client.
     :vartype pipeline: ~corehttp.runtime.pipeline.Pipeline or None
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_pipeline_client.py
+            :start-after: [START build_pipeline_client]
+            :end-before: [END build_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the pipeline client.
     """
 
     def __init__(
@@ -140,7 +149,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
+    def send_request(self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from corehttp.rest import HttpRequest
@@ -155,6 +164,5 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~corehttp.rest.HttpResponse
         """
-        stream = kwargs.pop("stream", False)  # want to add default value
         pipeline_response = self.pipeline.run(request, stream=stream, **kwargs)
         return pipeline_response.http_response

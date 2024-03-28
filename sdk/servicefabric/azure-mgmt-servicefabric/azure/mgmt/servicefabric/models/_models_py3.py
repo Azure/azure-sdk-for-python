@@ -1781,6 +1781,10 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype wave_upgrade_paused: bool
     :ivar notifications: Indicates a list of notification channels for cluster events.
     :vartype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+    :ivar enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+     allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+     token-based authentication is used, HttpGatewayTokenAuthEndpointPort must be defined.
+    :vartype enable_http_gateway_exclusive_auth_mode: bool
     """
 
     _validation = {
@@ -1855,6 +1859,10 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
         "upgrade_pause_end_timestamp_utc": {"key": "properties.upgradePauseEndTimestampUtc", "type": "iso-8601"},
         "wave_upgrade_paused": {"key": "properties.waveUpgradePaused", "type": "bool"},
         "notifications": {"key": "properties.notifications", "type": "[Notification]"},
+        "enable_http_gateway_exclusive_auth_mode": {
+            "key": "properties.enableHttpGatewayExclusiveAuthMode",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1889,6 +1897,7 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
         notifications: Optional[List["_models.Notification"]] = None,
+        enable_http_gateway_exclusive_auth_mode: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1993,6 +2002,10 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype wave_upgrade_paused: bool
         :keyword notifications: Indicates a list of notification channels for cluster events.
         :paramtype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+        :keyword enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+         allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+         token-based authentication is used, HttpGatewayTokenAuthEndpointPort must be defined.
+        :paramtype enable_http_gateway_exclusive_auth_mode: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.add_on_features = add_on_features
@@ -2027,6 +2040,7 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
         self.upgrade_pause_end_timestamp_utc = upgrade_pause_end_timestamp_utc
         self.wave_upgrade_paused = wave_upgrade_paused
         self.notifications = notifications
+        self.enable_http_gateway_exclusive_auth_mode = enable_http_gateway_exclusive_auth_mode
 
 
 class ClusterCodeVersionsListResult(_serialization.Model):
@@ -2333,6 +2347,10 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
     :vartype wave_upgrade_paused: bool
     :ivar notifications: Indicates a list of notification channels for cluster events.
     :vartype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+    :ivar enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+     allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+     token-based authentication is used, HttpGatewayTokenAuthEndpointPort must be defined.
+    :vartype enable_http_gateway_exclusive_auth_mode: bool
     """
 
     _attribute_map = {
@@ -2371,9 +2389,13 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
         "upgrade_pause_end_timestamp_utc": {"key": "properties.upgradePauseEndTimestampUtc", "type": "iso-8601"},
         "wave_upgrade_paused": {"key": "properties.waveUpgradePaused", "type": "bool"},
         "notifications": {"key": "properties.notifications", "type": "[Notification]"},
+        "enable_http_gateway_exclusive_auth_mode": {
+            "key": "properties.enableHttpGatewayExclusiveAuthMode",
+            "type": "bool",
+        },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
@@ -2399,6 +2421,7 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
         notifications: Optional[List["_models.Notification"]] = None,
+        enable_http_gateway_exclusive_auth_mode: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2487,6 +2510,10 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
         :paramtype wave_upgrade_paused: bool
         :keyword notifications: Indicates a list of notification channels for cluster events.
         :paramtype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+        :keyword enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+         allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+         token-based authentication is used, HttpGatewayTokenAuthEndpointPort must be defined.
+        :paramtype enable_http_gateway_exclusive_auth_mode: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -2512,6 +2539,7 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
         self.upgrade_pause_end_timestamp_utc = upgrade_pause_end_timestamp_utc
         self.wave_upgrade_paused = wave_upgrade_paused
         self.notifications = notifications
+        self.enable_http_gateway_exclusive_auth_mode = enable_http_gateway_exclusive_auth_mode
 
 
 class ClusterUpgradeDeltaHealthPolicy(_serialization.Model):
@@ -3110,6 +3138,9 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
     :ivar multiple_availability_zones: Indicates if the node type is enabled to support multiple
      zones.
     :vartype multiple_availability_zones: bool
+    :ivar http_gateway_token_auth_endpoint_port: The port used for token-auth based HTTPS
+     connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+    :vartype http_gateway_token_auth_endpoint_port: int
     """
 
     _validation = {
@@ -3134,6 +3165,7 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
         "reverse_proxy_endpoint_port": {"key": "reverseProxyEndpointPort", "type": "int"},
         "is_stateless": {"key": "isStateless", "type": "bool"},
         "multiple_availability_zones": {"key": "multipleAvailabilityZones", "type": "bool"},
+        "http_gateway_token_auth_endpoint_port": {"key": "httpGatewayTokenAuthEndpointPort", "type": "int"},
     }
 
     def __init__(
@@ -3152,6 +3184,7 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
         reverse_proxy_endpoint_port: Optional[int] = None,
         is_stateless: Optional[bool] = None,
         multiple_availability_zones: Optional[bool] = None,
+        http_gateway_token_auth_endpoint_port: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3200,6 +3233,9 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
         :keyword multiple_availability_zones: Indicates if the node type is enabled to support multiple
          zones.
         :paramtype multiple_availability_zones: bool
+        :keyword http_gateway_token_auth_endpoint_port: The port used for token-auth based HTTPS
+         connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+        :paramtype http_gateway_token_auth_endpoint_port: int
         """
         super().__init__(**kwargs)
         self.name = name
@@ -3215,6 +3251,7 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
         self.reverse_proxy_endpoint_port = reverse_proxy_endpoint_port
         self.is_stateless = is_stateless
         self.multiple_availability_zones = multiple_availability_zones
+        self.http_gateway_token_auth_endpoint_port = http_gateway_token_auth_endpoint_port
 
 
 class Notification(_serialization.Model):
@@ -3660,8 +3697,13 @@ class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attri
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
-     can be accessed via its DNS name instead of service name.
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
     :vartype service_dns_name: str
     """
 
@@ -3748,8 +3790,13 @@ class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attri
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
-         service can be accessed via its DNS name instead of service name.
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
         :paramtype service_dns_name: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
@@ -3916,8 +3963,13 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
-     can be accessed via its DNS name instead of service name.
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
     :vartype service_dns_name: str
     """
 
@@ -3990,8 +4042,13 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
-         service can be accessed via its DNS name instead of service name.
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
         :paramtype service_dns_name: str
         """
         super().__init__(
@@ -4419,8 +4476,13 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
-     can be accessed via its DNS name instead of service name.
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
     :vartype service_dns_name: str
     :ivar has_persisted_state: A flag indicating whether this is a persistent service which stores
      states on the local disk. If it is then the value of this property is true, if not it is false.
@@ -4519,8 +4581,13 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
-         service can be accessed via its DNS name instead of service name.
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
         :paramtype service_dns_name: str
         :keyword has_persisted_state: A flag indicating whether this is a persistent service which
          stores states on the local disk. If it is then the value of this property is true, if not it is
@@ -4734,8 +4801,13 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
-     can be accessed via its DNS name instead of service name.
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
     :vartype service_dns_name: str
     :ivar instance_count: The instance count.
     :vartype instance_count: int
@@ -4746,6 +4818,20 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
      (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
      It is represented in ISO 8601 format (hh:mm:ss.s).
     :vartype instance_close_delay_duration: str
+    :ivar min_instance_count: MinInstanceCount is the minimum number of instances that must be up
+     to meet the EnsureAvailability safety check during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil( MinInstancePercentage/100.0 *
+     InstanceCount) ). Note, if InstanceCount is set to -1, during MinInstanceCount computation -1
+     is first converted into the number of nodes on which the instances are allowed to be placed
+     according to the placement constraints on the service.
+    :vartype min_instance_count: int
+    :ivar min_instance_percentage: MinInstancePercentage is the minimum percentage of InstanceCount
+     that must be up to meet the EnsureAvailability safety check during operations like upgrade or
+     deactivate node. The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ). Note, if InstanceCount is set to -1, during
+     MinInstancePercentage computation, -1 is first converted into the number of nodes on which the
+     instances are allowed to be placed according to the placement constraints on the service.
+    :vartype min_instance_percentage: bytes
     """
 
     _validation = {
@@ -4771,6 +4857,8 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         "service_dns_name": {"key": "serviceDnsName", "type": "str"},
         "instance_count": {"key": "instanceCount", "type": "int"},
         "instance_close_delay_duration": {"key": "instanceCloseDelayDuration", "type": "str"},
+        "min_instance_count": {"key": "minInstanceCount", "type": "int"},
+        "min_instance_percentage": {"key": "minInstancePercentage", "type": "bytearray"},
     }
 
     def __init__(
@@ -4787,6 +4875,8 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         service_dns_name: Optional[str] = None,
         instance_count: Optional[int] = None,
         instance_close_delay_duration: Optional[str] = None,
+        min_instance_count: Optional[int] = None,
+        min_instance_percentage: Optional[bytes] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4818,8 +4908,13 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
-         service can be accessed via its DNS name instead of service name.
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
         :paramtype service_dns_name: str
         :keyword instance_count: The instance count.
         :paramtype instance_count: int
@@ -4830,6 +4925,20 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
          (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
          It is represented in ISO 8601 format (hh:mm:ss.s).
         :paramtype instance_close_delay_duration: str
+        :keyword min_instance_count: MinInstanceCount is the minimum number of instances that must be
+         up to meet the EnsureAvailability safety check during operations like upgrade or deactivate
+         node. The actual number that is used is max( MinInstanceCount, ceil(
+         MinInstancePercentage/100.0 * InstanceCount) ). Note, if InstanceCount is set to -1, during
+         MinInstanceCount computation -1 is first converted into the number of nodes on which the
+         instances are allowed to be placed according to the placement constraints on the service.
+        :paramtype min_instance_count: int
+        :keyword min_instance_percentage: MinInstancePercentage is the minimum percentage of
+         InstanceCount that must be up to meet the EnsureAvailability safety check during operations
+         like upgrade or deactivate node. The actual number that is used is max( MinInstanceCount, ceil(
+         MinInstancePercentage/100.0 * InstanceCount) ). Note, if InstanceCount is set to -1, during
+         MinInstancePercentage computation, -1 is first converted into the number of nodes on which the
+         instances are allowed to be placed according to the placement constraints on the service.
+        :paramtype min_instance_percentage: bytes
         """
         super().__init__(
             placement_constraints=placement_constraints,
@@ -4846,6 +4955,8 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         self.service_kind: str = "Stateless"
         self.instance_count = instance_count
         self.instance_close_delay_duration = instance_close_delay_duration
+        self.min_instance_count = min_instance_count
+        self.min_instance_percentage = min_instance_percentage
 
 
 class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
@@ -4883,8 +4994,7 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
      closing the instance. This delay enables existing requests to drain gracefully before the
      instance actually goes down
      (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
-     It is first interpreted as a string representing an ISO 8601 duration. It is represented in ISO
-     8601 format (hh:mm:ss.s).
+     It is represented in ISO 8601 format (hh:mm:ss.s).
     :vartype instance_close_delay_duration: str
     """
 
@@ -4947,8 +5057,7 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
          closing the instance. This delay enables existing requests to drain gracefully before the
          instance actually goes down
          (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
-         It is first interpreted as a string representing an ISO 8601 duration. It is represented in ISO
-         8601 format (hh:mm:ss.s).
+         It is represented in ISO 8601 format (hh:mm:ss.s).
         :paramtype instance_close_delay_duration: str
         """
         super().__init__(
@@ -5148,3 +5257,94 @@ class UserAssignedIdentity(_serialization.Model):
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+
+
+class VMSize(_serialization.Model):
+    """VM Sizes properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar size: VM Size name.
+    :vartype size: str
+    """
+
+    _validation = {
+        "size": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "size": {"key": "size", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.size = None
+
+
+class VMSizeResource(_serialization.Model):
+    """Describes a VM Sizes.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar properties: VM Size properties.
+    :vartype properties: ~azure.mgmt.servicefabric.models.VMSize
+    :ivar id: VM Size id.
+    :vartype id: str
+    :ivar name: VM Size name.
+    :vartype name: str
+    :ivar type: VM Size type.
+    :vartype type: str
+    """
+
+    _validation = {
+        "properties": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "VMSize"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.properties = None
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class VMSizesResult(_serialization.Model):
+    """Describes the result of the request to list VM Sizes for Service Fabric Clusters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of VM Sizes for Service Fabric Clusters.
+    :vartype value: list[~azure.mgmt.servicefabric.models.VMSizeResource]
+    :ivar next_link: URL to get the next set of VM Sizes if there are any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[VMSizeResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.VMSizeResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of VM Sizes for Service Fabric Clusters.
+        :paramtype value: list[~azure.mgmt.servicefabric.models.VMSizeResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None

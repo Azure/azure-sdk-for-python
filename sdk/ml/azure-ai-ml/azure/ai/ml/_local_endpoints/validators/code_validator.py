@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from pathlib import Path
+from typing import Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
@@ -21,7 +22,7 @@ def get_code_configuration_artifacts(
     deployment: OnlineDeployment,
     code_operations: CodeOperations,
     download_path: str,
-) -> str:
+) -> Optional[Union[str, Path]]:
     """Validates and returns code artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -51,7 +52,7 @@ def get_code_configuration_artifacts(
 
     if _code_configuration_contains_cloud_artifacts(deployment=deployment):
         return _get_cloud_code_configuration_artifacts(
-            deployment.code_configuration.code, code_operations, download_path
+            str(deployment.code_configuration.code), code_operations, download_path
         )
 
     if not _local_code_path_is_valid(deployment=deployment):
@@ -87,15 +88,18 @@ def _local_scoring_script_is_valid(deployment: OnlineDeployment):
 def _code_configuration_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.code_configuration.code is a string, then it is the cloud code artifact name or full arm ID
 
-    return isinstance(deployment.code_configuration.code, str) and (
-        is_url(deployment.code_configuration.code) or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+    return isinstance(deployment.code_configuration.code, str) and (  # type: ignore[union-attr]
+        is_url(deployment.code_configuration.code)  # type: ignore[union-attr]
+        or deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
     )
 
 
 def _get_local_code_configuration_artifacts(
     deployment: OnlineDeployment,
 ) -> Path:
-    return Path(deployment._base_path, deployment.code_configuration.code).resolve()
+    return Path(
+        deployment._base_path, deployment.code_configuration.code  # type: ignore[union-attr, arg-type]
+    ).resolve()
 
 
 def _get_cloud_code_configuration_artifacts(code: str, code_operations: CodeOperations, download_path: str) -> str:

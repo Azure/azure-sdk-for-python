@@ -140,7 +140,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
-  - template: /eng/pipelines/templates/steps/create-apireview.yml
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
@@ -153,7 +153,7 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)/reports'
       ArtifactName: 'reports'

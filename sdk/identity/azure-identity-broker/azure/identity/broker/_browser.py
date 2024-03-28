@@ -35,9 +35,10 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         may still log in with a different username.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
-        and your app opts in to use broker via `allow_broker`, you are required to also provide its window handle,
-        so that the sign in UI window will properly pop up on top of your window.
+    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system, you are required to
+        also provide its window handle so that the sign in UI window will properly pop up on top of your window.
+    :keyword bool use_default_broker_account: Whether to authenticate with the currently signed in user instead of
+        prompting the user with a login dialog. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
@@ -47,12 +48,16 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
     :raises ValueError: invalid **redirect_uri**
     """
 
     def __init__(self, **kwargs: Any) -> None:
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
+        self._use_default_broker_account = kwargs.pop("use_default_broker_account", False)
         super().__init__(**kwargs)
 
     @wrap_exceptions
@@ -62,6 +67,22 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
 
+        if self._use_default_broker_account:
+            try:
+                result = app.acquire_token_interactive(
+                    scopes=scopes,
+                    login_hint=self._login_hint,
+                    claims_challenge=claims,
+                    timeout=self._timeout,
+                    prompt=msal.Prompt.NONE,
+                    port=port,
+                    parent_window_handle=self._parent_window_handle,
+                    enable_msa_passthrough=self._enable_msa_passthrough,
+                )
+                if "access_token" in result:
+                    return result
+            except socket.error:
+                pass
         try:
             result = app.acquire_token_interactive(
                 scopes=scopes,
@@ -117,6 +138,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
                 enable_broker_on_windows=True,
+                enable_pii_log=self._enable_support_logging,
             )
 
         return client_applications_map[tenant_id]

@@ -73,7 +73,7 @@ class ChatAttachment(_serialization.Model):
 
     :ivar id: Id of the attachment. Required.
     :vartype id: str
-    :ivar attachment_type: The type of attachment. Required. "image"
+    :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
     :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
     :ivar name: The name of the attachment content.
     :vartype name: str
@@ -109,7 +109,8 @@ class ChatAttachment(_serialization.Model):
         """
         :keyword id: Id of the attachment. Required.
         :paramtype id: str
-        :keyword attachment_type: The type of attachment. Required. "image"
+        :keyword attachment_type: The type of attachment. Required. Known values are: "image" and
+         "file".
         :paramtype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
         :keyword name: The name of the attachment content.
         :paramtype name: str
@@ -786,7 +787,7 @@ class CommunicationIdentifierModel(_serialization.Model):
     rawId, at most one further property may be set which must match the kind enum value.
 
     :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
-     "communicationUser", "phoneNumber", and "microsoftTeamsUser".
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
     :vartype kind: str or ~azure.communication.chat.models.CommunicationIdentifierModelKind
     :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
     :vartype raw_id: str
@@ -797,6 +798,8 @@ class CommunicationIdentifierModel(_serialization.Model):
     :ivar microsoft_teams_user: The Microsoft Teams user.
     :vartype microsoft_teams_user:
      ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+    :ivar microsoft_teams_app: The Microsoft Teams application.
+    :vartype microsoft_teams_app: ~azure.communication.chat.models.MicrosoftTeamsAppIdentifierModel
     """
 
     _attribute_map = {
@@ -805,6 +808,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         "communication_user": {"key": "communicationUser", "type": "CommunicationUserIdentifierModel"},
         "phone_number": {"key": "phoneNumber", "type": "PhoneNumberIdentifierModel"},
         "microsoft_teams_user": {"key": "microsoftTeamsUser", "type": "MicrosoftTeamsUserIdentifierModel"},
+        "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
     }
 
     def __init__(
@@ -815,11 +819,12 @@ class CommunicationIdentifierModel(_serialization.Model):
         communication_user: Optional["_models.CommunicationUserIdentifierModel"] = None,
         phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
+        microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword kind: The identifier kind. Only required in responses. Known values are: "unknown",
-         "communicationUser", "phoneNumber", and "microsoftTeamsUser".
+         "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
         :paramtype kind: str or ~azure.communication.chat.models.CommunicationIdentifierModelKind
         :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
         :paramtype raw_id: str
@@ -831,6 +836,9 @@ class CommunicationIdentifierModel(_serialization.Model):
         :keyword microsoft_teams_user: The Microsoft Teams user.
         :paramtype microsoft_teams_user:
          ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+        :keyword microsoft_teams_app: The Microsoft Teams application.
+        :paramtype microsoft_teams_app:
+         ~azure.communication.chat.models.MicrosoftTeamsAppIdentifierModel
         """
         super().__init__(**kwargs)
         self.kind = kind
@@ -838,6 +846,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         self.communication_user = communication_user
         self.phone_number = phone_number
         self.microsoft_teams_user = microsoft_teams_user
+        self.microsoft_teams_app = microsoft_teams_app
 
 
 class CommunicationUserIdentifierModel(_serialization.Model):
@@ -928,6 +937,46 @@ class CreateChatThreadResult(_serialization.Model):
         super().__init__(**kwargs)
         self.chat_thread = chat_thread
         self.invalid_participants = None
+
+
+class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
+    """A Microsoft Teams application.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar app_id: The Id of the Microsoft Teams application. Required.
+    :vartype app_id: str
+    :ivar cloud: The cloud that the Microsoft Teams application belongs to. By default 'public' if
+     missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+    """
+
+    _validation = {
+        "app_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "app_id": {"key": "appId", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        app_id: str,
+        cloud: Optional[Union[str, "_models.CommunicationCloudEnvironmentModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword app_id: The Id of the Microsoft Teams application. Required.
+        :paramtype app_id: str
+        :keyword cloud: The cloud that the Microsoft Teams application belongs to. By default 'public'
+         if missing. Known values are: "public", "dod", and "gcch".
+        :paramtype cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+        """
+        super().__init__(**kwargs)
+        self.app_id = app_id
+        self.cloud = cloud
 
 
 class MicrosoftTeamsUserIdentifierModel(_serialization.Model):

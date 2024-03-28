@@ -75,7 +75,7 @@ class AzureCliCredential(AsyncContextManager):
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
@@ -149,13 +149,13 @@ async def _run_command(command: str, timeout: int) -> str:
         stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
         stderr = stderr_b.decode()
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-    except asyncio.TimeoutError as ex:
-        proc.kill()
-        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
 
     if proc.returncode == 0:
         return output

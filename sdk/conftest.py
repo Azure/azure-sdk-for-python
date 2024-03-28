@@ -26,7 +26,12 @@
 import os
 import pytest
 
-from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
+# In instances where packages do not require azure-sdk-tools we need to make sure that the following imports do not fail.
+# This is because this conftest is always activated, and we don't want to fail the pytest run if azure-sdk-tools is not installed.
+try:
+    from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
+except ImportError:
+    print("Failed to import test-proxy fixtures from azure-sdk-tools. If these are necessary, install tools/azure-sdk-tools.")
 
 def pytest_configure(config):
     # register an additional marker

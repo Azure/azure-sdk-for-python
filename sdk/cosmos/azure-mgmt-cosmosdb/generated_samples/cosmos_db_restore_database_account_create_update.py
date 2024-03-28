@@ -59,6 +59,7 @@ def main():
                     "restoreMode": "PointInTime",
                     "restoreSource": "/subscriptions/subid/providers/Microsoft.DocumentDB/locations/westus/restorableDatabaseAccounts/1a97b4bb-f6a0-430e-ade1-638d781830cc",
                     "restoreTimestampInUtc": "2021-03-11T22:05:09Z",
+                    "restoreWithTtlDisabled": False,
                     "sourceBackupLocation": "westus",
                 },
             },
@@ -68,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-11-15-preview/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-02-15-preview/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
 if __name__ == "__main__":
     main()

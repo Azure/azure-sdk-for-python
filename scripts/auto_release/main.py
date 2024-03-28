@@ -393,7 +393,6 @@ class CodegenTestPR:
         file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
         content = [
             "-e ../../../tools/azure-sdk-tools\n",
-            "-e ../../../tools/azure-devtools\n",
             "../../identity/azure-identity\n"
         ]
         if not file.exists():

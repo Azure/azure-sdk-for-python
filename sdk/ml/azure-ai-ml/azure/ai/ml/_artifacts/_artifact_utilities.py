@@ -9,10 +9,9 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, TypeVar, Union
+
 from typing_extensions import Literal
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
-from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
@@ -47,6 +46,12 @@ from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
+
+if TYPE_CHECKING:
+    from azure.ai.ml.operations import DataOperations, EnvironmentOperations, FeatureSetOperations, ModelOperations
+    from azure.ai.ml.operations._code_operations import CodeOperations
 
 module_logger = logging.getLogger(__name__)
 
@@ -60,7 +65,7 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     datastore_name = remove_aml_prefix(datastore_name)
     if is_ARM_id_for_resource(datastore_name):
         datastore_name = get_resource_name_from_arm_id(datastore_name)
-    return datastore_name
+    return str(datastore_name)
 
 
 def get_datastore_info(
@@ -83,7 +88,7 @@ def get_datastore_info(
     :return: The dictionary with datastore info
     :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
     """
-    datastore_info = {}
+    datastore_info: Dict = {}
     if name:
         datastore = operations.get(name, include_secrets=credential is None)
     else:
@@ -538,12 +543,13 @@ def _check_and_upload_env_build_context(
             datastore_name=environment.datastore,
             show_progress=show_progress,
         )
-        # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
-        environment.build.path = uploaded_artifact.full_storage_path + "/"
+        if environment.build is not None:
+            # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
+            environment.build.path = str(uploaded_artifact.full_storage_path) + "/"
     return environment
 
 
-def _get_snapshot_path_info(artifact) -> Tuple[Path, IgnoreFile, str]:
+def _get_snapshot_path_info(artifact) -> Optional[Tuple[Path, IgnoreFile, str]]:
     """
     Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
     :param artifact: Artifact object
