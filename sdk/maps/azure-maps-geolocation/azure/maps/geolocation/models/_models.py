@@ -16,8 +16,8 @@ class CountryRegionResult(object):
     """
     def __init__(
         self,
-        ip_address: str = None,
-        iso_code: str = None
+        ip_address: str = "",
+        iso_code: str = ""
     ):
         self.ip_address = ip_address
         self.iso_code = iso_code
