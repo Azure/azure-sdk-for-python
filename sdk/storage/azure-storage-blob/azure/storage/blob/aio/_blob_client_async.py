@@ -78,6 +78,7 @@ from ._upload_helpers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.policies import AsyncHTTPPolicy
     from azure.storage.blob.aio import ContainerClient
     from .._models import (
         ContentSettings,
@@ -3161,7 +3162,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+                policies=cast(Iterable[AsyncHTTPPolicy],
+                              self._pipeline._impl_policies) # pylint: disable = protected-access
             )
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
