@@ -29,7 +29,7 @@ def is_service_available(flight: bool):
                 groundedness_service = True
             if not flight:
                 print("GroundednessServiceFlight is off.")
-            if  "groundedness" not in available_service:
+            if "groundedness" not in available_service:
                 print("AACS service is not available in this region.")
     except Exception:
         print("Failed to call checkannotation endpoint.")
