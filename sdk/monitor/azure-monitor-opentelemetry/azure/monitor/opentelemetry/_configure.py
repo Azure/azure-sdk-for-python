@@ -74,7 +74,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
      will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
      instrumentations enabled.
-    :keyword ~opentelemetry.sdk.resources.Resource] resource: OpenTelemetry Resource object.
+    :keyword ~opentelemetry.sdk.resources.Resource resource: OpenTelemetry Resource object.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
