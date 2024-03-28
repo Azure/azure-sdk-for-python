@@ -228,7 +228,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __exit__(self, exception_type, exception_value, traceback) -> None:
         # Finish the span.
         if exception_type:
-            self.add_attribute(_ERROR_SPAN_ATTRIBUTE, str(exception_type.__name__))
+            module = exception_type.__module__ if exception_type.__module__ != "builtins" else ""
+            error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
+            self.add_attribute(_ERROR_SPAN_ATTRIBUTE, error_type)
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)  # pylint: disable=no-member
             self._current_ctxt_manager = None
