@@ -482,7 +482,7 @@ class TestConfigure(unittest.TestCase):
         is_attach_enabled_mock.return_value = True
         _detect_attach()
         mock_diagnostics.warning.assert_called_once_with(
-            "Distro detected that automatic attach may have occurred.",
+            "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
             _DISTRO_DETECTS_ATTACH,
         )
 

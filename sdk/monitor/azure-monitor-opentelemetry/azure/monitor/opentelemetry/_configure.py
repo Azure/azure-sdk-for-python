@@ -188,4 +188,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
 def _detect_attach():
     if _is_attach_enabled():
-        AzureDiagnosticLogging.warning("Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.", _DISTRO_DETECTS_ATTACH)
+        AzureDiagnosticLogging.warning(
+            "Distro detected that automatic attach may have occurred. Check your data to ensure "
+            "that telemetry is not being duplicated. This may impact your cost.",
+            _DISTRO_DETECTS_ATTACH)
