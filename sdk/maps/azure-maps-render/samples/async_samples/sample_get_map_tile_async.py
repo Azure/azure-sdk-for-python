@@ -21,7 +21,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 async def get_map_tile_async():
     # [START get_map_tile_async]

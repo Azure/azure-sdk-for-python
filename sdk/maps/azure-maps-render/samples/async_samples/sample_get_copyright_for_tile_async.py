@@ -22,7 +22,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 async def get_copyright_for_tile_async():
     # [START get_copyright_for_tile_async]
@@ -35,7 +35,7 @@ async def get_copyright_for_tile_async():
         result = await maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result.general_copyrights[0])
+    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
     # [END get_copyright_for_tile_async]
 
 if __name__ == '__main__':

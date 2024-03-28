@@ -21,7 +21,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 async def get_copyright_caption_async():
     # [START get_copyright_caption_async]

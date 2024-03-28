@@ -216,7 +216,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
                 :dedent: 4
                 :caption: Return map copyright attribution information for a section of a tileset.
         """
-        bounds=[
+        bounds_list = [
             bounds.south,
             bounds.west,
             bounds.north,
@@ -226,7 +226,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         async_result = await self._render_client.get_map_attribution(
             tileset_id=tileset_id,
             zoom=zoom,
-            bounds=bounds,
+            bounds=bounds_list,
             **kwargs
         )
         return async_result
@@ -443,12 +443,14 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         """
         _include_text=kwargs.pop("include_text", True)
 
-        return await self._render_client.get_copyright_from_bounding_box(
+        result = await self._render_client.get_copyright_from_bounding_box(
             include_text= "yes" if _include_text else "no",
-            south_west=(bounding_box.south,bounding_box.west),
-            north_east=(bounding_box.north,bounding_box.east),
+            south_west=[bounding_box.south,bounding_box.west],
+            north_east=[bounding_box.north,bounding_box.east],
             **kwargs
         )
+
+        return Copyright(**result.__dict__)
 
     @distributed_trace_async
     async def get_copyright_for_tile(
@@ -494,13 +496,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
 
         _include_text=kwargs.pop("include_text", True)
 
-        return await self._render_client.get_copyright_for_tile(
+        result = await self._render_client.get_copyright_for_tile(
             z=z,
             x=x,
             y=y,
             include_text= "yes" if _include_text else "no",
             **kwargs
         )
+
+        return Copyright(**result.__dict__)
 
     @distributed_trace_async
     async def get_copyright_for_world(
@@ -532,7 +536,9 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         """
         _include_text=kwargs.pop("include_text", True)
 
-        return await self._render_client.get_copyright_for_world(
+        result = await self._render_client.get_copyright_for_world(
             include_text= "yes" if _include_text else "no",
             **kwargs
         )
+
+        return Copyright(**result.__dict__)
