@@ -3,6 +3,7 @@
 ### 4.6.1 (Unreleased)
 
 #### Features Added
+* Adds vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
 
 #### Breaking Changes
 
