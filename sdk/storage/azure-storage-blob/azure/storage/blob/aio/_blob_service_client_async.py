@@ -780,7 +780,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             container_name = container
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=cast(Iterable[AsyncHTTPPolicy],
+            policies=cast(Iterable["AsyncHTTPPolicy"],
                           self._pipeline._impl_policies) # pylint: disable = protected-access
         )
         return BlobClient(

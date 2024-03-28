@@ -3162,7 +3162,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-                policies=cast(Iterable[AsyncHTTPPolicy],
+                policies=cast(Iterable["AsyncHTTPPolicy"],
                               self._pipeline._impl_policies) # pylint: disable = protected-access
             )
         else:
