@@ -254,7 +254,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
                 # We should detach as per the spec but then retry connecting
                 self._error = AMQPLinkError(condition=ErrorCondition.UnknownError,
                                             description="Link detached unexpectedly.", retryable=True)
-            self._set_state(LinkState.DETACHED)
+            await self._set_state(LinkState.DETACHED)
 
     async def attach(self) -> None:
         if self._is_closed:
