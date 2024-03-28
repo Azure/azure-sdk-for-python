@@ -19,7 +19,7 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 def get_copyright_from_bounding_box():
     # [START get_copyright_from_bounding_box]
@@ -39,9 +39,9 @@ def get_copyright_from_bounding_box():
     )
 
     print("Get copyright from bounding box result:")
-    print(result.general_copyrights[0])
+    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
     print("Result country code:")
-    print(result.regions[0].country.iso3)
+    print(result.regions and result.regions[0].country.iso3 or "no region found")
     # [END get_copyright_from_bounding_box]
 
 if __name__ == '__main__':

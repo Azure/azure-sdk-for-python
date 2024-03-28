@@ -23,7 +23,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 async def get_copyright_for_world_async():
     # [START get_copyright_for_world_async]
@@ -36,7 +36,7 @@ async def get_copyright_for_world_async():
         result = await maps_render_client.get_copyright_for_world()
 
     print("Get copyright for the world result:")
-    print(result.general_copyrights[0])
+    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
     # [END get_copyright_for_world_async]
 
 if __name__ == '__main__':

@@ -19,7 +19,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
 
 async def get_map_attribution_async():
     # [START get_map_attribution_async]
@@ -42,7 +42,7 @@ async def get_map_attribution_async():
         )
 
     print("Get map attribution result:")
-    print(result.copyrights[0])
+    print(result.copyrights and result.copyrights[0] or "no copyrights")
     # [END get_map_attribution_async]
 
 if __name__ == '__main__':

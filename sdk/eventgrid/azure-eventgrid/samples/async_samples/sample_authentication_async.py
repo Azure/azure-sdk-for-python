@@ -20,8 +20,8 @@ import os
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+topic_key = os.environ["EVENTGRID_TOPIC_KEY"] or "your-eventgrid-topic-key"
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"] or "your-eventgrid-topic-endpoint"
 
 credential_key = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential_key)

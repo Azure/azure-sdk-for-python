@@ -4,7 +4,7 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports,super-init-not-called, C0302, C0203
-from typing import NamedTuple, Any
+from typing import NamedTuple, Any, Optional
 from .._generated.models import (
     MapAttribution,
     Copyright as GenCopyright,
@@ -168,13 +168,13 @@ class ImagePathStyle(object):
 
     :keyword path_positions:
         The list of point coordinate on the path.
-    :paramtype path_positions: LatLon
+    :paramtype path_positions: Optional[LatLon]
     :keyword line_color:
         Line color of the path, including line opacity information.
-    :paramtype line_color: str
+    :paramtype line_color: Optional[str]
     :keyword fill_color:
         Fill color of the path, including line opacity information.
-    :paramtype fill_color: str
+    :paramtype fill_color: Optional[str]
     :keyword line_width_in_pixels:
         Line width of the path in pixels.
     :paramtype line_width_in_pixels: int
@@ -182,9 +182,9 @@ class ImagePathStyle(object):
         Circle radius in meters.
     :paramtype circle_radius_in_meters: int
     """
-    path_positions: LatLon = None
-    line_color: str = None
-    fill_color: str = None
+    path_positions: Optional[LatLon] = None
+    line_color: Optional[str] = None
+    fill_color: Optional[str] = None
     line_width_in_pixels: int = 0
     circle_radius_in_meters: int = 0
 
@@ -193,29 +193,29 @@ class ImagePushpinStyle(object):
 
     :keyword pushpin_positions:
         The list of Pushpin coordinate on the map.
-    :paramtype path_positions: LatLon
+    :paramtype path_positions: Optional[LatLon]
     :keyword pushpin_anchor_shift_in_pixels:
         To override the anchor location of the pin image,
         user can designate how to shift or move the anchor location by pixels
     :paramtype pushpin_anchor_shift_in_pixels: int
     :keyword pushpin_color:
         Pushpin color including opacity information.
-    :paramtype pushpin_color: str
+    :paramtype pushpin_color: Optional[str]
     :keyword pushpin_scale_ratio:
         Pushpin scale ratio. Value should greater than zero. A value of 1 is the standard scale.
         Values larger than 1 will make the pins larger, and values smaller than 1 will make them smaller.
     :paramtype pushpin_scale_ratio: float
     :keyword custom_pushpin_image_uri:
         Custom pushpin image, can only be 'ref="Uri"' format.
-    :paramtype custom_pushpin_image_uri: str
+    :paramtype custom_pushpin_image_uri: Optional[str]
     :keyword label_anchor_shift_in_pixels:
         The anchor location of label for built-in pushpins is at the top center of custom pushpins.
         To override the anchor location of the pin image,
         user can designate how to shift or move the anchor location by pixels
-    :paramtype label_anchor_shift_in_pixels: LatLon
+    :paramtype label_anchor_shift_in_pixels: Optional[LatLon]
     :keyword label_color:
         Label color information. Opacity value other than 1 be ignored.
-    :paramtype label_color: str
+    :paramtype label_color: Optional[str]
     :keyword label_scale_ratio:
         Label scale ratio. Should greater than 0. A value of 1 is the standard scale.
         Values larger than 1 will make the label larger.
@@ -226,12 +226,12 @@ class ImagePushpinStyle(object):
         Value can be -360 to 360.
     :paramtype rotation_in_degrees: int
     """
-    pushpin_positions: LatLon = None
+    pushpin_positions: Optional[LatLon] = None
     pushpin_anchor_shift_in_pixels: int = 0
-    pushpin_color: str = None
+    pushpin_color: Optional[str] = None
     pushpin_scale_ratio: float = 0.0
-    custom_pushpin_image_uri: str = None
-    label_anchor_shift_in_pixels: LatLon = None
-    label_color: str = None
+    custom_pushpin_image_uri: Optional[str] = None
+    label_anchor_shift_in_pixels: Optional[LatLon] = None
+    label_color: Optional[str] = None
     label_scale_ratio: float = 0.0
     rotation_in_degrees: int = 0
