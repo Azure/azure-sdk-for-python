@@ -11,8 +11,14 @@ def parse_chat(chat: list) -> dict:
 
     for each_turn in chat:
         if "user" in each_turn and "assistant" in each_turn:
-            question = each_turn["user"]["content"]
-            answer = each_turn["assistant"]["content"]
+            try:
+                question = each_turn["user"]["content"]
+            except Exception:
+                question = ""
+            try:
+                answer = each_turn["assistant"]["content"]
+            except Exception:
+                answer = ""
             try:
                 retrieved_documents = each_turn["retrieved_documents"]
             except KeyError:

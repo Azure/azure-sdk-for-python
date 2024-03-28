@@ -6,9 +6,9 @@ def normalize_user_text(user_text):
     return user_text.replace("'", "\\\"")
 
 
-def construct_single_request(question: str,
-                             answer: str,
-                             context: dict = None) -> dict:
+def construct_single_request(answer: str,
+                             context: dict,
+                             question: str = None) -> dict:
     metrics = ["generic_groundedness"]
     user_text = json.dumps({
         "question": question,
@@ -23,10 +23,13 @@ def construct_single_request(question: str,
 
 @tool
 def construct_groundedness_requests(parsed_chat: dict) -> str:
-    num_turns = len(parsed_chat["questions"])
+    num_turns = len(parsed_chat["answers"])
     request_bodies = []
     for i in range(num_turns):
-        question = parsed_chat["questions"][i]
+        try:
+            question = parsed_chat["questions"][i]
+        except Exception:
+            question = ""
         answer = parsed_chat["answers"][i]
         try:
             retrieved_documents = eval(
@@ -35,8 +38,8 @@ def construct_groundedness_requests(parsed_chat: dict) -> str:
             retrieved_documents = [
                 parsed_chat["retrieved_documents"][i]]
         context = {"citations": retrieved_documents}
-        request = construct_single_request(question,
-                                           answer,
-                                           context)
+        request = construct_single_request(answer,
+                                           context,
+                                           question)
         request_bodies.append(request)
     return request_bodies

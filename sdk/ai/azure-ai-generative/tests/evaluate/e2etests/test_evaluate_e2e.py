@@ -351,6 +351,42 @@ class TestEvaluate(AzureRecordedTestCase):
         assert "evaluation_per_turn" in columns_in_tabular_data
         assert tabular_result["gpt_groundedness"][0] == round(
             np.nanmean(tabular_result["evaluation_per_turn"][0]["gpt_groundedness"]["score"]), 2)
+    def test_task_type_chat_ill_format_chat(self, ai_client, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+        data_path = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        data_file = os.path.join(data_path, "ill_format_chat.jsonl")
+
+        with tmpdir.as_cwd():
+            output_path = tmpdir + "/evaluation_output"
+            tracking_uri = ai_client.tracking_uri
+
+            result = evaluate(  # This will log metric/artifacts using mlflow
+                evaluation_name="rag-chat-1",
+                data=data_file,
+                task_type="chat",
+                model_config={
+                    "api_version": "2023-07-01-preview",
+                    "api_base": e2e_openai_api_base,
+                    "api_type": "azure",
+                    "api_key": e2e_openai_api_key,
+                    "deployment_id": e2e_openai_completion_deployment_name,
+                },
+                data_mapping={
+                    "messages": "messages"
+                },
+                output_path=output_path,
+                tracking_uri=tracking_uri
+            )
+
+        metrics_summary = result.metrics_summary
+        tabular_result = pd.read_json(os.path.join(output_path, "eval_results.jsonl"), lines=True)
+        columns_in_tabular_data = tabular_result.columns.tolist()
+        assert len(metrics_summary) == 0
+        assert tabular_result.shape == (1, 1)
+        assert "messages" in columns_in_tabular_data
+        assert "gpt_groundedness" not in columns_in_tabular_data
+        assert "gpt_retrieval_score" not in columns_in_tabular_data
+        assert "evaluation_per_turn" not in columns_in_tabular_data
+
 
 
     def test_invalid_data(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):

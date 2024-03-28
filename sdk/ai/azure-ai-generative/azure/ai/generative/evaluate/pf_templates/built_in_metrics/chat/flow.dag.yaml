@@ -130,9 +130,6 @@ nodes:
     path: parse_chat.py
   inputs:
     chat: ${inputs.messages}
-  activate:
-    when: ${validate_conversation.output.parse_chat}
-    is: true
   use_variants: false
 - name: concatenate_metrics
   type: python
@@ -154,6 +151,7 @@ nodes:
     path: validate_conversation.py
   inputs:
     chat: ${inputs.messages}
+    parsed_chat: ${parse_chat.output}
     selected_metrics: ${select_metrics.output}
   use_variants: false
 - name: validate_service
