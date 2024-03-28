@@ -388,7 +388,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cast(Optional[List[GenCorsRule]], cors),
+            cors=cast(Optional[List["GenCorsRule"]], cors),
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
