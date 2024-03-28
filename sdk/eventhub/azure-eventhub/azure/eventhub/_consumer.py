@@ -89,6 +89,7 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
+        self._use_tls = kwargs.get("use_tls", True)
 
         self.running = False
         self.closed = False
@@ -172,6 +173,7 @@ class EventHubConsumer(
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
             message_received_callback=self._message_received,
+            use_tls=self._use_tls,
         )
 
     def _open_with_retry(self) -> None:
