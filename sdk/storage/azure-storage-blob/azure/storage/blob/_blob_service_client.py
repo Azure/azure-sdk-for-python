@@ -6,7 +6,7 @@
 
 import functools
 from typing import (
-    Any, Dict, List, Optional, Union,
+    Any, cast, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 import warnings
@@ -38,6 +38,7 @@ from ._shared.response_handlers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
+    from ._generated.models import CorsRule as GenCorsRule
     from ._lease import BlobLeaseClient
     from ._models import (
         BlobAnalyticsLogging,
@@ -387,7 +388,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=cast(Optional[List["GenCorsRule"]], cors),
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website

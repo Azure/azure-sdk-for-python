@@ -185,7 +185,7 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
         # check magic number
         if header.get('magic') != MAGIC:
-            fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC}."
+            fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC!r}."
             raise schema.AvroException(fail_msg)
 
         # set metadata

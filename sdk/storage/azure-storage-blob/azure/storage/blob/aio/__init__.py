@@ -74,7 +74,7 @@ async def upload_blob_to_url(
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         return await cast(BlobClient, client).upload_blob(
             data=data,
-            blob_type=BlobType.BlockBlob,
+            blob_type=BlobType.BLOCKBLOB,
             **kwargs)
 
 

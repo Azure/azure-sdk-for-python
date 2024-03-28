@@ -8,7 +8,7 @@
 import functools
 import warnings
 from typing import (
-    Any, Dict, List, Optional, Union,
+    Any, cast, Dict, Iterable, List, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -43,8 +43,10 @@ from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
+    from .._generated.models import CorsRule as GenCorsRule
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.policies import AsyncHTTPPolicy
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
@@ -392,7 +394,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=cast(Optional[List["GenCorsRule"]], cors),
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
@@ -778,7 +780,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             container_name = container
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(Iterable["AsyncHTTPPolicy"],
+                          self._pipeline._impl_policies) # pylint: disable = protected-access
         )
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,

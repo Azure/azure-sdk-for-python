@@ -155,7 +155,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     else:
         blob.name = generated.name.content  #type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
-    blob.blob_type = BlobType(blob_type) if blob_type else None
+    blob.blob_type = BlobType(blob_type) if blob_type else None  # type: ignore [assignment]
     blob.etag = generated.properties.etag
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
@@ -165,15 +165,15 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.last_modified = generated.properties.last_modified
-    blob.creation_time = generated.properties.creation_time
+    blob.creation_time = generated.properties.creation_time  # type: ignore [assignment]
     blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
-    blob.size = generated.properties.content_length
+    blob.size = generated.properties.content_length  # type: ignore [assignment]
     blob.page_blob_sequence_number = generated.properties.blob_sequence_number
-    blob.server_encrypted = generated.properties.server_encrypted
+    blob.server_encrypted = generated.properties.server_encrypted  # type: ignore [assignment]
     blob.encryption_scope = generated.properties.encryption_scope
     blob.deleted_time = generated.properties.deleted_time
     blob.remaining_retention_days = generated.properties.remaining_retention_days
-    blob.blob_tier = generated.properties.access_tier
+    blob.blob_tier = generated.properties.access_tier  # type: ignore [assignment]
     blob.rehydrate_priority = generated.properties.rehydrate_priority
     blob.blob_tier_inferred = generated.properties.access_tier_inferred
     blob.archive_status = generated.properties.archive_status
