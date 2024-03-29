@@ -313,7 +313,7 @@ def analyze_dependencies() -> None:
         upper_bound = False
         specs = dependencies[requirement]
         for spec in specs.keys():
-            if spec.operator in ("!=", "==", "<=", "<", "~="):
+            if hasattr(spec, "operator") and spec.operator in ("!=", "==", "<=", "<", "~="):
                 # There is a upper bound on the version, so we can't guarantee compatibility
                 upper_bounds.append(requirement)
                 upper_bound = True
