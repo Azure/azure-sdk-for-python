@@ -30,6 +30,7 @@ class AcknowledgeOptions(_model_base.Model):
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -47,6 +48,8 @@ class AcknowledgeOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AcknowledgeResult(_model_base.Model):
@@ -69,6 +72,7 @@ class AcknowledgeResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -87,6 +91,8 @@ class AcknowledgeResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class BrokerProperties(_model_base.Model):
@@ -105,6 +111,8 @@ class BrokerProperties(_model_base.Model):
     delivery_count: int = rest_field(name="deliveryCount")
     """The attempt count for delivering the event. Required."""
 
+
+ 
 
 
 class CloudEvent(_model_base.Model):
@@ -163,6 +171,8 @@ class CloudEvent(_model_base.Model):
      source)."""
 
 
+ 
+
 
 class Error(_model_base.Model):
     """The error object.
@@ -193,6 +203,7 @@ class Error(_model_base.Model):
     innererror: Optional["_models.InnerError"] = rest_field()
     """An object containing more specific information than the current object about the error."""
 
+
     @overload
     def __init__(
         self,
@@ -214,6 +225,8 @@ class Error(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class FailedLockToken(_model_base.Model):
@@ -233,6 +246,7 @@ class FailedLockToken(_model_base.Model):
     error: "_models.Error" = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -251,6 +265,8 @@ class FailedLockToken(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class InnerError(_model_base.Model):
@@ -268,6 +284,7 @@ class InnerError(_model_base.Model):
     """One of a server-defined set of error codes."""
     innererror: Optional["_models.InnerError"] = rest_field()
     """Inner error."""
+
 
     @overload
     def __init__(
@@ -287,6 +304,8 @@ class InnerError(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class PublishResult(_model_base.Model):
@@ -295,6 +314,8 @@ class PublishResult(_model_base.Model):
     """
 
 
+
+ 
 
 
 class ReceiveDetails(_model_base.Model):
@@ -314,6 +335,8 @@ class ReceiveDetails(_model_base.Model):
     """Cloud Event details. Required."""
 
 
+ 
+
 
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
@@ -328,6 +351,8 @@ class ReceiveResult(_model_base.Model):
     """Array of receive responses, one per cloud event. Required."""
 
 
+ 
+
 
 class RejectOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be rejected.
@@ -340,6 +365,7 @@ class RejectOptions(_model_base.Model):
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
+
 
     @overload
     def __init__(
@@ -358,6 +384,8 @@ class RejectOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class RejectResult(_model_base.Model):
@@ -380,6 +408,7 @@ class RejectResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully rejected cloud events. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -398,6 +427,8 @@ class RejectResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ReleaseOptions(_model_base.Model):
@@ -411,6 +442,7 @@ class ReleaseOptions(_model_base.Model):
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
+
 
     @overload
     def __init__(
@@ -429,6 +461,8 @@ class ReleaseOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ReleaseResult(_model_base.Model):
@@ -451,6 +485,7 @@ class ReleaseResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully released cloud events. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -469,6 +504,8 @@ class ReleaseResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class RenewCloudEventLocksResult(_model_base.Model):
@@ -490,6 +527,7 @@ class RenewCloudEventLocksResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully renewed locks. Required."""
 
+
     @overload
     def __init__(
         self,
@@ -508,6 +546,8 @@ class RenewCloudEventLocksResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class RenewLockOptions(_model_base.Model):
@@ -521,6 +561,7 @@ class RenewLockOptions(_model_base.Model):
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
+
 
     @overload
     def __init__(
@@ -539,3 +580,5 @@ class RenewLockOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
