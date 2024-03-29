@@ -302,17 +302,20 @@ def analyze_dependencies() -> None:
         print("\nAll library dependencies verified, no incompatible versions detected.")
 
     # verify there is no non-approved upper bound constraints
+    print(f"Checking for upper bound constraints in dependencies (excluding approved constraints in {approved_upper_bound_constraints_filename}).")
     approved_upper_bound_constraints = []
     if os.path.exists(approved_upper_bound_constraints_filename):
         with open(approved_upper_bound_constraints_filename, "r") as f:
             approved_upper_bound_constraints = set([line.strip() for line in f.readlines()])
-        
+
     for requirement in sorted(dependencies.keys()):
         if requirement in approved_upper_bound_constraints:
+            print(f"Skipping approved upper bound constraint for {requirement}")
             continue
         upper_bound = False
         specs = dependencies[requirement]
         for spec in specs.keys():
+            print(f"Checking {requirement} {spec}")
             if hasattr(spec, "operator") and spec.operator in ("!=", "==", "<=", "<", "~="):
                 # There is a upper bound on the version, so we can't guarantee compatibility
                 upper_bounds.append(requirement)
