@@ -320,7 +320,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_query_change_feed_with_start_time(self):
-        await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
                                                                             PartitionKey(path="/pk"))
         batchSize = 50
@@ -363,7 +362,30 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         totalCount = len(change_feed_iter)
 
         # now check if the number of items that were changed match the batch size
-        assert (totalCount == batchSize)
+        assert totalCount == batchSize
+
+        # negative test: pass in a valid time in the future
+        future_time = start_time + timedelta(hours=1)
+        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=future_time)]
+        totalCount = len(change_feed_iter)
+        # A future time should return 0
+        assert totalCount == 0
+
+        # test a date that is not utc, will ignore start time option
+        not_utc_time = datetime.now()
+        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=not_utc_time)]
+        totalCount = len(change_feed_iter)
+        # should return 100 (double the batch size)
+        assert totalCount == batchSize * 2
+
+        # test an invalid value, results in error
+        invalid_time = "Invalid value"
+        try:
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
+            pytest.fail("Should not have passed")
+        except AttributeError as e:
+            assert str(e) == "'str' object has no attribute 'strftime'"
+
         await self.created_db.delete_container(created_collection.id)
 
     @pytest.mark.asyncio
