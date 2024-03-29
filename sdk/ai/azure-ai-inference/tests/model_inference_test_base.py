@@ -7,6 +7,8 @@ import logging
 import sys
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
+import asyncio
+import time
 
 from os import path
 from typing import List, Optional, Union
@@ -14,8 +16,7 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError
 from azure.core.pipeline import PipelineRequest
-import asyncio
-import time
+
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
