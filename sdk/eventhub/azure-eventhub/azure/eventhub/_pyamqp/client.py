@@ -236,7 +236,6 @@ class AMQPClient(
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
                     self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
                     start_time = current_time
                 time.sleep(1)
@@ -827,7 +826,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,  # link_credit=0 on flow frame sent before client is ready
+                link_credit=0,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
@@ -852,7 +851,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         """
         try:
             if self._link.current_link_credit <= 0:
-                self._link.flow()
+                self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)

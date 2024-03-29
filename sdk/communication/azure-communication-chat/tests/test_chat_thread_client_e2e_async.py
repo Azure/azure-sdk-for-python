@@ -7,6 +7,7 @@ import pytest
 import asyncio
 from datetime import datetime, timezone
 from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat.aio import (
@@ -111,6 +112,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_update_topic(self):
         async with self.chat_client:
             await self._create_thread()
@@ -125,6 +127,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_send_message(self):
         async with self.chat_client:
             await self._create_thread()
@@ -146,6 +149,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_get_message(self):
         async with self.chat_client:
             await self._create_thread()
@@ -163,6 +167,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_list_messages(self):
         async with self.chat_client:
             await self._create_thread()
@@ -184,6 +189,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_update_message(self):
         async with self.chat_client:
             await self._create_thread()
@@ -200,6 +206,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_delete_message(self):
         async with self.chat_client:
             await self._create_thread()
@@ -215,6 +222,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_list_participants(self):
         async with self.chat_client:
             await self._create_thread()
@@ -244,6 +252,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_add_participants(self):
         async with self.chat_client:
             await self._create_thread()
@@ -267,6 +276,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_remove_participant(self):
         async with self.chat_client:
             await self._create_thread()
@@ -291,6 +301,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_send_typing_notification(self):
         async with self.chat_client:
             await self._create_thread()
@@ -303,6 +314,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_send_typing_notification_with_sender_display_name(self):
         async with self.chat_client:
             await self._create_thread()
@@ -315,10 +327,10 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_send_read_receipt(self):
         async with self.chat_client:
             await self._create_thread()
-
             async with self.chat_thread_client:
                 message_id = await self._send_message()
 
@@ -346,6 +358,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_list_read_receipts(self):
         async with self.chat_client:
             await self._create_thread_w_two_users()
@@ -392,6 +405,7 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_get_properties(self):
         async with self.chat_client:
             await self._create_thread()

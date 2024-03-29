@@ -7,7 +7,7 @@ def is_input_valid_for_safety_metrics(
     if is_valid_string(question) and is_valid_string(answer):
         return True
     else:
-        print("Input is not valid for safety metrics evaluation")
+        print("Input for safety metrics evaluation is not valid")
         return False
 
 
@@ -23,8 +23,7 @@ def validate_input(question: str,
                   "ground_truth": ground_truth}
     expected_input_cols = set(input_data.keys())
     dict_metric_required_fields = {
-        "gpt_groundedness": set(["question",
-                                 "answer",
+        "gpt_groundedness": set(["answer",
                                  "context"]),
         "gpt_relevance": set(["question",
                               "answer",
@@ -49,7 +48,7 @@ def validate_input(question: str,
             if metric_required_fields <= actual_input_cols:
                 data_validation[metric] = True
             else:
-                print("input for %s is not valid" % metric)
+                print("Input for %s is not valid." % metric)
 
     safety_metrics = is_input_valid_for_safety_metrics(question, answer)
     data_validation["safety_metrics"] = safety_metrics
