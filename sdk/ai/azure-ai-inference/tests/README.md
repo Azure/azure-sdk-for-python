@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/README.md#prerequisites). Create an Azure resource in one of the GPU-supported regions, otherwise some of the tests will fail.
+See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#prerequisites). Create an Azure resource in one of the GPU-supported regions, otherwise some of the tests will fail.
 
 ### Setup
 
@@ -29,7 +29,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 ### Set environment variables
 
-See [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/README.md#set-environment-variables).
+See [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#set-environment-variables).
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 ```
