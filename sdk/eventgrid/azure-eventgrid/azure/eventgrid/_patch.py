@@ -10,7 +10,7 @@ from typing import List, Union, Optional, Any
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta, PipelineClient
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential, AzureSasCredential
 from azure.core.pipeline import policies
 
 from ._legacy import (
@@ -37,7 +37,7 @@ class EventGridClient(InternalEventGridClient):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value for namespaces is
      "2023-10-01-preview". Default value for basic is "2018-01-01". Note that overriding this default value may result in unsupported
@@ -51,7 +51,7 @@ class EventGridClient(InternalEventGridClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: Union[AzureKeyCredential, AzureSasCredential, "TokenCredential"],
         *,
         api_version: Optional[str] = None,
         level: Union[str, ClientLevel] = "Standard",
@@ -62,6 +62,8 @@ class EventGridClient(InternalEventGridClient):
             endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
         )
         self._level = level
+
+        if 
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

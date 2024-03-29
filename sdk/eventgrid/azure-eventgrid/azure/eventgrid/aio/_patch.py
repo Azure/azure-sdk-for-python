@@ -11,7 +11,7 @@ from .._legacy.aio import EventGridPublisherClient
 from ._client import EventGridClient as InternalEventGridClient
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.pipeline import policies
 
 from .._serialization import Deserializer, Serializer
@@ -31,7 +31,7 @@ class EventGridClient(InternalEventGridClient):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value for namespaces is
      "2023-10-01-preview". Default value for basic is "2018-01-01". Note that overriding this default value may result in unsupported
@@ -45,7 +45,7 @@ class EventGridClient(InternalEventGridClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
         *,
         api_version: Optional[str] = None,
         level: Optional[Union[str, ClientLevel]] = None,
@@ -56,6 +56,7 @@ class EventGridClient(InternalEventGridClient):
             endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
         )
         self._level = level
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
