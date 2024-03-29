@@ -68,7 +68,7 @@ setup(
     },
     python_requires=">=3.6",
     install_requires=[
-        'msrestazure>=0.4.32,<2.0.0',
-        'azure-common~=1.1',
+        'msrestazure>=0.4.32',
+        'azure-common>=1.1',
     ],
 )

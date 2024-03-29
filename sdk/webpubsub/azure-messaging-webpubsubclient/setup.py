@@ -63,10 +63,10 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.24.0",
+        "isodate>=0.6.1",
+        "azure-core>=1.24.0",
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
-        "websocket-client<2.0.0,>=1.4.2"
+        "websocket-client>=1.4.2"
     ],
     python_requires=">=3.7",
 )

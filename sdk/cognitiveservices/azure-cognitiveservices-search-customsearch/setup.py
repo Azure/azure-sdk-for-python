@@ -84,8 +84,8 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.6.21',
-        'azure-common~=1.1',
-        'azure-mgmt-core>=1.2.0,<2.0.0',
+        'azure-common>=1.1',
+        'azure-mgmt-core>=1.2.0',
     ],
     include_package_data=True,
     package_data={

@@ -62,7 +62,7 @@ setup(
         'azure.openai': ['py.typed'],
     },
     install_requires=[
-        "azure-identity<2.0.0,>=1.15.0"
+        "azure-identity>=1.15.0"
     ],
     python_requires=">=3.7",
     project_urls={

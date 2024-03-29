@@ -49,7 +49,7 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2",
+        "azure-core>=1.2.2",
         "six>=1.11.0",
     ],
     python_requires=">=3.6",

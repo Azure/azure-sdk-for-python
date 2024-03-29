@@ -1,2 +1,10 @@
 opentelemetry-api
 opentelemetry-sdk
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-psycopg2
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-urllib
+opentelemetry-instrumentation-urllib3
+opentelemetry-resource-detector-azure
