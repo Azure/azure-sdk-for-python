@@ -9,9 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Optional, Any
 from enum import Enum
 
-from azure.core import CaseInsensitiveEnumMeta
+from azure.core import CaseInsensitiveEnumMeta, PipelineClient
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline import PipelineClient, policies
+from azure.core.pipeline import policies
 
 from ._legacy import (
     EventGridPublisherClient,
