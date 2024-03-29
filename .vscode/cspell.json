@@ -1277,6 +1277,15 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-inference/**",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-generative/**",
       "words": [
         "tqdm",
