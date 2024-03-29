@@ -29,7 +29,7 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     # [START publish_eg_event_dict_async]
     event0 = {

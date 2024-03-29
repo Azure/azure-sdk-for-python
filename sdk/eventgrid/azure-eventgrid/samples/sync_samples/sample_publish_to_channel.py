@@ -27,7 +27,7 @@ endpoint = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"]
 channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
 
 credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 
 client.send(
     [

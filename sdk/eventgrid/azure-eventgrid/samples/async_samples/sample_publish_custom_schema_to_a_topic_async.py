@@ -33,7 +33,7 @@ async def publish_event():
     # authenticate client
     # [START publish_custom_schema_async]
     credential = AzureKeyCredential(key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     custom_schema_event = {
         "customSubject": "sample",

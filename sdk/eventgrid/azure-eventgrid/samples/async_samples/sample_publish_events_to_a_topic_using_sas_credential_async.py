@@ -26,7 +26,7 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureSasCredential(sas)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     async with client:
         await client.send(

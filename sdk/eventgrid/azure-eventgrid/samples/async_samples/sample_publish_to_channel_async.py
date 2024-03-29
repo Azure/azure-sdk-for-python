@@ -30,7 +30,7 @@ channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
 
 async def publish():
     credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
     async with client:
         await client.send(
             [

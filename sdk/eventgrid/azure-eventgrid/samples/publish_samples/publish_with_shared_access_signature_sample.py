@@ -32,7 +32,7 @@ signature = generate_sas(endpoint, key, expiration_date_utc)
 
 # authenticate client
 credential = AzureSasCredential(signature)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level="Basic")
 
 services = [
     "EventGrid",

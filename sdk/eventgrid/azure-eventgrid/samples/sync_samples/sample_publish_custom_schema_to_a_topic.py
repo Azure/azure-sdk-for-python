@@ -31,7 +31,7 @@ endpoint = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_ENDPOINT"]
 def publish_event():
     # authenticate client
     credential = AzureKeyCredential(key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     # [START publish_custom_schema]
     custom_schema_event = {
