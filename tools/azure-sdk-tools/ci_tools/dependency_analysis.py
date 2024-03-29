@@ -57,7 +57,6 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
     packages = {}
     dependencies = {}
     for lib_dir in discover_targeted_packages("azure*", base_dir):
-        print(f"Processing {lib_dir}")
         try:
             setup_path = os.path.join(lib_dir, "setup.py")
             parsed = ParsedSetup.from_path(setup_path)
@@ -66,7 +65,6 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
             packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
 
             for req in requires:
-                print(f"  Processing {lib_name} requires {req}")
                 req_name, spec = parse_require(req)
                 if spec is None:
                     spec = ""
@@ -89,13 +87,11 @@ def get_wheel_deps(wheel_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str,
             with WheelFile(whl_path) as whl:
                 pkg_info = read_pkg_info_bytes(whl.read(whl.dist_info_path + "/METADATA"))
                 lib_name = pkg_info.get("Name")
-                print(f"Processing whl {lib_name}")
 
                 packages[lib_name] = {"version": pkg_info.get("Version"), "source": whl_path, "deps": []}
 
                 requires = pkg_info.get_all("Requires-Dist")
                 for req in requires:
-                    print(f"  Processing whl {lib_name} requires {req}")
                     req = req.split(";")[0]  # Extras conditions appear after a semicolon
                     req = re.sub(r"[\s\(\)]", "", req)  # Version specifiers appear in parentheses
                     req_name, spec = parse_require(req)
