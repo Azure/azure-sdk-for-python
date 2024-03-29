@@ -120,7 +120,7 @@ class _QueryExecutionContextBase(object):
         # Continues pages till finds a non-empty page or all results are exhausted
         while self._continuation or not self._has_started:
             # For start time option, First fetch will always return empty
-            # before we get a continuation toke
+            # before we get a continuation token
             first_fetch = not self._has_started
             if not self._has_started:
                 self._has_started = True
