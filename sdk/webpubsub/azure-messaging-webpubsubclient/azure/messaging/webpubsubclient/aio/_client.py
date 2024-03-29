@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator-async,too-many-lines,networking-import-outside-azure-core-transport
 import asyncio
-from functools import partial
 import inspect
 from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal, Awaitable
 import time
@@ -48,8 +47,9 @@ from ..models._enums import (
     WebPubSubProtocolType,
 )
 from .._client import (
-    _WebPubSubClient,
+    WebPubSubClientBase,
     WebPubSubClientCredential,
+    WebSocketAppBase,
     _RETRY_TOTAL,
     _RETRY_BACKOFF_FACTOR,
     _RETRY_BACKOFF_MAX,
@@ -64,7 +64,7 @@ from .._util import format_user_agent, raise_for_empty_message_ack
 _LOGGER = logging.getLogger(__name__)
 
 
-class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
+class WebSocketAppAsync(WebSocketAppBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         url,
@@ -77,12 +77,11 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
         reconnect_tried_times: Optional[int] = None,
         recover_start_time: Optional[float] = None,
     ) -> None:
+        super().__init__(reconnect_tried_times, recover_start_time)
         self.url = url
         self.on_open = on_open
         self.on_message = on_message
-        self.on_close = partial(
-            on_close, ws_reconnect_tried_times=reconnect_tried_times, ws_recover_start_time=recover_start_time
-        )
+        self.on_close = on_close
         self.on_error = on_error
         self.subprotocols = subprotocols
         self.header = header
@@ -90,8 +89,6 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
         self.session: Optional[aiohttp.ClientSession] = None
         self.sock: Optional[aiohttp.client.ClientWebSocketResponse] = None
         self.keep_running = False
-        self.close_event: Optional[CloseEvent] = None
-        self.error_happened: Optional[Exception] = None
 
     async def send(self, message: str) -> None:
         await self.sock.send_str(message)  # type: ignore
@@ -154,7 +151,7 @@ class WebSocketAppAsync:  # pylint: disable=too-many-instance-attributes
 
 
 class WebPubSubClient(
-    _WebPubSubClient
+    WebPubSubClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
 
@@ -607,6 +604,8 @@ class WebPubSubClient(
                     _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
                     await asyncio.sleep(delay_seconds)
                 await self._start_from_restarting(attempt)
+                if self._ws:
+                    self._ws.clear_reconnect_recover()
                 success = True
                 break
             except ReconnectError:
@@ -692,9 +691,6 @@ class WebPubSubClient(
                 _LOGGER.debug("WebSocket is connected with id: %s", message.connection_id)
                 self._connection_id = message.connection_id
                 self._reconnection_token = message.reconnection_token
-                if self._ws:
-                    self._ws.reconnect_tried_times = None
-                    self._ws.recover_start_time = None
 
                 if not self._is_initial_connected:
                     self._is_initial_connected = True
@@ -764,8 +760,6 @@ class WebPubSubClient(
             ws_instance: WebSocketAppAsync,
             close_status_code: int,
             close_msg: Optional[str] = None,
-            ws_reconnect_tried_times: Optional[int] = None,
-            ws_recover_start_time: Optional[float] = None,
         ):
             if self._state == WebPubSubClientState.CONNECTED:
                 _LOGGER.info(
@@ -780,33 +774,37 @@ class WebPubSubClient(
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
-                    await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+                    await self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 
                 if self._last_close_event and self._last_close_event.close_status_code == 1008:
                     _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
-                    await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+                    await self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 
                 if not self._protocol.is_reliable_sub_protocol:
                     _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
-                    await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+                    await self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 
                 recovery_url = self._build_recovery_url()
                 if not recovery_url:
                     _LOGGER.warning("Connection id or reconnection token is not available")
-                    await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+                    await self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 
                 self._state = WebPubSubClientState.RECOVERING
-                recovery_start = time.time() if ws_recover_start_time is None else ws_recover_start_time
+                recovery_start = (
+                    time.time() if ws_instance.recover_start_time is None else ws_instance.recover_start_time
+                )
                 first_time = True
                 while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
                     try:
-                        if ws_recover_start_time is not None or not first_time:
+                        if ws_instance.recover_start_time is not None or not first_time:
                             await asyncio.sleep(_RECOVERY_RETRY_INTERVAL)
                         await self._connect(recovery_url, None, recovery_start)
+                        if self._ws:
+                            self._ws.clear_reconnect_recover()
                         _LOGGER.debug("Recovery succeeded")
                         return
                     except RecoverError:
@@ -818,7 +816,7 @@ class WebPubSubClient(
                         _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
-                await self._handle_connection_close_and_no_recovery(ws_reconnect_tried_times)
+                await self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
             else:
                 if close_status_code or close_msg:
                     ws_instance.close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
@@ -892,7 +890,7 @@ class WebPubSubClient(
         self._last_disconnected_message = None
         self._connection_id = None
         self._reconnection_token = None
-        self._url = None
+        self._url = ""
 
         self._url = self._credential.get_client_access_url()
         await self._connect(self._url, reconnect_tried_times)

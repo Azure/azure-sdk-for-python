@@ -135,3 +135,16 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             test_group_name="test_disable_rejoin_group",
             assert_func=lambda x: x not in TEST_RESULT,
         )
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_open_client_error(self):
+        client = self.create_client(
+            connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
+        )
+        start_time = time.time()
+        with pytest.raises(OpenClientError) as err:
+            with client:
+                pass
+        assert time.time() - start_time < client._start_timeout
+        assert "During the process, error happened" in str(err)
