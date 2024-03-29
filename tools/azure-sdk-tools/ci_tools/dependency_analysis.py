@@ -316,13 +316,18 @@ def analyze_dependencies() -> None:
         upper_bound = False
         specs = dependencies[requirement]
         for spec in specs.keys():
-            print(f"Checking {spec}")
-            print(type(spec))
-            if any(s in spec for s in upper_bound_operators):
-                # There is a upper bound on the version, so we can't guarantee compatibility
-                print(f"Upper bound constraint found in {requirement} {spec}")
-                upper_bounds.append(requirement)
-                upper_bound = True
+            print(f"Checking {requirement} {spec}")
+            for s in upper_bound_operators:
+                print(f"Checking for {s} in {spec}")
+                if s in spec:
+                    print(f"Found {s} in {spec}")
+                    upper_bounds.append(requirement)
+                    upper_bound = True
+            # if any(s in spec for s in upper_bound_operators):
+            #     # There is a upper bound on the version, so we can't guarantee compatibility
+            #     print(f"Upper bound constraint found in {requirement} {spec}")
+            #     upper_bounds.append(requirement)
+            #     upper_bound = True
     if upper_bound:        
         if args.verbose:
             print(f"Upper bound constraints found in {pluralize(upper_bounds, 'dependency', 'dependencies')}: {list(upper_bounds)}")
