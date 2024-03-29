@@ -5,212 +5,171 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar
+from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar, IO
 import sys
 from azure.core.messaging import CloudEvent
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import _to_http_request
+from ..._operations._patch import _to_http_request, use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
 from ..._model_base import _deserialize
+
+from ..._operations._patch import _serialize_events, EVENT_TYPES_BASIC, EVENT_TYPES_STD, validate_args
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 class EventGridClientOperationsMixin(OperationsMixin):
 
-    @overload
-    async def publish_cloud_events(
-        self,
-        topic_name: str,
-        body: List[CloudEvent],
-        *,
-        binary_mode: bool = False,
-        content_type: str = "application/cloudevents-batch+json; charset=utf-8",
-        **kwargs: Any
-    ) -> None:
-        """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
-        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
-        various error codes. For example, 401: which indicates authorization failure, 403: which
-        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
-        not found, 400: for bad request, and 500: for internal server error.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param body: Array of Cloud Events being published. Required.
-        :type body: list[~azure.core.messaging.CloudEvent]
-        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
-         If 'datacontenttype` is not specified the default content type is `application/cloudevents-batch+json; charset=utf-8`.
-         Requires CloudEvent data to be passed in as bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
-         charset=utf-8".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @overload
-    async def publish_cloud_events(
+    async def send(
         self,
-        topic_name: str,
-        body: CloudEvent,
+        events: EVENT_TYPES_BASIC,
         *,
-        binary_mode: bool = False,
-        content_type: str = "application/cloudevents+json; charset=utf-8",
-        **kwargs: Any
+        channel_name: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
-        """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
-        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
-        various error codes. For example, 401: which indicates authorization failure, 403: which
-        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
-        not found, 400: for bad request, and 500: for internal server error.
+        """Send events to the Event Grid Service.
 
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param body: Single Cloud Event being published. Required.
-        :type body: ~azure.core.messaging.CloudEvent
-        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
-         If `datacontenttype` is not specified, the default content type is `application/cloudevents+json; charset=utf-8`.
-         Requires CloudEvent data to be passed in as bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
-        :paramtype content_type: str
+        :param event: The event to send.
+        :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
+         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
+         or CloudEventDict or List[CloudEventDict] or EventGridEventDict or List[EventGridEventDict]
+        :keyword channel_name: The name of the channel to send the event to.
+        :paramtype channel_name: str or None
+        :keyword content_type: The content type of the event. If not specified, the default value is
+         "application/cloudevents+json; charset=utf-8".
+        :paramtype content_type: str or None
+
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
+        ...
 
     @overload
-    async def publish_cloud_events(
+    async def send(
         self,
         topic_name: str,
-        body: Dict[str, Any],
+        events: EVENT_TYPES_STD,
         *,
         binary_mode: bool = False,
-        content_type: str = "application/cloudevents+json; charset=utf-8",
-        **kwargs: Any
+        content_type: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
-        """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
-        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
-        various error codes. For example, 401: which indicates authorization failure, 403: which
-        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
-        not found, 400: for bad request, and 500: for internal server error.
+        """Send events to the Event Grid Service.
 
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param body: Single Cloud Event being published. Required.
-        :type body: dict[str, Any]
-        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
-         If `datacontenttype` is not specified, the default content type is `application/cloudevents+json; charset=utf-8`.
-         Requires CloudEvent data to be passed in as bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
-        :paramtype content_type: str
+        :param event: The event to send.
+        :type event: CloudEvent or List[CloudEvent] or CloudEventDict or List[CloudEventDict]
+        :keyword topic_name: The name of the topic to send the event to.
+        :paramtype topic_name: str
+        :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
+         value is False.
+        :paramtype binary_mode: bool
+        :keyword content_type: The content type of the event. If not specified, the default value is
+         "application/cloudevents+json; charset=utf-8".
+        :paramtype content_type: str or None
+
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
+        ...
 
-    @overload
-    async def publish_cloud_events(
-        self,
-        topic_name: str,
-        body: List[Dict[str, Any]],
-        *,
-        binary_mode: bool = False,
-        content_type: str = "application/cloudevents-batch+json; charset=utf-8",
-        **kwargs: Any
-    ) -> None:
-        """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
-        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
-        various error codes. For example, 401: which indicates authorization failure, 403: which
-        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
-        not found, 400: for bad request, and 500: for internal server error.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param body: Batch of Cloud Events being published. Required.
-        :type body: list[dict[str, Any]]
-        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
-         If 'datacontenttype` is not specified, the default content type is `application/cloudevents-batch+json; charset=utf-8`.
-         Requires CloudEvent data to be passed in as bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    @validate_args(
+        kwargs_mapping={
+            "Basic": ["channel_name", "content_type"],
+            "Standard": ["binary_mode", "content_type"],
+        }
+    )
     @distributed_trace_async
-    async def publish_cloud_events(
-        self,
-        topic_name: str,
-        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
-        *,
-        binary_mode: bool = False,
-        **kwargs
-    ) -> None:
-        """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
-        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
-        various error codes. For example, 401: which indicates authorization failure, 403: which
-        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
-        not found, 400: for bad request, and 500: for internal server error.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param body: Cloud Event or Array of Cloud Events being published. Required.
-        :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, any] or list[dict[str, any]]
-        :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
-         If not specified, the default content type is "application/cloudevents+json; charset=utf-8".
-         Requires CloudEvent data to be passed in as bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    async def send(self, /, event, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
+        """Send events to the Event Grid Service."""
         
-        # Check that the body is a CloudEvent or list of CloudEvents even if dict
-        if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
+        channel_name = kwargs.pop("channel_name", None)
+        binary_mode = kwargs.pop("binary_mode", False)
+
+        if self._level == "Standard" and topic_name is None:
+            raise ValueError("Topic name is required for standard level client.")
+        
+        # check binary mode
+        if binary_mode:
+
+            # If data is passed as a dictionary, make sure it is a CloudEvent
             try:
-                if isinstance(body, list):
-                    body = [CloudEvent.from_dict(event) for event in body]
-                else:
-                    body = CloudEvent.from_dict(body)
+                if isinstance(event, dict):
+                    event = CloudEvent.from_dict(event)
             except AttributeError:
-                raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                                " list of CloudEvents, dict, or list of dicts."
-                                " If dict passed, must follow the CloudEvent format.")
+                raise TypeError("Binary mode is only supported for type CloudEvent.")
+            
+            # If data is a cloud event, convert to an HTTP Request in binary mode
+            if isinstance(event, CloudEvent):
+                kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
+                self._publish(
+                    topic_name, event, self._config.api_version, binary_mode, **kwargs
+                )  
+            else:
+                raise TypeError("Binary mode is only supported for type CloudEvent.")   
 
-
-        if isinstance(body, CloudEvent):
-            kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        elif isinstance(body, list):
-            kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
         else:
-            raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                            " list of CloudEvents, dict, or list of dicts."
-                            " If dict passed, must follow the CloudEvent format.")
+            # If no binary_mode is set, send whatever event is passed
 
+            # If a cloud event dict, convert to CloudEvent for serializing    
+            try:
+                if isinstance(event, dict):
+                    event = CloudEvent.from_dict(event)
+                if isinstance(event, list) and isinstance(event[0], dict):
+                    event = [CloudEvent.from_dict(e) for e in event]
+            except Exception:
+                pass
+
+            try:
+                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
+                if not isinstance(event, list):
+                    event = [event]
+                try:
+                    # Try to send via namespace
+                    await self._send(topic_name, _serialize_events(event), **kwargs)
+                except Exception as exception:
+                    if isinstance(exception, HttpResponseError):
+                        self._http_response_error_handler(exception, "namespace")
+                    else:
+                        # If that fails, try to send via basic
+                        await self._send(event, channel_name=channel_name, **kwargs)
+            except Exception as exception:
+                self._http_response_error_handler(exception, "basic")
+                raise Exception
+
+    def _http_response_error_handler(self, exception, level):
+        if isinstance(exception, HttpResponseError):
+            if exception.status_code == 400:
+                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
+            elif exception.status_code == 404:
+                raise HttpResponseError(f"Resource not found. Please check the {level} endpoint and try again.") from exception
+            else:
+                raise exception
+            
+        
+    @use_standard_only
     @distributed_trace_async
     async def receive_cloud_events(
         self,
@@ -263,24 +222,90 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    async def _publish(self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any) -> None:
+    @use_standard_only
+    @distributed_trace_async
+    async def acknowledge_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.AcknowledgeResult:
+        return await self._acknowledge_cloud_events(
+            topic_name, event_subscription_name, acknowledge_options, **kwargs
+        )
+
+    @use_standard_only
+    @distributed_trace_async
+    async def release_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
+        **kwargs: Any
+    ) -> _models.ReleaseResult:
+        return await self._release_cloud_events(
+            topic_name,
+            event_subscription_name,
+            release_options,
+            release_delay_in_seconds=release_delay_in_seconds,
+            **kwargs
+        )
+
+    @use_standard_only
+    @distributed_trace_async
+    async def reject_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        reject_options: Union[_models.RejectOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RejectResult:
+        return await self._reject_cloud_events(
+            topic_name, event_subscription_name, reject_options, **kwargs
+        )
+
+    @use_standard_only
+    @distributed_trace_async
+    async def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        return await self._renew_cloud_event_locks(
+            topic_name, event_subscription_name, renew_lock_options, **kwargs
+        )
+
+    async def _publish(
+        self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any
+    ) -> None:
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
+
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
         )
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = _to_http_request(            
+        http_request = _to_http_request(
             topic_name=topic_name,
             api_version=api_version,
             headers=_headers,
@@ -294,23 +319,27 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _stream = kwargs.pop("stream", False)
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            http_request,
-            stream=_stream,
-            **kwargs
+            http_request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+                await response.read()  # Load the body in memory and close the socket
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -318,13 +347,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         else:
             deserialized = _deserialize(
                 _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
+                response.json(),
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 __all__: List[str] = [
