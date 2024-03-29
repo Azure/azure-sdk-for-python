@@ -63,8 +63,6 @@ class EventGridClient(InternalEventGridClient):
         )
         self._level = level
 
-        if 
-
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
