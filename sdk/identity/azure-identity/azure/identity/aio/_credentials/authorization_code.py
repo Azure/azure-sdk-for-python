@@ -93,7 +93,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
           ``response`` attribute.
         """
         return await super(AuthorizationCodeCredential, self).get_token(
-            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret,  **kwargs
+            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
         )
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
