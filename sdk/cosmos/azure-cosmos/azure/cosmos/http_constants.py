@@ -41,6 +41,7 @@ class HttpHeaders:
 
     Authorization = "authorization"
     ETag = "etag"
+    ETagAsync = "Etag"
     MethodOverride = "X-HTTP-Method"
     Slug = "Slug"
     ContentType = "Content-Type"

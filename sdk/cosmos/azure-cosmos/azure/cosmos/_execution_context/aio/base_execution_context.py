@@ -131,7 +131,7 @@ class _QueryExecutionContextBase(object):
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
-                continuation_key = http_constants.HttpHeaders.ETag
+                continuation_key = http_constants.HttpHeaders.ETagAsync
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             # For start time however we get no initial results, so we need to pass continuation token
