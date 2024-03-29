@@ -87,7 +87,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
         """
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(
-            *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
         )
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
