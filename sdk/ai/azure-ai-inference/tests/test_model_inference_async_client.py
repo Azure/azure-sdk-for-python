@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import inspect
-import azure.ai.vision.imageanalysis as sdk
+import azure.ai.inference as sdk
 
 from model_inference_test_base import ModelInferenceTestBase, ServicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -22,15 +22,18 @@ class TestImageAnalysisAsyncClient(ModelInferenceTestBase):
     @recorded_by_proxy_async
     async def test_async_chat_completion(self, **kwargs):
 
-        self._create_client_for_standard_analysis(sync=False, **kwargs)
+        self._create_client_for_standard_test(sync=False, **kwargs)
+
+        options = sdk.models.ChatCompletionsOptions(
+            messages=[
+                sdk.models.ChatRequestUserMessage(
+                    content="How many feet are in a mile?"
+                )
+            ]
+        )
 
         await self._do_async_chat_completions(
-            options=[
-                messages=[
-                    role=sdk.models.ChatRole.USER,
-                    content="How many feet are in a mile?"
-                ]
-            ],
+            options=options,
             **kwargs
         )
 
@@ -73,7 +76,7 @@ class TestImageAnalysisAsyncClient(ModelInferenceTestBase):
     #
     # **********************************************************************************
 
- """    @ServicePreparer()
+"""    @ServicePreparer()
     @recorded_by_proxy_async
     async def test_analyze_async_authentication_failure(self, **kwargs):
 

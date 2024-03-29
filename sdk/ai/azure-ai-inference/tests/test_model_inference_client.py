@@ -21,11 +21,17 @@ class TestModelClient(ModelInferenceTestBase):
     # Test one chat completion
     @ServicePreparer()
     @recorded_by_proxy
-    def test_sync_chat_completion(self, **kwargs):
+    def test_chat_completion(self, **kwargs):
 
         self._create_client_for_standard_test(sync=True, **kwargs)
 
-        options = sdk.models.ChatCompletionsOptions(messages=[sdk.models.ChatRequestUserMessage(content="How many feet are in a mile?")])
+        options = sdk.models.ChatCompletionsOptions(
+            messages=[
+                sdk.models.ChatRequestUserMessage(
+                    content="How many feet are in a mile?"
+                )
+            ]
+        )
 
         self._do_chat_completions(
             options=options,

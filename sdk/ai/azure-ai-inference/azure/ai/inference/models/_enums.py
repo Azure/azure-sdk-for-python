@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents a generic policy for how a chat completions tool may be selected."""
+
+    AUTO = "auto"
+    """Specifies that the model may either use any of the tools provided in this chat completions
+    request or
+    instead return a standard chat completions response as if no tools were provided."""
+    NONE = "none"
+    """Specifies that the model should not respond with a tool call and should instead provide a
+    standard chat
+    completions response. Response content may still be influenced by the provided tool
+    definitions."""
+
+
 class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A description of the intended purpose of a message within a chat completions interaction."""
 

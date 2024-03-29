@@ -111,6 +111,13 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                       deterministic. It is not recommended to modify temperature and top_p for the same
                       completions request as the interaction of these two settings is difficult to
                       predict.
+                    "tool_choice": "str",  # Optional. If specified, the model will configure
+                      which of the provided tools it can use for the chat completions response. Is
+                      either a Union[str, "_models.ChatCompletionsToolSelectionPreset"] type or a
+                      ChatCompletionsNamedToolSelection type.
+                    "tools": [
+                        chat_completions_tool_definition
+                    ],
                     "top_p": 0.0  # Optional. An alternative to sampling with temperature called
                       nucleus sampling. This value causes the model to consider the results of tokens
                       with the provided probability mass. As an example, a value of 0.15 will cause
@@ -131,9 +138,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
-                                "role": "str"  # The chat role associated with the
+                                "role": "str",  # The chat role associated with the
                                   message. Required. Known values are: "system", "user", "assistant",
                                   and "tool".
+                                "tool_calls": [
+                                    chat_completions_tool_call
+                                ]
                             }
                         }
                     ],
@@ -190,9 +200,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
-                                "role": "str"  # The chat role associated with the
+                                "role": "str",  # The chat role associated with the
                                   message. Required. Known values are: "system", "user", "assistant",
                                   and "tool".
+                                "tool_calls": [
+                                    chat_completions_tool_call
+                                ]
                             }
                         }
                     ],
@@ -249,9 +262,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
-                                "role": "str"  # The chat role associated with the
+                                "role": "str",  # The chat role associated with the
                                   message. Required. Known values are: "system", "user", "assistant",
                                   and "tool".
+                                "tool_calls": [
+                                    chat_completions_tool_call
+                                ]
                             }
                         }
                     ],
@@ -341,6 +357,13 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                       deterministic. It is not recommended to modify temperature and top_p for the same
                       completions request as the interaction of these two settings is difficult to
                       predict.
+                    "tool_choice": "str",  # Optional. If specified, the model will configure
+                      which of the provided tools it can use for the chat completions response. Is
+                      either a Union[str, "_models.ChatCompletionsToolSelectionPreset"] type or a
+                      ChatCompletionsNamedToolSelection type.
+                    "tools": [
+                        chat_completions_tool_definition
+                    ],
                     "top_p": 0.0  # Optional. An alternative to sampling with temperature called
                       nucleus sampling. This value causes the model to consider the results of tokens
                       with the provided probability mass. As an example, a value of 0.15 will cause
@@ -361,9 +384,12 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                             "message": {
                                 "content": "str",  # The content of the message.
                                   Required.
-                                "role": "str"  # The chat role associated with the
+                                "role": "str",  # The chat role associated with the
                                   message. Required. Known values are: "system", "user", "assistant",
                                   and "tool".
+                                "tool_calls": [
+                                    chat_completions_tool_call
+                                ]
                             }
                         }
                     ],

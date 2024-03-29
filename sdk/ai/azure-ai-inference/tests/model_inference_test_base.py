@@ -6,7 +6,7 @@ import functools
 import logging
 import sys
 import azure.ai.inference as sdk
-import azure.ai.inference as async_sdk
+import azure.ai.inference.aio as async_sdk
 
 from os import path
 from typing import List, Optional, Union
@@ -14,6 +14,8 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError
 from azure.core.pipeline import PipelineRequest
+import asyncio
+import time
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
@@ -22,7 +24,7 @@ if LOGGING_ENABLED:
     # Create a logger for the 'azure' SDK
     # See https://docs.python.org/3/library/logging.html
     logger = logging.getLogger("azure")
-    logger.setLevel(logging.INFO)  # INFO or DEBUG
+    logger.setLevel(logging.DEBUG)  # INFO or DEBUG
 
     # Configure a console output
     handler = logging.StreamHandler(stream=sys.stdout)
@@ -105,14 +107,24 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
             ModelInferenceTestBase._validate_query_parameters(query_params, self.connection_url)
 
 
-    async def _do_async_chat_completion(
+    async def _do_async_chat_completions(
         self,
         options: sdk.models.ChatCompletionsOptions,
         query_params: Optional[dict] = None,
         **kwargs,
     ):
+        start_time = time.time()
 
-        result = await self.async_client.chat_completions(options=options, params=query_params)
+        # Start the operation and get a Future object
+        future = asyncio.ensure_future(self.async_client.get_chat_completions(chat_completions_options=options))
+
+        # Loop until the operation is done
+        while not future.done():
+            await asyncio.sleep(0.1)  # sleep for 100 ms
+            print(f"Elapsed time: {int(1000*(time.time()- start_time))}ms")
+
+        # Get the result (this will not block since the operation is done)
+        result = future.result()
 
         # Optional: console printout of all results
         if ModelInferenceTestBase.PRINT_CHAT_COMPLETION_RESULTS:
@@ -155,7 +167,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = await self.async_client.get_chat_completions(chat_completions_options=options)
+            result = await  self.async_client.get_chat_completions(chat_completions_options=options)
 
         except AzureError as e:
             print(e)
@@ -199,16 +211,18 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     @staticmethod
     def _print_chat_completions_results(result: sdk.models.ChatCompletions):
 
-        for choice in result.choices:
-            print(f" choices[0].message.content: {choice.message.content}")
-            print(" choices[0].message.role: {}".format(choice.message.role))
-            print(" choices[0].finish_reason: {}".format(choice.finish_reason))
-            print(" choices[0].index: {}".format(choice.index))
+        print(" Chat Completions:")
 
-        print(" id: {}".format(result.id))
-        print(" created: {}".format(result.created))
-        print(" model: {}".format(result.model))
-        print(" object: {}".format(result.object))
-        print(" usage.prompt_tokens: {}".format(result.usage.prompt_tokens))
-        print(" usage.completion_tokens: {}".format(result.usage.completion_tokens))
-        print(" usage.total_tokens: {}".format(result.usage.total_tokens))
+        for choice in result.choices:
+            print(f"\tchoices[0].message.content: {choice.message.content}")
+            print("\tchoices[0].message.role: {}".format(choice.message.role))
+            print("\tchoices[0].finish_reason: {}".format(choice.finish_reason))
+            print("\tchoices[0].index: {}".format(choice.index))
+
+        print("\tid: {}".format(result.id))
+        print("\tcreated: {}".format(result.created))
+        print("\tmodel: {}".format(result.model))
+        print("\tobject: {}".format(result.object))
+        print("\tusage.prompt_tokens: {}".format(result.usage.prompt_tokens))
+        print("\tusage.completion_tokens: {}".format(result.usage.completion_tokens))
+        print("\tusage.total_tokens: {}".format(result.usage.total_tokens))
