@@ -16,7 +16,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
+from azure.eventgrid import EventGridClient, EventGridEvent, generate_sas
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]

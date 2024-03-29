@@ -22,7 +22,7 @@ import time
 from datetime import datetime, timedelta
 from azure.core.credentials import AzureSasCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient, generate_sas
+from azure.eventgrid import EventGridClient, generate_sas
 
 key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]

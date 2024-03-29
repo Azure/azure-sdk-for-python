@@ -19,7 +19,7 @@ USAGE:
 import os
 from datetime import datetime
 from msrest.serialization import UTC
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]

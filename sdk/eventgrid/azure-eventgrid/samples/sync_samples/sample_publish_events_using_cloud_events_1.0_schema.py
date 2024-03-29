@@ -16,7 +16,7 @@ USAGE:
 """
 # [START publish_cloud_event_to_topic]
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 

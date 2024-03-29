@@ -15,7 +15,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
