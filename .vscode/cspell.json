@@ -135,6 +135,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "psycopg",
     "spinup",
     "cibuildwheel",
     "aoai",

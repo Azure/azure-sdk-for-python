@@ -63,7 +63,7 @@ setup(
     },
     python_requires=">=3.7",
     install_requires=[
-        'azure-core<2.0.0,>=1.26.0',
+        'azure-core>=1.26.0',
         'azure-mixedreality-authentication>=1.0.0b1',
         'msrest>=0.6.21'
     ],

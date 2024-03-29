@@ -76,7 +76,7 @@ setup(
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]<2.0.0,>=1.24.0",
+            "azure-core[aio]>=1.24.0",
         ],
     },
 )
