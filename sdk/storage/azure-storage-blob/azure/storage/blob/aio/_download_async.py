@@ -9,7 +9,7 @@ import sys
 import warnings
 from io import BytesIO
 from itertools import islice
-from typing import Any, AsyncIterator, Generator, Callable, cast, Dict, Generic, IO, List, Optional, Tuple, TypeVar, TYPE_CHECKING
+from typing import Any, AsyncIterator, Awaitable, Generator, Callable, cast, Dict, Generic, IO, List, Optional, Tuple, TypeVar, TYPE_CHECKING
 
 import asyncio
 
@@ -30,6 +30,7 @@ from .._encryption import (
 if TYPE_CHECKING:
     from .._encryption import _EncryptionData
     from .._generated.aio import AzureBlobStorage
+    from .._generated.aio.operations import BlobOperations
     from .._models import BlobProperties
     from .._shared.models import StorageConfiguration
 
@@ -62,10 +63,10 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
 class _AsyncChunkDownloader(_ChunkDownloader):
     def __init__(self, **kwargs: Any) -> None:
         super(_AsyncChunkDownloader, self).__init__(**kwargs)
-        self.stream_lock = asyncio.Lock() if kwargs.get('parallel') else None
-        self.progress_lock = asyncio.Lock() if kwargs.get('parallel') else None
+        self.stream_lock_async = asyncio.Lock() if kwargs.get('parallel') else None
+        self.progress_lock_async = asyncio.Lock() if kwargs.get('parallel') else None
 
-    async def process_chunk(self, chunk_start: int) -> None:
+    async def process_chunk(self, chunk_start: int) -> None:  # type: ignore [override]
         chunk_start, chunk_end = self._calculate_range(chunk_start)
         chunk_data = await self._download_chunk(chunk_start, chunk_end - 1)
         length = chunk_end - chunk_start
@@ -73,29 +74,29 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             await self._write_to_stream(chunk_data, chunk_start)
             await self._update_progress(length)
 
-    async def yield_chunk(self, chunk_start: int) -> bytes:
+    async def yield_chunk(self, chunk_start: int) -> bytes:  # type: ignore [override]
         chunk_start, chunk_end = self._calculate_range(chunk_start)
         return await self._download_chunk(chunk_start, chunk_end - 1)
 
-    async def _update_progress(self, length: int) -> None:
-        if self.progress_lock:
-            async with self.progress_lock:  # pylint: disable=not-async-context-manager
+    async def _update_progress(self, length: int) -> None:  # type: ignore [override]
+        if self.progress_lock_async:
+            async with self.progress_lock_async:  # pylint: disable=not-async-context-manager
                 self.progress_total += length
         else:
             self.progress_total += length
 
         if self.progress_hook:
-            await self.progress_hook(self.progress_total, self.total_size)
+            await cast(Callable[[int, Optional[int]], Awaitable[Any]], self.progress_hook)(self.progress_total, self.total_size)  # pylint: disable=line-too-long
 
-    async def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:
-        if self.stream_lock:
-            async with self.stream_lock:  # pylint: disable=not-async-context-manager
+    async def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:  # type: ignore [override]
+        if self.stream_lock_async:
+            async with self.stream_lock_async:  # pylint: disable=not-async-context-manager
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
                 self.stream.write(chunk_data)
         else:
             self.stream.write(chunk_data)
 
-    async def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:
+    async def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:  # type: ignore [override]
         if self.encryption_options is None:
             raise ValueError("Required argument is missing: encryption_options")
         download_range, offset = process_range_and_offset(
@@ -113,14 +114,14 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 check_content_md5=self.validate_content
             )
             try:
-                _, response = await self.client.download(
+                _, response = await cast(Awaitable[Any], self.client.download(
                     range=range_header,
                     range_get_content_md5=range_validation,
                     validate_content=self.validate_content,
                     data_stream_total=self.total_size,
                     download_stream_current=self.progress_total,
                     **self.request_options
-                )
+                ))
 
             except HttpResponseError as error:
                 process_storage_error(error)
@@ -374,11 +375,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = await self._clients.blob.download(
+                    _, response = cast(Tuple[Optional[Any], Any], await self._clients.blob.download(
                         validate_content=self._validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
-                        **self._request_options)
+                        **self._request_options))
                 except HttpResponseError as e:
                     process_storage_error(e)
 

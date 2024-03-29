@@ -81,8 +81,8 @@ class BlobSamplesAsync(object):
 
                 # [START upload_a_blob]
                 # Upload content to block blob
-                with open(SOURCE_FILE, "rb") as data:
-                    await blob_client.upload_blob(data, blob_type="BlockBlob")
+                with open(SOURCE_FILE, "rb") as source:
+                    await blob_client.upload_blob(source, blob_type="BlockBlob")
                 # [END upload_a_blob]
 
                 # [START download_a_blob]
@@ -211,8 +211,8 @@ class BlobSamplesAsync(object):
                 blob_client = container_client.get_blob_client("myappendblob")
 
                 # Upload content to the append blob
-                with open(SOURCE_FILE, "rb") as data:
-                    await blob_client.upload_blob(data, blob_type="AppendBlob")
+                with open(SOURCE_FILE, "rb") as source:
+                    await blob_client.upload_blob(source, blob_type="AppendBlob")
 
                 # Download append blob
                 with open(DEST_FILE, "wb") as my_blob:

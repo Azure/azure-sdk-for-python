@@ -1800,7 +1800,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def stage_block(
         self, block_id: str,
-        data: Union[Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1810,6 +1810,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
