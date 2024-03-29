@@ -12,7 +12,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.skip  # Skipping tests until emulator supports
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
