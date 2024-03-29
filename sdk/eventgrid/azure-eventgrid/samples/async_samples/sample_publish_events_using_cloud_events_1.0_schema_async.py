@@ -18,7 +18,7 @@ USAGE:
 import os
 import asyncio
 from azure.core.messaging import CloudEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]

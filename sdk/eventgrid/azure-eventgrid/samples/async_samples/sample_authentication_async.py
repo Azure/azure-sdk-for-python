@@ -17,7 +17,7 @@ USAGE:
 """
 # [START client_auth_with_key_cred_async]
 import os
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
@@ -29,7 +29,7 @@ client = EventGridClient(endpoint, credential_key, level="Basic")
 
 # [START client_auth_with_sas_cred_async]
 import os
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureSasCredential
 
 signature = os.environ["EVENTGRID_SAS"]
@@ -41,7 +41,7 @@ client = EventGridClient(endpoint, credential_sas, level="Basic")
 
 # [START client_auth_with_token_cred_async]
 from azure.identity.aio import DefaultAzureCredential
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid import EventGridEvent
 
 event = EventGridEvent(
