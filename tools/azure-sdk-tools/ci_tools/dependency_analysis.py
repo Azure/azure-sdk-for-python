@@ -192,9 +192,10 @@ def analyze_dependencies() -> None:
     )
     args = parser.parse_args()
 
-    incompatible, known_reqs, new_reqs, missing_reqs = [], [], [], []
+    incompatible, known_reqs, new_reqs, missing_reqs, upper_bounds = [], [], [], [], []
     exitcode = 0
     frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
+    approved_upper_bound_constraints_filename = os.path.join(base_dir, "approved_upper_bound_constraints.txt")
 
     if args.out:
         try:
@@ -300,6 +301,31 @@ def analyze_dependencies() -> None:
     else:
         print("\nAll library dependencies verified, no incompatible versions detected.")
 
+    # verify there is no non-approved upper bound constraints
+    approved_upper_bound_constraints = []
+    if os.path.exists(approved_upper_bound_constraints_filename):
+        with open(approved_upper_bound_constraints_filename, "r") as f:
+            approved_upper_bound_constraints = set([line.strip() for line in f.readlines()])
+        
+    for requirement in sorted(dependencies.keys()):
+        if requirement in approved_upper_bound_constraints:
+            continue
+        upper_bound = False
+        specs = dependencies[requirement]
+        for spec in specs.keys():
+            if spec.operator in ("!=", "==", "<=", "<", "~="):
+                # There is a upper bound on the version, so we can't guarantee compatibility
+                upper_bounds.append(requirement)
+                upper_bound = True
+    if upper_bound:        
+        if args.verbose:
+            print(f"Upper bound constraints found in {pluralize(upper_bounds, 'dependency', 'dependencies')}: {list(upper_bounds)}")
+        else:
+            print(
+                f"Upper bound constraints found in {pluralize(upper_bounds, 'dependency', 'dependencies')}. Run this script with --verbose for details."
+            )
+        exitcode = 1
+    
     if args.freeze:
         if incompatible:
             print(
