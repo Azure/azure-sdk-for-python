@@ -196,6 +196,7 @@ def analyze_dependencies() -> None:
     exitcode = 0
     frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
     approved_upper_bound_constraints_filename = os.path.join(base_dir, "approved_upper_bound_constraints.txt")
+    upper_bound_operators = ["==", "<=", "<", "~="]
 
     if args.out:
         try:
@@ -316,12 +317,10 @@ def analyze_dependencies() -> None:
         specs = dependencies[requirement]
         for spec in specs.keys():
             print(f"Checking {requirement} {spec}")
-            if hasattr(spec, "operator"):
-                print(f"  {spec.operator} {spec.version}")
-                if spec.operator in ("!=", "==", "<=", "<", "~="):
-                    # There is a upper bound on the version, so we can't guarantee compatibility
-                    upper_bounds.append(requirement)
-                    upper_bound = True
+            if any(s in spec for s in upper_bound_operators):
+                # There is a upper bound on the version, so we can't guarantee compatibility
+                upper_bounds.append(requirement)
+                upper_bound = True
     if upper_bound:        
         if args.verbose:
             print(f"Upper bound constraints found in {pluralize(upper_bounds, 'dependency', 'dependencies')}: {list(upper_bounds)}")
