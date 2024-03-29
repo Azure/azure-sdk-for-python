@@ -23,7 +23,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 try:
     # Publish a CloudEvent
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+    client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
     # Receive CloudEvents and parse out lock tokens
     receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)

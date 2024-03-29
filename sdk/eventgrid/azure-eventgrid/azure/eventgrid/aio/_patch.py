@@ -48,7 +48,7 @@ class EventGridClient(InternalEventGridClient):
         credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
         *,
         api_version: Optional[str] = None,
-        level: Optional[Union[str, ClientLevel]] = None,
+        level: Union[str, ClientLevel] = "Standard",
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
@@ -84,10 +84,12 @@ class EventGridClient(InternalEventGridClient):
             self._client = EventGridPublisherClient( # type: ignore[assignment]
                 endpoint, credential, api_version=self._config.api_version, **kwargs
             )
+            self._send = self._client.send
         elif level == ClientLevel.STANDARD:
             self._client: AsyncPipelineClient = AsyncPipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
+            self._send = self._publish_cloud_events
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

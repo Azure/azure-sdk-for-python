@@ -33,14 +33,14 @@ cloud_event_ack = CloudEvent(
 
 # Publish a CloudEvent
 try:
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_reject)
+    client.send(topic_name=TOPIC_NAME, events=cloud_event_reject)
 except HttpResponseError:
     raise
 
 # Publish a list of CloudEvents
 try:
     list_of_cloud_events = [cloud_event_release, cloud_event_ack]
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+    client.send(topic_name=TOPIC_NAME, events=list_of_cloud_events)
 except HttpResponseError:
     raise
 

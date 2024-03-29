@@ -183,12 +183,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    def send(self, /, event, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
+    def send(self, /, events, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
         """Send events to the Event Grid Service."""
         # TODO: type hints + docstrings
         
-        channel_name = kwargs.pop("channel_name", None)
-        binary_mode = kwargs.pop("binary_mode", False)
+        channel_name = channel_name
+        binary_mode = binary_mode
 
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
@@ -198,16 +198,16 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
             # If data is passed as a dictionary, make sure it is a CloudEvent
             try:
-                if isinstance(event, dict):
-                    event = CloudEvent.from_dict(event)
+                if isinstance(events, dict):
+                    events = CloudEvent.from_dict(events)
             except AttributeError:
                 raise TypeError("Binary mode is only supported for type CloudEvent.")
             
             # If data is a cloud event, convert to an HTTP Request in binary mode
-            if isinstance(event, CloudEvent):
-                kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
+            # Content type becomes the data content type
+            if isinstance(events, CloudEvent):
                 self._publish(
-                    topic_name, event, self._config.api_version, binary_mode, **kwargs
+                    topic_name, events, self._config.api_version, binary_mode, **kwargs
                 )  
             else:
                 raise TypeError("Binary mode is only supported for type CloudEvent.")   
@@ -217,26 +217,26 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
             # If a cloud event dict, convert to CloudEvent for serializing    
             try:
-                if isinstance(event, dict):
-                    event = CloudEvent.from_dict(event)
-                if isinstance(event, list) and isinstance(event[0], dict):
-                    event = [CloudEvent.from_dict(e) for e in event]
+                if isinstance(events, dict):
+                    events = CloudEvent.from_dict(events)
+                if isinstance(events, list) and isinstance(events[0], dict):
+                    events = [CloudEvent.from_dict(e) for e in events]
             except Exception:
                 pass
 
             try:
-                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-                if not isinstance(event, list):
-                    event = [event]
+                kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
+                if not isinstance(events, list):
+                    events = [events]
                 try:
                     # Try to send via namespace
-                    self._send(topic_name, _serialize_events(event), **kwargs)
+                    self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:
                     if isinstance(exception, HttpResponseError):
                         self._http_response_error_handler(exception, "namespace")
                     else:
                         # If that fails, try to send via basic
-                        self._send(event, channel_name=channel_name, **kwargs)
+                        self._send(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
                 self._http_response_error_handler(exception, "basic")
                 raise Exception
@@ -285,9 +285,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             api_version=api_version,
             headers=_headers,
             params=_params,
-            content_type=content_type,
             event=event,
-            binary_mode=binary_mode,
             **kwargs,
         )
 
@@ -461,10 +459,8 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     event = kwargs.pop("event")
-    binary_mode = kwargs.pop("binary_mode", False)
 
-    # if binary_mode:
-        # Content of the request is the data, if already in binary - no work needed
+    # Content of the request is the data, if already in binary - no work needed
     try:
         if isinstance(event.data, bytes):
             _content = event.data
