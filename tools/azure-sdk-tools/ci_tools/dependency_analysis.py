@@ -316,10 +316,12 @@ def analyze_dependencies() -> None:
         specs = dependencies[requirement]
         for spec in specs.keys():
             print(f"Checking {requirement} {spec}")
-            if hasattr(spec, "operator") and spec.operator in ("!=", "==", "<=", "<", "~="):
-                # There is a upper bound on the version, so we can't guarantee compatibility
-                upper_bounds.append(requirement)
-                upper_bound = True
+            if hasattr(spec, "operator"):
+                print(f"  {spec.operator} {spec.version}")
+                if spec.operator in ("!=", "==", "<=", "<", "~="):
+                    # There is a upper bound on the version, so we can't guarantee compatibility
+                    upper_bounds.append(requirement)
+                    upper_bound = True
     if upper_bound:        
         if args.verbose:
             print(f"Upper bound constraints found in {pluralize(upper_bounds, 'dependency', 'dependencies')}: {list(upper_bounds)}")
