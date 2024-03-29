@@ -86,6 +86,8 @@ class EventGridClient(InternalEventGridClient):
             )
             self._send = self._client.send
         elif level == ClientLevel.STANDARD:
+            if isinstance(credential, AzureSasCredential):
+                raise TypeError("SAS token authentication is not supported for the standard client.")
             self._client: AsyncPipelineClient = AsyncPipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )

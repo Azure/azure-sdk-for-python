@@ -90,6 +90,8 @@ class EventGridClient(InternalEventGridClient):
             self._client = EventGridPublisherClient(endpoint, credential, api_version=self._config.api_version) # type:ignore[assignment]
             self._send = self._client.send
         elif level == ClientLevel.STANDARD:
+            if isinstance(credential, AzureSasCredential):
+                raise TypeError("SAS token authentication is not supported for the standard client.")
             self._client = PipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
