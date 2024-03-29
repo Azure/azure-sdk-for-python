@@ -45,6 +45,11 @@ test:
     - azure.mgmt.alertsmanagement.aio.operations
     - azure.mgmt.alertsmanagement.models
     - azure.mgmt.alertsmanagement.operations
+    - azure.mgmt.apicenter
+    - azure.mgmt.apicenter.aio
+    - azure.mgmt.apicenter.aio.operations
+    - azure.mgmt.apicenter.models
+    - azure.mgmt.apicenter.operations
     - azure.mgmt.apimanagement
     - azure.mgmt.apimanagement.aio
     - azure.mgmt.apimanagement.aio.operations
@@ -271,11 +276,6 @@ test:
     - azure.mgmt.datafactory.aio.operations
     - azure.mgmt.datafactory.models
     - azure.mgmt.datafactory.operations
-    - azure.mgmt.datalake.store
-    - azure.mgmt.datalake.store.aio
-    - azure.mgmt.datalake.store.aio.operations
-    - azure.mgmt.datalake.store.models
-    - azure.mgmt.datalake.store.operations
     - azure.mgmt.datamigration
     - azure.mgmt.datamigration.aio
     - azure.mgmt.datamigration.aio.operations
@@ -367,6 +367,11 @@ test:
     - azure.mgmt.elastic.aio.operations
     - azure.mgmt.elastic.models
     - azure.mgmt.elastic.operations
+    - azure.mgmt.elasticsan
+    - azure.mgmt.elasticsan.aio
+    - azure.mgmt.elasticsan.aio.operations
+    - azure.mgmt.elasticsan.models
+    - azure.mgmt.elasticsan.operations
     - azure.mgmt.eventgrid
     - azure.mgmt.eventgrid.aio
     - azure.mgmt.eventgrid.aio.operations
@@ -436,6 +441,11 @@ test:
     - azure.mgmt.hybridconnectivity.aio.operations
     - azure.mgmt.hybridconnectivity.models
     - azure.mgmt.hybridconnectivity.operations
+    - azure.mgmt.hybridcontainerservice
+    - azure.mgmt.hybridcontainerservice.aio
+    - azure.mgmt.hybridcontainerservice.aio.operations
+    - azure.mgmt.hybridcontainerservice.models
+    - azure.mgmt.hybridcontainerservice.operations
     - azure.mgmt.hybridkubernetes
     - azure.mgmt.hybridkubernetes.aio
     - azure.mgmt.hybridkubernetes.aio.operations
@@ -596,6 +606,11 @@ test:
     - azure.mgmt.network.aio.operations
     - azure.mgmt.network.models
     - azure.mgmt.network.operations
+    - azure.mgmt.networkanalytics
+    - azure.mgmt.networkanalytics.aio
+    - azure.mgmt.networkanalytics.aio.operations
+    - azure.mgmt.networkanalytics.models
+    - azure.mgmt.networkanalytics.operations
     - azure.mgmt.networkcloud
     - azure.mgmt.networkcloud.aio
     - azure.mgmt.networkcloud.aio.operations

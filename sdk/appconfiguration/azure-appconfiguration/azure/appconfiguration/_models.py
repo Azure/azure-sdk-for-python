@@ -4,10 +4,13 @@
 # ------------------------------------
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast, Callable
 from typing_extensions import Literal
 
+from azure.core.async_paging import AsyncList
 from azure.core.rest import HttpResponse
+from azure.core.paging import PageIterator
+from azure.core.async_paging import AsyncPageIterator
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -15,10 +18,6 @@ from ._generated.models import (
     Snapshot as GeneratedConfigurationSnapshot,
     SnapshotStatus,
 )
-
-PolymorphicConfigurationSetting = Union[
-    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
-]
 
 
 class ConfigurationSetting(Model):
@@ -67,25 +66,23 @@ class ConfigurationSetting(Model):
         self.tags = kwargs.get("tags", {})
 
     @classmethod
-    def _from_generated(cls, key_value: KeyValue) -> PolymorphicConfigurationSetting:
-        if key_value is None:
-            return key_value
+    def _from_generated(cls, key_value: KeyValue) -> "ConfigurationSetting":
+        # pylint:disable=protected-access
         if key_value.content_type is not None:
             try:
                 if key_value.content_type.startswith(
-                    FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
+                    FeatureFlagConfigurationSetting._feature_flag_content_type
                 ) and key_value.key.startswith(  # type: ignore
-                    FeatureFlagConfigurationSetting._key_prefix  # pylint: disable=protected-access
+                    FeatureFlagConfigurationSetting._key_prefix
                 ):
-                    return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
-                        key_value
-                    )
+                    config_setting = FeatureFlagConfigurationSetting._from_generated(key_value)
+                    if key_value.value:
+                        config_setting.value = key_value.value
+                    return config_setting
                 if key_value.content_type.startswith(
-                    SecretReferenceConfigurationSetting._secret_reference_content_type  # pylint:disable=protected-access
+                    SecretReferenceConfigurationSetting._secret_reference_content_type
                 ):
-                    return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
-                        key_value
-                    )
+                    return SecretReferenceConfigurationSetting._from_generated(key_value)
             except (KeyError, AttributeError):
                 pass
 
@@ -122,7 +119,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """The identity of the configuration setting."""
     key: str
     """The key of the configuration setting."""
-    enabled: Optional[bool]
+    enabled: bool
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
     filters: Optional[List[Dict[str, Any]]]
@@ -161,7 +158,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self,
         feature_id: str,
         *,
-        enabled: Optional[bool] = None,
+        enabled: bool = False,
         filters: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> None:
@@ -170,8 +167,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         :type feature_id: str
         :keyword enabled: The value indicating whether the feature flag is enabled.
             A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-            if there are no conditions or if all conditions are satisfied.
-        :paramtype enabled: bool or None
+            if there are no conditions or if all conditions are satisfied. Default value of this property is False.
+        :paramtype enabled: bool
         :keyword filters: Filters that must run on the client and be evaluated as true for the feature
             to be considered enabled.
         :paramtype filters: list[dict[str, Any]] or None
@@ -204,6 +201,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             temp = json.loads(self._value)
             temp["id"] = self.feature_id
             temp["enabled"] = self.enabled
+            temp["display_name"] = self.display_name
+            temp["description"] = self.description
             if "conditions" not in temp.keys():
                 temp["conditions"] = {}
             temp["conditions"]["client_filters"] = self.filters
@@ -218,26 +217,30 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             temp = json.loads(new_value)
             temp["id"] = self.feature_id
             self._value = json.dumps(temp)
-            self.enabled = temp.get("enabled", None)
+            self.enabled = temp.get("enabled", False)
+            self.display_name = temp.get("display_name", None)
+            self.description = temp.get("description", None)
             self.filters = None
             conditions = temp.get("conditions", None)
             if conditions:
                 self.filters = conditions.get("client_filters", None)
         except (json.JSONDecodeError, ValueError):
             self._value = new_value
-            self.enabled = None
+            self.enabled = False
             self.filters = None
 
     @classmethod
-    def _from_generated(cls, key_value: KeyValue) -> Union["FeatureFlagConfigurationSetting", ConfigurationSetting]:
-        if key_value is None:
-            return key_value
-        enabled = None
+    def _from_generated(cls, key_value: KeyValue) -> "FeatureFlagConfigurationSetting":
+        enabled = False
         filters = None
+        display_name = None
+        description = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
-                enabled = temp.get("enabled")
+                enabled = temp.get("enabled", False)
+                display_name = temp.get("display_name")
+                description = temp.get("description")
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
         except (ValueError, json.JSONDecodeError):
@@ -253,6 +256,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             etag=key_value.etag,
             enabled=enabled,
             filters=filters,
+            display_name=display_name,
+            description=description,
         )
 
     def _to_generated(self) -> KeyValue:
@@ -346,8 +351,6 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> "SecretReferenceConfigurationSetting":
-        if key_value is None:
-            return key_value
         secret_uri = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
@@ -495,11 +498,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         return snapshot
 
     @classmethod
-    def _from_deserialized(  # pylint:disable=unused-argument
+    def _from_deserialized(
         cls,
-        response: HttpResponse,
+        response: HttpResponse,  # pylint:disable=unused-argument
         deserialized: GeneratedConfigurationSnapshot,
-        response_headers: Dict,
+        response_headers: Dict,  # pylint:disable=unused-argument
     ) -> "ConfigurationSnapshot":
         if deserialized is None:
             return deserialized
@@ -535,3 +538,81 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
             retention_period=self.retention_period,
             tags=self.tags,
         )
+
+
+def _return_deserialized_and_headers(_, deserialized, response_headers):
+    return deserialized, response_headers
+
+
+class ConfigurationSettingPropertiesPaged(PageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    etag: str
+    """The etag of current page."""
+
+    def __init__(self, command: Callable, **kwargs):
+        super(ConfigurationSettingPropertiesPaged, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
+
+    def _get_next_cb(self, continuation_token, **kwargs):
+        return self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            continuation_token=continuation_token,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
+        )
+
+    def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.pop("ETag")
+        return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
+
+
+class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    etag: str
+    """The etag of current page."""
+
+    def __init__(self, command: Callable, **kwargs):
+        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
+
+    async def _get_next_cb(self, continuation_token, **kwargs):
+        return await self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            continuation_token=continuation_token,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
+        )
+
+    async def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.pop("ETag")
+        return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))

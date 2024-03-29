@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import PipelineJob as Re
 from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleActionType as RestScheduleActionType
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2024_01_01_preview.models import TriggerRunSubmissionDto as RestTriggerRunSubmissionDto
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -117,12 +118,18 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
 
     @property
     def create_job(self) -> Any:  # pylint: disable=useless-return
+        """The create_job entity associated with the schedule if exists."""
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
 
     @create_job.setter
     def create_job(self, value: Any) -> None:  # pylint: disable=unused-argument
+        """Set the create_job entity associated with the schedule if exists.
+
+        :param value: The create_job entity associated with the schedule if exists.
+        :type value: Any
+        """
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @property
@@ -470,3 +477,41 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         :rtype: Dict[Literal["trigger_type"], str]
         """
         return {"trigger_type": type(self.trigger).__name__}
+
+
+class ScheduleTriggerResult:
+    """Schedule trigger result returned by trigger an enabled schedule once.
+
+    This class shouldn't be instantiated directly. Instead, it is used as the return type of schedule trigger.
+
+    :ivar str job_name:
+    :ivar str schedule_action_type:
+    """
+
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+        self.job_name = kwargs.get("job_name", None)
+        self.schedule_action_type = kwargs.get("schedule_action_type", None)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestTriggerRunSubmissionDto) -> "ScheduleTriggerResult":
+        """Construct a ScheduleJob from a rest object.
+
+        :param obj: The rest object to construct from.
+        :type obj: ~azure.ai.ml._restclient.v2024_01_01_preview.models.TriggerRunSubmissionDto
+        :return: The constructed ScheduleJob.
+        :rtype: ScheduleTriggerResult
+        """
+        return cls(
+            schedule_action_type=obj.schedule_action_type,
+            job_name=obj.submission_id,
+        )
+
+    def _to_dict(self) -> dict:
+        """Convert the object to a dictionary.
+        :return: The dictionary representation of the object.
+        :rtype: dict
+        """
+        return {
+            "job_name": self.job_name,
+            "schedule_action_type": self.schedule_action_type,
+        }

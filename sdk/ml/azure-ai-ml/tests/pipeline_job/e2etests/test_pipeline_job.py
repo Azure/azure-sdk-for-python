@@ -385,12 +385,12 @@ class TestPipelineJob(AzureRecordedTestCase):
                                 },
                                 "literal_input": {"job_input_type": "literal", "value": "2"},
                             },
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                         "hello_world_inline_commandjob_2": {
                             "type": "command",
                             "name": "hello_world_inline_commandjob_2",
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                     },
                     "outputs": {"job_out_path_1": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}},
@@ -474,7 +474,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                                     "value": "${{parent.inputs.pipeline_job_test_input}}",
                                 },
                             },
-                            "_source": "REMOTE.WORKSPACE.COMPONENT",
+                            "_source": "YAML.JOB",
                         },
                     },
                     "outputs": {
@@ -619,6 +619,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -1507,7 +1508,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
@@ -1525,7 +1526,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "fail_if_conflict",
             "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
@@ -1543,7 +1544,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
@@ -1566,7 +1567,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files_job"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.JOB",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
@@ -1589,7 +1590,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
                 "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
@@ -1613,7 +1614,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
         # registry component
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "outputs": {
                 "sink": {
                     "job_output_type": "uri_folder",
@@ -1671,7 +1672,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "computeId": "serverless",
             "outputs": {"sink": {"job_output_type": "mltable"}},
             "source": {
@@ -1695,7 +1696,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "computeId": "serverless",
             "outputs": {
                 "sink": {
@@ -1722,7 +1723,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.REGISTRY",
+            "_source": "BUILTIN",
             "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "sink": {
                 "connection": "${{parent.inputs.connection_target_azuresql}}",
@@ -2059,7 +2060,8 @@ jobs:
         # constructed based on response of code pending upload requests, and those requests have been normalized
         # in playback mode and mixed up.
         pipeline_job = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        assert client.jobs.validate(pipeline_job).passed
+        validation_result = client.jobs.validate(pipeline_job)
+        assert validation_result.passed, validation_result
 
         created_pipeline_job = assert_job_cancel(pipeline_job, client)
 

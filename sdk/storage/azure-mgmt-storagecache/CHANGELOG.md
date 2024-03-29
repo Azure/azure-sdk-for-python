@@ -1,5 +1,12 @@
 # Release History
 
+## 1.6.0b1 (2024-02-22)
+
+### Features Added
+
+  - Model AmlFilesystem has a new parameter root_squash_settings
+  - Model AmlFilesystemUpdate has a new parameter root_squash_settings
+
 ## 1.5.0 (2023-06-16)
 
 ### Features Added

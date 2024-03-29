@@ -9,6 +9,7 @@
 import datetime
 import sys
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, cast
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -121,9 +122,8 @@ class MetricDefinitionsOperations:
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -140,14 +140,25 @@ class MetricDefinitionsOperations:
                 _request = build_metric_definitions_list_request(
                     resource_uri=resource_uri,
                     metricnamespace=metricnamespace,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
 
             return _request
@@ -365,9 +376,8 @@ class MetricsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_metrics_list_request(
@@ -384,7 +394,7 @@ class MetricsOperations:
             auto_adjust_timegrain=auto_adjust_timegrain,
             validate_dimensions=validate_dimensions,
             rollupby=rollupby,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -460,9 +470,8 @@ class MetricNamespacesOperations:
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -479,14 +488,25 @@ class MetricNamespacesOperations:
                 _request = build_metric_namespaces_list_request(
                     resource_uri=resource_uri,
                     start_time=start_time,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
 
             return _request

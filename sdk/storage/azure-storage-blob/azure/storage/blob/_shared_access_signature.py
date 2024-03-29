@@ -91,9 +91,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
+            storage service receives the request. The provided datetime will always
+            be interpreted as UTC.
         :type start: datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
@@ -178,9 +177,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
+            storage service receives the request. The provided datetime will always
+            be interpreted as UTC.
         :type start: datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
@@ -308,15 +306,17 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Union[datetime, str]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Union["datetime", str],
+    start: Optional[Union["datetime", str]] = None,
+    ip: Optional[str] = None,
+    *,
+    services: Union[Services, str] = Services(blob=True),
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for the blob service.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -335,15 +335,13 @@ def generate_account_sas(
     :type permission: str or ~azure.storage.blob.AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Azure will always convert values to UTC. If a date is passed in
-        without timezone info, it is assumed to be UTC.
+        The provided datetime will always be interpreted as UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
@@ -351,6 +349,9 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
+    :keyword Union[Services, str] services:
+        Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
+        Will default to only this package (i.e. blobs) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str encryption_scope:
@@ -369,7 +370,7 @@ def generate_account_sas(
     """
     sas = SharedAccessSignature(account_name, account_key)
     return sas.generate_account(
-        services=Services(blob=True),
+        services=services,
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,
@@ -428,9 +429,8 @@ def generate_container_sas(
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
@@ -555,9 +555,8 @@ def generate_blob_sas(
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable
 
 from msrest import Deserializer, Serializer
 
@@ -16,7 +16,63 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CapacityReservationGroupsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, InferenceEndpointsOperations, InferenceGroupsOperations, InferencePoolsOperations, JobsOperations, LabelingJobsOperations, MarketplaceSubscriptionsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataReferencesOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, ServerlessEndpointsOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceFeaturesOperations
+from .operations import (
+    BatchDeploymentsOperations,
+    BatchEndpointsOperations,
+    CapacityReservationGroupsOperations,
+    CodeContainersOperations,
+    CodeVersionsOperations,
+    ComponentContainersOperations,
+    ComponentVersionsOperations,
+    ComputeOperations,
+    DataContainersOperations,
+    DatastoresOperations,
+    DataVersionsOperations,
+    EndpointDeploymentOperations,
+    EndpointOperations,
+    EnvironmentContainersOperations,
+    EnvironmentVersionsOperations,
+    FeaturesetContainersOperations,
+    FeaturesetVersionsOperations,
+    FeaturesOperations,
+    FeaturestoreEntityContainersOperations,
+    FeaturestoreEntityVersionsOperations,
+    InferenceEndpointsOperations,
+    InferenceGroupsOperations,
+    InferencePoolsOperations,
+    JobsOperations,
+    LabelingJobsOperations,
+    ManagedNetworkProvisionsOperations,
+    ManagedNetworkSettingsRuleOperations,
+    MarketplaceSubscriptionsOperations,
+    ModelContainersOperations,
+    ModelVersionsOperations,
+    OnlineDeploymentsOperations,
+    OnlineEndpointsOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    QuotasOperations,
+    RegistriesOperations,
+    RegistryCodeContainersOperations,
+    RegistryCodeVersionsOperations,
+    RegistryComponentContainersOperations,
+    RegistryComponentVersionsOperations,
+    RegistryDataContainersOperations,
+    RegistryDataReferencesOperations,
+    RegistryDataVersionsOperations,
+    RegistryEnvironmentContainersOperations,
+    RegistryEnvironmentVersionsOperations,
+    RegistryModelContainersOperations,
+    RegistryModelVersionsOperations,
+    SchedulesOperations,
+    ServerlessEndpointsOperations,
+    UsagesOperations,
+    VirtualMachineSizesOperations,
+    WorkspaceConnectionsOperations,
+    WorkspaceFeaturesOperations,
+    WorkspacesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -155,6 +211,30 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar serverless_endpoints: ServerlessEndpointsOperations operations
     :vartype serverless_endpoints:
      azure.mgmt.machinelearningservices.aio.operations.ServerlessEndpointsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.machinelearningservices.aio.operations.Operations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.machinelearningservices.aio.operations.WorkspacesOperations
+    :ivar workspace_connections: WorkspaceConnectionsOperations operations
+    :vartype workspace_connections:
+     azure.mgmt.machinelearningservices.aio.operations.WorkspaceConnectionsOperations
+    :ivar endpoint_deployment: EndpointDeploymentOperations operations
+    :vartype endpoint_deployment:
+     azure.mgmt.machinelearningservices.aio.operations.EndpointDeploymentOperations
+    :ivar endpoint: EndpointOperations operations
+    :vartype endpoint: azure.mgmt.machinelearningservices.aio.operations.EndpointOperations
+    :ivar managed_network_settings_rule: ManagedNetworkSettingsRuleOperations operations
+    :vartype managed_network_settings_rule:
+     azure.mgmt.machinelearningservices.aio.operations.ManagedNetworkSettingsRuleOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.machinelearningservices.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources:
+     azure.mgmt.machinelearningservices.aio.operations.PrivateLinkResourcesOperations
+    :ivar managed_network_provisions: ManagedNetworkProvisionsOperations operations
+    :vartype managed_network_provisions:
+     azure.mgmt.machinelearningservices.aio.operations.ManagedNetworkProvisionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -228,6 +308,15 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.online_deployments = OnlineDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.serverless_endpoints = ServerlessEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoint_deployment = EndpointDeploymentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoint = EndpointOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_settings_rule = ManagedNetworkSettingsRuleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_provisions = ManagedNetworkProvisionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

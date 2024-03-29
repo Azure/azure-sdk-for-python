@@ -341,6 +341,8 @@ class Backup(_serialization.Model):
 
     :ivar backup_retention_days: Backup retention days for the server.
     :vartype backup_retention_days: int
+    :ivar backup_interval_hours: Backup interval hours for the server.
+    :vartype backup_interval_hours: int
     :ivar geo_redundant_backup: Whether or not geo redundant backup is enabled. Known values are:
      "Enabled" and "Disabled".
     :vartype geo_redundant_backup: str or
@@ -355,6 +357,7 @@ class Backup(_serialization.Model):
 
     _attribute_map = {
         "backup_retention_days": {"key": "backupRetentionDays", "type": "int"},
+        "backup_interval_hours": {"key": "backupIntervalHours", "type": "int"},
         "geo_redundant_backup": {"key": "geoRedundantBackup", "type": "str"},
         "earliest_restore_date": {"key": "earliestRestoreDate", "type": "iso-8601"},
     }
@@ -363,12 +366,15 @@ class Backup(_serialization.Model):
         self,
         *,
         backup_retention_days: Optional[int] = None,
+        backup_interval_hours: Optional[int] = None,
         geo_redundant_backup: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword backup_retention_days: Backup retention days for the server.
         :paramtype backup_retention_days: int
+        :keyword backup_interval_hours: Backup interval hours for the server.
+        :paramtype backup_interval_hours: int
         :keyword geo_redundant_backup: Whether or not geo redundant backup is enabled. Known values
          are: "Enabled" and "Disabled".
         :paramtype geo_redundant_backup: str or
@@ -376,6 +382,7 @@ class Backup(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.backup_retention_days = backup_retention_days
+        self.backup_interval_hours = backup_interval_hours
         self.geo_redundant_backup = geo_redundant_backup
         self.earliest_restore_date = None
 
@@ -566,6 +573,92 @@ class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=
         self.name = None
         self.type = None
         self.system_data = None
+
+
+class OperationProgressResponseType(_serialization.Model):
+    """Represents the response properties specific to the operation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BackupAndExportResponseType, ImportFromStorageResponseType
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Identifies the type of source operation. Required. Known values are:
+     "BackupAndExportResponse" and "ImportFromStorageResponse".
+    :vartype object_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ObjectType
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "object_type": {
+            "BackupAndExportResponse": "BackupAndExportResponseType",
+            "ImportFromStorageResponse": "ImportFromStorageResponseType",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.object_type: Optional[str] = None
+
+
+class BackupAndExportResponseType(OperationProgressResponseType):
+    """BackupAndExport Response Properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Identifies the type of source operation. Required. Known values are:
+     "BackupAndExportResponse" and "ImportFromStorageResponse".
+    :vartype object_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ObjectType
+    :ivar datasource_size_in_bytes: Size of datasource in bytes.
+    :vartype datasource_size_in_bytes: int
+    :ivar data_transferred_in_bytes: Data transferred in bytes.
+    :vartype data_transferred_in_bytes: int
+    :ivar backup_metadata: Metadata related to backup to be stored for restoring resource in
+     key-value pairs.
+    :vartype backup_metadata: str
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "datasource_size_in_bytes": {"key": "datasourceSizeInBytes", "type": "int"},
+        "data_transferred_in_bytes": {"key": "dataTransferredInBytes", "type": "int"},
+        "backup_metadata": {"key": "backupMetadata", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        datasource_size_in_bytes: Optional[int] = None,
+        data_transferred_in_bytes: Optional[int] = None,
+        backup_metadata: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword datasource_size_in_bytes: Size of datasource in bytes.
+        :paramtype datasource_size_in_bytes: int
+        :keyword data_transferred_in_bytes: Data transferred in bytes.
+        :paramtype data_transferred_in_bytes: int
+        :keyword backup_metadata: Metadata related to backup to be stored for restoring resource in
+         key-value pairs.
+        :paramtype backup_metadata: str
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "BackupAndExportResponse"
+        self.datasource_size_in_bytes = datasource_size_in_bytes
+        self.data_transferred_in_bytes = data_transferred_in_bytes
+        self.backup_metadata = backup_metadata
 
 
 class BackupSettings(_serialization.Model):
@@ -1382,7 +1475,7 @@ class GetPrivateDnsZoneSuffixResponse(_serialization.Model):
 
 
 class HighAvailability(_serialization.Model):
-    """Network related properties of a server.
+    """High availability properties of a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1424,6 +1517,72 @@ class HighAvailability(_serialization.Model):
         self.mode = mode
         self.state = None
         self.standby_availability_zone = standby_availability_zone
+
+
+class HighAvailabilityValidationEstimation(_serialization.Model):
+    """High availability validation properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar estimated_downtime: Estimated seconds of downtime for the deployment.
+    :vartype estimated_downtime: int
+    :ivar scheduled_standby_availability_zone: Scheduled Availability zone of the standby server.
+    :vartype scheduled_standby_availability_zone: str
+    :ivar expected_standby_availability_zone: Expected Availability zone of the standby server.
+    :vartype expected_standby_availability_zone: str
+    """
+
+    _validation = {
+        "estimated_downtime": {"readonly": True},
+        "scheduled_standby_availability_zone": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "estimated_downtime": {"key": "estimatedDowntime", "type": "int"},
+        "scheduled_standby_availability_zone": {"key": "scheduledStandbyAvailabilityZone", "type": "str"},
+        "expected_standby_availability_zone": {"key": "expectedStandbyAvailabilityZone", "type": "str"},
+    }
+
+    def __init__(self, *, expected_standby_availability_zone: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword expected_standby_availability_zone: Expected Availability zone of the standby server.
+        :paramtype expected_standby_availability_zone: str
+        """
+        super().__init__(**kwargs)
+        self.estimated_downtime = None
+        self.scheduled_standby_availability_zone = None
+        self.expected_standby_availability_zone = expected_standby_availability_zone
+
+
+class ImportFromStorageResponseType(OperationProgressResponseType):
+    """ImportFromStorage Response Properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Identifies the type of source operation. Required. Known values are:
+     "BackupAndExportResponse" and "ImportFromStorageResponse".
+    :vartype object_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ObjectType
+    :ivar estimated_completion_time: The estimated time of operation completion.
+    :vartype estimated_completion_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "estimated_completion_time": {"key": "estimatedCompletionTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, estimated_completion_time: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword estimated_completion_time: The estimated time of operation completion.
+        :paramtype estimated_completion_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "ImportFromStorageResponse"
+        self.estimated_completion_time = estimated_completion_time
 
 
 class ImportSourceProperties(_serialization.Model):
@@ -1579,6 +1738,160 @@ class LogFileListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class Maintenance(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """Represents a maintenance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar maintenance_type: A string defines maintenance type. Known values are:
+     "RoutineMaintenance", "MinorVersionUpgrade", "SecurityPatches", and "HotFixes".
+    :vartype maintenance_type: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.MaintenanceType
+    :ivar maintenance_state: A string describes the maintenance status. Known values are:
+     "Scheduled", "ReScheduled", "InPreparation", "Processing", "Completed", and "Canceled".
+    :vartype maintenance_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.MaintenanceState
+    :ivar maintenance_start_time: The start time for a maintenance.
+    :vartype maintenance_start_time: ~datetime.datetime
+    :ivar maintenance_end_time: The end time for a maintenance.
+    :vartype maintenance_end_time: ~datetime.datetime
+    :ivar maintenance_execution_start_time: The start time for a maintenance execution.
+    :vartype maintenance_execution_start_time: ~datetime.datetime
+    :ivar maintenance_execution_end_time: The end time for a maintenance execution.
+    :vartype maintenance_execution_end_time: ~datetime.datetime
+    :ivar maintenance_available_schedule_min_time: The min time the maintenance can be rescheduled.
+    :vartype maintenance_available_schedule_min_time: ~datetime.datetime
+    :ivar maintenance_available_schedule_max_time: The max time the maintenance can be rescheduled.
+    :vartype maintenance_available_schedule_max_time: ~datetime.datetime
+    :ivar maintenance_title: The maintenance title.
+    :vartype maintenance_title: str
+    :ivar maintenance_description: The maintenance description.
+    :vartype maintenance_description: str
+    :ivar provisioning_state: Provisioning state of the Maintenance. Known values are: "Succeeded",
+     "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.MaintenanceProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "maintenance_type": {"readonly": True},
+        "maintenance_state": {"readonly": True},
+        "maintenance_end_time": {"readonly": True},
+        "maintenance_execution_start_time": {"readonly": True},
+        "maintenance_execution_end_time": {"readonly": True},
+        "maintenance_available_schedule_min_time": {"readonly": True},
+        "maintenance_available_schedule_max_time": {"readonly": True},
+        "maintenance_title": {"readonly": True},
+        "maintenance_description": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "maintenance_type": {"key": "properties.maintenanceType", "type": "str"},
+        "maintenance_state": {"key": "properties.maintenanceState", "type": "str"},
+        "maintenance_start_time": {"key": "properties.maintenanceStartTime", "type": "iso-8601"},
+        "maintenance_end_time": {"key": "properties.maintenanceEndTime", "type": "iso-8601"},
+        "maintenance_execution_start_time": {"key": "properties.maintenanceExecutionStartTime", "type": "iso-8601"},
+        "maintenance_execution_end_time": {"key": "properties.maintenanceExecutionEndTime", "type": "iso-8601"},
+        "maintenance_available_schedule_min_time": {
+            "key": "properties.maintenanceAvailableScheduleMinTime",
+            "type": "iso-8601",
+        },
+        "maintenance_available_schedule_max_time": {
+            "key": "properties.maintenanceAvailableScheduleMaxTime",
+            "type": "iso-8601",
+        },
+        "maintenance_title": {"key": "properties.maintenanceTitle", "type": "str"},
+        "maintenance_description": {"key": "properties.maintenanceDescription", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, maintenance_start_time: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword maintenance_start_time: The start time for a maintenance.
+        :paramtype maintenance_start_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.maintenance_type = None
+        self.maintenance_state = None
+        self.maintenance_start_time = maintenance_start_time
+        self.maintenance_end_time = None
+        self.maintenance_execution_start_time = None
+        self.maintenance_execution_end_time = None
+        self.maintenance_available_schedule_min_time = None
+        self.maintenance_available_schedule_max_time = None
+        self.maintenance_title = None
+        self.maintenance_description = None
+        self.provisioning_state = None
+
+
+class MaintenanceListResult(_serialization.Model):
+    """A list of maintenances.
+
+    :ivar value: The list of maintenances in a server.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.Maintenance]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Maintenance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Maintenance"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of maintenances in a server.
+        :paramtype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.Maintenance]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class MaintenanceUpdate(_serialization.Model):
+    """Represents a maintenance update parameter.
+
+    :ivar maintenance_start_time: The start time for a maintenance.
+    :vartype maintenance_start_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "maintenance_start_time": {"key": "properties.maintenanceStartTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, maintenance_start_time: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword maintenance_start_time: The start time for a maintenance.
+        :paramtype maintenance_start_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.maintenance_start_time = maintenance_start_time
 
 
 class MaintenanceWindow(_serialization.Model):
@@ -2038,6 +2351,102 @@ class OperationStatusResult(_serialization.Model):
         self.error = error
 
 
+class OperationProgressResult(OperationStatusResult):
+    """Represents Operation Results API Response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+    :ivar object_type: Identifies the type of source operation. Known values are:
+     "BackupAndExportResponse" and "ImportFromStorageResponse".
+    :vartype object_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ObjectType
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations:
+         list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+        :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+        """
+        super().__init__(
+            id=id,
+            name=name,
+            status=status,
+            percent_complete=percent_complete,
+            start_time=start_time,
+            end_time=end_time,
+            operations=operations,
+            error=error,
+            **kwargs
+        )
+        self.object_type: Optional[str] = None
+
+
 class OperationStatusExtendedResult(OperationStatusResult):
     """Represents Operation Results API Response.
 
@@ -2278,6 +2687,50 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.status = status
         self.description = description
         self.actions_required = actions_required
+
+
+class Provisioning(ProxyResource):
+    """Server backup properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar provisioning_state: The provisioning state of backup resource. Known values are:
+     "Succeeded", "Creating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
 
 
 class TrackedResource(Resource):
@@ -2632,6 +3085,111 @@ class ServerBackupListResult(_serialization.Model):
         """
         :keyword value: The list of backups of a server.
         :paramtype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackup]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ServerBackupV2(ProxyResource):
+    """Server backup properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar backup_name_v2: Backup name.
+    :vartype backup_name_v2: str
+    :ivar backup_type: "FULL"
+    :vartype backup_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupType
+    :ivar completed_time: Backup completed time (ISO8601 format).
+    :vartype completed_time: ~datetime.datetime
+    :ivar source: Backup source.
+    :vartype source: str
+    :ivar provisioning_state: The provisioning state of backup resource. Known values are:
+     "Succeeded", "Creating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "backup_name_v2": {"key": "properties.backupNameV2", "type": "str"},
+        "backup_type": {"key": "properties.backupType", "type": "str"},
+        "completed_time": {"key": "properties.completedTime", "type": "iso-8601"},
+        "source": {"key": "properties.source", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_name_v2: Optional[str] = None,
+        backup_type: Optional[Union[str, "_models.BackupType"]] = None,
+        completed_time: Optional[datetime.datetime] = None,
+        source: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_name_v2: Backup name.
+        :paramtype backup_name_v2: str
+        :keyword backup_type: "FULL"
+        :paramtype backup_type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupType
+        :keyword completed_time: Backup completed time (ISO8601 format).
+        :paramtype completed_time: ~datetime.datetime
+        :keyword source: Backup source.
+        :paramtype source: str
+        """
+        super().__init__(**kwargs)
+        self.backup_name_v2 = backup_name_v2
+        self.backup_type = backup_type
+        self.completed_time = completed_time
+        self.source = source
+        self.provisioning_state = None
+
+
+class ServerBackupV2ListResult(_serialization.Model):
+    """A list of server backups.
+
+    :ivar value: The list of backups of a server.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackupV2]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServerBackupV2]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.ServerBackupV2"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of backups of a server.
+        :paramtype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackupV2]
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
         """
@@ -3129,6 +3687,10 @@ class StorageEditionCapability(_serialization.Model):
     :vartype min_backup_retention_days: int
     :ivar max_backup_retention_days: Maximum backup retention days.
     :vartype max_backup_retention_days: int
+    :ivar min_backup_interval_hours: Minimal backup interval hours.
+    :vartype min_backup_interval_hours: int
+    :ivar max_backup_interval_hours: Maximum backup interval hours.
+    :vartype max_backup_interval_hours: int
     """
 
     _validation = {
@@ -3137,6 +3699,8 @@ class StorageEditionCapability(_serialization.Model):
         "max_storage_size": {"readonly": True},
         "min_backup_retention_days": {"readonly": True},
         "max_backup_retention_days": {"readonly": True},
+        "min_backup_interval_hours": {"readonly": True},
+        "max_backup_interval_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3145,6 +3709,8 @@ class StorageEditionCapability(_serialization.Model):
         "max_storage_size": {"key": "maxStorageSize", "type": "int"},
         "min_backup_retention_days": {"key": "minBackupRetentionDays", "type": "int"},
         "max_backup_retention_days": {"key": "maxBackupRetentionDays", "type": "int"},
+        "min_backup_interval_hours": {"key": "minBackupIntervalHours", "type": "int"},
+        "max_backup_interval_hours": {"key": "maxBackupIntervalHours", "type": "int"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -3155,6 +3721,8 @@ class StorageEditionCapability(_serialization.Model):
         self.max_storage_size = None
         self.min_backup_retention_days = None
         self.max_backup_retention_days = None
+        self.min_backup_interval_hours = None
+        self.max_backup_interval_hours = None
 
 
 class SystemData(_serialization.Model):

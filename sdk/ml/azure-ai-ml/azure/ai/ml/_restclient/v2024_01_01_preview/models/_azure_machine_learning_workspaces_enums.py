@@ -7,9 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+
 from six import with_metaclass
+
 from azure.core import CaseInsensitiveEnumMeta
 
+
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
 
 class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
@@ -379,6 +387,137 @@ class ComputeWeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Sunday weekday.
     SUNDAY = "Sunday"
 
+class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Authentication type of the connection target
+    """
+
+    PAT = "PAT"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    USERNAME_PASSWORD = "UsernamePassword"
+    NONE = "None"
+    SAS = "SAS"
+    ACCOUNT_KEY = "AccountKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    ACCESS_KEY = "AccessKey"
+    API_KEY = "ApiKey"
+    CUSTOM_KEYS = "CustomKeys"
+    O_AUTH2 = "OAuth2"
+    AAD = "AAD"
+
+class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of the connection
+    """
+
+    PYTHON_FEED = "PythonFeed"
+    CONTAINER_REGISTRY = "ContainerRegistry"
+    GIT = "Git"
+    S3 = "S3"
+    SNOWFLAKE = "Snowflake"
+    AZURE_SQL_DB = "AzureSqlDb"
+    AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
+    AZURE_MY_SQL_DB = "AzureMySqlDb"
+    AZURE_POSTGRES_DB = "AzurePostgresDb"
+    ADLS_GEN2 = "ADLSGen2"
+    REDIS = "Redis"
+    API_KEY = "ApiKey"
+    AZURE_OPEN_AI = "AzureOpenAI"
+    COGNITIVE_SEARCH = "CognitiveSearch"
+    COGNITIVE_SERVICE = "CognitiveService"
+    CUSTOM_KEYS = "CustomKeys"
+    AZURE_BLOB = "AzureBlob"
+    AZURE_ONE_LAKE = "AzureOneLake"
+    COSMOS_DB = "CosmosDb"
+    COSMOS_DB_MONGO_DB_API = "CosmosDbMongoDbApi"
+    AZURE_DATA_EXPLORER = "AzureDataExplorer"
+    AZURE_MARIA_DB = "AzureMariaDb"
+    AZURE_DATABRICKS_DELTA_LAKE = "AzureDatabricksDeltaLake"
+    AZURE_SQL_MI = "AzureSqlMi"
+    AZURE_TABLE_STORAGE = "AzureTableStorage"
+    AMAZON_RDS_FOR_ORACLE = "AmazonRdsForOracle"
+    AMAZON_RDS_FOR_SQL_SERVER = "AmazonRdsForSqlServer"
+    AMAZON_REDSHIFT = "AmazonRedshift"
+    DB2 = "Db2"
+    DRILL = "Drill"
+    GOOGLE_BIG_QUERY = "GoogleBigQuery"
+    GREENPLUM = "Greenplum"
+    HBASE = "Hbase"
+    HIVE = "Hive"
+    IMPALA = "Impala"
+    INFORMIX = "Informix"
+    MARIA_DB = "MariaDb"
+    MICROSOFT_ACCESS = "MicrosoftAccess"
+    MY_SQL = "MySql"
+    NETEZZA = "Netezza"
+    ORACLE = "Oracle"
+    PHOENIX = "Phoenix"
+    POSTGRE_SQL = "PostgreSql"
+    PRESTO = "Presto"
+    SAP_OPEN_HUB = "SapOpenHub"
+    SAP_BW = "SapBw"
+    SAP_HANA = "SapHana"
+    SAP_TABLE = "SapTable"
+    SPARK = "Spark"
+    SQL_SERVER = "SqlServer"
+    SYBASE = "Sybase"
+    TERADATA = "Teradata"
+    VERTICA = "Vertica"
+    CASSANDRA = "Cassandra"
+    COUCHBASE = "Couchbase"
+    MONGO_DB_V2 = "MongoDbV2"
+    MONGO_DB_ATLAS = "MongoDbAtlas"
+    AMAZON_S3_COMPATIBLE = "AmazonS3Compatible"
+    FILE_SERVER = "FileServer"
+    FTP_SERVER = "FtpServer"
+    GOOGLE_CLOUD_STORAGE = "GoogleCloudStorage"
+    HDFS = "Hdfs"
+    ORACLE_CLOUD_STORAGE = "OracleCloudStorage"
+    SFTP = "Sftp"
+    GENERIC_HTTP = "GenericHttp"
+    O_DATA_REST = "ODataRest"
+    ODBC = "Odbc"
+    GENERIC_REST = "GenericRest"
+    AMAZON_MWS = "AmazonMws"
+    CONCUR = "Concur"
+    DYNAMICS = "Dynamics"
+    DYNAMICS_AX = "DynamicsAx"
+    DYNAMICS_CRM = "DynamicsCrm"
+    GOOGLE_AD_WORDS = "GoogleAdWords"
+    HUBSPOT = "Hubspot"
+    JIRA = "Jira"
+    MAGENTO = "Magento"
+    MARKETO = "Marketo"
+    OFFICE365 = "Office365"
+    ELOQUA = "Eloqua"
+    RESPONSYS = "Responsys"
+    ORACLE_SERVICE_CLOUD = "OracleServiceCloud"
+    PAY_PAL = "PayPal"
+    QUICK_BOOKS = "QuickBooks"
+    SALESFORCE = "Salesforce"
+    SALESFORCE_SERVICE_CLOUD = "SalesforceServiceCloud"
+    SALESFORCE_MARKETING_CLOUD = "SalesforceMarketingCloud"
+    SAP_CLOUD_FOR_CUSTOMER = "SapCloudForCustomer"
+    SAP_ECC = "SapEcc"
+    SERVICE_NOW = "ServiceNow"
+    SHARE_POINT_ONLINE_LIST = "SharePointOnlineList"
+    SHOPIFY = "Shopify"
+    SQUARE = "Square"
+    WEB_TABLE = "WebTable"
+    XERO = "Xero"
+    ZOHO = "Zoho"
+    GENERIC_CONTAINER_REGISTRY = "GenericContainerRegistry"
+
+class ConnectionGroup(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Group based on connection category
+    """
+
+    AZURE = "Azure"
+    AZURE_AI = "AzureAI"
+    DATABASE = "Database"
+    NO_SQL = "NoSQL"
+    FILE = "File"
+    GENERIC_PROTOCOL = "GenericProtocol"
+    SERVICES_AND_APPS = "ServicesAndApps"
+
 class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of container to retrieve logs from.
     """
@@ -458,6 +597,24 @@ class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI_FOLDER = "uri_folder"
     MLTABLE = "mltable"
 
+class DefaultResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOT_STARTED = "NotStarted"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
+
+class DeploymentModelVersionUpgradeOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Deployment model version upgrade option.
+    """
+
+    ONCE_NEW_DEFAULT_VERSION_AVAILABLE = "OnceNewDefaultVersionAvailable"
+    ONCE_CURRENT_VERSION_EXPIRED = "OnceCurrentVersionExpired"
+    NO_AUTO_UPGRADE = "NoAutoUpgrade"
+
 class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Possible values for DeploymentProvisioningState.
     """
@@ -469,6 +626,14 @@ class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
+
+class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Level of workspace setup error
+    """
+
+    WARNING = "Warning"
+    ERROR = "Error"
+    INFORMATION = "Information"
 
 class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the job distribution type.
@@ -500,6 +665,13 @@ class EmailNotificationEnableType(with_metaclass(CaseInsensitiveEnumMeta, str, E
     JOB_COMPLETED = "JobCompleted"
     JOB_FAILED = "JobFailed"
     JOB_CANCELLED = "JobCancelled"
+
+class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether or not the encryption is enabled for the workspace.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class EndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine endpoint authentication mode.
@@ -536,6 +708,17 @@ class EndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, st
     PENDING = "Pending"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
+    TIMEOUT = "Timeout"
+
+class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of the endpoint.
+    """
+
+    AZURE_OPEN_AI = "Azure.OpenAI"
+    AZURE_SPEECH = "Azure.Speech"
+    AZURE_CONTENT_SAFETY = "Azure.ContentSafety"
+    AZURE_LLAMA = "Azure.Llama"
+    MANAGED_ONLINE_ENDPOINT = "managedOnlineEndpoint"
 
 class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Environment type is either user created or curated by Azure ML service
@@ -817,6 +1000,14 @@ class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta,
     #: AP is calculated for each class and averaged to get the MAP.
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
+class IsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Isolation mode for the managed network of a machine learning workspace.
+    """
+
+    DISABLED = "Disabled"
+    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
+    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
+
 class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the Job Input Type.
     """
@@ -976,6 +1167,13 @@ class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Only critical statements logged.
     CRITICAL = "Critical"
 
+class ManagedNetworkStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status for the managed network of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -1047,6 +1245,13 @@ class MLFlowAutologgerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class ModelLifecycleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Model lifecycle status.
+    """
+
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+    PREVIEW = "Preview"
 
 class ModelProvider(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the type of fine tuning.
@@ -1340,6 +1545,15 @@ class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
 class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute OS Type
     """
@@ -1411,6 +1625,15 @@ class PoolProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     UPDATING = "Updating"
     CANCELED = "Canceled"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
 
 class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protection level associated with the Intellectual Property.
@@ -1583,6 +1806,36 @@ class RollingRateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HOUR = "Hour"
     MINUTE = "Minute"
 
+class RuleAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The action enum for networking rule.
+    """
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+class RuleCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    REQUIRED = "Required"
+    RECOMMENDED = "Recommended"
+    USER_DEFINED = "UserDefined"
+
+class RuleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
+class RuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    FQDN = "FQDN"
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+    SERVICE_TAG = "ServiceTag"
+
 class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GRID = "Grid"
@@ -1678,6 +1931,11 @@ class ServerlessInferenceEndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta
 
     KEY = "Key"
     AAD = "AAD"
+
+class ServiceAccountKeyName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY1 = "Key1"
+    KEY2 = "Key2"
 
 class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

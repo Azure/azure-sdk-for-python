@@ -1,74 +1,80 @@
-id: template_eval_flow
-name: Template Evaluation Flow
+id: chat_quality_safety_eval_flow
+name: Chat Quality & Safety Evaluation Flow
 inputs:
   metrics:
     type: string
+    default: gpt_groundedness,gpt_relevance,gpt_retrieval_score,violence
     is_chat_input: false
   messages:
     type: list
     is_chat_input: false
   deployment_name:
     type: string
+    default: gpt-35-turbo
     is_chat_input: false
   threshold:
     type: int
-    default: 3
+    default: 4
+    is_chat_input: false
+  groundedness_service_flight:
+    type: bool
+    default: true
     is_chat_input: false
 outputs:
   gpt_coherence:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.gpt_coherence}
-  gpt_fluency_per_turn:
+  evaluation_per_turn:
     type: string
-    reference: ${concatenate_metrics.output.results_per_turn.gpt_fluency}
+    reference: ${concatenate_metrics.output.results_per_turn}
   gpt_relevance:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.gpt_relevance}
-  self_harm_reasoning:
-    type: string
-    reference: ${concatenate_metrics.output.results_per_chat.self_harm_reasoning}
   self_harm:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.self_harm}
-  gpt_retrieval_score_per_turn:
+  violence_reason:
     type: string
-    reference: ${concatenate_metrics.output.results_per_turn.gpt_retrieval_score}
-  gpt_groundedness_per_turn:
+    reference: ${concatenate_metrics.output.results_per_chat.violence_reason}
+  sexual_reason:
     type: string
-    reference: ${concatenate_metrics.output.results_per_turn.gpt_groundedness}
-  hate_fairness_reasoning:
+    reference: ${concatenate_metrics.output.results_per_chat.sexual_reason}
+  hate_unfairness:
     type: string
-    reference: ${concatenate_metrics.output.results_per_chat.hate_fairness_reasoning}
-  hate_fairness:
+    reference: ${concatenate_metrics.output.results_per_chat.hate_unfairness}
+  sexual_score:
     type: string
-    reference: ${concatenate_metrics.output.results_per_chat.hate_fairness}
+    reference: ${concatenate_metrics.output.results_per_chat.sexual_score}
+  violence_score:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.violence_score}
   gpt_groundedness:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.gpt_groundedness}
   gpt_retrieval_score:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.gpt_retrieval_score}
-  gpt_relevance_per_turn:
-    type: string
-    reference: ${concatenate_metrics.output.results_per_turn.gpt_relevance}
-  sexual_reasoning:
-    type: string
-    reference: ${concatenate_metrics.output.results_per_chat.sexual_reasoning}
   gpt_fluency:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.gpt_fluency}
   sexual:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.sexual}
-  violence_reasoning:
+  self_harm_score:
     type: string
-    reference: ${concatenate_metrics.output.results_per_chat.violence_reasoning}
+    reference: ${concatenate_metrics.output.results_per_chat.self_harm_score}
+  hate_unfairness_reason:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.hate_unfairness_reason}
   violence:
     type: string
     reference: ${concatenate_metrics.output.results_per_chat.violence}
-  gpt_coherence_per_turn:
+  hate_unfairness_score:
     type: string
-    reference: ${concatenate_metrics.output.results_per_turn.gpt_coherence}
+    reference: ${concatenate_metrics.output.results_per_chat.hate_unfairness_score}
+  self_harm_reason:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.self_harm_reason}
 nodes:
 - name: aggregate
   type: python
@@ -100,7 +106,7 @@ nodes:
     deployment_name: ${inputs.deployment_name}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output.rag_metrics}
     is: true
   use_variants: false
 - name: evaluate_coherence_fluency
@@ -114,7 +120,7 @@ nodes:
     parsed_qa: ${parse_chat.output}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output.non_rag_metrics}
     is: true
   use_variants: false
 - name: parse_chat
@@ -125,7 +131,7 @@ nodes:
   inputs:
     chat: ${inputs.messages}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output.parse_chat}
     is: true
   use_variants: false
 - name: concatenate_metrics
@@ -134,16 +140,18 @@ nodes:
     type: code
     path: concatenate_metrics.py
   inputs:
+    chat_validation: ${validate_conversation.output}
+    groundedness_results: ${parse_groundedness_responses.output}
     non_rag_results: ${evaluate_coherence_fluency.output}
     rag_results: ${evaluate_chat_rag.output}
     safety_results: ${format_service_output.output}
     selected_metrics: ${select_metrics.output}
   use_variants: false
-- name: validate_coversation
+- name: validate_conversation
   type: python
   source:
     type: code
-    path: validate_coversation.py
+    path: validate_conversation.py
   inputs:
     chat: ${inputs.messages}
     selected_metrics: ${select_metrics.output}
@@ -154,7 +162,10 @@ nodes:
     type: code
     path: validate_service.py
   inputs:
+    chat: ${inputs.messages}
+    flight: ${inputs.groundedness_service_flight}
     selected_metrics: ${select_metrics.output}
+    validate_chat_result: ${validate_conversation.output}
   use_variants: false
 - name: construct_service_request
   type: python
@@ -165,7 +176,7 @@ nodes:
     selected_metrics: ${select_metrics.output}
     user_text: ${inputs.messages}
   activate:
-    when: ${validate_service.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: call_rai_service
@@ -176,7 +187,7 @@ nodes:
   inputs:
     request_body: ${construct_service_request.output}
   activate:
-    when: ${validate_service.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: parse_service_response
@@ -188,7 +199,7 @@ nodes:
     batch_response: ${call_rai_service.output}
     selected_label_keys: ${select_metrics.output}
   activate:
-    when: ${validate_service.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: format_service_output
@@ -199,9 +210,55 @@ nodes:
   inputs:
     parsed_responses: ${parse_service_response.output}
   activate:
-    when: ${validate_service.output}
+    when: ${validate_service.output.content_harm_service}
+    is: true
+  use_variants: false
+- name: construct_groundedness_request
+  type: python
+  source:
+    type: code
+    path: construct_groundedness_request.py
+  inputs:
+    parsed_chat: ${parse_chat.output}
+  activate:
+    when: ${validate_service.output.groundedness_service}
+    is: true
+  use_variants: false
+- name: call_groundedness_service
+  type: python
+  source:
+    type: code
+    path: call_groundedness_service.py
+  inputs:
+    request_bodies: ${construct_groundedness_request.output}
+  use_variants: false
+- name: parse_groundedness_responses
+  type: python
+  source:
+    type: code
+    path: parse_groundedness_responses.py
+  inputs:
+    batch_response: ${call_groundedness_service.output}
+    chat_validation: ${validate_conversation.output}
+    llm_groundedness_response: ${fallback_groundedness_evaluation.output}
+    selected_metrics: ${select_metrics.output}
+    service_availability: ${validate_service.output}
+  use_variants: false
+- name: fallback_groundedness_evaluation
+  type: python
+  source:
+    type: code
+    path: fallback_groundedness_evaluation.py
+  inputs:
+    connection: openai_connection
+    chat: ${inputs.messages}
+    deployment_name: ${inputs.deployment_name}
+  activate:
+    when: ${validate_service.output.groundedness_prompt}
     is: true
   use_variants: false
 node_variants: {}
 environment:
   python_requirements_txt: requirements.txt
+environment_variables:
+  PF_WORKER_COUNT: 1

@@ -208,7 +208,3 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
     def close(self):
         """Close this reader."""
         self.reader.close()
-
-
-if __name__ == '__main__':
-    raise Exception('Not a standalone module')

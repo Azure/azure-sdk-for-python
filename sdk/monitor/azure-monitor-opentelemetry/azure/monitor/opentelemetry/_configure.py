@@ -35,6 +35,7 @@ from azure.monitor.opentelemetry._constants import (
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -51,7 +52,7 @@ from azure.monitor.opentelemetry._util.configurations import (
 _logger = getLogger(__name__)
 
 
-def configure_azure_monitor(**kwargs) -> None:
+def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
     configuration can be done via arguments passed to this function.
@@ -68,6 +69,8 @@ def configure_azure_monitor(**kwargs) -> None:
      `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
      will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
      instrumentations enabled.
+    :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
+     to process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
@@ -105,11 +108,13 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         resource=resource
     )
     set_tracer_provider(tracer_provider)
+    for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
+        get_tracer_provider().add_span_processor(span_processor) # type: ignore
     trace_exporter = AzureMonitorTraceExporter(**configurations)
-    span_processor = BatchSpanProcessor(
+    bsp = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(span_processor) # type: ignore
+    get_tracer_provider().add_span_processor(bsp) # type: ignore
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 

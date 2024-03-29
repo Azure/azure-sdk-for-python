@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AuthConfig
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterConfigurationListResult
 from ._models_py3 import ClusterForUpdate
@@ -32,6 +33,7 @@ from ._models_py3 import PrivateEndpointProperty
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import PromoteRequest
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import Role
@@ -45,18 +47,23 @@ from ._models_py3 import SimplePrivateEndpointConnection
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 
+from ._cosmosdb_for_postgresql_mgmt_client_enums import ActiveDirectoryAuth
 from ._cosmosdb_for_postgresql_mgmt_client_enums import ConfigurationDataType
 from ._cosmosdb_for_postgresql_mgmt_client_enums import CreatedByType
 from ._cosmosdb_for_postgresql_mgmt_client_enums import OperationOrigin
+from ._cosmosdb_for_postgresql_mgmt_client_enums import PasswordAuth
+from ._cosmosdb_for_postgresql_mgmt_client_enums import PrincipalType
 from ._cosmosdb_for_postgresql_mgmt_client_enums import PrivateEndpointConnectionProvisioningState
 from ._cosmosdb_for_postgresql_mgmt_client_enums import PrivateEndpointServiceConnectionStatus
 from ._cosmosdb_for_postgresql_mgmt_client_enums import ProvisioningState
+from ._cosmosdb_for_postgresql_mgmt_client_enums import RoleType
 from ._cosmosdb_for_postgresql_mgmt_client_enums import ServerRole
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AuthConfig",
     "Cluster",
     "ClusterConfigurationListResult",
     "ClusterForUpdate",
@@ -83,6 +90,7 @@ __all__ = [
     "PrivateLinkResource",
     "PrivateLinkResourceListResult",
     "PrivateLinkServiceConnectionState",
+    "PromoteRequest",
     "ProxyResource",
     "Resource",
     "Role",
@@ -95,12 +103,16 @@ __all__ = [
     "SimplePrivateEndpointConnection",
     "SystemData",
     "TrackedResource",
+    "ActiveDirectoryAuth",
     "ConfigurationDataType",
     "CreatedByType",
     "OperationOrigin",
+    "PasswordAuth",
+    "PrincipalType",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",
+    "RoleType",
     "ServerRole",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

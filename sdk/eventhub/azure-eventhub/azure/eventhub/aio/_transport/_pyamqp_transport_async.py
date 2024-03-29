@@ -376,7 +376,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         #     raise error
         elif isinstance(exception, errors.MessageException):
             _LOGGER.info("%r Event data send error (%r)", name, exception)
-            error = EventDataSendError(str(exception), exception)
+            # TODO: issue #34266
+            error = EventDataSendError(str(exception), exception)   # type: ignore[arg-type]
             raise error
         else:
             try:
