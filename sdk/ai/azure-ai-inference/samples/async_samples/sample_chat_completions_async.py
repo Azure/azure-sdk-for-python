@@ -4,10 +4,10 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion response from the service using a synchronous client.
+    This sample demonstrates how to get a chat completion response from the service using an asynchronous client.
 
 USAGE:
-    python sample_chat_completion.py
+    python sample_chat_completion_async.py
 
     Set these two environment variables before running the sample:
     1) MODEL_ENDPOINT - Your endpoint URL, in the form https://<deployment-name>.<azure-region>.inference.ai.azure.com
@@ -15,12 +15,12 @@ USAGE:
                         `azure-region` is the Azure region where your model is deployed.
     2) MODEL_KEY - Your model key (a 32-character string). Keep it secret.
 """
+import asyncio
 
 
-def sample_chat_completion():
-    # [START create_client]
+async def sample_chat_completions_async():
     import os
-    from azure.ai.inference import ModelClient
+    from azure.ai.inference.aio import ModelClient
     from azure.ai.inference.models import ChatCompletionsOptions, ChatRequestSystemMessage, ChatRequestUserMessage
     from azure.core.credentials import AzureKeyCredential
 
@@ -33,26 +33,29 @@ def sample_chat_completion():
         print("Set them before running this sample.")
         exit()
 
-    # Create an Image Analysis client for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
-    # [END create_client]
+    # Create a Model Client for synchronous operations
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # [START chat-completion]
-    # Do a single chat completion operation. This will be a synchronously (blocking) call.
-    result = client.get_chat_completions(
-        chat_completions_options=ChatCompletionsOptions(
-            messages=[
-                ChatRequestSystemMessage(
-                    content="You are an AI assistant that helps people find information."
-                ),
-                ChatRequestUserMessage(
-                    content="How many feet are in a mile?"
-                )
-            ]
-        ))
+    # Do a single chat completion operation. Start the operation and get a Future object.
+    future = asyncio.ensure_future(
+        client.get_chat_completions(
+            chat_completions_options=ChatCompletionsOptions(
+                messages=[
+                    ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
+                    ChatRequestUserMessage(content="How many feet are in a mile?"),
+                ]
+            )
+        )
+    )
+
+    # Loop until the operation is done
+    while not future.done():
+        await asyncio.sleep(0.1)
+        print("Waiting...")
+
+    # Get the result
+    result = future.result()
+    await client.close()
 
     # Print results the the console
     print("Chat Completions:")
@@ -68,8 +71,11 @@ def sample_chat_completion():
     print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
     print(f"usage.completion_tokens: {result.usage.completion_tokens}")
     print(f"usage.total_tokens: {result.usage.total_tokens}")
-    # [END chat-completion]
+
+
+async def main():
+    await sample_chat_completions_async()
 
 
 if __name__ == "__main__":
-    sample_chat_completion()
+    asyncio.run(main())

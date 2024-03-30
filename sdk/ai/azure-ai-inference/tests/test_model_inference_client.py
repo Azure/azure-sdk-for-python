@@ -5,12 +5,12 @@
 import inspect
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelInferenceTestBase, ServicePreparer
+from model_inference_test_base import ModelClientTestBase, ServicePreparer
 from devtools_testutils import recorded_by_proxy
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestModelClient(ModelInferenceTestBase):
+class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
@@ -26,21 +26,16 @@ class TestModelClient(ModelInferenceTestBase):
         self._create_client_for_standard_test(sync=True, **kwargs)
 
         options = sdk.models.ChatCompletionsOptions(
-            messages=[
-                sdk.models.ChatRequestUserMessage(
-                    content="How many feet are in a mile?"
-                )
-            ]
+            messages=[sdk.models.ChatRequestUserMessage(content="How many feet are in a mile?")]
         )
 
-        self._do_chat_completions(
-            options=options,
-            **kwargs
-        )
+        self._do_chat_completions(options=options, **kwargs)
 
         self.client.close()
 
     # Test some visual features, one after the other, from file, using default settings
+
+
 """     @ServicePreparer()
     @recorded_by_proxy
     def test_analyze_sync_single_feature_from_file(self, **kwargs):
@@ -60,11 +55,11 @@ class TestModelClient(ModelInferenceTestBase):
 
         self.client.close() """
 
-    # **********************************************************************************
-    #
-    #                            ERROR TESTS
-    #
-    # **********************************************************************************
+# **********************************************************************************
+#
+#                            ERROR TESTS
+#
+# **********************************************************************************
 
 """     @ServicePreparer()
     @recorded_by_proxy

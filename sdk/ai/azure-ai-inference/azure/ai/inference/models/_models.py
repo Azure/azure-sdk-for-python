@@ -571,8 +571,6 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
     :vartype role: str or ~azure.ai.inference.models.ASSISTANT
     :ivar content: The content of the message. Required.
     :vartype content: str
-    :ivar name: An optional name for the participant.
-    :vartype name: str
     """
 
     role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
@@ -580,15 +578,12 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
      Required. The role that provides responses to system-instructed, user-prompted input."""
     content: str = rest_field()
     """The content of the message. Required."""
-    name: Optional[str] = rest_field()
-    """An optional name for the participant."""
 
     @overload
     def __init__(
         self,
         *,
         content: str,
-        name: Optional[str] = None,
     ):
         ...
 
@@ -615,8 +610,6 @@ class ChatRequestSystemMessage(ChatRequestMessage, discriminator="system"):
     :vartype role: str or ~azure.ai.inference.models.SYSTEM
     :ivar content: The contents of the system message. Required.
     :vartype content: str
-    :ivar name: An optional name for the participant.
-    :vartype name: str
     """
 
     role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
@@ -624,15 +617,12 @@ class ChatRequestSystemMessage(ChatRequestMessage, discriminator="system"):
      Required. The role that instructs or sets the behavior of the assistant."""
     content: str = rest_field()
     """The contents of the system message. Required."""
-    name: Optional[str] = rest_field()
-    """An optional name for the participant."""
 
     @overload
     def __init__(
         self,
         *,
         content: str,
-        name: Optional[str] = None,
     ):
         ...
 
@@ -701,8 +691,6 @@ class ChatRequestUserMessage(ChatRequestMessage, discriminator="user"):
     :ivar content: The contents of the user message, with available input types varying by selected
      model. Required.
     :vartype content: str
-    :ivar name: An optional name for the participant.
-    :vartype name: str
     """
 
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
@@ -711,15 +699,12 @@ class ChatRequestUserMessage(ChatRequestMessage, discriminator="user"):
     content: str = rest_field()
     """The contents of the user message, with available input types varying by selected model.
      Required."""
-    name: Optional[str] = rest_field()
-    """An optional name for the participant."""
 
     @overload
     def __init__(
         self,
         *,
         content: str,
-        name: Optional[str] = None,
     ):
         ...
 
@@ -811,6 +796,181 @@ class CompletionsUsage(_model_base.Model):
         self,
         *,
         completion_tokens: int,
+        prompt_tokens: int,
+        total_tokens: int,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingItem(_model_base.Model):
+    """Representation of a single embeddings relatedness comparison.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
+     of the
+     vector-based relatedness of the provided input. Required.
+    :vartype embedding: list[float]
+    :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
+    :vartype index: int
+    :ivar object: The object type of this embeddings item. Will always be ``embedding``. Required.
+    :vartype object: str
+    """
+
+    embedding: List[float] = rest_field()
+    """List of embeddings value for the input prompt. These represent a measurement of the
+     vector-based relatedness of the provided input. Required."""
+    index: int = rest_field()
+    """Index of the prompt to which the EmbeddingItem corresponds. Required."""
+    object: str = rest_field()
+    """The object type of this embeddings item. Will always be ``embedding``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        embedding: List[float],
+        index: int,
+        object: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsOptions(_model_base.Model):
+    """The configuration information for an embeddings request.
+    Embeddings measure the relatedness of text strings and are commonly used for search,
+    clustering,
+    recommendations, and other similar scenarios.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar input: Input texts to get embeddings for, encoded as a an array of strings. Required.
+    :vartype input: list[str]
+    :ivar input_type: Specifies the input type to use for embedding search. Known values are:
+     "text", "query", and "document".
+    :vartype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+    """
+
+    input: List[str] = rest_field()
+    """Input texts to get embeddings for, encoded as a an array of strings. Required."""
+    input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = rest_field()
+    """Specifies the input type to use for embedding search. Known values are: \"text\", \"query\",
+     and \"document\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: List[str],
+        input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsResult(_model_base.Model):
+    """Representation of the response data from an embeddings request.
+    Embeddings measure the relatedness of text strings and are commonly used for search,
+    clustering,
+    recommendations, and other similar scenarios.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Unique identifier for the embeddings result. Required.
+    :vartype id: str
+    :ivar data: Embedding values for the prompts submitted in the request. Required.
+    :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
+    :ivar usage: Usage counts for tokens input using the embeddings API. Required.
+    :vartype usage: ~azure.ai.inference.models.EmbeddingsUsage
+    :ivar object: The object type of the embeddings result. Will always be ``list``. Required.
+    :vartype object: str
+    :ivar model: The model ID used to generate this result. Required.
+    :vartype model: str
+    """
+
+    id: str = rest_field()
+    """Unique identifier for the embeddings result. Required."""
+    data: List["_models.EmbeddingItem"] = rest_field()
+    """Embedding values for the prompts submitted in the request. Required."""
+    usage: "_models.EmbeddingsUsage" = rest_field()
+    """Usage counts for tokens input using the embeddings API. Required."""
+    object: str = rest_field()
+    """The object type of the embeddings result. Will always be ``list``. Required."""
+    model: str = rest_field()
+    """The model ID used to generate this result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        data: List["_models.EmbeddingItem"],
+        usage: "_models.EmbeddingsUsage",
+        object: str,
+        model: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsUsage(_model_base.Model):
+    """Measurement of the amount of tokens used in this request and response.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar prompt_tokens: Number of tokens sent in the original request. Required.
+    :vartype prompt_tokens: int
+    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
+    :vartype total_tokens: int
+    """
+
+    prompt_tokens: int = rest_field()
+    """Number of tokens sent in the original request. Required."""
+    total_tokens: int = rest_field()
+    """Total number of tokens transacted in this request/response. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
         prompt_tokens: int,
         total_tokens: int,
     ):

@@ -40,7 +40,7 @@ ServicePreparer = functools.partial(
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class ModelInferenceTestBase(AzureRecordedTestCase):
+class ModelClientTestBase(AzureRecordedTestCase):
 
     client: sdk.ModelClient
     async_client: async_sdk.ModelClient
@@ -49,18 +49,15 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     # Set to True to print out all analysis results
     PRINT_CHAT_COMPLETION_RESULTS = True
 
-
     def _create_client_for_standard_test(self, sync: bool, get_connection_url: bool = False, **kwargs):
         endpoint = kwargs.pop("model_endpoint")
         key = kwargs.pop("model_key")
         self._create_client(endpoint, key, sync, get_connection_url)
 
-
     def _create_client_for_authentication_failure(self, sync: bool, **kwargs):
         endpoint = kwargs.pop("model_endpoint")
         key = "00000000000000000000000000000000"
         self._create_client(endpoint, key, sync, False)
-
 
     def _create_client(self, endpoint: str, key: str, sync: bool, get_connection_url: bool):
         credential = AzureKeyCredential(key)
@@ -81,11 +78,9 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
             )
             assert self.async_client is not None
 
-
     def _raw_request_check(self, request: PipelineRequest):
         self.connection_url = request.http_request.url
         print(f"Connection URL: {request.http_request.url}")
-
 
     def _do_chat_completions(
         self,
@@ -97,16 +92,15 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
         result = self.client.get_chat_completions(chat_completions_options=options, params=query_params)
 
         # Optional: console printout of all results
-        if ModelInferenceTestBase.PRINT_CHAT_COMPLETION_RESULTS:
-            ModelInferenceTestBase._print_chat_completions_results(result)
+        if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
+            ModelClientTestBase._print_chat_completions_results(result)
 
         # Validate all results
-        ModelInferenceTestBase._validate_chat_completions_results(result)
+        ModelClientTestBase._validate_chat_completions_results(result)
 
         # Validate that additional query parameters exists in the connection URL, if specify
         if query_params is not None:
-            ModelInferenceTestBase._validate_query_parameters(query_params, self.connection_url)
-
+            ModelClientTestBase._validate_query_parameters(query_params, self.connection_url)
 
     async def _do_async_chat_completions(
         self,
@@ -128,16 +122,15 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
         result = future.result()
 
         # Optional: console printout of all results
-        if ModelInferenceTestBase.PRINT_CHAT_COMPLETION_RESULTS:
-            ModelInferenceTestBase._print_chat_completions_results(result)
+        if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
+            ModelClientTestBase._print_chat_completions_results(result)
 
         # Validate all results
-        ModelInferenceTestBase._validate_chat_completions_results(result)
+        ModelClientTestBase._validate_chat_completions_results(result)
 
         # Validate that additional query parameters exists in the connection URL, if specify
         if query_params is not None:
-            ModelInferenceTestBase._validate_query_parameters(query_params, self.connection_url)
-
+            ModelClientTestBase._validate_query_parameters(query_params, self.connection_url)
 
     def _do_chat_completion_with_error(
         self,
@@ -158,7 +151,6 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
             return
         assert False  # We should not get here
 
-
     async def _do_async_chat_completion_with_error(
         self,
         options: sdk.models.ChatCompletionsOptions,
@@ -168,7 +160,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = await  self.async_client.get_chat_completions(chat_completions_options=options)
+            result = await self.async_client.get_chat_completions(chat_completions_options=options)
 
         except AzureError as e:
             print(e)
@@ -178,7 +170,6 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
             return
         assert False  # We should not get here
 
-
     @staticmethod
     def _validate_query_parameters(query_params: dict, connection_url: str):
         assert len(query_params) > 0
@@ -187,7 +178,6 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
             query_string += "&" + key + "=" + value
         query_string = "?" + query_string[1:]
         assert query_string in connection_url
-
 
     @staticmethod
     def _validate_chat_completions_results(result: sdk.models.ChatCompletions):
@@ -206,8 +196,7 @@ class ModelInferenceTestBase(AzureRecordedTestCase):
         assert result.object == "chat.completion"
         assert result.usage.prompt_tokens > 0
         assert result.usage.completion_tokens > 0
-        assert result.usage.total_tokens ==  result.usage.prompt_tokens + result.usage.completion_tokens
-
+        assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
 
     @staticmethod
     def _print_chat_completions_results(result: sdk.models.ChatCompletions):

@@ -26,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import build_model_get_chat_completions_request
+from ..._operations._operations import build_model_get_chat_completions_request, build_model_get_embeddings_request
 from .._vendor import ModelClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -458,6 +458,264 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ChatCompletions, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def get_embeddings(
+        self, embeddings_options: _models.EmbeddingsOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for a given prompt.
+
+        :param embeddings_options: The JSON payload containing embedding options. Required.
+        :type embeddings_options: ~azure.ai.inference.models.EmbeddingsOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                embeddings_options = {
+                    "input": [
+                        "str"  # Input texts to get embeddings for, encoded as a an array of
+                          strings. Required.
+                    ],
+                    "input_type": "str"  # Optional. Specifies the input type to use for
+                      embedding search. Known values are: "text", "query", and "document".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                          Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @overload
+    async def get_embeddings(
+        self, embeddings_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for a given prompt.
+
+        :param embeddings_options: The JSON payload containing embedding options. Required.
+        :type embeddings_options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                          Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @overload
+    async def get_embeddings(
+        self, embeddings_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for a given prompt.
+
+        :param embeddings_options: The JSON payload containing embedding options. Required.
+        :type embeddings_options: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                          Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    async def get_embeddings(
+        self, embeddings_options: Union[_models.EmbeddingsOptions, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EmbeddingsResult:
+        # pylint: disable=line-too-long
+        """Return the embeddings for a given prompt.
+
+        :param embeddings_options: The JSON payload containing embedding options. Is one of the
+         following types: EmbeddingsOptions, JSON, IO[bytes] Required.
+        :type embeddings_options: ~azure.ai.inference.models.EmbeddingsOptions or JSON or IO[bytes]
+        :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.EmbeddingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                embeddings_options = {
+                    "input": [
+                        "str"  # Input texts to get embeddings for, encoded as a an array of
+                          strings. Required.
+                    ],
+                    "input_type": "str"  # Optional. Specifies the input type to use for
+                      embedding search. Known values are: "text", "query", and "document".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.0  # List of embeddings value for the input prompt.
+                                  These represent a measurement of the vector-based relatedness of the
+                                  provided input. Required.
+                            ],
+                            "index": 0,  # Index of the prompt to which the EmbeddingItem
+                              corresponds. Required.
+                            "object": "str"  # The object type of this embeddings item.
+                              Will always be ``embedding``. Required.
+                        }
+                    ],
+                    "id": "str",  # Unique identifier for the embeddings result. Required.
+                    "model": "str",  # The model ID used to generate this result. Required.
+                    "object": "str",  # The object type of the embeddings result. Will always be
+                      ``list``. Required.
+                    "usage": {
+                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                          Required.
+                        "total_tokens": 0  # Total number of tokens transacted in this
+                          request/response. Required.
+                    }
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EmbeddingsResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(embeddings_options, (IOBase, bytes)):
+            _content = embeddings_options
+        else:
+            _content = json.dumps(embeddings_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_model_get_embeddings_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

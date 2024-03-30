@@ -47,3 +47,14 @@ class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONTENT_FILTERED = "content_filter"
     """Completions generated a response that was identified as potentially sensitive per content
     moderation policies."""
+
+
+class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the input types used for embedding search."""
+
+    TEXT = "text"
+    """to do"""
+    QUERY = "query"
+    """to do"""
+    DOCUMENT = "document"
+    """to do"""

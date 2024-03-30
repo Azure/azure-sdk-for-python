@@ -24,12 +24,17 @@ from ._models import ChatRequestToolMessage
 from ._models import ChatRequestUserMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
+from ._models import EmbeddingItem
+from ._models import EmbeddingsOptions
+from ._models import EmbeddingsResult
+from ._models import EmbeddingsUsage
 from ._models import FunctionCall
 from ._models import FunctionDefinition
 
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
+from ._enums import EmbeddingInputType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -53,11 +58,16 @@ __all__ = [
     "ChatRequestUserMessage",
     "ChatResponseMessage",
     "CompletionsUsage",
+    "EmbeddingItem",
+    "EmbeddingsOptions",
+    "EmbeddingsResult",
+    "EmbeddingsUsage",
     "FunctionCall",
     "FunctionDefinition",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
     "CompletionsFinishReason",
+    "EmbeddingInputType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
