@@ -66,7 +66,7 @@ class EnvironmentCredential:
     def __init__(self, **kwargs: Any) -> None:
         self._credential: Optional[EnvironmentCredentialTypes] = None
 
-        if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
+        if all(os.environ.get(v) for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
