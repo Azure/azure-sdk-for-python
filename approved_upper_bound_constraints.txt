@@ -8,3 +8,6 @@ opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-urllib
 opentelemetry-instrumentation-urllib3
 opentelemetry-resource-detector-azure
+azure-keyvault-certificates
+azure-keyvault-secrets
+azure-keyvault-keys
