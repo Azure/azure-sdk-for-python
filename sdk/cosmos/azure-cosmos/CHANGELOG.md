@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug when a retryable exception occurs in the first page of a query execution. See [PR](https://github.com/Azure/azure-sdk-for-python/pull/).
 
 #### Other Changes
 

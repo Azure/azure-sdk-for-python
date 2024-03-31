@@ -44,7 +44,6 @@ class _QueryExecutionContextBase(object):
         self._options = options
         self._is_change_feed = "changeFeed" in options and options["changeFeed"] is True
         self._continuation = self._get_initial_continuation()
-        self._has_started = False
         self._has_finished = False
         self._buffer = deque()
 
@@ -54,7 +53,18 @@ class _QueryExecutionContextBase(object):
         return None
 
     def _has_more_pages(self):
-        return not self._has_started or self._continuation
+        return not self._has_finished
+    
+    def _ensure(self):
+        if not self._has_more_pages():
+            return
+
+        if not self._buffer:
+            results = self._fetch_next_block()
+            self._buffer.extend(results)
+
+        if not self._buffer:
+             self._has_finished = True
 
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
@@ -65,17 +75,10 @@ class _QueryExecutionContextBase(object):
         :return: List of results.
         :rtype: list
         """
-        if not self._has_more_pages():
-            return []
-
-        if self._buffer:
-            # if there is anything in the buffer returns that
-            res = list(self._buffer)
-            self._buffer.clear()
-            return res
-
-        # fetches the next block
-        return self._fetch_next_block()
+        self._ensure()
+        res = list(self._buffer)
+        self._buffer.clear()
+        return res
 
     def _fetch_next_block(self):
         raise NotImplementedError
@@ -94,13 +97,7 @@ class _QueryExecutionContextBase(object):
         :rtype: dict
         :raises StopIteration: If no more result is left.
         """
-        if self._has_finished:
-            raise StopIteration
-
-        if not self._buffer:
-
-            results = self.fetch_next_block()
-            self._buffer.extend(results)
+        self._ensure()
 
         if not self._buffer:
             raise StopIteration
@@ -116,9 +113,7 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         # Continues pages till finds a non-empty page or all results are exhausted
-        while self._continuation or not self._has_started:
-            if not self._has_started:
-                self._has_started = True
+        while True:
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
@@ -133,7 +128,7 @@ class _QueryExecutionContextBase(object):
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
-            if fetched_items:
+            if fetched_items or self._continuation is None:
                 break
         return fetched_items
 
