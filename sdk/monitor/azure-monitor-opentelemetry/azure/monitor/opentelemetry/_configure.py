@@ -36,7 +36,6 @@ from azure.monitor.opentelemetry._constants import (
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
-    _is_attach_enabled,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -48,6 +47,9 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
+)
+from azure.monitor.opentelemetry.exporter._utils import (
+    _is_attach_enabled,
 )
 from azure.monitor.opentelemetry._util.configurations import (
     _get_configurations,
@@ -81,7 +83,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :rtype: None
     """
 
-    _detect_attach()
+    _send_attach_warning()
 
     configurations = _get_configurations(**kwargs)
 
@@ -186,7 +188,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             )
 
 
-def _detect_attach():
+def _send_attach_warning():
     if _is_attach_enabled():
         AzureDiagnosticLogging.warning(
             "Distro detected that automatic attach may have occurred. Check your data to ensure "

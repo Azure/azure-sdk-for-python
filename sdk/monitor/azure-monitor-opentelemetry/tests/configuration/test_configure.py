@@ -18,7 +18,7 @@ from opentelemetry.sdk.resources import Resource
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
-    _detect_attach,
+    _send_attach_warning,
     _setup_instrumentations,
     _setup_logging,
     _setup_metrics,
@@ -33,7 +33,7 @@ TEST_RESOURCE = Resource({"foo": "bar"})
 
 class TestConfigure(unittest.TestCase):
     @patch(
-        "azure.monitor.opentelemetry._configure._detect_attach",
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -474,13 +474,13 @@ class TestConfigure(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
-    def test_detect_attach_true(
+    def test_send_attach_warning_true(
         self,
         is_attach_enabled_mock,
         mock_diagnostics,
     ):
         is_attach_enabled_mock.return_value = True
-        _detect_attach()
+        _send_attach_warning()
         mock_diagnostics.warning.assert_called_once_with(
             "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
             _DISTRO_DETECTS_ATTACH,
@@ -488,11 +488,11 @@ class TestConfigure(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
-    def test_detect_attach_false(
+    def test_send_attach_warning_false(
         self,
         is_attach_enabled_mock,
         mock_diagnostics,
     ):
         is_attach_enabled_mock.return_value = False
-        _detect_attach()
+        _send_attach_warning()
         mock_diagnostics.warning.assert_not_called()

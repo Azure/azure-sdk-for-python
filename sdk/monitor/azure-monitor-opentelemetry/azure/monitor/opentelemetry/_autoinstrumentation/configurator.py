@@ -9,10 +9,8 @@ from warnings import warn
 
 from opentelemetry.sdk._configuration import _OTelSDKConfigurator
 
-from azure.monitor.opentelemetry._constants import (
-    _is_attach_enabled,
-    _PREVIEW_ENTRY_POINT_WARNING,
-)
+from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled
+from azure.monitor.opentelemetry._constants import _PREVIEW_ENTRY_POINT_WARNING
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
     _ATTACH_FAILURE_CONFIGURATOR,
