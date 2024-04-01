@@ -27,7 +27,7 @@ domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(domain_key)
-    client = EventGridPublisherClient(domain_hostname, credential)
+    client = EventGridClient(domain_hostname, credential, level="Basic")
 
     await client.send(
         [

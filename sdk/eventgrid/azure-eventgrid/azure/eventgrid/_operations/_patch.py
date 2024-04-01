@@ -42,6 +42,7 @@ from .. import models as _models
 from functools import wraps
 
 from .._legacy import EventGridEvent
+from .._legacy._helpers import _from_cncf_events
 from .._serialization import Serializer
 
 if sys.version_info >= (3, 9):
@@ -231,8 +232,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = [events]
                 try:
                     # Try to send via namespace
-                    events = _serialize_events(events)
-                    self._send(topic_name, events, **kwargs)
+                    self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:
                     if isinstance(exception, HttpResponseError):
                         self._http_response_error_handler(exception, "namespace")
@@ -553,34 +553,41 @@ def _serialize_events(events):
             return events
         
 def _serialize_cloud_event(event, **kwargs):
-    data = {}
-    # CloudEvent required fields but validate they are not set to None
-    if event.type:
-        data["type"] =  _SERIALIZER.body(event.type, "str")
-    if event.specversion:
-        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
-    if event.source:
-        data["source"] = _SERIALIZER.body(event.source, "str")
-    if event.id:
-        data["id"] = _SERIALIZER.body(event.id, "str")
-    
-    # Check if data is bytes and serialize to base64
-    if isinstance(event.data, bytes):
-        data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
-    elif event.data:
-        data["data"] = _SERIALIZER.body(event.data, "str")
+    if isinstance(event, CloudEvent):
+        try:
+            data = {}
+            # CloudEvent required fields but validate they are not set to None
+            if event.type:
+                data["type"] =  _SERIALIZER.body(event.type, "str")
+            if event.specversion:
+                data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+            if event.source:
+                data["source"] = _SERIALIZER.body(event.source, "str")
+            if event.id:
+                data["id"] = _SERIALIZER.body(event.id, "str")
+            
+            # Check if data is bytes and serialize to base64
+            if isinstance(event.data, bytes):
+                data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
+            elif event.data:
+                data["data"] = _SERIALIZER.body(event.data, "str")
 
-    if event.subject:
-        data["subject"] = _SERIALIZER.body(event.subject, "str")
-    if event.time:
-        data["time"] = _SERIALIZER.body(event.time, "str")
-    if event.datacontenttype:
-        data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
-    if event.extensions:
-        for extension, value in event.extensions.items():
-            data[extension] = _SERIALIZER.body(value, "str")
+            if event.subject:
+                data["subject"] = _SERIALIZER.body(event.subject, "str")
+            if event.time:
+                data["time"] = _SERIALIZER.body(event.time, "str")
+            if event.datacontenttype:
+                data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
+            if event.extensions:
+                for extension, value in event.extensions.items():
+                    data[extension] = _SERIALIZER.body(value, "str")
 
-    return data
+            return data
+        except AttributeError:
+            events = [_from_cncf_events(e) for e in events]
+    else:
+        return event
+
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"

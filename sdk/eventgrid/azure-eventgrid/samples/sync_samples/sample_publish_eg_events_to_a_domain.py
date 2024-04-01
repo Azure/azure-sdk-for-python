@@ -22,7 +22,7 @@ domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
 domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
 credential = AzureKeyCredential(domain_key)
-client = EventGridPublisherClient(domain_hostname, credential)
+client = EventGridClient(domain_hostname, credential, level="Basic")
 
 client.send(
     [
