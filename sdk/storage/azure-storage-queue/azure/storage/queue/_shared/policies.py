@@ -477,7 +477,7 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
+        :param dict[str, Any] settings: The configurable values pertaining to the increment operation.
         :param PipelineRequest request: A pipeline request object.
         :param Optional[PipelineResponse] response: A pipeline response object.
         :param Optional[AzureError] error: An error encountered during the request, or
