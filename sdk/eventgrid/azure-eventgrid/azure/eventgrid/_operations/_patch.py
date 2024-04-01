@@ -474,7 +474,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         )
 
     # content_type must be CloudEvent DataContentType when in binary mode
-    kwarg_content_type = kwargs.pop("content_type")
+    kwarg_content_type = kwargs.pop("content_type", "application/cloudevents+json; charset=utf-8")
     content_type: str = event.datacontenttype or kwarg_content_type
     
     api_version: str = kwargs.pop(
