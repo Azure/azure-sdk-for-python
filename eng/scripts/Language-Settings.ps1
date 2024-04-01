@@ -601,6 +601,8 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
 }
 
+# Defined in common.ps1 as:
+# GetDocsMsMetadataForPackageFn = Get-${Language}-DocsMsMetadataForPackage
 function Get-python-DocsMsMetadataForPackage($PackageInfo) {
   $readmeName = $PackageInfo.Name.ToLower()
   Write-Host "Docs.ms Readme name: $($readmeName)"

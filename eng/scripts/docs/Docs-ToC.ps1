@@ -61,7 +61,9 @@ function Get-NamespacesFromWhlFile {
             Where-Object{$_.DirectoryName -notlike "*$([IO.Path]::DirectorySeparatorChar)_*" } |
             Where-Object{$_.DirectoryName -ine $rootLevelAzureDir}
         foreach($namespaceDir in $namespaceDirs) {
-            # strip off the root directy, everything left will be subDir1/subDir2 which needs
+            # Strip off the root directy, everything left will be subDir1/subDir2/../subDirN.
+            # The directory separators will be replaced with periods to compute the
+            # namespace
             $partialDir = $namespaceDir.DirectoryName.Replace($unpackDir + $([IO.Path]::DirectorySeparatorChar), "")
             $namespaces += $partialDir.Replace([IO.Path]::DirectorySeparatorChar, ".")
             # Since only the primary namespace is being pulled, break out of the loop after
