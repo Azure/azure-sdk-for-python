@@ -163,7 +163,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             if exception.status_code == 400:
                 raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             elif exception.status_code == 404:
-                raise HttpResponseError("Resource not found. " 
+                raise ResourceNotFoundError("Resource not found. " 
                                         f"Please check that the level set on the client, {level}, corresponds to the correct "
                                         "endpoint and/or topic name.") from exception
             else:
