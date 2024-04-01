@@ -117,4 +117,5 @@ __all__: List[str] = [
     "EventGridEvent",
     "generate_sas",
     "EventGridClient",
+    "ClientLevel",
 ]  # Add all objects you want publicly available to users at this package level
