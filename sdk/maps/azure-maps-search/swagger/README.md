@@ -40,6 +40,7 @@ credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
 python: true
 no-async: false
+models-mode: msrest
 add-credential: false
 title: MapsSearchClient
 disable-async-iterators: true

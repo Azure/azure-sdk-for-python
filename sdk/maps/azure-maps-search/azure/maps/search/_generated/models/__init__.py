@@ -6,228 +6,170 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Address
-    from ._models_py3 import AddressRanges
-    from ._models_py3 import BatchRequest
-    from ._models_py3 import BatchRequestItem
-    from ._models_py3 import BatchResult
-    from ._models_py3 import BatchResultItem
-    from ._models_py3 import BatchResultSummary
-    from ._models_py3 import BoundingBox
-    from ._models_py3 import BrandName
-    from ._models_py3 import Classification
-    from ._models_py3 import ClassificationName
-    from ._models_py3 import DataSource
-    from ._models_py3 import EntryPoint
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import GeoJsonFeature
-    from ._models_py3 import GeoJsonFeatureCollection
-    from ._models_py3 import GeoJsonFeatureCollectionData
-    from ._models_py3 import GeoJsonFeatureData
-    from ._models_py3 import GeoJsonGeometry
-    from ._models_py3 import GeoJsonGeometryCollection
-    from ._models_py3 import GeoJsonGeometryCollectionData
-    from ._models_py3 import GeoJsonLineString
-    from ._models_py3 import GeoJsonLineStringData
-    from ._models_py3 import GeoJsonMultiLineString
-    from ._models_py3 import GeoJsonMultiLineStringData
-    from ._models_py3 import GeoJsonMultiPoint
-    from ._models_py3 import GeoJsonMultiPointData
-    from ._models_py3 import GeoJsonMultiPolygon
-    from ._models_py3 import GeoJsonMultiPolygonData
-    from ._models_py3 import GeoJsonObject
-    from ._models_py3 import GeoJsonPoint
-    from ._models_py3 import GeoJsonPointData
-    from ._models_py3 import GeoJsonPolygon
-    from ._models_py3 import GeoJsonPolygonData
-    from ._models_py3 import GeometryIdentifier
-    from ._models_py3 import LatLongPairAbbreviated
-    from ._models_py3 import OperatingHours
-    from ._models_py3 import OperatingHoursTime
-    from ._models_py3 import OperatingHoursTimeRange
-    from ._models_py3 import PointOfInterest
-    from ._models_py3 import PointOfInterestCategory
-    from ._models_py3 import PointOfInterestCategorySet
-    from ._models_py3 import PointOfInterestCategoryTreeResult
-    from ._models_py3 import Polygon
-    from ._models_py3 import PolygonResult
-    from ._models_py3 import ReverseSearchAddressBatchItem
-    from ._models_py3 import ReverseSearchAddressBatchItemResponse
-    from ._models_py3 import ReverseSearchAddressBatchProcessResult
-    from ._models_py3 import ReverseSearchAddressResult
-    from ._models_py3 import ReverseSearchAddressResultItem
-    from ._models_py3 import ReverseSearchCrossStreetAddressResult
-    from ._models_py3 import ReverseSearchCrossStreetAddressResultItem
-    from ._models_py3 import SearchAddressBatchItem
-    from ._models_py3 import SearchAddressBatchItemResponse
-    from ._models_py3 import SearchAddressBatchResult
-    from ._models_py3 import SearchAddressResult
-    from ._models_py3 import SearchAddressResultItem
-    from ._models_py3 import SearchAlongRouteRequest
-    from ._models_py3 import SearchInsideGeometryRequest
-    from ._models_py3 import SearchSummary
-    from ._models_py3 import Viewport
-except (SyntaxError, ImportError):
-    from ._models import Address  # type: ignore
-    from ._models import AddressRanges  # type: ignore
-    from ._models import BatchRequest  # type: ignore
-    from ._models import BatchRequestItem  # type: ignore
-    from ._models import BatchResult  # type: ignore
-    from ._models import BatchResultItem  # type: ignore
-    from ._models import BatchResultSummary  # type: ignore
-    from ._models import BoundingBox  # type: ignore
-    from ._models import BrandName  # type: ignore
-    from ._models import Classification  # type: ignore
-    from ._models import ClassificationName  # type: ignore
-    from ._models import DataSource  # type: ignore
-    from ._models import EntryPoint  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import GeoJsonFeature  # type: ignore
-    from ._models import GeoJsonFeatureCollection  # type: ignore
-    from ._models import GeoJsonFeatureCollectionData  # type: ignore
-    from ._models import GeoJsonFeatureData  # type: ignore
-    from ._models import GeoJsonGeometry  # type: ignore
-    from ._models import GeoJsonGeometryCollection  # type: ignore
-    from ._models import GeoJsonGeometryCollectionData  # type: ignore
-    from ._models import GeoJsonLineString  # type: ignore
-    from ._models import GeoJsonLineStringData  # type: ignore
-    from ._models import GeoJsonMultiLineString  # type: ignore
-    from ._models import GeoJsonMultiLineStringData  # type: ignore
-    from ._models import GeoJsonMultiPoint  # type: ignore
-    from ._models import GeoJsonMultiPointData  # type: ignore
-    from ._models import GeoJsonMultiPolygon  # type: ignore
-    from ._models import GeoJsonMultiPolygonData  # type: ignore
-    from ._models import GeoJsonObject  # type: ignore
-    from ._models import GeoJsonPoint  # type: ignore
-    from ._models import GeoJsonPointData  # type: ignore
-    from ._models import GeoJsonPolygon  # type: ignore
-    from ._models import GeoJsonPolygonData  # type: ignore
-    from ._models import GeometryIdentifier  # type: ignore
-    from ._models import LatLongPairAbbreviated  # type: ignore
-    from ._models import OperatingHours  # type: ignore
-    from ._models import OperatingHoursTime  # type: ignore
-    from ._models import OperatingHoursTimeRange  # type: ignore
-    from ._models import PointOfInterest  # type: ignore
-    from ._models import PointOfInterestCategory  # type: ignore
-    from ._models import PointOfInterestCategorySet  # type: ignore
-    from ._models import PointOfInterestCategoryTreeResult  # type: ignore
-    from ._models import Polygon  # type: ignore
-    from ._models import PolygonResult  # type: ignore
-    from ._models import ReverseSearchAddressBatchItem  # type: ignore
-    from ._models import ReverseSearchAddressBatchItemResponse  # type: ignore
-    from ._models import ReverseSearchAddressBatchProcessResult  # type: ignore
-    from ._models import ReverseSearchAddressResult  # type: ignore
-    from ._models import ReverseSearchAddressResultItem  # type: ignore
-    from ._models import ReverseSearchCrossStreetAddressResult  # type: ignore
-    from ._models import ReverseSearchCrossStreetAddressResultItem  # type: ignore
-    from ._models import SearchAddressBatchItem  # type: ignore
-    from ._models import SearchAddressBatchItemResponse  # type: ignore
-    from ._models import SearchAddressBatchResult  # type: ignore
-    from ._models import SearchAddressResult  # type: ignore
-    from ._models import SearchAddressResultItem  # type: ignore
-    from ._models import SearchAlongRouteRequest  # type: ignore
-    from ._models import SearchInsideGeometryRequest  # type: ignore
-    from ._models import SearchSummary  # type: ignore
-    from ._models import Viewport  # type: ignore
+from ._models import Address
+from ._models import AddressRanges
+from ._models import BatchRequest
+from ._models import BatchRequestItem
+from ._models import BatchResult
+from ._models import BatchResultItem
+from ._models import BatchResultSummary
+from ._models import BoundingBox
+from ._models import BoundingBoxCompassNotation
+from ._models import Brand
+from ._models import Classification
+from ._models import ClassificationName
+from ._models import DataSource
+from ._models import EntryPoint
+from ._models import ErrorAdditionalInfo
+from ._models import ErrorDetail
+from ._models import ErrorResponse
+from ._models import GeoJsonFeature
+from ._models import GeoJsonFeatureCollection
+from ._models import GeoJsonFeatureCollectionData
+from ._models import GeoJsonFeatureData
+from ._models import GeoJsonGeometry
+from ._models import GeoJsonGeometryCollection
+from ._models import GeoJsonGeometryCollectionData
+from ._models import GeoJsonLineString
+from ._models import GeoJsonLineStringData
+from ._models import GeoJsonMultiLineString
+from ._models import GeoJsonMultiLineStringData
+from ._models import GeoJsonMultiPoint
+from ._models import GeoJsonMultiPointData
+from ._models import GeoJsonMultiPolygon
+from ._models import GeoJsonMultiPolygonData
+from ._models import GeoJsonObject
+from ._models import GeoJsonPoint
+from ._models import GeoJsonPointData
+from ._models import GeoJsonPolygon
+from ._models import GeoJsonPolygonData
+from ._models import GeometryIdentifier
+from ._models import LatLongPairAbbreviated
+from ._models import OperatingHours
+from ._models import OperatingHoursTime
+from ._models import OperatingHoursTimeRange
+from ._models import PointOfInterest
+from ._models import PointOfInterestCategory
+from ._models import PointOfInterestCategorySet
+from ._models import PointOfInterestCategoryTreeResult
+from ._models import Polygon
+from ._models import PolygonResult
+from ._models import ReverseSearchAddressBatchItem
+from ._models import ReverseSearchAddressBatchItemResponse
+from ._models import ReverseSearchAddressBatchResult
+from ._models import ReverseSearchAddressResult
+from ._models import ReverseSearchAddressResultItem
+from ._models import ReverseSearchCrossStreetAddressResult
+from ._models import ReverseSearchCrossStreetAddressResultItem
+from ._models import SearchAddressBatchItem
+from ._models import SearchAddressBatchItemResponse
+from ._models import SearchAddressBatchResult
+from ._models import SearchAddressResult
+from ._models import SearchAddressResultItem
+from ._models import SearchAlongRouteRequest
+from ._models import SearchInsideGeometryRequest
+from ._models import SearchSummary
+from ._models import Viewport
 
-from ._search_client_enums import (
-    ElectricVehicleConnector,
-    EntryPointType,
-    GeoJsonObjectType,
-    GeographicEntityType,
-    JsonFormat,
-    LocalizedMapView,
-    MatchType,
-    OperatingHoursRange,
-    PointOfInterestExtendedPostalCodes,
-    QueryType,
-    ResponseFormat,
-    RoadUseType,
-    SearchAddressResultType,
-    SearchIndexes,
-)
+from ._enums import ElectricVehicleConnector
+from ._enums import Entity
+from ._enums import EntryPointType
+from ._enums import GeoJsonObjectType
+from ._enums import GeographicEntityType
+from ._enums import JsonFormat
+from ._enums import LocalizedMapView
+from ._enums import MatchType
+from ._enums import OperatingHoursRange
+from ._enums import PointOfInterestExtendedPostalCodes
+from ._enums import QueryType
+from ._enums import ResponseFormat
+from ._enums import RoadUseType
+from ._enums import SearchAddressResultType
+from ._enums import SearchIndexes
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Address',
-    'AddressRanges',
-    'BatchRequest',
-    'BatchRequestItem',
-    'BatchResult',
-    'BatchResultItem',
-    'BatchResultSummary',
-    'BoundingBox',
-    'BrandName',
-    'Classification',
-    'ClassificationName',
-    'DataSource',
-    'EntryPoint',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'GeoJsonFeature',
-    'GeoJsonFeatureCollection',
-    'GeoJsonFeatureCollectionData',
-    'GeoJsonFeatureData',
-    'GeoJsonGeometry',
-    'GeoJsonGeometryCollection',
-    'GeoJsonGeometryCollectionData',
-    'GeoJsonLineString',
-    'GeoJsonLineStringData',
-    'GeoJsonMultiLineString',
-    'GeoJsonMultiLineStringData',
-    'GeoJsonMultiPoint',
-    'GeoJsonMultiPointData',
-    'GeoJsonMultiPolygon',
-    'GeoJsonMultiPolygonData',
-    'GeoJsonObject',
-    'GeoJsonPoint',
-    'GeoJsonPointData',
-    'GeoJsonPolygon',
-    'GeoJsonPolygonData',
-    'GeometryIdentifier',
-    'LatLongPairAbbreviated',
-    'OperatingHours',
-    'OperatingHoursTime',
-    'OperatingHoursTimeRange',
-    'PointOfInterest',
-    'PointOfInterestCategory',
-    'PointOfInterestCategorySet',
-    'PointOfInterestCategoryTreeResult',
-    'Polygon',
-    'PolygonResult',
-    'ReverseSearchAddressBatchItem',
-    'ReverseSearchAddressBatchItemResponse',
-    'ReverseSearchAddressBatchProcessResult',
-    'ReverseSearchAddressResult',
-    'ReverseSearchAddressResultItem',
-    'ReverseSearchCrossStreetAddressResult',
-    'ReverseSearchCrossStreetAddressResultItem',
-    'SearchAddressBatchItem',
-    'SearchAddressBatchItemResponse',
-    'SearchAddressBatchResult',
-    'SearchAddressResult',
-    'SearchAddressResultItem',
-    'SearchAlongRouteRequest',
-    'SearchInsideGeometryRequest',
-    'SearchSummary',
-    'Viewport',
-    'ElectricVehicleConnector',
-    'EntryPointType',
-    'GeoJsonObjectType',
-    'GeographicEntityType',
-    'JsonFormat',
-    'LocalizedMapView',
-    'MatchType',
-    'OperatingHoursRange',
-    'PointOfInterestExtendedPostalCodes',
-    'QueryType',
-    'ResponseFormat',
-    'RoadUseType',
-    'SearchAddressResultType',
-    'SearchIndexes',
+    "Address",
+    "AddressRanges",
+    "BatchRequest",
+    "BatchRequestItem",
+    "BatchResult",
+    "BatchResultItem",
+    "BatchResultSummary",
+    "BoundingBox",
+    "BoundingBoxCompassNotation",
+    "Brand",
+    "Classification",
+    "ClassificationName",
+    "DataSource",
+    "EntryPoint",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "GeoJsonFeature",
+    "GeoJsonFeatureCollection",
+    "GeoJsonFeatureCollectionData",
+    "GeoJsonFeatureData",
+    "GeoJsonGeometry",
+    "GeoJsonGeometryCollection",
+    "GeoJsonGeometryCollectionData",
+    "GeoJsonLineString",
+    "GeoJsonLineStringData",
+    "GeoJsonMultiLineString",
+    "GeoJsonMultiLineStringData",
+    "GeoJsonMultiPoint",
+    "GeoJsonMultiPointData",
+    "GeoJsonMultiPolygon",
+    "GeoJsonMultiPolygonData",
+    "GeoJsonObject",
+    "GeoJsonPoint",
+    "GeoJsonPointData",
+    "GeoJsonPolygon",
+    "GeoJsonPolygonData",
+    "GeometryIdentifier",
+    "LatLongPairAbbreviated",
+    "OperatingHours",
+    "OperatingHoursTime",
+    "OperatingHoursTimeRange",
+    "PointOfInterest",
+    "PointOfInterestCategory",
+    "PointOfInterestCategorySet",
+    "PointOfInterestCategoryTreeResult",
+    "Polygon",
+    "PolygonResult",
+    "ReverseSearchAddressBatchItem",
+    "ReverseSearchAddressBatchItemResponse",
+    "ReverseSearchAddressBatchResult",
+    "ReverseSearchAddressResult",
+    "ReverseSearchAddressResultItem",
+    "ReverseSearchCrossStreetAddressResult",
+    "ReverseSearchCrossStreetAddressResultItem",
+    "SearchAddressBatchItem",
+    "SearchAddressBatchItemResponse",
+    "SearchAddressBatchResult",
+    "SearchAddressResult",
+    "SearchAddressResultItem",
+    "SearchAlongRouteRequest",
+    "SearchInsideGeometryRequest",
+    "SearchSummary",
+    "Viewport",
+    "ElectricVehicleConnector",
+    "Entity",
+    "EntryPointType",
+    "GeoJsonObjectType",
+    "GeographicEntityType",
+    "JsonFormat",
+    "LocalizedMapView",
+    "MatchType",
+    "OperatingHoursRange",
+    "PointOfInterestExtendedPostalCodes",
+    "QueryType",
+    "ResponseFormat",
+    "RoadUseType",
+    "SearchAddressResultType",
+    "SearchIndexes",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
