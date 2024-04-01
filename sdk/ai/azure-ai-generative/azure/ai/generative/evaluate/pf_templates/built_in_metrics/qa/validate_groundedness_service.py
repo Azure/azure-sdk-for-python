@@ -1,7 +1,7 @@
 from promptflow import tool
 import mlflow
 from mlflow.utils.rest_utils import http_request
-from utils import get_cred, is_valid_string
+from utils import get_cred
 
 
 def is_service_available(flight: bool):
@@ -18,19 +18,23 @@ def is_service_available(flight: bool):
 
         if response.status_code != 200:
             print("Fail to get RAI service availability in this region.")
-            print(response.status_code)
+            print("Response_code: %d" % response.status_code)
         else:
             available_service = response.json()
+            # check if content harm service is avilable
             if "content harm" in available_service:
                 content_harm_service = True
             else:
                 print("Content harm service is not available in this region.")
+            # check if groundedness service is avilable
             if "groundedness" in available_service and flight:
                 groundedness_service = True
-            else:
+            if not flight:
+                print("GroundednessServiceFlight is off.")
+            if "groundedness" not in available_service:
                 print("AACS service is not available in this region.")
     except Exception:
-        print("Fail to get RAI service availability in this region.")
+        print("Failed to call checkannotation endpoint.")
     return {"content_harm_service": content_harm_service,
             "groundedness_service": groundedness_service
             }
@@ -54,18 +58,12 @@ def is_safety_metric_selected(selected_metrics: dict) -> bool:
 
 
 def is_groundedness_metric_selected(selected_metrics: dict) -> bool:
+    if not selected_metrics["quality_metrics"]["gpt_groundedness"]:
+        print("gpt_groundedness is not selected.")
     return selected_metrics["quality_metrics"]["gpt_groundedness"]
 
 
-def is_input_valid_for_safety_metrics(question: str, answer: str):
-    if is_valid_string(question) and is_valid_string(answer):
-        return True
-    else:
-        print("Input is not valid for safety metrics evaluation")
-        return False
-
-
-# check if RAI service is available in this region. If not, return False.
+# check if RAI service is avilable in this region. If not, return False.
 # check if tracking_uri is set. If not, return False
 # if tracking_rui is set, check if any safety metric is selected.
 # if no safety metric is selected, return False
@@ -73,24 +71,32 @@ def is_input_valid_for_safety_metrics(question: str, answer: str):
 def validate_safety_metric_input(
         selected_metrics: dict,
         validate_input_result: dict,
-        question: str,
-        answer: str,
         flight: bool = True,
-        context: str = None) -> dict:
-    service_available = is_service_available(flight)
+        ) -> dict:
     tracking_uri_set = is_tracking_uri_set()
+    service_available = is_service_available(flight)
+    safety_metrics_selected = is_safety_metric_selected(selected_metrics)
+    gpt_groundedness_selected = is_groundedness_metric_selected(
+        selected_metrics)
 
-    content_harm_service = is_safety_metric_selected(selected_metrics) \
+    content_harm_service = safety_metrics_selected \
         and service_available["content_harm_service"] and tracking_uri_set \
         and validate_input_result["safety_metrics"]
 
-    groundedness_service = is_groundedness_metric_selected(selected_metrics)\
+    groundedness_service = gpt_groundedness_selected\
         and validate_input_result["gpt_groundedness"] and tracking_uri_set \
         and service_available["groundedness_service"]
 
-    groundedness_prompt = is_groundedness_metric_selected(selected_metrics) \
-        and validate_input_result["gpt_groundedness"]  \
+    groundedness_prompt = gpt_groundedness_selected \
+        and validate_input_result["gpt_groundedness"] \
         and (not service_available["groundedness_service"])
+
+    if not validate_input_result["gpt_groundedness"] \
+            and gpt_groundedness_selected:
+        print("Input for gpt_groundedness is not valid")
+
+    if not validate_input_result["safety_metrics"] and safety_metrics_selected:
+        print("Input for safety metrics evaluation is not valid")
 
     return {"content_harm_service": content_harm_service,
             "groundedness_service": groundedness_service,

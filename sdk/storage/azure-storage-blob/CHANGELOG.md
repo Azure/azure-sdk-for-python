@@ -16,6 +16,7 @@ Python 3.12.
 using async OAuth credentials.
 - Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
 - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
+- Fixed a couple of issues with `upload_blob` when using Iterators/Generators as the data input.
 
 ### Other Changes
 - Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
