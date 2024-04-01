@@ -289,6 +289,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             headers=_headers,
             params=_params,
             event=event,
+            content_type=content_type,
             **kwargs,
         )
 
@@ -478,7 +479,8 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         )
 
     # content_type must be CloudEvent DataContentType when in binary mode
-    content_type: str = event.datacontenttype
+    kwarg_content_type = kwargs.pop("content_type")
+    content_type: str = event.datacontenttype or kwarg_content_type
     
     api_version: str = kwargs.pop(
         "api_version", _params.pop("api-version", "2023-10-01-preview")

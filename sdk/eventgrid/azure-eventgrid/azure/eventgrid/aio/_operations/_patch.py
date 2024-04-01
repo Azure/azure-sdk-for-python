@@ -312,6 +312,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             headers=_headers,
             params=_params,
             event=event,
+            content_type=content_type,
             **kwargs
         )
 
