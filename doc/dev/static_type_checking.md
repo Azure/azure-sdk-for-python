@@ -14,6 +14,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https:/
   - [Install and run type checkers on your client library code](#install-and-run-type-checkers-on-your-client-library-code)
     - [Run mypy](#run-mypy)
     - [Run pyright](#run-pyright)
+    - [next-mypy and next-pyright](#next---mypy-and-next---pyright)
     - [Run verifytypes](#run-verifytypes)
     - [How to ignore type checking errors](#how-to-ignore-type-checking-errors)
     - [How to opt out of type checking](#how-to-opt-out-of-type-checking)
@@ -149,11 +150,11 @@ else:
     from collections.abc import Sequence
 ```
 
-- The `typing-extensions` library backports types that are introduced only in later versions of Python (e.g. `Protocol`
-  which was introduced in Python 3.8) so that they can be used in earlier Python versions.
+- The `typing-extensions` library backports types that are introduced only in later versions of Python (e.g. `ParamSpec`
+  which was introduced in Python 3.10) so that they can be used in earlier Python versions.
 
 ```python
-from typing_extensions import Protocol
+from typing_extensions import ParamSpec
 ```
 
 If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`)
@@ -163,8 +164,8 @@ from `typing` if supported, or `typing-extensions` if the Python version is too 
 check yourself.
 
 See the [typing-extensions](https://github.com/python/typing_extensions) docs to check what has been
-backported. This document calls out which types are needed through `typing-extensions` based on support of Python 3.7+.
-Some commonly used types imported from `typing-extensions` are Literal, TypedDict, Protocol, runtime_checkable, and Final.
+backported. This document calls out which types are needed through `typing-extensions` based on support of Python 3.8+.
+Some commonly used types imported from `typing-extensions` are ParamSpec, TypeGuard, Self, TypeAlias, Never, etc.
 
 ## Install and run type checkers on your client library code
 
@@ -183,15 +184,15 @@ environment run in CI and brings in the third party stub packages necessary. To 
 
 ### Run mypy
 
-mypy is currently pinned to version [1.0.0](https://pypi.org/project/mypy/1.0.0/).
-
 To run mypy on your library, run the tox mypy env at the package level:
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e mypy -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run mypy on its own:
 
-`pip install mypy==1.0.0`
+Fill in `<version>` with the currently pinned version found in the [mypy.ini](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/tox.ini).
+
+`pip install mypy==<version>`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
@@ -213,8 +214,6 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
-
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
 To run pyright on your library, run the tox pyright env at the package level:
@@ -223,7 +222,9 @@ To run pyright on your library, run the tox pyright env at the package level:
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.287`
+Fill in `<version>` with the currently pinned version found in the [tox.ini](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/tox.ini).
+
+`pip install pyright==<version>`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -240,6 +241,15 @@ For example, to ignore type checking files under a specific directory, you can u
 ```
 
 Full documentation on pyright config options can be found here: https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+
+### next-mypy and next-pyright
+
+We aim to keep our repo up-to-date with the latest improvements and bug fixes from `mypy` and `pyright`. To meet this goal, we periodically bump the version of mypy and pyright every 3 months to a newer version. In order to prepare for the transition and be aware of any new typing checking errors that might come up in a library, we created `next-mypy` and `next-pyright` tox environments which target the next pinned version. These can be run locally like described in the above sections, swapping `next-mypy` for `mypy` and `next-pyright` for `pyright`:
+
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e next-mypy -c ../../../eng/tox/tox.ini --root .`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e next-pyright -c ../../../eng/tox/tox.ini --root .`
+
+Each library also runs `next-` checks in their `tests - weekly` pipeline. Upon any new failures with the next version, our bot will open GitHub issues indicating that typing updates are needed before the next version bump ([example issue](https://github.com/Azure/azure-sdk-for-python/issues/34170)). The issue will include the deadline for when each library should be clean for the new version.
 
 ### Run verifytypes
 
@@ -302,7 +312,7 @@ reason why a particular library should not run type checking, it is possible to 
 1) Disable the check in the library's `pyproject.toml` file following the instructions in [doc/eng_sys_checks.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml).
 2) Open an issue tracking that "library-name" should be opted in to running type checking
 
-> Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible.
+> Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible. Additionally, `mypy` is mandatory for all libraries in the Python SDK repo.
 
 ## Typing tips and guidance for the Python SDK
 
@@ -427,8 +437,7 @@ With [PEP 589](https://peps.python.org/pep-0589/), a `TypedDict` was introduced 
 type hints for dictionaries with a fixed set of keys. The syntax for this looks similar to building a dataclass:
 
 ```python
-# from typing import TypedDict  # Python >= 3.8
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 
 class Employee(TypedDict):
@@ -469,7 +478,6 @@ they try to access keys which don't exist.
 Use of generic TypedDict is also supported via typing_extensions (>=4.3.0). For example,
 
 ```python
-# from typing import TypedDict  # Python >= 3.8
 from typing_extensions import TypedDict
 from typing import Generic, TypeVar, List
 
@@ -488,7 +496,6 @@ employee = Employee[str](name="krista", title="swe", id=123, current=True, addit
 
 See the [TypedDict](https://docs.python.org/3/library/typing.html#typing.TypedDict) docs for more options.
 
-> Note that TypedDict is backported to older versions of Python by using typing_extensions.
 
 #### List
 
@@ -1097,8 +1104,7 @@ Below we create a `SupportsFly` protocol class which expects a `fly()` method on
 into `ascend()`.
 
 ```python
-# from typing import Protocol  # Python >=3.8
-from typing_extensions import Protocol
+from typing import Protocol
 
 
 class SupportsFly(Protocol):
@@ -1159,8 +1165,7 @@ See more on Protocols in the [reference documentation](https://docs.python.org/3
 If a Protocol is marked with @runtime_checkable, it can be used with `isinstance()` and `issubclass()` at runtime.
 
 ```python
-# from typing import runtime_checkable  Python >=3.8
-from typing_extensions import runtime_checkable, Protocol
+from typing import runtime_checkable, Protocol
 
 
 @runtime_checkable
@@ -1175,7 +1180,6 @@ assert isinstance(Penguin, SupportsFly)  # False
 Because this is a runtime check, only the presence of the required methods defined by the Protocol is checked -- not
 their type signatures.
 
-> Note that runtime_checkable is backported to older versions of Python by using typing_extensions.
 
 ### Use typing.Literal to restrict based on exact values
 
@@ -1184,8 +1188,7 @@ expression has a literal specific value. A Literal can contain one or more liter
 values:
 
 ```python
-# from typing import Literal  Python >=3.8
-from typing_extensions import Literal
+from typing import Literal
 
 doc_type = Literal["prebuilt-receipt"]
 allowed_content_types = Literal["application/json", "text/plain", "image/png", "image/jpeg"]
@@ -1295,8 +1298,7 @@ making `isinstance` checks to understand the result. The following example shows
 a Union of types which each contain a discriminator property, `kind`, typed as a Literal.
 
 ```python
-from typing import Union
-from typing_extensions import Literal
+from typing import Union, Literal
 
 
 # client library code
@@ -1363,8 +1365,6 @@ elif isinstance(ele, FormLine):
 
 Therefore, it is preferred to use `typing.Literal` in this situation to provide the best type checking experience for our users.
 
-> Note that Literal is backported to older versions of Python by using typing_extensions.
-
 ### Use typing.NewType to restrict a type to a specific context
 
 `NewType` can be useful to catch errors where a particular type is expected. `NewType` will take an existing type and
@@ -1400,8 +1400,7 @@ At runtime, `NewType` will return an object that returns its argument when calle
 It is best used when a variable's scope spans a large amount of modules and you want to ensure that it stays immutable (i.e. no line of code tries to change it).
 
 ```python
-# from typing import Final  Python >=3.8
-from typing_extensions import Final
+from typing import Final
 
 MAX_BLOB_SIZE: Final = 4 * 1024 * 1024
 ```
