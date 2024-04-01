@@ -52,42 +52,43 @@ class EventGridClient(InternalEventGridClient):
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = EventGridClientConfiguration(
-            endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
-        )
         self._level = level
-
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                (
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                    if self._config.redirect_policy
-                    else None
-                ),
-                self._config.http_logging_policy,
-            ]
 
         if level == ClientLevel.BASIC:
             self._config.api_version = api_version or DEFAULT_BASIC_API_VERSION
             self._client = EventGridPublisherClient( # type: ignore[assignment]
                 endpoint, credential, api_version=self._config.api_version, **kwargs
             )
-            self._send = self._client.send
+            self._send = self._client.send # type: ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
                 raise TypeError("SAS token authentication is not supported for the standard client.")
+
+            self._config = EventGridClientConfiguration(
+                endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
+            )
+            _policies = kwargs.pop("policies", None)
+            if _policies is None:
+                _policies = [
+                    policies.RequestIdPolicy(**kwargs),
+                    self._config.headers_policy,
+                    self._config.user_agent_policy,
+                    self._config.proxy_policy,
+                    policies.ContentDecodePolicy(**kwargs),
+                    self._config.redirect_policy,
+                    self._config.retry_policy,
+                    self._config.authentication_policy,
+                    self._config.custom_hook_policy,
+                    self._config.logging_policy,
+                    policies.DistributedTracingPolicy(**kwargs),
+                    (
+                        policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                        if self._config.redirect_policy
+                        else None
+                    ),
+                    self._config.http_logging_policy,
+                ]
+            
             self._client: AsyncPipelineClient = AsyncPipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
