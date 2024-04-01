@@ -927,7 +927,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             except queue.Empty:
                 break
         return batch
-    
+
     @staticmethod
     def _process_receive_error(message_delivery, condition, description=None, info=None):
         # TODO: Do we want to raise MessageSendFailed/MessageException here?
@@ -1021,12 +1021,13 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            # pylint: disable=too-many-boolean-expressions
             if state and (SEND_DISPOSITION_ACCEPT in state or
                 SEND_DISPOSITION_RELEASE in state or
                 SEND_DISPOSITION_MODIFY in state or
                 SEND_DISPOSITION_RECEIVED in state or
-                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] == None)):
-                    message_delivery.state = MessageDeliveryState.Ok
+                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] is None)):
+                message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -1181,4 +1182,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(condition=ErrorCondition.UnknownError, description="Settlement failed.") from None
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

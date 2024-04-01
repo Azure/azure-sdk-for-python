@@ -7,7 +7,6 @@
 import uuid
 import logging
 import time
-from functools import partial
 from typing import Optional, Union, TYPE_CHECKING, Callable
 
 from .._decode import decode_payload
@@ -191,6 +190,14 @@ class ReceiverLink(Link):
         on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
-        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
+        await self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            settled,
+            delivery_state,
+            batchable,
+            message=message_delivery,
+            on_disposition=on_disposition
+        )
         if not settled:
             await self._wait_for_response(wait)

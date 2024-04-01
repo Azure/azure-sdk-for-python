@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
+# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
@@ -901,15 +902,16 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             if self._shutdown:
                 await self.close_async()
 
-    async def _on_disposition_received_async(self, message_delivery, reason, state):        
+    async def _on_disposition_received_async(self, message_delivery, reason, state):
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            # pylint: disable=too-many-boolean-expressions
             if state and (SEND_DISPOSITION_ACCEPT in state or
                 SEND_DISPOSITION_RELEASE in state or
                 SEND_DISPOSITION_MODIFY in state or
                 SEND_DISPOSITION_RECEIVED in state or
-                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] == None)):
-                    message_delivery.state = MessageDeliveryState.Ok
+                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] is None)):
+                message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -1066,4 +1068,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(condition=ErrorCondition.UnknownError, description="Settlement failed.") from None
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

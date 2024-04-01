@@ -22,7 +22,6 @@ from typing import (
     cast
 )
 
-from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage

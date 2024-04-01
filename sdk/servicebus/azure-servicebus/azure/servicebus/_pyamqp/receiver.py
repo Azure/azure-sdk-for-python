@@ -191,6 +191,14 @@ class ReceiverLink(Link):
         on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
-        self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
+        self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            settled,
+            delivery_state,
+            batchable,
+            message=message_delivery,
+            on_disposition=on_disposition
+        )
         if not settled:
             self._wait_for_response(wait)
