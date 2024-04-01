@@ -1164,7 +1164,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            self.do_work(flow=False)
+            running = self.do_work(flow=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
