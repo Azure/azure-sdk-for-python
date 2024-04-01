@@ -7,7 +7,7 @@
 import uuid
 import time
 import logging
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, TYPE_CHECKING, Callable
 
 from ._decode import decode_payload
 from .link import Link
@@ -139,7 +139,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool],
         *,
         message: Optional["_MessageDelivery"] = None,
-        on_disposition: Optional[callable] = None,
+        on_disposition: Optional[Callable] = None,
     ):
         if delivery_tag not in self._received_delivery_tags:
             raise AMQPException(condition=ErrorCondition.IllegalState, description="Delivery tag not found.")
@@ -203,7 +203,7 @@ class ReceiverLink(Link):
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
         message_delivery: Optional["_MessageDelivery"] = None,
-        on_disposition: Optional[callable] = None,
+        on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
         self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
