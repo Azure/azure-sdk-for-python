@@ -649,6 +649,7 @@ from ._models_py3 import ServiceNowV2LinkedService
 from ._models_py3 import ServiceNowV2ObjectDataset
 from ._models_py3 import ServiceNowV2Source
 from ._models_py3 import ServicePrincipalCredential
+from ._models_py3 import ServicePrincipalCredentialResource
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
 from ._models_py3 import SftpReadSettings
@@ -1557,6 +1558,7 @@ __all__ = [
     "ServiceNowV2ObjectDataset",
     "ServiceNowV2Source",
     "ServicePrincipalCredential",
+    "ServicePrincipalCredentialResource",
     "SetVariableActivity",
     "SftpLocation",
     "SftpReadSettings",
