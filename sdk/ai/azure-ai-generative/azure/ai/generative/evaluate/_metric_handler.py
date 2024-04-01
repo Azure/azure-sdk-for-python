@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: skip-file
+
 import logging
 
 from os import path
@@ -17,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 NODE_LIST_BY_TASK = {
     "qa": ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"],
-    "chat": ["evaluate_chat_rag", "evaluate_coherence_fluency"],
+    "chat": ["evaluate_chat_rag", "evaluate_coherence_fluency", "fallback_groundedness_evaluation"],
 }
 
 
@@ -66,7 +68,7 @@ class MetricHandler(object):
         dict_list = self._get_data_for_pf_by_task_type(metrics)
 
         flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics", self.task_type)
-
+        # pylint: disable=E0611
         from promptflow import PFClient
         from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
@@ -136,6 +138,9 @@ class MetricHandler(object):
                     if col.replace("outputs.", "").startswith(metric):
                         is_col_to_delete = False
                         break
+            # keep the column "evaluation_per_turn" in the output
+            if "evaluation_per_turn" in col:
+                is_col_to_delete = False
             if is_col_to_delete:
                 columns_to_drop.append(col)
         result_df.drop(columns_to_drop, axis=1, inplace=True)

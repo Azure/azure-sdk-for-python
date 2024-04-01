@@ -1,6 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
--e ../../../tools/azure-devtools
 ../../identity/azure-identity
 -e ../../ml/azure-ai-ml
 -e ../azure-ai-resources

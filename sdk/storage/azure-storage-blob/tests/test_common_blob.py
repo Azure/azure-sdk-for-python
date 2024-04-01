@@ -6,10 +6,10 @@
 
 import os
 import tempfile
-import time
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
+from io import BytesIO
 
 from azure.mgmt.storage import StorageManagementClient
 
@@ -3376,5 +3376,48 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         with pytest.raises(ClientAuthenticationError):
             container.exists()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_partial_stream(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        data = b'abcde' * 100
+        stream = BytesIO(data)
+        read_length = 207
+
+        # Act
+        blob.upload_blob(stream, length=read_length, overwrite=True)
+
+        # Assert
+        result = blob.download_blob().readall()
+        assert result == data[:read_length]
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_partial_stream_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        data = b'abcde' * 1024
+        stream = BytesIO(data)
+        length = 3000
+
+        # Act
+        blob.upload_blob(stream, length=length, overwrite=True)
+
+        # Assert
+        result = blob.download_blob().readall()
+        assert result == data[:length]
 
     # ------------------------------------------------------------------------------

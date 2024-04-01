@@ -42,6 +42,9 @@
 # Service team
 ####
 
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceLabel: %AI
+
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
 
@@ -135,7 +138,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
-# PRLabel: %Load Testing
+# PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
@@ -334,8 +337,10 @@
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
-# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
+# AzureSdkOwners: @xiangyan99
+# ServiceOwners:  @mattgotteiner
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -830,9 +835,6 @@
 # ServiceLabel: %Scheduler %Service Attention
 #/<NotInRepo>/          @derek1ee
 
-# ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
-
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
 
@@ -910,9 +912,6 @@
 
 # ServiceLabel: %Network - Bastion %Service Attention
 #/<NotInRepo>/          @bastionsuppgithub
-
-# ServiceLabel: %Azure.Spring - Cosmos
-#/<NotInRepo>/          @kushagraThapar
 
 # ServiceLabel: %Network - Private Link %Service Attention
 #/<NotInRepo>/          @privlinksuppgithub

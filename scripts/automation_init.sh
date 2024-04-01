@@ -14,5 +14,6 @@ PATH="$VIRTUAL_ENV/bin:$PATH"
 export PATH
 python -m pip install -U pip
 python scripts/dev_setup.py -p azure-core
+
 echo "{}" >> $2
 echo "[Generate] init success!!!"
