@@ -509,12 +509,12 @@ class ReverseSearchAddressBatchProcessResult(object):
 
 class GeoJsonObject(msrest.serialization.Model):
     """A valid ``GeoJSON`` object.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`__ for details.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry,
-     GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString,
-     GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
+    GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString,
+    GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -557,7 +557,7 @@ class GeoJsonFeatureData(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3>`__ for details.
     :type geometry: ~azure.maps.search.models.GeoJsonObject
     :param properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
@@ -592,12 +592,12 @@ class GeoJsonFeatureData(msrest.serialization.Model):
 
 class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
     """A valid ``GeoJSON Feature`` object type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
     :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3>`__ for details.
     :type geometry: ~azure.maps.search.models.GeoJsonObject
     :param properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
@@ -659,7 +659,7 @@ class GeoJsonFeatureCollectionData(msrest.serialization.Model):
 
 class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
     """A valid ``GeoJSON FeatureCollection`` object type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -699,7 +699,7 @@ class GeoJsonGeometry(GeoJsonObject):
     """A valid ``GeoJSON`` geometry object.
     The type must be one of the seven valid GeoJSON geometry types -
     Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -757,7 +757,7 @@ class GeoJsonGeometryCollectionData(msrest.serialization.Model):
 
 class GeoJsonGeometryCollection(GeoJsonObject, GeoJsonGeometryCollectionData):
     """A valid ``GeoJSON GeometryCollection`` object type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.8>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -822,7 +822,7 @@ class GeoJsonLineStringData(msrest.serialization.Model):
 
 class GeoJsonLineString(GeoJsonObject, GeoJsonLineStringData):
     """A valid ``GeoJSON LineString`` geometry type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.4>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -887,7 +887,7 @@ class GeoJsonMultiLineStringData(msrest.serialization.Model):
 
 class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
     """A valid ``GeoJSON MultiLineString`` geometry type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.5>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -952,7 +952,7 @@ class GeoJsonMultiPointData(msrest.serialization.Model):
 
 class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
     """A valid ``GeoJSON MultiPoint`` geometry type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1018,7 +1018,7 @@ class GeoJsonMultiPolygonData(msrest.serialization.Model):
 
 class GeoJsonMultiPolygon(GeoJsonObject, GeoJsonMultiPolygonData):
     """A valid ``GeoJSON MultiPolygon`` object type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.7>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1063,7 +1063,7 @@ class GeoJsonPointData(msrest.serialization.Model):
     :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
      The first two elements are *longitude* and *latitude*, precisely in that order.
      *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details.
     :type coordinates: LatLon
     """
 
@@ -1087,14 +1087,14 @@ class GeoJsonPointData(msrest.serialization.Model):
 
 class GeoJsonPoint(GeoJsonObject, GeoJsonPointData):
     """A valid ``GeoJSON Point`` geometry type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.2>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 
     :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
      The first two elements are *longitude* and *latitude*, precisely in that order.
      *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details.
     :type coordinates: LatLon
     :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
      object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
@@ -1153,7 +1153,7 @@ class GeoJsonPolygonData(msrest.serialization.Model):
 
 class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
     """A valid ``GeoJSON Polygon`` geometry type.
-    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
+    Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.6>`__ for details.
 
     All required parameters must be populated in order to send to Azure.
 

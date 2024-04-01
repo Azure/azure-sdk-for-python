@@ -558,8 +558,8 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
     whls = [os.path.relpath(w, whl_dir) for w in whls]
 
     if not whls:
-        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
-        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        logging.info(f"No whl is found in directory {whl_dir} with package name format {pkg_name_format}")
+        logging.info(f"List of whls in directory: {glob.glob(os.path.join(whl_dir, '*.whl'))}")
         return
 
     compatible_tags = get_interpreter_compatible_tags()
