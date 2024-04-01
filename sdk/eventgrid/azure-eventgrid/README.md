@@ -18,7 +18,7 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
 
 ### Prerequisites
 * Python 3.8 or later is required to use this package.
-* You must have an [Azure subscription][azure_subscription] and an Event Grid Namespace resource, or an Event Grid Topic resource to use this package. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/en-us/azure/event-grid/create-view-manage-namespaces). Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
+* You must have an [Azure subscription][azure_subscription] and an Event Grid Namespace resource, or an Event Grid Topic resource to use this package. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces). Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
 
 
 ### Install the package
@@ -124,15 +124,15 @@ client = EventGridClient(endpoint, credential_key)
 
 ### Namespace
 
-A **[namespace](https://learn.microsoft.com/en-us/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
+A **[namespace](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
 
 #### Namespace Topic
 
-A **[namespace topic](https://learn.microsoft.com/en-us/azure/event-grid/concepts-event-grid-namespaces#namespace-topics)** are topics that are created within an Event Grid namespace. The client publishes events to an HTTP namespace endpoint specifying a namespace topic where published events are logically contained. A namespace topic only supports the CloudEvent v1.0 schema.
+A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespace-topics)** are topics that are created within an Event Grid namespace. The client publishes events to an HTTP namespace endpoint specifying a namespace topic where published events are logically contained. A namespace topic only supports the CloudEvent v1.0 schema.
 
 #### Event Subscription
 
-An **[event subscription](https://learn.microsoft.com/en-us/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
+An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
 
 ### Basic
 
