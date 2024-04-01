@@ -41,8 +41,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             extensions={"extension1": "value1", "extension2": "value2"}
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=event, binary_mode=True
         )
 
         time.sleep(5)
@@ -75,8 +75,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             datacontenttype='text/plain'
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+           topic_name= eventgrid_topic_name, events=event, binary_mode=True
         )
 
         time.sleep(5)
@@ -108,8 +108,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.publish_cloud_events(
-                eventgrid_topic_name, body=event, binary_mode=True
+            client.send(
+                topic_name=eventgrid_topic_name, events=event, binary_mode=True
             )
 
     @EventGridPreparer()
@@ -126,8 +126,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.publish_cloud_events(
-                eventgrid_topic_name, body=[event], binary_mode=True
+            client.send(
+                topic_name=eventgrid_topic_name, events=[event], binary_mode=True
             )
 
     @pytest.mark.live_test_only()
@@ -147,12 +147,12 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         dict_event = {"type": "Contoso.Items.ItemReceived", "source": "source", "subject": "MySubject", "data": b"hello", "datacontenttype": "text/plain"}
 
         
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=event, binary_mode=True
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=dict_event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=dict_event, binary_mode=True
         )
 
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
@@ -176,8 +176,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             data=b'this is binary data',
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=[event]
+        client.send(
+            topic_name=eventgrid_topic_name, events=[event]
         )
 
         time.sleep(5)
@@ -202,8 +202,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             data=b'this is binary data',
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=[event]
+        client.send(
+            topic_name=eventgrid_topic_name, events=[event]
         )
 
         time.sleep(5)

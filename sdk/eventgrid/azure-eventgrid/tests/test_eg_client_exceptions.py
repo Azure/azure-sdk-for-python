@@ -35,7 +35,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(HttpResponseError):
-            client.publish_cloud_events(eventgrid_topic_name, [event])
+            client.send(topic_name=eventgrid_topic_name, events=[event])
 
     @EventGridPreparer()
     @recorded_by_proxy    
@@ -49,7 +49,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(ResourceNotFoundError):
-            client.publish_cloud_events("faketopic", [event])
+            client.send(topic_name="faketopic", events=[event])
 
     @EventGridPreparer()
     @recorded_by_proxy
