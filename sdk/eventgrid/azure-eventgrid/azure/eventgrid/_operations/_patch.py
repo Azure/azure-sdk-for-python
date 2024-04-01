@@ -238,17 +238,19 @@ class EventGridClientOperationsMixin(OperationsMixin):
                         self._http_response_error_handler(exception, "namespace")
                     else:
                         # If that fails, try to send via basic
+                        self._last_exception = exception
                         self._send(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
-                self._http_response_error_handler(exception, "basic")
-                raise Exception
+                if isinstance(exception, HttpResponseError):
+                    self._http_response_error_handler(exception, "basic")
+                raise self._last_exception from exception
 
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
                 raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             elif exception.status_code == 404:
-                raise HttpResponseError(f"Resource not found. Please check the {level} endpoint and try again.") from exception
+                raise HttpResponseError(f"Resource not found. Please check the {level} endpoint and/or topic name, and try again.") from exception
             else:
                 raise exception
 
@@ -534,12 +536,12 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     )
 
 def _serialize_events(events):
-    try:
+    if isinstance(events[0], CloudEvent):
         internal_body_list = []
         for item in events:
             internal_body_list.append(_serialize_cloud_event(item))
         return json.dumps(internal_body_list)
-    except AttributeError:
+    else:
         try:
             serialize = Serializer()
             body = serialize.body(events, "[object]")
@@ -553,7 +555,6 @@ def _serialize_events(events):
             return events
         
 def _serialize_cloud_event(event, **kwargs):
-    if isinstance(event, CloudEvent):
         try:
             data = {}
             # CloudEvent required fields but validate they are not set to None
@@ -584,9 +585,7 @@ def _serialize_cloud_event(event, **kwargs):
 
             return data
         except AttributeError:
-            events = [_from_cncf_events(e) for e in events]
-    else:
-        return event
+            return [_from_cncf_events(e) for e in event]
 
 
 __all__: List[str] = [
