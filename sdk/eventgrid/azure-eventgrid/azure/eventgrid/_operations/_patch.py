@@ -7,6 +7,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 import sys
+import base64
 from typing import (
     Any,
     Callable,
@@ -178,8 +179,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @validate_args(
         kwargs_mapping={
-            "Basic": ["channel_name", "content_type"],
-            "Standard": ["binary_mode", "content_type"],
+            "Basic": ["channel_name"],
+            "Standard": ["binary_mode"],
         }
     )
     @distributed_trace
@@ -216,13 +217,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
             # If not binary_mode send whatever event is passed
 
             # If a cloud event dict, convert to CloudEvent for serializing    
-            try:
-                if isinstance(events, dict):
-                    events = CloudEvent.from_dict(events)
-                if isinstance(events, list) and isinstance(events[0], dict):
-                    events = [CloudEvent.from_dict(e) for e in events]
-            except Exception:
-                pass
+            # try:
+            #     if isinstance(events, dict):
+            #         events = CloudEvent.from_dict(events)
+            #     if isinstance(events, list) and isinstance(events[0], dict):
+            #         events = [CloudEvent.from_dict(e) for e in events]
+            # except Exception:
+            #     pass
 
             try:
                 kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
@@ -230,7 +231,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = [events]
                 try:
                     # Try to send via namespace
-                    self._send(topic_name, _serialize_events(events), **kwargs)
+                    events = _serialize_events(events)
+                    self._send(topic_name, events, **kwargs)
                 except Exception as exception:
                     if isinstance(exception, HttpResponseError):
                         self._http_response_error_handler(exception, "namespace")
@@ -393,7 +395,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         **kwargs: Any,
     ) -> _models.AcknowledgeResult:
         # TODO: docstring
-        return self.acknowledge_cloud_events(
+        return super().acknowledge_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             acknowledge_options=acknowledge_options,
@@ -411,7 +413,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
-        return self.release_cloud_events(
+        return super().release_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             release_options=release_options,
@@ -428,7 +430,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         reject_options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RejectResult:
-        return self.reject_cloud_events(
+        return super().reject_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             reject_options=reject_options,
@@ -444,7 +446,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
-        return self.renew_cloud_event_locks(
+        return super().renew_cloud_event_locks(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             renew_lock_options=renew_lock_options,
@@ -533,16 +535,52 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
 
 def _serialize_events(events):
     try:
-        serialize = Serializer()
-        body = serialize.body(events, "[object]")
-        if body is None:
-            data = None
-        else:
-            data = json.dumps(body)
-        
-        return data
+        internal_body_list = []
+        for item in events:
+            internal_body_list.append(_serialize_cloud_event(item))
+        return json.dumps(internal_body_list)
     except AttributeError:
-        return events
+        try:
+            serialize = Serializer()
+            body = serialize.body(events, "[object]")
+            if body is None:
+                data = None
+            else:
+                data = json.dumps(body)
+            
+            return data
+        except AttributeError:
+            return events
+        
+def _serialize_cloud_event(event, **kwargs):
+    data = {}
+    # CloudEvent required fields but validate they are not set to None
+    if event.type:
+        data["type"] =  _SERIALIZER.body(event.type, "str")
+    if event.specversion:
+        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+    if event.source:
+        data["source"] = _SERIALIZER.body(event.source, "str")
+    if event.id:
+        data["id"] = _SERIALIZER.body(event.id, "str")
+    
+    # Check if data is bytes and serialize to base64
+    if isinstance(event.data, bytes):
+        data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
+    elif event.data:
+        data["data"] = _SERIALIZER.body(event.data, "str")
+
+    if event.subject:
+        data["subject"] = _SERIALIZER.body(event.subject, "str")
+    if event.time:
+        data["time"] = _SERIALIZER.body(event.time, "str")
+    if event.datacontenttype:
+        data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
+    if event.extensions:
+        for extension, value in event.extensions.items():
+            data[extension] = _SERIALIZER.body(value, "str")
+
+    return data
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"

@@ -231,7 +231,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        return await self._acknowledge_cloud_events(
+        return await super().acknowledge_cloud_events(
             topic_name, event_subscription_name, acknowledge_options, **kwargs
         )
 
@@ -246,7 +246,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        return await self._release_cloud_events(
+        return await super().release_cloud_events(
             topic_name,
             event_subscription_name,
             release_options,
@@ -263,7 +263,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         reject_options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any
     ) -> _models.RejectResult:
-        return await self._reject_cloud_events(
+        return await super().reject_cloud_events(
             topic_name, event_subscription_name, reject_options, **kwargs
         )
 
@@ -276,7 +276,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
-        return await self._renew_cloud_event_locks(
+        return await super().renew_cloud_event_locks(
             topic_name, event_subscription_name, renew_lock_options, **kwargs
         )
 
