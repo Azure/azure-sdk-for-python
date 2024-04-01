@@ -217,13 +217,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
             # If not binary_mode send whatever event is passed
 
             # If a cloud event dict, convert to CloudEvent for serializing    
-            # try:
-            #     if isinstance(events, dict):
-            #         events = CloudEvent.from_dict(events)
-            #     if isinstance(events, list) and isinstance(events[0], dict):
-            #         events = [CloudEvent.from_dict(e) for e in events]
-            # except Exception:
-            #     pass
+            try:
+                if isinstance(events, dict):
+                    events = CloudEvent.from_dict(events)
+                if isinstance(events, list) and isinstance(events[0], dict):
+                    events = [CloudEvent.from_dict(e) for e in events]
+            except Exception:
+                pass
 
             try:
                 kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
