@@ -8,7 +8,7 @@ import uuid
 import logging
 import time
 from functools import partial
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, TYPE_CHECKING, Callable
 
 from .._decode import decode_payload
 from ._link_async import Link
@@ -136,7 +136,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool],
         *,
         message: Optional["_MessageDelivery"] = None,
-        on_disposition: Optional[callable] = None,
+        on_disposition: Optional[Callable] = None,
     ):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
@@ -188,7 +188,7 @@ class ReceiverLink(Link):
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
         message_delivery: Optional["_MessageDelivery"] = None,
-        on_disposition: Optional[callable] = None,
+        on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
         await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable, message=message_delivery, on_disposition=on_disposition)
