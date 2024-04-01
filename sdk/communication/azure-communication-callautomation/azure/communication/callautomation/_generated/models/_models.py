@@ -287,11 +287,6 @@ class AnswerCallRequest(_serialization.Model):
     :ivar answered_by: The identifier of the call automation entity which answers the call.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-    :ivar source_caller_id_number: The source caller Id, a phone number, that's will be used when
-     inviting a pstn target.
-     Required only when transferring call to PSTN, if this is an incoming voip call.
-    :vartype source_caller_id_number:
-     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _validation = {
@@ -307,7 +302,6 @@ class AnswerCallRequest(_serialization.Model):
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
-        "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -320,7 +314,6 @@ class AnswerCallRequest(_serialization.Model):
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
-        source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -342,11 +335,6 @@ class AnswerCallRequest(_serialization.Model):
         :keyword answered_by: The identifier of the call automation entity which answers the call.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used
-         when inviting a pstn target.
-         Required only when transferring call to PSTN, if this is an incoming voip call.
-        :paramtype source_caller_id_number:
-         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
@@ -356,7 +344,6 @@ class AnswerCallRequest(_serialization.Model):
         self.transcription_configuration = transcription_configuration
         self.call_intelligence_options = call_intelligence_options
         self.answered_by = answered_by
-        self.source_caller_id_number = source_caller_id_number
 
 
 class AnswerFailed(_serialization.Model):
@@ -639,9 +626,9 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
      in the request.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-    :ivar original_pstn_target: The original PSTN target of the incoming Call.
-    :vartype original_pstn_target:
-     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
+    :ivar answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+     when the original target is a Pstn number.
+    :vartype answered_for: ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _attribute_map = {
@@ -657,7 +644,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         "source": {"key": "source", "type": "CommunicationIdentifierModel"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
-        "original_pstn_target": {"key": "originalPstnTarget", "type": "PhoneNumberIdentifierModel"},
+        "answered_for": {"key": "answeredFor", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -675,7 +662,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         source: Optional["_models.CommunicationIdentifierModel"] = None,
         correlation_id: Optional[str] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
-        original_pstn_target: Optional["_models.PhoneNumberIdentifierModel"] = None,
+        answered_for: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -712,9 +699,9 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
          provided in the request.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-        :keyword original_pstn_target: The original PSTN target of the incoming Call.
-        :paramtype original_pstn_target:
-         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
+        :keyword answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+         when the original target is a Pstn number.
+        :paramtype answered_for: ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -729,7 +716,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
-        self.original_pstn_target = original_pstn_target
+        self.answered_for = answered_for
 
 
 class CallDisconnected(_serialization.Model):
@@ -842,11 +829,14 @@ class CallParticipant(_serialization.Model):
     :vartype identifier: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar is_muted: Is participant muted.
     :vartype is_muted: bool
+    :ivar is_on_hold: Is participant on hold.
+    :vartype is_on_hold: bool
     """
 
     _attribute_map = {
         "identifier": {"key": "identifier", "type": "CommunicationIdentifierModel"},
         "is_muted": {"key": "isMuted", "type": "bool"},
+        "is_on_hold": {"key": "isOnHold", "type": "bool"},
     }
 
     def __init__(
@@ -854,6 +844,7 @@ class CallParticipant(_serialization.Model):
         *,
         identifier: Optional["_models.CommunicationIdentifierModel"] = None,
         is_muted: Optional[bool] = None,
+        is_on_hold: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -861,10 +852,13 @@ class CallParticipant(_serialization.Model):
         :paramtype identifier: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword is_muted: Is participant muted.
         :paramtype is_muted: bool
+        :keyword is_on_hold: Is participant on hold.
+        :paramtype is_on_hold: bool
         """
         super().__init__(**kwargs)
         self.identifier = identifier
         self.is_muted = is_muted
+        self.is_on_hold = is_on_hold
 
 
 class CallTransferAccepted(_serialization.Model):
@@ -1369,7 +1363,7 @@ class CommunicationIdentifierModel(_serialization.Model):
     rawId, at most one further property may be set which must match the kind enum value.
 
     :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
-     "communicationUser", "phoneNumber", and "microsoftTeamsUser".
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
     :vartype kind: str or
      ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
     :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
@@ -1382,6 +1376,9 @@ class CommunicationIdentifierModel(_serialization.Model):
     :ivar microsoft_teams_user: The Microsoft Teams user.
     :vartype microsoft_teams_user:
      ~azure.communication.callautomation.models.MicrosoftTeamsUserIdentifierModel
+    :ivar microsoft_teams_app: The Microsoft Teams application.
+    :vartype microsoft_teams_app:
+     ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
     """
 
     _attribute_map = {
@@ -1390,6 +1387,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         "communication_user": {"key": "communicationUser", "type": "CommunicationUserIdentifierModel"},
         "phone_number": {"key": "phoneNumber", "type": "PhoneNumberIdentifierModel"},
         "microsoft_teams_user": {"key": "microsoftTeamsUser", "type": "MicrosoftTeamsUserIdentifierModel"},
+        "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
     }
 
     def __init__(
@@ -1400,11 +1398,12 @@ class CommunicationIdentifierModel(_serialization.Model):
         communication_user: Optional["_models.CommunicationUserIdentifierModel"] = None,
         phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
+        microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword kind: The identifier kind. Only required in responses. Known values are: "unknown",
-         "communicationUser", "phoneNumber", and "microsoftTeamsUser".
+         "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
         :paramtype kind: str or
          ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
         :keyword raw_id: Raw Id of the identifier. Optional in requests, required in responses.
@@ -1417,6 +1416,9 @@ class CommunicationIdentifierModel(_serialization.Model):
         :keyword microsoft_teams_user: The Microsoft Teams user.
         :paramtype microsoft_teams_user:
          ~azure.communication.callautomation.models.MicrosoftTeamsUserIdentifierModel
+        :keyword microsoft_teams_app: The Microsoft Teams application.
+        :paramtype microsoft_teams_app:
+         ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
         """
         super().__init__(**kwargs)
         self.kind = kind
@@ -1424,6 +1426,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         self.communication_user = communication_user
         self.phone_number = phone_number
         self.microsoft_teams_user = microsoft_teams_user
+        self.microsoft_teams_app = microsoft_teams_app
 
 
 class CommunicationUserIdentifierModel(_serialization.Model):
@@ -2650,6 +2653,113 @@ class GetParticipantsResponse(_serialization.Model):
         self.next_link = next_link
 
 
+class HoldFailed(_serialization.Model):
+    """HoldFailed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class HoldRequest(_serialization.Model):
+    """The request payload for holding participant from the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_participant: Participant to be held from the call. Required.
+    :vartype target_participant:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar play_source_info: Prompt to play while in hold.
+    :vartype play_source_info: ~azure.communication.callautomation.models.PlaySource
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    """
+
+    _validation = {
+        "target_participant": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
+        "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "_models.CommunicationIdentifierModel",
+        play_source_info: Optional["_models.PlaySource"] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_participant: Participant to be held from the call. Required.
+        :paramtype target_participant:
+         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword play_source_info: Prompt to play while in hold.
+        :paramtype play_source_info: ~azure.communication.callautomation.models.PlaySource
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        """
+        super().__init__(**kwargs)
+        self.target_participant = target_participant
+        self.play_source_info = play_source_info
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+
+
 class MediaStreamingConfiguration(_serialization.Model):
     """Configuration of Media streaming.
 
@@ -2713,6 +2823,48 @@ class MediaStreamingConfiguration(_serialization.Model):
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
+
+
+class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
+    """A Microsoft Teams application.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar app_id: The Id of the Microsoft Teams application. Required.
+    :vartype app_id: str
+    :ivar cloud: The cloud that the Microsoft Teams application belongs to. By default 'public' if
+     missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or
+     ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
+    """
+
+    _validation = {
+        "app_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "app_id": {"key": "appId", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        app_id: str,
+        cloud: Optional[Union[str, "_models.CommunicationCloudEnvironmentModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword app_id: The Id of the Microsoft Teams application. Required.
+        :paramtype app_id: str
+        :keyword cloud: The cloud that the Microsoft Teams application belongs to. By default 'public'
+         if missing. Known values are: "public", "dod", and "gcch".
+        :paramtype cloud: str or
+         ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
+        """
+        super().__init__(**kwargs)
+        self.app_id = app_id
+        self.cloud = cloud
 
 
 class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
@@ -4404,53 +4556,58 @@ class StartHoldMusicRequest(_serialization.Model):
     :ivar target_participant: Participant to be held from the call. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar play_source_info: Prompt to play while in hold. Required.
+    :ivar play_source_info: Prompt to play while in hold.
     :vartype play_source_info: ~azure.communication.callautomation.models.PlaySource
-    :ivar loop: If the prompt will be looped or not.
-    :vartype loop: bool
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
         "target_participant": {"required": True},
-        "play_source_info": {"required": True},
     }
 
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
-        "loop": {"key": "loop", "type": "bool"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         target_participant: "_models.CommunicationIdentifierModel",
-        play_source_info: "_models.PlaySource",
-        loop: Optional[bool] = None,
+        play_source_info: Optional["_models.PlaySource"] = None,
         operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword target_participant: Participant to be held from the call. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword play_source_info: Prompt to play while in hold. Required.
+        :keyword play_source_info: Prompt to play while in hold.
         :paramtype play_source_info: ~azure.communication.callautomation.models.PlaySource
-        :keyword loop: If the prompt will be looped or not.
-        :paramtype loop: bool
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.play_source_info = play_source_info
-        self.loop = loop
         self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class StartTranscriptionRequest(_serialization.Model):
@@ -5093,6 +5250,10 @@ class TransferToParticipantRequest(_serialization.Model):
      This setup is per-action. If this is not set, the default callback URI set by
      CreateCall/AnswerCall will be used.
     :vartype operation_callback_uri: str
+    :ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+     transferor's(Contoso) caller id when transfering a call a pstn target.
+    :vartype source_caller_id_number:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _validation = {
@@ -5105,6 +5266,7 @@ class TransferToParticipantRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -5115,6 +5277,7 @@ class TransferToParticipantRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         transferee: Optional["_models.CommunicationIdentifierModel"] = None,
         operation_callback_uri: Optional[str] = None,
+        source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5135,6 +5298,10 @@ class TransferToParticipantRequest(_serialization.Model):
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as
+         the transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
@@ -5142,6 +5309,51 @@ class TransferToParticipantRequest(_serialization.Model):
         self.operation_context = operation_context
         self.transferee = transferee
         self.operation_callback_uri = operation_callback_uri
+        self.source_caller_id_number = source_caller_id_number
+
+
+class UnholdRequest(_serialization.Model):
+    """The request payload for holding participant from the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_participant: Participants to be hold from the call.
+     Only ACS Users are supported. Required.
+    :vartype target_participant:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        "target_participant": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "_models.CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_participant: Participants to be hold from the call.
+         Only ACS Users are supported. Required.
+        :paramtype target_participant:
+         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.target_participant = target_participant
+        self.operation_context = operation_context
 
 
 class UnmuteParticipantsRequest(_serialization.Model):

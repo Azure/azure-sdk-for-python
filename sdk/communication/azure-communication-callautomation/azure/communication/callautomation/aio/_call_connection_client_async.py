@@ -259,6 +259,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         transferee: Optional['CommunicationIdentifier'] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -278,6 +279,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
+         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+         transferor's(Contoso) caller id when transfering a call a pstn target.
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -290,8 +293,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_calling_context=user_custom_context
-        )
+            custom_calling_context=user_custom_context,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number)
+            )
         process_repeatability_first_sent(kwargs)
         if transferee:
             request.transferee=serialize_identifier(transferee)
