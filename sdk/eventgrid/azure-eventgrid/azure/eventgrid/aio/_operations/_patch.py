@@ -97,8 +97,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @validate_args(
         kwargs_mapping={
-            "Basic": ["channel_name", "content_type"],
-            "Standard": ["binary_mode", "content_type"],
+            "Basic": ["channel_name"],
+            "Standard": ["binary_mode"],
         }
     )
     @distributed_trace_async
