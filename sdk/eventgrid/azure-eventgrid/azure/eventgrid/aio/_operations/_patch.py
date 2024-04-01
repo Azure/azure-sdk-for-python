@@ -150,21 +150,22 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     # Try to send via namespace
                     await self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:
-                    if isinstance(exception, HttpResponseError):
-                        self._http_response_error_handler(exception, "namespace")
-                    else:
-                        # If that fails, try to send via basic
-                        await self._send(events, channel_name=channel_name, **kwargs)
+                    self._http_response_error_handler(exception, "Standard")
+                    # If that fails, try to send via basic
+                    self._last_exception = exception
+                    await self._send(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
-                self._http_response_error_handler(exception, "basic")
-                raise Exception
+                self._http_response_error_handler(exception, "Basic")
+                raise self._last_exception from exception
 
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
                 raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             elif exception.status_code == 404:
-                raise HttpResponseError(f"Resource not found. Please check the {level} endpoint and try again.") from exception
+                raise HttpResponseError("Resource not found. " 
+                                        f"Please check that the level set on the client, {level}, corresponds to the correct "
+                                        "endpoint and/or topic name.") from exception
             else:
                 raise exception
             

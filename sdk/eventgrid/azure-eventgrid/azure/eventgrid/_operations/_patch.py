@@ -234,15 +234,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     # Try to send via namespace
                     self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:
-                    if isinstance(exception, HttpResponseError):
-                        self._http_response_error_handler(exception, "Standard")
-                    else:
-                        # If that fails, try to send via basic
-                        self._last_exception = exception
-                        self._send(events, channel_name=channel_name, **kwargs)
+                    self._http_response_error_handler(exception, "Standard")
+                    # If that fails, try to send via basic
+                    self._last_exception = exception
+                    self._send(events, channel_name=channel_name, **kwargs)
             except Exception as exception:
-                if isinstance(exception, HttpResponseError):
-                    self._http_response_error_handler(exception, "Basic")
+                self._http_response_error_handler(exception, "Basic")
                 raise self._last_exception from exception
 
     def _http_response_error_handler(self, exception, level):
