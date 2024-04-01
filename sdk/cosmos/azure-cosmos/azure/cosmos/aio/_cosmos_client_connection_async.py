@@ -2785,11 +2785,31 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 typ,
                 documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
             )
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
-            result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
-            if response_hook:
-                response_hook(self.last_response_headers, result)
-            return __GetBodiesFromQueryResult(result)
+            # Check change feed in all partitions
+            pk_ranges_ids = []
+            if typ != 'pkranges' and not options.get("partitionKeyRangeId"):
+                pk_ranges_ids = [pkid async for pkid in self._ReadPartitionKeyRanges(id_)]
+            if pk_ranges_ids and len(pk_ranges_ids) > 1:
+                results = []
+                for pk_id in pk_ranges_ids:
+                    headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options,
+                                              pk_id['id'])
+                    result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+                    if results:
+                        # add up all the query results from all over lapping ranges
+                        results["Documents"].extend(result["Documents"])
+                    else:
+                        results = result
+                    if response_hook:
+                        response_hook(self.last_response_headers, result)
+                if results:
+                    return __GetBodiesFromQueryResult(results)
+            else:
+                headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
+                result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+                if response_hook:
+                    response_hook(self.last_response_headers, result)
+                return __GetBodiesFromQueryResult(result)
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
