@@ -277,10 +277,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             "cls", None
         )  # pylint: disable=protected-access
 
-        content_type: str = kwargs.pop(
-            "content_type",
-            _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
-        )
 
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
@@ -289,7 +285,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             headers=_headers,
             params=_params,
             event=event,
-            content_type=content_type,
             **kwargs,
         )
 
