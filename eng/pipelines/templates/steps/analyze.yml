@@ -151,6 +151,11 @@ steps:
       Artifacts: ${{ parameters.Artifacts }}
       ArtifactName: "packages_extended"
 
+  - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
+
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
