@@ -55,9 +55,8 @@ class EventGridClient(InternalEventGridClient):
         self._level = level
 
         if level == ClientLevel.BASIC:
-            self._config.api_version = api_version or DEFAULT_BASIC_API_VERSION
             self._client = EventGridPublisherClient( # type: ignore[assignment]
-                endpoint, credential, api_version=self._config.api_version, **kwargs
+                endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
             )
             self._send = self._client.send # type: ignore[attr-defined]
         elif level == ClientLevel.STANDARD:

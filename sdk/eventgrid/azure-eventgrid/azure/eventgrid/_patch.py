@@ -62,8 +62,7 @@ class EventGridClient(InternalEventGridClient):
 
 
         if level == ClientLevel.BASIC:
-            self._config.api_version = api_version or DEFAULT_BASIC_API_VERSION
-            self._client = EventGridPublisherClient(endpoint, credential, api_version=self._config.api_version) # type:ignore[assignment]
+            self._client = EventGridPublisherClient(endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION) # type:ignore[assignment]
             self._send = self._client.send # type:ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
