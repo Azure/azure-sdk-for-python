@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed issue with `ChainedTokenCredential` where it wouldn't use the stored successful credential if one was available. ([#35045](https://github.com/Azure/azure-sdk-for-python/pull/35045))
+
 ### Other Changes
 
 ## 1.16.0b2 (2024-03-05)
