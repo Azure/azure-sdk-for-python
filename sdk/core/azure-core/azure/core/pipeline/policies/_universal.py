@@ -433,14 +433,14 @@ class HttpLoggingPolicy(
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.allowed_query_params: Set[str] = set()
         self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
+        self.lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
+        self.lower_case_allowed_header_names = [header.lower() for header in self.__class__.DEFAULT_HEADERS_ALLOWLIST]
 
     def _redact_query_param(self, key: str, value: str) -> str:
-        lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
-        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in self.lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def _redact_header(self, key: str, value: str) -> str:
-        lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
-        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in self.lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest[HTTPRequestType]
