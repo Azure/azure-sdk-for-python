@@ -27,8 +27,7 @@ jobs:
       # Pull and build the docker image.
       - template: /eng/common/pipelines/templates/steps/docker-pull-image.yml
         parameters:
-          ContainerRegistryClientId: $(azuresdkimages-cr-clientid)
-          ContainerRegistryClientSecret: $(azuresdkimages-cr-clientsecret)
+          ServiceConnectionName: azuresdkimages_container-registry
           ImageId: "$(DocValidationImageId)"
       # Sync docs repo onboarding files/folders
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
