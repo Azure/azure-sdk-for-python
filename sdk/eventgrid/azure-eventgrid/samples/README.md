@@ -52,8 +52,6 @@ To publish events, dict representation of the models could also be used as follo
 
 * Consume a Custom Payload of raw cloudevent data: [sample_consume_custom_payload.py][python-eg-sample-consume-custom-payload]
 
-EventGridClient operation samples: [EventGridClient samples][python-eg-client-sync-samples]
-
 ## Basic Async samples
 These code samples show common champion scenario operations with the Azure Event Grid client library using the async client.
 
@@ -68,8 +66,6 @@ These code samples show common champion scenario operations with the Azure Event
 To publish events, dict representation of the models could also be used as follows:
 * Publish EventGridEvent as dict like representation: [sample_publish_eg_event_using_dict_async.py][python-eg-sample-send-eg-as-dict-async]
 * Publish CloudEvent as dict like representation: [sample_publish_cloud_event_using_dict_async.py][python-eg-sample-send-cloudevent-as-dict-async]
-
-EventGridClient operation samples: [EventGridClient samples][python-eg-client-async-samples]
 
 ## More Samples
 
