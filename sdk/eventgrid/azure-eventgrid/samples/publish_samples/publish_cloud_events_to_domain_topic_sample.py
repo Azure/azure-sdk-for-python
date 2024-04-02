@@ -30,7 +30,7 @@ domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(domain_key)
-client = EventGridClient(domain_endpoint, credential)
+client = EventGridClient(domain_endpoint, credential, level="Basic")
 
 
 def publish_event():
