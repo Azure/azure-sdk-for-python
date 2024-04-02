@@ -922,6 +922,7 @@ class ServiceBusReceiver(
         start_time = time.time_ns()
 
         batch_count = 0
+        deleted = None
         while deleted != 0:
             deleted = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler

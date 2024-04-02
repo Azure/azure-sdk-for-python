@@ -891,6 +891,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
         
         batch_count = 0
+        deleted = None
         while deleted != 0:
             deleted = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
