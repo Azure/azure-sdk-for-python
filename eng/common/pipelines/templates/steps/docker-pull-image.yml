@@ -13,7 +13,7 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         # azuresdkimages.azurecr.io/pyrefautocr:latest -> azuresdkimages
-        $containerRegistryName = ("${{parameters.ImageId}}" -split "\/")[0].Replace("azurecr.io", "")
+        $containerRegistryName = ("${{parameters.ImageId}}" -split "\/")[0].Replace(".azurecr.io", "")
 
         az acr login --name $containerRegistryName
 
