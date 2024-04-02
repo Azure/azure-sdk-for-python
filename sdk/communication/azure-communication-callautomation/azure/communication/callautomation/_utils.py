@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 def build_external_storage(
     recording_storage: Union['AzureCommunicationsRecordingStorage',
                                       'AzureBlobContainerRecordingStorage'] = None
-) -> ExternalStorage:
+) -> Optional[ExternalStorage]:
     request: Optional[ExternalStorage] = None
     if recording_storage:
         if recording_storage.kind == RecordingStorageKind.AZURE_COMMUNICATION_SERVICES:
