@@ -77,7 +77,7 @@ from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
-endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
 client = EventGridClient(endpoint, default_az_credential)
 ```
 
@@ -107,8 +107,8 @@ import os
 from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
-key = os.environ["EVENTGRID_NAMESPACE_KEY"]
-endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
 credential_key = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential_key)

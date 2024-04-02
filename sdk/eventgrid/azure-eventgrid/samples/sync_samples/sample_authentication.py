@@ -6,7 +6,7 @@
 """
 FILE: sample_authentication.py
 DESCRIPTION:
-    These samples demonstrate authenticating an EventGridPublisherClient.
+    These samples demonstrate authenticating an EventGridClient.
 USAGE:
     python sample_authentication.py
     Set the environment variables with your own values before running the sample:
@@ -20,11 +20,11 @@ import os
 from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
-credential_key = AzureKeyCredential(topic_key)
-client = EventGridClient(endpoint, credential_key, level="Basic")
+credential_key = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential_key)
 # [END client_auth_with_key_cred]
 
 # [START client_auth_with_sas_cred]
@@ -44,6 +44,6 @@ from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridClient(endpoint, default_az_credential, level="Basic")
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+client = EventGridClient(endpoint, default_az_credential)
 # [END client_auth_with_token_cred]
