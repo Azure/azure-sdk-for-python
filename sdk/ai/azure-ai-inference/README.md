@@ -22,7 +22,7 @@ Note that for inference of OpenAI models hosted on azure you should be using the
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
-* A [TBD resouce](https://azure.microsoft.com/) in your Azure subscription. You will need the key and endpoint from this resource to authenticate against the service.
+* A [TBD resource](https://azure.microsoft.com/) in your Azure subscription. You will need the key and endpoint from this resource to authenticate against the service.
 
 ### Install the Model Client package
 
