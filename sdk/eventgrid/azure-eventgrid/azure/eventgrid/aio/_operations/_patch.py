@@ -123,7 +123,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             
             # If data is a cloud event, convert to an HTTP Request in binary mode
             if isinstance(events, CloudEvent):
-                kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
                 await self._publish(
                     topic_name, events, self._config.api_version, binary_mode, **kwargs
                 )  
@@ -300,7 +299,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             "cls", None
         )  # pylint: disable=protected-access
 
-
+        content_type = kwargs.pop("content_type", None)
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,

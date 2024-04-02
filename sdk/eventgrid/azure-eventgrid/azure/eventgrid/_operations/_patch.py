@@ -277,7 +277,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             "cls", None
         )  # pylint: disable=protected-access
 
-
+        content_type = kwargs.pop("content_type", None)
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,
