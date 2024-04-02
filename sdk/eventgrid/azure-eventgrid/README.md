@@ -2,7 +2,7 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src]
+| [Source code][python-eg-src]
 | [Package (PyPI)][python-eg-pypi]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-eventgrid/)
 | [API reference documentation][python-eg-ref-docs]
@@ -18,7 +18,9 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
 
 ### Prerequisites
 * Python 3.8 or later is required to use this package.
-* You must have an [Azure subscription][azure_subscription] and an Event Grid Namespace resource, or an Event Grid Topic resource to use this package. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces). Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
+* You must have an [Azure subscription][azure_subscription] and an Event Grid Namespace resource, or an Event Grid Basic resource to use this package.
+** To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces).
+** To create an Event Grid Basic resource follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
 
 
 ### Install the package
@@ -59,6 +61,7 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
+The default client created is a Standard Client, which is compatible with EventGrid Namespace. To create an EventGrid Basic Client, specify `level="Basic"` or `level=ClientLevel.BASIC` when instantiating the client.
 
 #### Using Azure Active Directory (AAD)
 
@@ -116,25 +119,25 @@ client = EventGridClient(endpoint, credential_key)
 
 <!-- END SNIPPET -->
 
-> **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
+> **Note:** A Basic client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
 
 ## Key concepts
 
-### Namespace
+### Namespace ~
 
 A **[namespace](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
 
 #### Namespace Topic
 
-A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespace-topics)** are topics that are created within an Event Grid namespace. The client publishes events to an HTTP namespace endpoint specifying a namespace topic where published events are logically contained. A namespace topic only supports the CloudEvent v1.0 schema.
+A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespace-topics)** is a topic that is created within an Event Grid namespace. The client publishes events to an HTTP namespace endpoint specifying a namespace topic where published events are logically contained. A namespace topic only supports the CloudEvent v1.0 schema.
 
 #### Event Subscription
 
 An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
 
-### Basic
+### Basic ~
 
 #### Topic
 A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
@@ -155,12 +158,24 @@ While you may configure your topic to use a [custom schema](https://docs.microso
 ##### CloudEvents v1.0 schema
 Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://cloudevents.io/) is a Cloud Native Computing Foundation project which produces a specification for describing event data in a common way. The service summary of CloudEvents can be found [here](https://docs.microsoft.com/azure/event-grid/cloud-event-schema).
 
-### EventGridClient
+ **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+
+##### System Topics
+A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
+
+The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
+For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
+
+ For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
+
+
+## EventGridClient
+
 `EventGridClient` provides operations to send, receive, acknowledge, reject, release event data to a resource specified during client initialization.
 
-If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridClient` will be used to publish events to it. Use the `send` method publishing events.
+If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridClient` will be used to publish events to it. Use the `send` method to publish events.
 
-The following formats of events are allowed to be sent:
+The following formats of events are allowed to be sent to an EventGrid Basic resource:
 - A list or a single instance of strongly typed EventGridEvents.
 - A dict representation of a serialized EventGridEvent object.
 - A list or a single instance of strongly typed CloudEvents.
@@ -168,18 +183,13 @@ The following formats of events are allowed to be sent:
 
 - A dict representation of any Custom Schema.
 
-Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
+The following formats of events are allowed to be sent to an EventGrid Namespace resource:
 
+* A list of single instance of strongly typed CloudEvents.
+* A dict representation of a serialized CloudEvent object.
 
- **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
-### System Topics
-A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
-
-The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
-For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
-
- For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
 ## Event Grid on Kubernetes with Azure Arc
 
@@ -495,7 +505,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
-[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/
+[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
 [python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
