@@ -13,7 +13,7 @@ urlFragment: eventgrid-samples
 ## Namespace Sync samples
 These code samples show common champion scenario operations with the Azure Event Grid client library.
 
-* Authenticate the client: [sample_eg_client_authentication.py][python-eg-client-auth-samples]
+* Authenticate the client: [sample_authentication.py][python-eg-auth]
 * Publish events to a namespace topic:[sample_publish_operation.py][python-eg-client-publish-sample]
 * Publish events in binary mode to a namespace topic: [sample_binary_mode.py][python-eg-client-binary-mode-sample]
 * Receive events from a namespace topic: [sample_receive_operation.py][python-eg-client-receive-sample]
@@ -100,10 +100,6 @@ To publish events, dict representation of the models could also be used as follo
 
 [python-eg-client-sync-samples]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples
 [python-eg-client-async-samples]:https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/async_samples/eventgrid_client_samples
-
-[python-eg-client-aad-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_aad_auth_operation.py
-
-[python-eg-client-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_eg_client_authentication.py
 
 [python-eg-client-ack-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_acknowledge_operation.py
 
