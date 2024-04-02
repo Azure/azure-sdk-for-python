@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_binary_mode_async.py
+DESCRIPTION:
+    These samples demonstrate sending CloudEvents in binary mode.
+USAGE:
+    python sample_binary_mode_async.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 import asyncio
 import json
