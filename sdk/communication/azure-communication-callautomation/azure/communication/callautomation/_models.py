@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from ._generated.models._enums  import (
         CallConnectionState,
         RecordingState,
+        RecordingKind,
         VoiceKind,
         DtmfTone
     )
@@ -442,21 +443,25 @@ class RecordingProperties:
     """Id of this recording operation."""
     recording_state: Optional[Union[str,'RecordingState']]
     """state of ongoing recording."""
+    recording_kind: Optional[Union[str, 'RecordingKind']]
 
     def __init__(
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None
+        recording_state: Optional[Union[str,'RecordingState']] = None,
+        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
     @classmethod
     def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
             recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state
+            recording_state=recording_state_result.recording_state,
+            recording_kind=recording_state_result.recording_kind,
         )
 
 

@@ -13,8 +13,6 @@ from ._call_connection_client_async import CallConnectionClient
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
-from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
-from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -103,26 +101,14 @@ class CallAutomationClient:
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
 
-        custom_enabled = get_custom_enabled()
-        custom_url = get_custom_url()
-        if custom_enabled and custom_url is not None:
-            self._client = AzureCommunicationCallAutomationService(
-                custom_url,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_call_automation_auth_policy(
-                custom_url, credential, acs_url=endpoint, is_async=True),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
-        else:
-            self._client = AzureCommunicationCallAutomationService(
-                endpoint,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_authentication_policy(
-                    endpoint, credential, is_async=True),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+        self._client = AzureCommunicationCallAutomationService(
+            endpoint,
+            credential,
+            api_version=api_version or DEFAULT_VERSION,
+            authentication_policy=get_authentication_policy(
+                endpoint, credential, is_async=True),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
@@ -144,7 +130,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, **kwargs)
 
-    def get_call_connection( # pylint: disable=client-method-missing-tracing-decorator
+    def get_call_connection( # pylint:disable=client-method-missing-tracing-decorator
         self,
         call_connection_id: str,
         **kwargs
@@ -160,7 +146,7 @@ class CallAutomationClient:
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
-        return CallConnectionClient._from_callautomation_client( #pylint:disable=protected-access
+        return CallConnectionClient._from_callautomation_client( # pylint:disable=protected-access
             callautomation_client=self._client,
             call_connection_id=call_connection_id,
             **kwargs
@@ -221,7 +207,6 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
@@ -314,15 +299,12 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
             operation_context=operation_context,
         )
-
         process_repeatability_first_sent(kwargs)
-
         result = await self._client.answer_call(
             answer_call_request=answer_call_request,
             **kwargs

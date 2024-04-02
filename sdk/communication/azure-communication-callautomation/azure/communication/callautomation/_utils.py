@@ -171,8 +171,8 @@ def serialize_communication_user_identifier(
 
 
 def deserialize_identifier(
-    identifier_model:CommunicationIdentifierModel
-)->CommunicationIdentifier:
+    identifier_model: CommunicationIdentifierModel
+) -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
