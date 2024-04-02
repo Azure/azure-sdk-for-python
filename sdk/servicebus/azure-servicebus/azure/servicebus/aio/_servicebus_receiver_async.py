@@ -847,7 +847,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         await self._open()
 
-        message_count = max_message_count if max_message_countelse 4000
+        message_count = max_message_count if max_message_count else 4000
 
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
