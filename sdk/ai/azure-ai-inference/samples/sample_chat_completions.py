@@ -21,7 +21,7 @@ def sample_chat_completions():
     # [START create_client]
     import os
     from azure.ai.inference import ModelClient
-    from azure.ai.inference.models import ChatCompletionsOptions, ChatRequestSystemMessage, ChatRequestUserMessage
+    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, UnknownParameters
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -43,12 +43,10 @@ def sample_chat_completions():
     # [START chat_completions]
     # Do a single chat completion operation. This will be a synchronously (blocking) call.
     result = client.get_chat_completions(
-        chat_completions_options=ChatCompletionsOptions(
-            messages=[
-                ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-                ChatRequestUserMessage(content="How many feet are in a mile?"),
-            ]
-        )
+        messages=[
+            ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
+            ChatRequestUserMessage(content="How many feet are in a mile?"),
+        ]
     )
 
     # Print results the the console

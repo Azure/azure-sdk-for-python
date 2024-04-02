@@ -17,10 +17,10 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_embeddings_async():
     import os
     from azure.ai.inference.aio import ModelClient
-    from azure.ai.inference.models import EmbeddingsOptions
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -38,13 +38,11 @@ async def sample_embeddings_async():
     # Do a single embeddings operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
         client.get_embeddings(
-            embeddings_options=EmbeddingsOptions(
-                input=[
-                    "first sentence",
-                    "second sentence",
-                    "third sentence"
-                ]
-            )
+            input=[
+                "first sentence",
+                "second sentence",
+                "third sentence"
+            ]
         )
     )
 
@@ -60,8 +58,8 @@ async def sample_embeddings_async():
     # Print results the the console
     print("Embeddings result:")
     for index, item in enumerate(result.data):
-        len=item.embedding.__len__()
-        print(f"data[{index}].index: {item.index}") 
+        len = item.embedding.__len__()
+        print(f"data[{index}].index: {item.index}")
         print(f"data[{index}].embedding[0]: {item.embedding[0]}")
         print(f"data[{index}].embedding[1]: {item.embedding[1]}")
         print("...")

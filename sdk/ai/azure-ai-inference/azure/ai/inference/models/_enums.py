@@ -58,3 +58,18 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
     DOCUMENT = "document"
     """to do"""
+
+
+class UnknownParameters(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the service behavior when unknown parameters are passed as extra properties in the
+    request payload.
+    """
+
+    ERROR = "error"
+    """The service should error when it sees unknown parameters in the request payload. This is the
+    default behavior if the service."""
+    IGNORE = "ignore"
+    """The service should ignore unknown parameters in the request payload. They will not be passed to
+    the back-end AI model."""
+    ALLOW = "allow"
+    """The service should pass unknown parameters to the back-end AI model."""

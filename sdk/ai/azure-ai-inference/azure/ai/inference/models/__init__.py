@@ -12,7 +12,6 @@ from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsJsonResponseFormat
 from ._models import ChatCompletionsNamedToolSelection
-from ._models import ChatCompletionsOptions
 from ._models import ChatCompletionsResponseFormat
 from ._models import ChatCompletionsTextResponseFormat
 from ._models import ChatCompletionsToolCall
@@ -25,7 +24,6 @@ from ._models import ChatRequestUserMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
 from ._models import EmbeddingItem
-from ._models import EmbeddingsOptions
 from ._models import EmbeddingsResult
 from ._models import EmbeddingsUsage
 from ._models import FunctionCall
@@ -35,6 +33,7 @@ from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
 from ._enums import EmbeddingInputType
+from ._enums import UnknownParameters
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -46,7 +45,6 @@ __all__ = [
     "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsJsonResponseFormat",
     "ChatCompletionsNamedToolSelection",
-    "ChatCompletionsOptions",
     "ChatCompletionsResponseFormat",
     "ChatCompletionsTextResponseFormat",
     "ChatCompletionsToolCall",
@@ -59,7 +57,6 @@ __all__ = [
     "ChatResponseMessage",
     "CompletionsUsage",
     "EmbeddingItem",
-    "EmbeddingsOptions",
     "EmbeddingsResult",
     "EmbeddingsUsage",
     "FunctionCall",
@@ -68,6 +65,7 @@ __all__ = [
     "ChatRole",
     "CompletionsFinishReason",
     "EmbeddingInputType",
+    "UnknownParameters",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

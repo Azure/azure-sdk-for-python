@@ -19,11 +19,10 @@ USAGE:
 
 def sample_embeddings():
     import os
-    
+
     from azure.ai.inference import ModelClient
-    from azure.ai.inference.models import EmbeddingsOptions
     from azure.core.credentials import AzureKeyCredential
-    
+
     # [START logging]
     import sys
     import logging
@@ -45,7 +44,7 @@ def sample_embeddings():
     formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
     handler.setFormatter(formatter)
     # [END logging]
-    
+
     # Read the values of your model endpoint and key from environment variables
     try:
         endpoint = os.environ["MODEL_ENDPOINT"]
@@ -61,20 +60,18 @@ def sample_embeddings():
     # [START embeddings]
     # Do a single embeddings operation. This will be a synchronously (blocking) call.
     result = client.get_embeddings(
-        embeddings_options=EmbeddingsOptions(
-            input=[
-                "first sentence",
-                "second sentence",
-                "third sentence"
-            ]
-        )
+       input=[
+           "first sentence",
+           "second sentence",
+           "third sentence"
+        ]
     )
-
+    
     # Print results the the console
     print("Embeddings result:")
     for index, item in enumerate(result.data):
-        len=item.embedding.__len__()
-        print(f"data[{index}].index: {item.index}") 
+        len = item.embedding.__len__()
+        print(f"data[{index}].index: {item.index}")
         print(f"data[{index}].embedding[0]: {item.embedding[0]}")
         print(f"data[{index}].embedding[1]: {item.embedding[1]}")
         print("...")

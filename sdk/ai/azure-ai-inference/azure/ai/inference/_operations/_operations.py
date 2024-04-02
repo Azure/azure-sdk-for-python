@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -34,6 +34,7 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,7 +42,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_model_get_chat_completions_request(**kwargs: Any) -> HttpRequest:
+def build_model_get_chat_completions_request(
+    *,
+    unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+    model_deployment: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -56,6 +62,10 @@ def build_model_get_chat_completions_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if unknown_parameters is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_parameters", unknown_parameters, "str")
+    if model_deployment is not None:
+        _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
@@ -63,7 +73,12 @@ def build_model_get_chat_completions_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_model_get_embeddings_request(**kwargs: Any) -> HttpRequest:
+def build_model_get_embeddings_request(
+    *,
+    unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+    model_deployment: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -78,6 +93,10 @@ def build_model_get_embeddings_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if unknown_parameters is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_parameters", unknown_parameters, "str")
+    if model_deployment is not None:
+        _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
@@ -89,8 +108,10 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
     @overload
     def get_chat_completions(
         self,
-        chat_completions_options: _models.ChatCompletionsOptions,
+        body: JSON,
         *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions:
@@ -100,8 +121,17 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completions_options: The JSON payload containing chat completion options. Required.
-        :type chat_completions_options: ~azure.ai.inference.models.ChatCompletionsOptions
+        :param body: Required.
+        :type body: JSON
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -126,7 +156,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                 }
 
                 # JSON input template you can fill out and use as your body input.
-                chat_completions_options = {
+                body = {
                     "messages": [
                         chat_request_message
                     ],
@@ -215,7 +245,26 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     def get_chat_completions(
-        self, chat_completions_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        *,
+        messages: List[_models.ChatRequestMessage],
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        stop: Optional[List[str]] = None,
+        stream_parameter: Optional[bool] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -223,11 +272,80 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completions_options: The JSON payload containing chat completion options. Required.
-        :type chat_completions_options: JSON
+        :keyword messages: The collection of context messages associated with this chat completions
+         request.
+         Typical usage begins with a chat message for the System role that provides instructions for
+         the behavior of the assistant, followed by alternating messages between the User and
+         Assistant roles. Required.
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword frequency_penalty: A value that influences the probability of generated tokens
+         appearing based on their cumulative
+         frequency in generated text.
+         Positive values will make tokens less likely to appear as their frequency increases and
+         decrease the likelihood of the model repeating the same statements verbatim. Default value is
+         None.
+        :paramtype frequency_penalty: float
+        :keyword presence_penalty: A value that influences the probability of generated tokens
+         appearing based on their existing
+         presence in generated text.
+         Positive values will make tokens less likely to appear when they already exist and increase
+         the
+         model's likelihood to output new topics. Default value is None.
+        :paramtype presence_penalty: float
+        :keyword temperature: The sampling temperature to use that controls the apparent creativity of
+         generated completions.
+         Higher values will make output more random while lower values will make results more focused
+         and deterministic.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
+         causes the
+         model to consider the results of tokens with the provided probability mass. As an example, a
+         value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+         considered.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype top_p: float
+        :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
+        :paramtype max_tokens: int
+        :keyword response_format: An object specifying the format that the model must output. Used to
+         enable JSON mode. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword stop: A collection of textual sequences that will end completions generation. Default
+         value is None.
+        :paramtype stop: list[str]
+        :keyword stream_parameter: A value indicating whether chat completions should be streamed for
+         this request. Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword tools: The available tool definitions that the chat completions request can use,
+         including caller-defined functions. Default value is None.
+        :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
+        :keyword tool_choice: If specified, the model will configure which of the provided tools it can
+         use for the chat completions response. Is either a Union[str,
+         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         Default value is None.
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed, and you
+         should refer to the
+         system_fingerprint response parameter to monitor changes in the backend.". Default value is
+         None.
+        :paramtype seed: int
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -277,7 +395,13 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     def get_chat_completions(
-        self, chat_completions_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: IO[bytes],
+        *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -285,8 +409,17 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completions_options: The JSON payload containing chat completion options. Required.
-        :type chat_completions_options: IO[bytes]
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -339,7 +472,26 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @distributed_trace
     def get_chat_completions(
-        self, chat_completions_options: Union[_models.ChatCompletionsOptions, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        messages: List[_models.ChatRequestMessage] = _Unset,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        stop: Optional[List[str]] = None,
+        stream_parameter: Optional[bool] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
@@ -347,10 +499,79 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         "completes"
         provided prompt data.
 
-        :param chat_completions_options: The JSON payload containing chat completion options. Is one of
-         the following types: ChatCompletionsOptions, JSON, IO[bytes] Required.
-        :type chat_completions_options: ~azure.ai.inference.models.ChatCompletionsOptions or JSON or
-         IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword messages: The collection of context messages associated with this chat completions
+         request.
+         Typical usage begins with a chat message for the System role that provides instructions for
+         the behavior of the assistant, followed by alternating messages between the User and
+         Assistant roles. Required.
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword frequency_penalty: A value that influences the probability of generated tokens
+         appearing based on their cumulative
+         frequency in generated text.
+         Positive values will make tokens less likely to appear as their frequency increases and
+         decrease the likelihood of the model repeating the same statements verbatim. Default value is
+         None.
+        :paramtype frequency_penalty: float
+        :keyword presence_penalty: A value that influences the probability of generated tokens
+         appearing based on their existing
+         presence in generated text.
+         Positive values will make tokens less likely to appear when they already exist and increase
+         the
+         model's likelihood to output new topics. Default value is None.
+        :paramtype presence_penalty: float
+        :keyword temperature: The sampling temperature to use that controls the apparent creativity of
+         generated completions.
+         Higher values will make output more random while lower values will make results more focused
+         and deterministic.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
+         causes the
+         model to consider the results of tokens with the provided probability mass. As an example, a
+         value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+         considered.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype top_p: float
+        :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
+        :paramtype max_tokens: int
+        :keyword response_format: An object specifying the format that the model must output. Used to
+         enable JSON mode. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword stop: A collection of textual sequences that will end completions generation. Default
+         value is None.
+        :paramtype stop: list[str]
+        :keyword stream_parameter: A value indicating whether chat completions should be streamed for
+         this request. Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword tools: The available tool definitions that the chat completions request can use,
+         including caller-defined functions. Default value is None.
+        :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
+        :keyword tool_choice: If specified, the model will configure which of the provided tools it can
+         use for the chat completions response. Is either a Union[str,
+         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         Default value is None.
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed, and you
+         should refer to the
+         system_fingerprint response parameter to monitor changes in the backend.". Default value is
+         None.
+        :paramtype seed: int
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -372,7 +593,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                 }
 
                 # JSON input template you can fill out and use as your body input.
-                chat_completions_options = {
+                body = {
                     "messages": [
                         chat_request_message
                     ],
@@ -472,14 +693,34 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ChatCompletions] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if messages is _Unset:
+                raise TypeError("missing required argument: messages")
+            body = {
+                "frequency_penalty": frequency_penalty,
+                "max_tokens": max_tokens,
+                "messages": messages,
+                "presence_penalty": presence_penalty,
+                "response_format": response_format,
+                "seed": seed,
+                "stop": stop,
+                "stream": stream_parameter,
+                "temperature": temperature,
+                "tool_choice": tool_choice,
+                "tools": tools,
+                "top_p": top_p,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(chat_completions_options, (IOBase, bytes)):
-            _content = chat_completions_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(chat_completions_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_chat_completions_request(
+            unknown_parameters=unknown_parameters,
+            model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -513,13 +754,28 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     def get_embeddings(
-        self, embeddings_options: _models.EmbeddingsOptions, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: JSON,
+        *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given prompt.
 
-        :param embeddings_options: The JSON payload containing embedding options. Required.
-        :type embeddings_options: ~azure.ai.inference.models.EmbeddingsOptions
+        :param body: Required.
+        :type body: JSON
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -531,7 +787,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                embeddings_options = {
+                body = {
                     "input": [
                         "str"  # Input texts to get embeddings for, encoded as a an array of
                           strings. Required.
@@ -570,16 +826,35 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     def get_embeddings(
-        self, embeddings_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        *,
+        input: List[str],
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given prompt.
 
-        :param embeddings_options: The JSON payload containing embedding options. Required.
-        :type embeddings_options: JSON
+        :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
+        :paramtype input: list[str]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword input_type: Specifies the input type to use for embedding search. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -617,13 +892,28 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @overload
     def get_embeddings(
-        self, embeddings_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: IO[bytes],
+        *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given prompt.
 
-        :param embeddings_options: The JSON payload containing embedding options. Required.
-        :type embeddings_options: IO[bytes]
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -664,14 +954,34 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
     @distributed_trace
     def get_embeddings(
-        self, embeddings_options: Union[_models.EmbeddingsOptions, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        input: List[str] = _Unset,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        **kwargs: Any
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
         """Return the embeddings for a given prompt.
 
-        :param embeddings_options: The JSON payload containing embedding options. Is one of the
-         following types: EmbeddingsOptions, JSON, IO[bytes] Required.
-        :type embeddings_options: ~azure.ai.inference.models.EmbeddingsOptions or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
+        :paramtype input: list[str]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword input_type: Specifies the input type to use for embedding search. Known values are:
+         "text", "query", and "document". Default value is None.
+        :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -680,7 +990,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                embeddings_options = {
+                body = {
                     "input": [
                         "str"  # Input texts to get embeddings for, encoded as a an array of
                           strings. Required.
@@ -730,14 +1040,21 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EmbeddingsResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {"input": input, "input_type": input_type}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(embeddings_options, (IOBase, bytes)):
-            _content = embeddings_options
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(embeddings_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_embeddings_request(
+            unknown_parameters=unknown_parameters,
+            model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

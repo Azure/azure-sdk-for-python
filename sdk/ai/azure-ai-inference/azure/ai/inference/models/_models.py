@@ -8,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import ChatRole
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class ChatChoice(_model_base.Model):
@@ -352,157 +359,6 @@ class ChatCompletionsNamedToolSelection(_model_base.Model):
 
     type: str = rest_discriminator(name="type")
     """The object type. Required."""
-
-
-class ChatCompletionsOptions(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """The configuration information for a chat completions request.
-    Completions support a wide variety of tasks and generate text that continues from or
-    "completes"
-    provided prompt data.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar messages: The collection of context messages associated with this chat completions
-     request.
-     Typical usage begins with a chat message for the System role that provides instructions for
-     the behavior of the assistant, followed by alternating messages between the User and
-     Assistant roles. Required.
-    :vartype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-    :ivar frequency_penalty: A value that influences the probability of generated tokens appearing
-     based on their cumulative
-     frequency in generated text.
-     Positive values will make tokens less likely to appear as their frequency increases and
-     decrease the likelihood of the model repeating the same statements verbatim.
-    :vartype frequency_penalty: float
-    :ivar presence_penalty: A value that influences the probability of generated tokens appearing
-     based on their existing
-     presence in generated text.
-     Positive values will make tokens less likely to appear when they already exist and increase
-     the
-     model's likelihood to output new topics.
-    :vartype presence_penalty: float
-    :ivar temperature: The sampling temperature to use that controls the apparent creativity of
-     generated completions.
-     Higher values will make output more random while lower values will make results more focused
-     and deterministic.
-     It is not recommended to modify temperature and top_p for the same completions request as the
-     interaction of these two settings is difficult to predict.
-    :vartype temperature: float
-    :ivar top_p: An alternative to sampling with temperature called nucleus sampling. This value
-     causes the
-     model to consider the results of tokens with the provided probability mass. As an example, a
-     value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
-     considered.
-     It is not recommended to modify temperature and top_p for the same completions request as the
-     interaction of these two settings is difficult to predict.
-    :vartype top_p: float
-    :ivar max_tokens: The maximum number of tokens to generate.
-    :vartype max_tokens: int
-    :ivar response_format: An object specifying the format that the model must output. Used to
-     enable JSON mode.
-    :vartype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
-    :ivar stop: A collection of textual sequences that will end completions generation.
-    :vartype stop: list[str]
-    :ivar stream: A value indicating whether chat completions should be streamed for this request.
-    :vartype stream: bool
-    :ivar tools: The available tool definitions that the chat completions request can use,
-     including caller-defined functions.
-    :vartype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
-    :ivar tool_choice: If specified, the model will configure which of the provided tools it can
-     use for the chat completions response. Is either a Union[str,
-     "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
-    :vartype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-     ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
-    :ivar seed: If specified, the system will make a best effort to sample deterministically such
-     that repeated requests with the
-     same seed and parameters should return the same result. Determinism is not guaranteed, and you
-     should refer to the
-     system_fingerprint response parameter to monitor changes in the backend.".
-    :vartype seed: int
-    """
-
-    messages: List["_models.ChatRequestMessage"] = rest_field()
-    """The collection of context messages associated with this chat completions request.
-     Typical usage begins with a chat message for the System role that provides instructions for
-     the behavior of the assistant, followed by alternating messages between the User and
-     Assistant roles. Required."""
-    frequency_penalty: Optional[float] = rest_field()
-    """A value that influences the probability of generated tokens appearing based on their cumulative
-     frequency in generated text.
-     Positive values will make tokens less likely to appear as their frequency increases and
-     decrease the likelihood of the model repeating the same statements verbatim."""
-    presence_penalty: Optional[float] = rest_field()
-    """A value that influences the probability of generated tokens appearing based on their existing
-     presence in generated text.
-     Positive values will make tokens less likely to appear when they already exist and increase the
-     model's likelihood to output new topics."""
-    temperature: Optional[float] = rest_field()
-    """The sampling temperature to use that controls the apparent creativity of generated completions.
-     Higher values will make output more random while lower values will make results more focused
-     and deterministic.
-     It is not recommended to modify temperature and top_p for the same completions request as the
-     interaction of these two settings is difficult to predict."""
-    top_p: Optional[float] = rest_field()
-    """An alternative to sampling with temperature called nucleus sampling. This value causes the
-     model to consider the results of tokens with the provided probability mass. As an example, a
-     value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
-     considered.
-     It is not recommended to modify temperature and top_p for the same completions request as the
-     interaction of these two settings is difficult to predict."""
-    max_tokens: Optional[int] = rest_field()
-    """The maximum number of tokens to generate."""
-    response_format: Optional["_models.ChatCompletionsResponseFormat"] = rest_field()
-    """An object specifying the format that the model must output. Used to enable JSON mode."""
-    stop: Optional[List[str]] = rest_field()
-    """A collection of textual sequences that will end completions generation."""
-    stream: Optional[bool] = rest_field()
-    """A value indicating whether chat completions should be streamed for this request."""
-    tools: Optional[List["_models.ChatCompletionsToolDefinition"]] = rest_field()
-    """The available tool definitions that the chat completions request can use, including
-     caller-defined functions."""
-    tool_choice: Optional[
-        Union[str, "_models.ChatCompletionsToolSelectionPreset", "_models.ChatCompletionsNamedToolSelection"]
-    ] = rest_field()
-    """If specified, the model will configure which of the provided tools it can use for the chat
-     completions response. Is either a Union[str, \"_models.ChatCompletionsToolSelectionPreset\"]
-     type or a ChatCompletionsNamedToolSelection type."""
-    seed: Optional[int] = rest_field()
-    """If specified, the system will make a best effort to sample deterministically such that repeated
-     requests with the
-     same seed and parameters should return the same result. Determinism is not guaranteed, and you
-     should refer to the
-     system_fingerprint response parameter to monitor changes in the backend.\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        messages: List["_models.ChatRequestMessage"],
-        frequency_penalty: Optional[float] = None,
-        presence_penalty: Optional[float] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        response_format: Optional["_models.ChatCompletionsResponseFormat"] = None,
-        stop: Optional[List[str]] = None,
-        stream: Optional[bool] = None,
-        tools: Optional[List["_models.ChatCompletionsToolDefinition"]] = None,
-        tool_choice: Optional[
-            Union[str, "_models.ChatCompletionsToolSelectionPreset", "_models.ChatCompletionsNamedToolSelection"]
-        ] = None,
-        seed: Optional[int] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ChatCompletionsTextResponseFormat(ChatCompletionsResponseFormat, discriminator="text"):
@@ -842,47 +698,6 @@ class EmbeddingItem(_model_base.Model):
         embedding: List[float],
         index: int,
         object: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingsOptions(_model_base.Model):
-    """The configuration information for an embeddings request.
-    Embeddings measure the relatedness of text strings and are commonly used for search,
-    clustering,
-    recommendations, and other similar scenarios.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar input: Input texts to get embeddings for, encoded as a an array of strings. Required.
-    :vartype input: list[str]
-    :ivar input_type: Specifies the input type to use for embedding search. Known values are:
-     "text", "query", and "document".
-    :vartype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
-    """
-
-    input: List[str] = rest_field()
-    """Input texts to get embeddings for, encoded as a an array of strings. Required."""
-    input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = rest_field()
-    """Specifies the input type to use for embedding search. Known values are: \"text\", \"query\",
-     and \"document\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        input: List[str],
-        input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = None,
     ):
         ...
 

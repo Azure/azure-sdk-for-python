@@ -21,7 +21,7 @@ import asyncio
 async def sample_chat_completions_async():
     import os
     from azure.ai.inference.aio import ModelClient
-    from azure.ai.inference.models import ChatCompletionsOptions, ChatRequestSystemMessage, ChatRequestUserMessage
+    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -39,12 +39,10 @@ async def sample_chat_completions_async():
     # Do a single chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
         client.get_chat_completions(
-            chat_completions_options=ChatCompletionsOptions(
-                messages=[
-                    ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-                    ChatRequestUserMessage(content="How many feet are in a mile?"),
-                ]
-            )
+            messages=[
+                ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
+                ChatRequestUserMessage(content="How many feet are in a mile?"),
+            ]
         )
     )
 

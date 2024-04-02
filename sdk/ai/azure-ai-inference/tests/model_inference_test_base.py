@@ -84,12 +84,11 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     def _do_chat_completions(
         self,
-        options: sdk.models.ChatCompletionsOptions,
         query_params: Optional[dict] = None,
         **kwargs,
     ):
 
-        result = self.client.get_chat_completions(chat_completions_options=options, params=query_params)
+        result = self.client.get_chat_completions(messages=kwargs.get('messages'), params=query_params)
 
         # Optional: console printout of all results
         if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
@@ -104,14 +103,13 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     async def _do_async_chat_completions(
         self,
-        options: sdk.models.ChatCompletionsOptions,
         query_params: Optional[dict] = None,
         **kwargs,
     ):
         start_time = time.time()
 
         # Start the operation and get a Future object
-        future = asyncio.ensure_future(self.async_client.get_chat_completions(chat_completions_options=options))
+        future = asyncio.ensure_future(self.async_client.get_chat_completions(messages=kwargs.get('messages')))
 
         # Loop until the operation is done
         while not future.done():
@@ -134,14 +132,13 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     def _do_chat_completion_with_error(
         self,
-        options: sdk.models.ChatCompletionsOptions,
         expected_status_code: int,
         expected_message_contains: str,
         **kwargs,
     ):
 
         try:
-            result = self.client.get_chat_completions(chat_completions_options=options)
+            result = self.client.get_chat_completions(messages=kwargs.get('messages'))
 
         except AzureError as e:
             print(e)
@@ -153,14 +150,13 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     async def _do_async_chat_completion_with_error(
         self,
-        options: sdk.models.ChatCompletionsOptions,
         expected_status_code: int,
         expected_message_contains: str,
         **kwargs,
     ):
 
         try:
-            result = await self.async_client.get_chat_completions(chat_completions_options=options)
+            result = await self.async_client.get_chat_completions(messages=kwargs.get('messages'))
 
         except AzureError as e:
             print(e)
