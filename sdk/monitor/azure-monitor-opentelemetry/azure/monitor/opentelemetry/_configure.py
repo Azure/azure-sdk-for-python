@@ -6,7 +6,6 @@
 from logging import getLogger
 from typing import Dict, cast
 
-from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled
 from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -45,6 +44,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
+from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
