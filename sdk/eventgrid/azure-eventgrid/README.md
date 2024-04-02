@@ -137,6 +137,10 @@ A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-even
 
 An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
 
+#### Binary Content Mode
+
+A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**. To specify this, when sending events to the service pass in `binary_mode=True`.
+
 ### Basic ~
 
 #### Topic
