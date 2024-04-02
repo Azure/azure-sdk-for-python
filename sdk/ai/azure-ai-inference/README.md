@@ -49,7 +49,7 @@ Once you define the environment variables, this Python code will create and auth
 ```python
 import os
 from azure.ai.inference import ModelClient
-from azure.ai.inference.models import ChatCompletionsOptions, ChatRequestSystemMessage, ChatRequestUserMessage
+from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, UnknownParameters
 from azure.core.credentials import AzureKeyCredential
 
 # Read the values of your model endpoint and key from environment variables
@@ -62,7 +62,10 @@ except KeyError:
     exit()
 
 # Create Model Client for synchronous operations
-client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+client = ModelClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+)
 ```
 
 <!-- END SNIPPET -->
@@ -115,12 +118,10 @@ This example demonstrates how to generate chat completions.
 ```python
 # Do a single chat completion operation. This will be a synchronously (blocking) call.
 result = client.get_chat_completions(
-    chat_completions_options=ChatCompletionsOptions(
-        messages=[
-            ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-            ChatRequestUserMessage(content="How many feet are in a mile?"),
-        ]
-    )
+    messages=[
+        ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
+        ChatRequestUserMessage(content="How many feet are in a mile?"),
+    ]
 )
 
 # Print results the the console
@@ -152,20 +153,18 @@ This example demonstrates how to get embeddings.
 ```python
 # Do a single embeddings operation. This will be a synchronously (blocking) call.
 result = client.get_embeddings(
-    embeddings_options=EmbeddingsOptions(
-        input=[
-            "first sentence",
-            "second sentence",
-            "third sentence"
-        ]
-    )
+   input=[
+       "first sentence",
+       "second sentence",
+       "third sentence"
+    ]
 )
 
 # Print results the the console
 print("Embeddings result:")
 for index, item in enumerate(result.data):
-    len=item.embedding.__len__()
-    print(f"data[{index}].index: {item.index}") 
+    len = item.embedding.__len__()
+    print(f"data[{index}].index: {item.index}")
     print(f"data[{index}].embedding[0]: {item.embedding[0]}")
     print(f"data[{index}].embedding[1]: {item.embedding[1]}")
     print("...")
