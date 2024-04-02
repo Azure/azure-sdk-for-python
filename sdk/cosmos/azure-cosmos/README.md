@@ -687,7 +687,8 @@ indexing_policy = {
         ]
     }
 ```
-You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it like shown below:
+You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
+The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
 ```python
 database.create_container(id=container_id, partition_key=PartitionKey(path="/id"),
                           indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
