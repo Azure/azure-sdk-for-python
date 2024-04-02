@@ -629,6 +629,71 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
+### Private Preview - Vector Embeddings and Vector Indexes
+We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
+search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
+before you can use them.
+
+Each vector embedding should have a path to the relevant vector field in your items being stored, a supported data type
+(float32, int8, uint8), the vector's dimensions, and the distance function being used for that embedding.
+A sample vector embedding policy would look like this:
+```python
+vector_embedding_policy = {
+    "vectorEmbeddings": [
+        {
+            "path": "/vector1",
+            "dataType": "float32",
+            "dimensions": 1000,
+            "distanceFunction": "euclidean"
+        },
+        {
+            "path": "/vector2",
+            "dataType": "int8",
+            "dimensions": 200,
+            "distanceFunction": "dotproduct"
+        },
+        {
+            "path": "/vector3",
+            "dataType": "uint8",
+            "dimensions": 400,
+            "distanceFunction": "cosine"
+        }
+    ]
+}
+```
+
+Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
+the path to the relevant field to be used, and the type of index from the possible options (flat, quantizedFlat, or diskANN).
+A sample indexing policy with vector indexes would look like this:
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "compositeIndexes": [
+            [
+                {"path": "/numberField", "order": "ascending"},
+                {"path": "/stringField", "order": "descending"}
+            ]
+        ],
+        "spatialIndexes": [
+            {"path": "/location/*", "types": [
+                "Point",
+                "Polygon"]}
+        ],
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "flat"},
+            {"path": "/vector2", "type": "quantizedFlat"},
+            {"path": "/vector3", "type": "diskANN"}
+        ]
+    }
+```
+You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it like shown below:
+```python
+database.create_container(id=container_id, partition_key=PartitionKey(path="/id"),
+                          indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
+```
+***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
+
 ## Troubleshooting
 
 ### General
