@@ -542,10 +542,10 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
 
   # Python requires pregenerated token file in addition to wheel to generate API review.
   # Make sure that token file exists in same path as wheel file.
-  $tokenFile = Join-Path -Path $whlDirectory -ChildPath "${packageName}_Python.json"
+  $tokenFile = Join-Path -Path $whlDirectory -ChildPath "${packageName}_${Language}.json"
   if (!(Test-Path $tokenFile))
   {
-    Write-Host "API review token file for $($artifactName) does not exist in path $($whlDirectory). Skipping API review for $packageName"
+    Write-Host "API review token file for $($tokenFile) does not exist in path $($whlDirectory). Skipping API review for $packageName"
     return $null
   }
   else
