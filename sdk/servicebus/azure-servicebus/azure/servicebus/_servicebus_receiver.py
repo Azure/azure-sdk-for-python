@@ -863,8 +863,7 @@ class ServiceBusReceiver(
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
         """
-        This operation deletes messages in the queue that are older than the specified enqueued time,
-         up to 4,000 messages at a time.
+        This operation deletes messages in the queue that are older than the specified enqueued time.
 
         :keyword int or None max_message_count: The maximum number of messages to delete.
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
@@ -890,13 +889,14 @@ class ServiceBusReceiver(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
         )
 
-        if deleted == message_count and (message_count > 4000 or max_message_count is None):
-            batch_count = message_count
-            while batch_count == message_count:
-                batch_count = self._mgmt_request_response_with_retry(
-                    REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
-                )
-                deleted += batch_count
+        # TODO: Loop on DeleteBatch until all are deleted if given a max_message_count > 4000 separate func
+        # if deleted == message_count and (message_count > 4000 or max_message_count is None):
+        #     batch_count = message_count
+        #     while batch_count == message_count:
+        #         batch_count = self._mgmt_request_response_with_retry(
+        #             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+        #         )
+        #         deleted += batch_count
 
 
         links = get_receive_links(deleted)

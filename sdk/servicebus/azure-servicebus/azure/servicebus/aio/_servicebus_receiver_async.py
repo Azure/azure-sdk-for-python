@@ -847,7 +847,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         await self._open()
 
-        message_count = max_message_count if max_message_count else 4000
+        message_count = max_message_count if max_message_countelse 4000
 
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
@@ -861,13 +861,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
         )
 
-        if deleted == message_count and (message_count > 4000 or max_message_count is None):
-            batch_count = message_count
-            while batch_count == message_count:
-                batch_count = await self._mgmt_request_response_with_retry(
-                    REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
-                )
-                deleted += batch_count
+        # TODO: Loop on DeleteBatch until all are deleted if given a max_message_count > 4000 - separate func
+        # if deleted == message_count and (message_count > 4000 or max_message_count is None):
+        #     batch_count = message_count
+        #     while batch_count == message_count:
+        #         batch_count = await self._mgmt_request_response_with_retry(
+        #             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+        #         )
+        #         deleted += batch_count
 
         links = get_receive_links(deleted)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
