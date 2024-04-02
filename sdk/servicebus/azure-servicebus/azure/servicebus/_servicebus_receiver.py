@@ -901,7 +901,6 @@ class ServiceBusReceiver(
         """
         This operation purges all messages in the queue that are older than the specified enqueued time.
 
-        :keyword int or None max_message_count: The maximum number of messages to delete.
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :rtype: int
