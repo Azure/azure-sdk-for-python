@@ -60,7 +60,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -274,7 +274,7 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -344,7 +344,7 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -391,7 +391,7 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -440,7 +440,7 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -487,7 +487,7 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -535,7 +535,7 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -587,7 +587,7 @@ def build_upload_range_request(
 
     comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -643,6 +643,7 @@ def build_upload_range_from_url_request(
     file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -652,7 +653,7 @@ def build_upload_range_from_url_request(
     file_range_write_from_url: Literal["update"] = kwargs.pop(
         "file_range_write_from_url", _headers.pop("x-ms-write", "update")
     )
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -704,6 +705,8 @@ def build_upload_range_from_url_request(
         _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
             "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -717,6 +720,7 @@ def build_get_range_list_request(
     timeout: Optional[int] = None,
     range: Optional[str] = None,
     lease_id: Optional[str] = None,
+    support_rename: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -725,7 +729,7 @@ def build_get_range_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rangelist"] = kwargs.pop("comp", _params.pop("comp", "rangelist"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -755,6 +759,8 @@ def build_get_range_list_request(
         _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    if support_rename is not None:
+        _headers["x-ms-file-support-rename"] = _SERIALIZER.header("support_rename", support_rename, "bool")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -784,7 +790,7 @@ def build_start_copy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -858,7 +864,7 @@ def build_abort_copy_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -904,7 +910,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -952,7 +958,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1010,7 +1016,7 @@ def build_rename_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -2441,6 +2447,7 @@ class FileOperations:
             file_last_written_mode=file_last_written_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
             version=self._config.version,
@@ -2488,6 +2495,7 @@ class FileOperations:
         prevsharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
+        support_rename: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
@@ -2507,6 +2515,13 @@ class FileOperations:
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
          value is None.
         :type range: str
+        :param support_rename: This header is allowed only when PrevShareSnapshot query parameter is
+         set. Determines whether the changed ranges for a file that has been renamed or moved between
+         the target snapshot (or the live file) and the previous snapshot should be listed. If the value
+         is true, the valid changed ranges for the file will be returned. If the value is false, the
+         operation will result in a failure with 409 (Conflict) response. The default value is false.
+         Default value is None.
+        :type support_rename: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: ShareFileRangeList or the result of cls(response)
@@ -2538,6 +2553,7 @@ class FileOperations:
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
+            support_rename=support_rename,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,

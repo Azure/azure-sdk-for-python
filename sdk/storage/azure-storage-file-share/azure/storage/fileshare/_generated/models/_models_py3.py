@@ -647,6 +647,8 @@ class HandleItem(_serialization.Model):
     :vartype session_id: str
     :ivar client_ip: Client IP that opened the handle. Required.
     :vartype client_ip: str
+    :ivar client_name: Name of the client machine where the share is being mounted. Required.
+    :vartype client_name: str
     :ivar open_time: Time when the session that previously opened the handle has last been
      reconnected. (UTC). Required.
     :vartype open_time: ~datetime.datetime
@@ -662,6 +664,7 @@ class HandleItem(_serialization.Model):
         "file_id": {"required": True},
         "session_id": {"required": True},
         "client_ip": {"required": True},
+        "client_name": {"required": True},
         "open_time": {"required": True},
     }
 
@@ -672,6 +675,7 @@ class HandleItem(_serialization.Model):
         "parent_id": {"key": "ParentId", "type": "str"},
         "session_id": {"key": "SessionId", "type": "str"},
         "client_ip": {"key": "ClientIp", "type": "str"},
+        "client_name": {"key": "ClientName", "type": "str"},
         "open_time": {"key": "OpenTime", "type": "rfc-1123"},
         "last_reconnect_time": {"key": "LastReconnectTime", "type": "rfc-1123"},
         "access_right_list": {"key": "AccessRightList", "type": "[str]", "xml": {"wrapped": True}},
@@ -686,6 +690,7 @@ class HandleItem(_serialization.Model):
         file_id: str,
         session_id: str,
         client_ip: str,
+        client_name: str,
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
@@ -705,6 +710,8 @@ class HandleItem(_serialization.Model):
         :paramtype session_id: str
         :keyword client_ip: Client IP that opened the handle. Required.
         :paramtype client_ip: str
+        :keyword client_name: Name of the client machine where the share is being mounted. Required.
+        :paramtype client_name: str
         :keyword open_time: Time when the session that previously opened the handle has last been
          reconnected. (UTC). Required.
         :paramtype open_time: ~datetime.datetime
@@ -720,6 +727,7 @@ class HandleItem(_serialization.Model):
         self.parent_id = parent_id
         self.session_id = session_id
         self.client_ip = client_ip
+        self.client_name = client_name
         self.open_time = open_time
         self.last_reconnect_time = last_reconnect_time
         self.access_right_list = access_right_list
