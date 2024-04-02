@@ -889,19 +889,48 @@ class ServiceBusReceiver(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
         )
 
-        # TODO: Loop on DeleteBatch until all are deleted if given a max_message_count > 4000 separate func
-        # if deleted == message_count and (message_count > 4000 or max_message_count is None):
-        #     batch_count = message_count
-        #     while batch_count == message_count:
-        #         batch_count = self._mgmt_request_response_with_retry(
-        #             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
-        #         )
-        #         deleted += batch_count
-
-
         links = get_receive_links(deleted)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return deleted
+
+    def purge_messages(
+        self,
+        *,
+        before_enqueued_time_utc: Optional[datetime.datetime] = None,
+    ) -> int:
+        """
+        This operation purges all messages in the queue that are older than the specified enqueued time.
+
+        :keyword int or None max_message_count: The maximum number of messages to delete.
+        :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
+         should be deleted. The default value is None, meaning all messages in the queue will be considered.
+        :rtype: int
+
+        """
+        self._check_live()
+        self._open()
+
+
+        message = {
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
+                else datetime.datetime.now(datetime.timezone.utc),
+            MGMT_REQUEST_MAX_MESSAGE_COUNT: 4000,
+        }
+
+        self._populate_message_properties(message)
+        handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
+        start_time = time.time_ns()
+
+        batch_count = 0
+        while deleted != 0:
+            deleted = self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+            )
+            batch_count += deleted
+
+        links = get_receive_links(batch_count)
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
+            return batch_count
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
