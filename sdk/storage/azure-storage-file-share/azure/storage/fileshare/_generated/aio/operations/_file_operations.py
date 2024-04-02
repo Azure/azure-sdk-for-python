@@ -123,10 +123,6 @@ class FileOperations:
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword file_type_constant: Dummy constant parameter, file type can only be file. Default
-         value is "file". Note that overriding this default value may result in unsupported behavior.
-        :paramtype file_type_constant: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -256,8 +252,7 @@ class FileOperations:
         :type range_get_content_md5: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -458,7 +453,6 @@ class FileOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -574,7 +568,6 @@ class FileOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -682,10 +675,6 @@ class FileOperations:
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -810,10 +799,6 @@ class FileOperations:
         :type metadata: dict[str, str]
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -904,13 +889,6 @@ class FileOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -991,13 +969,6 @@ class FileOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "release". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1085,13 +1056,6 @@ class FileOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "change". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1176,13 +1140,6 @@ class FileOperations:
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "break". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1297,10 +1254,6 @@ class FileOperations:
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :param optionalbody: Initial data. Default value is None.
         :type optionalbody: IO[bytes]
-        :keyword comp: comp. Default value is "range". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1427,10 +1380,6 @@ class FileOperations:
          ~azure.storage.fileshare.models.SourceModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "range". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1473,7 +1422,6 @@ class FileOperations:
             file_last_written_mode=file_last_written_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
-            file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
             version=self._config.version,
@@ -1521,7 +1469,6 @@ class FileOperations:
         prevsharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
-        support_rename: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
@@ -1541,19 +1488,8 @@ class FileOperations:
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
          value is None.
         :type range: str
-        :param support_rename: This header is allowed only when PrevShareSnapshot query parameter is
-         set. Determines whether the changed ranges for a file that has been renamed or moved between
-         the target snapshot (or the live file) and the previous snapshot should be listed. If the value
-         is true, the valid changed ranges for the file will be returned. If the value is false, the
-         operation will result in a failure with 409 (Conflict) response. The default value is false.
-         Default value is None.
-        :type support_rename: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "rangelist". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ShareFileRangeList or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ShareFileRangeList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1583,7 +1519,6 @@ class FileOperations:
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
-            support_rename=support_rename,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
@@ -1665,7 +1600,6 @@ class FileOperations:
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1772,13 +1706,6 @@ class FileOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "copy". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword copy_action_abort_constant: Abort. Default value is "abort". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype copy_action_abort_constant: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1868,10 +1795,6 @@ class FileOperations:
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
-        :keyword comp: comp. Default value is "listhandles". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListHandlesResponse or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1958,10 +1881,6 @@ class FileOperations:
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
-        :keyword comp: comp. Default value is "forceclosehandles". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2084,10 +2003,6 @@ class FileOperations:
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
-        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
