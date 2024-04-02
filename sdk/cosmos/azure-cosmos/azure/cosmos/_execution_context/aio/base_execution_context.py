@@ -56,7 +56,18 @@ class _QueryExecutionContextBase(object):
         return None
 
     def _has_more_pages(self):
-        return not self._has_started or self._continuation
+        return not self._has_finished
+
+    async def _ensure(self):
+        if not self._has_more_pages():
+            return
+
+        if not self._buffer:
+            results = await self._fetch_next_block()
+            self._buffer.extend(results)
+
+        if not self._buffer:
+             self._has_finished = True
 
     async def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
@@ -67,17 +78,10 @@ class _QueryExecutionContextBase(object):
         :return: List of results.
         :rtype: list
         """
-        if not self._has_more_pages():
-            return []
-
-        if self._buffer:
-            # if there is anything in the buffer returns that
-            res = list(self._buffer)
-            self._buffer.clear()
-            return res
-
-        # fetches the next block
-        return await self._fetch_next_block()
+        await self._ensure()
+        res = list(self._buffer)
+        self._buffer.clear()
+        return res
 
     async def _fetch_next_block(self):
         raise NotImplementedError
@@ -96,13 +100,7 @@ class _QueryExecutionContextBase(object):
         :rtype: dict
         :raises StopAsyncIteration: If no more result is left.
         """
-        if self._has_finished:
-            raise StopAsyncIteration
-
-        if not self._buffer:
-
-            results = await self.fetch_next_block()
-            self._buffer.extend(results)
+        await self._ensure()
 
         if not self._buffer:
             raise StopAsyncIteration
@@ -115,13 +113,19 @@ class _QueryExecutionContextBase(object):
         :param Callable fetch_function: The function that fetches the items.
         :return: List of fetched items.
         :rtype: list
-        """
+        """ 
         fetched_items = []
         # Continues pages till finds a non-empty page or all results are exhausted
-        while self._continuation or not self._has_started:
-            # For start time option, First fetch will always return empty
-            # before we get a continuation token
-            first_fetch = not self._has_started
+#         while self._continuation or not self._has_started:
+#             # For start time option, First fetch will always return empty
+#             # before we get a continuation token
+#             first_fetch = not self._has_started
+#             if not self._has_started:
+#                 self._has_started = True
+        while True:
+            # Check if this is first fetch for read from specific time change feed.
+            # For read specific time the first fetch will return empty even if we have more pages.
+            is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
             if not self._has_started:
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
@@ -135,13 +139,11 @@ class _QueryExecutionContextBase(object):
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             # For start time however we get no initial results, so we need to pass continuation token
-            if not self._is_change_feed or fetched_items:
-                self._continuation = response_headers.get(continuation_key)
-            elif self._is_change_feed and self._options.get("startTime") and first_fetch:
+            if not self._is_change_feed or fetched_items or is_s_time_first_fetch:
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
-            if fetched_items:
+            if fetched_items or self._continuation is None:
                 break
         return fetched_items
 

@@ -9,6 +9,8 @@
 
 #### Bugs Fixed
 * Fixed bug where change feed pulls in Async clients weren't returning all pages. See [PR 34694](https://github.com/Azure/azure-sdk-for-python/pull/34694)
+* Fixed bug when a retryable exception occurs in the first page of a query execution. See [PR](https://github.com/Azure/azure-sdk-for-python/pull/).
+
 
 #### Other Changes
 
