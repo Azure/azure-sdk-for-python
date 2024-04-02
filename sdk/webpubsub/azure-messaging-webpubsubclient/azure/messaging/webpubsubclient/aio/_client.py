@@ -958,7 +958,7 @@ class WebPubSubClient(
         """
 
     @overload
-    async def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
+    async def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], Awaitable[None]]) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -1051,7 +1051,9 @@ class WebPubSubClient(
         """
 
     @overload
-    async def unsubscribe(self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], None]) -> None:
+    async def unsubscribe(
+        self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], Awaitable[None]]
+    ) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
         :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
