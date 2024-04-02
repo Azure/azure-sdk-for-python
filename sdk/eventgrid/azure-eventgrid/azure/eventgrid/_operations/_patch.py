@@ -185,12 +185,39 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    def send(self, /, events, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
+    # def send(self, /, events, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
+    def send(self, *args, **kwargs) -> None:
         """Send events to the Event Grid Service."""
         # TODO: type hints + docstrings
+
+        topic_name = None
+        events = None
+        binary_mode = False
+        channel_name = None
+
+        # Check kwargs
+        channel_name = kwargs.pop("channel_name", None)
+        binary_mode = kwargs.pop("binary_mode", False)
+        topic_name = kwargs.pop("topic_name", None)
+        events = kwargs.pop("events", None)
+
+        # both there
+        if len(args) > 1:
+            if events is not None:
+                raise ValueError("events is already passed as a keyword argument.")
+            if topic_name is not None:
+                raise ValueError("topic_name is already passed as a keyword argument.")
+            events = args[1]
+            topic_name = args[0]
         
-        channel_name = channel_name
-        binary_mode = binary_mode
+        elif len(args) == 1:
+            if events is not None:
+                if topic_name is not None:
+                    raise ValueError("topic_name is already passed as a keyword argument.")
+                topic_name = args[0]
+            else:
+                events = args[0]
+        
 
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
