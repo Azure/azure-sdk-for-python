@@ -216,7 +216,7 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
 
         assert "InputContainerError" == error_details.error.code
         # Message: "Could not find the asset file in the storage account. Please make sure all paths and names are correct and the file is uploaded to storage."
-        assert None != error_details.error.message
+        assert error_details.error.message is not None
         assert "Could not find the asset file in the storage account" in error_details.error.message
 
     def test_simple_session(self, recorded_test, account_info, arr_client):
