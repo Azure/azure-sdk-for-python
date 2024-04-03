@@ -500,8 +500,8 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
             "Binary mode is not supported for batch CloudEvents. Set `binary_mode` to False when passing in a batch of CloudEvents."
         )
 
-    # content_type must be CloudEvent DataContentType when in binary mode
-    kwarg_content_type = kwargs.pop("content_type", "application/cloudevents+json; charset=utf-8")
+    # content_type must be CloudEvent DataContentType when in binary mode, try to use application/json if not
+    kwarg_content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
     content_type: str = event.datacontenttype or kwarg_content_type
     
     api_version: str = kwargs.pop(
