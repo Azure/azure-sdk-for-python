@@ -17,7 +17,7 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hdinsightcontainers
 # USAGE
-    python create_spark_cluster.py
+    python create_spark_cluster_with_internal_ingress.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -41,6 +41,7 @@ def main():
             "properties": {
                 "clusterProfile": {
                     "authorizationProfile": {"userIds": ["testuser1", "testuser2"]},
+                    "clusterAccessProfile": {"enableInternalIngress": True},
                     "clusterVersion": "0.0.1",
                     "identityProfile": {
                         "msiClientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
@@ -96,6 +97,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateSparkCluster.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateSparkClusterWithInternalIngress.json
 if __name__ == "__main__":
     main()

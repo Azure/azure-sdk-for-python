@@ -36,7 +36,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_by_location_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_request(
+    resource_group_name: str, cluster_pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -46,11 +48,14 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/availableClusterVersions",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusterpools/{clusterPoolName}/availableUpgrades",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "location": _SERIALIZER.url("location", location, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "clusterPoolName": _SERIALIZER.url("cluster_pool_name", cluster_pool_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -64,14 +69,14 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AvailableClusterVersionsOperations:
+class ClusterPoolAvailableUpgradesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.hdinsightcontainers.HDInsightContainersMgmtClient`'s
-        :attr:`available_cluster_versions` attribute.
+        :attr:`cluster_pool_available_upgrades` attribute.
     """
 
     models = _models
@@ -84,20 +89,27 @@ class AvailableClusterVersionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_location(self, location: str, **kwargs: Any) -> Iterable["_models.ClusterVersion"]:
-        """Returns a list of available cluster versions.
+    def list(
+        self, resource_group_name: str, cluster_pool_name: str, **kwargs: Any
+    ) -> Iterable["_models.ClusterPoolAvailableUpgrade"]:
+        """List a cluster pool available upgrade.
 
-        :param location: The name of the Azure region. Required.
-        :type location: str
-        :return: An iterator like instance of either ClusterVersion or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.hdinsightcontainers.models.ClusterVersion]
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_pool_name: The name of the cluster pool. Required.
+        :type cluster_pool_name: str
+        :return: An iterator like instance of either ClusterPoolAvailableUpgrade or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgrade]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ClusterVersionsListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ClusterPoolAvailableUpgradeList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -110,8 +122,9 @@ class AvailableClusterVersionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_by_location_request(
-                    location=location,
+                _request = build_list_request(
+                    resource_group_name=resource_group_name,
+                    cluster_pool_name=cluster_pool_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -139,7 +152,7 @@ class AvailableClusterVersionsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClusterVersionsListResult", pipeline_response)
+            deserialized = self._deserialize("ClusterPoolAvailableUpgradeList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
