@@ -32,7 +32,7 @@ from msal import PublicClientApplication
 
 class CommunicationIdentityClientSamples(object):
     def __init__(self):
-        self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING", "")
+        self.connection_string = os.getenv("COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING", "")
         self.client_id = os.getenv("AZURE_CLIENT_ID")
         self.client_secret = os.getenv("AZURE_CLIENT_SECRET")
         self.tenant_id = os.getenv("AZURE_TENANT_ID")
