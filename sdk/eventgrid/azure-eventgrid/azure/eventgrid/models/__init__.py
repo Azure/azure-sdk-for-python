@@ -8,9 +8,7 @@
 
 from ._models import AcknowledgeOptions
 from ._models import AcknowledgeResult
-from ._models import Error
 from ._models import FailedLockToken
-from ._models import InnerError
 from ._models import RejectOptions
 from ._models import RejectResult
 from ._models import ReleaseOptions
@@ -25,9 +23,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AcknowledgeOptions',
     'AcknowledgeResult',
-    'Error',
     'FailedLockToken',
-    'InnerError',
     'RejectOptions',
     'RejectResult',
     'ReleaseOptions',

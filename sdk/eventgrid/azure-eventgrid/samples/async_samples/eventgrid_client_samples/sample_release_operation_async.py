@@ -39,9 +39,9 @@ async def run():
             tokens = ReleaseOptions(lock_tokens=["token"])
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
                 release_delay_in_seconds=10,
-                release_options=tokens,
+                options=tokens,
             )
             print(release_events)
     except HttpResponseError:

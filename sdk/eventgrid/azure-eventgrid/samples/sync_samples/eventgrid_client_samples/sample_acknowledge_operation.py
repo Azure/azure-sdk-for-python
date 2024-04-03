@@ -36,8 +36,8 @@ try:
     lock_tokens = AcknowledgeOptions(lock_tokens=["token"])
     ack_events = client.acknowledge_cloud_events(
         topic_name=TOPIC_NAME,
-        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-        acknowledge_options=lock_tokens,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
+        options=lock_tokens,
     )
     print(ack_events)
 except HttpResponseError:

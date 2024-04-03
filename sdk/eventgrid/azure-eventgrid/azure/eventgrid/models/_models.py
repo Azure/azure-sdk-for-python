@@ -198,34 +198,12 @@ class Error(_model_base.Model):
     """A human-readable representation of the error. Required."""
     target: Optional[str] = rest_field()
     """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field()
+    details: Optional[List["_models._models.Error"]] = rest_field()
     """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
+    innererror: Optional["_models._models.InnerError"] = rest_field()
     """An object containing more specific information than the current object about the error."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  
 
 
@@ -243,7 +221,7 @@ class FailedLockToken(_model_base.Model):
 
     lock_token: str = rest_field(name="lockToken")
     """The lock token of an entry in the request. Required."""
-    error: "_models.Error" = rest_field()
+    error: "_models._models.Error" = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
 
 
@@ -252,7 +230,7 @@ class FailedLockToken(_model_base.Model):
         self,
         *,
         lock_token: str,
-        error: "_models.Error",
+        error: "_models._models.Error",
     ):
         ...
 
@@ -282,29 +260,10 @@ class InnerError(_model_base.Model):
 
     code: Optional[str] = rest_field()
     """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
+    innererror: Optional["_models._models.InnerError"] = rest_field()
     """Inner error."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  
 
 

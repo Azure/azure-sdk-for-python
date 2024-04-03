@@ -223,7 +223,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def receive_cloud_events(
         self,
         topic_name: str,
-        event_subscription_name: str,
+        subscription_name: str,
         *,
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
@@ -233,8 +233,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
+        :param subscription_name: Event Subscription Name. Required.
+        :type subscription_name: str
         :keyword max_events: Max Events count to be received. Minimum value is 1, while maximum value
          is 100 events. If not specified, the default value is 1. Default value is None.
         :paramtype max_events: int
@@ -252,7 +252,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         detail_items = []
         receive_result = await self._receive_cloud_events(
             topic_name,
-            event_subscription_name,
+            subscription_name,
             max_events=max_events,
             max_wait_time=max_wait_time,
             **kwargs,
@@ -274,8 +274,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def acknowledge_cloud_events(
         self,
         topic_name: str,
-        event_subscription_name: str,
-        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
+        subscription_name: str,
+        options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -285,11 +285,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
+        :param subscription_name: Event Subscription Name. Required.
+        :type subscription_name: str
+        :param options: AcknowledgeOptions. Is one of the following types:
          AcknowledgeOptions, JSON, IO[bytes] Required.
-        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
+        :type options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -298,7 +298,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                acknowledge_options = {
+                options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -335,7 +335,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         return await super().acknowledge_cloud_events(
-            topic_name, event_subscription_name, acknowledge_options, **kwargs
+            topic_name, subscription_name, options, **kwargs
         )
 
     @use_standard_only
@@ -346,8 +346,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def release_cloud_events(
         self,
         topic_name: str,
-        event_subscription_name: str,
-        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        subscription_name: str,
+        options: Union[_models.ReleaseOptions, JSON, IO],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
@@ -358,8 +358,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
+        :param subscription_name: Event Subscription Name. Required.
+        :type subscription_name: str
         :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
          IO[bytes] Required.
         :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
@@ -412,8 +412,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         return await super().release_cloud_events(
             topic_name,
-            event_subscription_name,
-            release_options,
+            subscription_name,
+            options,
             release_delay_in_seconds=release_delay_in_seconds,
             **kwargs,
         )
@@ -423,8 +423,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def reject_cloud_events(
         self,
         topic_name: str,
-        event_subscription_name: str,
-        reject_options: Union[_models.RejectOptions, JSON, IO],
+        subscription_name: str,
+        options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -433,11 +433,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON,
+        :param subscription_name: Event Subscription Name. Required.
+        :type subscription_name: str
+        :param options: RejectOptions. Is one of the following types: RejectOptions, JSON,
          IO[bytes] Required.
-        :type reject_options: ~azure.eventgrid.models.RejectOptions or JSON or IO[bytes]
+        :type options: ~azure.eventgrid.models.RejectOptions or JSON or IO[bytes]
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -446,7 +446,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                reject_options = {
+                options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -483,7 +483,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         return await super().reject_cloud_events(
-            topic_name, event_subscription_name, reject_options, **kwargs
+            topic_name, subscription_name, options, **kwargs
         )
 
     @use_standard_only
@@ -494,8 +494,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     async def renew_cloud_event_locks(
         self,
         topic_name: str,
-        event_subscription_name: str,
-        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        subscription_name: str,
+        options: Union[_models.RenewLockOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -505,11 +505,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param renew_lock_options: RenewLockOptions. Is one of the following types: RenewLockOptions,
+        :param subscription_name: Event Subscription Name. Required.
+        :type subscription_name: str
+        :param options: RenewLockOptions. Is one of the following types: RenewLockOptions,
          JSON, IO[bytes] Required.
-        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO[bytes]
+        :type roptions: ~azure.eventgrid.models.RenewLockOptions or JSON or IO[bytes]
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
@@ -519,7 +519,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                renew_lock_options = {
+                options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -556,7 +556,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         return await super().renew_cloud_event_locks(
-            topic_name, event_subscription_name, renew_lock_options, **kwargs
+            topic_name, subscription_name, options, **kwargs
         )
 
     async def _publish(

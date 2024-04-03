@@ -37,8 +37,8 @@ async def run():
         lock_tokens = RenewLockOptions(lock_tokens=["token"])
         release_events = await client.renew_cloud_event_locks(
             topic_name=TOPIC_NAME,
-            event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-            renew_lock_options=lock_tokens,
+            subscription_name=EVENT_SUBSCRIPTION_NAME,
+            options=lock_tokens,
         )
         print(release_events)
     except HttpResponseError:

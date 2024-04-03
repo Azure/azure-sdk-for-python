@@ -45,7 +45,7 @@ try:
     client.send(topic_name=TOPIC_NAME, events=cloud_event, binary_mode=True)
 
     # Receive a CloudEvent
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=100)
+    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=100)
     for receive_details in receive_result.value:
         cloud_event_received = receive_details.event
         print("CloudEvent: ", cloud_event_received)

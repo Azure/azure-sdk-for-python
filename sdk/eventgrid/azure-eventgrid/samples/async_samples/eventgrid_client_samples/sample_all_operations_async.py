@@ -68,7 +68,7 @@ async def run():
         try:
             receive_results = await client.receive_cloud_events(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,
                 max_wait_time=10,
             )
@@ -98,8 +98,8 @@ async def run():
                 release_tokens = ReleaseOptions(lock_tokens=release_events)
                 release_result = await client.release_cloud_events(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    release_options=release_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    options=release_tokens,
                 )
             except HttpResponseError:
                 raise
@@ -112,8 +112,8 @@ async def run():
                 ack_tokens = AcknowledgeOptions(lock_tokens=acknowledge_events)
                 ack_result = await client.acknowledge_cloud_events(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    acknowledge_options=ack_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    options=ack_tokens,
                 )
             except HttpResponseError:
                 raise
@@ -126,8 +126,8 @@ async def run():
                 reject_tokens = RejectOptions(lock_tokens=reject_events)
                 reject_result = await client.reject_cloud_events(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    reject_options=reject_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    options=reject_tokens,
                 )
             except HttpResponseError:
                 raise

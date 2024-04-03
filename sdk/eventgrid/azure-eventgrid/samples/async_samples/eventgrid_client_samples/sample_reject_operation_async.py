@@ -39,8 +39,8 @@ async def run():
             tokens = RejectOptions(lock_tokens=["token"])
             reject_events = await client.reject_cloud_events(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                reject_options=tokens,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
+                options=tokens,
             )
             print(reject_events)
     except HttpResponseError:

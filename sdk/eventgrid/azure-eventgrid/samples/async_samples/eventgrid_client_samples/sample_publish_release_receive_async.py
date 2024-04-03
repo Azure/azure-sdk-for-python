@@ -42,7 +42,7 @@ async def run():
             await client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
             # Receive CloudEvents and parse out lock tokens
-            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
             lock_tokens_to_release = []
             for item in receive_result.value:
                 lock_tokens_to_release.append(item.broker_properties.lock_token)
@@ -53,22 +53,22 @@ async def run():
             release_token = ReleaseOptions(lock_tokens=lock_tokens_to_release)
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
                 release_delay_in_seconds=60,
-                release_options=release_token,
+                options=release_token,
             )
             print("Released Event:", release_events)
 
             # Receive CloudEvents again
-            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
             print("Received events after release:", receive_result.value)
 
             # Acknowledge LockTokens
             acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
             acknowledge_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                acknowledge_options=acknowledge_token,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
+                options=acknowledge_token,
             )
             print("Acknowledged events after release:", acknowledge_events)
         except HttpResponseError:
