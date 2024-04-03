@@ -19,8 +19,8 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
 ### Prerequisites
 * Python 3.8 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and at least one of the following:
-** an Event Grid Namespace resource. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces).
-** an Event Grid Basic resource. To create an Event Grid Basic resource via the Azure portal follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal). To create an Event Grid Basic resource via the [Azure CLI](https://docs.microsoft.com/cli/azure) follow this [tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart)
+    * an Event Grid Namespace resource. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces).
+    * an Event Grid Basic resource. To create an Event Grid Basic resource via the Azure portal follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal). To create an Event Grid Basic resource via the [Azure CLI](https://docs.microsoft.com/cli/azure) follow this [tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart)
 
 ## Key concepts
 
