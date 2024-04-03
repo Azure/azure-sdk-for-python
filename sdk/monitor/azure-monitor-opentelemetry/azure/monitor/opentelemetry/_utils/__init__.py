@@ -43,7 +43,6 @@ def _get_customer_ikey_from_env_var():
     return _CUSTOMER_IKEY_ENV_VAR
 
 
-#TODO: move to utils or diagnostic logs
 def _get_log_path(status_log_path=False):
     system = platform.system()
     if system == "Linux":
@@ -56,7 +55,6 @@ def _get_log_path(status_log_path=False):
     return None
 
 
-#TODO: move to utils
 def _env_var_or_default(var_name, default_val=""):
     try:
         return environ[var_name]
@@ -64,7 +62,6 @@ def _env_var_or_default(var_name, default_val=""):
         return default_val
 
 
-#TODO: move to utils
 _EXTENSION_VERSION = _env_var_or_default(
     "ApplicationInsightsAgent_EXTENSION_VERSION", "disabled"
 )
