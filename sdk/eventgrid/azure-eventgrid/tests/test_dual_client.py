@@ -11,7 +11,7 @@ from azure.eventgrid import EventGridClient, EventGridEvent
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from eventgrid_preparer import EventGridPreparer
 
@@ -120,3 +120,85 @@ class TestEGDualClient(AzureRecordedTestCase):
                 client.send(
                     topic_name=eventgrid_topic_name, events=event
                 )
+
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_create_client_cloud_event(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name,
+                                   eventgrid_cloud_event_topic_key, eventgrid_cloud_event_topic_endpoint):
+        if level=="Basic":
+            client = self.create_eg_client(eventgrid_cloud_event_topic_endpoint, eventgrid_cloud_event_topic_key, level=level)
+        else:
+            client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
+        
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data={"test": "data"},
+            datacontenttype="application/json",
+            extensions={"extension1": "value1", "extension2": "value2"}
+        )
+
+        client.send(
+            topic_name=eventgrid_topic_name, events=event
+        )
+
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_create_client_channel_name(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name,
+                                   eventgrid_partner_namespace_topic_key, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_channel_name):
+        
+        client = self.create_eg_client(eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_namespace_topic_key, level=level)
+        
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data={"test": "data"},
+            datacontenttype="application/json",
+            extensions={"extension1": "value1", "extension2": "value2"}
+        )
+
+        if level=="Standard":
+            with pytest.raises(ValueError):
+                client.send(
+                    topic_name=eventgrid_topic_name, events=event, channel_name=eventgrid_partner_channel_name
+                )
+        else:
+            client.send(
+                topic_name=eventgrid_topic_name, events=event, channel_name=eventgrid_partner_channel_name
+            )
+
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_publish_endpoint(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
+        
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
+        
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data={"test": "data"},
+            datacontenttype="application/json",
+            extensions={"extension1": "value1", "extension2": "value2"}
+        )
+
+        if level=="Basic":
+            with pytest.raises(ResourceNotFoundError):
+                client.send(
+                    topic_name=eventgrid_topic_name, events=event
+                )
+        else:
+            client.send(
+                topic_name=eventgrid_topic_name, events=event
+            )
