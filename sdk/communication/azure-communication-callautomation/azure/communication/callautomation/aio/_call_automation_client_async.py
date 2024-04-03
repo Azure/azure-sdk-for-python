@@ -417,6 +417,7 @@ class CallAutomationClient:
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
         :keyword recording_storage: Defines the kind of external storage. Known values are:
           ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+          If no storage option is provided, the default is Azure Communications recording storage.
         :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
@@ -467,6 +468,7 @@ class CallAutomationClient:
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
         :keyword recording_storage: Defines the kind of external storage. Known values are:
           ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+          If no storage option is provided, the default is Azure Communications recording storage.
         :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
