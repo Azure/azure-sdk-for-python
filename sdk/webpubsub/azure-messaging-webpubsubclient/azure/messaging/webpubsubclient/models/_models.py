@@ -108,7 +108,7 @@ class SendEventMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         event: str,
         ack_id: Optional[int] = None,
@@ -212,7 +212,7 @@ class SendEventData(_model_base.Model):
         self,
         *,
         type: Literal["event"] = "event",  # pylint: disable=redefined-builtin
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         event: str,
         ack_id: Optional[int] = None,
@@ -257,7 +257,7 @@ class SendToGroupData(_model_base.Model):
         *,
         type: Literal["sendToGroup"] = "sendToGroup",  # pylint: disable=redefined-builtin
         group: str,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         no_echo: bool,
         ack_id: Optional[int] = None,
@@ -369,7 +369,7 @@ class GroupDataMessage:
     def __init__(
         self,
         *,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         from_user_id: Optional[str] = None,
@@ -396,7 +396,7 @@ class ServerDataMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         sequence_id: Optional[int] = None,
     ) -> None:
@@ -423,7 +423,7 @@ class SendToGroupMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         no_echo: bool,
@@ -722,7 +722,7 @@ class OnGroupDataMessageArgs:
     def __init__(
         self,
         *,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         from_user_id: Optional[str] = None,
@@ -748,7 +748,7 @@ class OnServerDataMessageArgs:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         sequence_id: Optional[int] = None,
     ) -> None:

@@ -465,7 +465,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: str,
-        data_type: Literal[WebPubSubDataType.TEXT, "text"],
+        data_type: Literal[WebPubSubDataType.TEXT],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -477,7 +477,7 @@ class WebPubSubClient(
          pubsub. Required.
         :type content: str.
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -488,7 +488,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: memoryview,
-        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF, "binary", "protobuf"],
+        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -501,8 +501,7 @@ class WebPubSubClient(
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
-         Literal["binary"] or Literal["protobuf"].
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF.
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -513,7 +512,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: Dict[str, Any],
-        data_type: Literal[WebPubSubDataType.JSON, "json"],
+        data_type: Literal[WebPubSubDataType.JSON],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -525,7 +524,7 @@ class WebPubSubClient(
          pubsub. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON.
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -535,7 +534,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: Union[str, memoryview, Dict[str, Any]],
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -577,7 +576,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: str,
-        data_type: Literal[WebPubSubDataType.TEXT, "text"],
+        data_type: Literal[WebPubSubDataType.TEXT],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -586,7 +585,7 @@ class WebPubSubClient(
         :param content: The data content. Required.
         :type content: str.
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -597,7 +596,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: Dict[str, Any],
-        data_type: Literal[WebPubSubDataType.JSON, "json"],
+        data_type: Literal[WebPubSubDataType.JSON],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -606,7 +605,7 @@ class WebPubSubClient(
         :param content: The data content. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -617,7 +616,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: memoryview,
-        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF, "binary", "protobuf"],
+        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -627,8 +626,7 @@ class WebPubSubClient(
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
-         Literal["binary"] or Literal["protobuf"].
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -638,7 +636,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: Union[str, memoryview, Dict[str, Any]],
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -698,7 +696,7 @@ class WebPubSubClient(
                 )
                 time.sleep(delay_seconds)
 
-    def _call_back(self, callback_type: Union[CallbackType, str], *args):
+    def _call_back(self, callback_type: CallbackType, *args):
         for func in self._handler[callback_type]:
             # _call_back works in listener thread which must not be blocked so we have to execute the func
             # in new thread to avoid dead lock
@@ -1075,12 +1073,12 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.CONNECTED, "connected"],
+        event: Literal[CallbackType.CONNECTED],
         listener: Callable[[OnConnectedArgs], None],
     ) -> None:
         """Add handler for connected event.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED or Literal["connected"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1088,12 +1086,12 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.DISCONNECTED, "disconnected"],
+        event: Literal[CallbackType.DISCONNECTED],
         listener: Callable[[OnDisconnectedArgs], None],
     ) -> None:
         """Add handler for disconnected event.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED or Literal["disconnected"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1101,12 +1099,12 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.STOPPED, "stopped"],
+        event: Literal[CallbackType.STOPPED],
         listener: Callable[[], None],
     ) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1114,12 +1112,12 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.SERVER_MESSAGE, "server-message"],
+        event: Literal[CallbackType.SERVER_MESSAGE],
         listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Add handler for server messages.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE or Literal["server-message"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
@@ -1127,12 +1125,12 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.GROUP_MESSAGE, "group-message"],
+        event: Literal[CallbackType.GROUP_MESSAGE],
         listener: Callable[[OnGroupDataMessageArgs], None],
     ) -> None:
         """Add handler for group messages.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE or Literal["group-message"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
@@ -1140,7 +1138,7 @@ class WebPubSubClient(
     @overload
     def subscribe(
         self,
-        event: Literal[CallbackType.REJOIN_GROUP_FAILED, "rejoin-group-failed"],
+        event: Literal[CallbackType.REJOIN_GROUP_FAILED],
         listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Add handler for rejoining group failed.
@@ -1153,13 +1151,13 @@ class WebPubSubClient(
 
     def subscribe(
         self,
-        event: Union[CallbackType, str],
+        event: CallbackType,
         listener: Callable,
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         """Add handler.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType or str
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType
         :param listener: The handler
         :type listener: callable.
         """
@@ -1171,12 +1169,12 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.CONNECTED, "connected"],
+        event: Literal[CallbackType.CONNECTED],
         listener: Callable[[OnConnectedArgs], None],
     ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED or Literal["connected"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1184,12 +1182,12 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.DISCONNECTED, "disconnected"],
+        event: Literal[CallbackType.DISCONNECTED],
         listener: Callable[[OnDisconnectedArgs], None],
     ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED or Literal["disconnected"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1197,12 +1195,12 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.STOPPED, "stopped"],
+        event: Literal[CallbackType.STOPPED],
         listener: Callable[[], None],
     ) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED or Literal["stopped"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
         :param listener: The handler
         :type listener: callable.
         """
@@ -1210,12 +1208,12 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.SERVER_MESSAGE, "server-message"],
+        event: Literal[CallbackType.SERVER_MESSAGE],
         listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Remove handler for server message.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE or Literal["server-message"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
@@ -1223,12 +1221,12 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.GROUP_MESSAGE, "group-message"],
+        event: Literal[CallbackType.GROUP_MESSAGE],
         listener: Callable[[OnGroupDataMessageArgs], None],
     ) -> None:
         """Remove handler for group message.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE or Literal["group-message"]
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
@@ -1236,7 +1234,7 @@ class WebPubSubClient(
     @overload
     def unsubscribe(
         self,
-        event: Literal[CallbackType.REJOIN_GROUP_FAILED, "rejoin-group-failed"],
+        event: Literal[CallbackType.REJOIN_GROUP_FAILED],
         listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Remove handler for rejoining group failed.
@@ -1249,13 +1247,13 @@ class WebPubSubClient(
 
     def unsubscribe(
         self,
-        event: Union[CallbackType, str],
+        event: CallbackType,
         listener: Callable,
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         """Remove handler for rejoining group failed.
         :param event: The event name. Required.
-        :type event: ~azure.messaging.webpubsubclient.models.CallbackType or str
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType
         :param listener: The handler
         :type listener: callable.
         """

@@ -12,6 +12,8 @@ from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
     OnDisconnectedArgs,
+    CallbackType,
+    WebPubSubDataType,
 )
 from dotenv import load_dotenv
 
@@ -49,18 +51,18 @@ async def main():
     )
 
     async with client:
-        await client.subscribe("connected", on_connected)
-        await client.subscribe("disconnected", on_disconnected)
-        await client.subscribe("group-message", on_group_message)
+        await client.subscribe(CallbackType.CONNECTED, on_connected)
+        await client.subscribe(CallbackType.DISCONNECTED, on_disconnected)
+        await client.subscribe(CallbackType.GROUP_MESSAGE, on_group_message)
         group_name = "test"
         await client.join_group(group_name)
         await client.send_to_group(
-            group_name, "hello text", "text", no_echo=False, ack=False
+            group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False
         )
-        await client.send_to_group(group_name, {"hello": "json"}, "json")
-        await client.send_to_group(group_name, "hello text", "text")
+        await client.send_to_group(group_name, {"hello": "json"}, WebPubSubDataType.JSON)
+        await client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT)
         content = memoryview("hello binary".encode())
-        await client.send_to_group(group_name, content, "binary")
+        await client.send_to_group(group_name, content, WebPubSubDataType.BINARY)
 
     # If you can't run client in context, please open/close client manually like:
     # await client.open()

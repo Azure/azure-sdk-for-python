@@ -10,6 +10,7 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.messaging.webpubsubclient.aio import WebPubSubClient as AsyncClient
 from azure.messaging.webpubsubclient import WebPubSubClient as Client
 from azure.messaging.webpubsubclient import WebPubSubClientCredential
+from azure.messaging.webpubsubclient.models import WebPubSubDataType
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,14 +42,14 @@ def send() -> None:
         client.join_group(group_name)
         start = time.time()
         for i in range(MESSAGE_COUNT):
-            client.send_to_group(group_name, {"hello": "json"}, "json")
+            client.send_to_group(group_name, {"hello": "json"}, WebPubSubDataType.JSON)
             print(f"send message {i} with Sync API ")
         TIME_COST = time.time() - start
 
 
 async def send_item_async(client_async, idx):
     print(f"send message {idx} with Async API")
-    await client_async.send_to_group("test", {"hello": "json"}, "json")
+    await client_async.send_to_group("test", {"hello": "json"}, WebPubSubDataType.JSON)
 
 
 async def send_async() -> None:

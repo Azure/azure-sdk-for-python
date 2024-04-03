@@ -10,6 +10,8 @@ from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
     OnDisconnectedArgs,
+    CallbackType,
+    WebPubSubDataType,
 )
 from dotenv import load_dotenv
 
@@ -47,16 +49,16 @@ def main():
     )
 
     with client:
-        client.subscribe("connected", on_connected)
-        client.subscribe("disconnected", on_disconnected)
-        client.subscribe("group-message", on_group_message)
+        client.subscribe(CallbackType.CONNECTED, on_connected)
+        client.subscribe(CallbackType.DISCONNECTED, on_disconnected)
+        client.subscribe(CallbackType.GROUP_MESSAGE, on_group_message)
         group_name = "test"
         client.join_group(group_name)
-        client.send_to_group(group_name, "hello text", "text", no_echo=False, ack=False)
-        client.send_to_group(group_name, {"hello": "json"}, "json")
-        client.send_to_group(group_name, "hello text", "text")
+        client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False)
+        client.send_to_group(group_name, {"hello": "json"}, WebPubSubDataType.JSON)
+        client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT)
         content = memoryview("hello binary".encode())
-        client.send_to_group(group_name, content, "binary")
+        client.send_to_group(group_name, content, WebPubSubDataType.BINARY)
 
     # If you can't run client in context, please open/close client manually like:
     # client.open()
