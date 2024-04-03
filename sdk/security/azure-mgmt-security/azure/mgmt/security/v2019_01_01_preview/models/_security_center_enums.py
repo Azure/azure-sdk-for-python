@@ -112,7 +112,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All supported regulatory compliance controls in the given standard have a passed state"""
     FAILED = "Failed"
     """At least one supported regulatory compliance control in the given standard has a state of
-    #: failed"""
+    failed"""
     SKIPPED = "Skipped"
     """All supported regulatory compliance controls in the given standard have a state of skipped"""
     UNSUPPORTED = "Unsupported"

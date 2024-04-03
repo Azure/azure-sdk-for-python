@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -145,7 +145,7 @@ def build_dismiss_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
+class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -178,7 +178,6 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         :type solution_name: str
         :param top: Number of results to retrieve. Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IoTSecurityAggregatedAlert or the result of
          cls(response)
         :rtype:
@@ -202,18 +201,17 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     solution_name=solution_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -224,14 +222,14 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IoTSecurityAggregatedAlertList", pipeline_response)
@@ -241,11 +239,11 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -256,10 +254,6 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default/aggregatedAlerts"
-    }
 
     @distributed_trace
     def get(
@@ -275,7 +269,6 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         :type solution_name: str
         :param aggregated_alert_name: Identifier of the aggregated alert. Required.
         :type aggregated_alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecurityAggregatedAlert or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecurityAggregatedAlert
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -294,22 +287,21 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecurityAggregatedAlert] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             aggregated_alert_name=aggregated_alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -321,13 +313,9 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         deserialized = self._deserialize("IoTSecurityAggregatedAlert", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default/aggregatedAlerts/{aggregatedAlertName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def dismiss(  # pylint: disable=inconsistent-return-statements
@@ -342,7 +330,6 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         :type solution_name: str
         :param aggregated_alert_name: Identifier of the aggregated alert. Required.
         :type aggregated_alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -361,22 +348,21 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_dismiss_request(
+        _request = build_dismiss_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             aggregated_alert_name=aggregated_alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.dismiss.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -386,8 +372,4 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    dismiss.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default/aggregatedAlerts/{aggregatedAlertName}/dismiss"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

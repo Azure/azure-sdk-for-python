@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -66,7 +66,6 @@ class AssessmentsMetadataOperations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.SecurityAssessmentMetadata"]:
         """Get metadata information on all assessment types.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityAssessmentMetadata or the result of
          cls(response)
         :rtype:
@@ -90,14 +89,13 @@ class AssessmentsMetadataOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -108,14 +106,14 @@ class AssessmentsMetadataOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SecurityAssessmentMetadataList", pipeline_response)
@@ -125,11 +123,11 @@ class AssessmentsMetadataOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -141,8 +139,6 @@ class AssessmentsMetadataOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata"}
-
     @distributed_trace_async
     async def get(self, assessment_metadata_name: str, **kwargs: Any) -> _models.SecurityAssessmentMetadata:
         """Get metadata information on an assessment type.
@@ -150,7 +146,6 @@ class AssessmentsMetadataOperations:
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
          Required.
         :type assessment_metadata_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAssessmentMetadata or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -169,19 +164,18 @@ class AssessmentsMetadataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.SecurityAssessmentMetadata] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             assessment_metadata_name=assessment_metadata_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -193,17 +187,14 @@ class AssessmentsMetadataOperations:
         deserialized = self._deserialize("SecurityAssessmentMetadata", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.SecurityAssessmentMetadata"]:
         """Get metadata information on all assessment types in a specific subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityAssessmentMetadata or the result of
          cls(response)
         :rtype:
@@ -227,15 +218,14 @@ class AssessmentsMetadataOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -246,14 +236,14 @@ class AssessmentsMetadataOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SecurityAssessmentMetadataList", pipeline_response)
@@ -263,11 +253,11 @@ class AssessmentsMetadataOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -278,10 +268,6 @@ class AssessmentsMetadataOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata"
-    }
 
     @distributed_trace_async
     async def get_in_subscription(
@@ -292,7 +278,6 @@ class AssessmentsMetadataOperations:
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
          Required.
         :type assessment_metadata_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAssessmentMetadata or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -311,20 +296,19 @@ class AssessmentsMetadataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.SecurityAssessmentMetadata] = kwargs.pop("cls", None)
 
-        request = build_get_in_subscription_request(
+        _request = build_get_in_subscription_request(
             assessment_metadata_name=assessment_metadata_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_in_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -336,13 +320,9 @@ class AssessmentsMetadataOperations:
         deserialized = self._deserialize("SecurityAssessmentMetadata", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_in_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_in_subscription(
@@ -363,7 +343,6 @@ class AssessmentsMetadataOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAssessmentMetadata or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -373,7 +352,7 @@ class AssessmentsMetadataOperations:
     async def create_in_subscription(
         self,
         assessment_metadata_name: str,
-        assessment_metadata: IO,
+        assessment_metadata: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -384,11 +363,10 @@ class AssessmentsMetadataOperations:
          Required.
         :type assessment_metadata_name: str
         :param assessment_metadata: AssessmentMetadata object. Required.
-        :type assessment_metadata: IO
+        :type assessment_metadata: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAssessmentMetadata or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -398,7 +376,7 @@ class AssessmentsMetadataOperations:
     async def create_in_subscription(
         self,
         assessment_metadata_name: str,
-        assessment_metadata: Union[_models.SecurityAssessmentMetadata, IO],
+        assessment_metadata: Union[_models.SecurityAssessmentMetadata, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityAssessmentMetadata:
         """Create metadata information on an assessment type in a specific subscription.
@@ -407,13 +385,9 @@ class AssessmentsMetadataOperations:
          Required.
         :type assessment_metadata_name: str
         :param assessment_metadata: AssessmentMetadata object. Is either a SecurityAssessmentMetadata
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type assessment_metadata: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: SecurityAssessmentMetadata or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecurityAssessmentMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,23 +415,22 @@ class AssessmentsMetadataOperations:
         else:
             _json = self._serialize.body(assessment_metadata, "SecurityAssessmentMetadata")
 
-        request = build_create_in_subscription_request(
+        _request = build_create_in_subscription_request(
             assessment_metadata_name=assessment_metadata_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_in_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -469,13 +442,9 @@ class AssessmentsMetadataOperations:
         deserialized = self._deserialize("SecurityAssessmentMetadata", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_in_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_in_subscription(  # pylint: disable=inconsistent-return-statements
@@ -487,7 +456,6 @@ class AssessmentsMetadataOperations:
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
          Required.
         :type assessment_metadata_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -506,20 +474,19 @@ class AssessmentsMetadataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_in_subscription_request(
+        _request = build_delete_in_subscription_request(
             assessment_metadata_name=assessment_metadata_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_in_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -529,8 +496,4 @@ class AssessmentsMetadataOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_in_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

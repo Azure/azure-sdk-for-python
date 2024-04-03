@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -64,7 +64,6 @@ class SecurityContactsOperations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.SecurityContact"]:
         """List all security contact configurations for the subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityContact or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact]
@@ -89,15 +88,14 @@ class SecurityContactsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -108,14 +106,14 @@ class SecurityContactsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SecurityContactList", pipeline_response)
@@ -125,11 +123,11 @@ class SecurityContactsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -141,15 +139,12 @@ class SecurityContactsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securityContacts"}
-
     @distributed_trace_async
     async def get(self, security_contact_name: str, **kwargs: Any) -> _models.SecurityContact:
         """Get Default Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object. Required.
         :type security_contact_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityContact or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -170,20 +165,19 @@ class SecurityContactsOperations:
         )
         cls: ClsType[_models.SecurityContact] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             security_contact_name=security_contact_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -195,13 +189,9 @@ class SecurityContactsOperations:
         deserialized = self._deserialize("SecurityContact", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securityContacts/{securityContactName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create(
@@ -221,7 +211,6 @@ class SecurityContactsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityContact or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -229,18 +218,22 @@ class SecurityContactsOperations:
 
     @overload
     async def create(
-        self, security_contact_name: str, security_contact: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        security_contact_name: str,
+        security_contact: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SecurityContact:
         """Create security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object. Required.
         :type security_contact_name: str
         :param security_contact: Security contact object. Required.
-        :type security_contact: IO
+        :type security_contact: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityContact or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -248,19 +241,16 @@ class SecurityContactsOperations:
 
     @distributed_trace_async
     async def create(
-        self, security_contact_name: str, security_contact: Union[_models.SecurityContact, IO], **kwargs: Any
+        self, security_contact_name: str, security_contact: Union[_models.SecurityContact, IO[bytes]], **kwargs: Any
     ) -> _models.SecurityContact:
         """Create security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object. Required.
         :type security_contact_name: str
-        :param security_contact: Security contact object. Is either a SecurityContact type or a IO
-         type. Required.
-        :type security_contact: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param security_contact: Security contact object. Is either a SecurityContact type or a
+         IO[bytes] type. Required.
+        :type security_contact: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact or
+         IO[bytes]
         :return: SecurityContact or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01_preview.models.SecurityContact
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -290,23 +280,22 @@ class SecurityContactsOperations:
         else:
             _json = self._serialize.body(security_contact, "SecurityContact")
 
-        request = build_create_request(
+        _request = build_create_request(
             security_contact_name=security_contact_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -326,10 +315,6 @@ class SecurityContactsOperations:
 
         return deserialized  # type: ignore
 
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securityContacts/{securityContactName}"
-    }
-
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, security_contact_name: str, **kwargs: Any
@@ -338,7 +323,6 @@ class SecurityContactsOperations:
 
         :param security_contact_name: Name of the security contact object. Required.
         :type security_contact_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -359,20 +343,19 @@ class SecurityContactsOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             security_contact_name=security_contact_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -382,8 +365,4 @@ class SecurityContactsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securityContacts/{securityContactName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

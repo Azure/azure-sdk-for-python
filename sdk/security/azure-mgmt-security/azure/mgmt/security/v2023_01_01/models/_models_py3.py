@@ -92,7 +92,7 @@ class Extension(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The extension name. Supported values are: :code:`<br>`:code:`<br>`\
      **AgentlessDiscoveryForKubernetes** - API-based discovery of information about Kubernetes
@@ -325,7 +325,7 @@ class Pricing(Resource):
 class PricingList(_serialization.Model):
     """List of pricing configurations response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of pricing configurations. Required.
     :vartype value: list[~azure.mgmt.security.v2023_01_01.models.Pricing]

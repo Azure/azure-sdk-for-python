@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -62,7 +62,6 @@ class SecurityOperatorsOperations:
 
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityOperatorList or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01_preview.models.SecurityOperatorList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83,20 +82,19 @@ class SecurityOperatorsOperations:
         )
         cls: ClsType[_models.SecurityOperatorList] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             pricing_name=pricing_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -108,13 +106,9 @@ class SecurityOperatorsOperations:
         deserialized = self._deserialize("SecurityOperatorList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}/securityOperators"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(self, pricing_name: str, security_operator_name: str, **kwargs: Any) -> _models.SecurityOperator:
@@ -124,7 +118,6 @@ class SecurityOperatorsOperations:
         :type pricing_name: str
         :param security_operator_name: name of the securityOperator. Required.
         :type security_operator_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityOperator or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01_preview.models.SecurityOperator
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -145,21 +138,20 @@ class SecurityOperatorsOperations:
         )
         cls: ClsType[_models.SecurityOperator] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             pricing_name=pricing_name,
             security_operator_name=security_operator_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -171,13 +163,9 @@ class SecurityOperatorsOperations:
         deserialized = self._deserialize("SecurityOperator", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}/securityOperators/{securityOperatorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def create_or_update(
@@ -189,7 +177,6 @@ class SecurityOperatorsOperations:
         :type pricing_name: str
         :param security_operator_name: name of the securityOperator. Required.
         :type security_operator_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityOperator or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_01_01_preview.models.SecurityOperator
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -210,21 +197,20 @@ class SecurityOperatorsOperations:
         )
         cls: ClsType[_models.SecurityOperator] = kwargs.pop("cls", None)
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             pricing_name=pricing_name,
             security_operator_name=security_operator_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -236,13 +222,9 @@ class SecurityOperatorsOperations:
         deserialized = self._deserialize("SecurityOperator", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}/securityOperators/{securityOperatorName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -254,7 +236,6 @@ class SecurityOperatorsOperations:
         :type pricing_name: str
         :param security_operator_name: name of the securityOperator. Required.
         :type security_operator_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -275,21 +256,20 @@ class SecurityOperatorsOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             pricing_name=pricing_name,
             security_operator_name=security_operator_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -299,8 +279,4 @@ class SecurityOperatorsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}/securityOperators/{securityOperatorName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

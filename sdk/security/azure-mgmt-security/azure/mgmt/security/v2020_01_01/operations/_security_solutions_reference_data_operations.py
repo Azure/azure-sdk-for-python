@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -116,7 +116,6 @@ class SecuritySolutionsReferenceDataOperations:
     def list(self, **kwargs: Any) -> _models.SecuritySolutionsReferenceDataList:
         """Gets a list of all supported Security Solutions for the subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecuritySolutionsReferenceDataList or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecuritySolutionsReferenceDataList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -135,19 +134,18 @@ class SecuritySolutionsReferenceDataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.SecuritySolutionsReferenceDataList] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -159,13 +157,9 @@ class SecuritySolutionsReferenceDataOperations:
         deserialized = self._deserialize("SecuritySolutionsReferenceDataList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securitySolutionsReferenceData"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_home_region(self, asc_location: str, **kwargs: Any) -> _models.SecuritySolutionsReferenceDataList:
@@ -174,7 +168,6 @@ class SecuritySolutionsReferenceDataOperations:
         :param asc_location: The location where ASC stores the data of the subscription. can be
          retrieved from Get locations. Required.
         :type asc_location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecuritySolutionsReferenceDataList or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.SecuritySolutionsReferenceDataList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -193,20 +186,19 @@ class SecuritySolutionsReferenceDataOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.SecuritySolutionsReferenceDataList] = kwargs.pop("cls", None)
 
-        request = build_list_by_home_region_request(
+        _request = build_list_by_home_region_request(
             asc_location=asc_location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_by_home_region.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -218,10 +210,6 @@ class SecuritySolutionsReferenceDataOperations:
         deserialized = self._deserialize("SecuritySolutionsReferenceDataList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_by_home_region.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/securitySolutionsReferenceData"
-    }
+        return deserialized  # type: ignore

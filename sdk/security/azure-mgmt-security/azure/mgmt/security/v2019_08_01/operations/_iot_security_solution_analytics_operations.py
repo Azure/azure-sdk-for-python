@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -133,7 +133,6 @@ class IotSecuritySolutionAnalyticsOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionAnalyticsModelList or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionAnalyticsModelList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -152,21 +151,20 @@ class IotSecuritySolutionAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecuritySolutionAnalyticsModelList] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -178,13 +176,9 @@ class IotSecuritySolutionAnalyticsOperations:
         deserialized = self._deserialize("IoTSecuritySolutionAnalyticsModelList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -197,7 +191,6 @@ class IotSecuritySolutionAnalyticsOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IoTSecuritySolutionAnalyticsModel or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionAnalyticsModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -216,21 +209,20 @@ class IotSecuritySolutionAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-08-01"))
         cls: ClsType[_models.IoTSecuritySolutionAnalyticsModel] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             solution_name=solution_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -242,10 +234,6 @@ class IotSecuritySolutionAnalyticsOperations:
         deserialized = self._deserialize("IoTSecuritySolutionAnalyticsModel", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default"
-    }
+        return deserialized  # type: ignore

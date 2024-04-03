@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -70,7 +70,6 @@ class SecurityConnectorApplicationOperations:
         :param application_id: The security Application key - unique key for the standard application.
          Required.
         :type application_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Application or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_07_01_preview.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -91,22 +90,21 @@ class SecurityConnectorApplicationOperations:
         )
         cls: ClsType[_models.Application] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             security_connector_name=security_connector_name,
             application_id=application_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -118,13 +116,9 @@ class SecurityConnectorApplicationOperations:
         deserialized = self._deserialize("Application", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName}/providers/Microsoft.Security/applications/{applicationId}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -152,7 +146,6 @@ class SecurityConnectorApplicationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Application or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_07_01_preview.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -164,7 +157,7 @@ class SecurityConnectorApplicationOperations:
         resource_group_name: str,
         security_connector_name: str,
         application_id: str,
-        application: IO,
+        application: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -180,11 +173,10 @@ class SecurityConnectorApplicationOperations:
          Required.
         :type application_id: str
         :param application: Application over a subscription scope. Required.
-        :type application: IO
+        :type application: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Application or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_07_01_preview.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -196,7 +188,7 @@ class SecurityConnectorApplicationOperations:
         resource_group_name: str,
         security_connector_name: str,
         application_id: str,
-        application: Union[_models.Application, IO],
+        application: Union[_models.Application, IO[bytes]],
         **kwargs: Any
     ) -> _models.Application:
         """Creates or update a security Application on the given security connector.
@@ -209,13 +201,9 @@ class SecurityConnectorApplicationOperations:
         :param application_id: The security Application key - unique key for the standard application.
          Required.
         :type application_id: str
-        :param application: Application over a subscription scope. Is either a Application type or a IO
-         type. Required.
-        :type application: ~azure.mgmt.security.v2022_07_01_preview.models.Application or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param application: Application over a subscription scope. Is either a Application type or a
+         IO[bytes] type. Required.
+        :type application: ~azure.mgmt.security.v2022_07_01_preview.models.Application or IO[bytes]
         :return: Application or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_07_01_preview.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -245,7 +233,7 @@ class SecurityConnectorApplicationOperations:
         else:
             _json = self._serialize.body(application, "Application")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             security_connector_name=security_connector_name,
             application_id=application_id,
@@ -254,16 +242,15 @@ class SecurityConnectorApplicationOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -283,10 +270,6 @@ class SecurityConnectorApplicationOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName}/providers/Microsoft.Security/applications/{applicationId}"
-    }
-
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, security_connector_name: str, application_id: str, **kwargs: Any
@@ -301,7 +284,6 @@ class SecurityConnectorApplicationOperations:
         :param application_id: The security Application key - unique key for the standard application.
          Required.
         :type application_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -322,22 +304,21 @@ class SecurityConnectorApplicationOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             security_connector_name=security_connector_name,
             application_id=application_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -347,8 +328,4 @@ class SecurityConnectorApplicationOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName}/providers/Microsoft.Security/applications/{applicationId}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

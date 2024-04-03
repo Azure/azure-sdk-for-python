@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -201,7 +201,6 @@ class AdaptiveApplicationControlsOperations:
         :type include_path_recommendations: bool
         :param summary: Return output in a summarized form. Default value is None.
         :type summary: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdaptiveApplicationControlGroups or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroups
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -220,21 +219,20 @@ class AdaptiveApplicationControlsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.AdaptiveApplicationControlGroups] = kwargs.pop("cls", None)
 
-        request = build_list_request(
+        _request = build_list_request(
             subscription_id=self._config.subscription_id,
             include_path_recommendations=include_path_recommendations,
             summary=summary,
             api_version=api_version,
-            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -246,11 +244,9 @@ class AdaptiveApplicationControlsOperations:
         deserialized = self._deserialize("AdaptiveApplicationControlGroups", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/applicationWhitelistings"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(self, asc_location: str, group_name: str, **kwargs: Any) -> _models.AdaptiveApplicationControlGroup:
@@ -261,7 +257,6 @@ class AdaptiveApplicationControlsOperations:
         :type asc_location: str
         :param group_name: Name of an application control machine group. Required.
         :type group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdaptiveApplicationControlGroup or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -280,21 +275,20 @@ class AdaptiveApplicationControlsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.AdaptiveApplicationControlGroup] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             asc_location=asc_location,
             group_name=group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -306,13 +300,9 @@ class AdaptiveApplicationControlsOperations:
         deserialized = self._deserialize("AdaptiveApplicationControlGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def put(
@@ -336,7 +326,6 @@ class AdaptiveApplicationControlsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdaptiveApplicationControlGroup or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -344,7 +333,13 @@ class AdaptiveApplicationControlsOperations:
 
     @overload
     def put(
-        self, asc_location: str, group_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        asc_location: str,
+        group_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AdaptiveApplicationControlGroup:
         """Update an application control machine group.
 
@@ -354,11 +349,10 @@ class AdaptiveApplicationControlsOperations:
         :param group_name: Name of an application control machine group. Required.
         :type group_name: str
         :param body: Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdaptiveApplicationControlGroup or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -369,7 +363,7 @@ class AdaptiveApplicationControlsOperations:
         self,
         asc_location: str,
         group_name: str,
-        body: Union[_models.AdaptiveApplicationControlGroup, IO],
+        body: Union[_models.AdaptiveApplicationControlGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.AdaptiveApplicationControlGroup:
         """Update an application control machine group.
@@ -379,12 +373,9 @@ class AdaptiveApplicationControlsOperations:
         :type asc_location: str
         :param group_name: Name of an application control machine group. Required.
         :type group_name: str
-        :param body: Is either a AdaptiveApplicationControlGroup type or a IO type. Required.
-        :type body: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param body: Is either a AdaptiveApplicationControlGroup type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup or
+         IO[bytes]
         :return: AdaptiveApplicationControlGroup or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -412,7 +403,7 @@ class AdaptiveApplicationControlsOperations:
         else:
             _json = self._serialize.body(body, "AdaptiveApplicationControlGroup")
 
-        request = build_put_request(
+        _request = build_put_request(
             asc_location=asc_location,
             group_name=group_name,
             subscription_id=self._config.subscription_id,
@@ -420,16 +411,15 @@ class AdaptiveApplicationControlsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.put.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -441,13 +431,9 @@ class AdaptiveApplicationControlsOperations:
         deserialized = self._deserialize("AdaptiveApplicationControlGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    put.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -460,7 +446,6 @@ class AdaptiveApplicationControlsOperations:
         :type asc_location: str
         :param group_name: Name of an application control machine group. Required.
         :type group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -479,21 +464,20 @@ class AdaptiveApplicationControlsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             asc_location=asc_location,
             group_name=group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -503,8 +487,4 @@ class AdaptiveApplicationControlsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

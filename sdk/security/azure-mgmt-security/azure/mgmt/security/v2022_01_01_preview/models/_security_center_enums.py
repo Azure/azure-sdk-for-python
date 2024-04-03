@@ -17,12 +17,9 @@ class GovernanceRuleConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMe
 
     EQUALS = "Equals"
     """Checks that the string value of the data defined in Property equals the given value - exact fit"""
-    IN = "In"
-    """Checks that the string value of the data defined in Property equals any of the given values
-    #: (exact fit)"""
     IN_ENUM = "In"
     """Checks that the string value of the data defined in Property equals any of the given values
-    #: (exact fit)"""
+    (exact fit)"""
 
 
 class GovernanceRuleOwnerSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

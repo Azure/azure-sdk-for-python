@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -92,7 +92,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_by_azure_api_management_service_request(
+def build_list_by_azure_api_management_service_request(  # pylint: disable=name-too-long
     resource_group_name: str, service_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -132,7 +132,7 @@ def build_list_by_azure_api_management_service_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_by_azure_api_management_service_request(
+def build_get_by_azure_api_management_service_request(  # pylint: disable=name-too-long
     resource_group_name: str, service_name: str, api_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -173,7 +173,7 @@ def build_get_by_azure_api_management_service_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_onboard_azure_api_management_api_request(
+def build_onboard_azure_api_management_api_request(  # pylint: disable=name-too-long
     resource_group_name: str, service_name: str, api_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -214,7 +214,7 @@ def build_onboard_azure_api_management_api_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_offboard_azure_api_management_api_request(
+def build_offboard_azure_api_management_api_request(  # pylint: disable=name-too-long
     resource_group_name: str, service_name: str, api_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -282,7 +282,6 @@ class APICollectionsOperations:
         Gets a list of API collections within a subscription that have been onboarded to Microsoft
         Defender for APIs.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApiCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2023_11_15.models.ApiCollection]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -304,15 +303,14 @@ class APICollectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -323,14 +321,14 @@ class APICollectionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ApiCollectionList", pipeline_response)
@@ -340,11 +338,11 @@ class APICollectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -356,10 +354,6 @@ class APICollectionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/apiCollections"
-    }
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.ApiCollection"]:
@@ -371,7 +365,6 @@ class APICollectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApiCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2023_11_15.models.ApiCollection]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,16 +386,15 @@ class APICollectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -413,14 +405,14 @@ class APICollectionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ApiCollectionList", pipeline_response)
@@ -430,11 +422,11 @@ class APICollectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -446,10 +438,6 @@ class APICollectionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/apiCollections"
-    }
 
     @distributed_trace
     def list_by_azure_api_management_service(
@@ -467,7 +455,6 @@ class APICollectionsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApiCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2023_11_15.models.ApiCollection]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -489,17 +476,16 @@ class APICollectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_azure_api_management_service_request(
+                _request = build_list_by_azure_api_management_service_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_azure_api_management_service.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -510,14 +496,14 @@ class APICollectionsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ApiCollectionList", pipeline_response)
@@ -527,11 +513,11 @@ class APICollectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -543,10 +529,6 @@ class APICollectionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_azure_api_management_service.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/providers/Microsoft.Security/apiCollections"
-    }
 
     @distributed_trace
     def get_by_azure_api_management_service(
@@ -567,7 +549,6 @@ class APICollectionsOperations:
         :param api_id: API revision identifier. Must be unique in the API Management service instance.
          Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApiCollection or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2023_11_15.models.ApiCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -586,22 +567,21 @@ class APICollectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-11-15"))
         cls: ClsType[_models.ApiCollection] = kwargs.pop("cls", None)
 
-        request = build_get_by_azure_api_management_service_request(
+        _request = build_get_by_azure_api_management_service_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             api_id=api_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_by_azure_api_management_service.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -614,15 +594,11 @@ class APICollectionsOperations:
         deserialized = self._deserialize("ApiCollection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    get_by_azure_api_management_service.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/providers/Microsoft.Security/apiCollections/{apiId}"
-    }
-
-    def _onboard_azure_api_management_api_initial(
+    def _onboard_azure_api_management_api_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, service_name: str, api_id: str, **kwargs: Any
     ) -> _models.ApiCollection:
         error_map = {
@@ -639,22 +615,21 @@ class APICollectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-11-15"))
         cls: ClsType[_models.ApiCollection] = kwargs.pop("cls", None)
 
-        request = build_onboard_azure_api_management_api_request(
+        _request = build_onboard_azure_api_management_api_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             api_id=api_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._onboard_azure_api_management_api_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -678,10 +653,6 @@ class APICollectionsOperations:
 
         return deserialized  # type: ignore
 
-    _onboard_azure_api_management_api_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/providers/Microsoft.Security/apiCollections/{apiId}"
-    }
-
     @distributed_trace
     def begin_onboard_azure_api_management_api(
         self, resource_group_name: str, service_name: str, api_id: str, **kwargs: Any
@@ -700,14 +671,6 @@ class APICollectionsOperations:
         :param api_id: API revision identifier. Must be unique in the API Management service instance.
          Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either ApiCollection or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.v2023_11_15.models.ApiCollection]
@@ -737,7 +700,7 @@ class APICollectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ApiCollection", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -749,17 +712,15 @@ class APICollectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.ApiCollection].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_onboard_azure_api_management_api.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/providers/Microsoft.Security/apiCollections/{apiId}"
-    }
+        return LROPoller[_models.ApiCollection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def offboard_azure_api_management_api(  # pylint: disable=inconsistent-return-statements
@@ -778,7 +739,6 @@ class APICollectionsOperations:
         :param api_id: API revision identifier. Must be unique in the API Management service instance.
          Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -797,22 +757,21 @@ class APICollectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-11-15"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_offboard_azure_api_management_api_request(
+        _request = build_offboard_azure_api_management_api_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             api_id=api_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.offboard_azure_api_management_api.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -823,8 +782,4 @@ class APICollectionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    offboard_azure_api_management_api.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/providers/Microsoft.Security/apiCollections/{apiId}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
