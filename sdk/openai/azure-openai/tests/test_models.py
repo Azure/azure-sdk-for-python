@@ -8,29 +8,38 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, ALL, ASST_AZURE, OPENAI
+from conftest import configure, ASST_AZURE, OPENAI, AZURE, AZURE_AD, PREVIEW, GA
 
 
 class TestModels(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", ALL)
-    def test_models_list(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_models_list(self, client, api_type, api_version, **kwargs):
 
         models = client.models.list()
         for model in models:
             assert model.id
 
     @configure
-    @pytest.mark.parametrize("api_type", ALL)
-    def test_models_retrieve(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_models_retrieve(self, client, api_type, api_version, **kwargs):
 
         model = client.models.retrieve(**kwargs)
         assert model.id
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, ASST_AZURE])
-    def test_files(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)]
+    )
+    def test_files(self, client, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("test")

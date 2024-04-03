@@ -277,3 +277,33 @@ def test_compress_compressed_header_offline(port, http_request):
     content = b"".join(list(data))
     with pytest.raises(UnicodeDecodeError):
         content.decode("utf-8")
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_streaming_request_iterable(port, http_request):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    class Content:
+        def __iter__(self):
+            yield b"test 123"
+
+    client = PipelineClient("")
+    request = http_request(method="POST", url=url, data=Content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123"
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_streaming_request_generator(port, http_request):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    def content():
+        yield b"test 123"
+        yield b"test 456"
+
+    client = PipelineClient("")
+    request = http_request(method="POST", url=url, data=content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123test 456"

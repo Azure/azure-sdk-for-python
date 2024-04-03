@@ -7,7 +7,6 @@
 import logging
 import platform
 from os import environ
-from os.path import isdir
 from pathlib import Path
 
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # pylint: disable=import-error,no-name-in-module
@@ -98,11 +97,6 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
 # Opt-in
 _PREVIEW_INSTRUMENTED_LIBRARIES = ()
 _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES + _PREVIEW_INSTRUMENTED_LIBRARIES
-
-# Autoinstrumentation
-
-def _is_attach_enabled():
-    return isdir("/agents/python/")
 
 _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
 _AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"

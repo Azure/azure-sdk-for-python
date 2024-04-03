@@ -59,7 +59,7 @@ class AccessPolicy(_serialization.Model):
 class ClearRange(_serialization.Model):
     """ClearRange.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start: Required.
     :vartype start: int
@@ -189,7 +189,7 @@ class CorsRule(_serialization.Model):
     policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
     way to allow one domain (the origin domain) to call APIs in another domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allowed_origins: The origin domains that are permitted to make a request against the
      storage service via CORS. The origin domain is the domain from which the request originates.
@@ -298,7 +298,7 @@ class DestinationLeaseAccessConditions(_serialization.Model):
 class DirectoryItem(_serialization.Model):
     """A listed directory item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: ~azure.storage.fileshare.models.StringEncoded
@@ -423,7 +423,7 @@ class FileHTTPHeaders(_serialization.Model):
 class FileItem(_serialization.Model):
     """A listed file item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: ~azure.storage.fileshare.models.StringEncoded
@@ -484,7 +484,7 @@ class FileItem(_serialization.Model):
 class FileProperty(_serialization.Model):
     """File properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content_length: Content length of the file. This value may not be up-to-date since an SMB
      client may have modified the file locally. The value of Content-Length may not reflect that
@@ -563,7 +563,7 @@ class FileProperty(_serialization.Model):
 class FileRange(_serialization.Model):
     """An Azure Storage file range.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start: Start of the range. Required.
     :vartype start: int
@@ -597,7 +597,7 @@ class FileRange(_serialization.Model):
 class FilesAndDirectoriesListSegment(_serialization.Model):
     """Abstract for entries that can be listed from Directory.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar directory_items: Required.
     :vartype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
@@ -633,7 +633,7 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
 class HandleItem(_serialization.Model):
     """A listed Azure Storage handle item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar handle_id: XSMB service handle ID. Required.
     :vartype handle_id: str
@@ -647,6 +647,8 @@ class HandleItem(_serialization.Model):
     :vartype session_id: str
     :ivar client_ip: Client IP that opened the handle. Required.
     :vartype client_ip: str
+    :ivar client_name: Name of the client machine where the share is being mounted. Required.
+    :vartype client_name: str
     :ivar open_time: Time when the session that previously opened the handle has last been
      reconnected. (UTC). Required.
     :vartype open_time: ~datetime.datetime
@@ -662,6 +664,7 @@ class HandleItem(_serialization.Model):
         "file_id": {"required": True},
         "session_id": {"required": True},
         "client_ip": {"required": True},
+        "client_name": {"required": True},
         "open_time": {"required": True},
     }
 
@@ -672,6 +675,7 @@ class HandleItem(_serialization.Model):
         "parent_id": {"key": "ParentId", "type": "str"},
         "session_id": {"key": "SessionId", "type": "str"},
         "client_ip": {"key": "ClientIp", "type": "str"},
+        "client_name": {"key": "ClientName", "type": "str"},
         "open_time": {"key": "OpenTime", "type": "rfc-1123"},
         "last_reconnect_time": {"key": "LastReconnectTime", "type": "rfc-1123"},
         "access_right_list": {"key": "AccessRightList", "type": "[str]", "xml": {"wrapped": True}},
@@ -686,6 +690,7 @@ class HandleItem(_serialization.Model):
         file_id: str,
         session_id: str,
         client_ip: str,
+        client_name: str,
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
@@ -705,6 +710,8 @@ class HandleItem(_serialization.Model):
         :paramtype session_id: str
         :keyword client_ip: Client IP that opened the handle. Required.
         :paramtype client_ip: str
+        :keyword client_name: Name of the client machine where the share is being mounted. Required.
+        :paramtype client_name: str
         :keyword open_time: Time when the session that previously opened the handle has last been
          reconnected. (UTC). Required.
         :paramtype open_time: ~datetime.datetime
@@ -720,6 +727,7 @@ class HandleItem(_serialization.Model):
         self.parent_id = parent_id
         self.session_id = session_id
         self.client_ip = client_ip
+        self.client_name = client_name
         self.open_time = open_time
         self.last_reconnect_time = last_reconnect_time
         self.access_right_list = access_right_list
@@ -750,7 +758,7 @@ class LeaseAccessConditions(_serialization.Model):
 class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An enumeration of directories and files.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_endpoint: Required.
     :vartype service_endpoint: str
@@ -857,7 +865,7 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):  # pylint: d
 class ListHandlesResponse(_serialization.Model):
     """An enumeration of handles.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar handle_list:
     :vartype handle_list: list[~azure.storage.fileshare.models.HandleItem]
@@ -896,7 +904,7 @@ class ListHandlesResponse(_serialization.Model):
 class ListSharesResponse(_serialization.Model):
     """An enumeration of shares.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_endpoint: Required.
     :vartype service_endpoint: str
@@ -968,7 +976,7 @@ class ListSharesResponse(_serialization.Model):
 class Metrics(_serialization.Model):
     """Storage Analytics metrics for file service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of Storage Analytics to configure. Required.
     :vartype version: str
@@ -1023,7 +1031,7 @@ class Metrics(_serialization.Model):
 class RetentionPolicy(_serialization.Model):
     """The retention policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Indicates whether a retention policy is enabled for the File service. If false,
      metrics data is retained, and the user is responsible for deleting it. Required.
@@ -1094,7 +1102,7 @@ class ShareFileRangeList(_serialization.Model):
 class ShareItemInternal(_serialization.Model):
     """A listed Azure Storage share item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1162,7 +1170,7 @@ class ShareItemInternal(_serialization.Model):
 class SharePermission(_serialization.Model):
     """A permission (a security descriptor) at the share level.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
      Required.
@@ -1190,7 +1198,7 @@ class SharePermission(_serialization.Model):
 class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a share.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar last_modified: Required.
     :vartype last_modified: ~datetime.datetime
@@ -1390,7 +1398,7 @@ class ShareSmbSettings(_serialization.Model):
 class ShareStats(_serialization.Model):
     """Stats for the share.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar share_usage_bytes: The approximate size of the data stored in bytes. Note that this value
      may not include all recently created or recently resized files. Required.
@@ -1418,7 +1426,7 @@ class ShareStats(_serialization.Model):
 class SignedIdentifier(_serialization.Model):
     """Signed identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique id. Required.
     :vartype id: str
