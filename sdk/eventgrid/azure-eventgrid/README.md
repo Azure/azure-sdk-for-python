@@ -38,7 +38,7 @@ An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-
 
 #### Binary Content Mode
 
-A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**. To specify this, when sending events to the service pass in `binary_mode=True`.
+A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
 
 ### Basic ~
 
@@ -61,7 +61,7 @@ While you may configure your topic to use a [custom schema](https://docs.microso
 ##### CloudEvents v1.0 schema
 Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://cloudevents.io/) is a Cloud Native Computing Foundation project which produces a specification for describing event data in a common way. The service summary of CloudEvents can be found [here](https://docs.microsoft.com/azure/event-grid/cloud-event-schema).
 
- **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+ **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, the service will return an error.
 
 ##### System Topics
 A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
@@ -110,6 +110,11 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 The default client created is a Standard Client, which is compatible with EventGrid Namespace. To create an EventGrid Basic Client, specify `level="Basic"` or `level=ClientLevel.BASIC` when instantiating the client.
+
+```python
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+```
+
 
 #### Using Azure Active Directory (AAD)
 
@@ -173,7 +178,7 @@ client = EventGridClient(endpoint, credential_key)
 
 ## EventGridClient
 
-`EventGridClient` provides operations to send, receive, acknowledge, reject, release event data to a resource specified during client initialization.
+`EventGridClient` provides operations to send to, receive from, acknowledge, reject, release event data for a resource specified during client initialization.
 
 If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridClient` will be used to publish events to it. Use the `send` method to publish events.
 
@@ -218,8 +223,71 @@ The following sections provide several code snippets covering some of the most c
 * [Send a Cloud Event](#send-a-cloud-event)
 * [Send Multiple Events](#send-multiple-events)
 * [Send events as Dictionaries](#send-events-as-dictionaries)
+* [Receive events](#receive-events-from-namespace)
 * [Consume a payload from storage queue](#consume-from-storage-queue)
 * [Consume from ServiceBus](#consume-from-servicebus)
+
+### Send a Cloud Event
+
+This example publishes a Cloud event.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridClient, ClientLevel
+
+key = os.environ["EVENTGRID_NAMESPACE_KEY"]
+endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+
+
+event = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team": "azure-sdk"}
+)
+
+credential = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+
+client.send(topic_name, event)
+```
+
+### Send Multiple events
+
+It is possible to send events as a batch when sending multiple events to a topic or a domain. This example sends a list of CloudEvents using the send method.
+
+**WARNING:** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridClient, ClientLevel
+
+key = os.environ["EVENTGRID_NAMESPACE_KEY"]
+endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+
+event0 = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team": "azure-sdk"}
+)
+event1 = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team2": "azure-eventgrid"}
+)
+
+events = [event0, event1]
+
+credential = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+
+client.send(topic_name, events)
+```
 
 ### Send an Event Grid Event
 
@@ -244,65 +312,6 @@ credential = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 
 client.send(event)
-```
-
-### Send a Cloud Event
-
-This example publishes a Cloud event.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, ClientLevel
-
-key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
-
-event = CloudEvent(
-    type="Azure.Sdk.Sample",
-    source="https://egsample.dev/sampleevent",
-    data={"team": "azure-sdk"}
-)
-
-credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
-
-client.send(event)
-```
-
-### Send Multiple events
-
-It is possible to send events as a batch when sending multiple events to a topic or a domain. This example sends a list of CloudEvents using the send method.
-
-**WARNING:** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, ClientLevel
-
-key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
-
-event0 = CloudEvent(
-    type="Azure.Sdk.Sample",
-    source="https://egsample.dev/sampleevent",
-    data={"team": "azure-sdk"}
-)
-event1 = CloudEvent(
-    type="Azure.Sdk.Sample",
-    source="https://egsample.dev/sampleevent",
-    data={"team2": "azure-eventgrid"}
-)
-
-events = [event0, event1]
-
-credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
-
-client.send(events)
 ```
 
 ### Send events as dictionaries
@@ -335,6 +344,28 @@ credential = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 
 client.send(event)
+```
+
+### Receive events from Namespace
+
+Use EventGridClient's receive function to receive CloudEvents from a Namespace event subscription.
+
+```python
+import os
+import uuid
+import datetime as dt
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridClient, ClientLevel
+
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
+
+credential = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+
+client.receive_cloud_events(topic_name, sub_name)
 ```
 
 ### Consume from storage queue
