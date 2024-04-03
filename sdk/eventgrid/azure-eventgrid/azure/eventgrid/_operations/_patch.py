@@ -210,6 +210,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
+        :keyword channel_name: The name of the channel to send the event to.
+        :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
          "application/cloudevents+json; charset=utf-8".
         :paramtype content_type: str or None
