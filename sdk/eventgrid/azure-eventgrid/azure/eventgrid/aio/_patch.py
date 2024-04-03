@@ -7,15 +7,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import List, Union, Any, TYPE_CHECKING, Optional
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+
+
 from .._legacy.aio import EventGridPublisherClient
 from ._client import EventGridClient as InternalEventGridClient
-
-from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.core.pipeline import policies
-
 from .._serialization import Deserializer, Serializer
-from ._configuration import EventGridClientConfiguration
 from .._patch import (
     ClientLevel,
     DEFAULT_BASIC_API_VERSION,
@@ -41,8 +38,10 @@ class EventGridClient(InternalEventGridClient):
      "2023-10-01-preview". Default value for basic is "2018-01-01". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str or None
-    :keyword level: The level of the event grid service. Known values include: "Basic", "Standard". Default value is "Standard".
-     `Standard` is used for sending events to a namespace topic. `Basic` is used for sending events to a basic topic.
+    :keyword level: The level of the event grid service.
+     Known values include: "Basic", "Standard". Default value is "Standard".
+     `Standard` is used for sending events to a namespace topic.
+     `Basic` is used for sending events to a basic topic.
     :paramtype level: str
     """
 
@@ -74,36 +73,11 @@ class EventGridClient(InternalEventGridClient):
                     "SAS token authentication is not supported for the standard client."
                 )
 
-            self._config = EventGridClientConfiguration(
+            super().__init__(
                 endpoint=endpoint,
                 credential=credential,
                 api_version=api_version or DEFAULT_STANDARD_API_VERSION,
                 **kwargs
-            )
-            _policies = kwargs.pop("policies", None)
-            if _policies is None:
-                _policies = [
-                    policies.RequestIdPolicy(**kwargs),
-                    self._config.headers_policy,
-                    self._config.user_agent_policy,
-                    self._config.proxy_policy,
-                    policies.ContentDecodePolicy(**kwargs),
-                    self._config.redirect_policy,
-                    self._config.retry_policy,
-                    self._config.authentication_policy,
-                    self._config.custom_hook_policy,
-                    self._config.logging_policy,
-                    policies.DistributedTracingPolicy(**kwargs),
-                    (
-                        policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                        if self._config.redirect_policy
-                        else None
-                    ),
-                    self._config.http_logging_policy,
-                ]
-
-            self._client: AsyncPipelineClient = AsyncPipelineClient(
-                base_url=_endpoint, policies=_policies, **kwargs
             )
             self._send = self._publish_cloud_events
 

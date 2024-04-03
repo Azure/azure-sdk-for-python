@@ -124,12 +124,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :return: None
         :rtype: None
         """
-
-        topic_name = None
-        events = None
-        binary_mode = False
-        channel_name = None
-
         # Check kwargs
         channel_name = kwargs.pop("channel_name", None)
         binary_mode = kwargs.pop("binary_mode", False)
@@ -160,22 +154,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         # check binary mode
         if binary_mode:
-
-            # If data is passed as a dictionary, make sure it is a CloudEvent
-            try:
-                if isinstance(events, dict):
-                    events = CloudEvent.from_dict(events)
-            except AttributeError:
-                raise TypeError("Binary mode is only supported for type CloudEvent.")
-
-            # If data is a cloud event, convert to an HTTP Request in binary mode
-            if isinstance(events, CloudEvent):
-                await self._publish(
-                    topic_name, events, self._config.api_version, binary_mode, **kwargs
-                )
-            else:
-                raise TypeError("Binary mode is only supported for type CloudEvent.")
-
+            await self._send_binary(topic_name, events, **kwargs)
         else:
             # If no binary_mode is set, send whatever event is passed
 
@@ -185,7 +164,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = CloudEvent.from_dict(events)
                 if isinstance(events, list) and isinstance(events[0], dict):
                     events = [CloudEvent.from_dict(e) for e in events]
-            except Exception:
+            except Exception: # pylint: disable=broad-except
                 pass
 
             try:
@@ -197,14 +176,31 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 try:
                     # Try to send via namespace
                     await self._send(topic_name, _serialize_events(events), **kwargs)
-                except Exception as exception:
+                except Exception as exception: # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
                     # If that fails, try to send via basic
                     self._last_exception = exception
                     await self._send(events, channel_name=channel_name, **kwargs)
-            except Exception as exception:
+            except Exception as exception: # pylint: disable=broad-except
                 self._http_response_error_handler(exception, "Basic")
                 raise self._last_exception from exception
+
+    async def _send_binary(self, topic_name: str, events: Any, **kwargs: Any) -> None:
+        # If data is passed as a dictionary, make sure it is a CloudEvent
+        try:
+            if isinstance(events, dict):
+                events = CloudEvent.from_dict(events)
+        except AttributeError:
+            raise TypeError("Binary mode is only supported for type CloudEvent.") # pylint: disable=raise-missing-from
+
+        # If data is a cloud event, convert to an HTTP Request in binary mode
+        if isinstance(events, CloudEvent):
+            await self._publish(
+                topic_name, events, self._config.api_version, **kwargs
+            )
+        else:
+            raise TypeError("Binary mode is only supported for type CloudEvent.")
+
 
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
@@ -212,14 +208,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 raise HttpResponseError(
                     "Invalid event data. Please check the data and try again."
                 ) from exception
-            elif exception.status_code == 404:
+            if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
                     f"Please check that the level set on the client, {level}, corresponds to the correct "
                     "endpoint and/or topic name."
                 ) from exception
-            else:
-                raise exception
+            raise exception
 
     @use_standard_only
     @distributed_trace_async
@@ -563,7 +558,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         )
 
     async def _publish(
-        self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any
+        self, topic_name: str, event: Any, api_version, **kwargs: Any
     ) -> None:
 
         error_map = {
@@ -581,7 +576,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             "cls", None
         )  # pylint: disable=protected-access
 
-        content_type = kwargs.pop("content_type", None)
+        content_type = kwargs.pop("content_type", None) # pylint: disable=unused-variable
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,

@@ -7,7 +7,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 import sys
-import base64
+from functools import wraps
 from typing import (
     Any,
     Callable,
@@ -40,7 +40,7 @@ from .._model_base import _deserialize
 from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
 from .._validation import api_version_validation
-from functools import wraps
+
 
 from .._legacy import EventGridEvent
 from .._legacy._helpers import _from_cncf_events
@@ -81,11 +81,19 @@ EVENT_TYPES_STD = Union[
 
 
 def use_standard_only(func):
-    """Use the standard client only."""
+    """Use the standard client only.
+
+    This decorator raises an AttributeError if the client is not a standard client.
+
+    :param func: The function to decorate.
+    :type func: Callable
+    :return: The decorated function.
+    :rtype: Callable
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._level == "Basic":
+        if self._level == "Basic":  # pylint: disable=protected-access
             raise AttributeError(
                 "The basic client is not supported for this operation."
             )
@@ -100,7 +108,7 @@ def validate_args(**kwargs: Any):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args: Any, **kwargs: Any) -> T:
-            selected_client_level = self._level
+            selected_client_level = self._level  # pylint: disable=protected-access
 
             if kwargs_mapping:
                 unsupported_kwargs = {
@@ -209,11 +217,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :return: None
         :rtype: None
         """
-        topic_name = None
-        events = None
-        binary_mode = False
-        channel_name = None
-
         # Check kwargs
         channel_name = kwargs.pop("channel_name", None)
         binary_mode = kwargs.pop("binary_mode", False)
@@ -244,23 +247,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         # check binary mode
         if binary_mode:
-
-            # If data is passed as a dictionary, make sure it is a CloudEvent
-            try:
-                if isinstance(events, dict):
-                    events = CloudEvent.from_dict(events)
-            except AttributeError:
-                raise TypeError("Binary mode is only supported for type CloudEvent.")
-
-            # If data is a cloud event, convert to an HTTP Request in binary mode
-            # Content type becomes the data content type
-            if isinstance(events, CloudEvent):
-                self._publish(
-                    topic_name, events, self._config.api_version, binary_mode, **kwargs
-                )
-            else:
-                raise TypeError("Binary mode is only supported for type CloudEvent.")
-
+            self._send_binary(topic_name, events, **kwargs)
         else:
             # If not binary_mode send whatever event is passed
 
@@ -270,7 +257,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = CloudEvent.from_dict(events)
                 if isinstance(events, list) and isinstance(events[0], dict):
                     events = [CloudEvent.from_dict(e) for e in events]
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
             try:
@@ -282,7 +269,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 try:
                     # Try to send via namespace
                     self._send(topic_name, _serialize_events(events), **kwargs)
-                except Exception as exception:
+                except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
                     # If that fails, try to send via basic
                     self._last_exception = exception
@@ -291,27 +278,42 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 self._http_response_error_handler(exception, "Basic")
                 raise self._last_exception from exception
 
+    def _send_binary(self, topic_name, events, **kwargs):
+        # If data is passed as a dictionary, make sure it is a CloudEvent
+        try:
+            if isinstance(events, dict):
+                events = CloudEvent.from_dict(events)
+        except AttributeError:
+            raise TypeError(  # pylint: disable=raise-missing-from
+                "Binary mode is only supported for type CloudEvent."
+            )
+
+        # If data is a cloud event, convert to an HTTP Request in binary mode
+        # Content type becomes the data content type
+        if isinstance(events, CloudEvent):
+            self._publish(topic_name, events, self._config.api_version, **kwargs)
+        else:
+            raise TypeError("Binary mode is only supported for type CloudEvent.")
+
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
                 raise HttpResponseError(
                     "Invalid event data. Please check the data and try again."
                 ) from exception
-            elif exception.status_code == 404:
+            if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
                     f"Please check that the level set on the client, {level}, corresponds to the correct "
                     "endpoint and/or topic name."
                 ) from exception
-            else:
-                raise exception
+            raise exception
 
     def _publish(
         self,
         topic_name: str,
         event: Any,
         api_version: str,
-        binary_mode: Optional[bool] = False,
         **kwargs: Any,
     ) -> None:
 
@@ -330,7 +332,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
             "cls", None
         )  # pylint: disable=protected-access
 
-        content_type = kwargs.pop("content_type", None)
+        content_type = kwargs.pop( # pylint: disable=unused-variable
+            "content_type", None
+        )
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,
@@ -518,27 +522,29 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
-        information. Successfully acknowledged events will no longer be available to any consumer.
+        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully released
+        lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
-         AcknowledgeOptions, JSON, IO[bytes] Required.
-        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
-        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.AcknowledgeResult
+        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
+         IO[bytes] Required.
+        :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
+        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
+        :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                acknowledge_options = {
+                release_options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
@@ -568,7 +574,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                         }
                     ],
                     "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                        "str"  # Array of lock tokens for the successfully released cloud
                           events. Required.
                     ]
                 }
@@ -745,10 +751,11 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
                 "CloudEvent data must be bytes when in binary mode."
                 "Did you forget to call `json.dumps()` and/or `encode()` on CloudEvent data?"
             )
-    except AttributeError:
+    except AttributeError as exc:
         raise TypeError(
-            "Binary mode is not supported for batch CloudEvents. Set `binary_mode` to False when passing in a batch of CloudEvents."
-        )
+            "Binary mode is not supported for batch CloudEvents."
+            " Set `binary_mode` to False when passing in a batch of CloudEvents."
+        ) from exc
 
     # content_type must be CloudEvent DataContentType when in binary mode, try to use application/json if not
     kwarg_content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
@@ -813,21 +820,20 @@ def _serialize_events(events):
         for item in events:
             internal_body_list.append(_serialize_cloud_event(item))
         return json.dumps(internal_body_list)
-    else:
-        try:
-            serialize = Serializer()
-            body = serialize.body(events, "[object]")
-            if body is None:
-                data = None
-            else:
-                data = json.dumps(body)
+    try:
+        serialize = Serializer()
+        body = serialize.body(events, "[object]")
+        if body is None:
+            data = None
+        else:
+            data = json.dumps(body)
 
-            return data
-        except AttributeError:
-            return events
+        return data
+    except AttributeError:
+        return events
 
 
-def _serialize_cloud_event(event, **kwargs):
+def _serialize_cloud_event(event):
     try:
         data = {}
         # CloudEvent required fields but validate they are not set to None
