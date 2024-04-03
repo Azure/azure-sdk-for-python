@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b3
+## 1.1.0b3 (2024-04-03)
 - This package is no longer being maintained.
 
 ## 1.1.0b2 (Unreleased)
