@@ -113,8 +113,8 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        # if not in_jupyter_notebook() or not enable_telemetry:
-        #     return (logging.NullHandler(), None)
+        if not in_jupyter_notebook() or not enable_telemetry:
+            return (logging.NullHandler(), None)
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
             return (logging.NullHandler(), None)
