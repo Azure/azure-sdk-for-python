@@ -225,7 +225,6 @@ def log_activity(
                 activity_name, completion_status, duration_ms
             )
             if exception:
-                message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__  # type: ignore[index]
                 if isinstance(exception, MlException):
                     activityLogger.activity_info[  # type: ignore[index]
@@ -241,9 +240,14 @@ def log_activity(
                         activityLogger.activity_info["innerException"] = type(  # type: ignore[index]
                             exception.inner_exception
                         ).__name__
+                message += ", Exception={}".format(activityLogger.activity_info["exception"])
+                message += ", ErrorCategory={}".format(activityLogger.activity_info["errorCategory"])
+                message += ", ErrorMessage={}".format(activityLogger.activity_info["errorMessage"])
+
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
+
         except Exception:  # pylint: disable=broad-except
             return  # pylint: disable=lost-exception
 
