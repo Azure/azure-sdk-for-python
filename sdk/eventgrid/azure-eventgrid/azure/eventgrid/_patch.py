@@ -10,7 +10,11 @@ from typing import List, Union, Optional, Any
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta, PipelineClient
-from azure.core.credentials import AzureKeyCredential, TokenCredential, AzureSasCredential
+from azure.core.credentials import (
+    AzureKeyCredential,
+    TokenCredential,
+    AzureSasCredential,
+)
 from azure.core.pipeline import policies
 
 from ._legacy import (
@@ -19,16 +23,21 @@ from ._legacy import (
     EventGridEvent,
     generate_sas,
 )
-from ._client import EventGridClient as InternalEventGridClient, EventGridClientConfiguration
+from ._client import (
+    EventGridClient as InternalEventGridClient,
+    EventGridClientConfiguration,
+)
 from ._serialization import Serializer, Deserializer
 
 
 class ClientLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    STANDARD = "Standard",
+    STANDARD = ("Standard",)
     BASIC = "Basic"
+
 
 DEFAULT_STANDARD_API_VERSION = "2023-10-01-preview"
 DEFAULT_BASIC_API_VERSION = "2018-01-01"
+
 
 class EventGridClient(InternalEventGridClient):
     """Azure Messaging EventGrid Client.
@@ -60,18 +69,27 @@ class EventGridClient(InternalEventGridClient):
         _endpoint = "{endpoint}"
         self._level = level
 
-
         if level == ClientLevel.BASIC:
-            self._client = EventGridPublisherClient(endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION) # type:ignore[assignment]
-            self._send = self._client.send # type:ignore[attr-defined]
+            self._client = EventGridPublisherClient(
+                endpoint,
+                credential,
+                api_version=api_version or DEFAULT_BASIC_API_VERSION,
+            )  # type:ignore[assignment]
+            self._send = self._client.send  # type:ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
-                raise TypeError("SAS token authentication is not supported for the standard client.")
+                raise TypeError(
+                    "SAS token authentication is not supported for the standard client."
+                )
             self._config = EventGridClientConfiguration(
-            endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs)
+                endpoint=endpoint,
+                credential=credential,
+                api_version=api_version or DEFAULT_STANDARD_API_VERSION,
+                **kwargs
+            )
 
             self._send = self._publish_cloud_events
-    
+
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
@@ -101,7 +119,6 @@ class EventGridClient(InternalEventGridClient):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-
 
 
 def patch_sdk():

@@ -27,7 +27,12 @@ from ... import models as _models
 from ..._model_base import _deserialize
 from ..._validation import api_version_validation
 
-from ..._operations._patch import _serialize_events, EVENT_TYPES_BASIC, EVENT_TYPES_STD, validate_args
+from ..._operations._patch import (
+    _serialize_events,
+    EVENT_TYPES_BASIC,
+    EVENT_TYPES_STD,
+    validate_args,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -39,8 +44,8 @@ ClsType = Optional[
     Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
 ]
 
-class EventGridClientOperationsMixin(OperationsMixin):
 
+class EventGridClientOperationsMixin(OperationsMixin):
 
     @overload
     async def send(
@@ -139,18 +144,20 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 raise ValueError("topic_name is already passed as a keyword argument.")
             events = args[1]
             topic_name = args[0]
-        
+
         elif len(args) == 1:
             if events is not None:
                 if topic_name is not None:
-                    raise ValueError("topic_name is already passed as a keyword argument.")
+                    raise ValueError(
+                        "topic_name is already passed as a keyword argument."
+                    )
                 topic_name = args[0]
             else:
                 events = args[0]
 
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
-        
+
         # check binary mode
         if binary_mode:
 
@@ -160,19 +167,19 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = CloudEvent.from_dict(events)
             except AttributeError:
                 raise TypeError("Binary mode is only supported for type CloudEvent.")
-            
+
             # If data is a cloud event, convert to an HTTP Request in binary mode
             if isinstance(events, CloudEvent):
                 await self._publish(
                     topic_name, events, self._config.api_version, binary_mode, **kwargs
-                )  
+                )
             else:
-                raise TypeError("Binary mode is only supported for type CloudEvent.")   
+                raise TypeError("Binary mode is only supported for type CloudEvent.")
 
         else:
             # If no binary_mode is set, send whatever event is passed
 
-            # If a cloud event dict, convert to CloudEvent for serializing    
+            # If a cloud event dict, convert to CloudEvent for serializing
             try:
                 if isinstance(events, dict):
                     events = CloudEvent.from_dict(events)
@@ -182,7 +189,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 pass
 
             try:
-                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
+                kwargs["content_type"] = (
+                    "application/cloudevents-batch+json; charset=utf-8"
+                )
                 if not isinstance(events, list):
                     events = [events]
                 try:
@@ -200,15 +209,18 @@ class EventGridClientOperationsMixin(OperationsMixin):
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
-                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
+                raise HttpResponseError(
+                    "Invalid event data. Please check the data and try again."
+                ) from exception
             elif exception.status_code == 404:
-                raise ResourceNotFoundError("Resource not found. " 
-                                        f"Please check that the level set on the client, {level}, corresponds to the correct "
-                                        "endpoint and/or topic name.") from exception
+                raise ResourceNotFoundError(
+                    "Resource not found. "
+                    f"Please check that the level set on the client, {level}, corresponds to the correct "
+                    "endpoint and/or topic name."
+                ) from exception
             else:
                 raise exception
-            
-        
+
     @use_standard_only
     @distributed_trace_async
     async def receive_cloud_events(
@@ -218,7 +230,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
 
@@ -246,7 +258,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             event_subscription_name,
             max_events=max_events,
             max_wait_time=max_wait_time,
-            **kwargs
+            **kwargs,
         )
         for detail_item in receive_result.value:
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
@@ -267,7 +279,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
@@ -324,7 +336,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     ]
                 }
         """
-        
+
         return await super().acknowledge_cloud_events(
             topic_name, event_subscription_name, acknowledge_options, **kwargs
         )
@@ -332,7 +344,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @use_standard_only
     @distributed_trace_async
     @api_version_validation(
-        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
     async def release_cloud_events(
         self,
@@ -341,7 +353,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_options: Union[_models.ReleaseOptions, JSON, IO],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully released
@@ -400,13 +412,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     ]
                 }
         """
-        
+
         return await super().release_cloud_events(
             topic_name,
             event_subscription_name,
             release_options,
             release_delay_in_seconds=release_delay_in_seconds,
-            **kwargs
+            **kwargs,
         )
 
     @use_standard_only
@@ -416,7 +428,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         reject_options: Union[_models.RejectOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully rejected
@@ -472,7 +484,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     ]
                 }
         """
-        
+
         return await super().reject_cloud_events(
             topic_name, event_subscription_name, reject_options, **kwargs
         )
@@ -487,7 +499,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
@@ -545,7 +557,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     ]
                 }
         """
-        
+
         return await super().renew_cloud_event_locks(
             topic_name, event_subscription_name, renew_lock_options, **kwargs
         )
@@ -577,7 +589,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             headers=_headers,
             params=_params,
             event=event,
-            **kwargs
+            **kwargs,
         )
 
         _stream = kwargs.pop("stream", False)

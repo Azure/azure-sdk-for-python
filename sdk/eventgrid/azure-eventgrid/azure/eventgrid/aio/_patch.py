@@ -16,7 +16,11 @@ from azure.core.pipeline import policies
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import EventGridClientConfiguration
-from .._patch import ClientLevel, DEFAULT_BASIC_API_VERSION, DEFAULT_STANDARD_API_VERSION
+from .._patch import (
+    ClientLevel,
+    DEFAULT_BASIC_API_VERSION,
+    DEFAULT_STANDARD_API_VERSION,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -45,7 +49,9 @@ class EventGridClient(InternalEventGridClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
+        credential: Union[
+            AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"
+        ],
         *,
         api_version: Optional[str] = None,
         level: Union[str, ClientLevel] = "Standard",
@@ -55,16 +61,24 @@ class EventGridClient(InternalEventGridClient):
         self._level = level
 
         if level == ClientLevel.BASIC:
-            self._client = EventGridPublisherClient( # type: ignore[assignment]
-                endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
+            self._client = EventGridPublisherClient(  # type: ignore[assignment]
+                endpoint,
+                credential,
+                api_version=api_version or DEFAULT_BASIC_API_VERSION,
+                **kwargs
             )
-            self._send = self._client.send # type: ignore[attr-defined]
+            self._send = self._client.send  # type: ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
-                raise TypeError("SAS token authentication is not supported for the standard client.")
+                raise TypeError(
+                    "SAS token authentication is not supported for the standard client."
+                )
 
             self._config = EventGridClientConfiguration(
-                endpoint=endpoint, credential=credential, api_version=api_version or DEFAULT_STANDARD_API_VERSION, **kwargs
+                endpoint=endpoint,
+                credential=credential,
+                api_version=api_version or DEFAULT_STANDARD_API_VERSION,
+                **kwargs
             )
             _policies = kwargs.pop("policies", None)
             if _policies is None:
@@ -87,7 +101,7 @@ class EventGridClient(InternalEventGridClient):
                     ),
                     self._config.http_logging_policy,
                 ]
-            
+
             self._client: AsyncPipelineClient = AsyncPipelineClient(
                 base_url=_endpoint, policies=_policies, **kwargs
             )
