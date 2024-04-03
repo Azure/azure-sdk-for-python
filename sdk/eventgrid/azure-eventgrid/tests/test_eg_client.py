@@ -175,7 +175,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, acknowledge_options=AcknowledgeOptions(lock_tokens=[lock_token]))
+        ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, acknowledge_options=Options(lock_tokens=[lock_token]))
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 

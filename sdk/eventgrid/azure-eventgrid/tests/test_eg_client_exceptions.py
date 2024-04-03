@@ -105,7 +105,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(ResourceNotFoundError):
-            lock_tokens = AcknowledgeOptions(lock_tokens=["faketoken"])
+            lock_tokens = Options(lock_tokens=["faketoken"])
             client.acknowledge_cloud_events(
                 "faketopic", eventgrid_event_subscription_name, lock_tokens
             )
@@ -116,7 +116,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(ResourceNotFoundError):
-            lock_tokens = ReleaseOptions(lock_tokens=["faketoken"])
+            lock_tokens = Options(lock_tokens=["faketoken"])
             client.release_cloud_events(
                 "faketopic", eventgrid_event_subscription_name, lock_tokens
             )
@@ -125,7 +125,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_reject_cloud_event_not_found(self, eventgrid_endpoint, eventgrid_key, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
-        lock_tokens = RejectOptions(lock_tokens=["faketoken"])
+        lock_tokens = Options(lock_tokens=["faketoken"])
 
         with pytest.raises(ResourceNotFoundError):
             client.reject_cloud_events(
@@ -137,11 +137,11 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     def test_acknowledge_cloud_event_invalid_token(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
-        lock_tokens = AcknowledgeOptions(lock_tokens=["faketoken"])
+        lock_tokens = Options(lock_tokens=["faketoken"])
         ack = client.acknowledge_cloud_events(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
         )
-        assert type(ack) == AcknowledgeResult
+        assert type(ack) == Result
         assert ack.succeeded_lock_tokens == []
         assert type(ack.failed_lock_tokens[0]) == FailedLockToken
         assert ack.failed_lock_tokens[0].lock_token == "faketoken"
@@ -151,11 +151,11 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     def test_release_cloud_event_invalid_token(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
-        lock_tokens = ReleaseOptions(lock_tokens=["faketoken"])
+        lock_tokens = Options(lock_tokens=["faketoken"])
         release = client.release_cloud_events(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
         )
-        assert type(release) == ReleaseResult
+        assert type(release) == Result
         assert release.succeeded_lock_tokens == []
         assert type(release.failed_lock_tokens[0]) == FailedLockToken
         assert release.failed_lock_tokens[0].lock_token == "faketoken"
@@ -164,12 +164,12 @@ class TestEGClientExceptions(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_reject_cloud_event_invalid_token(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
-        lock_tokens = RejectOptions(lock_tokens=["faketoken"])
+        lock_tokens = Options(lock_tokens=["faketoken"])
 
         reject = client.reject_cloud_events(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
         )
-        assert type(reject) == RejectResult
+        assert type(reject) == Result
         assert reject.succeeded_lock_tokens == []
         assert type(reject.failed_lock_tokens[0]) == FailedLockToken
         assert reject.failed_lock_tokens[0].lock_token == "faketoken"

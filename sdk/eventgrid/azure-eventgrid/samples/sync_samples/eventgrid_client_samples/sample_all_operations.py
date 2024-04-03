@@ -88,7 +88,7 @@ for detail in receive_results.value:
 
 if len(release_events) > 0:
     try:
-        release_tokens = ReleaseOptions(lock_tokens=release_events)
+        release_tokens = Options(lock_tokens=release_events)
         release_result = client.release_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
@@ -102,7 +102,7 @@ if len(release_events) > 0:
 
 if len(acknowledge_events) > 0:
     try:
-        ack_tokens = AcknowledgeOptions(lock_tokens=acknowledge_events)
+        ack_tokens = Options(lock_tokens=acknowledge_events)
         ack_result = client.acknowledge_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
@@ -116,7 +116,7 @@ if len(acknowledge_events) > 0:
 
 if len(reject_events) > 0:
     try:
-        reject_tokens = RejectOptions(lock_tokens=reject_events)
+        reject_tokens = Options(lock_tokens=reject_events)
         reject_result = client.reject_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,

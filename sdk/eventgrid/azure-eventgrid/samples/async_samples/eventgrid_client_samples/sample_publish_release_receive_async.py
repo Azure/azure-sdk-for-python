@@ -50,7 +50,7 @@ async def run():
             print("Received events:", receive_result.value)
 
             # Release a LockToken
-            release_token = ReleaseOptions(lock_tokens=lock_tokens_to_release)
+            release_token = Options(lock_tokens=lock_tokens_to_release)
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
@@ -64,7 +64,7 @@ async def run():
             print("Received events after release:", receive_result.value)
 
             # Acknowledge LockTokens
-            acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
+            acknowledge_token = Options(lock_tokens=lock_tokens_to_release)
             acknowledge_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
