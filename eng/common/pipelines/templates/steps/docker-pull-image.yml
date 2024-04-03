@@ -1,6 +1,7 @@
 parameters: 
   - name: ServiceConnectionName
     type: string
+    default: azuresdkimages_container-registry
   - name: ImageId
     type: string
 steps:
