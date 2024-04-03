@@ -60,23 +60,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger: logging.Logger, activity_info: str):
+    def __init__(self, logger: logging.Logger, activity_info: Dict):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
         :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
-        :type activity_info: str
+        :type activity_info: Dict
         """
         self._activity_info = activity_info
         super(ActivityLoggerAdapter, self).__init__(logger, None)  # type: ignore[arg-type]
 
     @property
-    def activity_info(self) -> str:
+    def activity_info(self) -> Dict:
         """Return current activity info.
 
         :return: The info to write to the logger
-        :rtype: str
+        :rtype: Dict
         """
         return self._activity_info
 
