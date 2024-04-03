@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,7 +67,6 @@ class CheckNameAvailabilityOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.devcenter.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75,17 +74,16 @@ class CheckNameAvailabilityOperations:
 
     @overload
     async def execute(
-        self, name_availability_request: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, name_availability_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Check the availability of name for resource.
 
         :param name_availability_request: The required parameters for checking if resource name is
          available. Required.
-        :type name_availability_request: IO
+        :type name_availability_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.devcenter.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -93,18 +91,14 @@ class CheckNameAvailabilityOperations:
 
     @distributed_trace_async
     async def execute(
-        self, name_availability_request: Union[_models.CheckNameAvailabilityRequest, IO], **kwargs: Any
+        self, name_availability_request: Union[_models.CheckNameAvailabilityRequest, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Check the availability of name for resource.
 
         :param name_availability_request: The required parameters for checking if resource name is
-         available. Is either a CheckNameAvailabilityRequest type or a IO type. Required.
+         available. Is either a CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type name_availability_request: ~azure.mgmt.devcenter.models.CheckNameAvailabilityRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.devcenter.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -132,22 +126,21 @@ class CheckNameAvailabilityOperations:
         else:
             _json = self._serialize.body(name_availability_request, "CheckNameAvailabilityRequest")
 
-        request = build_execute_request(
+        _request = build_execute_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.execute.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -160,8 +153,6 @@ class CheckNameAvailabilityOperations:
         deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DevCenter/checkNameAvailability"}
+        return deserialized  # type: ignore
