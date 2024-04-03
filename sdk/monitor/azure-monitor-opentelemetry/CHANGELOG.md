@@ -15,6 +15,8 @@
 
 - Updated FastAPI sample
     ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Refactored constants and utils
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
 
 ## 1.3.0 (2024-02-29)
 
