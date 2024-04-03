@@ -431,16 +431,34 @@ class HttpLoggingPolicy(
 
     def __init__(self, logger: Optional[logging.Logger] = None, **kwargs: Any):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-        self.allowed_query_params: Set[str] = set()
-        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-        self.lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
-        self.lower_case_allowed_header_names = [header.lower() for header in self.__class__.DEFAULT_HEADERS_ALLOWLIST]
+        self._allowed_query_params: Set[str] = set()
+        self._allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
+        self._lower_case_allowed_query_params = [param.lower() for param in self._allowed_query_params]
+        self._lower_case_allowed_header_names = [header.lower() for header in self._allowed_header_names]
+    
+    @property
+    def allowed_query_params(self):
+        return self._allowed_query_params
+
+    @allowed_query_params.setter
+    def allowed_query_params(self, value: Set[str]):
+        self._allowed_query_params = value
+        self._lower_case_allowed_query_params = [param.lower() for param in self._allowed_query_params]
+
+    @property
+    def allowed_header_names(self):
+        return self._allowed_header_names
+
+    @allowed_header_names.setter
+    def allowed_header_names(self, value: Set[str]):
+        self._allowed_header_names = value
+        self._lower_case_allowed_header_names = [param.lower() for param in self._allowed_header_names]
 
     def _redact_query_param(self, key: str, value: str) -> str:
-        return value if key.lower() in self.lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in self._lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def _redact_header(self, key: str, value: str) -> str:
-        return value if key.lower() in self.lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in self._lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest[HTTPRequestType]
