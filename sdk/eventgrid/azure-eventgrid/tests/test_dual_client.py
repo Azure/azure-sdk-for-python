@@ -7,11 +7,12 @@ import pytest
 import os
 import time
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from cloudevents.http import CloudEvent as CNCFCloudEvent
 
 from eventgrid_preparer import EventGridPreparer
 
@@ -202,3 +203,32 @@ class TestEGDualClient(AzureRecordedTestCase):
             client.send(
                 topic_name=eventgrid_topic_name, events=event
             )
+
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_publish_cncf_events(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name,
+                                   eventgrid_cloud_event_topic_key, eventgrid_cloud_event_topic_endpoint):
+        if level=="Basic":
+            client = self.create_eg_client(eventgrid_cloud_event_topic_endpoint, eventgrid_cloud_event_topic_key, level=level)
+        else:
+            client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
+        
+        attributes = {
+            "type": "com.example.sampletype1",
+            "source": "https://example.com/event-producer",
+        }
+        data = {"message": "Hello World!"}
+        cloud_event = CNCFCloudEvent(attributes, data)
+
+        if level==ClientLevel.STANDARD:
+            with pytest.raises(HttpResponseError):
+                client.send(
+                    topic_name=eventgrid_topic_name, events=cloud_event
+                )
+        else:
+            client.send(
+                    topic_name=eventgrid_topic_name, events=cloud_event
+                )
