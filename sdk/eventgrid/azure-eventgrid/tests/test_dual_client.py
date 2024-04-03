@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import os
-import time
+from datetime import datetime
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
 from azure.eventgrid.models import *
@@ -232,3 +231,57 @@ class TestEGDualClient(AzureRecordedTestCase):
             client.send(
                     topic_name=eventgrid_topic_name, events=cloud_event
                 )
+            
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_create_client_cloud_event_dict(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name,
+                                   eventgrid_cloud_event_topic_key, eventgrid_cloud_event_topic_endpoint):
+        if level=="Basic":
+            client = self.create_eg_client(eventgrid_cloud_event_topic_endpoint, eventgrid_cloud_event_topic_key, level=level)
+        else:
+            client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
+        
+        event = {"type": "Contoso.Items.ItemReceived",
+            "source": "source",
+            "subject": "MySubject",
+            "data": {"test": "data"},
+            "datacontenttype": "application/json",
+            "extensions": {"extension1": "value1", "extension2": "value2"}}
+
+        client.send(
+            topic_name=eventgrid_topic_name, events=event
+        )
+
+    @pytest.mark.live_test_only()
+    @pytest.mark.parametrize("level", ["Standard", "Basic"])
+    @EventGridPreparer()
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_create_client_publish_event_dict(self, level, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name,
+                                   eventgrid_topic_key, eventgrid_topic_endpoint):
+        if level=="Basic":
+            client = self.create_eg_client(eventgrid_topic_endpoint, eventgrid_topic_key, level=level)
+        else:
+            client = self.create_eg_client(eventgrid_endpoint, eventgrid_key, level=level)
+        
+        event = {
+            "eventType": "Contoso.Items.ItemReceived",
+            "data": {"itemSku": "Contoso Item SKU #1"},
+            "subject": "Door1",
+            "dataVersion": "2.0",
+            "id": "randomuuid11",
+            "eventTime": datetime.now(),
+        }
+
+        if level==ClientLevel.STANDARD:
+            with pytest.raises(HttpResponseError):
+                client.send(
+                    topic_name=eventgrid_topic_name, events=event
+                )
+        else:
+            client.send(
+                topic_name=eventgrid_topic_name, events=event
+            )
