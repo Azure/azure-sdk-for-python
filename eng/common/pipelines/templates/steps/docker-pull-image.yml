@@ -4,7 +4,6 @@ parameters:
   - name: ImageId
     type: string
 steps:
-- ${{ if ne(parameters.ServiceConnectionName, '' ) }}:
   - task: AzureCLI@2
     displayName: Authenticate to Container Registry
     inputs:
@@ -13,10 +12,7 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         # azuresdkimages.azurecr.io/pyrefautocr:latest -> azuresdkimages
-        $containerRegistryName = ("${{parameters.ImageId}}" -split "\/")[0].Replace(".azurecr.io", "")
+        $containerRegistryName = ("${{ parameters.ImageId }}" -split "\/")[0].Replace(".azurecr.io", "")
 
         az acr login --name $containerRegistryName
-
-- pwsh: |
-    docker pull '${{ parameters.ImageId}}'
-  displayName: Pull docker image ${{ parameters.ImageId }}
+        docker pull '${{ parameters.ImageId }}'
