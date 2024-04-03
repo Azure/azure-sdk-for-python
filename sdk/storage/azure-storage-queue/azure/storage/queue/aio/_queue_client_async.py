@@ -59,7 +59,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+    :type credential:
+        Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -144,7 +145,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -176,7 +178,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -851,7 +854,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
             next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
-        :rtype: list[QueueMessage]
+        :rtype: list[~azure.storage.queue.QueueMessage]
 
         .. admonition:: Example:
 
