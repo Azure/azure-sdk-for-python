@@ -6,7 +6,17 @@
 # pylint: disable=client-method-missing-tracing-decorator-async,too-many-lines,networking-import-outside-azure-core-transport
 import asyncio
 import inspect
-from typing import Any, overload, Callable, Union, Optional, Dict, List, Literal, Awaitable
+from typing import (
+    Any,
+    overload,
+    Callable,
+    Union,
+    Optional,
+    Dict,
+    List,
+    Literal,
+    Awaitable,
+)
 import time
 import uuid
 import logging
@@ -332,7 +342,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: str,
-        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
+        data_type: Literal[WebPubSubDataType.TEXT, "text"],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -355,12 +365,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: memoryview,
-        data_type: Union[
-            Literal[WebPubSubDataType.BINARY],
-            Literal[WebPubSubDataType.PROTOBUF],
-            Literal["binary"],
-            Literal["protobuf"],
-        ],
+        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF, "binary", "protobuf"],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -385,7 +390,7 @@ class WebPubSubClient(
         self,
         event_name: str,
         content: Dict[str, Any],
-        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
+        data_type: Literal[WebPubSubDataType.JSON, "json"],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -449,7 +454,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: str,
-        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
+        data_type: Literal[WebPubSubDataType.TEXT, "text"],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -469,7 +474,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: Dict[str, Any],
-        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
+        data_type: Literal[WebPubSubDataType.JSON, "json"],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -489,12 +494,7 @@ class WebPubSubClient(
         self,
         group_name: str,
         content: memoryview,
-        data_type: Union[
-            Literal[WebPubSubDataType.BINARY],
-            Literal[WebPubSubDataType.PROTOBUF],
-            Literal["binary"],
-            Literal["protobuf"],
-        ],
+        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF, "binary", "protobuf"],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -601,7 +601,11 @@ class WebPubSubClient(
                     delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
                     if not delay_seconds:
                         break
-                    _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
+                    _LOGGER.debug(
+                        "Delay time for reconnect attempt %d: %ds",
+                        attempt,
+                        delay_seconds,
+                    )
                     await asyncio.sleep(delay_seconds)
                 await self._start_from_restarting(attempt)
                 if self._ws:
@@ -631,7 +635,7 @@ class WebPubSubClient(
             CallbackType.DISCONNECTED,
             OnDisconnectedArgs(
                 connection_id=self._connection_id,
-                message=self._last_disconnected_message.message if self._last_disconnected_message else None,
+                message=(self._last_disconnected_message.message if self._last_disconnected_message else None),
             ),
         )
         if self._auto_reconnect:
@@ -662,7 +666,10 @@ class WebPubSubClient(
         await _rejoin_group_func()
 
     async def _connect(
-        self, url: str, reconnect_tried_times: Optional[int] = None, recover_start_time: Optional[float] = None
+        self,
+        url: str,
+        reconnect_tried_times: Optional[int] = None,
+        recover_start_time: Optional[float] = None,
     ):  # pylint: disable=too-many-statements
         async def on_open():
             if self._is_stopping:
@@ -934,12 +941,12 @@ class WebPubSubClient(
     @overload
     async def subscribe(
         self,
-        event: Union[Literal[CallbackType.CONNECTED], str],
+        event: Literal[CallbackType.CONNECTED, "connected"],
         listener: Callable[[OnConnectedArgs], Awaitable[None]],
     ) -> None:
         """Add handler for connected event.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED or Literal["connected"]
         :param listener: The handler to add which must be awaitable
         :type listener: callable.
         """
@@ -947,21 +954,12 @@ class WebPubSubClient(
     @overload
     async def subscribe(
         self,
-        event: Union[Literal[CallbackType.DISCONNECTED], str],
+        event: Literal[CallbackType.DISCONNECTED, "disconnected"],
         listener: Callable[[OnDisconnectedArgs], Awaitable[None]],
     ) -> None:
         """Add handler for disconnected event.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
-        :param listener: The handler to add which must be awaitable
-        :type listener: callable.
-        """
-
-    @overload
-    async def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], Awaitable[None]]) -> None:
-        """Add handler for stopped event.
-        :param event: The event name. Required.
-        :type event: str
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED or Literal["disconnected"]
         :param listener: The handler to add which must be awaitable
         :type listener: callable.
         """
@@ -969,12 +967,25 @@ class WebPubSubClient(
     @overload
     async def subscribe(
         self,
-        event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
+        event: Literal[CallbackType.STOPPED, "stopped"],
+        listener: Callable[[], Awaitable[None]],
+    ) -> None:
+        """Add handler for stopped event.
+        :param event: The event name. Required.
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED or Literal["stopped"]
+        :param listener: The handler to add which must be awaitable
+        :type listener: callable.
+        """
+
+    @overload
+    async def subscribe(
+        self,
+        event: Literal[CallbackType.SERVER_MESSAGE, "server-message"],
         listener: Callable[[OnServerDataMessageArgs], Awaitable[None]],
     ) -> None:
         """Add handler for server messages.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE or Literal["server-message"]
         :param listener: The handler to add which must be awaitable
         :type listener: callable.
         """
@@ -982,12 +993,12 @@ class WebPubSubClient(
     @overload
     async def subscribe(
         self,
-        event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
+        event: Literal[CallbackType.GROUP_MESSAGE, "group-message"],
         listener: Callable[[OnGroupDataMessageArgs], Awaitable[None]],
     ) -> None:
         """Add handler for group messages.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE or Literal["group-message"]
         :param listener: The handler to add which must be awaitable
         :type listener: callable.
         """
@@ -995,12 +1006,13 @@ class WebPubSubClient(
     @overload
     async def subscribe(
         self,
-        event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
+        event: Literal[CallbackType.REJOIN_GROUP_FAILED, "rejoin-group-failed"],
         listener: Callable[[OnRejoinGroupFailedArgs], Awaitable[None]],
     ) -> None:
         """Add handler for rejoining group failed.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
+         or Literal["rejoin-group-failed"]
         :param listener: The handler to add which must be awaitable
         :type listener: callable.
         """
@@ -1027,12 +1039,12 @@ class WebPubSubClient(
     @overload
     async def unsubscribe(
         self,
-        event: Union[Literal[CallbackType.CONNECTED], str],
+        event: Literal[CallbackType.CONNECTED, "connected"],
         listener: Callable[[OnConnectedArgs], Awaitable[None]],
     ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED or Literal["connected"]
         :param listener: The handler to remove
         :type listener: callable.
         """
@@ -1040,23 +1052,12 @@ class WebPubSubClient(
     @overload
     async def unsubscribe(
         self,
-        event: Union[Literal[CallbackType.DISCONNECTED], str],
+        event: Literal[CallbackType.DISCONNECTED, "disconnected"],
         listener: Callable[[OnDisconnectedArgs], Awaitable[None]],
     ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
-        :param listener: The handler to remove
-        :type listener: callable.
-        """
-
-    @overload
-    async def unsubscribe(
-        self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], Awaitable[None]]
-    ) -> None:
-        """Remove handler for stopped event.
-        :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED or Literal["disconnected"]
         :param listener: The handler to remove
         :type listener: callable.
         """
@@ -1064,12 +1065,25 @@ class WebPubSubClient(
     @overload
     async def unsubscribe(
         self,
-        event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
+        event: Literal[CallbackType.STOPPED, "stopped"],
+        listener: Callable[[], Awaitable[None]],
+    ) -> None:
+        """Remove handler for stopped event.
+        :param event: The event name. Required.
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED or Literal["stopped"]
+        :param listener: The handler to remove
+        :type listener: callable.
+        """
+
+    @overload
+    async def unsubscribe(
+        self,
+        event: Literal[CallbackType.SERVER_MESSAGE, "server-message"],
         listener: Callable[[OnServerDataMessageArgs], Awaitable[None]],
     ) -> None:
         """Remove handler for server message.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE or Literal["server-message"]
         :param listener: The handler to remove
         :type listener: callable.
         """
@@ -1077,12 +1091,12 @@ class WebPubSubClient(
     @overload
     async def unsubscribe(
         self,
-        event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
+        event: Literal[CallbackType.GROUP_MESSAGE, "group-message"],
         listener: Callable[[OnGroupDataMessageArgs], Awaitable[None]],
     ) -> None:
         """Remove handler for group message.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE or Literal["group-message"]
         :param listener: The handler to remove
         :type listener: callable.
         """
@@ -1090,12 +1104,13 @@ class WebPubSubClient(
     @overload
     async def unsubscribe(
         self,
-        event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
+        event: Literal[CallbackType.REJOIN_GROUP_FAILED, "rejoin-group-failed"],
         listener: Callable[[OnRejoinGroupFailedArgs], Awaitable[None]],
     ) -> None:
         """Remove handler for rejoining group failed.
         :param event: The event name. Required.
-        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
+         or Literal["rejoin-group-failed"]
         :param listener: The handler to remove
         :type listener: callable.
         """
