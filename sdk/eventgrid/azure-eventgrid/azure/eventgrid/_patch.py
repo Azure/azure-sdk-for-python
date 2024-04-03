@@ -24,7 +24,7 @@ from ._serialization import Serializer, Deserializer
 
 
 class ClientLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    STANDARD = ("Standard",)
+    STANDARD = "Standard",
     BASIC = "Basic"
 
 DEFAULT_STANDARD_API_VERSION = "2023-10-01-preview"

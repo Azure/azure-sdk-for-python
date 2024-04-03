@@ -39,6 +39,7 @@ from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from .._model_base import _deserialize
 from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
+from .._validation import api_version_validation
 from functools import wraps
 
 from .._legacy import EventGridEvent
@@ -134,7 +135,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         content_type: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Send events to the Event Grid Service.
+        """Send events to the Event Grid Basic Service.
 
         :param event: The event to send.
         :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
@@ -160,12 +161,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         content_type: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Send events to the Event Grid Service.
+        """Send events to the Event Grid Namespace Service.
 
+        :param topic_name: The name of the topic to send the event to.
+        :type topic_name: str
         :param event: The event to send.
         :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
-        :keyword topic_name: The name of the topic to send the event to.
-        :paramtype topic_name: str
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -185,11 +186,24 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    # def send(self, /, events, topic_name = None, *, binary_mode = False, channel_name = None, **kwargs) -> None:
     def send(self, *args, **kwargs) -> None:
-        """Send events to the Event Grid Service."""
-        # TODO: type hints + docstrings
+        """Send events to the Event Grid Service.
 
+        :param topic_name: The name of the topic to send the event to.
+        :type topic_name: str
+        :param event: The event to send.
+        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+         or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
+        :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
+         value is False.
+        :paramtype binary_mode: bool
+        :keyword content_type: The content type of the event. If not specified, the default value is
+         "application/cloudevents+json; charset=utf-8".
+        :paramtype content_type: str or None
+
+        :return: None
+        :rtype: None
+        """
         topic_name = None
         events = None
         binary_mode = False
@@ -418,7 +432,61 @@ class EventGridClientOperationsMixin(OperationsMixin):
         acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.AcknowledgeResult:
-        # TODO: docstring
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
+        information. Successfully acknowledged events will no longer be available to any consumer.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
+         AcknowledgeOptions, JSON, IO[bytes] Required.
+        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
+        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.AcknowledgeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                acknowledge_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
+        """
         return super().acknowledge_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -428,6 +496,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace
+    @api_version_validation(
+        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+    )
     def release_cloud_events(
         self,
         topic_name: str,
@@ -437,6 +508,61 @@ class EventGridClientOperationsMixin(OperationsMixin):
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
+        information. Successfully acknowledged events will no longer be available to any consumer.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
+         AcknowledgeOptions, JSON, IO[bytes] Required.
+        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
+        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.AcknowledgeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                acknowledge_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
+        """
         return super().release_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -454,6 +580,60 @@ class EventGridClientOperationsMixin(OperationsMixin):
         reject_options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RejectResult:
+        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully rejected
+        lockTokens, along with other failed lockTokens with their corresponding error information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON,
+         IO[bytes] Required.
+        :type reject_options: ~azure.eventgrid.models.RejectOptions or JSON or IO[bytes]
+        :return: RejectResult. The RejectResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.RejectResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                reject_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully rejected cloud
+                          events. Required.
+                    ]
+                }
+        """
         return super().reject_cloud_events(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -463,6 +643,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-10-01-preview",
+    )
     def renew_cloud_event_locks(
         self,
         topic_name: str,
@@ -470,6 +653,63 @@ class EventGridClientOperationsMixin(OperationsMixin):
         renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
         **kwargs: Any,
     ) -> _models.RenewCloudEventLocksResult:
+        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        renewed lockTokens, along with other failed lockTokens with their corresponding error
+        information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param renew_lock_options: RenewLockOptions. Is one of the following types: RenewLockOptions,
+         JSON, IO[bytes] Required.
+        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO[bytes]
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
+         MutableMapping
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                renew_lock_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully renewed locks.
+                          Required.
+                    ]
+                }
+        """
+        
         return super().renew_cloud_event_locks(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
