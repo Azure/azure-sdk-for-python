@@ -143,7 +143,6 @@ class ReceiverLink(Link):
 
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
-        await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
         # If trying to settle a message, keep track of the disposition
         if message:
@@ -158,6 +157,9 @@ class ReceiverLink(Link):
             delivery.sent = True
 
             self._pending_receipts.append(delivery)
+
+
+        await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     async def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return

@@ -1007,8 +1007,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
-        await self.open_async()
-
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
         elif outcome.lower() == 'released':
