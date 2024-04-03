@@ -30,8 +30,7 @@ class EventGridClient(InternalEventGridClient):
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value for namespaces is
