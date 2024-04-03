@@ -200,9 +200,9 @@ class DatabaseProxy(object):
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
-        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
-            embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
-            is generated for a particular distance function.
+        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
