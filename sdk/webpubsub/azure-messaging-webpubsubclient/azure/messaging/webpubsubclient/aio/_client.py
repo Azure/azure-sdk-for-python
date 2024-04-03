@@ -127,7 +127,13 @@ class WebSocketAppAsync(WebSocketAppBase):  # pylint: disable=too-many-instance-
                 await self.on_close(self, msg.data, msg.extra)
                 break
             elif msg.type == aiohttp.WSMsgType.ERROR:
-                await self.on_close(self, 1008, "unexpected WebSocket error")
+                sock_error = self.sock.exception()
+                error_message = getattr(sock_error, "message", str(sock_error))
+                _LOGGER.warning("WebSocket error: %s", sock_error)
+                if isinstance(sock_error, aiohttp.WebSocketError):
+                    await self.on_error(self, sock_error.code, error_message)
+                else:
+                    await self.on_close(self, 1008, error_message)
                 break
             else:
                 _LOGGER.debug("Unknown message: %s", msg)
