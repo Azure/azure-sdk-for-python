@@ -210,20 +210,23 @@ class TestStructuredMessageEncodeStream:
         with pytest.raises(UnsupportedOperation):
             sm_stream.seek(10)
 
-    def test_seek_reverse(self):
-        data_size = 10
-        initial_read = 25
-        seek_offset = 0
-        segment_size = 10
-
-        data = b'abcdefghij'
+    @pytest.mark.parametrize("initial_read, seek_offset, segment_size, flags", [
+        (5, 0, 500, StructuredMessageProperties.NONE),
+        (5, 0, 500, StructuredMessageProperties.CRC64),  # Message header
+        (15, 0, 500, StructuredMessageProperties.NONE),
+        (15, 0, 500, StructuredMessageProperties.CRC64),  # Segment header
+        (100, 0, 500, StructuredMessageProperties.NONE),
+        (100, 0, 500, StructuredMessageProperties.CRC64),  # First segment content
+        (1000, 0, 500, StructuredMessageProperties.NONE),
+        (1000, 0, 500, StructuredMessageProperties.CRC64),  # Second segment content
+        (525, 0, 500, StructuredMessageProperties.CRC64),  # Segment footer
+        (1085, 0, 500, StructuredMessageProperties.CRC64),  # Message footer
+    ])
+    def test_seek_reverse(self, initial_read, seek_offset, segment_size, flags):
+        data = os.urandom(1024)
         inner_stream = BytesIO(data)
-        sm_stream = StructuredMessageEncodeStream(
-            inner_stream,
-            len(data),
-            StructuredMessageProperties.CRC64,
-            segment_size=segment_size)
-        expected = _build_structured_message(data, segment_size, StructuredMessageProperties.CRC64)[0].getvalue()
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
+        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
 
         initial = sm_stream.read(initial_read)
         assert initial == expected[:initial_read]

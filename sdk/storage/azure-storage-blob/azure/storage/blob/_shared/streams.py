@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from __future__ import annotations
+
 import math
 import sys
 from enum import auto, Enum, IntFlag
@@ -71,7 +73,7 @@ class StructuredMessageEncodeStream(IOBase):
     _checksum_offset: int
     """Tracks the offset the checksum has been calculated up to for seeking purposes"""
     _message_crc64: int
-    _segment_crc64: int
+    _segment_crc64s: dict[int, int]
 
     def __init__(
         self, inner_stream: IO[bytes],
@@ -101,7 +103,7 @@ class StructuredMessageEncodeStream(IOBase):
 
         self._checksum_offset = 0
         self._message_crc64 = 0
-        self._segment_crc64 = 0
+        self._segment_crc64s = {}
 
         # Attempt to get starting position of inner stream. If we can't, this stream will not be seekable
         try:
@@ -277,7 +279,8 @@ class StructuredMessageEncodeStream(IOBase):
 
         elif region == SMRegion.SEGMENT_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
-                return self._segment_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little')
+                return self._segment_crc64s[self._current_segment_number].to_bytes(
+                    StructuredMessageConstants.CRC64_LENGTH, 'little')
             else:
                 return b''
 
@@ -295,24 +298,18 @@ class StructuredMessageEncodeStream(IOBase):
 
         if current == SMRegion.MESSAGE_HEADER:
             self._current_region = SMRegion.SEGMENT_HEADER
-            self._current_segment_number += 1
-            # self._current_region_length = self._segment_header_length
+            self._increment_current_segment()
         elif current == SMRegion.SEGMENT_HEADER:
             self._current_region = SMRegion.SEGMENT_CONTENT
-            # self._current_region_length = min(self._segment_size, self.content_length - self._content_offset)
-            self._segment_crc64 = 0
         elif current == SMRegion.SEGMENT_CONTENT:
             self._current_region = SMRegion.SEGMENT_FOOTER
-            # self._current_region_length = self._segment_footer_length
         elif current == SMRegion.SEGMENT_FOOTER:
             # If we're at the end of the content
             if self._content_offset == self.content_length:
                 self._current_region = SMRegion.MESSAGE_FOOTER
-                # self._current_region_length = self._message_footer_length
             else:
                 self._current_region = SMRegion.SEGMENT_HEADER
-                self._current_segment_number += 1
-                # self._current_region_length = self._segment_header_length
+                self._increment_current_segment()
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
@@ -347,16 +344,25 @@ class StructuredMessageEncodeStream(IOBase):
 
         if StructuredMessageProperties.CRC64 in self.flags:
             if checksum_offset == 0:
-                self._segment_crc64 = crc64.compute_crc64(content, self._segment_crc64)
+                self._segment_crc64s[self._current_segment_number] = \
+                    crc64.compute_crc64(content, self._segment_crc64s[self._current_segment_number])
                 self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
 
-        self._checksum_offset += read_size - checksum_offset
         self._content_offset += read_size
+        # Only update the checksum offset if we've read new data
+        if self._content_offset > self._checksum_offset:
+            self._checksum_offset += read_size
         self._current_region_offset += read_size
         if self._current_region_offset == self._current_region_length:
             self._advance_region(SMRegion.SEGMENT_CONTENT)
 
         return read_size
+
+    def _increment_current_segment(self):
+        self._current_segment_number += 1
+        if StructuredMessageProperties.CRC64 in self.flags:
+            # If seek was used, we may already have this segment's CRC (could be partial), otherwise initialize to 0
+            self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
 class StructuredMessageDecodeStream:
