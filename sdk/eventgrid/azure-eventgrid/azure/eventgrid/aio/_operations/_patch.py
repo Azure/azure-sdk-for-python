@@ -360,9 +360,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
+        :param options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
          IO[bytes] Required.
-        :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
+        :type options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
         :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
         :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
@@ -374,7 +374,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                release_options = {
+                options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]
