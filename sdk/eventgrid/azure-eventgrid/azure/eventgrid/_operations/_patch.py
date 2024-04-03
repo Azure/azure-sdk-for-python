@@ -396,8 +396,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
          value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
          60 seconds. Default value is None.
         :paramtype max_wait_time: int
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReceiveResult
         :raises ~azure.core.exceptions.HttpResponseError:
