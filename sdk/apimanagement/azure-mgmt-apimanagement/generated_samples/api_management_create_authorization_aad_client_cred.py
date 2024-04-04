@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -40,7 +43,7 @@ def main():
                 "oauth2grantType": "AuthorizationCode",
                 "parameters": {
                     "clientId": "53790925-fdd3-4b80-bc7a-4c3aaf25801d",
-                    "clientSecret": "FcJkQ3iPSaKAQRA7Ft8Q~fZ1X5vKmqzUAfJagcJ8",
+                    "clientSecret": "xxxxxxxxxxxxxxx~xxxxxxxxx",
                 },
             }
         },

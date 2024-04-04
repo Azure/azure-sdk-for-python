@@ -19,7 +19,6 @@ steps:
     versionSpec: 3.8
 
 - script: |
-    python3 -m pip install azure-devtools[ci_tools]>=1.1.0
     python3 -m pip install -e $(Build.SourcesDirectory)/tools/azure-sdk-tools[ghtools]
   displayName: 'Install Azure SDK tools'
 

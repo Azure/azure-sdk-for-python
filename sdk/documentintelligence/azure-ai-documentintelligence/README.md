@@ -12,7 +12,13 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 [Source code][python-di-src]
 | [Package (PyPI)][python-di-pypi]
+| [API reference documentation][python-di-ref-docs]
+| [Product documentation][python-di-product-docs]
 | [Samples][python-di-samples]
+
+## _Disclaimer_
+
+_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -26,6 +32,7 @@ This table shows the relationship between SDK versions and supported API service
 |SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
+|1.0.0b2 | 2024-02-29-preview
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -435,31 +442,40 @@ if result.documents:
                     f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
                 )
 
-# iterate over tables, lines, and selection marks on each page
-for page in result.pages:
-    print(f"\nLines found on page {page.page_number}")
-    if page.lines:
-        for line in page.lines:
-            print(f"...Line '{line.content}'")
-    if page.words:
-        for word in page.words:
-            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
-    if page.selection_marks:
-        print(f"\nSelection marks found on page {page.page_number}")
-        for selection_mark in page.selection_marks:
-            print(
-                f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
-            )
+    # Extract table cell values
+    SYMBOL_OF_TABLE_TYPE = "array"
+    KEY_OF_VALUE_OBJECT = "valueObject"
+    KEY_OF_CELL_CONTENT = "content"
 
-if result.tables:
-    for i, table in enumerate(result.tables):
-        print(f"\nTable {i + 1} can be found on page:")
-        if table.bounding_regions:
-            for region in table.bounding_regions:
-                print(f"...{region.page_number}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-print("-----------------------------------")
+    for doc in result.documents:
+        if not doc.fields is None:
+            for field_name, field_value in doc.fields.items():
+                # "MaintenanceLog" is the table field name which you labeled. Table cell information store as array in document field.
+                if (
+                    field_name == "MaintenanceLog"
+                    and field_value.type == SYMBOL_OF_TABLE_TYPE
+                    and field_value.value_array
+                ):
+                    col_names = []
+                    sample_obj = field_value.value_array[0]
+                    if KEY_OF_VALUE_OBJECT in sample_obj:
+                        col_names = list(sample_obj[KEY_OF_VALUE_OBJECT].keys())
+                    print("----Extracting Table Cell Values----")
+                    table_rows = []
+                    for obj in field_value.value_array:
+                        if KEY_OF_VALUE_OBJECT in obj:
+                            value_obj = obj[KEY_OF_VALUE_OBJECT]
+                            extract_value_by_col_name = lambda key: (
+                                value_obj[key].get(KEY_OF_CELL_CONTENT)
+                                if key in value_obj
+                                and KEY_OF_CELL_CONTENT in value_obj[key]
+                                else "None"
+                            )
+                            row_data = list(map(extract_value_by_col_name, col_names))
+                            table_rows.append(row_data)
+                    print_table(col_names, table_rows)
+
+print("------------------------------------")
 ```
 
 <!-- END SNIPPET -->
@@ -669,7 +685,12 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure_sub]: https://azure.microsoft.com/free/
-[python-di-product-docs]: https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/overview?view=form-recog-3.0.0
+[python-di-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/azure/ai/documentintelligence
+[python-di-pypi]: https://pypi.org/project/azure-ai-documentintelligence/
+[python-di-product-docs]: https://learn.microsoft.com/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0&viewFallbackFrom=form-recog-3.0.0
+[python-di-ref-docs]: https://aka.ms/azsdk/python/documentintelligence/docs
+[python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
+[python-di-available-regions]: https://aka.ms/azsdk/documentintelligence/available-regions
 [azure_portal]: https://ms.portal.azure.com/
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer

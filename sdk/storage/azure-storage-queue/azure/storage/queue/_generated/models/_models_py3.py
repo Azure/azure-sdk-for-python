@@ -62,7 +62,7 @@ class CorsRule(_serialization.Model):
     policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
     way to allow one domain (the origin domain) to call APIs in another domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allowed_origins: The origin domains that are permitted to make a request against the
      storage service via CORS. The origin domain is the domain from which the request originates.
@@ -141,7 +141,7 @@ class CorsRule(_serialization.Model):
 class DequeuedMessageItem(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Get Messages on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -227,7 +227,7 @@ class DequeuedMessageItem(_serialization.Model):
 class EnqueuedMessage(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Put Message on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -297,7 +297,7 @@ class EnqueuedMessage(_serialization.Model):
 class GeoReplication(_serialization.Model):
     """GeoReplication.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
@@ -342,7 +342,7 @@ class GeoReplication(_serialization.Model):
 class ListQueuesSegmentResponse(_serialization.Model):
     """The object returned when calling List Queues on a Queue Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_endpoint: Required.
     :vartype service_endpoint: str
@@ -416,7 +416,7 @@ class ListQueuesSegmentResponse(_serialization.Model):
 class Logging(_serialization.Model):
     """Azure Analytics Logging settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of Storage Analytics to configure. Required.
     :vartype version: str
@@ -479,7 +479,7 @@ class Logging(_serialization.Model):
 class Metrics(_serialization.Model):
     """a summary of request statistics grouped by API in hour or minute aggregates for queues.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of Storage Analytics to configure.
     :vartype version: str
@@ -533,7 +533,7 @@ class Metrics(_serialization.Model):
 class PeekedMessageItem(_serialization.Model):
     """The object returned in the QueueMessageList array when calling Peek Messages on a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_id: The Id of the Message. Required.
     :vartype message_id: str
@@ -599,7 +599,7 @@ class PeekedMessageItem(_serialization.Model):
 class QueueItem(_serialization.Model):
     """An Azure Storage Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the Queue. Required.
     :vartype name: str
@@ -632,7 +632,7 @@ class QueueItem(_serialization.Model):
 class QueueMessage(_serialization.Model):
     """A Message object which can be stored in a Queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message_text: The content of the message. Required.
     :vartype message_text: str
@@ -658,7 +658,7 @@ class QueueMessage(_serialization.Model):
 class RetentionPolicy(_serialization.Model):
     """the retention policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Indicates whether a retention policy is enabled for the storage service.
      Required.
@@ -695,7 +695,7 @@ class RetentionPolicy(_serialization.Model):
 class SignedIdentifier(_serialization.Model):
     """signed identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: a unique id. Required.
     :vartype id: str

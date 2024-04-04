@@ -56,6 +56,15 @@ credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_win
 client = BlobServiceClient(account_url, credential=credential)
 ```
 
+To bypass the account selection dialog and use the default broker account, set the `use_default_broker_account` argument to `True`. The credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
+
+```python
+credential = InteractiveBrowserBrokerCredential(
+    parent_window_handle=current_window_handle,
+    use_default_broker_account=True
+)
+```
+
 ## Troubleshooting
 
 See the Azure Identity [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.

@@ -1,9 +1,10 @@
 # Release History
 
-## 1.3.0b1 (Unreleased)
+## 1.3.0 (Unreleased)
 
 ### Features Added
 
+- Updated `chat_attachment.attachment_type`to include type `file` to support ACS users to recieve files shared by Teams user.
 - Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ### Breaking Changes

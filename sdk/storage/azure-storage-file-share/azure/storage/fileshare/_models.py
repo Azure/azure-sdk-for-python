@@ -220,9 +220,8 @@ class AccessPolicy(GenAccessPolicy):
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
@@ -452,6 +451,7 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
+    :keyword str client_name: Required. Name of the client machine where the share is being mounted.
     :keyword str handle_id: Required. XSMB service handle ID
     :keyword str path: Required. File or directory name including full path starting
      from share root
@@ -470,6 +470,7 @@ class Handle(DictMixin):
     """
 
     def __init__(self, **kwargs):
+        self.client_name = kwargs.get('client_name')
         self.id = kwargs.get('handle_id')
         self.path = kwargs.get('path')
         self.file_id = kwargs.get('file_id')
@@ -483,6 +484,7 @@ class Handle(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         handle = cls()
+        handle.client_name = generated.client_name
         handle.id = generated.handle_id
         handle.path = unquote(generated.path.content) if generated.path.encoded else generated.path.content
         handle.file_id = generated.file_id

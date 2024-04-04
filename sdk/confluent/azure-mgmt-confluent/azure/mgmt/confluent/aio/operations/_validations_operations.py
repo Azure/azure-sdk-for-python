@@ -68,8 +68,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -98,8 +97,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -126,8 +124,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -219,8 +216,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -249,8 +245,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -277,8 +272,7 @@ class ValidationsOperations:
 
         Organization Validate proxy resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str

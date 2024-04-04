@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.private_endpoint_connection.begin_delete(
+    client.private_endpoint_connection.begin_delete(
         resource_group_name="rg1",
         service_name="apimService1",
         private_endpoint_connection_name="privateEndpointConnectionName",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeletePrivateEndpointConnection.json

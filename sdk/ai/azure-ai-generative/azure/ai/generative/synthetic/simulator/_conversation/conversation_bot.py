@@ -57,21 +57,13 @@ class ConversationBot:
         self.model = model
 
         self.logger = logging.getLogger(repr(self))
-
         self.conversation_starter = None  # can either be a dictionary or jinja template
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
-                    msg = f"{conversation_starter_content} instead of generating a turn using a LLM"
-                    self.logger.info(
-                        "This simulated bot will use the provided conversation starter (passed in as dictionary): %s",
-                        msg,
-                    )
                     self.conversation_starter = conversation_starter_content
                 else:
-                    msg = f"{repr(conversation_starter_content)[:400]} instead of generating a turn using a LLM"
-                    self.logger.info("This simulated bot will use the provided conversation starter %s", msg)
                     self.conversation_starter = jinja2.Template(
                         conversation_starter_content, undefined=jinja2.StrictUndefined
                     )
@@ -107,12 +99,8 @@ class ConversationBot:
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
             if isinstance(self.conversation_starter, dict):
-                self.logger.info("Returning conversation starter: %s", self.conversation_starter)
                 samples = [self.conversation_starter]
             else:
-                self.logger.info(
-                    "Returning conversation starter: %s", repr(self.persona_template_args["conversation_starter"])[:400]
-                )
                 samples = [self.conversation_starter.render(**self.persona_template_args)]  # type: ignore[attr-defined]
             time_taken = 0
 
