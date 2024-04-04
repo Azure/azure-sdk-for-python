@@ -528,10 +528,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             )
 
             dl_tasks = downloader.get_chunk_offsets()
-            running_futures = {[
+            running_futures = [  # pylint: disable=consider-using-set-comprehension
                 asyncio.ensure_future(downloader.process_chunk(d))
                 for d in islice(dl_tasks, 0, self._max_concurrency)
-            ]}
+            ]
             while running_futures:
                 # Wait for some download to finish before adding a new one
                 done, running_futures = await asyncio.wait(
@@ -686,10 +686,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             **self._request_options)
 
         dl_tasks = downloader.get_chunk_offsets()
-        running_futures = {[
+        running_futures = [  # pylint: disable=consider-using-set-comprehension
             asyncio.ensure_future(downloader.process_chunk(d))
             for d in islice(dl_tasks, 0, self._max_concurrency)
-        ]}
+        ]
         while running_futures:
             # Wait for some download to finish before adding a new one
             done, running_futures = await asyncio.wait(
