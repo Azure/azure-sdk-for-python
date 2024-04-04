@@ -9,7 +9,12 @@ import sys
 import warnings
 from io import BytesIO
 from itertools import islice
-from typing import Any, AsyncIterator, Awaitable, Generator, Callable, cast, Dict, Generic, IO, List, Optional, Tuple, TypeVar, TYPE_CHECKING
+from typing import (
+    Any, AsyncIterator, Awaitable,
+    Generator, Callable, cast, Dict,
+    Generic, IO, List, Optional,
+    Tuple, TypeVar, TYPE_CHECKING
+)
 
 import asyncio
 
@@ -285,7 +290,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         else:
             initial_request_end = initial_request_start + self._first_get_size - 1
 
-        self._initial_range, self._initial_offset = process_range_and_offset(
+        self._initial_range, self._initial_offset = process_range_and_offset(  # pylint: disable=W0201
             initial_request_start,
             initial_request_end,
             self._end_range,
@@ -518,7 +523,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
-                progress_hook=self._progress_hook,
+                progress_hook=self._progress_hook,  # pylint: disable=consider-using-set-comprehension
                 **self._request_options
             )
 
@@ -676,7 +681,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             encryption_data=self._encryption_data,
-            use_location=self._location_mode,
+            use_location=self._location_mode,  # pylint: disable=consider-using-set-comprehension
             progress_hook=self._progress_hook,
             **self._request_options)
 
