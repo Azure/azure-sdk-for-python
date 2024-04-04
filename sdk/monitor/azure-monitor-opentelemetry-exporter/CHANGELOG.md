@@ -25,6 +25,8 @@
 
 - Updated FastAPI sample
     ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Set up branching logic for attach function
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
 
 ## 1.0.0b23 (2024-02-28)
 
