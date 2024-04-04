@@ -298,6 +298,59 @@ class TestStructuredMessageEncodeStream:
             result = sm_stream.read()
             assert result == expected[seek_offset:]
 
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_read(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        result = sm_stream.read()
+        assert result == expected
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_seek_beginning(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        initial = sm_stream.read(101)
+        assert initial == expected[:101]
+
+        sm_stream.seek(0)
+        assert inner_stream.tell() == partial_read
+
+        result = sm_stream.read()
+        assert result == expected
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_seek_middle(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        initial = sm_stream.read(501)
+        assert initial == expected[:501]
+
+        sm_stream.seek(100)
+        assert inner_stream.tell() == partial_read + (100 -
+                                                      StructuredMessageConstants.V1_HEADER_LENGTH -
+                                                      StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH)
+
+        result = sm_stream.read()
+        assert result == expected[100:]
+
 
 class TestStructuredMessageDecodeStream:
 
