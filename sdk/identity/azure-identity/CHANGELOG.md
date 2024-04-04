@@ -1,10 +1,12 @@
 # Release History
 
-## 1.16.0b3 (Unreleased)
+## 1.16.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- For IMDS requests in `ManagedIdentityCredential`, the retry backoff factor was reduced from 2 to 0.8 in order to avoid excessive retry delays. This change might potentially affect workloads that rely on the previous retry behavior. See [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md).
 
 ### Bugs Fixed
 
