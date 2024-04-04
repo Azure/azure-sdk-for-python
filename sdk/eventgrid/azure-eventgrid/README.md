@@ -22,9 +22,27 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
     * an Event Grid Namespace resource. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces).
     * an Event Grid Basic resource. To create an Event Grid Basic resource via the Azure portal follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal). To create an Event Grid Basic resource via the [Azure CLI](https://docs.microsoft.com/cli/azure) follow this [tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart)
 
+### Differences Between Event Grid Resources
+
+Below is a brief synopsis of the differences between Azure Event Grid Namespaces and Azure Event Grid Basic. More on the following can be found [here](https://learn.microsoft.com/azure/event-grid/choose-right-tier).
+
+|   Feature            | Namespaces (Standard) | Basic |
+| :---------------- | :------: | :----: |
+| Throughput        |   High   | Low |
+| MQTT           |   Yes   | No |
+| Publish and Subscribe to custom events    |  Yes   | Yes |
+| Push Delivery to Event Hubs |  Yes   | Yes |
+| Maximum message retention |  7 days   | 1 day |
+| Push Delivery to Azure Services |  No   | Yes |
+| Subscribe to Azure System Events |  No   | Yes |
+| Subscribe to Partner Events |  No   | Yes |
+| Domain Scope Subscriptions |  No   | Yes |
+
+**Note:** Azure Event Grid Namespaces only supports the Cloud Event v1.0 Schema.
+
 ## Key concepts
 
-### Namespace ~
+### Namespace
 
 A **[namespace](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
 
@@ -40,7 +58,7 @@ An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-
 
 A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
 
-### Basic ~
+### Basic 
 
 #### Topic
 A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
@@ -48,20 +66,10 @@ A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a 
 #### Domain
 An event **[domain](https://docs.microsoft.com/azure/event-grid/event-domains)** is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
 
-When you create an event domain, a publishing endpoint for this domain is made available to you. This process is similar to creating an Event Grid Topic. The only difference is that, when publishing to a domain, you must specify the topic within the domain that you'd like the event to be delivered to.
-
 #### Event schemas
 An **[event](https://docs.microsoft.com/azure/event-grid/concepts#events)** is the smallest amount of information that fully describes something that happened in the system. When a custom topic or domain is created, you must specify the schema that will be used when publishing events.
 
 Event Grid supports multiple schemas for encoding events.
-
-##### Event Grid schema
-While you may configure your topic to use a [custom schema](https://docs.microsoft.com/azure/event-grid/input-mappings), it is more common to use the already-defined Event Grid schema. See the specifications and requirements [here](https://docs.microsoft.com/azure/event-grid/event-schema).
-
-##### CloudEvents v1.0 schema
-Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://cloudevents.io/) is a Cloud Native Computing Foundation project which produces a specification for describing event data in a common way. The service summary of CloudEvents can be found [here](https://docs.microsoft.com/azure/event-grid/cloud-event-schema).
-
- **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, the service will return an error.
 
 ##### System Topics
 A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
@@ -289,7 +297,61 @@ client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 client.send(topic_name, events)
 ```
 
-### Send an Event Grid Event
+### Receive and Process Events from Namespace
+
+Use EventGridClient's receive function to receive CloudEvents from a Namespace event subscription. Then try to acknowledge, reject, release or renew the locks. 
+
+```python
+import os
+import uuid
+import datetime as dt
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridClient, ClientLevel
+
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
+
+credential = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+
+events = client.receive_cloud_events(topic_name, sub_name, max_events=4)
+
+for e in events:
+    renew_tokens = RenewLockOptions(lock_tokens=e.broker_properties.lock_token)
+    renew_result = client.renew_cloud_events_lock(
+        topic_name=TOPIC_NAME,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
+        options=renew_tokens,
+    )
+
+release_tokens = ReleaseOptions(lock_tokens=events[0].broker_properties.lock_token)
+release_result = client.release_cloud_events(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    options=release_tokens,
+)
+
+ack_tokens = AcknowledgeOptions(lock_tokens=events[1].broker_properties.lock_token)
+ack_result = client.acknowledge_cloud_events(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    options=ack_tokens,
+)
+
+reject_tokens = RejectOptions(lock_tokens=events[2].broker_properties.lock_token)
+reject_result = client.reject_cloud_events(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    options=reject_tokens,
+)
+
+```
+
+### Legacy EventGrid operations
+#### Send an Event Grid Event
+
 
 This example publishes an Event Grid event.
 
@@ -312,105 +374,6 @@ credential = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 
 client.send(event)
-```
-
-### Send events as dictionaries
-
-A dict representation of respective serialized models can also be used to publish CloudEvent(s) or EventGridEvent(s) apart from the strongly typed objects.
-
-Use a dict-like representation to send to a topic with custom schema as shown below.
-
-```python
-import os
-import uuid
-import datetime as dt
-from msrest.serialization import UTC
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, ClientLevel
-
-key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
-endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
-
-event = custom_schema_event = {
-    "customSubject": "sample",
-    "customEventType": "sample.event",
-    "customDataVersion": "2.0",
-    "customId": uuid.uuid4(),
-    "customEventTime": dt.datetime.now(UTC()).isoformat(),
-    "customData": "sample data"
-    }
-
-credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
-
-client.send(event)
-```
-
-### Receive events from Namespace
-
-Use EventGridClient's receive function to receive CloudEvents from a Namespace event subscription.
-
-```python
-import os
-import uuid
-import datetime as dt
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, ClientLevel
-
-key = os.environ["EVENTGRID_KEY"]
-endpoint = os.environ["EVENTGRID_ENDPOINT"]
-topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
-sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
-
-credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
-
-client.receive_cloud_events(topic_name, sub_name)
-```
-
-### Consume from storage queue
-
-This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
-
-```python
-from azure.core.messaging import CloudEvent
-from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
-import os
-import json
-
-# all types of CloudEvents below produce same DeserializedEvent
-connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
-queue_name = os.environ['STORAGE_QUEUE_NAME']
-
-with QueueServiceClient.from_connection_string(connection_str) as qsc:
-    payload =  qsc.get_queue_client(
-        queue=queue_name,
-        message_decode_policy=BinaryBase64DecodePolicy()
-        ).peek_messages()
-
-    ## deserialize payload into a list of typed Events
-    events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
-```
-
-### Consume from servicebus
-
-This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
-
-```python
-from azure.eventgrid import EventGridEvent
-from azure.servicebus import ServiceBusClient
-import os
-import json
-
-# all types of EventGridEvents below produce same DeserializedEvent
-connection_str = os.environ['SERVICE_BUS_CONN_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-
-with ServiceBusClient.from_connection_string(connection_str) as sb_client:
-    payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
-
-    ## deserialize payload into a list of typed Events
-    events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
 ```
 
 ## Distributed Tracing with EventGrid
