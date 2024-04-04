@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import datetime
 import locale
 from os import environ
 from os.path import isdir
@@ -86,6 +87,12 @@ def _get_sdk_version_prefix():
     return sdk_version_prefix
 
 
+def _get_sdk_version():
+    return "{}py{}:otel{}:ext{}".format(
+        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
+    )
+
+
 def _getlocale():
     try:
         with warnings.catch_warnings():
@@ -105,13 +112,11 @@ azure_monitor_context = {
     ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
     ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
     ContextTagKeys.AI_DEVICE_TYPE: "Other",
-    ContextTagKeys.AI_INTERNAL_SDK_VERSION: "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
-    ),
+    ContextTagKeys.AI_INTERNAL_SDK_VERSION: _get_sdk_version(),
 }
 
 
-def ns_to_duration(nanoseconds: int):
+def ns_to_duration(nanoseconds: int) -> str:
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
     value, microseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)
@@ -120,6 +125,23 @@ def ns_to_duration(nanoseconds: int):
     return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
         days, hours, minutes, seconds, microseconds
     )
+
+
+# Replicate .netDateTime.Ticks(), which is the UTC time, expressed as the number
+# of 100-nanosecond intervals that have elapsed since 12:00:00 midnight on
+# January 1, 0001.
+def _ticks_since_dot_net_epoch():
+    # Since time.time() is the elapsed time since UTC January 1, 1970, we have
+    # to shift this start time, and  then multiply by 10^7 to get the number of
+    # 100-nanosecond intervals
+    shift_time = int(
+        (
+            datetime.datetime(1970, 1, 1, 0, 0, 0) -
+            datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
+        ) * (10 ** 7)
+    # Add shift time to 100-ns intervals since time.time()
+    return int(time.time() * (10**7)) + shift_time
+
 
 _INSTRUMENTATIONS_BIT_MASK = 0
 _INSTRUMENTATIONS_BIT_MASK_LOCK = threading.Lock()
@@ -233,3 +255,11 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             continue
         truncated_properties[key] = str(val)[:8192]
     return truncated_properties
+
+
+class Singleton(type):
+    _instance = None
+    def __call__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance

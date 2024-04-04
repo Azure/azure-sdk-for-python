@@ -144,6 +144,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
 
+    ApiCenterApiDefinitionAddedEventName = 'Microsoft.ApiCenter.ApiDefinitionAdded'
+
+    ApiCenterApiDefinitionUpdatedEventName = 'Microsoft.ApiCenter.ApiDefinitionUpdated'
+
     ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.APICreated'
 
     ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.APIDeleted'

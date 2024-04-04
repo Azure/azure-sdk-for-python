@@ -219,6 +219,8 @@ def to_rest_dataset_literal_inputs(
                     # set mode attribute manually for binding job input
                     if input_value.mode:
                         input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
+                    if input_value.path_on_compute:
+                        input_data.pathOnCompute = input_value.path_on_compute
                     input_data.job_input_type = JobInputType.LITERAL
                 else:
                     target_cls_dict = get_input_rest_cls_dict()
@@ -282,11 +284,15 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
                 path = input_value.uri
-
+                if getattr(input_value, "pathOnCompute", None) is not None:
+                    sourcePathOnCompute = input_value.pathOnCompute
+                else:
+                    sourcePathOnCompute = None
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
                     mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
+                    path_on_compute=sourcePathOnCompute,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
             # otherwise, the input is a literal, so just unpack the InputData value field
@@ -331,6 +337,7 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                         asset_version=output_value.version,
                         uri=output_value.path,
                         mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                        pathOnCompute=output_value.path_on_compute if output_value.path_on_compute else None,
                         description=output_value.description,
                     )
                 else:
@@ -364,12 +371,16 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
         # deal with invalid output type submitted by feb api
         # todo: backend help convert node level input/output type
         normalize_job_input_output_type(output_value)
-
+        if getattr(output_value, "pathOnCompute", None) is not None:
+            sourcePathOnCompute = output_value.pathOnCompute
+        else:
+            sourcePathOnCompute = None
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
                 version=output_value.asset_version,

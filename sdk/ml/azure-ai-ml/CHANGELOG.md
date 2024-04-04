@@ -1,6 +1,36 @@
 # Release History
 
-## 1.14.0 (unreleased)
+## 1.16.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.15.0 (2024-03-26)
+
+### Other Changes
+
+- The following classes will still be able to be imported from `azure.ai.ml`, but the import is deprecated and emits a warning. Instead, please import them from `azure.ai.ml.entities`.
+  - `AmlTokenConfiguration`
+  - `ManagedIdentityConfiguration`
+  - `UserIdentityConfiguration`
+- The following classes will still be able to be imported from `azure.ai.ml.entities`, but the import is deprecated and emits a warning. Instead, please import them from `azure.ai.ml.sweep`.
+  - `Choice`
+  - `Uniform`
+  - `LogUniform`
+  - `QLogUniform`
+  - `QUniform`
+  - `QLogNormal`
+  - `QNormal`
+  - `LogNormal`
+  - `Normal`
+  - `Randint`
+
+## 1.14.0 (2024-03-11)
 
 ### Features Added
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
@@ -20,7 +50,7 @@
 
 - Support for Python 3.12
 
-## 1.13.0 (unreleased)
+## 1.13.0 (2024-01-29)
 
 ### Features Added
 

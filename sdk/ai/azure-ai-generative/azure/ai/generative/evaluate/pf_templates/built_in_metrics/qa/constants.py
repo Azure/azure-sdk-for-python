@@ -1,12 +1,12 @@
-import sys
 from enum import Enum
-#import numpy as np
+
 
 class RAIService:
     """Define constants related to RAI service"""
     TIMEOUT = 1800
     SLEEPTIME = 2
     HARM_SEVERITY_THRESHOLD = 4
+
 
 class Metric:
     """Defines all metrics supported by RAI service"""
@@ -16,16 +16,15 @@ class Metric:
     SelfHarm = "self_harm"
     Violence = "violence"
     Sexual = "sexual"
-    HateFairness = "hate_fairness"
+    HateFairness = "hate_unfairness"
 
     QUALITY_METRICS = {
         "gpt_groundedness",
         "gpt_similarity",
-        "gpt_fluency", 
+        "gpt_fluency",
         "gpt_coherence",
-        "gpt_relevance", 
-        "f1_score",
-        "ada_similarity"
+        "gpt_relevance",
+        "f1_score"
         }
 
     # Content harm metric set
@@ -36,11 +35,13 @@ class Metric:
         HateFairness
     }
 
+
 class HarmSeverityLevel(Enum):
-    Safe = 0
-    Low = 1
-    Medium = 2
-    High = 3
+    VeryLow = "Very low"
+    Low = "Low"
+    Medium = "Medium"
+    High = "High"
+
 
 class Tasks:
     """Defines types of annotation tasks supported by RAI Service."""

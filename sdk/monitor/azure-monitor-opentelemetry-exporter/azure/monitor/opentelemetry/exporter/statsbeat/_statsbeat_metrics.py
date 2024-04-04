@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
+    get_statsbeat_live_metrics_feature_set,
     get_statsbeat_custom_events_feature_set,
 )
 from azure.monitor.opentelemetry.exporter import _utils
@@ -64,6 +65,7 @@ class _StatsbeatFeature:
     AAD = 2
     CUSTOM_EVENTS_EXTENSION = 4
     DISTRO = 8
+    LIVE_METRICS = 16
 
 
 class _AttachTypes:
@@ -120,6 +122,8 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.DISTRO
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
+        if get_statsbeat_live_metrics_feature_set():
+            self._feature |= _StatsbeatFeature.LIVE_METRICS
         self._ikey = instrumentation_key
         self._meter_provider = meter_provider
         self._meter = self._meter_provider.get_meter(__name__)
@@ -208,7 +212,7 @@ class _StatsbeatMetrics:
             request_url = "{0}?{1}&{2}".format(
                 _AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
             response = requests.get(
-                request_url, headers={"MetaData": "True"}, timeout=5.0)
+                request_url, headers={"MetaData": "True"}, timeout=0.2)
         except (requests.exceptions.ConnectionError, requests.Timeout):
             # Not in VM
             self._vm_retry = False

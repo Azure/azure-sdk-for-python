@@ -1,22 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-from azure.ai.generative.synthetic.simulator._conversation import (
-    ConversationBot,
-    ConversationRole,
-    ConversationTurn,
-    simulate_conversation,
-)
-
+#pylint: skip-file
 import copy
 from typing import List, Tuple
 
+from azure.ai.generative.synthetic.simulator._conversation import (
+    ConversationBot,
+    ConversationTurn,
+)
+
 
 class CallbackConversationBot(ConversationBot):
-    def __init__(
-        self, callback, user_template, user_template_parameters, *args, **kwargs
-    ):
+    def __init__(self, callback, user_template, user_template_parameters, *args, **kwargs):
         self.callback = callback
         self.user_template = user_template
         self.user_template_parameters = user_template_parameters
@@ -25,7 +21,7 @@ class CallbackConversationBot(ConversationBot):
 
     async def generate_response(
         self,
-        session: "RetryClient", # type: ignore[name-defined]
+        session: "RetryClient",  # type: ignore[name-defined]
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
@@ -34,9 +30,34 @@ class CallbackConversationBot(ConversationBot):
             self.user_template, conversation_history, self.user_template_parameters
         )
         msg_copy = copy.deepcopy(chat_protocol_message)
-        result = await self.callback(msg_copy)
+        result = {}
+        try:
+            result = await self.callback(msg_copy)
+        except Exception as exc:
+            if "status_code" in dir(exc) and 400 <= exc.status_code < 500 and "response was filtered" in exc.message:
+                result = {
+                    "messages": [{
+                        "content": ("Error: The response was filtered due to the prompt "
+                                    "triggering Azure OpenAI's content management policy. "
+                                    "Please modify your prompt and retry."), 
+                        "role": "assistant"
+                    }],
+                    "finish_reason": ["stop"],
+                    "id": None,
+                    "template_parameters": {}
+                }
+        if not result:
+            result = {
+                "messages": [{
+                    "content": "Callback did not return a response.",
+                    "role": "assistant"
+                }],
+                "finish_reason": ["stop"],
+                "id": None,
+                "template_parameters": {}
+            } 
 
-        self.logger.info(f"Using user provided callback returning response.")
+        self.logger.info("Using user provided callback returning response.")
 
         time_taken = 0
         try:
@@ -45,20 +66,22 @@ class CallbackConversationBot(ConversationBot):
                 "finish_reason": ["stop"],
                 "id": None,
             }
-        except:
-            raise TypeError(
-                "User provided callback do not conform to chat protocol standard."
-            )
+        except Exception as exc:
+            raise TypeError("User provided callback do not conform to chat protocol standard.") from exc
 
-        self.logger.info(f"Parsed callback response")
+        self.logger.info("Parsed callback response")
 
-        return response, {}, time_taken, response
+        return response, {}, time_taken, result
 
+    # pylint: disable=unused-argument
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
 
-        for i, m in enumerate(conversation_history):
+        for _, m in enumerate(conversation_history):
             messages.append({"content": m.message, "role": m.role.value})
+
+        if template_parameters.get("file_content", None) and any('File contents:' not in message['content'] for message in messages):
+            messages.append({"content": f"File contents: {template_parameters['file_content']}", "role": "user"})
 
         return {
             "template_parameters": template_parameters,

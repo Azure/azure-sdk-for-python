@@ -4,6 +4,7 @@ import sys
 import subprocess
 import shutil
 import logging
+from typing import Optional
 
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci
@@ -172,7 +173,7 @@ def create_package_and_install(
             logging.info("Installed {w}".format(w=built_package))
 
 
-def replace_dev_reqs(file: str, pkg_root: str) -> None:
+def replace_dev_reqs(file: str, pkg_root: str, wheel_dir: Optional[str]) -> None:
     """Takes a target requirements file, replaces all local relative install locations with wheels assembled from whatever that target path was.
     This is an extremely important step that runs on every dev_requirements.txt file before invoking any tox runs.
 
@@ -181,6 +182,7 @@ def replace_dev_reqs(file: str, pkg_root: str) -> None:
 
     :param str file: the absolute path to the dev_requirements.txt file
     :param str pkg_root: the absolute path to the package's root
+    :param Optional[str] wheel_dir: the absolute path to the prebuilt wheel directory
     :return: None
     """
     adjusted_req_lines = []
@@ -198,7 +200,7 @@ def replace_dev_reqs(file: str, pkg_root: str) -> None:
             if extras:
                 extras = f"[{extras}"
 
-        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root, wheel_dir)}{extras}")
 
     req_file_name = os.path.basename(file)
     logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
@@ -262,7 +264,7 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
 
             adjusted_req_lines.append(amended_line)
 
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
+    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root, None), adjusted_req_lines))
     install_deps_commands = [
         sys.executable,
         "-m",
@@ -285,30 +287,41 @@ def is_relative_install_path(req: str, package_path: str) -> bool:
     return os.path.exists(possible_setup_path)
 
 
-def build_whl_for_req(req: str, package_path: str) -> str:
+def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> str:
     """Builds a whl from the dev_requirements file.
 
     :param str req: a requirement from the dev_requirements.txt
     :param str package_path: the absolute path to the package's root
+    :param Optional[str] wheel_dir: the absolute path to the prebuilt wheel directory
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
     from ci_tools.build import create_package
 
     if is_relative_install_path(req, package_path):
-        # Create temp path if it doesn't exist
-        temp_dir = os.path.join(package_path, ".tmp_whl_dir")
-        if not os.path.exists(temp_dir):
-            os.mkdir(temp_dir)
-
         req_pkg_path = os.path.abspath(os.path.join(package_path, req.replace("\n", "")))
         parsed = ParsedSetup.from_path(req_pkg_path)
 
-        logging.info("Building wheel for package {}".format(parsed.name))
-        create_package(req_pkg_path, temp_dir, enable_sdist=False)
+        # First check for prebuilt wheel
+        logging.info("Checking for prebuilt wheel for package {}".format(parsed.name))
+        prebuilt_whl = None
+        if wheel_dir:
+            prebuilt_whl = find_whl(wheel_dir, parsed.name, parsed.version)
 
-        whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
+        if prebuilt_whl:
+            whl_path = os.path.join(wheel_dir, prebuilt_whl)
+        else:
+            # Create temp path if it doesn't exist
+            temp_dir = os.path.join(package_path, ".tmp_whl_dir")
+            if not os.path.exists(temp_dir):
+                os.mkdir(temp_dir)
+
+            logging.info("Building wheel for package {}".format(parsed.name))
+            create_package(req_pkg_path, temp_dir, enable_sdist=False)
+
+            whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
+
         logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
-        logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
+        logging.info("Replacing dev requirement. Old requirement: {0}, New requirement: {1}".format(req, whl_path))
         return whl_path
     else:
         return req
@@ -335,7 +348,7 @@ def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
 
     if in_ci():
         if not is_check_enabled(mapped_args.target, "optional", False):
-            logging.info(f"Package {parsed_package.package_name} opts-out of optional check.")
+            logging.info(f"Package {parsed_package.name} opts-out of optional check.")
             return 0
 
     optional_configs = get_config_setting(mapped_args.target, "optional")

@@ -54,7 +54,9 @@ def test_retry_types():
     assert backoff_time == 4
 
 
-@pytest.mark.parametrize("retry_after_input,http_response", product(["0", "800", "1000", "1200"], HTTP_RESPONSES))
+@pytest.mark.parametrize(
+    "retry_after_input,http_response", product(["0", "800", "1000", "1200", "0.9"], HTTP_RESPONSES)
+)
 def test_retry_after(retry_after_input, http_response):
     retry_policy = RetryPolicy()
     request = HttpRequest("GET", "http://localhost")

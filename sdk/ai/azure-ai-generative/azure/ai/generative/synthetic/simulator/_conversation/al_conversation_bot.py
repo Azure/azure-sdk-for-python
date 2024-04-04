@@ -3,40 +3,44 @@
 # ---------------------------------------------------------
 
 import time
-import jinja2
 import logging
-from .augloop_client import AugLoopClient, AugLoopParams
 from typing import Dict, List, Tuple
 from azure.ai.generative.synthetic.simulator._model_tools import RetryClient
+from .augloop_client import AugLoopClient, AugLoopParams
 from .conversation_turn import ConversationTurn
 from .constants import ConversationRole
 from .conversation_bot import ConversationBot
 
+
 class AugLoopConversationBot(ConversationBot):
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         role: ConversationRole,
         augLoopParams: AugLoopParams,
         instantiation_parameters: Dict[str, str],
     ):
         """
-        Create an AugLoop ConversationBot with specific name, persona and a sentence that can be used as a conversation starter.
+        Create an AugLoop ConversationBot with specific name,
+        persona and a sentence that can be used as a conversation starter.
 
         Parameters
         ----------
         role: The role of the bot in the conversation, either USER or ASSISTANT
         augLoopParams: The augloop params to use for connecting to augloop
-        conversation_template: A jinja2 template that describes the conversation, this is used to generate the prompt for the LLM
+        conversation_template: A jinja2 template that describes the conversation,
+        this is used to generate the prompt for the LLM
         instantiation_parameters: A dictionary of parameters that are used to instantiate the conversation template
         """
         if role == ConversationRole.USER:
-            raise Exception(f"AugLoop conversation Bot is not enabled for USER role")
+            raise Exception("AugLoop conversation Bot is not enabled for USER role")
 
         self.role = role
         self.augLoopParams = augLoopParams
 
         self.persona_template_args = instantiation_parameters
-        self.name = self.persona_template_args.get("chatbot_name", role.value) or f"Augloop_{augLoopParams.workflowName}"
+        self.name = (
+            self.persona_template_args.get("chatbot_name", role.value) or f"Augloop_{augLoopParams.workflowName}"
+        )
 
         self.logger = logging.getLogger(repr(self))
 
@@ -52,17 +56,16 @@ class AugLoopConversationBot(ConversationBot):
         """
         Prompt the ConversationBot for a response.
 
-        Parameters
-        ----------
-        session: The aiohttp session to use for the request.
-        conversation_history: The turns in the conversation so far.
-        request_params: Parameters used to query GPT-4 model.
-
-        Returns
-        -------
-        response: The response from the ConversationBot.
-        time_taken: The time taken to generate the response.
-        full_response: The full response from the model.
+        :param session: The aiohttp session to use for the request.
+        :type session: RetryClient
+        :param conversation_history: The turns in the conversation so far.
+        :type conversation_history: List[ConversationTurn]
+        :param max_history: Parameters used to query GPT-4 model.
+        :type max_history: int
+        :param turn_number: Parameters used to query GPT-4 model.
+        :type turn_number: int
+        :return: The response from the ConversationBot.
+        :rtype: Tuple[dict, dict, int, dict]
         """
 
         messageToSend = conversation_history[-1].message
@@ -75,12 +78,12 @@ class AugLoopConversationBot(ConversationBot):
         time_taken = time.time() - time_start
 
         if not response_data["success"]:
-            raise Exception(f"Unexpected result from Augloop")
+            raise Exception("Unexpected result from Augloop")
 
         parsed_response = {
-                "samples": response_data["messages"],
-                "id": response_data["id"],
-            }
+            "samples": response_data["messages"],
+            "id": response_data["id"],
+        }
 
         messages = [{"role": "system", "content": messageToSend}]
         request = {"messages": messages}

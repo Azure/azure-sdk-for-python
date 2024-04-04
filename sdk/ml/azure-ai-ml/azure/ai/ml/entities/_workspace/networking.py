@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
@@ -256,7 +256,7 @@ class ManagedNetwork:
         self,
         *,
         isolation_mode: str = IsolationMode.DISABLED,
-        outbound_rules: Optional[Any] = None,
+        outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -268,7 +268,8 @@ class ManagedNetwork:
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
             {
-                outbound_rule.name: outbound_rule._to_rest_object()  # pylint: disable=protected-access
+                # pylint: disable=protected-access
+                outbound_rule.name: outbound_rule._to_rest_object()  # type: ignore[attr-defined]
                 for outbound_rule in self.outbound_rules
             }
             if self.outbound_rules
@@ -288,7 +289,7 @@ class ManagedNetwork:
         )
         return ManagedNetwork(
             isolation_mode=obj.isolation_mode,
-            outbound_rules=from_rest_outbound_rules,
+            outbound_rules=from_rest_outbound_rules,  # type: ignore[arg-type]
             network_id=obj.network_id,
             status=obj.status,
         )

@@ -14,7 +14,7 @@ import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
+scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required

@@ -30,6 +30,7 @@ from ._deserialize import process_storage_error, is_file_path
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
+    from ._models import PathProperties
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -540,11 +541,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def get_paths(self, path=None, # type: Optional[str]
-                  recursive=True,  # type: Optional[bool]
-                  max_results=None,  # type: Optional[int]
-                  **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+    def get_paths(
+        self, path: Optional[str] = None,
+        recursive: Optional[bool] = True,
+        max_results: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged["PathProperties"]:
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -555,16 +557,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param int max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
-        :keyword upn:
+        :keyword bool upn:
             Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "true", the user identity values returned
+            enabled for the account. If "True", the user identity values returned
             in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
             transformed from Azure Active Directory Object IDs to User Principal
-            Names.  If "false", the values will be returned as Azure Active
+            Names. If "False", the values will be returned as Azure Active
             Directory Object IDs. The default value is false. Note that group and
             application Object IDs are not translated because they do not have
             unique friendly names.
-        :type upn: bool
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

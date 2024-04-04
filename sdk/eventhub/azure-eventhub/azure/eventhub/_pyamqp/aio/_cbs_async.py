@@ -63,7 +63,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": None
+            "amqpLink": ""
         }
 
         self._token_status_code: Optional[int] = None
@@ -169,7 +169,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
     async def _update_status(self):
         if self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED):
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                self._expires_on, self._refresh_window
+                self._expires_on, self._refresh_window # type: ignore
             )
             _LOGGER.debug(
                 "CBS status check: state == %r, expired == %r, refresh required == %r",
@@ -235,13 +235,13 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         elif isinstance(access_token.token, str):
             self._token = access_token.token
         else:
-            raise ValueError("Token must be either bytes or string.")
+            raise ValueError("Token must be a string or bytes.")
         if isinstance(self._auth.token_type, bytes):
             token_type = self._auth.token_type.decode()
         elif isinstance(self._auth.token_type, str):
             token_type = self._auth.token_type
         else:
-            raise ValueError("Token type must be either bytes or string.")
+            raise ValueError("Token type must be a string or bytes.")
 
         self._token_put_time = int(utc_now().timestamp())
         if self._token and token_type:

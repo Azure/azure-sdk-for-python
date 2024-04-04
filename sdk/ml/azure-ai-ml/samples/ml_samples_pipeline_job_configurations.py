@@ -83,6 +83,7 @@ class PipelineConfigurationOptions(object):
             settings=PipelineJobSettings(force_rerun=True, default_compute="cpu-cluster"),
             jobs={"component1": component_func(component_in_number=1.0, component_in_path=uri_file_input)},
         )
+
         ml_client.jobs.create_or_update(pipeline_job)
         # [END configure_pipeline_job_and_settings]
 
