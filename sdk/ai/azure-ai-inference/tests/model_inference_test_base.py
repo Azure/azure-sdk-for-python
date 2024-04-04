@@ -88,7 +88,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        result = self.client.get_chat_completions(messages=kwargs.get('messages'), params=query_params)
+        result = self.client.get_chat_completions(messages=kwargs.get("messages"), params=query_params)
 
         # Optional: console printout of all results
         if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
@@ -109,7 +109,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         start_time = time.time()
 
         # Start the operation and get a Future object
-        future = asyncio.ensure_future(self.async_client.get_chat_completions(messages=kwargs.get('messages')))
+        future = asyncio.ensure_future(self.async_client.get_chat_completions(messages=kwargs.get("messages")))
 
         # Loop until the operation is done
         while not future.done():
@@ -138,7 +138,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = self.client.get_chat_completions(messages=kwargs.get('messages'))
+            result = self.client.get_chat_completions(messages=kwargs.get("messages"))
 
         except AzureError as e:
             print(e)
@@ -156,7 +156,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = await self.async_client.get_chat_completions(messages=kwargs.get('messages'))
+            result = await self.async_client.get_chat_completions(messages=kwargs.get("messages"))
 
         except AzureError as e:
             print(e)

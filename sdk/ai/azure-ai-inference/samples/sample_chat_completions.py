@@ -34,10 +34,7 @@ def sample_chat_completions():
         exit()
 
     # Create Model Client for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     # [END create_client]
 
     # [START chat_completions]

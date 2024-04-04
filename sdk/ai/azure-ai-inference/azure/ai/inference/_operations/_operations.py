@@ -104,6 +104,37 @@ def build_model_get_embeddings_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_model_get_image_generations_request(  # pylint: disable=name-too-long
+    *,
+    unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+    model_deployment: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/v1/images/generations"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if unknown_parameters is not None:
+        _headers["unknown-parameters"] = _SERIALIZER.header("unknown_parameters", unknown_parameters, "str")
+    if model_deployment is not None:
+        _headers["azureml-model-deployment"] = _SERIALIZER.header("model_deployment", model_deployment, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class ModelClientOperationsMixin(ModelClientMixinABC):
     @overload
     def get_chat_completions(
@@ -173,9 +204,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "response_format": chat_completions_response_format,
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed, and you
-                      should refer to the system_fingerprint response parameter to monitor changes in
-                      the backend.".
+                      parameters should return the same result. Determinism is not guaranteed.".
                     "stop": [
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
@@ -233,6 +262,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The response object type, which is always
                       ``chat.completion``. Required.
                     "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
                         "completion_tokens": 0,  # The number of tokens generated across all
                           completions emissions. Required.
                         "prompt_tokens": 0,  # The number of tokens in the provided prompts
@@ -341,10 +373,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed, and you
-         should refer to the
-         system_fingerprint response parameter to monitor changes in the backend.". Default value is
-         None.
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
         :paramtype seed: int
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
@@ -383,6 +413,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The response object type, which is always
                       ``chat.completion``. Required.
                     "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
                         "completion_tokens": 0,  # The number of tokens generated across all
                           completions emissions. Required.
                         "prompt_tokens": 0,  # The number of tokens in the provided prompts
@@ -460,6 +493,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The response object type, which is always
                       ``chat.completion``. Required.
                     "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
                         "completion_tokens": 0,  # The number of tokens generated across all
                           completions emissions. Required.
                         "prompt_tokens": 0,  # The number of tokens in the provided prompts
@@ -567,10 +603,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed, and you
-         should refer to the
-         system_fingerprint response parameter to monitor changes in the backend.". Default value is
-         None.
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
         :paramtype seed: int
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
@@ -610,9 +644,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "response_format": chat_completions_response_format,
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed, and you
-                      should refer to the system_fingerprint response parameter to monitor changes in
-                      the backend.".
+                      parameters should return the same result. Determinism is not guaranteed.".
                     "stop": [
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
@@ -670,6 +702,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The response object type, which is always
                       ``chat.completion``. Required.
                     "usage": {
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
                         "completion_tokens": 0,  # The number of tokens generated across all
                           completions emissions. Required.
                         "prompt_tokens": 0,  # The number of tokens in the provided prompts
@@ -816,8 +851,15 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The object type of the embeddings result. Will always be
                       ``list``. Required.
                     "usage": {
-                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
                           request/response. Required.
                     }
@@ -882,8 +924,15 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The object type of the embeddings result. Will always be
                       ``list``. Required.
                     "usage": {
-                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
                           request/response. Required.
                     }
@@ -944,8 +993,15 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The object type of the embeddings result. Will always be
                       ``list``. Required.
                     "usage": {
-                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
                           request/response. Required.
                     }
@@ -1019,8 +1075,15 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "object": "str",  # The object type of the embeddings result. Will always be
                       ``list``. Required.
                     "usage": {
-                        "prompt_tokens": 0,  # Number of tokens sent in the original request.
+                        "capacity_type": "str",  # Indicates whether your capacity has been
+                          affected by the usage amount (token count) reported here. Required. Known
+                          values are: "usage" and "fixed".
+                        "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
+                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
+                          the AI model. Typically identical to"" ``input_tokens``. However, certain AI
+                          models may add extra tokens to the input hence the number can be higher. (for
+                          example when input_type="query"). Required.
                         "total_tokens": 0  # Total number of tokens transacted in this
                           request/response. Required.
                     }
@@ -1080,6 +1143,352 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def get_image_generations(
+        self,
+        body: JSON,
+        *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImageGenerations:
+        # pylint: disable=line-too-long
+        """Creates images given a prompt.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ImageGenerations
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "prompt": "str",  # A description of the desired images. Required.
+                    "size": "str",  # The desired dimension in pixels of the generated images, in
+                      the format ":code:`<Width>`x:code:`<Hight>`". For example: "1024x1024",
+                      "1792x1024". Required.
+                    "quality": "str",  # Optional. The desired image generation quality level to
+                      use. Known values are: "standard" and "hd".
+                    "response_format": "str",  # Optional. The format in which image generation
+                      response items should be presented. Known values are: "url" and "b64_json".
+                    "seed": 0  # Optional. If specified, the system will make a best effort to
+                      sample deterministically such that repeated requests with the same seed and
+                      parameters should return the same result. Determinism is not guaranteed.".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
+                      operation was started. Represented as seconds since the beginning of the Unix
+                      epoch of 00:00 on 1 Jan 1970. Required.
+                    "data": [
+                        {
+                            "b64_json": "str",  # Optional. The complete data for an
+                              image, represented as a base64-encoded string.
+                            "url": "str"  # Optional. The URL that provides temporary
+                              access to download the generated image.
+                        }
+                    ],
+                    "id": "str",  # A unique identifier associated with this image generation
+                      response. Required.
+                    "model": "str"  # The model used for the image generation. Required.
+                }
+        """
+
+    @overload
+    def get_image_generations(
+        self,
+        *,
+        prompt: str,
+        size: str,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
+        response_format: Optional[Union[str, _models.ImageGenerationResponseFormat]] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.ImageGenerations:
+        # pylint: disable=line-too-long
+        """Creates images given a prompt.
+
+        :keyword prompt: A description of the desired images. Required.
+        :paramtype prompt: str
+        :keyword size: The desired dimension in pixels of the generated images, in the format
+         ":code:`<Width>`x:code:`<Hight>`".
+         For example: "1024x1024", "1792x1024". Required.
+        :paramtype size: str
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword quality: The desired image generation quality level to use. Known values are:
+         "standard" and "hd". Default value is None.
+        :paramtype quality: str or ~azure.ai.inference.models.ImageGenerationQuality
+        :keyword response_format: The format in which image generation response items should be
+         presented. Known values are: "url" and "b64_json". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ImageGenerationResponseFormat
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
+        :paramtype seed: int
+        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ImageGenerations
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
+                      operation was started. Represented as seconds since the beginning of the Unix
+                      epoch of 00:00 on 1 Jan 1970. Required.
+                    "data": [
+                        {
+                            "b64_json": "str",  # Optional. The complete data for an
+                              image, represented as a base64-encoded string.
+                            "url": "str"  # Optional. The URL that provides temporary
+                              access to download the generated image.
+                        }
+                    ],
+                    "id": "str",  # A unique identifier associated with this image generation
+                      response. Required.
+                    "model": "str"  # The model used for the image generation. Required.
+                }
+        """
+
+    @overload
+    def get_image_generations(
+        self,
+        body: IO[bytes],
+        *,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImageGenerations:
+        # pylint: disable=line-too-long
+        """Creates images given a prompt.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ImageGenerations
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
+                      operation was started. Represented as seconds since the beginning of the Unix
+                      epoch of 00:00 on 1 Jan 1970. Required.
+                    "data": [
+                        {
+                            "b64_json": "str",  # Optional. The complete data for an
+                              image, represented as a base64-encoded string.
+                            "url": "str"  # Optional. The URL that provides temporary
+                              access to download the generated image.
+                        }
+                    ],
+                    "id": "str",  # A unique identifier associated with this image generation
+                      response. Required.
+                    "model": "str"  # The model used for the image generation. Required.
+                }
+        """
+
+    @distributed_trace
+    def get_image_generations(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        prompt: str = _Unset,
+        size: str = _Unset,
+        unknown_parameters: Optional[Union[str, _models.UnknownParameters]] = None,
+        model_deployment: Optional[str] = None,
+        quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
+        response_format: Optional[Union[str, _models.ImageGenerationResponseFormat]] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.ImageGenerations:
+        # pylint: disable=line-too-long
+        """Creates images given a prompt.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword prompt: A description of the desired images. Required.
+        :paramtype prompt: str
+        :keyword size: The desired dimension in pixels of the generated images, in the format
+         ":code:`<Width>`x:code:`<Hight>`".
+         For example: "1024x1024", "1792x1024". Required.
+        :paramtype size: str
+        :keyword unknown_parameters: Controls what happens if unknown parameters are passed as extra
+         properties in the request payload. Known values are: "error", "ignore", and "allow". Default
+         value is None.
+        :paramtype unknown_parameters: str or ~azure.ai.inference.models.UnknownParameters
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword quality: The desired image generation quality level to use. Known values are:
+         "standard" and "hd". Default value is None.
+        :paramtype quality: str or ~azure.ai.inference.models.ImageGenerationQuality
+        :keyword response_format: The format in which image generation response items should be
+         presented. Known values are: "url" and "b64_json". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ImageGenerationResponseFormat
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
+        :paramtype seed: int
+        :return: ImageGenerations. The ImageGenerations is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ImageGenerations
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "prompt": "str",  # A description of the desired images. Required.
+                    "size": "str",  # The desired dimension in pixels of the generated images, in
+                      the format ":code:`<Width>`x:code:`<Hight>`". For example: "1024x1024",
+                      "1792x1024". Required.
+                    "quality": "str",  # Optional. The desired image generation quality level to
+                      use. Known values are: "standard" and "hd".
+                    "response_format": "str",  # Optional. The format in which image generation
+                      response items should be presented. Known values are: "url" and "b64_json".
+                    "seed": 0  # Optional. If specified, the system will make a best effort to
+                      sample deterministically such that repeated requests with the same seed and
+                      parameters should return the same result. Determinism is not guaranteed.".
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created": "2020-02-20 00:00:00",  # A timestamp representing when this
+                      operation was started. Represented as seconds since the beginning of the Unix
+                      epoch of 00:00 on 1 Jan 1970. Required.
+                    "data": [
+                        {
+                            "b64_json": "str",  # Optional. The complete data for an
+                              image, represented as a base64-encoded string.
+                            "url": "str"  # Optional. The URL that provides temporary
+                              access to download the generated image.
+                        }
+                    ],
+                    "id": "str",  # A unique identifier associated with this image generation
+                      response. Required.
+                    "model": "str"  # The model used for the image generation. Required.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImageGenerations] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if prompt is _Unset:
+                raise TypeError("missing required argument: prompt")
+            if size is _Unset:
+                raise TypeError("missing required argument: size")
+            body = {
+                "prompt": prompt,
+                "quality": quality,
+                "response_format": response_format,
+                "seed": seed,
+                "size": size,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_model_get_image_generations_request(
+            unknown_parameters=unknown_parameters,
+            model_deployment=model_deployment,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ImageGenerations, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

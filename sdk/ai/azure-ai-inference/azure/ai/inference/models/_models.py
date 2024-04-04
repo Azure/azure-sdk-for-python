@@ -629,6 +629,9 @@ class CompletionsUsage(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
+    :ivar capacity_type: Indicates whether your capacity has been affected by the usage amount
+     (token count) reported here. Required. Known values are: "usage" and "fixed".
+    :vartype capacity_type: str or ~azure.ai.inference.models.CapacityType
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
     :vartype completion_tokens: int
@@ -640,6 +643,9 @@ class CompletionsUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
+    capacity_type: Union[str, "_models.CapacityType"] = rest_field()
+    """Indicates whether your capacity has been affected by the usage amount (token count) reported
+     here. Required. Known values are: \"usage\" and \"fixed\"."""
     completion_tokens: int = rest_field()
     """The number of tokens generated across all completions emissions. Required."""
     prompt_tokens: int = rest_field()
@@ -651,6 +657,7 @@ class CompletionsUsage(_model_base.Model):
     def __init__(
         self,
         *,
+        capacity_type: Union[str, "_models.CapacityType"],
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
@@ -771,14 +778,30 @@ class EmbeddingsUsage(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar prompt_tokens: Number of tokens sent in the original request. Required.
+    :ivar capacity_type: Indicates whether your capacity has been affected by the usage amount
+     (token count) reported here. Required. Known values are: "usage" and "fixed".
+    :vartype capacity_type: str or ~azure.ai.inference.models.CapacityType
+    :ivar input_tokens: Number of tokens in the request prompt. Required.
+    :vartype input_tokens: int
+    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
+     identical to\ ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type="query"). Required.
     :vartype prompt_tokens: int
     :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
     :vartype total_tokens: int
     """
 
+    capacity_type: Union[str, "_models.CapacityType"] = rest_field()
+    """Indicates whether your capacity has been affected by the usage amount (token count) reported
+     here. Required. Known values are: \"usage\" and \"fixed\"."""
+    input_tokens: int = rest_field()
+    """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens sent in the original request. Required."""
+    """Number of tokens used for the prompt sent to the AI model. Typically identical to\
+     ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type=\"query\"). Required."""
     total_tokens: int = rest_field()
     """Total number of tokens transacted in this request/response. Required."""
 
@@ -786,6 +809,8 @@ class EmbeddingsUsage(_model_base.Model):
     def __init__(
         self,
         *,
+        capacity_type: Union[str, "_models.CapacityType"],
+        input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
     ):
@@ -877,6 +902,90 @@ class FunctionDefinition(_model_base.Model):
         name: str,
         description: Optional[str] = None,
         parameters: Optional[Any] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ImageGenerationData(_model_base.Model):
+    """A representation of a single generated image, provided as either base64-encoded data or as a
+    URL from which the image
+    may be retrieved.
+
+    :ivar url: The URL that provides temporary access to download the generated image.
+    :vartype url: str
+    :ivar b64_json: The complete data for an image, represented as a base64-encoded string.
+    :vartype b64_json: str
+    """
+
+    url: Optional[str] = rest_field()
+    """The URL that provides temporary access to download the generated image."""
+    b64_json: Optional[str] = rest_field()
+    """The complete data for an image, represented as a base64-encoded string."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+        b64_json: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ImageGenerations(_model_base.Model):
+    """The result of a successful image generation operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: A unique identifier associated with this image generation response. Required.
+    :vartype id: str
+    :ivar created: A timestamp representing when this operation was started.
+     Represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
+    :vartype created: ~datetime.datetime
+    :ivar model: The model used for the image generation. Required.
+    :vartype model: str
+    :ivar data: The images generated by the operation. Required.
+    :vartype data: list[~azure.ai.inference.models.ImageGenerationData]
+    """
+
+    id: str = rest_field()
+    """A unique identifier associated with this image generation response. Required."""
+    created: datetime.datetime = rest_field(format="unix-timestamp")
+    """A timestamp representing when this operation was started.
+     Represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
+    model: str = rest_field()
+    """The model used for the image generation. Required."""
+    data: List["_models.ImageGenerationData"] = rest_field()
+    """The images generated by the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created: datetime.datetime,
+        model: str,
+        data: List["_models.ImageGenerationData"],
     ):
         ...
 

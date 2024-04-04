@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether your capacity has been affected by the usage amount (token count) reported here."""
+
+    ERROR = "usage"
+    """Your capacity has been affected by the usage amount (token count) reported here."""
+    IGNORE = "fixed"
+    """Your capacity has not been affected by the usage amount (token count) reported here."""
+
+
 class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a generic policy for how a chat completions tool may be selected."""
 
@@ -58,6 +67,27 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
     DOCUMENT = "document"
     """to do"""
+
+
+class ImageGenerationQuality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An image generation configuration that specifies how the model should prioritize quality, cost,
+    and speed.
+    """
+
+    STANDARD = "standard"
+    """Requests image generation with standard, balanced characteristics of quality, cost, and speed."""
+    HD = "hd"
+    """Requests image generation with higher quality, higher cost and lower speed relative to
+    standard."""
+
+
+class ImageGenerationResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format in which the generated images are returned."""
+
+    URL = "url"
+    """Image generation response items should provide a URL from which the image may be retrieved."""
+    BASE64 = "b64_json"
+    """Image generation response items should provide image data as a base64-encoded string."""
 
 
 class UnknownParameters(str, Enum, metaclass=CaseInsensitiveEnumMeta):
