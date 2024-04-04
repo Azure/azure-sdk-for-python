@@ -648,7 +648,7 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
 
   $allSucceeded = $true
   foreach ($item in $PackageInfos) {
-    # If the Version is INGORE that means it's a source install and those aren't run through ValidatePackage
+    # If the Version is IGNORE that means it's a source install and those aren't run through ValidatePackage
     if ($item.Version -eq 'IGNORE') {
       continue
     }
