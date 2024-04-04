@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where using `EventHubProducerClient` in buffered mode could potentially drop a buffered message without actually sending it. ([#34712](https://github.com/Azure/azure-sdk-for-python/pull/34712))
+
 ### Other Changes
 
 - Updated network trace logging to replace `None` values in AMQP connection info with empty strings as per the OpenTelemetry specification.

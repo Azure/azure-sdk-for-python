@@ -18,6 +18,9 @@
 
 ### Bugs Fixed
 
+- Reduce vm metadata service timeout to 200ms
+    ([#35039](https://github.com/Azure/azure-sdk-for-python/pull/35039))
+
 ### Other Changes
 
 - Updated FastAPI sample

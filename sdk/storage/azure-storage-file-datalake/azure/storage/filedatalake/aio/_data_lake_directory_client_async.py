@@ -265,6 +265,15 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             Decrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             Required if the directory was created with a customer-provided key.
+        :keyword bool upn:
+            Optional. Valid only when Hierarchical Namespace is
+            enabled for the account. If "True", the user identity values returned
+            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            transformed from Azure Active Directory Object IDs to User Principal
+            Names. If "False", the values will be returned as Azure Active
+            Directory Object IDs. The default value is false. Note that group and
+            application Object IDs are not translated because they do not have
+            unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -282,6 +291,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async

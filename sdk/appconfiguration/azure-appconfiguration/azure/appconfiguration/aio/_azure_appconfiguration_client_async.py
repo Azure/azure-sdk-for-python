@@ -6,7 +6,7 @@
 import binascii
 import functools
 from datetime import datetime
-from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
+from typing import Any, Dict, List, Optional, Union, cast, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -23,7 +23,6 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.utils import CaseInsensitiveDict
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
@@ -334,7 +333,6 @@ class AzureAppConfigurationClient:
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {412: ResourceExistsError}
 
         try:
@@ -343,8 +341,8 @@ class AzureAppConfigurationClient:
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_none_match="*",
-                headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value_added)
         except binascii.Error as exc:
@@ -373,9 +371,9 @@ class AzureAppConfigurationClient:
             Will use the value from param configuration_setting if not set.
         :return: The ConfigurationSetting returned from the service
         :rtype: ~azure.appconfiguration.ConfigurationSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
-            :class:`~azure.core.exceptions.ResourceReadOnlyError`, \
             :class:`~azure.core.exceptions.ResourceModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -396,7 +394,6 @@ class AzureAppConfigurationClient:
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -414,8 +411,8 @@ class AzureAppConfigurationClient:
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
                 if_none_match=prep_if_none_match(etag or configuration_setting.etag, match_condition),
-                headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value_set)
         except binascii.Error as exc:
@@ -430,7 +427,7 @@ class AzureAppConfigurationClient:
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs,
-    ) -> ConfigurationSetting:
+    ) -> Union[None, ConfigurationSetting]:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -442,9 +439,9 @@ class AzureAppConfigurationClient:
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: ~azure.appconfiguration.ConfigurationSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
-            :class:`~azure.core.exceptions.ResourceReadOnlyError`, \
             :class:`~azure.core.exceptions.ResourceModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -459,7 +456,6 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -475,10 +471,12 @@ class AzureAppConfigurationClient:
                 key=key,
                 label=label,
                 if_match=prep_if_match(etag, match_condition),
-                headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
-            return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
+            if key_value_deleted:
+                return ConfigurationSetting._from_generated(key_value_deleted)
+            return None
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 

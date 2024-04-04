@@ -43,7 +43,7 @@ from .._constants import JsonSchemaDraftIdentifier
 from ._async_lru import alru_cache  # pylint: disable=import-error
 
 if TYPE_CHECKING:
-    from ....aio._schema_registry_client_async import SchemaRegistryClient
+    import azure.schemaregistry.aio
     from ...._encoder_protocols import MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ class JsonSchemaEncoder(object):
 
     :keyword client: Required. The schema registry client which is used to retrieve schema from the service.
      and retrieve schema from the service.
-    :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
+    :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
     :keyword validate: Required. Used for validation in encode and decode.
      If a JsonSchemaDraftIdentifier value or equivalent string is provided, the corresponding validator from
      `jsonschema` will be used. In this case, `jsonschema` MUST be installed separately or by installing the
@@ -71,7 +71,7 @@ class JsonSchemaEncoder(object):
     def __init__(
         self,
         *,
-        client: "SchemaRegistryClient",
+        client: "azure.schemaregistry.aio.SchemaRegistryClient",
         validate: Union[JsonSchemaDraftIdentifier, str, "SchemaContentValidate"],
         group_name: Optional[str] = None,
     ) -> None:
