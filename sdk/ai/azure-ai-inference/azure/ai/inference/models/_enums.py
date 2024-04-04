@@ -69,6 +69,19 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
 
 
+class ExtraParameters(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the service behavior when extra parameters are passed in the request payload."""
+
+    ERROR = "error"
+    """The service should error when it sees extra parameters in the request payload. This is the
+    default behavior if the service."""
+    IGNORE = "ignore"
+    """The service should ignore extra parameters in the request payload. They will not be passed to
+    the back-end AI model."""
+    ALLOW = "allow"
+    """The service should pass extra parameters to the back-end AI model."""
+
+
 class ImageGenerationQuality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An image generation configuration that specifies how the model should prioritize quality, cost,
     and speed.
@@ -88,18 +101,3 @@ class ImageGenerationResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Image generation response items should provide a URL from which the image may be retrieved."""
     BASE64 = "b64_json"
     """Image generation response items should provide image data as a base64-encoded string."""
-
-
-class UnknownParameters(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the service behavior when unknown parameters are passed as extra properties in the
-    request payload.
-    """
-
-    ERROR = "error"
-    """The service should error when it sees unknown parameters in the request payload. This is the
-    default behavior if the service."""
-    IGNORE = "ignore"
-    """The service should ignore unknown parameters in the request payload. They will not be passed to
-    the back-end AI model."""
-    ALLOW = "allow"
-    """The service should pass unknown parameters to the back-end AI model."""

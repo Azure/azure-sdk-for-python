@@ -62,7 +62,12 @@ def sample_embeddings():
 
     # [START embeddings]
     # Do a single embeddings operation. This will be a synchronously (blocking) call.
-    result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
+    result = client.get_embeddings(
+        input=[
+            "first sentence",
+            "second sentence","third sentence"
+        ]
+    )
 
     # Print results the the console
     print("Embeddings result:")

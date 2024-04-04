@@ -160,7 +160,12 @@ This example demonstrates how to get embeddings.
 
 ```python
 # Do a single embeddings operation. This will be a synchronously (blocking) call.
-result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
+result = client.get_embeddings(
+    input=[
+        "first sentence",
+        "second sentence","third sentence"
+    ]
+)
 
 # Print results the the console
 print("Embeddings result:")
@@ -198,7 +203,7 @@ result = client.get_image_generations(
 print("Image generation result:")
 for index, item in enumerate(result.data):
     with open(f"image_{index}.png", "wb") as image:
-        image.write(item.b64_json.decode('base64'))
+        image.write(item.b64_json.decode("base64"))
 print(f"id: {result.id}")
 print(f"model: {result.model}")
 print(f"created: {result.created}")

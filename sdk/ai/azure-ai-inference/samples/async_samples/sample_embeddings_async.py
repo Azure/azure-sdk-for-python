@@ -43,8 +43,7 @@ async def sample_embeddings_async():
         client.get_embeddings(
             input=[
                 "first sentence",
-                "second sentence",
-                "third sentence"
+                "second sentence","third sentence"
             ]
         )
     )

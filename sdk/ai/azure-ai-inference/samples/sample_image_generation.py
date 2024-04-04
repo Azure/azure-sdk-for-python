@@ -71,7 +71,7 @@ def sample_image_generation():
     print("Image generation result:")
     for index, item in enumerate(result.data):
         with open(f"image_{index}.png", "wb") as image:
-            image.write(item.b64_json.decode('base64'))
+            image.write(item.b64_json.decode("base64"))
     print(f"id: {result.id}")
     print(f"model: {result.model}")
     print(f"created: {result.created}")
