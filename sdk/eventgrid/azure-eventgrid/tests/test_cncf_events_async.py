@@ -4,8 +4,7 @@ from devtools_testutils import AzureRecordedTestCase, CachedResourceGroupPrepare
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid.aio import EventGridClient
-from azure.eventgrid import ClientLevel
+from azure.eventgrid.aio import EventGridPublisherClient
 from cloudevents.http import CloudEvent
 
 from eventgrid_preparer import (
@@ -13,11 +12,11 @@ from eventgrid_preparer import (
 )
 
 
-class TestEventGridClientCncf(AzureRecordedTestCase):
+class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
-        credential = self.get_credential(EventGridClient, is_async=True)
+        credential = self.get_credential(EventGridPublisherClient, is_async=True)
         client = self.create_client_from_credential(
-            EventGridClient, credential=credential, endpoint=endpoint, level=ClientLevel.BASIC
+            EventGridPublisherClient, credential=credential, endpoint=endpoint
         )
         return client
 

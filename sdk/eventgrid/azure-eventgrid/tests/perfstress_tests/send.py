@@ -8,11 +8,10 @@ import asyncio
 from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.eventgrid import (
-    EventGridClient as SyncPublisherClient,
+    EventGridPublisherClient as SyncPublisherClient,
     EventGridEvent,
-    ClientLevel
 )
-from azure.eventgrid.aio import EventGridClient as AsyncPublisherClient
+from azure.eventgrid.aio import EventGridPublisherClient as AsyncPublisherClient
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -27,10 +26,10 @@ class EventGridPerfTest(PerfStressTest):
 
         # Create clients
         self.publisher_client = SyncPublisherClient(
-            endpoint=endpoint, credential=AzureKeyCredential(topic_key), level=ClientLevel.BASIC
+            endpoint=endpoint, credential=AzureKeyCredential(topic_key)
         )
         self.async_publisher_client = AsyncPublisherClient(
-            endpoint=endpoint, credential=AzureKeyCredential(topic_key), level=ClientLevel.BASIC
+            endpoint=endpoint, credential=AzureKeyCredential(topic_key)
         )
 
         self.event_list = []

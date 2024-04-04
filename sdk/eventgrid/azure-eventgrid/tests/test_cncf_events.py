@@ -2,7 +2,7 @@ import json
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import EventGridClient, ClientLevel
+from azure.eventgrid import EventGridPublisherClient
 from cloudevents.http import CloudEvent
 
 from eventgrid_preparer import (
@@ -12,9 +12,9 @@ from eventgrid_preparer import (
 
 class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
-        credential = self.get_credential(EventGridClient)
+        credential = self.get_credential(EventGridPublisherClient)
         client = self.create_client_from_credential(
-            EventGridClient, credential=credential, endpoint=endpoint, level=ClientLevel.BASIC
+            EventGridPublisherClient, credential=credential, endpoint=endpoint
         )
         return client
 

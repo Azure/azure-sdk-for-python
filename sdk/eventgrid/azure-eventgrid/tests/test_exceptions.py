@@ -27,7 +27,7 @@ except ImportError:
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.messaging import CloudEvent
 
 from eventgrid_preparer import (
@@ -37,9 +37,9 @@ from eventgrid_preparer import (
 
 class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
-        credential = self.get_credential(EventGridClient)
+        credential = self.get_credential(EventGridPublisherClient)
         client = self.create_client_from_credential(
-            EventGridClient, credential=credential, endpoint=endpoint, level=ClientLevel.BASIC
+            EventGridPublisherClient, credential=credential, endpoint=endpoint
         )
         return client
 
@@ -47,7 +47,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
-        client = EventGridClient(eventgrid_topic_endpoint, akc_credential, level=ClientLevel.BASIC)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
@@ -64,10 +64,9 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     def test_raise_on_bad_resource(self):
         credential = AzureKeyCredential(os.environ["EVENTGRID_TOPIC_KEY"])
-        client = EventGridClient(
+        client = EventGridPublisherClient(
             "https://bad-resource.eastus-1.eventgrid.azure.net/api/events",
             credential,
-            level=ClientLevel.BASIC,
         )
         eg_event = CloudEvent(
             subject="sample",

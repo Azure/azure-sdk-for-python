@@ -21,8 +21,8 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
-from azure.eventgrid import EventGridEvent, generate_sas, ClientLevel
-from azure.eventgrid.aio import EventGridClient
+from azure.eventgrid import EventGridEvent, generate_sas
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.eventgrid._legacy._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import EventGridPreparer
@@ -30,9 +30,9 @@ from eventgrid_preparer import EventGridPreparer
 
 class TestEventGridPublisherClient(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
-        credential = self.get_credential(EventGridClient, is_async=True)
+        credential = self.get_credential(EventGridPublisherClient, is_async=True)
         client = self.create_client_from_credential(
-            EventGridClient, credential=credential, endpoint=endpoint, level=ClientLevel.BASIC
+            EventGridPublisherClient, credential=credential, endpoint=endpoint
         )
         return client
 
@@ -80,7 +80,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     ):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         parsed_url = urlparse(eventgrid_topic_endpoint)
-        client = EventGridClient(parsed_url.netloc, akc_credential, level=ClientLevel.BASIC)
+        client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
@@ -284,7 +284,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
             eventgrid_topic_endpoint, eventgrid_topic_key, expiration_date_utc
         )
         credential = AzureSasCredential(signature)
-        client = EventGridClient(eventgrid_topic_endpoint, credential, level=ClientLevel.BASIC)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
@@ -357,15 +357,15 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         with pytest.raises(
             ValueError, match="Parameter 'self._credential' must not be None."
         ):
-            client = EventGridClient(eventgrid_topic_endpoint, None, level=ClientLevel.BASIC)
+            client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_send_token_credential_async(self, eventgrid_topic_endpoint):
-        credential = self.get_credential(EventGridClient)
-        client = EventGridClient(eventgrid_topic_endpoint, credential, level=ClientLevel.BASIC)
+        credential = self.get_credential(EventGridPublisherClient)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
             subject="sample",
             data={"sample": "eventgridevent"},
@@ -379,8 +379,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_send_partner_namespace_async(self, eventgrid_partner_namespace_topic_endpoint, eventgrid_partner_namespace_topic_key, eventgrid_partner_channel_name):
         credential = AzureKeyCredential(eventgrid_partner_namespace_topic_key)
-        client = EventGridClient(
-            eventgrid_partner_namespace_topic_endpoint, credential, level=ClientLevel.BASIC
+        client = EventGridPublisherClient(
+            eventgrid_partner_namespace_topic_endpoint, credential
         )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
