@@ -33,10 +33,21 @@ async def sample_embeddings_async():
         exit()
 
     # Create an Image Analysis client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ModelClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
     # Do a single embeddings operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(client.get_embeddings(input=["first sentence", "second sentence", "third sentence"]))
+    future = asyncio.ensure_future(
+        client.get_embeddings(
+            input=[
+                "first sentence",
+                "second sentence",
+                "third sentence"
+            ]
+        )
+    )
 
     # Loop until the operation is done
     while not future.done():

@@ -4,10 +4,10 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get embeddings for a list of sentences using a synchronous client.
+    This sample demonstrates how to generate an image from a prompt using an asynchronous client.
 
 USAGE:
-    python sample_embeddings.py
+    python sample_image_generation_async.py
 
     Set these two environment variables before running the sample:
     1) MODEL_ENDPOINT - Your endpoint URL, in the form https://<deployment-name>.<azure-region>.inference.ai.azure.com
@@ -15,12 +15,12 @@ USAGE:
                         `azure-region` is the Azure region where your model is deployed.
     2) MODEL_KEY - Your model key (a 32-character string). Keep it secret.
 """
+import asyncio
 
-
-def sample_embeddings():
+async def sample_image_generation_async():
     import os
 
-    from azure.ai.inference import ModelClient
+    from azure.ai.inference.aio import ModelClient
     from azure.core.credentials import AzureKeyCredential
 
     # [START logging]
@@ -60,27 +60,36 @@ def sample_embeddings():
         credential=AzureKeyCredential("key")
     )
 
-    # [START embeddings]
-    # Do a single embeddings operation. This will be a synchronously (blocking) call.
-    result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
+    # Generate an image from text prompt. This will be an asynchronously (non-blocking) call.
+    future = asyncio.ensure_future(
+        client.get_image_generations(
+            prompt="A painting of a beautiful sunset over a mountain lake.",
+            size="1024x768"
+        )
+     )
 
-    # Print results the the console
-    print("Embeddings result:")
+    # Loop until the operation is done
+    while not future.done():
+        await asyncio.sleep(0.1)
+        print("Waiting...")
+
+    # Get the result
+    result = future.result()
+    await client.close()
+
+    # Save generated image to file and print other results the the console
+    print("Image generation result:")
     for index, item in enumerate(result.data):
-        len = item.embedding.__len__()
-        print(f"data[{index}].index: {item.index}")
-        print(f"data[{index}].embedding[0]: {item.embedding[0]}")
-        print(f"data[{index}].embedding[1]: {item.embedding[1]}")
-        print("...")
-        print(f"data[{index}].embedding[{len-2}]: {item.embedding[len-2]}")
-        print(f"data[{index}].embedding[{len-1}]: {item.embedding[len-1]}")
+        with open(f"image_{index}.png", "wb") as image:
+            image.write(item.b64_json.decode('base64'))
     print(f"id: {result.id}")
     print(f"model: {result.model}")
-    print(f"object: {result.object}")
-    print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-    print(f"usage.total_tokens: {result.usage.total_tokens}")
-    # [END embeddings]
+    print(f"created: {result.created}")
+
+
+async def main():
+    await sample_image_generation_async()
 
 
 if __name__ == "__main__":
-    sample_embeddings()
+    asyncio.run(main())

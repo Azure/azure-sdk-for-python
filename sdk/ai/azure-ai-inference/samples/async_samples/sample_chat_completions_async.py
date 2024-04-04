@@ -34,7 +34,10 @@ async def sample_chat_completions_async():
         exit()
 
     # Create a Model Client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ModelClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
     # Do a single chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(

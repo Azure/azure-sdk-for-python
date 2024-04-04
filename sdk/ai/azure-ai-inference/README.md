@@ -7,6 +7,7 @@ Use the model client library to:
 * Authenticate against the service
 * Get chat completions
 * Get embeddings
+* Generate an image from a text prompt
 
 Note that for inference of OpenAI models hosted on azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
 
@@ -98,12 +99,19 @@ TBD
 
 Target the `/v1/embeddings` route
 
+### Image Generation
+
+TBD
+
+Target the `/images/generations` route
+
 ## Examples
 
 The following sections provide code snippets covering these common scenarios:
 
 * [Chat completions](#chat-completions-example)
 * [Embeddings](#embeddings-example)
+* [Image geneartion](#image-generation-example)
 
 These snippets use the synchronous `client` from [Create and authenticate the client](#create-and-authenticate-the-client).
 
@@ -152,13 +160,7 @@ This example demonstrates how to get embeddings.
 
 ```python
 # Do a single embeddings operation. This will be a synchronously (blocking) call.
-result = client.get_embeddings(
-   input=[
-       "first sentence",
-       "second sentence",
-       "third sentence"
-    ]
-)
+result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
 
 # Print results the the console
 print("Embeddings result:")
@@ -179,11 +181,36 @@ print(f"usage.total_tokens: {result.usage.total_tokens}")
 
 <!-- END SNIPPET -->
 
+### Image generation example
+
+This example demonstrates how to generate and image from a text prompt
+
+<!-- SNIPPET:sample_image_generation.image_generation -->
+
+```python
+# Generate a single image from a text prompt. This will be a synchronously (blocking) call.
+result = client.get_image_generations(
+    prompt="A painting of a beautiful sunset over a mountain lake.",
+    size="1024x768"
+)
+
+# Save generated image to file and print other results the the console
+print("Image generation result:")
+for index, item in enumerate(result.data):
+    with open(f"image_{index}.png", "wb") as image:
+        image.write(item.b64_json.decode('base64'))
+print(f"id: {result.id}")
+print(f"model: {result.model}")
+print(f"created: {result.created}")
+```
+
+<!-- END SNIPPET -->
+
 ## Troubleshooting
 
 ### Exceptions
 
-The `get_chat_completions` and `get_embeddings` methods raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `get_chat_completions`, `get_embeddings` and `get_image_geneartions` methods raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
 
 ```python
 from azure.core.exceptions import HttpResponseError
