@@ -128,6 +128,25 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :return: None
         :rtype: None
+
+        A single instance or a list of dictionaries, CloudEvents are accepted. In the case of an Azure Event Grid
+        Basic Resource, EventGridEvent(s) and CNCFCloudEvents are also accepted.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/eventgrid_client_samples/sample_publish_operation_async.py
+                :start-after: [START publish_cloud_event_async]
+                :end-before: [END publish_cloud_event_async]
+                :language: python
+                :dedent: 0
+                :caption: Publishing a Cloud Event to a Namespace Topic.
+
+            .. literalinclude:: ../samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
+                :start-after: [START publish_cloud_event_to_topic_async]
+                :end-before: [END publish_cloud_event_to_topic_async]
+                :language: python
+                :dedent: 0
+                :caption: Publishing a CloudEvent to a Basic Topic.
         """
         # Check kwargs
         channel_name = kwargs.pop("channel_name", None)
@@ -382,7 +401,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                release_options = {
+                options = {
                     "lockTokens": [
                         "str"  # Array of lock tokens. Required.
                     ]

@@ -221,6 +221,25 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :return: None
         :rtype: None
+
+        A single instance or a list of dictionaries, CloudEvents are accepted. In the case of an Azure Event Grid
+        Basic Resource, EventGridEvent(s) and CNCFCloudEvents are also accepted.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/eventgrid_client_samples/sample_publish_operation.py
+                :start-after: [START publish_cloud_event]
+                :end-before: [END publish_cloud_event]
+                :language: python
+                :dedent: 0
+                :caption: Publishing a Cloud Event to a Namespace Topic.
+
+            .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+                :start-after: [START publish_cloud_event_to_topic]
+                :end-before: [END publish_cloud_event_to_topic]
+                :language: python
+                :dedent: 0
+                :caption: Publishing a CloudEvent to a Basic Topic.
         """
         # Check kwargs
         channel_name = kwargs.pop("channel_name", None)
