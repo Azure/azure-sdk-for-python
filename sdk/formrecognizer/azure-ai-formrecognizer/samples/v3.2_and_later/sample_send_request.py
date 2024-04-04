@@ -43,40 +43,28 @@ def sample_send_request():
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+    print(response_body)
     
     # pass with absolute url and override the API version
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2022-08-31")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+    print(response_body)
     
     # override the API version to v2.1
     request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    print(response_body)
     
     # pass with absolute url and override the API version to v2.1
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.1/custom/models?op=summary")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    print(response_body)
 
 
 def sample_send_request_v2():
@@ -97,28 +85,21 @@ def sample_send_request_v2():
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    print(response_body)
     
     # pass with absolute url and override the API version
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    print(response_body)
     
     # override the API version to 2023-07-31
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2023-07-31")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+    print(response_body)
 
 
 if __name__ == "__main__":
