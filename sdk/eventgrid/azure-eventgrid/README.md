@@ -25,7 +25,7 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
 ### Differences Between Event Grid Resources
 
 Below is a brief synopsis of the differences between Azure Event Grid Namespaces and Azure Event Grid Basic. More on the following can be found [here](https://learn.microsoft.com/azure/event-grid/choose-right-tier).
-
+gi
 |   Feature            | Namespaces (Standard) | Basic |
 | :---------------- | :------: | :----: |
 | Throughput        |   High   | Low |
@@ -42,7 +42,7 @@ Below is a brief synopsis of the differences between Azure Event Grid Namespaces
 
 ## Key concepts
 
-### Namespace
+### Namespace Resource
 
 A **[namespace](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
 
@@ -58,7 +58,7 @@ An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-
 
 A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
 
-### Basic 
+### Basic Resource
 
 #### Topic
 A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
@@ -120,7 +120,7 @@ An **endpoint** and **credential** are necessary to instantiate the client objec
 The default client created is a Standard Client, which is compatible with EventGrid Namespace. To create an EventGrid Basic Client, specify `level="Basic"` or `level=ClientLevel.BASIC` when instantiating the client.
 
 ```python
-client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 ```
 
 
