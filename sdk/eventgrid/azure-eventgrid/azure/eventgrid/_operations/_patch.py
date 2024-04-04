@@ -46,7 +46,7 @@ from .._validation import api_version_validation
 
 
 from .._legacy import EventGridEvent
-from .._legacy._helpers import _from_cncf_events
+from .._legacy._helpers import _from_cncf_events, _is_eventgrid_event
 from .._serialization import Serializer
 
 if sys.version_info >= (3, 9):
@@ -265,23 +265,26 @@ class EventGridClientOperationsMixin(OperationsMixin):
             except Exception:  # pylint: disable=broad-except
                 pass
 
-            try:
+            if self._level == "Standard":
                 kwargs["content_type"] = kwargs.get(
                     "content_type", "application/cloudevents-batch+json; charset=utf-8"
                 )
                 if not isinstance(events, list):
                     events = [events]
+
+                if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+                    raise TypeError("EventGridEvent is not supported for standard level client.")
                 try:
                     # Try to send via namespace
                     self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
-                    # If that fails, try to send via basic
-                    self._last_exception = exception
+            else:
+                try:
                     self._send(events, channel_name=channel_name, **kwargs)
-            except Exception as exception:
-                self._http_response_error_handler(exception, "Basic")
-                raise self._last_exception from exception
+                except Exception as exception:
+                    self._http_response_error_handler(exception, "Basic")
+                    raise exception
 
     def _send_binary(self, topic_name, events, **kwargs):
         # If data is passed as a dictionary, make sure it is a CloudEvent

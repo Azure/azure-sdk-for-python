@@ -34,6 +34,9 @@ from ..._operations._patch import (
     validate_args,
 )
 
+from ..._legacy import EventGridEvent
+from ..._legacy._helpers import _is_eventgrid_event
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -169,23 +172,28 @@ class EventGridClientOperationsMixin(OperationsMixin):
             except Exception: # pylint: disable=broad-except
                 pass
 
-            try:
-                kwargs["content_type"] = (
-                    "application/cloudevents-batch+json; charset=utf-8"
+            if self._level == "Standard":
+                kwargs["content_type"] = kwargs.get(
+                    "content_type", "application/cloudevents-batch+json; charset=utf-8"
                 )
                 if not isinstance(events, list):
                     events = [events]
+
+                if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+                    raise TypeError("EventGridEvent is not supported for standard level client.")
                 try:
                     # Try to send via namespace
                     await self._send(topic_name, _serialize_events(events), **kwargs)
-                except Exception as exception: # pylint: disable=broad-except
+                except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
-                    # If that fails, try to send via basic
-                    self._last_exception = exception
+                    # # If that fails, try to send via basic
+                    # self._last_exception = exception
+            else:
+                try:
                     await self._send(events, channel_name=channel_name, **kwargs)
-            except Exception as exception: # pylint: disable=broad-except
-                self._http_response_error_handler(exception, "Basic")
-                raise self._last_exception from exception
+                except Exception as exception:
+                    self._http_response_error_handler(exception, "Basic")
+                    raise self._last_exception from exception
 
     async def _send_binary(self, topic_name: str, events: Any, **kwargs: Any) -> None:
         # If data is passed as a dictionary, make sure it is a CloudEvent
@@ -334,7 +342,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 }
         """
 
-        return await super().acknowledge_cloud_events(
+        return await super()._acknowledge_cloud_events(
             topic_name, subscription_name, options, **kwargs
         )
 
@@ -410,7 +418,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 }
         """
 
-        return await super().release_cloud_events(
+        return await super()._release_cloud_events(
             topic_name,
             subscription_name,
             options,
@@ -482,7 +490,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 }
         """
 
-        return await super().reject_cloud_events(
+        return await super()._reject_cloud_events(
             topic_name, subscription_name, options, **kwargs
         )
 
@@ -555,7 +563,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 }
         """
 
-        return await super().renew_cloud_event_locks(
+        return await super()._renew_cloud_event_locks(
             topic_name, subscription_name, options, **kwargs
         )
 

@@ -116,7 +116,7 @@ class TestEGDualClient(AzureRecordedTestCase):
                 events=event
                 )
         else:
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TypeError):
                 client.send(
                     topic_name=eventgrid_topic_name, events=event
                 )
@@ -277,7 +277,7 @@ class TestEGDualClient(AzureRecordedTestCase):
         }
 
         if level==ClientLevel.STANDARD:
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TypeError):
                 client.send(
                     topic_name=eventgrid_topic_name, events=event
                 )
