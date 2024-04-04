@@ -21,8 +21,30 @@ def sample_chat_completions():
     # [START create_client]
     import os
     from azure.ai.inference import ModelClient
-    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, UnknownParameters
+    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ExtraParameters
     from azure.core.credentials import AzureKeyCredential
+
+    # [START logging]
+    import sys
+    import logging
+
+    # Acquire the logger for this client library. Use 'azure' to affect both
+    # 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
+    logger = logging.getLogger("azure")
+
+    # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
+    logger.setLevel(logging.DEBUG)
+
+    # Direct logging output to stdout (the default):
+    handler = logging.StreamHandler(stream=sys.stdout)
+    # Or direct logging output to a file:
+    # handler = logging.FileHandler(filename = 'sample.log')
+    logger.addHandler(handler)
+
+    # Optional: change the default logging format. Here we add a timestamp.
+    formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+    handler.setFormatter(formatter)
+    # [END logging]
 
     # Read the values of your model endpoint and key from environment variables
     try:
@@ -34,7 +56,7 @@ def sample_chat_completions():
         exit()
 
     # Create Model Client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
     # [END create_client]
 
     # [START chat_completions]
@@ -43,7 +65,10 @@ def sample_chat_completions():
         messages=[
             ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
             ChatRequestUserMessage(content="How many feet are in a mile?"),
-        ]
+        ],
+        # Examples of setting extra parameters (TODO: move this to advanced sample)
+        extras=dict(key1="value1", key2="value2"),
+        extra_parameters=ExtraParameters.ALLOW
     )
 
     # Print results the the console

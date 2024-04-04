@@ -50,20 +50,29 @@ Once you define the environment variables, this Python code will create and auth
 ```python
 import os
 from azure.ai.inference import ModelClient
-from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, UnknownParameters
+from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ExtraParameters
 from azure.core.credentials import AzureKeyCredential
 
-# Read the values of your model endpoint and key from environment variables
-try:
-    endpoint = os.environ["MODEL_ENDPOINT"]
-    key = os.environ["MODEL_KEY"]
-except KeyError:
-    print("Missing environment variable 'MODEL_ENDPOINT' or 'MODEL_KEY'")
-    print("Set them before running this sample.")
-    exit()
+# [START logging]
+import sys
+import logging
 
-# Create Model Client for synchronous operations
-client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+# Acquire the logger for this client library. Use 'azure' to affect both
+# 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
+logger = logging.getLogger("azure")
+
+# Set the desired logging level. logging.INFO or logging.DEBUG are good options.
+logger.setLevel(logging.DEBUG)
+
+# Direct logging output to stdout (the default):
+handler = logging.StreamHandler(stream=sys.stdout)
+# Or direct logging output to a file:
+# handler = logging.FileHandler(filename = 'sample.log')
+logger.addHandler(handler)
+
+# Optional: change the default logging format. Here we add a timestamp.
+formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+handler.setFormatter(formatter)
 ```
 
 <!-- END SNIPPET -->
@@ -126,7 +135,10 @@ result = client.get_chat_completions(
     messages=[
         ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
         ChatRequestUserMessage(content="How many feet are in a mile?"),
-    ]
+    ],
+    # Examples of setting extra parameters (TODO: move this to advanced sample)
+    extras=dict(key1="value1", key2="value2"),
+    extra_parameters=ExtraParameters.ALLOW
 )
 
 # Print results the the console
