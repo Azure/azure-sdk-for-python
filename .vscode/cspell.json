@@ -1356,7 +1356,8 @@
         "Ffile",
         "Fsubdir",
         "Fdir",
-        "adal"
+        "adal",
+        "mytestshare"
       ]
     },
     {
@@ -1686,6 +1687,12 @@
       "filename": "sdk/appconfiguration/azure-appconfiguration/**",
       "words": [
         "kvset"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
+      "words": [
+        "adfsasdfzsd"
       ]
     },
     {

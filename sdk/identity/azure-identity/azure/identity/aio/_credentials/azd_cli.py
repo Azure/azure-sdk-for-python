@@ -32,7 +32,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
     Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy
     resources in Azure. It's built on top of the Azure CLI and provides additional functionality specific
     to Azure developers. It allows users to authenticate as a user and/or a service principal against
-    `Microsoft Entra ID <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
+    `Microsoft Entra ID <"https://learn.microsoft.com/entra/fundamentals/">`__.
     The AzureDeveloperCliCredential authenticates in a development environment and acquires a token on behalf of
     the logged-in user or service principal in Azure Developer CLI. It acts as the Azure Developer CLI logged-in user
     or service principal and executes an Azure CLI command underneath to authenticate the application against
@@ -94,7 +94,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 

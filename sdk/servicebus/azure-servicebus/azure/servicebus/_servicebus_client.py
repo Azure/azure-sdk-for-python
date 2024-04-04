@@ -372,7 +372,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
          `max_message_count` (if provided) within its request to the service.
-         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -383,7 +383,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
-
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -394,7 +393,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 :language: python
                 :dedent: 4
                 :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
-
 
         """
 
@@ -564,7 +562,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
          `max_message_count` (if provided) within its request to the service.
-         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -575,6 +573,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
+        :returns: A subscription receiver.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
