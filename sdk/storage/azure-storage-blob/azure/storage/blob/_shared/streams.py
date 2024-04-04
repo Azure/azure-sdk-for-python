@@ -133,7 +133,8 @@ class StructuredMessageEncodeStream(IOBase):
         elif self._current_region == SMRegion.SEGMENT_HEADER:
             self._current_region_length = self._segment_header_length
         elif self._current_region == SMRegion.SEGMENT_CONTENT:
-            self._current_region_length = min(self._segment_size, self.content_length - self._content_offset)
+            self._current_region_length = min(self._segment_size, self.content_length - self._content_offset) \
+                if self._current_segment_number == self._num_segments else self._segment_size
         elif self._current_region == SMRegion.SEGMENT_FOOTER:
             self._current_region_length = self._segment_footer_length
         elif self._current_region == SMRegion.MESSAGE_FOOTER:
