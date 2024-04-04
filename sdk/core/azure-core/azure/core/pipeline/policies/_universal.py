@@ -452,7 +452,7 @@ class HttpLoggingPolicy(
     @allowed_header_names.setter
     def allowed_header_names(self, value: Set[str]):
         self._allowed_header_names = value
-        self._lower_case_allowed_header_names = [param.lower() for param in self._allowed_header_names]
+        self._lower_case_allowed_header_names = [header.lower() for header in self._allowed_header_names]
 
     def _redact_query_param(self, key: str, value: str) -> str:
         return value if key.lower() in self._lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
