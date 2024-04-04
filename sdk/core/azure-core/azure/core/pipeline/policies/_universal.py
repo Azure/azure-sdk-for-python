@@ -435,7 +435,7 @@ class HttpLoggingPolicy(
         self._allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
         self._lower_case_allowed_query_params = [param.lower() for param in self._allowed_query_params]
         self._lower_case_allowed_header_names = [header.lower() for header in self._allowed_header_names]
-    
+
     @property
     def allowed_query_params(self):
         return self._allowed_query_params
