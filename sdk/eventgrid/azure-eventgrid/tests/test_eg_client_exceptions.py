@@ -107,7 +107,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = Options(lock_tokens=["faketoken"])
             client.acknowledge_cloud_events(
-                "faketopic", eventgrid_event_subscription_name, lock_tokens
+                "faketopic", eventgrid_event_subscription_name, acknowledge_options=lock_tokens
             )
 
     @EventGridPreparer()
@@ -118,7 +118,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = Options(lock_tokens=["faketoken"])
             client.release_cloud_events(
-                "faketopic", eventgrid_event_subscription_name, lock_tokens
+                "faketopic", eventgrid_event_subscription_name, release_options=lock_tokens
             )
 
     @EventGridPreparer()
@@ -129,7 +129,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         with pytest.raises(ResourceNotFoundError):
             client.reject_cloud_events(
-                "faketopic", eventgrid_event_subscription_name, lock_tokens
+                "faketopic", eventgrid_event_subscription_name, reject_options=lock_tokens
             )
 
     @EventGridPreparer()
@@ -139,7 +139,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         lock_tokens = Options(lock_tokens=["faketoken"])
         ack = client.acknowledge_cloud_events(
-            eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
+            eventgrid_topic_name, eventgrid_event_subscription_name, acknowledge_options=lock_tokens
         )
         assert type(ack) == Result
         assert ack.succeeded_lock_tokens == []
@@ -153,7 +153,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         lock_tokens = Options(lock_tokens=["faketoken"])
         release = client.release_cloud_events(
-            eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
+            eventgrid_topic_name, eventgrid_event_subscription_name, release_options=lock_tokens
         )
         assert type(release) == Result
         assert release.succeeded_lock_tokens == []
@@ -167,7 +167,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         lock_tokens = Options(lock_tokens=["faketoken"])
 
         reject = client.reject_cloud_events(
-            eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens
+            eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=lock_tokens
         )
         assert type(reject) == Result
         assert reject.succeeded_lock_tokens == []
