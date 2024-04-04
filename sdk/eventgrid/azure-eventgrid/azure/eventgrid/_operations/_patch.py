@@ -217,7 +217,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
          "application/cloudevents+json; charset=utf-8".
-        :paramtype content_type: str or None
+        :paramtype content_type: str
 
         :return: None
         :rtype: None
