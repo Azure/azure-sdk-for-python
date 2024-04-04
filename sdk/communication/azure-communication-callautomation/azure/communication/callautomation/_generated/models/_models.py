@@ -5356,6 +5356,50 @@ class UnholdRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
+class UnholdRequest(_serialization.Model):
+    """The request payload for holding participant from the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_participant: Participants to be hold from the call.
+     Only ACS Users are supported. Required.
+    :vartype target_participant:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        "target_participant": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "_models.CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_participant: Participants to be hold from the call.
+         Only ACS Users are supported. Required.
+        :paramtype target_participant:
+         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.target_participant = target_participant
+        self.operation_context = operation_context
+
+
 class UnmuteParticipantsRequest(_serialization.Model):
     """The request payload for unmuting participant from the call.
 
