@@ -7,7 +7,7 @@
 import math
 import os
 import random
-from io import BytesIO, UnsupportedOperation
+from io import BytesIO, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
 from typing import List, Optional, Tuple, Union
 
 import pytest
@@ -192,7 +192,14 @@ class TestStructuredMessageEncodeStream:
         expected = _build_structured_message(data, segment_size, StructuredMessageProperties.CRC64)[0].getvalue()
         assert content == expected
 
-    def test_seek_not_seekable(self):
+    def test_seekable(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+
+        assert sm_stream.seekable()
+
+    def test_not_seekable(self):
         data = os.urandom(10)
         inner_stream = NonSeekableStream(BytesIO(data))
         sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
@@ -200,6 +207,20 @@ class TestStructuredMessageEncodeStream:
         assert not sm_stream.seekable()
         with pytest.raises(UnsupportedOperation):
             sm_stream.seek(0)
+
+    def test_seek_whence(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+        # Read so we can seek backwards
+        sm_stream.read(25)
+
+        pos = sm_stream.seek(10, SEEK_SET)
+        assert pos == 10
+        pos = sm_stream.seek(-len(sm_stream) + 9, SEEK_END)
+        assert pos == 9
+        pos = sm_stream.seek(-5, SEEK_CUR)
+        assert pos == 4
 
     def test_seek_forward(self):
         data = os.urandom(10)

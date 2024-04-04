@@ -150,8 +150,8 @@ class StructuredMessageEncodeStream(IOBase):
 
     def seekable(self) -> bool:
         try:
-            # We are only seekable if the inner stream is
-            return self._inner_stream.seekable()
+            # Only seekable if the inner stream is and we could get its initial position
+            return self._inner_stream.seekable() and self._initial_content_position is not None
         except (AttributeError, UnsupportedOperation, OSError):
             return False
 
