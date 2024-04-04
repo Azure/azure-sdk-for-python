@@ -31,6 +31,24 @@ class AcknowledgeOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -55,6 +73,25 @@ class AcknowledgeResult(_model_base.Model):
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -289,6 +326,24 @@ class RejectOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -313,6 +368,25 @@ class RejectResult(_model_base.Model):
     """Array of lock tokens for the successfully rejected cloud events. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -329,6 +403,24 @@ class ReleaseOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -353,6 +445,25 @@ class ReleaseResult(_model_base.Model):
     """Array of lock tokens for the successfully released cloud events. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -376,6 +487,25 @@ class RenewCloudEventLocksResult(_model_base.Model):
     """Array of lock tokens for the successfully renewed locks. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  
 
 
@@ -392,4 +522,22 @@ class RenewLockOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
  

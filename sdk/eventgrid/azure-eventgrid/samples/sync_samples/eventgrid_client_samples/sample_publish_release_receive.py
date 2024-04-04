@@ -47,7 +47,7 @@ try:
     print("Received events:", receive_result.value)
 
     # Release a LockToken
-    release_token = Options(lock_tokens=lock_tokens_to_release)
+    release_token = ReleaseOptions(lock_tokens=lock_tokens_to_release)
     release_events = client.release_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
@@ -61,7 +61,7 @@ try:
     print("Received events after release:", receive_result.value)
 
     # Acknowledge a LockToken
-    acknowledge_token = Options(lock_tokens=lock_tokens_to_release)
+    acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
     acknowledge_events = client.acknowledge_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,

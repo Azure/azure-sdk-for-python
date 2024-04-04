@@ -378,18 +378,18 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    async def _acknowledge_cloud_events(  # pylint: disable=protected-access
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: _models._models.AcknowledgeOptions,
+        acknowledge_options: _models.AcknowledgeOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult:
+    ) -> _models.AcknowledgeResult:
         ...
     @overload
-    async def _acknowledge_cloud_events(  # pylint: disable=protected-access
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -397,10 +397,10 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult:
+    ) -> _models.AcknowledgeResult:
         ...
     @overload
-    async def _acknowledge_cloud_events(  # pylint: disable=protected-access
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -408,17 +408,17 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult:
+    ) -> _models.AcknowledgeResult:
         ...
 
     @distributed_trace_async
-    async def _acknowledge_cloud_events(  # pylint: disable=protected-access
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: Union[_models._models.AcknowledgeOptions, JSON, IO[bytes]],
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.AcknowledgeResult:
+    ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
@@ -483,7 +483,7 @@ class EventGridClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models._models.AcknowledgeResult] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop(
             'cls', None
         )
 
@@ -527,7 +527,7 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.AcknowledgeResult,  # pylint: disable=protected-access
+                _models.AcknowledgeResult,
                 response.json()
             )
 
@@ -541,23 +541,23 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )  # pylint: disable=protected-access
-    async def _release_cloud_events(  # pylint: disable=protected-access
+    )
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: _models._models.ReleaseOptions,
+        release_options: _models.ReleaseOptions,
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult:
+    ) -> _models.ReleaseResult:
         ...
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )  # pylint: disable=protected-access
-    async def _release_cloud_events(  # pylint: disable=protected-access
+    )
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -566,13 +566,13 @@ class EventGridClientOperationsMixin(
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult:
+    ) -> _models.ReleaseResult:
         ...
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )  # pylint: disable=protected-access
-    async def _release_cloud_events(  # pylint: disable=protected-access
+    )
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -581,22 +581,22 @@ class EventGridClientOperationsMixin(
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReleaseResult:
+    ) -> _models.ReleaseResult:
         ...
 
     @distributed_trace_async
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )  # pylint: disable=protected-access
-    async def _release_cloud_events(  # pylint: disable=protected-access
+    )
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: Union[_models._models.ReleaseOptions, JSON, IO[bytes]],
+        release_options: Union[_models.ReleaseOptions, JSON, IO[bytes]],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
-    ) -> _models._models.ReleaseResult:
+    ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
@@ -663,7 +663,7 @@ class EventGridClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models._models.ReleaseResult] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models.ReleaseResult] = kwargs.pop(
             'cls', None
         )
 
@@ -708,7 +708,7 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ReleaseResult,  # pylint: disable=protected-access
+                _models.ReleaseResult,
                 response.json()
             )
 
@@ -720,18 +720,18 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    async def _reject_cloud_events(  # pylint: disable=protected-access
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: _models._models.RejectOptions,
+        reject_options: _models.RejectOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult:
+    ) -> _models.RejectResult:
         ...
     @overload
-    async def _reject_cloud_events(  # pylint: disable=protected-access
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -739,10 +739,10 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult:
+    ) -> _models.RejectResult:
         ...
     @overload
-    async def _reject_cloud_events(  # pylint: disable=protected-access
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -750,17 +750,17 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RejectResult:
+    ) -> _models.RejectResult:
         ...
 
     @distributed_trace_async
-    async def _reject_cloud_events(  # pylint: disable=protected-access
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: Union[_models._models.RejectOptions, JSON, IO[bytes]],
+        reject_options: Union[_models.RejectOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.RejectResult:
+    ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully rejected
         lockTokens, along with other failed lockTokens with their corresponding error information.
@@ -824,7 +824,7 @@ class EventGridClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models._models.RejectResult] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models.RejectResult] = kwargs.pop(
             'cls', None
         )
 
@@ -868,7 +868,7 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.RejectResult,  # pylint: disable=protected-access
+                _models.RejectResult,
                 response.json()
             )
 
@@ -882,22 +882,22 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )  # pylint: disable=protected-access
-    async def _renew_cloud_event_locks(  # pylint: disable=protected-access
+    )
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: _models._models.RenewLockOptions,
+        renew_lock_options: _models.RenewLockOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult:
+    ) -> _models.RenewCloudEventLocksResult:
         ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )  # pylint: disable=protected-access
-    async def _renew_cloud_event_locks(  # pylint: disable=protected-access
+    )
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -905,13 +905,13 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult:
+    ) -> _models.RenewCloudEventLocksResult:
         ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )  # pylint: disable=protected-access
-    async def _renew_cloud_event_locks(  # pylint: disable=protected-access
+    )
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -919,20 +919,20 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult:
+    ) -> _models.RenewCloudEventLocksResult:
         ...
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )  # pylint: disable=protected-access
-    async def _renew_cloud_event_locks(  # pylint: disable=protected-access
+    )
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: Union[_models._models.RenewLockOptions, JSON, IO[bytes]],
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models._models.RenewCloudEventLocksResult:
+    ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
         renewed lockTokens, along with other failed lockTokens with their corresponding error
@@ -998,7 +998,7 @@ class EventGridClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models._models.RenewCloudEventLocksResult] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models.RenewCloudEventLocksResult] = kwargs.pop(
             'cls', None
         )
 
@@ -1042,7 +1042,7 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.RenewCloudEventLocksResult,  # pylint: disable=protected-access
+                _models.RenewCloudEventLocksResult,
                 response.json()
             )
 

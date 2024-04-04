@@ -32,7 +32,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Renew a lockToken
 try:
-    lock_tokens = Options(lock_tokens=["token"])
+    lock_tokens = RenewLockOptions(lock_tokens=["token"])
     release_events = client.renew_cloud_event_locks(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,

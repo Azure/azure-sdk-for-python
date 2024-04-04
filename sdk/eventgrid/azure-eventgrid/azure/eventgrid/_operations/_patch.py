@@ -40,8 +40,6 @@ from .._model_base import _deserialize
 from ..models._patch import (
     ReceiveResult,
     ReceiveDetails,
-    Options,
-    Result
 )
 from .. import models as _models
 from .._validation import api_version_validation
@@ -450,9 +448,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        options: Union[Options, JSON, IO],
+        options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any,
-    ) -> Result:
+    ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
@@ -462,11 +460,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :param options: Options. Is one of the following types:
-         Options, JSON, IO[bytes] Required.
-        :type options: ~azure.eventgrid.models.Options or JSON or IO[bytes]
-        :return: Result. The Result is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.Result
+        :param options: AcknowledgeOptions. Is one of the following types:
+         AcknowledgeOptions, JSON, IO[bytes] Required.
+        :type options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
+        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -524,11 +522,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        options: Union[Options, JSON, IO],
+        options: Union[_models.ReleaseOptions, JSON, IO],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
-    ) ->Result:
+    ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
@@ -537,14 +535,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :param options: Options. Is one of the following types: Options, JSON,
+        :param options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
          IO[bytes] Required.
-        :type options: ~azure.eventgrid.models.Options or JSON or IO[bytes]
+        :type options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
         :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
         :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
-        :return: Result. The Result is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.Result
+        :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -600,9 +598,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        options: Union[Options, JSON, IO],
+        options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any,
-    ) -> Result:
+    ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
         is successfully accepted. The response body will include the set of successfully rejected
         lockTokens, along with other failed lockTokens with their corresponding error information.
@@ -611,11 +609,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :param options: Options. Is one of the following types: Options, JSON,
+        :param options: RejectOptions. Is one of the following types: RejectOptions, JSON,
          IO[bytes] Required.
-        :type options: ~azure.eventgrid.models.Options or JSON or IO[bytes]
-        :return: Result. The Result is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.Result
+        :type options: ~azure.eventgrid.models.RejectOptions or JSON or IO[bytes]
+        :return: RejectResult. The RejectResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -673,9 +671,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         self,
         topic_name: str,
         subscription_name: str,
-        options: Union[Options, JSON, IO],
+        options: Union[_models.RenewLockOptions, JSON, IO],
         **kwargs: Any,
-    ) -> Result:
+    ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
         request is successfully accepted. The response body will include the set of successfully
         renewed lockTokens, along with other failed lockTokens with their corresponding error
@@ -685,12 +683,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param subscription_name: Event Subscription Name. Required.
         :type subscription_name: str
-        :param options: Options. Is one of the following types: Options,
+        :param options: RenewLockOptions. Is one of the following types: RenewLockOptions,
          JSON, IO[bytes] Required.
-        :type options: ~azure.eventgrid.models.Options or JSON or IO[bytes]
-        :return: Result. The Result is compatible with
+        :type options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO[bytes]
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
-        :rtype: ~azure.eventgrid.models.Result
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:

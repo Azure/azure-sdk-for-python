@@ -36,7 +36,7 @@ async def run():
     # Release a LockToken
     try:
         async with client:
-            tokens = Options(lock_tokens=["token"])
+            tokens = ReleaseOptions(lock_tokens=["token"])
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
