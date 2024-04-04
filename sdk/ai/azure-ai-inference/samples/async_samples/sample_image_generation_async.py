@@ -56,17 +56,11 @@ async def sample_image_generation_async():
         exit()
 
     # Create an Model for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential("key")
-    )
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential("key"))
 
     # Generate an image from text prompt. This will be an asynchronously (non-blocking) call.
     future = asyncio.ensure_future(
-        client.get_image_generations(
-            prompt="A painting of a beautiful sunset over a mountain lake.",
-            size="1024x768"
-        )
+        client.get_image_generations(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
     )
 
     # Loop until the operation is done

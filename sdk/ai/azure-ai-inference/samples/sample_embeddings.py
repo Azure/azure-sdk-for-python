@@ -55,19 +55,11 @@ def sample_embeddings():
         exit()
 
     # Create an Model for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential("key")
-    )
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential("key"))
 
     # [START embeddings]
     # Do a single embeddings operation. This will be a synchronously (blocking) call.
-    result = client.get_embeddings(
-        input=[
-            "first sentence",
-            "second sentence","third sentence"
-        ]
-    )
+    result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
 
     # Print results the the console
     print("Embeddings result:")

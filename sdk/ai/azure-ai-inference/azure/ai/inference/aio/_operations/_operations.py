@@ -50,7 +50,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: JSON,
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions:
@@ -65,11 +65,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -195,7 +195,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage],
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
@@ -228,11 +228,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -353,7 +353,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: IO[bytes],
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions:
@@ -368,11 +368,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -433,7 +433,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -467,11 +467,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -690,7 +690,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         _request = build_model_get_chat_completions_request(
             extra_parameters=extra_parameters,
-            model_deployemnt=model_deployemnt,
+            model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -728,7 +728,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: JSON,
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
@@ -740,11 +740,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -813,7 +813,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         input: List[str],
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -827,11 +827,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -893,7 +893,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: IO[bytes],
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
@@ -905,11 +905,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -962,7 +962,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         input: List[str] = _Unset,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
@@ -977,11 +977,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -1078,7 +1078,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         _request = build_model_get_embeddings_request(
             extra_parameters=extra_parameters,
-            model_deployemnt=model_deployemnt,
+            model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1116,7 +1116,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: JSON,
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ImageGenerations:
@@ -1128,11 +1128,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1191,7 +1191,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         prompt: str,
         size: str,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
         quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
@@ -1211,11 +1211,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1269,7 +1269,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: IO[bytes],
         *,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ImageGenerations:
@@ -1281,11 +1281,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1323,7 +1323,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         prompt: str = _Unset,
         size: str = _Unset,
         extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-        model_deployemnt: Optional[str] = None,
+        model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
         response_format: Optional[Union[str, _models.ImageGenerationResponseFormat]] = None,
@@ -1344,11 +1344,11 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
          payload. Known values are: "error", "ignore", and "allow". Default value is None.
         :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
-        :keyword model_deployemnt: Name of the deployment to which you would like to route the request.
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
          Default value is None.
-        :paramtype model_deployemnt: str
+        :paramtype model_deployment: str
         :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
          standard request payload.
          They will be passed to the service as-is in the root of the JSON request payload.
@@ -1451,7 +1451,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         _request = build_model_get_image_generations_request(
             extra_parameters=extra_parameters,
-            model_deployemnt=model_deployemnt,
+            model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

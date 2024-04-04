@@ -63,10 +63,7 @@ except KeyError:
     exit()
 
 # Create Model Client for synchronous operations
-client = ModelClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(key)
-)
+client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -160,12 +157,7 @@ This example demonstrates how to get embeddings.
 
 ```python
 # Do a single embeddings operation. This will be a synchronously (blocking) call.
-result = client.get_embeddings(
-    input=[
-        "first sentence",
-        "second sentence","third sentence"
-    ]
-)
+result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
 
 # Print results the the console
 print("Embeddings result:")
@@ -195,8 +187,7 @@ This example demonstrates how to generate and image from a text prompt
 ```python
 # Generate a single image from a text prompt. This will be a synchronously (blocking) call.
 result = client.get_image_generations(
-    prompt="A painting of a beautiful sunset over a mountain lake.",
-    size="1024x768"
+    prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
 )
 
 # Save generated image to file and print other results the the console

@@ -55,16 +55,12 @@ def sample_image_generation():
         exit()
 
     # Create an Model for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential("key")
-    )
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential("key"))
 
     # [START image_generation]
     # Generate a single image from a text prompt. This will be a synchronously (blocking) call.
     result = client.get_image_generations(
-        prompt="A painting of a beautiful sunset over a mountain lake.",
-        size="1024x768"
+        prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
     )
 
     # Save generated image to file and print other results the the console
