@@ -37,20 +37,20 @@ class _ServiceTest(PerfStressTest):
                 tenant_id = self.get_from_env("AZURE-STORAGE-BLOB_TENANT_ID")
                 client_id = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_ID")
                 client_secret = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_SECRET")
-                token_credential = SyncClientSecretCredential(
+                sync_token_credential = SyncClientSecretCredential(
                     tenant_id,
                     client_id,
                     client_secret
                 )
-                token_credential = AsyncClientSecretCredential(
+                async_token_credential = AsyncClientSecretCredential(
                     tenant_id,
                     client_id,
                     client_secret
                 )
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
                 url = f"https://{account_name}.blob.core.windows.net"
-                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=token_credential, **self._client_kwargs)
-                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=token_credential, **self._client_kwargs)
+                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)
+                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=async_token_credential, **self._client_kwargs)
             else:
                 connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
                 _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
