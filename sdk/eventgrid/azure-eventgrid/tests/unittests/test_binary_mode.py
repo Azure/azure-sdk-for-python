@@ -24,6 +24,7 @@ class TestEGClientExceptions():
             source="source",
             subject="MySubject",
             data=b'this is binary data',
+            datacontenttype="application/json"
         )
 
         request = _to_http_request("https://MYTOPIC.westus2-1.eventgrid.azure.net/api/events", event=event)
