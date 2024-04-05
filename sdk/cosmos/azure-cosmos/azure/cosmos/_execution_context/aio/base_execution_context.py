@@ -126,18 +126,10 @@ class _QueryExecutionContextBase(object):
             new_options["continuation"] = self._continuation
 
             response_headers = {}
-            try:
-                (fetched_items, response_headers) = await fetch_function(new_options)
-                if not self._has_started:
-                    self._has_started = True
-                if self._has_hit_429:
-                    print(" We retried and made it work here is num items ", len(fetched_items), "Headers?", (response_headers is not None), " Continuation: ", response_headers.get(http_constants.HttpHeaders.Continuation))
-                    self._has_hit_429 = False
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == 429:
-                    self._has_hit_429 = True
-                    print("429 oops")
-                    # self._has_started = False
+            (fetched_items, response_headers) = await fetch_function(new_options)
+            if not self._has_started:
+                self._has_started = True
+
 
 
             continuation_key = http_constants.HttpHeaders.Continuation

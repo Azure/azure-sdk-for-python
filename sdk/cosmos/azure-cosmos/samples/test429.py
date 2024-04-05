@@ -21,13 +21,19 @@ async def create_and_query_items():
                 )
             except exceptions.CosmosResourceExistsError:
                 container = database.get_container_client(container_name)
+            try:
+                query_iterable = [d async for d in container.query_items(query, max_item_count=100)]
+                count = count + 1
+                if len(query_iterable) == 0:
+                    print("Oops", count)
+                else:
+                    print("NOt oops", len(query_iterable))
+            except exceptions.CosmosHttpResponseError as e:
+                print("current except ", e.status_code)
+                if e.status_code == 429:
+                    print("Received a 429 status code (Too Many Requests).")
+                    print("429 oops query")
 
-            query_iterable = [d async for d in container.query_items(query, max_item_count=100)]
-            count = count + 1
-            if len(query_iterable) == 0:
-                print("Oops", count)
-            else:
-                print("NOt oops",len(query_iterable))
 
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code == 429:
