@@ -50,6 +50,7 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+        self._has_hit_429 = False
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -120,13 +121,23 @@ class _QueryExecutionContextBase(object):
             # Check if this is first fetch for read from specific time change feed.
             # For read specific time the first fetch will return empty even if we have more pages.
             is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
-            if not self._has_started:
-                self._has_started = True
+
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
             response_headers = {}
-            (fetched_items, response_headers) = await fetch_function(new_options)
+            try:
+                (fetched_items, response_headers) = await fetch_function(new_options)
+                if not self._has_started:
+                    self._has_started = True
+                if self._has_hit_429:
+                    print(" We retried and made it work here is num items ", len(fetched_items), "Headers?", (response_headers is not None), " Continuation: ", response_headers.get(http_constants.HttpHeaders.Continuation))
+                    self._has_hit_429 = False
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == 429:
+                    self._has_hit_429 = True
+                    print("429 oops")
+                    # self._has_started = False
 
 
             continuation_key = http_constants.HttpHeaders.Continuation
@@ -146,12 +157,8 @@ class _QueryExecutionContextBase(object):
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
         async def callback():
-            try:
-                return await self._fetch_items_helper_no_retries(fetch_function)
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == 429:
-                    self._has_started = False
-                return await self._fetch_items_helper_no_retries(fetch_function)
+            return await self._fetch_items_helper_no_retries(fetch_function)
+
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
 
