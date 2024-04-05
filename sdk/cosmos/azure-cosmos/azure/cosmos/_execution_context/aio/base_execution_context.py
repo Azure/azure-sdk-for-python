@@ -128,6 +128,7 @@ class _QueryExecutionContextBase(object):
             response_headers = {}
             (fetched_items, response_headers) = await fetch_function(new_options)
 
+
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
@@ -139,13 +140,18 @@ class _QueryExecutionContextBase(object):
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
-            if fetched_items or self._continuation is None:
+            if fetched_items:
                 break
         return fetched_items
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
         async def callback():
-            return await self._fetch_items_helper_no_retries(fetch_function)
+            try:
+                return await self._fetch_items_helper_no_retries(fetch_function)
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == 429:
+                    self._has_started = False
+                return await self._fetch_items_helper_no_retries(fetch_function)
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
 
