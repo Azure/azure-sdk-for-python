@@ -1106,8 +1106,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is not None and "partitionKeyRangeId" in options:
             partition_key_range_id = options["partitionKeyRangeId"]
 
-
-
         return self._QueryChangeFeed(
             collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
         )

@@ -117,14 +117,15 @@ class _QueryExecutionContextBase(object):
         fetched_items = []
         # Continues pages till finds a non-empty page or all results are exhausted
         while self._continuation or not self._has_started:
-            # For start time option, First fetch will always return empty
-            # before we get a continuation token
-            first_fetch = not self._has_started
+            # Check if this is first fetch for read from specific time change feed.
+            # For read specific time the first fetch will return empty even if we have more pages.
+            is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
             if not self._has_started:
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
+            response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
@@ -133,9 +134,7 @@ class _QueryExecutionContextBase(object):
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             # For start time however we get no initial results, so we need to pass continuation token
-            if not self._is_change_feed or fetched_items:
-                self._continuation = response_headers.get(continuation_key)
-            elif self._is_change_feed and self._options.get("startTime") and first_fetch:
+            if not self._is_change_feed or fetched_items or is_s_time_first_fetch:
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
