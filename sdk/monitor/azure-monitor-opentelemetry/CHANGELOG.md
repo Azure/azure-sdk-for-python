@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Adding diagnostic warning when distro detects RP attach
+    ([#34971](https://github.com/Azure/azure-sdk-for-python/pull/34971))
+
 ### Breaking Changes
 
 ### Bugs Fixed
