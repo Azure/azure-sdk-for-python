@@ -161,14 +161,16 @@ class TableBatchOperations(object):
         if match_condition and not etag and isinstance(entity, TableEntity):
             if hasattr(entity, "metadata"):
                 etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(etag, match_condition)
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+        )
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
                 etag=etag,
-                match_condition=match_condition or MatchConditions.Unconditionally,
+                match_condition=match_condition,
                 json=entity,
                 version=self._config.version,
                 **kwargs,
@@ -222,13 +224,15 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(etag, match_condition)
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+        )
         request = build_table_delete_entity_request(
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
             etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+            match_condition=match_condition,
             version=self._config.version,
             **kwargs,
         )
