@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional, Union, Any
+from typing import Optional, Union
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._models import AccountSasPermissions, TableSasPermissions, ResourceTypes, SASProtocol
@@ -23,7 +23,10 @@ def generate_account_sas(
     resource_types: ResourceTypes,
     permission: Union[str, AccountSasPermissions],
     expiry: Union[datetime, str],
-    **kwargs: Any
+    *,
+    start: Optional[Union[datetime, str]] = None,
+    ip_address_or_range: Optional[str] = None,
+    protocol: Optional[Union[SASProtocol, str]] = None,
 ) -> str:
     """
     Generates a shared access signature for the table service.
@@ -78,13 +81,27 @@ def generate_account_sas(
         resource_types,
         permission,
         expiry,
-        start=kwargs.pop("start", None),
-        ip_address_or_range=kwargs.pop("ip_address_or_range", None),
-        protocol=kwargs.pop("protocol", None),
+        start=start,
+        ip_address_or_range=ip_address_or_range,
+        protocol=protocol,
     )
 
 
-def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs: Any) -> str:
+def generate_table_sas(
+    credential: AzureNamedKeyCredential,
+    table_name: str,
+    *,
+    permission: Optional[TableSasPermissions] = None,
+    expiry: Optional[Union[datetime, str]] = None,
+    start: Optional[Union[datetime, str]] = None,
+    ip_address_or_range: Optional[str] = None,
+    policy_id: Optional[str] = None,
+    protocol: Optional[Union[SASProtocol, str]] = None,
+    start_pk: Optional[str] = None,
+    start_rk: Optional[str] = None,
+    end_pk: Optional[str] = None,
+    end_rk: Optional[str] = None,
+) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
@@ -136,17 +153,16 @@ def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **k
     sas = TableSharedAccessSignature(credential)
     return sas.generate_table(
         table_name=table_name,
-        permission=kwargs.pop("permission", None),
-        expiry=kwargs.pop("expiry", None),
-        start=kwargs.pop("start", None),
-        policy_id=kwargs.pop("policy_id", None),
-        ip=kwargs.pop("ip_address_or_range", None),
-        protocol=kwargs.pop("protocol", None),
-        start_pk=kwargs.pop("start_pk", None),
-        start_rk=kwargs.pop("start_rk", None),
-        end_pk=kwargs.pop("end_pk", None),
-        end_rk=kwargs.pop("end_rk", None),
-        **kwargs
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        policy_id=policy_id,
+        ip_address_or_range=ip_address_or_range,
+        protocol=protocol,
+        start_pk=start_pk,
+        start_rk=start_rk,
+        end_pk=end_pk,
+        end_rk=end_rk,
     )
 
 
@@ -177,7 +193,6 @@ class TableSharedAccessSignature(SharedAccessSignature):
         start_rk: Optional[str] = None,
         end_pk: Optional[str] = None,
         end_rk: Optional[str] = None,
-        **kwargs  # pylint: disable=unused-argument
     ) -> str:
         """
         Generates a shared access signature for the table.

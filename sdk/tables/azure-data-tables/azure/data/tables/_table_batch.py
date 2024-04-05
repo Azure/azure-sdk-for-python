@@ -123,7 +123,15 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
+    def update(
+        self,
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs,
+    ) -> None:
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -132,7 +140,7 @@ class TableBatchOperations(object):
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :raises ValueError:
 
@@ -150,14 +158,10 @@ class TableBatchOperations(object):
         partition_key = _prepare_key(entity["PartitionKey"])
         row_key = _prepare_key(entity["RowKey"])
 
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             if hasattr(entity, "metadata"):
                 etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
-            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
-        )
+        match_condition = _get_match_condition(etag, match_condition)
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
@@ -188,14 +192,21 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def delete(self, entity: EntityType, **kwargs) -> None:
+    def delete(
+        self,
+        entity: EntityType,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs,
+    ) -> None:
         """Adds a delete operation to the current branch.
 
-        param entity: The properties for the table entity.
+        :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :raises: ValueError
 
@@ -209,13 +220,9 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
-            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
-        )
+        match_condition = _get_match_condition(etag, match_condition)
         request = build_table_delete_entity_request(
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),

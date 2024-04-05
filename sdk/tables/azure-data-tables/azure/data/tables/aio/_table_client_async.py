@@ -432,7 +432,7 @@ class TableClient(AsyncTablesBaseClient):
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
             The default value is Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
