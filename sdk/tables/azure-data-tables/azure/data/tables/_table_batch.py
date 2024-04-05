@@ -129,7 +129,7 @@ class TableBatchOperations(object):
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         etag: Optional[str] = None,
-        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs,
     ) -> None:
         """Adds an update operation to the current batch.
@@ -138,9 +138,9 @@ class TableBatchOperations(object):
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: Etag of the entity.
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
         :raises ValueError:
 
@@ -168,7 +168,7 @@ class TableBatchOperations(object):
                 partition_key=partition_key,
                 row_key=row_key,
                 etag=etag,
-                match_condition=match_condition,
+                match_condition=match_condition or MatchConditions.Unconditionally,
                 json=entity,
                 version=self._config.version,
                 **kwargs,
@@ -197,16 +197,16 @@ class TableBatchOperations(object):
         entity: EntityType,
         *,
         etag: Optional[str] = None,
-        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs,
     ) -> None:
         """Adds a delete operation to the current branch.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
-        :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: Etag of the entity.
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
         :raises: ValueError
 
@@ -228,7 +228,7 @@ class TableBatchOperations(object):
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
             etag=etag,
-            match_condition=match_condition,
+            match_condition=match_condition or MatchConditions.Unconditionally,
             version=self._config.version,
             **kwargs,
         )
