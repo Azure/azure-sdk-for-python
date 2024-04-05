@@ -1,6 +1,6 @@
-# Azure AI Model Client Library for Python
+# Azure model client library for Python
 
-The Model Client library allows you to do inference against any of AI models in you deployed to Azure. It supports both "model as a service" and "models with hosted managed infrastructure". For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The Azure AI Model Client Library allows you to do inference against any of AI models in you deployed to Azure. It supports both "model as a service" and "models with hosted managed infrastructure". For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
 Use the model client library to:
 
