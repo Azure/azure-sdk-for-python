@@ -9,7 +9,7 @@ import threading
 from os import makedirs
 from os.path import exists, join
 
-from azure.monitor.opentelemetry._constants import (
+from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
     _IS_DIAGNOSTICS_ENABLED,
     _env_var_or_default,

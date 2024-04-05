@@ -49,7 +49,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
 )
