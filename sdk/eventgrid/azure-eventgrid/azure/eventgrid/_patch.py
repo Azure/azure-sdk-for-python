@@ -54,7 +54,7 @@ class EventGridClient(InternalEventGridClient):
      `Standard` and `Basic`. Default value is `Standard`.
      `Standard` is used for sending events to a namespace topic.
      `Basic` is used for sending events to a basic topic.
-    :keywordtype level: str
+    :paramtype level: str
     """
 
     def __init__(
