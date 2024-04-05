@@ -6,7 +6,7 @@
 import pytest
 import time
 from datetime import datetime, timezone
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
@@ -110,12 +110,14 @@ class TestChatThreadClient(AzureRecordedTestCase):
         return message_id
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_update_topic(self):
         self._create_thread()
         topic = "update topic"
         self.chat_thread_client.update_topic(topic=topic)
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_send_message(self):
         self._create_thread()
 
@@ -130,6 +132,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         assert create_message_result_id is not None
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_get_message(self):
         self._create_thread()
         message_id = self._send_message()
@@ -139,6 +142,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         assert message.content.message == 'hello world'
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_list_messages(self):
         self._create_thread()
         self._send_message()
@@ -150,6 +154,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
             assert len(li) <= 1
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_update_message(self):
         self._create_thread()
         message_id = self._send_message()
@@ -158,6 +163,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         self.chat_thread_client.update_message(message_id, content=content)
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_delete_message(self):
         self._create_thread()
         message_id = self._send_message()
@@ -165,6 +171,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         self.chat_thread_client.delete_message(message_id)
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_list_participants(self):
         self._create_thread()
 
@@ -192,6 +199,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
 
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_add_participants(self):
         self._create_thread()
 
@@ -210,6 +218,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
 
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_remove_participant(self):
         self._create_thread()
 
@@ -228,18 +237,21 @@ class TestChatThreadClient(AzureRecordedTestCase):
         self.chat_thread_client.remove_participant(self.new_user)
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_send_typing_notification(self):
         self._create_thread()
 
         self.chat_thread_client.send_typing_notification()
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_send_typing_notification_with_display_name(self):
         self._create_thread()
 
         self.chat_thread_client.send_typing_notification(sender_display_name="John")
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_send_read_receipt(self):
         self._create_thread()
         message_id = self._send_message()
@@ -266,6 +278,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
 
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_list_read_receipts(self):
         self._create_thread_w_two_users()
 
@@ -302,6 +315,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         assert len(items) == 2
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_get_properties(self):
         self._create_thread()
         get_thread_result = self.chat_thread_client.get_properties()
