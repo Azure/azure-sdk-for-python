@@ -1,9 +1,7 @@
 # Release History
 
-## 1.1.0b3 (2024-04-03)
+## 1.1.0b2 (2024-04-03)
 - Please note, this package is no longer being maintained.
-
-## 1.1.0b2 (Unreleased)
 
 ### Features Added
 - Added the ability specify the API version by an optional `api_version` keyword parameter.
