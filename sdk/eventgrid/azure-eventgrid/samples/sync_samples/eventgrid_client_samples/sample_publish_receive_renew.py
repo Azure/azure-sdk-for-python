@@ -40,16 +40,15 @@ try:
 
     # Receive CloudEvents and parse out lock tokens
     receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
-    lock_tokens_to_release = []
+    lock_tokens_to_renew = []
     for item in receive_result.value:
-        lock_tokens_to_release.append(item.broker_properties.lock_token)
+        lock_tokens_to_renew.append(item.broker_properties.lock_token)
 
     # Renew a lock token
-    lock_tokens = RenewLockOptions(lock_tokens=lock_tokens_to_release)
     renew_events = client.renew_cloud_event_locks(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
-        options=lock_tokens,
+        lock_tokens=lock_tokens_to_renew,
     )
     print("Renewed Event:", renew_events)
 except HttpResponseError:

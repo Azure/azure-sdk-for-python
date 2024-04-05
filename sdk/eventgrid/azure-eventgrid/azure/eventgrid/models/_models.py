@@ -31,24 +31,6 @@ class AcknowledgeOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_tokens: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  
 
 
@@ -326,24 +308,6 @@ class RejectOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_tokens: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  
 
 
@@ -403,24 +367,6 @@ class ReleaseOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_tokens: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  
 
 
@@ -522,22 +468,4 @@ class RenewLockOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_tokens: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
  

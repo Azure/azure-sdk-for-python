@@ -50,12 +50,11 @@ async def run():
             print("Received events:", receive_result.value)
 
             # Release a LockToken
-            release_token = ReleaseOptions(lock_tokens=lock_tokens_to_release)
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 release_delay_in_seconds=60,
-                options=release_token,
+                lock_tokens=lock_tokens_to_release,
             )
             print("Released Event:", release_events)
 
@@ -63,12 +62,11 @@ async def run():
             receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
             print("Received events after release:", receive_result.value)
 
-            # Acknowledge LockTokens
-            acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
+            # Acknowledge a LockToken that was released
             acknowledge_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
-                options=acknowledge_token,
+                lock_tokens=lock_tokens_to_release,
             )
             print("Acknowledged events after release:", acknowledge_events)
         except HttpResponseError:

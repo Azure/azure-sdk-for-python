@@ -34,11 +34,11 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 async def run():
     # Renew a lockToken
     try:
-        lock_tokens = RenewLockOptions(lock_tokens=["token"])
+        lock_tokens = ["token"]
         release_events = await client.renew_cloud_event_locks(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
-            options=lock_tokens,
+            lock_tokens=lock_tokens,
         )
         print(release_events)
     except HttpResponseError:

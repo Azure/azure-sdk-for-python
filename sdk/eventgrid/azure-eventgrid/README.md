@@ -319,32 +319,32 @@ client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 events = client.receive_cloud_events(topic_name, sub_name, max_events=4)
 
 for e in events:
-    renew_tokens = RenewLockOptions(lock_tokens=e.broker_properties.lock_token)
+    renew_tokens = e.broker_properties.lock_token
     renew_result = client.renew_cloud_events_lock(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
-        options=renew_tokens,
+        lock_tokens=renew_tokens,
     )
 
-release_tokens = ReleaseOptions(lock_tokens=events[0].broker_properties.lock_token)
+release_tokens = events[0].broker_properties.lock_token
 release_result = client.release_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    options=release_tokens,
+    lock_tokens=release_tokens,
 )
 
-ack_tokens = AcknowledgeOptions(lock_tokens=events[1].broker_properties.lock_token)
+ack_tokens = events[1].broker_properties.lock_token
 ack_result = client.acknowledge_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    options=ack_tokens,
+    lock_tokens=ack_tokens,
 )
 
-reject_tokens = RejectOptions(lock_tokens=events[2].broker_properties.lock_token)
+reject_tokens = events[2].broker_properties.lock_token
 reject_result = client.reject_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    options=reject_tokens,
+    lock_tokens=reject_tokens,
 )
 
 ```

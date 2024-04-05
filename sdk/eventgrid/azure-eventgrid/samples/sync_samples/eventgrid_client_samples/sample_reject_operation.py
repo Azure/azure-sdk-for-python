@@ -32,11 +32,11 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Release a LockToken
 try:
-    lock_tokens = RejectOptions(lock_tokens=["token"])
+    lock_tokens = ["token"]
     reject_events = client.reject_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
-        options=lock_tokens,
+        lock_tokens=lock_tokens,
     )
     print(reject_events)
 except HttpResponseError:

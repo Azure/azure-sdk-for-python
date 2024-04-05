@@ -649,11 +649,11 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    def _acknowledge_cloud_events(
+    def _acknowledge_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: _models.AcknowledgeOptions,
+        acknowledge_options: _models._models.AcknowledgeOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -687,7 +687,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO[bytes]],
+        acknowledge_options: Union[_models._models.AcknowledgeOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -812,12 +812,12 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )
-    def _release_cloud_events(
+    )  # pylint: disable=protected-access
+    def _release_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: _models.ReleaseOptions,
+        release_options: _models._models.ReleaseOptions,
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
@@ -863,7 +863,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: Union[_models.ReleaseOptions, JSON, IO[bytes]],
+        release_options: Union[_models._models.ReleaseOptions, JSON, IO[bytes]],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
@@ -991,11 +991,11 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    def _reject_cloud_events(
+    def _reject_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: _models.RejectOptions,
+        reject_options: _models._models.RejectOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1029,7 +1029,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: Union[_models.RejectOptions, JSON, IO[bytes]],
+        reject_options: Union[_models._models.RejectOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -1153,12 +1153,12 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )
-    def _renew_cloud_event_locks(
+    )  # pylint: disable=protected-access
+    def _renew_cloud_event_locks(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: _models.RenewLockOptions,
+        renew_lock_options: _models._models.RenewLockOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1201,7 +1201,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO[bytes]],
+        renew_lock_options: Union[_models._models.RenewLockOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
