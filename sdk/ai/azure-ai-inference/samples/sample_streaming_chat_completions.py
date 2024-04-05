@@ -4,10 +4,10 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion response from the service using a synchronous client.
+    This sample demonstrates how to get a chat completion streaming response from the service using a synchronous.
 
 USAGE:
-    python sample_chat_completion.py
+    python sample_streaming_chat_completion.py
 
     Set these two environment variables before running the sample:
     1) MODEL_ENDPOINT - Your endpoint URL, in the form https://<deployment-name>.<azure-region>.inference.ai.azure.com
@@ -18,10 +18,9 @@ USAGE:
 
 
 def sample_chat_completions():
-    # [START create_client]
     import os
     from azure.ai.inference import ModelClient
-    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ExtraParameters
+    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
     from azure.core.credentials import AzureKeyCredential
 
     # [START logging]
@@ -57,35 +56,16 @@ def sample_chat_completions():
 
     # Create Model Client for synchronous operations
     client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
-    # [END create_client]
 
-    # [START chat_completions]
+    # [START streaming_chat_completions]
     # Do a single chat completion operation. This will be a synchronously (blocking) call.
-    result = client.get_chat_completions(
+    result = client.get_streaming_chat_completions(
         messages=[
             ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
             ChatRequestUserMessage(content="How many feet are in a mile?"),
-        ],
-        # Examples of setting extra parameters (TODO: move this to advanced sample)
-        extras=dict(key1="value1", key2="value2"),
-        extra_parameters=ExtraParameters.ALLOW,
+        ]
     )
-
-    # Print results the the console
-    print("Chat Completions:")
-    for index, choice in enumerate(result.choices):
-        print(f"choices[{index}].message.content: {choice.message.content}")
-        print(f"choices[{index}].message.role: {choice.message.role}")
-        print(f"choices[{index}].finish_reason: {choice.finish_reason}")
-        print(f"choices[{index}].index: {choice.index}")
-    print(f"id: {result.id}")
-    print(f"created: {result.created}")
-    print(f"model: {result.model}")
-    print(f"object: {result.object}")
-    print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-    print(f"usage.completion_tokens: {result.usage.completion_tokens}")
-    print(f"usage.total_tokens: {result.usage.total_tokens}")
-    # [END chat_completions]
+    # [END streaming_chat_completions]
 
 
 if __name__ == "__main__":

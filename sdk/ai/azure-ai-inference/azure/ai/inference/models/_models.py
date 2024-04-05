@@ -36,28 +36,28 @@ class ChatChoice(_model_base.Model):
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
-    :ivar message: The chat message for a given chat completions prompt. Required.
-    :vartype message: ~azure.ai.inference.models.ChatResponseMessage
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
      Required. Known values are: "stop", "length", and "content_filter".
     :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
+    :ivar message: The chat message for a given chat completions prompt. Required.
+    :vartype message: ~azure.ai.inference.models.ChatResponseMessage
     """
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    message: "_models.ChatResponseMessage" = rest_field()
-    """The chat message for a given chat completions prompt. Required."""
     finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", and \"content_filter\"."""
+    message: "_models.ChatResponseMessage" = rest_field()
+    """The chat message for a given chat completions prompt. Required."""
 
     @overload
     def __init__(
         self,
         *,
         index: int,
-        message: "_models.ChatResponseMessage",
         finish_reason: Union[str, "_models.CompletionsFinishReason"],
+        message: "_models.ChatResponseMessage",
     ):
         ...
 
@@ -90,13 +90,13 @@ class ChatCompletions(_model_base.Model):
     :vartype created: ~datetime.datetime
     :ivar model: The model used for the chat completion. Required.
     :vartype model: str
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     :ivar choices: The collection of completions choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required.
     :vartype choices: list[~azure.ai.inference.models.ChatChoice]
-    :ivar usage: Usage information for tokens processed and generated as part of this completions
-     operation. Required.
-    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     """
 
     id: str = rest_field()
@@ -108,13 +108,13 @@ class ChatCompletions(_model_base.Model):
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
     model: str = rest_field()
     """The model used for the chat completion. Required."""
+    usage: "_models.CompletionsUsage" = rest_field()
+    """Usage information for tokens processed and generated as part of this completions operation.
+     Required."""
     choices: List["_models.ChatChoice"] = rest_field()
     """The collection of completions choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
-    """Usage information for tokens processed and generated as part of this completions operation.
-     Required."""
 
     @overload
     def __init__(
@@ -124,8 +124,8 @@ class ChatCompletions(_model_base.Model):
         object: str,
         created: datetime.datetime,
         model: str,
-        choices: List["_models.ChatChoice"],
         usage: "_models.CompletionsUsage",
+        choices: List["_models.ChatChoice"],
     ):
         ...
 
