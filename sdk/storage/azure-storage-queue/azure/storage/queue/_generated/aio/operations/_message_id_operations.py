@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -84,7 +84,6 @@ class MessageIdOperations:
         :type request_id_parameter: str
         :param queue_message: A Message object which can be stored in a Queue. Default value is None.
         :type queue_message: ~azure.storage.queue.models.QueueMessage
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -108,7 +107,7 @@ class MessageIdOperations:
         else:
             _content = None
 
-        request = build_update_request(
+        _request = build_update_request(
             url=self._config.url,
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
@@ -117,16 +116,15 @@ class MessageIdOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -146,9 +144,7 @@ class MessageIdOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    update.metadata = {"url": "{url}/messages"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -167,7 +163,6 @@ class MessageIdOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -185,22 +180,21 @@ class MessageIdOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             pop_receipt=pop_receipt,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,6 +210,4 @@ class MessageIdOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}/messages"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

@@ -36,6 +36,7 @@
                 "sdk/confidentialledger/azure-confidentialledger/tests/_shared/constants.py",
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
                 "sdk/identity/azure-identity/tests/certificate.pfx",
+                "sdk/identity/azure-identity/tests/certificate.pem",
                 "sdk/identity/azure-identity/tests/certificate-with-password.pfx",
                 "sdk/identity/azure-identity/tests/credscan_ignore.py",
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",

@@ -254,6 +254,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response from creating a new block blob for a given URL.
+        :rtype: Dict[str, Any]
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -894,6 +896,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
@@ -1589,13 +1592,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A string value that identifies the block.
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
+        :type data: Union[Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -1631,7 +1635,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :rtype: None
+        :returns: Blob property dict.
+        :rtype: Dict[str, Any]
         """
         options = self._stage_block_options(
             block_id,
@@ -1652,7 +1657,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -1693,7 +1698,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
-        :rtype: None
+        :returns: Blob property dict.
+        :rtype: Dict[str, Any]
         """
         options = self._stage_block_from_url_options(
             block_id,
@@ -2177,7 +2183,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         .. versionadded:: 12.2.0
             This operation was introduced in API version '2019-07-07'.
 
-        :param previous_snapshot_url:
+        :param str previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
             The response will only contain pages that were changed between the target blob and
             its previous snapshot.
@@ -2558,6 +2564,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response after uploading pages from specified URL.
+        :rtype: Dict[str, Any]
         """
 
         options = self._upload_pages_from_url_options(
@@ -2654,6 +2662,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
         :param data:
             Content of the block.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length:
             Size of the block in bytes.
         :keyword bool validate_content:
@@ -2833,6 +2842,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Result after appending a new block.
+        :rtype: Dict[str, Union[str, datetime, int]]
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),

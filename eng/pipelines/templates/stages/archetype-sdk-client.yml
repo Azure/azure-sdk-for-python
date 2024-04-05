@@ -1,127 +1,134 @@
 parameters:
-- name: ServiceDirectory
-  type: string
-  default: not-specified
-- name: Artifacts
-  type: object
-  default: []
-- name: TestPipeline
-  type: boolean
-  default: false
-- name: BeforeTestSteps
-  type: object
-  default: []
-- name: AfterTestSteps
-  type: object
-  default: []
-- name: BeforePublishSteps
-  type: object
-  default: []
-- name: TestMarkArgument
-  type: string
-  default: ''
-- name: BuildTargetingString
-  type: string
-  default: azure-*
-- name: TestTimeoutInMinutes
-  type: number
-  default: 60
-- name: ToxEnvParallel
-  type: string
-  default: --tenvparallel
-- name: InjectedPackages
-  type: string
-  default: ''
-- name: BuildDocs
-  type: boolean
-  default: true
-- name: DevFeedName
-  type: string
-  default: public/azure-sdk-for-python
-- name: TargetDocRepoOwner
-  type: string
-  default: MicrosoftDocs
-- name: TargetDocRepoName
-  type: string
-  default: azure-docs-sdk-python
-- name: MatrixConfigs
-  type: object
-  default:
-    - Name: Python_ci_test_base
-      Path: eng/pipelines/templates/stages/platform-matrix.json
-      Selection: sparse
-      GenerateVMJobs: true
-- name: AdditionalMatrixConfigs
-  type: object
-  default: []
-- name: MatrixFilters
-  type: object
-  default: []
-- name: MatrixReplace
-  type: object
-  default: []
-- name: VerifyAutorest
-  type: boolean
-  default: false
-- name: ValidateFormatting
-  type: boolean
-  default: false
-- name: TestProxy
-  type: boolean
-  default: false
-- name: GenerateApiReviewForManualOnly
-  type: boolean
-  default: false
-- name: AdvancedBuild
-  type: boolean
-  default: false
+  - name: ServiceDirectory
+    type: string
+    default: not-specified
+  - name: Artifacts
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: azure-*
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 60
+  - name: ToxEnvParallel
+    type: string
+    default: --tenvparallel
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: DevFeedName
+    type: string
+    default: public/azure-sdk-for-python
+  - name: TargetDocRepoOwner
+    type: string
+    default: MicrosoftDocs
+  - name: TargetDocRepoName
+    type: string
+    default: azure-docs-sdk-python
+  - name: MatrixConfigs
+    type: object
+    default:
+      - Name: Python_ci_test_base
+        Path: eng/pipelines/templates/stages/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+  - name: AdditionalMatrixConfigs
+    type: object
+    default: []
+  - name: MatrixFilters
+    type: object
+    default: []
+  - name: MatrixReplace
+    type: object
+    default: []
+  - name: VerifyAutorest
+    type: boolean
+    default: false
+  - name: ValidateFormatting
+    type: boolean
+    default: false
+  - name: TestProxy
+    type: boolean
+    default: false
+  - name: GenerateApiReviewForManualOnly
+    type: boolean
+    default: false
+  - name: AdvancedBuild
+    type: boolean
+    default: false
+  - name: oneESTemplateTag
+    type: string
+    default: release
 
-variables:
-  - template: /eng/pipelines/templates/variables/globals.yml
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
+    stages:
+      - stage: Build
+        jobs:
+          - template: /eng/pipelines/templates/jobs/ci.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              Artifacts: ${{ parameters.Artifacts }}
+              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+                TestPipeline: true
+              BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+              AfterTestSteps: ${{ parameters.AfterTestSteps }}
+              BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+              TestMarkArgument: ${{ parameters.TestMarkArgument }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+              TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+              InjectedPackages: ${{ parameters.InjectedPackages }}
+              BuildDocs: ${{ parameters.BuildDocs }}
+              DevFeedName: ${{ parameters.DevFeedName }}
+              MatrixConfigs:
+                - ${{ each config in parameters.MatrixConfigs }}:
+                    - ${{ config }}
+                - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+                    - ${{ config }}
+              MatrixFilters: ${{ parameters.MatrixFilters }}
+              MatrixReplace: ${{ parameters.MatrixReplace }}
+              VerifyAutorest: ${{ parameters.VerifyAutorest }}
+              ValidateFormatting: ${{ parameters.ValidateFormatting }}
+              TestProxy: ${{ parameters.TestProxy }}
+              GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+              AdvancedBuild: ${{ parameters.AdvancedBuild }}
 
-stages:
-  - stage: Build
-    jobs:
-    - template: /eng/pipelines/templates/jobs/ci.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        DevFeedName: ${{ parameters.DevFeedName }}
-        MatrixConfigs:
-          - ${{ each config in parameters.MatrixConfigs }}:
-            -  ${{ config }}
-          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-            -  ${{ config }}
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
-        TestProxy: ${{ parameters.TestProxy }}
-        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
-        AdvancedBuild: ${{ parameters.AdvancedBuild }}
+        variables:
+          - template: /eng/pipelines/templates/variables/globals.yml
+          - template: /eng/pipelines/templates/variables/image.yml
 
-  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: archetype-python-release.yml
-      parameters:
-        DependsOn: Build
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        ArtifactName: packages_extended
-        DocArtifact: documentation
-        TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-        TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-        DevFeedName: ${{ parameters.DevFeedName }}
+      - template: archetype-python-release.yml
+        parameters:
+          DependsOn: "Build"
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+            TestPipeline: true
+          ArtifactName: packages_extended
+          DocArtifact: documentation
+          TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+          TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+          DevFeedName: ${{ parameters.DevFeedName }}
+

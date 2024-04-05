@@ -31,6 +31,7 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._data_transfer_jobs_operations import (
     build_cancel_request,
+    build_complete_request,
     build_create_request,
     build_get_request,
     build_list_by_database_account_request,
@@ -478,6 +479,73 @@ class DataTransferJobsOperations:
 
     cancel.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/dataTransferJobs/{jobName}/cancel"
+    }
+
+    @distributed_trace_async
+    async def complete(
+        self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
+    ) -> _models.DataTransferJobGetResults:
+        """Completes a Data Transfer Online Job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param job_name: Name of the Data Transfer Job. Required.
+        :type job_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DataTransferJobGetResults or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.DataTransferJobGetResults
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.DataTransferJobGetResults] = kwargs.pop("cls", None)
+
+        request = build_complete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.complete.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("DataTransferJobGetResults", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    complete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/dataTransferJobs/{jobName}/complete"
     }
 
     @distributed_trace

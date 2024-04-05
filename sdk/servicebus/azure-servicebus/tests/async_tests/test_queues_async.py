@@ -61,15 +61,15 @@ from azure.servicebus.exceptions import (
     OperationTimeoutError
 )
 from devtools_testutils import AzureMgmtRecordedTestCase, AzureRecordedTestCase
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from utilities import get_logger, print_message, sleep_until_expired
+from tests.utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
-from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

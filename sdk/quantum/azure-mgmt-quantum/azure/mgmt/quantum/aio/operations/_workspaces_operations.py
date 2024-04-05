@@ -50,7 +50,7 @@ class WorkspacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.quantum.aio.AzureQuantumManagementClient`'s
+        :class:`~azure.mgmt.quantum.aio.AzureQuantumMgmtClient`'s
         :attr:`workspaces` attribute.
     """
 
@@ -67,7 +67,8 @@ class WorkspacesOperations:
     async def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> _models.QuantumWorkspace:
         """Returns the Workspace resource associated with the given name.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -209,7 +210,8 @@ class WorkspacesOperations:
     ) -> AsyncLROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -244,7 +246,8 @@ class WorkspacesOperations:
     ) -> AsyncLROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -277,7 +280,8 @@ class WorkspacesOperations:
     ) -> AsyncLROPoller[_models.QuantumWorkspace]:
         """Creates or updates a workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -363,7 +367,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -390,7 +395,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -415,7 +421,8 @@ class WorkspacesOperations:
     ) -> _models.QuantumWorkspace:
         """Updates an existing workspace's tags.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -543,7 +550,8 @@ class WorkspacesOperations:
     async def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a Workspace resource.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param workspace_name: The name of the quantum workspace resource. Required.
         :type workspace_name: str
@@ -584,7 +592,9 @@ class WorkspacesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -689,7 +699,8 @@ class WorkspacesOperations:
     ) -> AsyncIterable["_models.QuantumWorkspace"]:
         """Gets the list of Workspaces within a resource group.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either QuantumWorkspace or the result of cls(response)

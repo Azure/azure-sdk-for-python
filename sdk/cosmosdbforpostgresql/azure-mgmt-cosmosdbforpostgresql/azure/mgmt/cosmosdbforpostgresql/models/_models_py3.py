@@ -17,6 +17,40 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AuthConfig(_serialization.Model):
+    """Authentication configuration of a cluster.
+
+    :ivar active_directory_auth: Known values are: "enabled" and "disabled".
+    :vartype active_directory_auth: str or
+     ~azure.mgmt.cosmosdbforpostgresql.models.ActiveDirectoryAuth
+    :ivar password_auth: Known values are: "enabled" and "disabled".
+    :vartype password_auth: str or ~azure.mgmt.cosmosdbforpostgresql.models.PasswordAuth
+    """
+
+    _attribute_map = {
+        "active_directory_auth": {"key": "activeDirectoryAuth", "type": "str"},
+        "password_auth": {"key": "passwordAuth", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        active_directory_auth: Optional[Union[str, "_models.ActiveDirectoryAuth"]] = None,
+        password_auth: Optional[Union[str, "_models.PasswordAuth"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword active_directory_auth: Known values are: "enabled" and "disabled".
+        :paramtype active_directory_auth: str or
+         ~azure.mgmt.cosmosdbforpostgresql.models.ActiveDirectoryAuth
+        :keyword password_auth: Known values are: "enabled" and "disabled".
+        :paramtype password_auth: str or ~azure.mgmt.cosmosdbforpostgresql.models.PasswordAuth
+        """
+        super().__init__(**kwargs)
+        self.active_directory_auth = active_directory_auth
+        self.password_auth = password_auth
+
+
 class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -199,6 +233,15 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar private_endpoint_connections: The private endpoint connections for a cluster.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.cosmosdbforpostgresql.models.SimplePrivateEndpointConnection]
+    :ivar database_name: The database name of the cluster. Only one database per cluster is
+     supported.
+    :vartype database_name: str
+    :ivar enable_geo_backup: If cluster backup is stored in another Azure region in addition to the
+     copy of the backup stored in the cluster's region. Enabled only at the time of cluster
+     creation.
+    :vartype enable_geo_backup: bool
+    :ivar auth_config: Authentication configuration of a cluster.
+    :vartype auth_config: ~azure.mgmt.cosmosdbforpostgresql.models.AuthConfig
     """
 
     _validation = {
@@ -252,6 +295,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.privateEndpointConnections",
             "type": "[SimplePrivateEndpointConnection]",
         },
+        "database_name": {"key": "properties.databaseName", "type": "str"},
+        "enable_geo_backup": {"key": "properties.enableGeoBackup", "type": "bool"},
+        "auth_config": {"key": "properties.authConfig", "type": "AuthConfig"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -278,6 +324,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         source_resource_id: Optional[str] = None,
         source_location: Optional[str] = None,
         point_in_time_utc: Optional[datetime.datetime] = None,
+        database_name: Optional[str] = None,
+        enable_geo_backup: Optional[bool] = None,
+        auth_config: Optional["_models.AuthConfig"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -337,6 +386,15 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype source_location: str
         :keyword point_in_time_utc: Date and time in UTC (ISO8601 format) for cluster restore.
         :paramtype point_in_time_utc: ~datetime.datetime
+        :keyword database_name: The database name of the cluster. Only one database per cluster is
+         supported.
+        :paramtype database_name: str
+        :keyword enable_geo_backup: If cluster backup is stored in another Azure region in addition to
+         the copy of the backup stored in the cluster's region. Enabled only at the time of cluster
+         creation.
+        :paramtype enable_geo_backup: bool
+        :keyword auth_config: Authentication configuration of a cluster.
+        :paramtype auth_config: ~azure.mgmt.cosmosdbforpostgresql.models.AuthConfig
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.administrator_login = None
@@ -365,6 +423,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.read_replicas = None
         self.earliest_restore_time = None
         self.private_endpoint_connections = None
+        self.database_name = database_name
+        self.enable_geo_backup = enable_geo_backup
+        self.auth_config = auth_config
 
 
 class ClusterConfigurationListResult(_serialization.Model):
@@ -1707,12 +1768,30 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
+class PromoteRequest(_serialization.Model):
+    """Request from client to promote geo-redundant replica.
+
+    :ivar enable_geo_backup: Cluster name to verify.
+    :vartype enable_geo_backup: bool
+    """
+
+    _attribute_map = {
+        "enable_geo_backup": {"key": "enableGeoBackup", "type": "bool"},
+    }
+
+    def __init__(self, *, enable_geo_backup: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enable_geo_backup: Cluster name to verify.
+        :paramtype enable_geo_backup: bool
+        """
+        super().__init__(**kwargs)
+        self.enable_geo_backup = enable_geo_backup
+
+
 class Role(ProxyResource):
     """Represents a cluster role.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
      "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
@@ -1725,11 +1804,20 @@ class Role(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.cosmosdbforpostgresql.models.SystemData
-    :ivar password: The password of the cluster role. Required.
+    :ivar role_type: Known values are: "user" and "admin".
+    :vartype role_type: str or ~azure.mgmt.cosmosdbforpostgresql.models.RoleType
+    :ivar password: The password of the cluster role. If an identity is used, password will not be
+     required.
     :vartype password: str
     :ivar provisioning_state: Provisioning state of the role. Known values are: "Succeeded",
      "Canceled", "InProgress", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.cosmosdbforpostgresql.models.ProvisioningState
+    :ivar object_id:
+    :vartype object_id: str
+    :ivar principal_type: Known values are: "user", "servicePrincipal", and "group".
+    :vartype principal_type: str or ~azure.mgmt.cosmosdbforpostgresql.models.PrincipalType
+    :ivar tenant_id:
+    :vartype tenant_id: str
     """
 
     _validation = {
@@ -1737,7 +1825,6 @@ class Role(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "password": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -1746,18 +1833,44 @@ class Role(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "role_type": {"key": "properties.roleType", "type": "str"},
         "password": {"key": "properties.password", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "object_id": {"key": "properties.externalIdentity.objectId", "type": "str"},
+        "principal_type": {"key": "properties.externalIdentity.principalType", "type": "str"},
+        "tenant_id": {"key": "properties.externalIdentity.tenantId", "type": "str"},
     }
 
-    def __init__(self, *, password: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        role_type: Union[str, "_models.RoleType"] = "user",
+        password: Optional[str] = None,
+        object_id: Optional[str] = None,
+        principal_type: Optional[Union[str, "_models.PrincipalType"]] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword password: The password of the cluster role. Required.
+        :keyword role_type: Known values are: "user" and "admin".
+        :paramtype role_type: str or ~azure.mgmt.cosmosdbforpostgresql.models.RoleType
+        :keyword password: The password of the cluster role. If an identity is used, password will not
+         be required.
         :paramtype password: str
+        :keyword object_id:
+        :paramtype object_id: str
+        :keyword principal_type: Known values are: "user", "servicePrincipal", and "group".
+        :paramtype principal_type: str or ~azure.mgmt.cosmosdbforpostgresql.models.PrincipalType
+        :keyword tenant_id:
+        :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
+        self.role_type = role_type
         self.password = password
         self.provisioning_state = None
+        self.object_id = object_id
+        self.principal_type = principal_type
+        self.tenant_id = tenant_id
 
 
 class RoleListResult(_serialization.Model):
