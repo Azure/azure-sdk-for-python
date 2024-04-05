@@ -206,6 +206,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     await self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
+                    raise exception
                     # # If that fails, try to send via basic
                     # self._last_exception = exception
             else:
@@ -213,7 +214,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     await self._send(events, channel_name=channel_name, **kwargs)
                 except Exception as exception:
                     self._http_response_error_handler(exception, "Basic")
-                    raise self._last_exception from exception
+                    raise exception
 
     async def _send_binary(self, topic_name: str, events: Any, **kwargs: Any) -> None:
         # If data is passed as a dictionary, make sure it is a CloudEvent

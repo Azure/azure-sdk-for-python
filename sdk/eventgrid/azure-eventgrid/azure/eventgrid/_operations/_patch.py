@@ -299,6 +299,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     self._send(topic_name, _serialize_events(events), **kwargs)
                 except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
+                    raise exception
             else:
                 try:
                     self._send(events, channel_name=channel_name, **kwargs)
