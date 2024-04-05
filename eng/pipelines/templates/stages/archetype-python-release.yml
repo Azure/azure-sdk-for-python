@@ -215,15 +215,6 @@ stages:
 
                           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
-
-                          # py2docfx requires python >= 3.11
-                          - task: UsePythonVersion@0
-                            displayName: 'Use Python 3.11'
-                            inputs:
-                              versionSpec: '3.11'
-
-                          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
-
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
