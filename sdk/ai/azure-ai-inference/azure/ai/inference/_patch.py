@@ -20,37 +20,36 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 
+
 class ModelClient(ModelClientGenerated):
+    @distributed_trace
+    def get_streaming_chat_completions(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        messages: List[_models.ChatRequestMessage] = _Unset,
+        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
+        model_deployment: Optional[str] = None,
+        extras: Optional[Dict[str, str]] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        stop: Optional[List[str]] = None,
+        stream_parameter: Optional[bool] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        print("This is a placeholder for the actual implementation")
 
-        @distributed_trace
-        def get_streaming_chat_completions(
-            self,
-            body: Union[JSON, IO[bytes]] = _Unset,
-            *,
-            messages: List[_models.ChatRequestMessage] = _Unset,
-            extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
-            model_deployment: Optional[str] = None,
-            extras: Optional[Dict[str, str]] = None,
-            frequency_penalty: Optional[float] = None,
-            presence_penalty: Optional[float] = None,
-            temperature: Optional[float] = None,
-            top_p: Optional[float] = None,
-            max_tokens: Optional[int] = None,
-            response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
-            stop: Optional[List[str]] = None,
-            stream_parameter: Optional[bool] = None,
-            tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
-            tool_choice: Optional[
-                Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
-            ] = None,
-            seed: Optional[int] = None,
-            **kwargs: Any
-        ) -> None:
-            print("This is a placeholder for the actual implementation")
 
-__all__: List[str] = [
-    "ModelClient"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

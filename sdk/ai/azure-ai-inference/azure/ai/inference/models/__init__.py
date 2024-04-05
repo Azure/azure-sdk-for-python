@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._models import ChatChoice
+from ._models import ChatChoiceDelta
 from ._models import ChatCompletions
+from ._models import ChatCompletionsDelta
 from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsJsonResponseFormat
@@ -45,7 +47,9 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ChatChoice",
+    "ChatChoiceDelta",
     "ChatCompletions",
+    "ChatCompletionsDelta",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
     "ChatCompletionsJsonResponseFormat",
