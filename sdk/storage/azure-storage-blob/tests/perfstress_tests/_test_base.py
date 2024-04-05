@@ -48,6 +48,7 @@ class _ServiceTest(PerfStressTest):
                     client_secret
                 )
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
+                # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"
                 _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)
                 _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=async_token_credential, **self._client_kwargs)
