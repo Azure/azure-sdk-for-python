@@ -26,7 +26,7 @@ database service.
 from collections import deque
 import copy
 from .. import _retry_utility, http_constants
-
+from .. import exceptions
 # pylint: disable=protected-access
 
 
@@ -114,15 +114,7 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         # Continues pages till finds a non-empty page or all results are exhausted
-# <<<<<<< HEAD
-#         while self._continuation or not self._has_started:
-#             # For start time option, First fetch will always return empty
-#             # before we get a continuation token
-#             first_fetch = not self._has_started
-#             if not self._has_started:
-#                 self._has_started = True
-# =======
-        while True:
+        while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
             # For read specific time the first fetch will return empty even if we have more pages.
             is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
@@ -131,7 +123,9 @@ class _QueryExecutionContextBase(object):
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
+            response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
+
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:

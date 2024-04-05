@@ -28,6 +28,7 @@ import copy
 
 from ...aio import _retry_utility_async
 from ... import http_constants
+from ... import exceptions
 
 # pylint: disable=protected-access
 
@@ -67,7 +68,7 @@ class _QueryExecutionContextBase(object):
             self._buffer.extend(results)
 
         if not self._buffer:
-             self._has_finished = True
+            self._has_finished = True
 
     async def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
@@ -115,14 +116,7 @@ class _QueryExecutionContextBase(object):
         :rtype: list
         """ 
         fetched_items = []
-        # Continues pages till finds a non-empty page or all results are exhausted
-#         while self._continuation or not self._has_started:
-#             # For start time option, First fetch will always return empty
-#             # before we get a continuation token
-#             first_fetch = not self._has_started
-#             if not self._has_started:
-#                 self._has_started = True
-        while True:
+        while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
             # For read specific time the first fetch will return empty even if we have more pages.
             is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
@@ -131,14 +125,16 @@ class _QueryExecutionContextBase(object):
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
+            response_headers = {}
             (fetched_items, response_headers) = await fetch_function(new_options)
+
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
-                continuation_key = http_constants.HttpHeaders.ETagAsync
+                continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
-            # For start time however we get no initial results, so we need to pass continuation token
+            # No initial fetch for start time change feed, so we need to pass continuation token for first fetch
             if not self._is_change_feed or fetched_items or is_s_time_first_fetch:
                 self._continuation = response_headers.get(continuation_key)
             else:

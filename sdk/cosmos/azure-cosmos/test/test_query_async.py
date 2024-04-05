@@ -384,7 +384,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
             pytest.fail("Should not have passed")
         except AttributeError as e:
-            assert str(e) == "'str' object has no attribute 'strftime'"
+            assert str(e) == "'str' object has no attribute 'tzinfo'"
 
         await self.created_db.delete_container(created_collection.id)
 

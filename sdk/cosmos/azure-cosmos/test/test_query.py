@@ -343,7 +343,7 @@ class TestQuery(unittest.TestCase):
             change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
             self.fail("Should not have passed")
         except AttributeError as e:
-            self.assertEqual(str(e), "'str' object has no attribute 'strftime'")
+            self.assertEqual(str(e), "'str' object has no attribute 'tzinfo'")
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container("query_metrics_test",
