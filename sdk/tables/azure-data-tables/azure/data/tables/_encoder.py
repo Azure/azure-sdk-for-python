@@ -1,16 +1,23 @@
-from typing import Any, Iterator, Optional, Tuple, Union, Mapping
+import abc
+from typing import Any, Optional, Tuple, Union, Mapping, overload, TypeVar, Generic, Dict
 from uuid import UUID
-from json import JSONEncoder
 from datetime import datetime
 from math import isnan
 
 from ._serialize import EdmType
+from ._entity import TableEntity
+from ._deserialize import _convert_to_entity
 from ._common_conversion import _encode_base64, _to_utc_datetime
 
 _ODATA_SUFFIX = "@odata.type"
+T = TypeVar("T")
 
 
-class TableEntityEncoder:
+@abc.ABC
+class TableEntityEncoder(Generic[T]):
+    # @abc.abstractmethod
+    # def __init__(self, entity_type: Type[T]) -> None:
+    #     self._entity_type = entity_type
 
     def prepare_key(self, key: str) -> str:
         """Duplicate the single quote char to escape."""
@@ -66,8 +73,16 @@ class TableEntityEncoder:
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
+    
+    @abc.abstractmethod
+    def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
+        """Encode an entity object into JSON format to send out.
+        """
 
-    def encode_entity(self, entity: Mapping) -> Mapping[str, Union[str, int, float, bool]]:
+        
+class _TableEntityEncoder(TableEntityEncoder[Union[Mapping[str, Any], TableEntity]]):
+    
+    def encode_entity(self, entity: Union[Mapping[str, Any], TableEntity]) -> Dict[str, Union[str, int, float, bool]]:
         """This method currently behaves the same as the existing serialization function in that
         there is no special treatment for the system keys - PartitionKey, RowKey, Timestamp, Etag.
 
@@ -95,13 +110,17 @@ class TableEntityEncoder:
                 encoded[key + _ODATA_SUFFIX] = edm_type.value
             encoded[key] = value
         return encoded
+    
+    @abc.abstractmethod
+    def decode_entity(self, entity: Mapping[str, Union[str, int, float, bool]]) -> T:
+        return self._entity_type(_convert_to_entity(entity))
 
 
-class TableEntityJSONEncoder(JSONEncoder, TableEntityEncoder):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+# class TableEntityJSONEncoder(JSONEncoder, TableEntityEncoder):
+#     def __init__(self, **kwargs) -> None:
+#         super().__init__(**kwargs)
 
-    def iterencode(self, o: Any, _one_shot: bool = ...) -> Iterator[str]:
-        if isinstance(o, Mapping):
-            o = self.encode_entity(o)
-        return super().iterencode(o, _one_shot)
+#     def iterencode(self, o: Any, _one_shot: bool = ...) -> Iterator[str]:
+#         if isinstance(o, Mapping):
+#             o = self.encode_entity(o)
+#         return super().iterencode(o, _one_shot)
