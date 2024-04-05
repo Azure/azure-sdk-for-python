@@ -36,7 +36,7 @@ async def run():
     # Receive CloudEvents
     try:
         async with client:
-            receive_result = await client.receive_cloud_events(
+            receive_result = await client.receive(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,

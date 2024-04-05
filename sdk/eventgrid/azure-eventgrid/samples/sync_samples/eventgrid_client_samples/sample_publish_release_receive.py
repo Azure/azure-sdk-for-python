@@ -39,7 +39,7 @@ try:
     client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
     # Receive CloudEvents and parse out lock tokens
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+    receive_result = client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     lock_tokens_to_release = []
     for item in receive_result.value:
         lock_tokens_to_release.append(item.broker_properties.lock_token)
@@ -47,7 +47,7 @@ try:
     print("Received events:", receive_result.value)
 
     # Release a LockToken
-    release_events = client.release_cloud_events(
+    release_events = client.release(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         release_delay_in_seconds=60,
@@ -56,11 +56,11 @@ try:
     print("Released Event:", release_events)
 
     # Receive CloudEvents again
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+    receive_result = client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     print("Received events after release:", receive_result.value)
 
     # Acknowledge a LockToken that was released
-    acknowledge_events = client.acknowledge_cloud_events(
+    acknowledge_events = client.acknowledge(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         lock_tokens=lock_tokens_to_release,

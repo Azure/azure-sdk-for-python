@@ -37,7 +37,7 @@ async def run():
     try:
         async with client:
             tokens = ["token"]
-            reject_events = await client.reject_cloud_events(
+            reject_events = await client.reject(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 lock_tokens=tokens,

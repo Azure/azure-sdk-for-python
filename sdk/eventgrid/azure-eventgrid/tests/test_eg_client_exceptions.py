@@ -57,7 +57,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(ResourceNotFoundError):
-            client.receive_cloud_events("faketopic", eventgrid_event_subscription_name)
+            client.receive("faketopic", eventgrid_event_subscription_name)
 
     @EventGridPreparer()
     @recorded_by_proxy
@@ -65,7 +65,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(HttpResponseError):
-            client.receive_cloud_events(
+            client.receive(
                 eventgrid_topic_name, eventgrid_event_subscription_name, max_events=-20
             )
 
@@ -75,7 +75,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(HttpResponseError):
-            client.receive_cloud_events(
+            client.receive(
                 eventgrid_topic_name, eventgrid_event_subscription_name, max_wait_time=-20
             )
 
@@ -85,7 +85,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(HttpResponseError):
-            client.receive_cloud_events(
+            client.receive(
                 eventgrid_topic_name, eventgrid_event_subscription_name, max_wait_time=121
             )
 
@@ -95,7 +95,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         with pytest.raises(HttpResponseError):
-            client.receive_cloud_events(
+            client.receive(
                 eventgrid_topic_name, eventgrid_event_subscription_name, max_wait_time=9
             )
 
@@ -106,7 +106,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = ["faketoken"]
-            client.acknowledge_cloud_events(
+            client.acknowledge(
                 "faketopic", eventgrid_event_subscription_name, lock_tokens=lock_tokens
             )
 
@@ -117,7 +117,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         with pytest.raises(ResourceNotFoundError):
             lock_tokens = ["faketoken"]
-            client.release_cloud_events(
+            client.release(
                 "faketopic", eventgrid_event_subscription_name, lock_tokens=lock_tokens
             )
 
@@ -128,7 +128,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         lock_tokens = ["faketoken"]
 
         with pytest.raises(ResourceNotFoundError):
-            client.reject_cloud_events(
+            client.reject(
                 "faketopic", eventgrid_event_subscription_name, lock_tokens=lock_tokens
             )
 
@@ -138,7 +138,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         lock_tokens = ["faketoken"]
-        ack = client.acknowledge_cloud_events(
+        ack = client.acknowledge(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=lock_tokens
         )
         assert type(ack) == AcknowledgeResult
@@ -152,7 +152,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         lock_tokens = ["faketoken"]
-        release = client.release_cloud_events(
+        release = client.release(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=lock_tokens
         )
         assert type(release) == ReleaseResult
@@ -166,7 +166,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
         lock_tokens = ["faketoken"]
 
-        reject = client.reject_cloud_events(
+        reject = client.reject(
             eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=lock_tokens
         )
         assert type(reject) == RejectResult

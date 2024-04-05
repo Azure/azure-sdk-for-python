@@ -37,7 +37,7 @@ async def run():
     try:
         async with client:
             tokens = ["token"]
-            release_events = await client.release_cloud_events(
+            release_events = await client.release(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 release_delay_in_seconds=10,

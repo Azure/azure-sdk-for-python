@@ -47,13 +47,13 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
 
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
 
@@ -75,13 +75,13 @@ class TestEGClientExceptions(AzureRecordedTestCase):
            topic_name= eventgrid_topic_name, events=event, binary_mode=True
         )
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
 
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
     @EventGridPreparer()
@@ -145,12 +145,12 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             topic_name=eventgrid_topic_name, events=dict_event, binary_mode=True
         )
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
     @pytest.mark.live_test_only()
@@ -172,10 +172,10 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
+        ack = client.acknowledge(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 
@@ -198,12 +198,12 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = client.release_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
+        ack = client.release(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         assert events.value[0].broker_properties.delivery_count > 1

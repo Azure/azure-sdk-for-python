@@ -42,13 +42,13 @@ async def run():
             await client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
             # Receive CloudEvents and parse out lock tokens
-            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
+            receive_result = await client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
             lock_tokens_to_release = []
             for item in receive_result.value:
                 lock_tokens_to_release.append(item.broker_properties.lock_token)
 
             # Renew lock tokens
-            renew_events = await client.renew_cloud_event_locks(
+            renew_events = await client.renew_locks(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 lock_tokens=lock_tokens_to_release,

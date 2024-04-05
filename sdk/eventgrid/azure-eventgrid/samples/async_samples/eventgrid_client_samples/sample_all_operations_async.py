@@ -66,7 +66,7 @@ async def run():
 
         # Receive Published Cloud Events
         try:
-            receive_results = await client.receive_cloud_events(
+            receive_results = await client.receive(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,
@@ -95,7 +95,7 @@ async def run():
 
         if len(release_events) > 0:
             try:
-                release_result = await client.release_cloud_events(
+                release_result = await client.release(
                     topic_name=TOPIC_NAME,
                     subscription_name=EVENT_SUBSCRIPTION_NAME,
                     lock_tokens=release_events,
@@ -108,7 +108,7 @@ async def run():
 
         if len(acknowledge_events) > 0:
             try:
-                ack_result = await client.acknowledge_cloud_events(
+                ack_result = await client.acknowledge(
                     topic_name=TOPIC_NAME,
                     subscription_name=EVENT_SUBSCRIPTION_NAME,
                     lock_tokens=acknowledge_events,
@@ -121,7 +121,7 @@ async def run():
 
         if len(reject_events) > 0:
             try:
-                reject_result = await client.reject_cloud_events(
+                reject_result = await client.reject(
                     topic_name=TOPIC_NAME,
                     subscription_name=EVENT_SUBSCRIPTION_NAME,
                     lock_tokens=reject_events,
