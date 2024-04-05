@@ -106,7 +106,10 @@ def _default_resource(configurations):
         OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
         ",".join(_SUPPORTED_RESOURCE_DETECTORS)
     )
-    configurations[RESOURCE_ARG] = Resource.create()
+    if RESOURCE_ARG not in configurations:
+        configurations[RESOURCE_ARG] = Resource.create()
+    else:
+        configurations[RESOURCE_ARG] = Resource.create(configurations[RESOURCE_ARG].attributes)
 
 
 # TODO: remove when sampler uses env var instead
