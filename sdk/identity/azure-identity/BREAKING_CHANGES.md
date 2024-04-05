@@ -1,17 +1,5 @@
 # Breaking Changes
 
-## 1.16.0
-
-### Behavioral change to `ManagedIdentityCredential` in IMDS managed identity scenarios
-
-As of `azure-identity` 1.16.0, `ManagedIdentityCredential` makes a minor change to the retry behavior in environments where Instance Metadata Service (IMDS) managed identity is used. The retry backoff factor for IMDS requests was reduced to `0.8` from `2` to prevent excessive delays during retries and to improve responsiveness. This change might affect workloads that rely on the previous retry behavior.
-
-If retry settings need to be customized for IMDS managed identity scenarios, users can pass in `RetryPolicy` parameters noted in the [Azure Core Client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies) to the `ManagedIdentityCredential` constructor. For example:
-
-```python
-credential = ManagedIdentityCredential(retry_connect=8, retry_backoff_factor=2)
-```
-
 ## 1.11.0
 
 ### Behavioral change to credential types supporting multi-tenant authentication

@@ -23,6 +23,7 @@ PIPELINE_SETTINGS = {
     "connection_timeout": 2,
     # Five retries, with each retry sleeping for [0.0s, 1.6s, 3.2s, 6.4s, 12.8s] between attempts.
     "retry_backoff_factor": 0.8,
+    "retry_backoff_max": 60,
     "retry_on_status_codes": [404, 410, 429] + list(range(500, 600)),
     "retry_status": 5,
     "retry_total": 5,
