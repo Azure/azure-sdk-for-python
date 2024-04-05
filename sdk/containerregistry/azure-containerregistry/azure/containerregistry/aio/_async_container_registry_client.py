@@ -30,7 +30,7 @@ from .._container_registry_client import (
     _return_response_and_headers,
     _return_response,
 )
-from .._generated.models import AcrErrors
+from .._generated.models import AcrErrors, ArtifactManifestOrder, ArtifactTagOrder
 from .._helpers import (
     _compute_digest,
     _is_tag,
@@ -138,7 +138,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         await self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
-    def list_repository_names(self, **kwargs) -> AsyncItemPaged[str]:
+    def list_repository_names(self, *, results_per_page: Optional[int] = None, **kwargs) -> AsyncItemPaged[str]:
         """List all repositories
 
         :keyword results_per_page: Number of repositories to return per page
@@ -156,7 +156,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: List repositories in a container registry account
         """
-        n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
         cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -188,9 +187,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
                     )
-                if n is not None:
+                if results_per_page is not None:
                     query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "n", n, "int"
+                        "n", results_per_page, "int"
                     )
 
                 request = self._client._client.get(  # pylint: disable=protected-access
@@ -258,7 +257,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifest_properties(self, repository: str, **kwargs) -> AsyncItemPaged[ArtifactManifestProperties]:
+    def list_manifest_properties(
+        self,
+        repository: str,
+        *,
+        order_by: Optional[Union[ArtifactManifestOrder, str]] = None,
+        results_per_page: Optional[int] = None,
+        **kwargs,
+    ) -> AsyncItemPaged[ArtifactManifestProperties]:
         """List the manifests of a repository
 
         :param str repository: Name of the repository
@@ -272,8 +278,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         name = repository
         last = kwargs.pop("last", None)
-        n = kwargs.pop("results_per_page", None)
-        orderby = kwargs.pop("order_by", None)
         cls = kwargs.pop(
             "cls",
             lambda objs: [
@@ -314,13 +318,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
                     )
-                if n is not None:
+                if results_per_page is not None:
                     query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "n", n, "int"
+                        "n", results_per_page, "int"
                     )
-                if orderby is not None:
+                if order_by is not None:
                     query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "orderby", orderby, "str"
+                        "orderby", order_by, "str"
                     )
 
                 request = self._client._client.get(  # pylint: disable=protected-access
@@ -463,7 +467,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_tag_properties(self, repository: str, **kwargs) -> AsyncItemPaged[ArtifactTagProperties]:
+    def list_tag_properties(
+        self,
+        repository: str,
+        *,
+        order_by: Optional[Union[ArtifactTagOrder, str]] = None,
+        results_per_page: Optional[int] = None,
+        **kwargs,
+    ) -> AsyncItemPaged[ArtifactTagProperties]:
         """List the tags for a repository
 
         :param str repository: Name of the repository
@@ -488,8 +499,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         name = repository
         last = kwargs.pop("last", None)
-        n = kwargs.pop("results_per_page", None)
-        orderby = kwargs.pop("order_by", None)
         digest = kwargs.pop("digest", None)
         cls = kwargs.pop(
             "cls",
@@ -529,13 +538,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
                     )
-                if n is not None:
+                if results_per_page is not None:
                     query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "n", n, "int"
+                        "n", results_per_page, "int"
                     )
-                if orderby is not None:
+                if order_by is not None:
                     query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "orderby", orderby, "str"
+                        "orderby", order_by, "str"
                     )
                 if digest is not None:
                     query_parameters["digest"] = self._client._serialize.query(  # pylint: disable=protected-access
