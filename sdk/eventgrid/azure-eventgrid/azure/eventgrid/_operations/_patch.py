@@ -42,7 +42,7 @@ from ..models._patch import (
     ReceiveDetails,
 )
 from .. import models as _models
-from ..models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
+from ..models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
 from .._validation import api_version_validation
 
 
