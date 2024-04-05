@@ -528,7 +528,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             async for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
+                feature_flag_value = json.loads(feature_flag.value)
+                if "telemetry" in feature_flag_value:
+                    if "metadata" not in feature_flag_value["telemetry"]:
+                        feature_flag_value["telemetry"]["metadata"] = {}
+                    feature_flag_value["telemetry"]["metadata"] ["etag"] = feature_flag.etag
+                loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
