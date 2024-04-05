@@ -50,10 +50,10 @@ class EventGridClient(InternalEventGridClient):
      "2023-10-01-preview". Default value for basic is "2018-01-01". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str or None
-    :keyword level: The level of Client to use. Known values are
+    :keyword level: The level of client to use. Known values are
      `Standard` and `Basic`. Default value is `Standard`.
-     `Standard` is used for sending events to a namespace topic.
-     `Basic` is used for sending events to a basic topic.
+     `Standard` is used for working with a namespace topic.
+     `Basic` is used for working with a basic topic.
     :paramtype level: str
     """
 

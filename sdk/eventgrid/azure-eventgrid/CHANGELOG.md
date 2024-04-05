@@ -10,8 +10,7 @@
 
  ### Breaking Changes 
   - Removed the `AcknowledgeOptions`,`ReleaseOptions`, `RejectOptions`, and `RenewLockOptions` models. `lock_tokens` can now be specified as a `kwarg` on the operation.
-  - Renamed `publish_cloud_events` to `send`.
-
+  - Renamed `publish_cloud_events` to `send`, `receive_cloud_events` to `receive`, `release_cloud_events` to `release`, `acknowledge_cloud_events` to `acknowledge`, `reject_cloud_events` to `reject`, and `renew_cloud_event_locks` to `renew_locks`.
 
 
 ## 4.18.0 (2024-03-12)
