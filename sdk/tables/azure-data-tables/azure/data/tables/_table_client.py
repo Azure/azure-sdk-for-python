@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
+from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple, TypeVar
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -14,8 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._encoder import TableEntityEncoder
-from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
+from ._encoder import TableEntityEncoder, _TableEntityEncoder
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
@@ -29,13 +28,14 @@ from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
-    _add_entity_properties,
-    _prepare_key,
     _get_match_condition,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
+
+T = TypeVar("T")
+DEFAULT_ENCODER: TableEntityEncoder[TableEntity] = _TableEntityEncoder()
 
 
 class TableClient(TablesBaseClient):
@@ -265,7 +265,9 @@ class TableClient(TablesBaseClient):
                 raise
 
     @overload
-    def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+    def delete_entity(
+        self, partition_key: str, row_key: str, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs: Any
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -276,8 +278,9 @@ class TableClient(TablesBaseClient):
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
             The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword encoder: The entity encoder
-        :type encoder: TableEntityEncoder
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -292,19 +295,22 @@ class TableClient(TablesBaseClient):
         """
 
     @overload
-    def delete_entity(self, entity: EntityType, **kwargs: Any) -> None:
+    def delete_entity(
+        self, entity: EntityType, *, encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER, **kwargs: Any
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
-        :param entity: The entity to delete
+        :param entity: The entity to delete.
         :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword str etag: Etag of the entity
+        :keyword str etag: Etag of the entity.
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
             The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword encoder: The entity encoder
-        :type encoder: TableEntityEncoder
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -316,6 +322,24 @@ class TableClient(TablesBaseClient):
                 :language: python
                 :dedent: 12
                 :caption: Deleting an entity of a Table
+        """
+    
+    @overload
+    def delete_entity(self, entity: T,  *, encoder: TableEntityEncoder[T], **kwargs: Any) -> None:
+        """Deletes the specified entity in a table. No error will be raised if
+        the entity or PartitionKey-RowKey pairing is not found.
+
+        :param entity: The entity to delete.
+        :type entity: Union[TableEntity, Mapping[str, Any]]
+        :keyword str etag: Etag of the entity.
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
     @distributed_trace
@@ -343,9 +367,7 @@ class TableClient(TablesBaseClient):
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
-        encoder = kwargs.pop('encoder', None)
-        if not encoder:
-            encoder = TableEntityEncoder()
+        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
@@ -360,15 +382,16 @@ class TableClient(TablesBaseClient):
                 return
             _process_table_error(error, table_name=self.table_name)
 
-    @distributed_trace
-    def create_entity(self, entity: EntityType, **kwargs) -> Dict[str, Any]:
+    @overload
+    def create_entity(self, entity: EntityType, *, encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER, **kwargs) -> Dict[str, Any]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword encoder: The entity encoder
-        :type encoder: TableEntityEncoder
-        :return: Dictionary mapping operation metadata returned from the service
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -381,10 +404,25 @@ class TableClient(TablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        encoder = kwargs.pop('encoder', None)
-        if not encoder:
-            encoder = TableEntityEncoder()
-        entity_json = encoder.encode_entity(_add_entity_properties(entity))
+    
+    @overload
+    def create_entity(self, entity: T, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+        """Insert entity in a table.
+
+        :param entity: The properties for the table entity.
+        :type entity: Custom entity type
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
+        :rtype: dict[str, Any]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+    
+    @distributed_trace
+    def create_entity(self, *args, **kwargs) -> Dict[str, Any]:
+        entity = args[0]
+        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
+        entity_json = encoder.encode_entity(entity)
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
@@ -403,20 +441,23 @@ class TableClient(TablesBaseClient):
             raise error
         return _trim_service_metadata(metadata, content=content)
 
-    @distributed_trace
-    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
+    @overload
+    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs) -> Dict[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
-        :param mode: Merge or Replace entity
+        :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str etag: Etag of the entity
+        :keyword str etag: Etag of the entity.
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
             The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: Dictionary mapping operation metadata returned from the service
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -429,6 +470,32 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already exiting entity in a Table
         """
+    
+    @overload
+    def update_entity(self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+        """Update entity in a table.
+
+        :param entity: The properties for the table entity.
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
+        :param mode: Merge or Replace entity.
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword str etag: Etag of the entity.
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
+        :rtype: dict[str, Any]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+    
+    @distributed_trace
+    def update_entity(self, *args, **kwargs) -> Dict[str, Any]:
+        entity = args[0]
+        mode = args[1]
+        encoder = kwargs.pop(encoder, DEFAULT_ENCODER)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
@@ -436,9 +503,9 @@ class TableClient(TablesBaseClient):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_copy = _add_entity_properties(entity)
-        partition_key = entity_copy["PartitionKey"]
-        row_key = entity_copy["RowKey"]
+        entity_json = encoder.encode_entity(entity)
+        partition_key = entity_json["PartitionKey"]
+        row_key = entity_json["RowKey"]
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -446,9 +513,9 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.update_entity(
                         table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_copy,
+                        partition_key=encoder.prepare_key(partition_key),
+                        row_key=encoder.prepare_key(row_key),
+                        table_entity_properties=entity_json,
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -460,11 +527,11 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.merge_entity(
                         table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
+                        partition_key=encoder.prepare_key(partition_key),
+                        row_key=encoder.prepare_key(row_key),
                         etag=etag,
                         match_condition=match_condition,
-                        table_entity_properties=entity_copy,
+                        table_entity_properties=entity_json,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -519,7 +586,7 @@ class TableClient(TablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str]
-        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters.
         :paramtype parameters: dict[str, Any]
         :return: An iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
@@ -552,7 +619,9 @@ class TableClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def get_entity(self, partition_key: str, row_key: str, **kwargs) -> TableEntity:
+    def get_entity(
+        self, partition_key: str, row_key: str, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs
+    ) -> Dict[str, Any]:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -561,10 +630,11 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str]
-        :keyword encoder: The entity encoder
-        :paramtype encoder: TableEntityEncoder
-        :return: Dictionary mapping operation metadata returned from the service
-        :rtype: ~azure.data.tables.TableEntity
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
+        :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -579,9 +649,6 @@ class TableClient(TablesBaseClient):
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ",".join(user_select)
-        encoder = kwargs.pop('encoder', None)
-        if not encoder:
-            encoder = TableEntityEncoder()
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -594,15 +661,20 @@ class TableClient(TablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _convert_to_entity(entity)
 
-    @distributed_trace
-    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
+    @overload
+    def upsert_entity(
+        self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[TableEntityEncoder] = DEFAULT_ENCODER, **kwargs
+    ) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
-        :param mode: Merge or Replace entity
+        :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
-        :return: Dictionary mapping operation metadata returned from the service
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityEncoder` will be used.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -615,17 +687,39 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Update/merge or insert an entity into a table
         """
-        entity_json = _add_entity_properties(entity)
+
+    @overload
+    def upsert_entity(self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+        """Update/Merge or Insert entity into table.
+
+        :param entity: The properties for the table entity.
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
+        :param mode: Merge or Replace entity.
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :return: Dictionary mapping operation metadata returned from the service.
+        :rtype: dict[str, Any]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+    
+    @distributed_trace
+    def upsert_entity(self, *args, **kwargs) -> Dict[str, Any]:
+        entity = args[0]
+        mode = args[1]
+        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
+        entity_json = encoder.encode(entity)
         partition_key = entity_json["PartitionKey"]
         row_key = entity_json["RowKey"]
+        
         try:
             if mode == UpdateMode.MERGE:
                 metadata, content = cast(
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.merge_entity(
                         table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
+                        partition_key=encoder.prepare_key(partition_key),
+                        row_key=encoder.prepare_key(row_key),
                         table_entity_properties=entity_json,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
@@ -636,8 +730,8 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.update_entity(
                         table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
+                        partition_key=encoder.prepare_key(partition_key),
+                        row_key=encoder.prepare_key(row_key),
                         table_entity_properties=entity_json,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
