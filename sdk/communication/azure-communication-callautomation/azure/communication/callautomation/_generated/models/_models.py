@@ -624,11 +624,14 @@ class CallParticipant(_serialization.Model):
     :vartype identifier: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar is_muted: Is participant muted.
     :vartype is_muted: bool
+    :ivar is_on_hold: Is participant on hold.
+    :vartype is_on_hold: bool
     """
 
     _attribute_map = {
         "identifier": {"key": "identifier", "type": "CommunicationIdentifierModel"},
         "is_muted": {"key": "isMuted", "type": "bool"},
+        "is_on_hold": {"key": "isOnHold", "type": "bool"},
     }
 
     def __init__(
@@ -636,6 +639,7 @@ class CallParticipant(_serialization.Model):
         *,
         identifier: Optional["_models.CommunicationIdentifierModel"] = None,
         is_muted: Optional[bool] = None,
+        is_on_hold: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -643,10 +647,13 @@ class CallParticipant(_serialization.Model):
         :paramtype identifier: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword is_muted: Is participant muted.
         :paramtype is_muted: bool
+        :keyword is_on_hold: Is participant on hold.
+        :paramtype is_on_hold: bool
         """
         super().__init__(**kwargs)
         self.identifier = identifier
         self.is_muted = is_muted
+        self.is_on_hold = is_on_hold
 
 
 class CallTransferAccepted(_serialization.Model):
@@ -1181,6 +1188,7 @@ class CommunicationIdentifierModel(_serialization.Model):
 
     :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
      "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
     :vartype kind: str or
      ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
     :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses.
@@ -1196,6 +1204,9 @@ class CommunicationIdentifierModel(_serialization.Model):
     :ivar microsoft_teams_app: The Microsoft Teams application.
     :vartype microsoft_teams_app:
      ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+    :ivar microsoft_teams_app: The Microsoft Teams application.
+    :vartype microsoft_teams_app:
+     ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
     """
 
     _attribute_map = {
@@ -1204,6 +1215,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         "communication_user": {"key": "communicationUser", "type": "CommunicationUserIdentifierModel"},
         "phone_number": {"key": "phoneNumber", "type": "PhoneNumberIdentifierModel"},
         "microsoft_teams_user": {"key": "microsoftTeamsUser", "type": "MicrosoftTeamsUserIdentifierModel"},
+        "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
         "microsoft_teams_app": {"key": "microsoftTeamsApp", "type": "MicrosoftTeamsAppIdentifierModel"},
     }
 
@@ -1216,10 +1228,12 @@ class CommunicationIdentifierModel(_serialization.Model):
         phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
         microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+        microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword kind: The identifier kind. Only required in responses. Known values are: "unknown",
+         "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
          "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
         :paramtype kind: str or
          ~azure.communication.callautomation.models.CommunicationIdentifierModelKind
@@ -1236,6 +1250,9 @@ class CommunicationIdentifierModel(_serialization.Model):
         :keyword microsoft_teams_app: The Microsoft Teams application.
         :paramtype microsoft_teams_app:
          ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+        :keyword microsoft_teams_app: The Microsoft Teams application.
+        :paramtype microsoft_teams_app:
+         ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
         """
         super().__init__(**kwargs)
         self.kind = kind
@@ -1243,6 +1260,7 @@ class CommunicationIdentifierModel(_serialization.Model):
         self.communication_user = communication_user
         self.phone_number = phone_number
         self.microsoft_teams_user = microsoft_teams_user
+        self.microsoft_teams_app = microsoft_teams_app
         self.microsoft_teams_app = microsoft_teams_app
 
 
@@ -1736,17 +1754,21 @@ class ExternalStorage(_serialization.Model):
         self.recording_destination_container_url = recording_destination_container_url
 
 
-class FileSource(_serialization.Model):
-    """FileSource.
+class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
+    """A Microsoft Teams application.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar uri: Uri for the audio file to be played. Required.
-    :vartype uri: str
+    :ivar app_id: The Id of the Microsoft Teams application. Required.
+    :vartype app_id: str
+    :ivar cloud: The cloud that the Microsoft Teams application belongs to. By default 'public' if
+     missing. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or
+     ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
     """
 
     _validation = {
-        "uri": {"required": True},
+        "app_id": {"required": True},
     }
 
     _attribute_map = {

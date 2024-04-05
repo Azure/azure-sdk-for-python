@@ -42,6 +42,7 @@ from ...operations._operations import (
     build_call_connection_terminate_call_request,
     build_call_connection_transfer_to_participant_request,
     build_call_media_cancel_all_media_operations_request,
+    build_call_media_hold_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
     build_call_media_send_dtmf_tones_request,

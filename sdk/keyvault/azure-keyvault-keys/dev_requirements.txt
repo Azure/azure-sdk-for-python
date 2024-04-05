@@ -1,4 +1,3 @@
--e ../../../tools/azure-devtools
 ../../core/azure-core
 -e ../../../tools/azure-sdk-tools
 ../../nspkg/azure-keyvault-nspkg

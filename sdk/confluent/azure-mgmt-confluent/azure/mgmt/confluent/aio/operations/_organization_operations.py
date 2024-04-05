@@ -32,11 +32,21 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._organization_operations import (
+    build_create_api_key_request,
     build_create_request,
+    build_delete_cluster_api_key_request,
     build_delete_request,
+    build_get_cluster_api_key_request,
+    build_get_cluster_by_id_request,
+    build_get_environment_by_id_request,
     build_get_request,
+    build_get_schema_registry_cluster_by_id_request,
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
+    build_list_clusters_request,
+    build_list_environments_request,
+    build_list_regions_request,
+    build_list_schema_registry_clusters_request,
     build_update_request,
 )
 
@@ -160,8 +170,7 @@ class OrganizationOperations:
 
         List all Organizations under the specified resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OrganizationResource or the result of
@@ -255,8 +264,7 @@ class OrganizationOperations:
 
         Get the properties of a specific Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -407,8 +415,7 @@ class OrganizationOperations:
 
         Create Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -445,8 +452,7 @@ class OrganizationOperations:
 
         Create Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -481,8 +487,7 @@ class OrganizationOperations:
 
         Create Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -570,8 +575,7 @@ class OrganizationOperations:
 
         Update Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -600,8 +604,7 @@ class OrganizationOperations:
 
         Update Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -628,8 +631,7 @@ class OrganizationOperations:
 
         Update Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -768,8 +770,7 @@ class OrganizationOperations:
 
         Delete Organization resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -828,4 +829,1025 @@ class OrganizationOperations:
 
     begin_delete.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}"
+    }
+
+    @distributed_trace
+    def list_environments(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        page_size: Optional[int] = None,
+        page_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SCEnvironmentRecord"]:
+        """Lists of all the environments in a organization.
+
+        Lists of all the environments in a organization.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param page_size: Pagination size. Default value is None.
+        :type page_size: int
+        :param page_token: An opaque pagination token to fetch the next set of records. Default value
+         is None.
+        :type page_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SCEnvironmentRecord or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.SCEnvironmentRecord]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.GetEnvironmentsResponse] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_environments_request(
+                    resource_group_name=resource_group_name,
+                    organization_name=organization_name,
+                    subscription_id=self._config.subscription_id,
+                    page_size=page_size,
+                    page_token=page_token,
+                    api_version=api_version,
+                    template_url=self.list_environments.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("GetEnvironmentsResponse", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ResourceProviderDefaultErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    list_environments.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments"
+    }
+
+    @distributed_trace_async
+    async def get_environment_by_id(
+        self, resource_group_name: str, organization_name: str, environment_id: str, **kwargs: Any
+    ) -> _models.SCEnvironmentRecord:
+        """Get Environment details by environment Id.
+
+        Get Environment details by environment Id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SCEnvironmentRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.SCEnvironmentRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.SCEnvironmentRecord] = kwargs.pop("cls", None)
+
+        request = build_get_environment_by_id_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get_environment_by_id.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("SCEnvironmentRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_environment_by_id.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}"
+    }
+
+    @distributed_trace
+    def list_clusters(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        page_size: Optional[int] = None,
+        page_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SCClusterRecord"]:
+        """Lists of all the clusters in a environment.
+
+        Lists of all the clusters in a environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param page_size: Pagination size. Default value is None.
+        :type page_size: int
+        :param page_token: An opaque pagination token to fetch the next set of records. Default value
+         is None.
+        :type page_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SCClusterRecord or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.SCClusterRecord]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ListClustersSuccessResponse] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_clusters_request(
+                    resource_group_name=resource_group_name,
+                    organization_name=organization_name,
+                    environment_id=environment_id,
+                    subscription_id=self._config.subscription_id,
+                    page_size=page_size,
+                    page_token=page_token,
+                    api_version=api_version,
+                    template_url=self.list_clusters.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ListClustersSuccessResponse", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ResourceProviderDefaultErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    list_clusters.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}/clusters"
+    }
+
+    @distributed_trace
+    def list_schema_registry_clusters(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        page_size: Optional[int] = None,
+        page_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SchemaRegistryClusterRecord"]:
+        """Get schema registry clusters.
+
+        Get schema registry clusters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param page_size: Pagination size. Default value is None.
+        :type page_size: int
+        :param page_token: An opaque pagination token to fetch the next set of records. Default value
+         is None.
+        :type page_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SchemaRegistryClusterRecord or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.SchemaRegistryClusterRecord]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ListSchemaRegistryClustersResponse] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_schema_registry_clusters_request(
+                    resource_group_name=resource_group_name,
+                    organization_name=organization_name,
+                    environment_id=environment_id,
+                    subscription_id=self._config.subscription_id,
+                    page_size=page_size,
+                    page_token=page_token,
+                    api_version=api_version,
+                    template_url=self.list_schema_registry_clusters.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ListSchemaRegistryClustersResponse", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ResourceProviderDefaultErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    list_schema_registry_clusters.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}/schemaRegistryClusters"
+    }
+
+    @overload
+    async def list_regions(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: _models.ListAccessRequestModel,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ListRegionsSuccessResponse:
+        """cloud provider regions available for creating Schema Registry clusters.
+
+        cloud provider regions available for creating Schema Registry clusters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListRegionsSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.ListRegionsSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def list_regions(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ListRegionsSuccessResponse:
+        """cloud provider regions available for creating Schema Registry clusters.
+
+        cloud provider regions available for creating Schema Registry clusters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListRegionsSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.ListRegionsSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_regions(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: Union[_models.ListAccessRequestModel, IO],
+        **kwargs: Any
+    ) -> _models.ListRegionsSuccessResponse:
+        """cloud provider regions available for creating Schema Registry clusters.
+
+        cloud provider regions available for creating Schema Registry clusters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO type.
+         Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListRegionsSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.ListRegionsSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ListRegionsSuccessResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "ListAccessRequestModel")
+
+        request = build_list_regions_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.list_regions.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("ListRegionsSuccessResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_regions.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/listRegions"
+    }
+
+    @overload
+    async def create_api_key(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        cluster_id: str,
+        body: _models.CreateAPIKeyModel,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.APIKeyRecord:
+        """Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param cluster_id: Confluent kafka or schema registry cluster id. Required.
+        :type cluster_id: str
+        :param body: Request payload for get creating API Key for schema registry Cluster ID or Kafka
+         Cluster ID under a environment. Required.
+        :type body: ~azure.mgmt.confluent.models.CreateAPIKeyModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: APIKeyRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.APIKeyRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_api_key(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        cluster_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.APIKeyRecord:
+        """Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param cluster_id: Confluent kafka or schema registry cluster id. Required.
+        :type cluster_id: str
+        :param body: Request payload for get creating API Key for schema registry Cluster ID or Kafka
+         Cluster ID under a environment. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: APIKeyRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.APIKeyRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_api_key(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        cluster_id: str,
+        body: Union[_models.CreateAPIKeyModel, IO],
+        **kwargs: Any
+    ) -> _models.APIKeyRecord:
+        """Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param cluster_id: Confluent kafka or schema registry cluster id. Required.
+        :type cluster_id: str
+        :param body: Request payload for get creating API Key for schema registry Cluster ID or Kafka
+         Cluster ID under a environment. Is either a CreateAPIKeyModel type or a IO type. Required.
+        :type body: ~azure.mgmt.confluent.models.CreateAPIKeyModel or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: APIKeyRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.APIKeyRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.APIKeyRecord] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "CreateAPIKeyModel")
+
+        request = build_create_api_key_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            cluster_id=cluster_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.create_api_key.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("APIKeyRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_api_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}/clusters/{clusterId}/createAPIKey"
+    }
+
+    @distributed_trace_async
+    async def delete_cluster_api_key(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, organization_name: str, api_key_id: str, **kwargs: Any
+    ) -> None:
+        """Deletes API key of a kafka or schema registry cluster.
+
+        Deletes API key of a kafka or schema registry cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param api_key_id: Confluent API Key id. Required.
+        :type api_key_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_delete_cluster_api_key_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            api_key_id=api_key_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.delete_cluster_api_key.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_cluster_api_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/apiKeys/{apiKeyId}"
+    }
+
+    @distributed_trace_async
+    async def get_cluster_api_key(
+        self, resource_group_name: str, organization_name: str, api_key_id: str, **kwargs: Any
+    ) -> _models.APIKeyRecord:
+        """Get API key details of a kafka or schema registry cluster.
+
+        Get API key details of a kafka or schema registry cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param api_key_id: Confluent API Key id. Required.
+        :type api_key_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: APIKeyRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.APIKeyRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.APIKeyRecord] = kwargs.pop("cls", None)
+
+        request = build_get_cluster_api_key_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            api_key_id=api_key_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get_cluster_api_key.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("APIKeyRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_cluster_api_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/apiKeys/{apiKeyId}"
+    }
+
+    @distributed_trace_async
+    async def get_schema_registry_cluster_by_id(
+        self, resource_group_name: str, organization_name: str, environment_id: str, cluster_id: str, **kwargs: Any
+    ) -> _models.SchemaRegistryClusterRecord:
+        """Get schema registry cluster by Id.
+
+        Get schema registry cluster by Id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param cluster_id: Confluent kafka or schema registry cluster id. Required.
+        :type cluster_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SchemaRegistryClusterRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.SchemaRegistryClusterRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.SchemaRegistryClusterRecord] = kwargs.pop("cls", None)
+
+        request = build_get_schema_registry_cluster_by_id_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            cluster_id=cluster_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get_schema_registry_cluster_by_id.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("SchemaRegistryClusterRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_schema_registry_cluster_by_id.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}/schemaRegistryClusters/{clusterId}"
+    }
+
+    @distributed_trace_async
+    async def get_cluster_by_id(
+        self, resource_group_name: str, organization_name: str, environment_id: str, cluster_id: str, **kwargs: Any
+    ) -> _models.SCClusterRecord:
+        """Get cluster by Id.
+
+        Get cluster by Id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param cluster_id: Confluent kafka or schema registry cluster id. Required.
+        :type cluster_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SCClusterRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.SCClusterRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.SCClusterRecord] = kwargs.pop("cls", None)
+
+        request = build_get_cluster_by_id_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            cluster_id=cluster_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get_cluster_by_id.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("SCClusterRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_cluster_by_id.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/environments/{environmentId}/clusters/{clusterId}"
     }

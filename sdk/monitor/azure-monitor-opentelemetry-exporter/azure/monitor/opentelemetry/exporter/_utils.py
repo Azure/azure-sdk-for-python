@@ -50,7 +50,9 @@ def _is_on_functions():
     return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
 
 def _is_attach_enabled():
-    return isdir("/agents/python/")
+    if _is_on_app_service():
+        return isdir("/agents/python/")
+    return False
 
 
 # AKS
@@ -116,7 +118,7 @@ azure_monitor_context = {
 }
 
 
-def ns_to_duration(nanoseconds: int):
+def ns_to_duration(nanoseconds: int) -> str:
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
     value, microseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)

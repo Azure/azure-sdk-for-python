@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from typing import AsyncIterator
 from io import BytesIO
 
 from ._random_stream import get_random_bytes, _DEFAULT_LENGTH
@@ -58,3 +59,46 @@ class AsyncRandomStream(BytesIO):
 
     def close(self):
         self._closed = True
+
+
+class AsyncIteratorRandomStream(AsyncIterator[bytes]):
+    """
+        Async random stream of bytes for methods that accept AsyncIterator as input.
+    """
+    def __init__(self, length, initial_buffer_length=_DEFAULT_LENGTH):
+        self._base_data = get_random_bytes(initial_buffer_length)
+        self._data_length = length
+        self._base_buffer_length = initial_buffer_length
+        self._position = 0
+        self._remaining = length
+
+    def __len__(self):
+        return self._remaining
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._remaining == 0:
+            raise StopAsyncIteration
+        return self.read()
+
+    def reset(self):
+        self._position = 0
+        self._remaining = self._data_length
+
+    def read(self, size=None):
+        if self._remaining == 0:
+            return b""
+
+        if size is None:
+            e = self._base_buffer_length
+        else:
+            e = size
+        e = min(e, self._remaining)
+        if e > self._base_buffer_length:
+            self._base_data = get_random_bytes(e)
+            self._base_buffer_length = e
+        self._remaining = self._remaining - e
+        self._position += e
+        return self._base_data[:e]

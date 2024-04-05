@@ -6,7 +6,7 @@ import pytest
 import json
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import AZURE, OPENAI, ALL, configure_async
+from conftest import AZURE, OPENAI, AZURE_AD, PREVIEW, GA, configure_async
 
 
 class TestCompletionsAsync(AzureRecordedTestCase):
@@ -14,8 +14,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
-    async def test_completion(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (AZURE_AD, PREVIEW), (AZURE_AD, GA), (OPENAI, "v1")]
+    )
+    async def test_completion(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(prompt="hello world", **kwargs)
         assert completion.id
@@ -32,8 +35,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_batched_completions(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_batched_completions(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(prompt=["hello world", "how are you today?"], **kwargs)
         assert completion.id
@@ -52,8 +58,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.skip("openai.error.APIError: Invalid response object from API: 'Unsupported data type\n' (HTTP response code was 400)")
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_token_input(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_token_input(self, client_async, api_type, api_version, **kwargs):
  
         completion = await client_async.completions.create(prompt=[10919, 3124, 318, 281, 17180, 30], **kwargs)
         assert completion.id
@@ -71,8 +80,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_streamed_completions(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_streamed_completions(self, client_async, api_type, api_version, **kwargs):
 
         response = await client_async.completions.create(prompt="how do I bake a chocolate cake?", max_tokens=500,  stream=True, **kwargs)
 
@@ -89,8 +101,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_max_tokens(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_max_tokens(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -112,23 +127,29 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_completion_content_filter_prompt(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA)]
+    )
+    async def test_completion_content_filter_prompt(self, client_async, api_type, api_version, **kwargs):
 
         with pytest.raises(openai.BadRequestError) as e:
             await client_async.completions.create(
                 prompt="how do I rob a bank with violence?",
-                model=azure_openai_creds["completions_name"]
+                **kwargs,
             )
-        assert e.value.status_code == 400
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in err["error"]["message"]
+        err = e.value
+        assert err.status_code == 400
+        assert err.body["code"] == "content_filter"
+        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in err.body["message"]
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_temperature(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_temperature(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -150,8 +171,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_top_p(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_top_p(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -173,8 +197,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_n(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_n(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="hello world",
@@ -196,8 +223,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_logprobs(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_logprobs(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -223,8 +253,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_echo(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_echo(self, client_async, api_type, api_version, **kwargs):
 
         prompt = "How do I bake a chocolate cake?"
         completion = await client_async.completions.create(
@@ -247,8 +280,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_stop(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_stop(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -269,8 +305,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_token_penalty(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_token_penalty(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -293,8 +332,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_best_of(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_best_of(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -317,8 +359,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_user(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_user(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="How do I bake a chocolate cake?",
@@ -340,8 +385,11 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_completion_logit_bias(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    )
+    async def test_completion_logit_bias(self, client_async, api_type, api_version, **kwargs):
 
         completion = await client_async.completions.create(
             prompt="What color is the ocean?",
@@ -363,8 +411,8 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_completion_rai_annotations(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
+    async def test_completion_rai_annotations(self, client_async, api_type, api_version, **kwargs):
 
         # prompt filtered
         with pytest.raises(openai.BadRequestError) as e:
@@ -372,9 +420,15 @@ class TestCompletionsAsync(AzureRecordedTestCase):
                 prompt="how do I rob a bank with violence?",
                 **kwargs
             )
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        content_filter_result = err["error"]["innererror"]["content_filter_result"]
+        e = e.value
+        assert e.code == "content_filter"
+        assert e.message is not None
+        assert e.status_code == 400
+        err = e.body
+        assert err["code"] == "content_filter"
+        assert err["param"] == "prompt"
+        assert err["message"] is not None
+        content_filter_result = err["innererror"]["content_filter_result"]
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
@@ -389,12 +443,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             prompt="What color is the ocean?",
             **kwargs
         )
-        # prompt content filter result in "model_extra" for azure
-        try:
-            prompt_filter_result = completion.model_extra["prompt_annotations"][0]["content_filter_results"]
-        except:
-            prompt_filter_result = completion.model_extra["prompt_filter_results"][0]["content_filter_results"]
-
+        prompt_filter_result = completion.prompt_filter_results[0]["content_filter_results"]
         assert prompt_filter_result["hate"]["filtered"] is False
         assert prompt_filter_result["hate"]["severity"] == "safe"
         assert prompt_filter_result["self_harm"]["filtered"] is False
@@ -405,7 +454,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert prompt_filter_result["violence"]["severity"] == "safe"
 
         # output content filter result
-        output_filter_result = completion.choices[0].model_extra["content_filter_results"]
+        output_filter_result = completion.choices[0].content_filter_results
         assert output_filter_result["hate"]["filtered"] is False
         assert output_filter_result["hate"]["severity"] == "safe"
         assert output_filter_result["self_harm"]["filtered"] is False

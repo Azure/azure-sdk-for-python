@@ -49,6 +49,8 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -58,6 +60,7 @@ setup(
         'azure',
         'azure.communication'
     ]),
+    python_requires=">=3.8",
     python_requires=">=3.8",
     include_package_data=True,
     package_data={
