@@ -19,7 +19,7 @@ from unittest.mock import patch
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry._utils.configurations import (
     SAMPLING_RATIO_ENV_VAR,
     _get_configurations,
 )
@@ -38,9 +38,9 @@ TEST_DEFAULT_RESOURCE = Resource({
 })
 
 
-class TestUtil(TestCase):
+class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
@@ -160,7 +160,7 @@ class TestUtil(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     def test_merge_instrumentation_options_conflict(self, resource_create_mock):
         configurations = _get_configurations(
             instrumentation_options = {
@@ -186,7 +186,7 @@ class TestUtil(TestCase):
         })
 
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
         configurations = _get_configurations(
