@@ -54,8 +54,8 @@ class TableClient(AsyncTablesBaseClient):
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
         AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
     :vartype credential:
-        ~azure.core.credentials.AzureNamedKeyCredential or
-        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.AzureNamedKeyCredential or \
+        ~azure.core.credentials.AzureSasCredential or \
         ~azure.core.credentials_async.AsyncTokenCredential or None
     """
 
@@ -77,8 +77,8 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
         AzureSasCredential (azure-core), or an AsyncTokenCredential implementation from azure-identity.
         :paramtype credential:
-            ~azure.core.credentials.AzureNamedKeyCredential or
-            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.AzureNamedKeyCredential or \
+            ~azure.core.credentials.AzureSasCredential or \
             ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
@@ -126,7 +126,7 @@ class TableClient(AsyncTablesBaseClient):
             The credentials with which to authenticate. This is optional if the
             table URL already has a SAS token.
         :paramtype credential:
-            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureNamedKeyCredential or \
             ~azure.core.credentials.AzureSasCredential or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
@@ -225,8 +225,8 @@ class TableClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START create_table]
-                :end-before: [END create_table]
+                :start-after: [START create_table_from_table_client]
+                :end-before: [END create_table_from_table_client]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table from the TableClient object.
