@@ -142,9 +142,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(
-        ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
         self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
@@ -209,9 +207,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                     ).result()
 
                     if not result:
-                        model_rest_obj = self._get(
-                            name=str(model.name), version=model.version
-                        )
+                        model_rest_obj = self._get(name=str(model.name), version=model.version)
                         return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -220,9 +216,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                     version=model.version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(
-                        self._registry_name, "models", model.name, model.version
-                    ),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
 
             model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
@@ -274,9 +268,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             model = Model._from_rest_object(result)
             if auto_increment_version and indicator_file:
                 datastore_info = _get_default_datastore_info(self._datastore_operation)
-                _update_metadata(
-                    model.name, model.version, indicator_file, datastore_info
-                )  # update version in storage
+                _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
 
             return model
         except Exception as ex:  # pylint: disable=broad-except
@@ -285,9 +277,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(
-        self, name: str, version: Optional[str] = None
-    ) -> ModelVersion:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -306,9 +296,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             )
 
         return (
-            self._model_container_operation.get(
-                name=name, registry_name=self._registry_name, **self._scope_kwargs
-            )
+            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
             if self._registry_name
             else self._model_container_operation.get(
                 name=name, workspace_name=self._workspace_name, **self._scope_kwargs
@@ -316,9 +304,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
-    def get(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None
-    ) -> Model:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -368,9 +354,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         return model
 
     @monitor_with_activity(ops_logger, "Evaluator.Download", ActivityType.PUBLICAPI)
-    def download(
-        self, name: str, version: str, download_path: Union[PathLike, str] = "."
-    ) -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
         :param name: Name of the model.
@@ -384,9 +368,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         """
 
         model_uri = self.get(name=name, version=version).path
-        ds_name, path_prefix = get_ds_name_and_path_prefix(
-            model_uri, self._registry_name
-        )
+        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
@@ -398,9 +380,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                 uri=model_uri,
             )
             if auth_type == "SAS":
-                storage_client = get_storage_client(
-                    credential=None, storage_account=None, account_url=sas_uri
-                )
+                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
             else:
                 parts = sas_uri.split("/")
                 storage_account = parts[2].split(".")[0]
@@ -569,29 +549,26 @@ class EvaluatorOperations(_ScopeDependentOperations):
                     )
                 ),
             )
-        else:
-            # ModelContainer object does not carry properties.
-            raise UnsupportedOperationError(
-                "list on evaluation operations without name provided"
-            )
-            # TODO: Implement filtering of the ModelContainerOperations list output
-            # return cast(
-            #     Iterable[Model], (
-            #         self._model_container_operation.list(
-            #             registry_name=self._registry_name,
-            #             cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-            #             list_view_type=list_view_type,
-            #             **self._scope_kwargs,
-            #         )
-            #         if self._registry_name
-            #         else self._model_container_operation.list(
-            #             workspace_name=self._workspace_name,
-            #             cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-            #             list_view_type=list_view_type,
-            #             **self._scope_kwargs,
-            #         )
-            #     )
-            # )
+        # ModelContainer object does not carry properties.
+        raise UnsupportedOperationError("list on evaluation operations without name provided")
+        # TODO: Implement filtering of the ModelContainerOperations list output
+        # return cast(
+        #     Iterable[Model], (
+        #         self._model_container_operation.list(
+        #             registry_name=self._registry_name,
+        #             cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+        #             list_view_type=list_view_type,
+        #             **self._scope_kwargs,
+        #         )
+        #         if self._registry_name
+        #         else self._model_container_operation.list(
+        #             workspace_name=self._workspace_name,
+        #             cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+        #             list_view_type=list_view_type,
+        #             **self._scope_kwargs,
+        #         )
+        #     )
+        # )
 
     @monitor_with_activity(ops_logger, "Evaluator.Share", ActivityType.PUBLICAPI)
     @experimental
@@ -676,9 +653,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub = get_registry_client(
-                self._service_client._config.credential, registry_name
-            )
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
@@ -694,9 +669,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(ops_logger, "Model.Package", ActivityType.PUBLICAPI)
-    def package(
-        self, name: str, version: str, package_request: ModelPackage, **kwargs: Any
-    ) -> Environment:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs: Any) -> Environment:
         """Package a model asset
 
         :param name: Name of model asset.
@@ -719,20 +692,13 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
             # Create a code asset if code is not already an ARM ID
             if hasattr(package_request.inferencing_server, "code_configuration"):
-                if (
-                    package_request.inferencing_server.code_configuration
-                    and not is_ARM_id_for_resource(
-                        package_request.inferencing_server.code_configuration.code,
-                        AzureMLResourceType.CODE,
-                    )
+                if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
+                    package_request.inferencing_server.code_configuration.code,
+                    AzureMLResourceType.CODE,
                 ):
-                    if package_request.inferencing_server.code_configuration.code.startswith(
-                        ARM_ID_PREFIX
-                    ):
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
                         package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            package_request.inferencing_server.code_configuration.code[
-                                len(ARM_ID_PREFIX) :
-                            ],
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
                             azureml_type=AzureMLResourceType.CODE,
                         )
                     else:
@@ -747,36 +713,26 @@ class EvaluatorOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration, "code"
                 ):
                     package_request.inferencing_server.code_configuration.code = (
-                        "azureml:/"
-                        + package_request.inferencing_server.code_configuration.code
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code
                     )
 
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
-                if not package_request.base_environment_source.resource_id.startswith(
-                    REGISTRY_URI_FORMAT
-                ):
-                    package_request.base_environment_source.resource_id = (
-                        orchestrators.get_asset_arm_id(
-                            package_request.base_environment_source.resource_id,
-                            azureml_type=AzureMLResourceType.ENVIRONMENT,
-                        )
+                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):
+                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                        package_request.base_environment_source.resource_id,
+                        azureml_type=AzureMLResourceType.ENVIRONMENT,
                     )
 
                 package_request.base_environment_source.resource_id = (
                     "azureml:/" + package_request.base_environment_source.resource_id
-                    if not package_request.base_environment_source.resource_id.startswith(
-                        ARM_ID_PREFIX
-                    )
+                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)
                     else package_request.base_environment_source.resource_id
                 )
 
             # create ARM id for the target environment
-            if (
-                self._operation_scope._workspace_location
-                and self._operation_scope._workspace_id
-            ):
+            if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
                 package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
             else:
                 if self._all_operations is not None:
@@ -790,8 +746,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
 
             if package_request.environment_version is not None:
                 package_request.target_environment_id = (
-                    package_request.target_environment_id
-                    + f"/versions/{package_request.environment_version}"
+                    package_request.target_environment_id + f"/versions/{package_request.environment_version}"
                 )
             package_request = package_request._to_rest_object()
 
@@ -801,11 +756,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             self._model_versions_operation.begin_package(
                 name=name,
                 version=version,
-                registry_name=(
-                    self._registry_name
-                    if self._registry_name
-                    else self._registry_reference
-                ),
+                registry_name=(self._registry_name if self._registry_name else self._registry_reference),
                 body=package_request,
                 **self._scope_kwargs,
             ).result()
@@ -818,9 +769,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             ).result()
         )
-        if (
-            is_deployment_flow
-        ):  # No need to go through the schema, as this is for deployment notification only
+        if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
         if hasattr(package_out, "target_environment_id"):
             environment_id = package_out.target_environment_id
@@ -839,10 +788,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
-        if (
-            package_out is not None
-            and package_out.__class__.__name__ == "PackageResponse"
-        ):
+        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
             if self._registry_name:
                 current_rg = self._scope_kwargs.pop("resource_group_name", None)
                 self._scope_kwargs["resource_group_name"] = self._workspace_rg
@@ -857,11 +803,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
                 self._scope_kwargs["resource_group_name"] = current_rg
             else:
                 if self._all_operations is not None:
-                    environment_operation = self._all_operations.all_operations[
-                        AzureMLResourceType.ENVIRONMENT
-                    ]
-                    package_out = environment_operation.get(
-                        name=environment_name, version=environment_version
-                    )
+                    environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+                    package_out = environment_operation.get(name=environment_name, version=environment_version)
 
         return package_out

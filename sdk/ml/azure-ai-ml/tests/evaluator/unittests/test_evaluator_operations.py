@@ -117,9 +117,7 @@ class TestModelOperations:
                 blob_uri=None,
             )
         mock_eval_operation._model_versions_operation.create_or_update.assert_called_once()
-        assert "version='42'" in str(
-            mock_eval_operation._model_versions_operation.create_or_update.call_args
-        )
+        assert "version='42'" in str(mock_eval_operation._model_versions_operation.create_or_update.call_args)
 
     def test_create_autoincrement(
         self,
@@ -131,10 +129,7 @@ class TestModelOperations:
         assert model._auto_increment_version
         model.version = None
 
-        with patch(
-            "azure.ai.ml.operations._evaluator_operations.Model._from_rest_object",
-            return_value=None,
-        ), patch(
+        with patch("azure.ai.ml.operations._evaluator_operations.Model._from_rest_object", return_value=None,), patch(
             "azure.ai.ml.operations._evaluator_operations._get_next_version_from_container",
             return_value="version",
         ) as mock_nextver, patch(
@@ -158,9 +153,7 @@ class TestModelOperations:
                 workspace_name=mock_workspace_scope.workspace_name,
             )
 
-    def test_get_name_and_version(
-        self, mock_eval_operation: EvaluatorOperations
-    ) -> None:
+    def test_get_name_and_version(self, mock_eval_operation: EvaluatorOperations) -> None:
         mock_eval_operation._model_container_operation.get.return_value = None
         with patch(
             "azure.ai.ml.operations._evaluator_operations.Model._from_rest_object",
@@ -178,19 +171,13 @@ class TestModelOperations:
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())
     def test_list(self, mock_eval_operation: EvaluatorOperations) -> None:
-        mock_eval_operation._model_versions_operation.list.return_value = [
-            Mock(Model) for _ in range(10)
-        ]
-        mock_eval_operation._model_container_operation.list.return_value = [
-            Mock(Model) for _ in range(10)
-        ]
+        mock_eval_operation._model_versions_operation.list.return_value = [Mock(Model) for _ in range(10)]
+        mock_eval_operation._model_container_operation.list.return_value = [Mock(Model) for _ in range(10)]
 
         mock_eval_operation.list(name="random_string")
         mock_eval_operation._model_versions_operation.list.assert_called_once()
 
-    def test_list_with_no_name_raises(
-        self, mock_eval_operation: EvaluatorOperations
-    ) -> None:
+    def test_list_with_no_name_raises(self, mock_eval_operation: EvaluatorOperations) -> None:
         """Test that listing evaluators without values raises an unsupported exception."""
         with pytest.raises(UnsupportedOperationError) as cm:
             mock_eval_operation.list(None)
@@ -216,12 +203,8 @@ class TestModelOperations:
 
     def test_archive_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
-        model_container = Mock(
-            ModelContainerData(properties=Mock(ModelContainerDetails()))
-        )
-        mock_eval_operation._model_container_operation.get.return_value = (
-            model_container
-        )
+        model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
+        mock_eval_operation._model_container_operation.get.return_value = model_container
         mock_eval_operation.archive(name=name)
         mock_eval_operation._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
@@ -250,12 +233,8 @@ class TestModelOperations:
 
     def test_restore_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
-        model_container = Mock(
-            ModelContainerData(properties=Mock(ModelContainerDetails()))
-        )
-        mock_eval_operation._model_container_operation.get.return_value = (
-            model_container
-        )
+        model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
+        mock_eval_operation._model_container_operation.get.return_value = model_container
         mock_eval_operation.restore(name=name)
         mock_eval_operation._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
@@ -284,9 +263,7 @@ class TestModelOperations:
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=Model(),
         ):
-            model = _load_flow(
-                eval_name, version="3", datastore="workspaceartifactstore"
-            )
+            model = _load_flow(eval_name, version="3", datastore="workspaceartifactstore")
             path = Path(model._base_path, model.path).resolve()
             mock_eval_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -340,6 +317,4 @@ class TestModelOperations:
         ):
             with pytest.raises(ResourceNotFoundError) as cm:
                 mock_eval_operation.get(name="random_string", version="1")
-            assert (
-                f"Evaluator random_string with version 1 not found." in cm.value.args[0]
-            )
+            assert f"Evaluator random_string with version 1 not found." in cm.value.args[0]

@@ -76,9 +76,7 @@ class TestModel(AzureRecordedTestCase):
         # test_model = next(iter(models), None)
         # assert isinstance(test_model, Model)
 
-    def test_crud_model_with_stage(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_crud_model_with_stage(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = randstr("model_prod_name")
         model = _load_flow(model_name, stage="Production", version="3")
 
@@ -100,18 +98,14 @@ class TestModel(AzureRecordedTestCase):
         model_stage_list = [m.stage for m in model_list if m is not None]
         assert model.stage in model_stage_list
 
-    def test_models_get_latest_label(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_models_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
         for version in ["1", "2", "3", "4"]:
             model = _load_flow(model_name, version=version)
             client.evaluators.create_or_update(model)
             assert client.evaluators.get(model_name, label="latest").version == version
 
-    def test_model_archive_restore_version(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_model_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
 
         versions = ["1", "2"]
@@ -123,9 +117,7 @@ class TestModel(AzureRecordedTestCase):
         def get_model_list():
             # Wait for list index to update before calling list command
             sleep_if_live(30)
-            model_list = client.evaluators.list(
-                name=model_name, list_view_type=ListViewType.ACTIVE_ONLY
-            )
+            model_list = client.evaluators.list(name=model_name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 
         assert version_archived in get_model_list()
@@ -134,12 +126,8 @@ class TestModel(AzureRecordedTestCase):
         client.evaluators.restore(name=model_name, version=version_archived)
         assert version_archived in get_model_list()
 
-    @pytest.mark.skip(
-        reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out."
-    )
-    def test_model_archive_restore_container(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
+    def test_model_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
         version = "1"
         model = _load_flow(model_name, version=version)
@@ -162,9 +150,7 @@ class TestModel(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Registry uploads do not record well. Investigate later",
     )
-    def test_create_get_download_model_registry(
-        self, registry_client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = randstr("model_name")
         model_version = "2"
 
@@ -175,18 +161,14 @@ class TestModel(AzureRecordedTestCase):
         assert model.description == "This is evaluator."
         assert model.type == "custom_model"
 
-        model_get = registry_client.evaluators.get(
-            name=model_name, version=model_version
-        )
+        model_get = registry_client.evaluators.get(name=model_name, version=model_version)
         assert model == model_get
         assert model_get.name == model_name
         assert model_get.version == model_version
         assert model_get.description == "This is evaluator."
         assert model_get.type == "custom_model"
 
-        registry_client.evaluators.download(
-            name=model_name, version=model_version, download_path="downloaded"
-        )
+        registry_client.evaluators.download(name=model_name, version=model_version, download_path="downloaded")
         wd = os.path.join(os.getcwd(), f"downloaded/{model_name}")
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/basic/flow.dag.yaml")
@@ -227,11 +209,5 @@ class TestModel(AzureRecordedTestCase):
         # we expect only evaluator to be returned
         model_list = list(ml_cli.evaluators.list(model_name))
         assert len(model_list) == 1
-        assert (
-            "is-promptflow" in model_list[0].properties
-            and model_list[0].properties["is-promptflow"] == "true"
-        )
-        assert (
-            "is-evaluator" in model_list[0].properties
-            and model_list[0].properties["is-evaluator"] == "true"
-        )
+        assert "is-promptflow" in model_list[0].properties and model_list[0].properties["is-promptflow"] == "true"
+        assert "is-evaluator" in model_list[0].properties and model_list[0].properties["is-evaluator"] == "true"
