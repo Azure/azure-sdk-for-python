@@ -50,7 +50,9 @@ from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import DataOperations, EnvironmentOperations, FeatureSetOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        DataOperations, EnvironmentOperations, FeatureSetOperations, ModelOperations,
+        EvaluatorOperations)
     from azure.ai.ml.operations._code_operations import CodeOperations
 
 module_logger = logging.getLogger(__name__)
@@ -454,7 +456,8 @@ T = TypeVar("T", bound=Artifact)
 
 def _check_and_upload_path(
     artifact: T,
-    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "FeatureSetOperations"],
+    asset_operations: Union["DataOperations", "ModelOperations", "EvaluatorOperations",
+                            "CodeOperations", "FeatureSetOperations"],
     artifact_type: str,
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,
