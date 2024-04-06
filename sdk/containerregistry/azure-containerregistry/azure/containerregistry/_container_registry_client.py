@@ -9,8 +9,6 @@ import hashlib
 import json
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping, TYPE_CHECKING
-if TYPE_CHECKING:
-    from ._generated.models import ArtifactManifestOrder, ArtifactTagOrder
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
@@ -49,6 +47,8 @@ from ._models import (
     DigestValidationError,
 )
 
+if TYPE_CHECKING:
+    from ._generated.models import ArtifactManifestOrder, ArtifactTagOrder
 JSON = MutableMapping[str, Any]
 
 
