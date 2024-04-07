@@ -28,20 +28,20 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._diagnostics_operations import build_create_request, build_get_request
+from ...operations._simplified_solutions_operations import build_create_request, build_get_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DiagnosticsOperations:
+class SimplifiedSolutionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.selfhelp.aio.SelfHelpMgmtClient`'s
-        :attr:`diagnostics` attribute.
+        :attr:`simplified_solutions` attribute.
     """
 
     models = _models
@@ -56,10 +56,10 @@ class DiagnosticsOperations:
     async def _create_initial(
         self,
         scope: str,
-        diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
+        simplified_solutions_resource_name: str,
+        simplified_solutions_request_body: Optional[Union[_models.SimplifiedSolutionsResource, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> _models.DiagnosticResource:
+    ) -> _models.SimplifiedSolutionsResource:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -73,22 +73,22 @@ class DiagnosticsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DiagnosticResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SimplifiedSolutionsResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(diagnostic_resource_request, (IOBase, bytes)):
-            _content = diagnostic_resource_request
+        if isinstance(simplified_solutions_request_body, (IOBase, bytes)):
+            _content = simplified_solutions_request_body
         else:
-            if diagnostic_resource_request is not None:
-                _json = self._serialize.body(diagnostic_resource_request, "DiagnosticResource")
+            if simplified_solutions_request_body is not None:
+                _json = self._serialize.body(simplified_solutions_request_body, "SimplifiedSolutionsResource")
             else:
                 _json = None
 
         _request = build_create_request(
             scope=scope,
-            diagnostics_resource_name=diagnostics_resource_name,
+            simplified_solutions_resource_name=simplified_solutions_resource_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -112,10 +112,10 @@ class DiagnosticsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("DiagnosticResource", pipeline_response)
+            deserialized = self._deserialize("SimplifiedSolutionsResource", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("DiagnosticResource", pipeline_response)
+            deserialized = self._deserialize("SimplifiedSolutionsResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -126,32 +126,36 @@ class DiagnosticsOperations:
     async def begin_create(
         self,
         scope: str,
-        diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[_models.DiagnosticResource] = None,
+        simplified_solutions_resource_name: str,
+        simplified_solutions_request_body: Optional[_models.SimplifiedSolutionsResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
-        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
-        data and provide the root cause of the issue and the steps to address the
-        issue.:code:`<br/>`:code:`<br/>`.
+    ) -> AsyncLROPoller[_models.SimplifiedSolutionsResource]:
+        """Creates Simplified Solutions for an Azure subscription using 'solutionId' from Discovery
+        Solutions as the input. :code:`<br/>`:code:`<br/>` Simplified Solutions API makes the
+        consumption of solutions APIs easier while still providing access to the same powerful
+        solutions rendered in Solutions API. With Simplified Solutions, users don't have to worry about
+        stitching together the article using replacement maps and can use the content in the API
+        response to directly render as HTML content.:code:`<br/>`.
 
         :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
          /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
          Required.
         :type scope: str
-        :param diagnostics_resource_name: Unique resource name for insight resources. Required.
-        :type diagnostics_resource_name: str
-        :param diagnostic_resource_request: The required request body for this insightResource
-         invocation. Default value is None.
-        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource
+        :param simplified_solutions_resource_name: Simplified Solutions Resource Name. Required.
+        :type simplified_solutions_resource_name: str
+        :param simplified_solutions_request_body: The required request body for simplified Solutions
+         resource creation. Default value is None.
+        :type simplified_solutions_request_body:
+         ~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
+        :return: An instance of AsyncLROPoller that returns either SimplifiedSolutionsResource or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -159,32 +163,35 @@ class DiagnosticsOperations:
     async def begin_create(
         self,
         scope: str,
-        diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[IO[bytes]] = None,
+        simplified_solutions_resource_name: str,
+        simplified_solutions_request_body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
-        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
-        data and provide the root cause of the issue and the steps to address the
-        issue.:code:`<br/>`:code:`<br/>`.
+    ) -> AsyncLROPoller[_models.SimplifiedSolutionsResource]:
+        """Creates Simplified Solutions for an Azure subscription using 'solutionId' from Discovery
+        Solutions as the input. :code:`<br/>`:code:`<br/>` Simplified Solutions API makes the
+        consumption of solutions APIs easier while still providing access to the same powerful
+        solutions rendered in Solutions API. With Simplified Solutions, users don't have to worry about
+        stitching together the article using replacement maps and can use the content in the API
+        response to directly render as HTML content.:code:`<br/>`.
 
         :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
          /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
          Required.
         :type scope: str
-        :param diagnostics_resource_name: Unique resource name for insight resources. Required.
-        :type diagnostics_resource_name: str
-        :param diagnostic_resource_request: The required request body for this insightResource
-         invocation. Default value is None.
-        :type diagnostic_resource_request: IO[bytes]
+        :param simplified_solutions_resource_name: Simplified Solutions Resource Name. Required.
+        :type simplified_solutions_resource_name: str
+        :param simplified_solutions_request_body: The required request body for simplified Solutions
+         resource creation. Default value is None.
+        :type simplified_solutions_request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
+        :return: An instance of AsyncLROPoller that returns either SimplifiedSolutionsResource or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -192,27 +199,32 @@ class DiagnosticsOperations:
     async def begin_create(
         self,
         scope: str,
-        diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
+        simplified_solutions_resource_name: str,
+        simplified_solutions_request_body: Optional[Union[_models.SimplifiedSolutionsResource, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
-        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
-        data and provide the root cause of the issue and the steps to address the
-        issue.:code:`<br/>`:code:`<br/>`.
+    ) -> AsyncLROPoller[_models.SimplifiedSolutionsResource]:
+        """Creates Simplified Solutions for an Azure subscription using 'solutionId' from Discovery
+        Solutions as the input. :code:`<br/>`:code:`<br/>` Simplified Solutions API makes the
+        consumption of solutions APIs easier while still providing access to the same powerful
+        solutions rendered in Solutions API. With Simplified Solutions, users don't have to worry about
+        stitching together the article using replacement maps and can use the content in the API
+        response to directly render as HTML content.:code:`<br/>`.
 
         :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
          /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
          Required.
         :type scope: str
-        :param diagnostics_resource_name: Unique resource name for insight resources. Required.
-        :type diagnostics_resource_name: str
-        :param diagnostic_resource_request: The required request body for this insightResource
-         invocation. Is either a DiagnosticResource type or a IO[bytes] type. Default value is None.
-        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
+        :param simplified_solutions_resource_name: Simplified Solutions Resource Name. Required.
+        :type simplified_solutions_resource_name: str
+        :param simplified_solutions_request_body: The required request body for simplified Solutions
+         resource creation. Is either a SimplifiedSolutionsResource type or a IO[bytes] type. Default
+         value is None.
+        :type simplified_solutions_request_body:
+         ~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either SimplifiedSolutionsResource or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -220,15 +232,15 @@ class DiagnosticsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DiagnosticResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SimplifiedSolutionsResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_initial(
                 scope=scope,
-                diagnostics_resource_name=diagnostics_resource_name,
-                diagnostic_resource_request=diagnostic_resource_request,
+                simplified_solutions_resource_name=simplified_solutions_resource_name,
+                simplified_solutions_request_body=simplified_solutions_request_body,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -239,7 +251,7 @@ class DiagnosticsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DiagnosticResource", pipeline_response)
+            deserialized = self._deserialize("SimplifiedSolutionsResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -254,29 +266,31 @@ class DiagnosticsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.DiagnosticResource].from_continuation_token(
+            return AsyncLROPoller[_models.SimplifiedSolutionsResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.DiagnosticResource](
+        return AsyncLROPoller[_models.SimplifiedSolutionsResource](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace_async
-    async def get(self, scope: str, diagnostics_resource_name: str, **kwargs: Any) -> _models.DiagnosticResource:
-        """Get the diagnostics using the 'diagnosticsResourceName' you chose while creating the
-        diagnostic.
+    async def get(
+        self, scope: str, simplified_solutions_resource_name: str, **kwargs: Any
+    ) -> _models.SimplifiedSolutionsResource:
+        """Get the simplified Solutions using the applicable solutionResourceName while creating the
+        simplified Solutions.
 
         :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
          /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
          Required.
         :type scope: str
-        :param diagnostics_resource_name: Unique resource name for insight resources. Required.
-        :type diagnostics_resource_name: str
-        :return: DiagnosticResource or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.DiagnosticResource
+        :param simplified_solutions_resource_name: Simplified Solutions Resource Name. Required.
+        :type simplified_solutions_resource_name: str
+        :return: SimplifiedSolutionsResource or the result of cls(response)
+        :rtype: ~azure.mgmt.selfhelp.models.SimplifiedSolutionsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -291,11 +305,11 @@ class DiagnosticsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DiagnosticResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SimplifiedSolutionsResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             scope=scope,
-            diagnostics_resource_name=diagnostics_resource_name,
+            simplified_solutions_resource_name=simplified_solutions_resource_name,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -315,7 +329,7 @@ class DiagnosticsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DiagnosticResource", pipeline_response)
+        deserialized = self._deserialize("SimplifiedSolutionsResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
