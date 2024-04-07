@@ -128,7 +128,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: JSON, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, message: Union[str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -269,7 +269,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: JSON, *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, user_id: str, message: Union[str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -412,7 +412,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     def send_to_group(  # pylint: disable=inconsistent-return-statements
         self,
         group: str,
-        message: JSON,
+        message: Union[str, JSON],
         *,
         excluded: Optional[List[str]] = None,
         filter: Optional[str] = None,
@@ -592,7 +592,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         
     @overload
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: JSON, *, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, connection_id: str, message: Union[str, JSON], *, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
