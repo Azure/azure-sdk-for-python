@@ -15,7 +15,7 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hdinsightcontainers
 # USAGE
-    python get_operations.py
+    python list_cluster_available_upgrades.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,15 @@ def main():
         subscription_id="10e32bab-26da-4cc4-a441-52b318f824e6",
     )
 
-    response = client.operations.list()
+    response = client.cluster_available_upgrades.list(
+        resource_group_name="hiloResourcegroup",
+        cluster_pool_name="clusterpool1",
+        cluster_name="cluster1",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/GetOperations.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/ListClusterAvailableUpgrades.json
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
@@ -15,7 +17,7 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hdinsightcontainers
 # USAGE
-    python get_operations.py
+    python upgrade_node_os_for_cluster_pool.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +32,14 @@ def main():
         subscription_id="10e32bab-26da-4cc4-a441-52b318f824e6",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.cluster_pools.begin_upgrade(
+        resource_group_name="hiloResourcegroup",
+        cluster_pool_name="clusterpool1",
+        cluster_pool_upgrade_request={"properties": {"upgradeType": "NodeOsUpgrade"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/GetOperations.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/UpgradeNodeOsForClusterPool.json
 if __name__ == "__main__":
     main()
