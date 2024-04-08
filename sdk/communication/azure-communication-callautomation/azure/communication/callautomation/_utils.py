@@ -11,6 +11,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsAppIdentifier,
     UnknownIdentifier,
     CommunicationIdentifierKind
 )
@@ -193,6 +194,12 @@ def deserialize_identifier(
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
             cloud=identifier_model.microsoft_teams_user.cloud
+        )
+    if identifier_model.microsoft_teams_app:
+        return MicrosoftTeamsAppIdentifier(
+            app_id=identifier_model.microsoft_teams_app.app_id,
+            raw_id=raw_id,
+            cloud=identifier_model.microsoft_teams_app.cloud
         )
     return UnknownIdentifier(raw_id)
 
