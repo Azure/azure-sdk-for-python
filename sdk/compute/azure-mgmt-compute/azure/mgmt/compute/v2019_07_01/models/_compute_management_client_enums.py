@@ -75,20 +75,17 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disk will be attached to a VM."""
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference."""
-    IMPORT = "Import"
+    IMPORT_ENUM = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    by storageAccountId."""
     COPY = "Copy"
     """Create a new disk or snapshot by copying from a disk or snapshot specified by the given
-    #: sourceResourceId."""
+    sourceResourceId."""
     RESTORE = "Restore"
     """Create a new disk by copying from a backup recovery point."""
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
-    #: the disk."""
-    IMPORT_ENUM = "Import"
-    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    the disk."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -137,10 +134,10 @@ class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium SSD locally redundant storage. Best for production and performance sensitive workloads."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     """Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
-    #: applications and dev/test."""
+    applications and dev/test."""
     ULTRA_SSD_LRS = "UltraSSD_LRS"
     """Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier
-    #: databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
+    databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
 
 
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

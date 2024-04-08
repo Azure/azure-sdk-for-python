@@ -5,6 +5,7 @@
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- Added support for service version 2024-05-04.
 - The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
 tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 
@@ -15,6 +16,7 @@ Python 3.12.
 using async OAuth credentials.
 - Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
 - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
+- Fixed a couple of issues with `upload_blob` when using Iterators/Generators as the data input.
 
 ### Other Changes
 - Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:

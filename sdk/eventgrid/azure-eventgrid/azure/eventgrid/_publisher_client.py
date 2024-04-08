@@ -44,6 +44,7 @@ from ._generated import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
 )
 from ._policies import CloudEventDistributedTracingPolicy
+from ._constants import DEFAULT_API_VERSION
 from ._version import VERSION
 
 if TYPE_CHECKING:
@@ -79,6 +80,9 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
      implements SAS key authentication or SAS token authentication or a TokenCredential.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Will default to the most recent Api Version. Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :rtype: None
 
     .. admonition:: Example:
@@ -98,12 +102,19 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
+    def __init__(
+            self,
+            endpoint: str,
+            credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
+            *,
+            api_version: Optional[str] = None,
+            **kwargs: Any
+        ) -> None:
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
 
     @staticmethod
     def _policies(credential, **kwargs):
@@ -221,7 +232,9 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
+            _build_request(
+                self._endpoint,content_type, events, channel_name=channel_name, api_version=self._api_version),
+                **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:

@@ -44,7 +44,12 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
+    _DISTRO_DETECTS_ATTACH,
+    AzureDiagnosticLogging,
+)
+from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
 )
@@ -75,6 +80,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
     """
+
+    _send_attach_warning()
 
     configurations = _get_configurations(**kwargs)
 
@@ -177,3 +184,11 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 lib_name,
                 exc_info=ex,
             )
+
+
+def _send_attach_warning():
+    if _is_attach_enabled():
+        AzureDiagnosticLogging.warning(
+            "Distro detected that automatic attach may have occurred. Check your data to ensure "
+            "that telemetry is not being duplicated. This may impact your cost.",
+            _DISTRO_DETECTS_ATTACH)

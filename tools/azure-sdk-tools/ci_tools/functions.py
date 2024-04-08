@@ -154,7 +154,7 @@ def generate_difference(original_packages: List[str], filtered_packages: List[st
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
-        individual_globs = glob_string.split(",")
+        individual_globs = [glob_string.strip() for glob_string in glob_string.split(",")]
     else:
         individual_globs = "azure-*"
     collected_top_level_directories = []
@@ -558,8 +558,8 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
     whls = [os.path.relpath(w, whl_dir) for w in whls]
 
     if not whls:
-        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
-        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        logging.info(f"No whl is found in directory {whl_dir} with package name format {pkg_name_format}")
+        logging.info(f"List of whls in directory: {glob.glob(os.path.join(whl_dir, '*.whl'))}")
         return
 
     compatible_tags = get_interpreter_compatible_tags()

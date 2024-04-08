@@ -797,3 +797,4 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     async def close(self) -> None:
         await self._client.__aexit__()
+        

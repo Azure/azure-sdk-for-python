@@ -6,7 +6,7 @@
 """
 Asynchronous streaming tests.
 
-Test naming convention: test_{1}_{2}
+Test naming convention for streaming response tests: test_{1}_{2}
 
 1:
 compress or decompress. Refers to the stream that is returned from the testserver / streams.py
@@ -294,3 +294,35 @@ async def test_decompress_compressed_header_offline(port, transport):
         data = response.iter_bytes()
         decoded = b"".join([d async for d in data]).decode("utf-8")
         assert decoded == "test"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_streaming_request_iterable(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    class Content:
+        async def __aiter__(self):
+            yield b"test 123"
+
+    client = AsyncPipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=Content())
+    response = await client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_streaming_request_generator(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    async def content():
+        yield b"test 123"
+        yield b"test 456"
+
+    client = AsyncPipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=content())
+    response = await client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123test 456"
