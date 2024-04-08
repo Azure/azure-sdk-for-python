@@ -378,75 +378,18 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    async def acknowledge_cloud_events(
+    async def _acknowledge_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: _models.AcknowledgeOptions,
+        acknowledge_options: _models._models.AcknowledgeOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
-        information. Successfully acknowledged events will no longer be available to any consumer.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Required.
-        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.AcknowledgeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                acknowledge_options = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
-    async def acknowledge_cloud_events(
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -455,59 +398,9 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
-        information. Successfully acknowledged events will no longer be available to any consumer.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Required.
-        :type acknowledge_options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.AcknowledgeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
-    async def acknowledge_cloud_events(
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -516,64 +409,14 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        acknowledged lockTokens, along with other failed lockTokens with their corresponding error
-        information. Successfully acknowledged events will no longer be available to any consumer.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param acknowledge_options: AcknowledgeOptions. Required.
-        :type acknowledge_options: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.AcknowledgeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
 
     @distributed_trace_async
-    async def acknowledge_cloud_events(
+    async def _acknowledge_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO[bytes]],
+        acknowledge_options: Union[_models._models.AcknowledgeOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -698,82 +541,23 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
-    )
-    async def release_cloud_events(
+    )  # pylint: disable=protected-access
+    async def _release_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: _models.ReleaseOptions,
+        release_options: _models._models.ReleaseOptions,
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully released
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param release_options: ReleaseOptions. Required.
-        :type release_options: ~azure.eventgrid.models.ReleaseOptions
-        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
-         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.ReleaseResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                release_options = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully released cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
     )
-    async def release_cloud_events(
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -783,64 +567,12 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully released
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param release_options: ReleaseOptions. Required.
-        :type release_options: JSON
-        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
-         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.ReleaseResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully released cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
     )
-    async def release_cloud_events(
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -850,69 +582,17 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully released
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param release_options: ReleaseOptions. Required.
-        :type release_options: IO[bytes]
-        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
-         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.ReleaseResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully released cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
 
     @distributed_trace_async
     @api_version_validation(
         params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
     )
-    async def release_cloud_events(
+    async def _release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: Union[_models.ReleaseOptions, JSON, IO[bytes]],
+        release_options: Union[_models._models.ReleaseOptions, JSON, IO[bytes]],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
@@ -1040,74 +720,18 @@ class EventGridClientOperationsMixin(
 
 
     @overload
-    async def reject_cloud_events(
+    async def _reject_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: _models.RejectOptions,
+        reject_options: _models._models.RejectOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully rejected
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param reject_options: RejectOptions. Required.
-        :type reject_options: ~azure.eventgrid.models.RejectOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RejectResult. The RejectResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.RejectResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                reject_options = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully rejected cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
-    async def reject_cloud_events(
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1116,58 +740,9 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully rejected
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param reject_options: RejectOptions. Required.
-        :type reject_options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RejectResult. The RejectResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.RejectResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully rejected cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
-    async def reject_cloud_events(
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1176,63 +751,14 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
-        is successfully accepted. The response body will include the set of successfully rejected
-        lockTokens, along with other failed lockTokens with their corresponding error information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param reject_options: RejectOptions. Required.
-        :type reject_options: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RejectResult. The RejectResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.RejectResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully rejected cloud
-                          events. Required.
-                    ]
-                }
-        """
-
+        ...
 
     @distributed_trace_async
-    async def reject_cloud_events(
+    async def _reject_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: Union[_models.RejectOptions, JSON, IO[bytes]],
+        reject_options: Union[_models._models.RejectOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -1356,80 +882,22 @@ class EventGridClientOperationsMixin(
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
-    )
-    async def renew_cloud_event_locks(
+    )  # pylint: disable=protected-access
+    async def _renew_cloud_event_locks(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: _models.RenewLockOptions,
+        renew_lock_options: _models._models.RenewLockOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
-        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        renewed lockTokens, along with other failed lockTokens with their corresponding error
-        information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param renew_lock_options: RenewLockOptions. Required.
-        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
-         MutableMapping
-        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                renew_lock_options = {
-                    "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully renewed locks.
-                          Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    async def renew_cloud_event_locks(
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1438,63 +906,12 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
-        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        renewed lockTokens, along with other failed lockTokens with their corresponding error
-        information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param renew_lock_options: RenewLockOptions. Required.
-        :type renew_lock_options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
-         MutableMapping
-        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully renewed locks.
-                          Required.
-                    ]
-                }
-        """
-
+        ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    async def renew_cloud_event_locks(
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -1503,68 +920,17 @@ class EventGridClientOperationsMixin(
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
-        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        renewed lockTokens, along with other failed lockTokens with their corresponding error
-        information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :param renew_lock_options: RenewLockOptions. Required.
-        :type renew_lock_options: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
-         MutableMapping
-        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "failedLockTokens": [
-                        {
-                            "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
-                                    "innererror": ...
-                                },
-                                "target": "str"  # Optional. The target of the error.
-                            },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
-                        }
-                    ],
-                    "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully renewed locks.
-                          Required.
-                    ]
-                }
-        """
-
+        ...
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    async def renew_cloud_event_locks(
+    async def _renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO[bytes]],
+        renew_lock_options: Union[_models._models.RenewLockOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the

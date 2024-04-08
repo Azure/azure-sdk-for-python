@@ -18,7 +18,7 @@ USAGE:
 import os
 import asyncio
 from azure.core.messaging import CloudEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
@@ -27,7 +27,7 @@ endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     # [START publish_cloud_event_dict_async]
     async with client:
