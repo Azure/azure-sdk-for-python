@@ -285,6 +285,7 @@ class AsyncTransport(
                 family=socket.AF_UNSPEC,
                 proto=SOL_TCP,
                 server_hostname=self.host if self.sslopts else None,
+                # TODO: if self.sslopts + self._use_tls? else None
             )
             self.connected = True
             sock = self.writer.transport.get_extra_info("socket")

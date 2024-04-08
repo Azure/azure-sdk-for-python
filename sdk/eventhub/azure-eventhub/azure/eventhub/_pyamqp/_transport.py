@@ -595,8 +595,7 @@ class SSLTransport(_AbstractTransport):
             context.check_hostname = False
             context.verify_mode = cert_reqs
 
-        if self._use_tls:
-            sock = context.wrap_socket(**opts)
+        sock = context.wrap_socket(**opts)
         return sock
 
     def _shutdown_transport(self):
