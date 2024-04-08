@@ -10,9 +10,11 @@ from azure.messaging.webpubsubservice._operations._operations import build_send_
 from azure.core.credentials import AzureKeyCredential
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.identity import DefaultAzureCredential
+from devtools_testutils import recorded_by_proxy
 
-class WebpubsubReverseProxyTest(WebpubsubTest):
+class TestWebpubsubReverseProxy(WebpubsubTest):
 
+    @recorded_by_proxy
     def test_reverse_proxy_endpoint_redirection_azure_key_credential(self):
         def _callback(pipeline_request):
             assert pipeline_request.http_request.url.startswith("https://apim.contoso.com/")
@@ -27,6 +29,7 @@ class WebpubsubReverseProxyTest(WebpubsubTest):
             client.send_request(request, raw_request_hook=_callback)
         assert "Success!" in str(ex.value)
 
+    @recorded_by_proxy
     def test_reverse_proxy_endpoint_redirection_identity(self):
         def _callback(pipeline_request):
             assert pipeline_request.http_request.url.startswith("https://apim.contoso.com/")
@@ -42,6 +45,7 @@ class WebpubsubReverseProxyTest(WebpubsubTest):
         assert "Success!" in str(ex.value)
 
     @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy
     def test_reverse_proxy_call(self, webpubsub_connection_string, webpubsub_reverse_proxy_endpoint):
         client = self.create_client(
             connection_string=webpubsub_connection_string,
