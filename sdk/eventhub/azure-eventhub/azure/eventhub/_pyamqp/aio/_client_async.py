@@ -257,7 +257,7 @@ class AMQPClientAsync(AMQPClientSync):
                 http_proxy=self._http_proxy,
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
-                use_tls = self._use_tls
+                use_tls=self._use_tls,
             )
             await self._connection.open()
         if not self._session:

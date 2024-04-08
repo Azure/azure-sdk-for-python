@@ -501,7 +501,7 @@ class WebSocketTransportAsync(
                 autoclose=False,
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
-                ssl=self.sslopts,
+                ssl=self.sslopts if self._use_tls else None,
                 heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
         except ClientConnectorError as exc:
