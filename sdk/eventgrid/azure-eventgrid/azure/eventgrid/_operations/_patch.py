@@ -385,7 +385,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             http_request.url, **path_format_arguments
         )
 
-        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
                 http_request, stream=_stream, **kwargs

@@ -207,8 +207,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 except Exception as exception:  # pylint: disable=broad-except
                     self._http_response_error_handler(exception, "Standard")
                     raise exception
-                    # # If that fails, try to send via basic
-                    # self._last_exception = exception
             else:
                 try:
                     await self._send(events, channel_name=channel_name, **kwargs)
