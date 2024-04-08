@@ -24,9 +24,10 @@ class TestEGClientExceptions():
             source="source",
             subject="MySubject",
             data=b'this is binary data',
+            datacontenttype="application/json"
         )
 
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
+        request = _to_http_request("https://MYTOPIC.westus2-1.eventgrid.azure.net/api/events", event=event)
 
         assert request.data == b"this is binary data"
         assert request.headers.get("ce-source") == "source"
@@ -43,7 +44,7 @@ class TestEGClientExceptions():
             extensions={"extension1": "value1", "extension2": "value2"}
         )
 
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
+        request = _to_http_request("https://MYTOPIC.westus2-1.eventgrid.azure.net/api/events", event=event)
 
         assert request.data == b"this is my data"
         assert request.headers.get("ce-source") == "source"
@@ -63,5 +64,5 @@ class TestEGClientExceptions():
         )
 
         with pytest.raises(TypeError):
-            _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event, binary_mode=True)
+            _to_http_request("https://MYTOPIC.westus2-1.eventgrid.azure.net/api/events", event=event)
 

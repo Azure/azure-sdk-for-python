@@ -18,7 +18,7 @@ USAGE:
 import os
 import asyncio
 from azure.core.messaging import CloudEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
@@ -27,18 +27,18 @@ endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(endpoint, credential)
-
-    await client.send(
-        [
-            CloudEvent(
-                type="Contoso.Items.ItemReceived",
-                source="/contoso/items",
-                data={"itemSku": "Contoso Item SKU #1"},
-                subject="Door1",
-            )
-        ]
-    )
+    client = EventGridClient(endpoint, credential, level="Basic")
+    async with client:
+        await client.send(
+            [
+                CloudEvent(
+                    type="Contoso.Items.ItemReceived",
+                    source="/contoso/items",
+                    data={"itemSku": "Contoso Item SKU #1"},
+                    subject="Door1",
+                )
+            ]
+        )
 
 
 # [END publish_cloud_event_to_topic_async]
