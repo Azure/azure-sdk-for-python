@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_publish_receive_renew_async.py
+DESCRIPTION:
+    These samples demonstrate sending, receiving, and renewing CloudEvents.
+USAGE:
+    python sample_publish_receive_renew_async.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
@@ -26,20 +39,19 @@ async def run():
         try:
             # Publish a CloudEvent
             cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
             # Receive CloudEvents and parse out lock tokens
-            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
+            receive_result = await client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
             lock_tokens_to_release = []
             for item in receive_result.value:
                 lock_tokens_to_release.append(item.broker_properties.lock_token)
 
             # Renew lock tokens
-            lock_tokens = RenewLockOptions(lock_tokens=lock_tokens_to_release)
-            renew_events = await client.renew_cloud_event_locks(
+            renew_events = await client.renew_locks(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                renew_lock_options=lock_tokens,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
+                lock_tokens=lock_tokens_to_release,
             )
             print("Renewed Event:", renew_events)
         except HttpResponseError:
