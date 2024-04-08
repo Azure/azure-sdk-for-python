@@ -123,3 +123,11 @@ class TestEventHubConnectionStringParser:
         )
         assert fully_qualified_namespace == 'localhost:6065'
         assert emulator == True
+
+
+    def test_eh_emulator_slug_parse_not_localhost(self, **kwargs):
+        conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;UseDevelopmentEmulator=true'
+        with pytest.raises(ValueError) as e:
+            fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
+                conn_str
+            )
