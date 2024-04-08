@@ -129,7 +129,7 @@ def _parse_conn_str(
     # check that endpoint is valid
     if not endpoint:
         raise ValueError("Connection string is either blank or malformed.")
-    emulator = bool(use_emulator=="true") if use_emulator else False
+    emulator = bool(use_emulator=="true")
     if emulator:
         if not _is_local_endpoint(endpoint):
             raise ValueError("Invalid Endpoint on the Connection String. "
