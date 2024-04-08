@@ -3,13 +3,13 @@
 ### 4.6.1 (Unreleased)
 
 #### Features Added
-* Added support for using the start time option for change feed pulls. See [PR 34694](https://github.com/Azure/azure-sdk-for-python/pull/34694)
+* Added support for using the start time option for change feed pulls. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug where change feed pulls in Async clients weren't returning all pages. See [PR 34694](https://github.com/Azure/azure-sdk-for-python/pull/34694)
-* Fixed bug when a retryable exception occurs in the first page of a query execution. See [PR](https://github.com/Azure/azure-sdk-for-python/pull/).
+* Fixed bug where change feed pulls in Async clients weren't returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
+* Fixed bug when a retryable exception occurs in the first page of a query execution. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
 
 
 #### Other Changes

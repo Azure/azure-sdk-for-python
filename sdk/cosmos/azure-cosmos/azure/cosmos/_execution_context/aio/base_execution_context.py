@@ -29,7 +29,6 @@ import copy
 from ...aio import _retry_utility_async
 from ... import http_constants
 
-
 # pylint: disable=protected-access
 
 
@@ -50,7 +49,6 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
-        self._has_hit_429 = False
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:

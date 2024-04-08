@@ -27,7 +27,6 @@ from collections import deque
 import copy
 from .. import _retry_utility, http_constants
 
-
 # pylint: disable=protected-access
 
 
@@ -114,7 +113,6 @@ class _QueryExecutionContextBase(object):
         :rtype: list
         """
         fetched_items = []
-        # Continues pages till finds a non-empty page or all results are exhausted
         while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
             # For read specific time the first fetch will return empty even if we have more pages.
