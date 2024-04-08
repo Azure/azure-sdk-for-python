@@ -260,6 +260,7 @@ class AsyncTransport(
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
+        self._use_tls = kwargs.get("use_tls", True)
 
     async def connect(self):
         try:
@@ -280,7 +281,7 @@ class AsyncTransport(
             self.reader, self.writer = await asyncio.open_connection(
                 host=self.host,
                 port=self.port,
-                ssl=self.sslopts,
+                ssl=self.sslopts if self._use_tls else None,
                 family=socket.AF_UNSPEC,
                 proto=SOL_TCP,
                 server_hostname=self.host if self.sslopts else None,
