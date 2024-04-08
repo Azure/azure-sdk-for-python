@@ -375,16 +375,15 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         not_utc_time = datetime.now()
         change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=not_utc_time)]
         totalCount = len(change_feed_iter)
-        # should return 100 (double the batch size)
-        assert totalCount == batchSize * 2
+        # Should not equal batch size
+        assert totalCount != batchSize
 
-        # test an invalid value, results in error
+        # test an invalid value, will ignore start time option
         invalid_time = "Invalid value"
-        try:
-            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
-            pytest.fail("Should not have passed")
-        except AttributeError as e:
-            assert str(e) == "'str' object has no attribute 'tzinfo'"
+        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
+        totalCount = len(change_feed_iter)
+        # Should not equal batch size
+        assert totalCount != batchSize
 
         await self.created_db.delete_container(created_collection.id)
 

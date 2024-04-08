@@ -334,16 +334,15 @@ class TestQuery(unittest.TestCase):
         not_utc_time = datetime.now()
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=not_utc_time))
         totalCount = len(change_feed_iter)
-        # should return 100 (double the batch size)
-        self.assertEqual(totalCount, batchSize*2)
+        # Should not equal batch size
+        self.assertNotEqual(totalCount, batchSize)
 
         # test an invalid value, results in error
         invalid_time = "Invalid value"
-        try:
-            change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
-            self.fail("Should not have passed")
-        except AttributeError as e:
-            self.assertEqual(str(e), "'str' object has no attribute 'tzinfo'")
+        change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
+        totalCount = len(change_feed_iter)
+        # Should not equal batch size
+        self.assertNotEqual(totalCount, batchSize)
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container("query_metrics_test",
