@@ -114,3 +114,12 @@ class TestEventHubConnectionStringParser:
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert "Invalid connection string" in str(e.value)
+
+    def test_eh_emulator_slug_parse_localhost(self, **kwargs):
+        conn_str = 'Endpoint=localhost:6065/;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;UseDevelopmentEmulator=true'
+        parse_result = parse_connection_string(conn_str)
+        assert parse_result.endpoint == 'sb://eh-namespace.servicebus.windows.net/'
+        assert parse_result.fully_qualified_namespace == 'eh-namespace.servicebus.windows.net'
+        assert parse_result.shared_access_key_name == 'test-policy'
+        assert parse_result.shared_access_key == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
+        assert parse_result.get("emulator") == True

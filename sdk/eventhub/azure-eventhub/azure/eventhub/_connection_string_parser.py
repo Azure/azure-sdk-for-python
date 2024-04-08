@@ -102,5 +102,6 @@ def parse_connection_string(conn_str: str) -> "EventHubConnectionStringPropertie
         "shared_access_signature": signature,
         "shared_access_key_name": policy,
         "shared_access_key": key,
+        "emulator": emulator,
     }
     return EventHubConnectionStringProperties(**props)
