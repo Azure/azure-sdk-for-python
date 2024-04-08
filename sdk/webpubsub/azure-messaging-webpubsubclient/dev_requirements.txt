@@ -2,3 +2,4 @@
 ../../core/azure-core
 ../../identity/azure-identity
 azure-messaging-webpubsubservice==1.1.0b1
+psutil
