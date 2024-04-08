@@ -26,7 +26,8 @@ database service.
 from collections import deque
 import copy
 from .. import _retry_utility, http_constants
-from .. import exceptions
+
+
 # pylint: disable=protected-access
 
 
@@ -55,7 +56,7 @@ class _QueryExecutionContextBase(object):
 
     def _has_more_pages(self):
         return not self._has_finished
-    
+
     def _ensure(self):
         if not self._has_more_pages():
             return
@@ -65,7 +66,7 @@ class _QueryExecutionContextBase(object):
             self._buffer.extend(results)
 
         if not self._buffer:
-             self._has_finished = True
+            self._has_finished = True
 
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
@@ -126,7 +127,6 @@ class _QueryExecutionContextBase(object):
             response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
 
-
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
@@ -144,12 +144,7 @@ class _QueryExecutionContextBase(object):
 
     def _fetch_items_helper_with_retries(self, fetch_function):
         def callback():
-            try:
-                return self._fetch_items_helper_no_retries(fetch_function)
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == 429:
-                    self._has_started = False
-                return self._fetch_items_helper_no_retries(fetch_function)
+            return self._fetch_items_helper_no_retries(fetch_function)
 
         return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
 

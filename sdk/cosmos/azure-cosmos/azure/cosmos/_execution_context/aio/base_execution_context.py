@@ -28,7 +28,7 @@ import copy
 
 from ...aio import _retry_utility_async
 from ... import http_constants
-from ... import exceptions
+
 
 # pylint: disable=protected-access
 
@@ -115,7 +115,7 @@ class _QueryExecutionContextBase(object):
         :param Callable fetch_function: The function that fetches the items.
         :return: List of fetched items.
         :rtype: list
-        """ 
+        """
         fetched_items = []
         while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
@@ -129,8 +129,6 @@ class _QueryExecutionContextBase(object):
             (fetched_items, response_headers) = await fetch_function(new_options)
             if not self._has_started:
                 self._has_started = True
-
-
 
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
@@ -150,7 +148,6 @@ class _QueryExecutionContextBase(object):
     async def _fetch_items_helper_with_retries(self, fetch_function):
         async def callback():
             return await self._fetch_items_helper_no_retries(fetch_function)
-
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
 
