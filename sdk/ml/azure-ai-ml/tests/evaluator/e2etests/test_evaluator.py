@@ -58,12 +58,16 @@ class TestModel(AzureRecordedTestCase):
         assert model.version == "3"
         assert model.description == "This is evaluator."
         assert model.type == "custom_model"
+        assert "is-promptflow" in model.properties and model.properties["is-promptflow"] == "true"
+        assert "is-evaluator" in model.properties and model.properties["is-evaluator"] == "true"
         assert re.match(LONG_URI_REGEX_FORMAT, model.path)
 
         model = client.evaluators.get(model.name, "3")
         assert model.name == model_name
         assert model.version == "3"
         assert model.description == "This is evaluator."
+        assert "is-promptflow" in model.properties and model.properties["is-promptflow"] == "true"
+        assert "is-evaluator" in model.properties and model.properties["is-evaluator"] == "true"
 
         models = client.evaluators.list(name=model_name)
         assert isinstance(models, ItemPaged)

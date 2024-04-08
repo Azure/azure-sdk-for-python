@@ -104,7 +104,7 @@ class TestModelOperations:
             mock_eval_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
                 mock_workspace_scope,
-                mock_eval_operation._datastore_operation,
+                mock_eval_operation._model_op._datastore_operation,
                 path,
                 asset_name=model.name,
                 asset_version=model.version,
@@ -116,8 +116,8 @@ class TestModelOperations:
                 ignore_file=None,
                 blob_uri=None,
             )
-        mock_eval_operation._model_versions_operation.create_or_update.assert_called_once()
-        assert "version='42'" in str(mock_eval_operation._model_versions_operation.create_or_update.call_args)
+        mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_once()
+        assert "version='42'" in str(mock_eval_operation._model_op._model_versions_operation.create_or_update.call_args)
 
     def test_create_autoincrement(
         self,
@@ -129,23 +129,23 @@ class TestModelOperations:
         assert model._auto_increment_version
         model.version = None
 
-        with patch("azure.ai.ml.operations._evaluator_operations.Model._from_rest_object", return_value=None,), patch(
-            "azure.ai.ml.operations._evaluator_operations._get_next_version_from_container",
+        with patch("azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=None,), patch(
+            "azure.ai.ml.operations._model_operations._get_next_version_from_container",
             return_value="version",
         ) as mock_nextver, patch(
-            "azure.ai.ml.operations._evaluator_operations._check_and_upload_path",
+            "azure.ai.ml.operations._model_operations._check_and_upload_path",
             return_value=(model, "indicatorfile.txt"),
         ), patch(
-            "azure.ai.ml.operations._evaluator_operations.Model._from_rest_object",
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=model,
         ), patch(
-            "azure.ai.ml.operations._evaluator_operations._get_default_datastore_info",
+            "azure.ai.ml.operations._model_operations._get_default_datastore_info",
             return_value=None,
         ):
             mock_eval_operation.create_or_update(model)
             mock_nextver.assert_called_once()
 
-            mock_eval_operation._model_versions_operation.create_or_update.assert_called_once_with(
+            mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_once_with(
                 body=model._to_rest_object(),
                 name=model.name,
                 version=mock_nextver.return_value,
@@ -154,14 +154,14 @@ class TestModelOperations:
             )
 
     def test_get_name_and_version(self, mock_eval_operation: EvaluatorOperations) -> None:
-        mock_eval_operation._model_container_operation.get.return_value = None
+        mock_eval_operation._model_op._model_container_operation.get.return_value = None
         with patch(
             "azure.ai.ml.operations._evaluator_operations.Model._from_rest_object",
             return_value=None,
         ):
             mock_eval_operation.get(name="random_string", version="1")
-        mock_eval_operation._model_versions_operation.get.assert_called_once()
-        assert mock_eval_operation._model_container_operation.get.call_count == 0
+        mock_eval_operation._model_op._model_versions_operation.get.assert_called_once()
+        assert mock_eval_operation._model_op._model_container_operation.get.call_count == 0
 
     def test_get_no_version(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
@@ -171,11 +171,11 @@ class TestModelOperations:
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())
     def test_list(self, mock_eval_operation: EvaluatorOperations) -> None:
-        mock_eval_operation._model_versions_operation.list.return_value = [Mock(Model) for _ in range(10)]
-        mock_eval_operation._model_container_operation.list.return_value = [Mock(Model) for _ in range(10)]
+        mock_eval_operation._model_op._model_versions_operation.list.return_value = [Mock(Model) for _ in range(10)]
+        mock_eval_operation._model_op._model_container_operation.list.return_value = [Mock(Model) for _ in range(10)]
 
         mock_eval_operation.list(name="random_string")
-        mock_eval_operation._model_versions_operation.list.assert_called_once()
+        mock_eval_operation._model_op._model_versions_operation.list.assert_called_once()
 
     def test_list_with_no_name_raises(self, mock_eval_operation: EvaluatorOperations) -> None:
         """Test that listing evaluators without values raises an unsupported exception."""
@@ -187,60 +187,60 @@ class TestModelOperations:
         name = "random_string"
         model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
         version = "1"
-        mock_eval_operation._model_versions_operation.get.return_value = model_version
+        mock_eval_operation._model_op._model_versions_operation.get.return_value = model_version
         with patch(
             "azure.ai.ml.operations._evaluator_operations.EvaluatorOperations.get",
             return_value=MagicMock(),
         ):
             mock_eval_operation.archive(name=name, version=version)
-        mock_eval_operation._model_versions_operation.create_or_update.assert_called_once_with(
+        mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_once_with(
             name=name,
             version=version,
-            workspace_name=mock_eval_operation._workspace_name,
+            workspace_name=mock_eval_operation._model_op._workspace_name,
             body=model_version,
-            resource_group_name=mock_eval_operation._resource_group_name,
+            resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
     def test_archive_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_eval_operation._model_container_operation.get.return_value = model_container
+        mock_eval_operation._model_op._model_container_operation.get.return_value = model_container
         mock_eval_operation.archive(name=name)
-        mock_eval_operation._model_container_operation.create_or_update.assert_called_once_with(
+        mock_eval_operation._model_op._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
-            workspace_name=mock_eval_operation._workspace_name,
+            workspace_name=mock_eval_operation._model_op._workspace_name,
             body=model_container,
-            resource_group_name=mock_eval_operation._resource_group_name,
+            resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
     def test_restore_version(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
         version = "1"
-        mock_eval_operation._model_versions_operation.get.return_value = model
+        mock_eval_operation._model_op._model_versions_operation.get.return_value = model
         with patch(
             "azure.ai.ml.operations._evaluator_operations.EvaluatorOperations.get",
             return_value=MagicMock(),
         ):
             mock_eval_operation.restore(name=name, version=version)
-        mock_eval_operation._model_versions_operation.create_or_update.assert_called_with(
+        mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_with(
             name=name,
             version=version,
-            workspace_name=mock_eval_operation._workspace_name,
+            workspace_name=mock_eval_operation._model_op._workspace_name,
             body=model,
-            resource_group_name=mock_eval_operation._resource_group_name,
+            resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
     def test_restore_container(self, mock_eval_operation: EvaluatorOperations) -> None:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_eval_operation._model_container_operation.get.return_value = model_container
+        mock_eval_operation._model_op._model_container_operation.get.return_value = model_container
         mock_eval_operation.restore(name=name)
-        mock_eval_operation._model_container_operation.create_or_update.assert_called_once_with(
+        mock_eval_operation._model_op._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
-            workspace_name=mock_eval_operation._workspace_name,
+            workspace_name=mock_eval_operation._model_op._workspace_name,
             body=model_container,
-            resource_group_name=mock_eval_operation._resource_group_name,
+            resource_group_name=mock_eval_operation._model_op._resource_group_name,
         )
 
     def test_create_with_datastore(
@@ -268,7 +268,7 @@ class TestModelOperations:
             mock_eval_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
                 mock_workspace_scope,
-                mock_eval_operation._datastore_operation,
+                mock_eval_operation._model_op._datastore_operation,
                 path,
                 asset_name=model.name,
                 asset_version=model.version,
@@ -298,7 +298,7 @@ class TestModelOperations:
             ),
         ), patch(
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
-            return_value=Model(),
+            return_value=Model(properties={"mock": "mock"}),
         ):
             mock_eval_operation.create_or_update(plane_model)
         assert plane_model.properties == {
@@ -310,7 +310,7 @@ class TestModelOperations:
         """Test that evaluator operations add correct tags to model."""
         p = "./tests/test_configs/model/model_with_datastore.yml"
         plane_model = load_model(p)
-        mock_eval_operation._model_container_operation.get.return_value = None
+        mock_eval_operation._model_op._model_container_operation.get.return_value = None
         with patch(
             "azure.ai.ml.operations._evaluator_operations.Model._from_rest_object",
             return_value=plane_model,

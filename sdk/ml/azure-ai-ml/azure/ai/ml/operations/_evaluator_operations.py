@@ -4,24 +4,8 @@
 
 # pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
 
-import re
-from contextlib import contextmanager
-from os import PathLike, path
-from typing import Any, Dict, Generator, Iterable, Optional, Union, cast
-
-from marshmallow.exceptions import ValidationError as SchemaValidationError
-
-from azure.ai.ml._artifacts._artifact_utilities import (
-    _check_and_upload_path,
-    _get_default_datastore_info,
-    _update_metadata,
-)
-from azure.ai.ml._artifacts._constants import (
-    ASSET_PATH_ERROR,
-    CHANGED_ASSET_PATH_MSG,
-    CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-)
-from azure.ai.ml._exception_helper import log_and_raise_error
+from os import PathLike
+from typing import Any, Dict, Iterable, Optional, Union, cast
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -30,7 +14,6 @@ from azure.ai.ml._restclient.v2023_08_01_preview import (
 )
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ListViewType,
-    ModelVersion,
 )
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -39,55 +22,23 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource
-from azure.ai.ml._utils._asset_utils import (
-    _archive_or_restore,
-    _get_latest,
-    _get_next_version_from_container,
-    _resolve_label_to_asset,
-)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import (
-    get_asset_body_for_registry_storage,
-    get_registry_client,
-    get_sas_uri_for_registry_asset,
-    get_storage_details_for_registry_assets,
-)
-from azure.ai.ml._utils._storage_utils import (
-    get_ds_name_and_path_prefix,
-    get_storage_client,
-)
 from azure.ai.ml._utils.utils import (
-    resolve_short_datastore_url,
-    validate_ml_flow_folder,
     _get_evaluator_properties,
     _is_evaluator,
 )
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    ASSET_ID_FORMAT,
-    REGISTRY_URI_FORMAT,
-    AzureMLResourceType,
-)
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
-from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets.workspace_asset_reference import (
     WorkspaceAssetReference,
 )
-from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
-    AssetPathException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
     UnsupportedOperationError,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
 
-from ._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._model_operations import ModelOperations
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -128,19 +79,16 @@ class EvaluatorOperations(_ScopeDependentOperations):
     ):
         super(EvaluatorOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._model_versions_operation = service_client.model_versions
-        self._model_container_operation = service_client.model_containers
-        self._service_client = service_client
-        self._datastore_operation = datastore_operations
-        self._all_operations = all_operations
-        self._control_plane_client: Any = kwargs.get("control_plane_client", None)
-        self._workspace_rg = kwargs.pop("workspace_rg", None)
-        self._workspace_sub = kwargs.pop("workspace_sub", None)
-        self._registry_reference = kwargs.pop("registry_reference", None)
-
-        # Maps a label to a function which given an asset name,
-        # returns the asset associated with the label
-        self._managed_label_resolver = {"latest": self._get_latest_version}
+        self._model_op = ModelOperations(
+            operation_scope=operation_scope,
+            operation_config=operation_config,
+            service_client=service_client,
+            datastore_operations=datastore_operations,
+            all_operations=all_operations,
+            **kwargs,
+        )
+        self._operation_scope = self._model_op._operation_scope
+        self._datastore_operation = self._model_op._datastore_operation
 
     @monitor_with_activity(ops_logger, "Evaluator.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
@@ -159,149 +107,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Model
         """
         model.properties.update(_get_evaluator_properties())
-        try:
-            name = model.name
-            if not model.version and model._auto_increment_version:
-                model.version = _get_next_version_from_container(
-                    name=model.name,
-                    container_operation=self._model_container_operation,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    workspace_name=self._workspace_name,
-                    registry_name=self._registry_name,
-                )
-
-            version = model.version
-
-            sas_uri = None
-
-            if self._registry_name:
-                # Case of copy model to registry
-                if isinstance(model, WorkspaceAssetReference):
-                    # verify that model is not already in registry
-                    try:
-                        self._model_versions_operation.get(
-                            name=model.name,
-                            version=model.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
-                        )
-                    except Exception as err:  # pylint: disable=broad-except
-                        if isinstance(err, ResourceNotFoundError):
-                            pass
-                        else:
-                            raise err
-                    else:
-                        msg = "An evaluator with this name and version already exists in registry"
-                        raise ValidationException(
-                            message=msg,
-                            no_personal_data_message=msg,
-                            target=ErrorTarget.MODEL,
-                            error_category=ErrorCategory.USER_ERROR,
-                        )
-
-                    model_rest = model._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=model_rest,
-                    ).result()
-
-                    if not result:
-                        model_rest_obj = self._get(name=str(model.name), version=model.version)
-                        return Model._from_rest_object(model_rest_obj)
-
-                sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
-                    name=model.name,
-                    version=model.version,
-                    resource_group=self._resource_group_name,
-                    registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
-                )
-
-            model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
-                artifact=model,
-                asset_operations=self,
-                sas_uri=sas_uri,
-                artifact_type=ErrorTarget.MODEL,
-                show_progress=self._show_progress,
-            )
-
-            model.path = resolve_short_datastore_url(model.path, self._operation_scope)  # type: ignore
-            validate_ml_flow_folder(model.path, model.type)  # type: ignore
-
-            model_version_resource = model._to_rest_object()
-            auto_increment_version = model._auto_increment_version
-            try:
-                result = (
-                    self._model_versions_operation.begin_create_or_update(
-                        name=name,
-                        version=version,
-                        body=model_version_resource,
-                        registry_name=self._registry_name,
-                        **self._scope_kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._model_versions_operation.create_or_update(
-                        name=name,
-                        version=version,
-                        body=model_version_resource,
-                        workspace_name=self._workspace_name,
-                        **self._scope_kwargs,
-                    )
-                )
-
-                if not result and self._registry_name:
-                    result = self._get(name=str(model.name), version=model.version)
-
-            except Exception as e:  # pylint: disable=broad-except
-                # service side raises an exception if we attempt to update an existing asset's path
-                if str(e) == ASSET_PATH_ERROR:
-                    raise AssetPathException(
-                        message=CHANGED_ASSET_PATH_MSG,
-                        target=ErrorTarget.MODEL,
-                        no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-                        error_category=ErrorCategory.USER_ERROR,
-                    ) from e
-                raise e
-
-            model = Model._from_rest_object(result)
-            if auto_increment_version and indicator_file:
-                datastore_info = _get_default_datastore_info(self._datastore_operation)
-                _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
-
-            return model
-        except Exception as ex:  # pylint: disable=broad-except
-            if isinstance(ex, SchemaValidationError):
-                log_and_raise_error(ex)
-            else:
-                raise ex
-
-    def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
-        if version:
-            return (
-                self._model_versions_operation.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                )
-                if self._registry_name
-                else self._model_versions_operation.get(
-                    name=name,
-                    version=version,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
-                )
-            )
-
-        return (
-            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
-            if self._registry_name
-            else self._model_container_operation.get(
-                name=name, workspace_name=self._workspace_name, **self._scope_kwargs
-            )
-        )
+        return self._model_op.create_or_update(model)
 
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
@@ -318,32 +124,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
         """
-        if version and label:
-            msg = "Cannot specify both version and label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.MODEL,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-
-        if label:
-            return _resolve_label_to_asset(self, name, label)
-
-        if not version:
-            msg = "Must provide either version or label"
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.MODEL,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
-        # TODO: We should consider adding an exception trigger for internal_model=None
-        model_version_resource = self._get(name, version)
-
-        model = Model._from_rest_object(model_version_resource)
+        model = self._model_op.get(name, version, label)
 
         if model is not None and not _is_evaluator(model.properties):
             raise ResourceNotFoundError(
@@ -366,62 +147,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :type download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
-
-        model_uri = self.get(name=name, version=version).path
-        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
-        if self._registry_name:
-            sas_uri, auth_type = get_storage_details_for_registry_assets(
-                service_client=self._service_client,
-                asset_name=name,
-                asset_version=version,
-                reg_name=self._registry_name,
-                asset_type=AzureMLResourceType.MODEL,
-                rg_name=self._resource_group_name,
-                uri=model_uri,
-            )
-            if auth_type == "SAS":
-                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
-            else:
-                parts = sas_uri.split("/")
-                storage_account = parts[2].split(".")[0]
-                container_name = parts[3]
-                storage_client = get_storage_client(
-                    credential=None,
-                    storage_account=storage_account,
-                    container_name=container_name,
-                )
-
-        else:
-            ds = self._datastore_operation.get(ds_name, include_secrets=True)
-            acc_name = ds.account_name
-
-            if isinstance(ds.credentials, AccountKeyConfiguration):
-                credential = ds.credentials.account_key
-            else:
-                try:
-                    credential = ds.credentials.sas_token
-                except Exception as e:  # pylint: disable=broad-except
-                    if not hasattr(ds.credentials, "sas_token"):
-                        credential = self._datastore_operation._credential
-                    else:
-                        raise e
-
-            container = ds.container_name
-            datastore_type = ds.type
-
-            storage_client = get_storage_client(
-                credential=credential,
-                container_name=container,
-                storage_account=acc_name,
-                storage_type=datastore_type,
-            )
-
-        path_file = "{}{}{}".format(download_path, path.sep, name)
-        is_directory = storage_client.exists(f"{path_prefix.rstrip('/')}/")
-        if is_directory:
-            path_file = path.join(path_file, path.basename(path_prefix.rstrip("/")))
-        module_logger.info("Downloading the model %s at %s\n", path_prefix, path_file)
-        storage_client.download(starts_with=path_prefix, destination=path_file)
+        self._model_op.download(name, version, download_path)
 
     @monitor_with_activity(ops_logger, "Evaluator.Archive", ActivityType.PUBLICAPI)
     def archive(
@@ -453,15 +179,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         # If there is no version, we cannot get the model.
         if version:
             self.get(name=name, version=version, label=label)
-        _archive_or_restore(
-            asset_operations=self,
-            version_operation=self._model_versions_operation,
-            container_operation=self._model_container_operation,
-            is_archived=True,
-            name=name,
-            version=version,
-            label=label,
-        )
+        self._model_op.archive(name, version, label, **kwargs)
 
     @monitor_with_activity(ops_logger, "Evaluator.Restore", ActivityType.PUBLICAPI)
     def restore(
@@ -493,17 +211,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         # If there is no version, we cannot get the model.
         if version:
             self.get(name=name, version=version, label=label)
-        _archive_or_restore(
-            asset_operations=self,
-            version_operation=self._model_versions_operation,
-            container_operation=self._model_container_operation,
-            is_archived=False,
-            name=name,
-            version=version,
-            label=label,
-        )
-
-    # def _filter_model_container(self, obj):
+        self._model_op.restore(name, version, label, **kwargs)
 
     @monitor_with_activity(ops_logger, "Evaluator.List", ActivityType.PUBLICAPI)
     def list(
@@ -530,22 +238,22 @@ class EvaluatorOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_versions_operation.list(
+                    self._model_op._model_versions_operation.list(
                         name=name,
-                        registry_name=self._registry_name,
+                        registry_name=self._model_op._registry_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         properties=properties_str,
-                        **self._scope_kwargs,
+                        **self._model_op._scope_kwargs,
                     )
                     if self._registry_name
-                    else self._model_versions_operation.list(
+                    else self._model_op._model_versions_operation.list(
                         name=name,
-                        workspace_name=self._workspace_name,
+                        workspace_name=self._model_op._workspace_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         list_view_type=list_view_type,
                         properties=properties_str,
                         stage=stage,
-                        **self._scope_kwargs,
+                        **self._model_op._scope_kwargs,
                     )
                 ),
             )
@@ -598,74 +306,13 @@ class EvaluatorOperations(_ScopeDependentOperations):
         """
 
         self.get(name=name, version=version)
-
-        #  Get workspace info to get workspace GUID
-        workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
+        return self._model_op.share(
+            name=name,
+            version=version,
+            share_with_name=share_with_name,
+            share_with_version=share_with_version,
+            registry_name=registry_name,
         )
-        workspace_guid = workspace.workspace_id
-        workspace_location = workspace.location
-
-        # Get model asset ID
-        asset_id = ASSET_ID_FORMAT.format(
-            workspace_location,
-            workspace_guid,
-            AzureMLResourceType.MODEL,
-            name,
-            version,
-        )
-
-        model_ref = WorkspaceAssetReference(
-            name=share_with_name if share_with_name else name,
-            version=share_with_version if share_with_version else version,
-            asset_id=asset_id,
-        )
-
-        with self._set_registry_client(registry_name):
-            return self.create_or_update(model_ref)
-
-    def _get_latest_version(self, name: str) -> Model:
-        """Returns the latest version of the asset with the given name.
-
-        Latest is defined as the most recently created, not the most recently updated.
-        """
-        result = _get_latest(
-            name,
-            self._model_versions_operation,
-            self._resource_group_name,
-            self._workspace_name,
-            self._registry_name,
-        )
-        return Model._from_rest_object(result)
-
-    @contextmanager
-    def _set_registry_client(self, registry_name: str) -> Generator:
-        """Sets the registry client for the model operations.
-
-        :param registry_name: Name of the registry.
-        :type registry_name: str
-        """
-        rg_ = self._operation_scope._resource_group_name
-        sub_ = self._operation_scope._subscription_id
-        registry_ = self._operation_scope.registry_name
-        client_ = self._service_client
-        model_versions_operation_ = self._model_versions_operation
-
-        try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
-            self._operation_scope.registry_name = registry_name
-            self._operation_scope._resource_group_name = _rg
-            self._operation_scope._subscription_id = _sub
-            self._service_client = _client
-            self._model_versions_operation = _client.model_versions
-            yield
-        finally:
-            self._operation_scope.registry_name = registry_
-            self._operation_scope._resource_group_name = rg_
-            self._operation_scope._subscription_id = sub_
-            self._service_client = client_
-            self._model_versions_operation = model_versions_operation_
 
     @experimental
     @monitor_with_activity(ops_logger, "Model.Package", ActivityType.PUBLICAPI)
@@ -681,129 +328,4 @@ class EvaluatorOperations(_ScopeDependentOperations):
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
         """
-
-        is_deployment_flow = kwargs.pop("skip_to_rest", False)
-        if not is_deployment_flow:
-            orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations,  # type: ignore[arg-type]
-                operation_scope=self._operation_scope,
-                operation_config=self._operation_config,
-            )
-
-            # Create a code asset if code is not already an ARM ID
-            if hasattr(package_request.inferencing_server, "code_configuration"):
-                if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
-                    package_request.inferencing_server.code_configuration.code,
-                    AzureMLResourceType.CODE,
-                ):
-                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
-                            azureml_type=AzureMLResourceType.CODE,
-                        )
-                    else:
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            Code(
-                                base_path=package_request._base_path,
-                                path=package_request.inferencing_server.code_configuration.code,
-                            ),
-                            azureml_type=AzureMLResourceType.CODE,
-                        )
-                if package_request.inferencing_server.code_configuration and hasattr(
-                    package_request.inferencing_server.code_configuration, "code"
-                ):
-                    package_request.inferencing_server.code_configuration.code = (
-                        "azureml:/" + package_request.inferencing_server.code_configuration.code
-                    )
-
-            if package_request.base_environment_source and hasattr(
-                package_request.base_environment_source, "resource_id"
-            ):
-                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):
-                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
-                        package_request.base_environment_source.resource_id,
-                        azureml_type=AzureMLResourceType.ENVIRONMENT,
-                    )
-
-                package_request.base_environment_source.resource_id = (
-                    "azureml:/" + package_request.base_environment_source.resource_id
-                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)
-                    else package_request.base_environment_source.resource_id
-                )
-
-            # create ARM id for the target environment
-            if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
-                package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
-            else:
-                if self._all_operations is not None:
-                    ws: Any = self._all_operations.all_operations.get("workspaces")
-                    ws_details = ws.get(self._workspace_name)
-                    workspace_location, workspace_id = (
-                        ws_details.location,
-                        ws_details._workspace_id,
-                    )
-                    package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
-
-            if package_request.environment_version is not None:
-                package_request.target_environment_id = (
-                    package_request.target_environment_id + f"/versions/{package_request.environment_version}"
-                )
-            package_request = package_request._to_rest_object()
-
-        if self._registry_reference:
-            package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
-        package_out = (
-            self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                registry_name=(self._registry_name if self._registry_name else self._registry_reference),
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
-            if self._registry_name or self._registry_reference
-            else self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                workspace_name=self._workspace_name,
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
-        )
-        if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
-            return package_out
-        if hasattr(package_out, "target_environment_id"):
-            environment_id = package_out.target_environment_id
-        else:
-            environment_id = package_out.additional_properties["targetEnvironmentId"]
-
-        pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
-        parsed_id: Any = re.search(pattern, environment_id)
-
-        if parsed_id:
-            environment_name = parsed_id.group(3)
-            environment_version = parsed_id.group(4)
-        else:
-            parsed_id = AMLVersionedArmId(environment_id)
-            environment_name = parsed_id.asset_name
-            environment_version = parsed_id.asset_version
-
-        module_logger.info("\nPackage Created")
-        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
-            if self._registry_name:
-                current_rg = self._scope_kwargs.pop("resource_group_name", None)
-                self._scope_kwargs["resource_group_name"] = self._workspace_rg
-                self._control_plane_client._config.subscription_id = self._workspace_sub
-                env_out = self._control_plane_client.environment_versions.get(
-                    name=environment_name,
-                    version=environment_version,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
-                )
-                package_out = Environment._from_rest_object(env_out)
-                self._scope_kwargs["resource_group_name"] = current_rg
-            else:
-                if self._all_operations is not None:
-                    environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
-                    package_out = environment_operation.get(name=environment_name, version=environment_version)
-
-        return package_out
+        return self._model_op.package(name, version, package_request, **kwargs)
