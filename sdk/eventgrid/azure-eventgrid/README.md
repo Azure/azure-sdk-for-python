@@ -459,7 +459,7 @@ These code samples show common champion scenario operations with the Azure Event
 
 #### Namespaces EventGrid Scenarios
 
-* Authenticate the client: [sample_eg_client_authentication.py][python-eg-client-auth-samples]
+* Authenticate the client: [sample_authentication.py][python-eg-auth] 
 * Sample of all operations: [sample_all_operations.py][python-eg-client-all-ops-sample]
 * Publish cloud event in binary mode: [sample_binary_mode_operation.py][python-eg-client-binary-mode-sample]
 
@@ -540,10 +540,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/consume_samples
 [python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
 
-
-[python-eg-client-aad-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_aad_auth_operation.py
-
-[python-eg-client-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_eg_client_authentication.py
 
 [python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
 
