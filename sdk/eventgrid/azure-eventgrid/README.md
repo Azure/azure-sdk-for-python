@@ -2,7 +2,7 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src]
+| [Source code][python-eg-src]
 | [Package (PyPI)][python-eg-pypi]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-eventgrid/)
 | [API reference documentation][python-eg-ref-docs]
@@ -12,14 +12,34 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is a beta release of Azure EventGrid's `EventGridClient`, which along with the GA `EventGridPublisherClient`. `EventGridClient` supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, `reject_cloud_events`, and `renew_cloud_event_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
+This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive`, `acknowledge` , `release`, `reject`, and `renew_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
 
 ## Getting started
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package.
-* You must have an [Azure subscription][azure_subscription] and an Event Grid Topic resource to use this package. Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
+* Python 3.8 or later is required to use this package.
+* You must have an [Azure subscription][azure_subscription] and at least one of the following:
+    * an Event Grid Namespace resource. To create an Event Grid Namespace resource follow [this tutorial](https://learn.microsoft.com/azure/event-grid/create-view-manage-namespaces).
+    * an Event Grid Basic resource. To create an Event Grid Basic resource via the Azure portal follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal). To create an Event Grid Basic resource via the [Azure CLI](https://docs.microsoft.com/cli/azure) follow this [tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart)
 
+### Event Grid Resources
+
+Below is a brief synopsis of the differences between Azure Event Grid Namespaces and Azure Event Grid Basic.
+More information on the two resource types can be found [here](https://learn.microsoft.com/azure/event-grid/choose-right-tier).
+
+|   Feature            | Namespaces (Standard) | Basic |
+| :---------------- | :------: | :----: |
+| Throughput        |   High   | Low |
+| MQTT           |   Yes   | No |
+| Publish and Subscribe to custom events    |  Yes   | Yes |
+| Push Delivery to Event Hubs |  Yes   | Yes |
+| Maximum message retention |  7 days   | 1 day |
+| Push Delivery to Azure Services |  No   | Yes |
+| Subscribe to Azure System Events |  No   | Yes |
+| Subscribe to Partner Events |  No   | Yes |
+| Domain Scope Subscriptions |  No   | Yes |
+
+**Note:** Azure Event Grid Namespaces only supports the Cloud Event v1.0 Schema.
 
 ### Install the package
 Install the Azure Event Grid client library for Python with [pip][pip]:
@@ -28,17 +48,29 @@ Install the Azure Event Grid client library for Python with [pip][pip]:
 pip install azure-eventgrid
 ```
 
-* An existing Event Grid topic or domain is required. You can create the resource using [Azure Portal][azure_portal_create_EG_resource] or [Azure CLI][azure_cli_link]
+* An existing Event Grid Basic topic or domain, or Event Grid Namespace topic is required. You can create the resource using [Azure Portal][azure_portal_create_EG_resource] or [Azure CLI][azure_cli_link]
 
 If you use Azure CLI, replace `<resource-group-name>` and `<resource-name>` with your own unique names.
 
-#### Create an Event Grid Topic
+#### Create an Event Grid Namespace
+
+```
+az eventgrid namespace create --location <location> --resource-group <resource-group-name> --name <resource-name>
+```
+
+#### Create an Event Grid Namespace Topic
+
+```
+az eventgrid namespace create topic --location <location> --resource-group <resource-group-name> --name <resource-name>
+```
+
+#### Create an Event Grid Basic Topic
 
 ```
 az eventgrid topic --create --location <location> --resource-group <resource-group-name> --name <resource-name>
 ```
 
-#### Create an Event Grid Domain
+#### Create an Event Grid Basic Domain
 
 ```
 az eventgrid domain --create --location <location> --resource-group <resource-group-name> --name <resource-name>
@@ -47,6 +79,11 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
+The default client created is a Standard Client, which is compatible with EventGrid Namespace. To create an EventGrid Basic Client, specify `level="Basic"` or `level=ClientLevel.BASIC` when instantiating the client.
+
+```python
+client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
+```
 
 #### Using Azure Active Directory (AAD)
 
@@ -62,20 +99,26 @@ For example, you can use `DefaultAzureCredential` to construct a client which wi
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, default_az_credential)
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+client = EventGridClient(endpoint, default_az_credential)
 ```
 
 <!-- END SNIPPET -->
 
-#### Looking up the endpoint
+### Looking up the endpoint
+
+#### Event Grid Namespace
+You can find the Namespace endpoint within the Event Grid Namespace resource on the Azure portal. This will look like:
+`"<event-grid-namespace-name>.<namespace-location>.eventgrid.azure.net"`
+
+#### Event Grid Basic
 You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
 `"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net/api/events"`
 
-#### Create the client with AzureKeyCredential
+### Create the client with AzureKeyCredential
 
 To use an Access key as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
@@ -86,49 +129,68 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 ```python
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
-credential_key = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential_key)
+credential_key = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential_key)
 ```
 
 <!-- END SNIPPET -->
 
-> **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
+> **Note:** A Basic client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
 
 ## Key concepts
 
-### Topic
+### *Event Grid Namespace*
+
+A **[namespace](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespaces)** is a management container for other resources. It allows for grouping of related resources in order to manage them under one subscription.
+
+#### Namespace Topic
+
+A **[namespace topic](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#namespace-topics)** is a topic that is created within an Event Grid namespace. The client publishes events to an HTTP namespace endpoint specifying a namespace topic where published events are logically contained. A namespace topic only supports the CloudEvent v1.0 schema.
+
+#### Event Subscription
+
+An **[event subscription](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#event-subscriptions)** is a configuration resource associated with a single topic.
+
+#### Binary Content Mode
+
+A namespace topic can receive CloudEvents published in **[binary mode](https://learn.microsoft.com/azure/event-grid/concepts-event-grid-namespaces#binary-content-mode)**.
+
+### *Event Grid Basic*
+
+#### Topic
 A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
 
-### Domain
+#### Domain
 An event **[domain](https://docs.microsoft.com/azure/event-grid/event-domains)** is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
 
-When you create an event domain, a publishing endpoint for this domain is made available to you. This process is similar to creating an Event Grid Topic. The only difference is that, when publishing to a domain, you must specify the topic within the domain that you'd like the event to be delivered to.
-
-### Event schemas
+#### Event schemas
 An **[event](https://docs.microsoft.com/azure/event-grid/concepts#events)** is the smallest amount of information that fully describes something that happened in the system. When a custom topic or domain is created, you must specify the schema that will be used when publishing events.
 
 Event Grid supports multiple schemas for encoding events.
 
-#### Event Grid schema
-While you may configure your topic to use a [custom schema](https://docs.microsoft.com/azure/event-grid/input-mappings), it is more common to use the already-defined Event Grid schema. See the specifications and requirements [here](https://docs.microsoft.com/azure/event-grid/event-schema).
+##### System Topics
+A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
 
-#### CloudEvents v1.0 schema
-Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://cloudevents.io/) is a Cloud Native Computing Foundation project which produces a specification for describing event data in a common way. The service summary of CloudEvents can be found [here](https://docs.microsoft.com/azure/event-grid/cloud-event-schema).
+The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
+For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
 
-### EventGridPublisherClient
-`EventGridPublisherClient` provides operations to send event data to a topic hostname specified during client initialization.
+ For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
-Regardless of the schema that your topic or domain is configured to use, `EventGridPublisherClient` will be used to publish events to it. Use the `send` method publishing events.
+## EventGridClient
 
-The following formats of events are allowed to be sent:
+`EventGridClient` provides operations to send to, receive from, acknowledge, reject, release event data for a resource specified during client initialization.
+
+If you are using Event Grid Basic, regardless of the schema that your topic or domain is configured to use, `EventGridClient` will be used to publish events to it. Use the `send` method to publish events.
+
+The following formats of events are allowed to be sent to an EventGrid Basic resource:
 - A list or a single instance of strongly typed EventGridEvents.
 - A dict representation of a serialized EventGridEvent object.
 - A list or a single instance of strongly typed CloudEvents.
@@ -136,18 +198,13 @@ The following formats of events are allowed to be sent:
 
 - A dict representation of any Custom Schema.
 
-Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
+The following formats of events are allowed to be sent to an EventGrid Namespace resource:
 
+* A list of single instance of strongly typed CloudEvents.
+* A dict representation of a serialized CloudEvent object.
 
- **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
-### System Topics
-A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
-
-The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
-For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
-
- For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
 ## Event Grid on Kubernetes with Azure Arc
 
@@ -174,33 +231,9 @@ The following sections provide several code snippets covering some of the most c
 * [Send a Cloud Event](#send-a-cloud-event)
 * [Send Multiple Events](#send-multiple-events)
 * [Send events as Dictionaries](#send-events-as-dictionaries)
+* [Receive events](#receive-events-from-namespace)
 * [Consume a payload from storage queue](#consume-from-storage-queue)
 * [Consume from ServiceBus](#consume-from-servicebus)
-
-### Send an Event Grid Event
-
-This example publishes an Event Grid event.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
-
-key = os.environ["EG_ACCESS_KEY"]
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
-
-event = EventGridEvent(
-    data={"team": "azure-sdk"},
-    subject="Door1",
-    event_type="Azure.Sdk.Demo",
-    data_version="2.0"
-)
-
-credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
-
-client.send(event)
-```
 
 ### Send a Cloud Event
 
@@ -210,10 +243,12 @@ This example publishes a Cloud event.
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient, ClientLevel
 
-key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+key = os.environ["EVENTGRID_NAMESPACE_KEY"]
+endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+
 
 event = CloudEvent(
     type="Azure.Sdk.Sample",
@@ -222,9 +257,9 @@ event = CloudEvent(
 )
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 
-client.send(event)
+client.send(topic_name, event)
 ```
 
 ### Send Multiple events
@@ -237,10 +272,11 @@ It is possible to send events as a batch when sending multiple events to a topic
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient, ClientLevel
 
-key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+key = os.environ["EVENTGRID_NAMESPACE_KEY"]
+endpoint = os.environ["EVENTGRID_NAMESPACE_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
 
 event0 = CloudEvent(
     type="Azure.Sdk.Sample",
@@ -256,86 +292,88 @@ event1 = CloudEvent(
 events = [event0, event1]
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 
-client.send(events)
+client.send(topic_name, events)
 ```
 
-### Send events as dictionaries
+### Receive and Process Events from Namespace
 
-A dict representation of respective serialized models can also be used to publish CloudEvent(s) or EventGridEvent(s) apart from the strongly typed objects.
-
-Use a dict-like representation to send to a topic with custom schema as shown below.
+Use EventGridClient's receive function to receive CloudEvents from a Namespace event subscription. Then try to acknowledge, reject, release or renew the locks. 
 
 ```python
 import os
 import uuid
 import datetime as dt
-from msrest.serialization import UTC
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient, ClientLevel
 
-key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
-endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
-
-event = custom_schema_event = {
-    "customSubject": "sample",
-    "customEventType": "sample.event",
-    "customDataVersion": "2.0",
-    "customId": uuid.uuid4(),
-    "customEventTime": dt.datetime.now(UTC()).isoformat(),
-    "customData": "sample data"
-    }
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
+sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
+
+events = client.receive(topic_name, sub_name, max_events=4)
+
+for e in events:
+    renew_tokens = e.broker_properties.lock_token
+    renew_result = client.renew_locks(
+        topic_name=TOPIC_NAME,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
+        lock_tokens=renew_tokens,
+    )
+
+release_tokens = events[0].broker_properties.lock_token
+release_result = client.release(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    lock_tokens=release_tokens,
+)
+
+ack_tokens = events[1].broker_properties.lock_token
+ack_result = client.acknowledge(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    lock_tokens=ack_tokens,
+)
+
+reject_tokens = events[2].broker_properties.lock_token
+reject_result = client.reject(
+    topic_name=TOPIC_NAME,
+    subscription_name=EVENT_SUBSCRIPTION_NAME,
+    lock_tokens=reject_tokens,
+)
+
+```
+
+### Legacy EventGrid operations
+#### Send an Event Grid Event
+
+
+This example publishes an Event Grid event.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
+
+key = os.environ["EG_ACCESS_KEY"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+
+event = EventGridEvent(
+    data={"team": "azure-sdk"},
+    subject="Door1",
+    event_type="Azure.Sdk.Demo",
+    data_version="2.0"
+)
+
+credential = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential, level=ClientLevel.BASIC)
 
 client.send(event)
-```
-
-### Consume from storage queue
-
-This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
-
-```python
-from azure.core.messaging import CloudEvent
-from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
-import os
-import json
-
-# all types of CloudEvents below produce same DeserializedEvent
-connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
-queue_name = os.environ['STORAGE_QUEUE_NAME']
-
-with QueueServiceClient.from_connection_string(connection_str) as qsc:
-    payload =  qsc.get_queue_client(
-        queue=queue_name,
-        message_decode_policy=BinaryBase64DecodePolicy()
-        ).peek_messages()
-
-    ## deserialize payload into a list of typed Events
-    events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
-```
-
-### Consume from servicebus
-
-This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
-
-```python
-from azure.eventgrid import EventGridEvent
-from azure.servicebus import ServiceBusClient
-import os
-import json
-
-# all types of EventGridEvents below produce same DeserializedEvent
-connection_str = os.environ['SERVICE_BUS_CONN_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-
-with ServiceBusClient.from_connection_string(connection_str) as sb_client:
-    payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
-
-    ## deserialize payload into a list of typed Events
-    events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
 ```
 
 ## Distributed Tracing with EventGrid
@@ -372,11 +410,11 @@ trace.get_tracer_provider().add_span_processor(
 )
 ```
 
-Once the `tracer` and `exporter` are set, please follow the example below to start collecting traces while using the `send` method from the `EventGridPublisherClient` to send a CloudEvent object.
+Once the `tracer` and `exporter` are set, please follow the example below to start collecting traces while using the `send` method from the `EventGridClient` to send a CloudEvent object.
 
 ```python
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient, ClientLevel
 from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
@@ -388,7 +426,7 @@ cloud_event = CloudEvent(
     data = {'test': 'hello'},
 )
 with tracer.start_as_current_span(name="MyApplication"):
-    client = EventGridPublisherClient(hostname, key)
+    client = EventGridClient(hostname, key, level=ClientLevel.BASIC)
     client.send(cloud_event)
 ```
 
@@ -418,6 +456,14 @@ The following section provides several code snippets illustrating common pattern
 ### More sample code
 
 These code samples show common champion scenario operations with the Azure Event Grid client library.
+
+#### Namespaces EventGrid Scenarios
+
+* Authenticate the client: [sample_eg_client_authentication.py][python-eg-client-auth-samples]
+* Sample of all operations: [sample_all_operations.py][python-eg-client-all-ops-sample]
+* Publish cloud event in binary mode: [sample_binary_mode_operation.py][python-eg-client-binary-mode-sample]
+
+#### Basic EventGrid Scenarios
 
 * Generate Shared Access Signature: [sample_generate_sas.py][python-eg-generate-sas]
 
@@ -455,7 +501,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
-[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/
+[python-eg-src]: https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
 [python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
@@ -493,6 +539,16 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-publish-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/publish_samples
 [python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/consume_samples
 [python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
+
+
+[python-eg-client-aad-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_aad_auth_operation.py
+
+[python-eg-client-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_eg_client_authentication.py
+
+[python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
+
+[python-eg-client-binary-mode-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_binary_mode.py
+
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

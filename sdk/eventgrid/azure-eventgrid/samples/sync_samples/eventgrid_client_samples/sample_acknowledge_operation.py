@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_acknowledge_operation.py
+DESCRIPTION:
+    These samples demonstrate acknowledging CloudEvents.
+USAGE:
+    python sample_acknowledge_operation.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridClient
@@ -20,11 +33,11 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Acknowledge a CloudEvent
 try:
-    lock_tokens = AcknowledgeOptions(lock_tokens=["token"])
-    ack_events = client.acknowledge_cloud_events(
+    lock_tokens = ["token"]
+    ack_events = client.acknowledge(
         topic_name=TOPIC_NAME,
-        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-        acknowledge_options=lock_tokens,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
+        lock_tokens=lock_tokens,
     )
     print(ack_events)
 except HttpResponseError:

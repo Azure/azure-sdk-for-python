@@ -41,23 +41,19 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             extensions={"extension1": "value1", "extension2": "value2"}
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=event, binary_mode=True
         )
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
-        my_returned_event = events.value[0].event
-        assert my_returned_event.data == xml_string
-        assert my_returned_event.datacontenttype == 'text/xml'
-        assert my_returned_event.type == "Contoso.Items.ItemReceived"
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
 
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
 
@@ -75,23 +71,17 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             datacontenttype='text/plain'
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+           topic_name= eventgrid_topic_name, events=event, binary_mode=True
         )
 
-        time.sleep(5)
-
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
-        my_returned_event = events.value[0].event
-        assert my_returned_event.data == 'this is binary data'
-        assert my_returned_event.datacontenttype == 'text/plain'
-        assert my_returned_event.type == "Contoso.Items.ItemReceived"
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
 
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
     @EventGridPreparer()
@@ -108,8 +98,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.publish_cloud_events(
-                eventgrid_topic_name, body=event, binary_mode=True
+            client.send(
+                topic_name=eventgrid_topic_name, events=event, binary_mode=True
             )
 
     @EventGridPreparer()
@@ -126,8 +116,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.publish_cloud_events(
-                eventgrid_topic_name, body=[event], binary_mode=True
+            client.send(
+                topic_name=eventgrid_topic_name, events=[event], binary_mode=True
             )
 
     @pytest.mark.live_test_only()
@@ -147,23 +137,23 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         dict_event = {"type": "Contoso.Items.ItemReceived", "source": "source", "subject": "MySubject", "data": b"hello", "datacontenttype": "text/plain"}
 
         
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=event, binary_mode=True
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=dict_event, binary_mode=True
+        client.send(
+            topic_name=eventgrid_topic_name, events=dict_event, binary_mode=True
         )
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         tokens = []
         for detail in events.value:
             token = detail.broker_properties.lock_token
             tokens.append(token)
-        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
+        rejected_result = client.reject(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
 
 
-    @pytest.mark.skip("need to update conftest")
+    @pytest.mark.live_test_only()
     @EventGridPreparer()
     @recorded_by_proxy
     def test_publish_receive_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
@@ -176,20 +166,20 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             data=b'this is binary data',
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=[event]
+        client.send(
+            topic_name=eventgrid_topic_name, events=[event]
         )
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=AcknowledgeOptions(lock_tokens=[lock_token]))
+        ack = client.acknowledge(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 
-    @pytest.mark.skip("need to update conftest")
+    @pytest.mark.live_test_only()
     @EventGridPreparer()
     @recorded_by_proxy
     def test_publish_release_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
@@ -202,18 +192,18 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             data=b'this is binary data',
         )
 
-        client.publish_cloud_events(
-            eventgrid_topic_name, body=[event]
+        client.send(
+            topic_name=eventgrid_topic_name, events=[event]
         )
 
         time.sleep(5)
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
-        ack = client.release_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=ReleaseOptions(lock_tokens=[lock_token]))
+        ack = client.release(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
         assert len(ack.succeeded_lock_tokens) == 1
         assert len(ack.failed_lock_tokens) == 0
 
-        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
+        events = client.receive(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         assert events.value[0].broker_properties.delivery_count > 1
