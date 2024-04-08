@@ -742,11 +742,12 @@ class WebSocketTransport(_AbstractTransport):
             ) from None
         try:
             self.sock = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self._host) if self._use_tls else "ws://{}".format(self._custom_endpoint) or self._host,
+                url="wss://{}".format(self._custom_endpoint or self._host) if self._use_tls
+                    else "ws://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,    # timeout for read/write operations
                 skip_utf8_validation=True,
-                sslopt=self.sslopts,
+                sslopt=self.sslopts if self._use_tls else None,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
