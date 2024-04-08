@@ -89,6 +89,7 @@ may be explicitly create as EntityProperty objects but need not be. For example,
 the below with both create STRING typed properties on the entity:
     
 .. code-block:: python
+
     entity = TableEntity()
     entity.a = 'b'
     entity.x = EntityProperty('y', EdmType.STRING)
