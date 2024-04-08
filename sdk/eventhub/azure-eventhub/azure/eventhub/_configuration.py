@@ -85,6 +85,3 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
                 self.custom_endpoint_address += "/$servicebus/websocket"
             # in case proxy and custom endpoint are both provided, we default port to 443 if it's not provided
             self.connection_port = endpoint.port or DEFAULT_AMQP_WSS_PORT
-            print(f"custom_endpoint_address: {self.custom_endpoint_address}")
-            print(f"custom_endpoint_hostname: {self.custom_endpoint_hostname}")
-            print(f"connection_port: {self.connection_port}")
