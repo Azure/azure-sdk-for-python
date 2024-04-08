@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.4.0 (2024-04-09)
 
 ### Features Added
 
@@ -8,10 +8,6 @@
     ([#34971](https://github.com/Azure/azure-sdk-for-python/pull/34971))
 - Added `resource` parameter
     ([#34900](https://github.com/Azure/azure-sdk-for-python/pull/34900))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
