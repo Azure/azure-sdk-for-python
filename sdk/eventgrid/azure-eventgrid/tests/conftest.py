@@ -58,6 +58,22 @@ def add_sanitizers(test_proxy):
     eventgrid_client_secret = os.getenv("EVENTGRID_CLIENT_SECRET", "sanitized")
     tenant_id = os.getenv("AZURE_TENANT_ID", "sanitized")
     eventgrid_topic_endpoint = os.getenv("EVENTGRID_TOPIC_ENDPOINT", "sanitized")
+
+    eventgrid_endpoint = os.getenv("EVENTGRID_ENDPOINT", "sanitized")
+    eventgrid_key = os.getenv("EVENTGRID_KEY", "sanitized")
+    eventgrid_topic_name = os.getenv("EVENTGRID_TOPIC_NAME", "sanitized")
+    eventgrid_event_subscription_name = os.getenv("EVENTGRID_EVENT_SUBSCRIPTION_NAME", "sanitized")
+
+    eventgrid_cloud_event_topic_key = os.getenv("EVENTGRID_CLOUD_EVENT_TOPIC_KEY", "sanitized")
+    eventgrid_cloud_event_topic_endpoint = os.getenv("EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT", "sanitized")
+
+    eventgrid_topic_key = os.getenv("EVENTGRID_TOPIC_KEY", "sanitized")
+    eventgrid_topic_endpoint = os.getenv("EVENTGRID_TOPIC_ENDPOINT", "sanitized")
+
+    eventgrid_partner_channel_name=os.getenv("EVENTGRID_PARTNER_CHANNEL_NAME", "sanitized")
+    eventgrid_partner_namespace_topic_endpoint=os.getenv("EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT", "sanitized")
+    eventgrid_partner_namespace_topic_key=os.getenv("EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY", "sanitized")
+
     # Need to santize namespace for eventgrid_topic:
     try:
         eventgrid_hostname = urlparse(eventgrid_topic_endpoint).hostname

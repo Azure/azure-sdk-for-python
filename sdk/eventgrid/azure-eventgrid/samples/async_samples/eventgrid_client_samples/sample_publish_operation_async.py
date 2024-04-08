@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_publish_operation_async.py
+DESCRIPTION:
+    These samples demonstrate sending CloudEvents.
+USAGE:
+    python sample_publish_operation_async.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
@@ -27,13 +40,13 @@ async def run():
         # Publish a CloudEvent as dict
         try:
             cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event_dict)
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents as dict
         try:
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
+            await client.send(topic_name=TOPIC_NAME, events=[cloud_event_dict, cloud_event_dict])
         except HttpResponseError:
             raise
 
@@ -43,15 +56,15 @@ async def run():
             cloud_event = CloudEvent(
                 data="HI", source="https://example.com", type="example"
             )
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event)
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event, cloud_event]
-            await client.publish_cloud_events(
-                topic_name=TOPIC_NAME, body=list_of_cloud_events
+            await client.send(
+                topic_name=TOPIC_NAME, events=list_of_cloud_events
             )
         except HttpResponseError:
             raise

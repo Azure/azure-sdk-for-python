@@ -17,7 +17,7 @@ USAGE:
 import os
 import asyncio
 from azure.eventgrid import EventGridEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
@@ -26,7 +26,7 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureSasCredential(sas)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     async with client:
         await client.send(

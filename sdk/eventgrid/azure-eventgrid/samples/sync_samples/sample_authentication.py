@@ -6,7 +6,7 @@
 """
 FILE: sample_authentication.py
 DESCRIPTION:
-    These samples demonstrate authenticating an EventGridPublisherClient.
+    These samples demonstrate authenticating an EventGridClient.
 USAGE:
     python sample_authentication.py
     Set the environment variables with your own values before running the sample:
@@ -17,33 +17,33 @@ USAGE:
 """
 # [START client_auth_with_key_cred]
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+key = os.environ["EVENTGRID_KEY"]
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
-credential_key = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential_key)
+credential_key = AzureKeyCredential(key)
+client = EventGridClient(endpoint, credential_key)
 # [END client_auth_with_key_cred]
 
 # [START client_auth_with_sas_cred]
 import os
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureSasCredential
 
 signature = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential_sas = AzureSasCredential(signature)
-client = EventGridPublisherClient(endpoint, credential_sas)
+client = EventGridClient(endpoint, credential_sas, level="Basic")
 # [END client_auth_with_sas_cred]
 
 # [START client_auth_with_token_cred]
 from azure.identity import DefaultAzureCredential
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 
 default_az_credential = DefaultAzureCredential()
-endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, default_az_credential)
+endpoint = os.environ["EVENTGRID_ENDPOINT"]
+client = EventGridClient(endpoint, default_az_credential)
 # [END client_auth_with_token_cred]

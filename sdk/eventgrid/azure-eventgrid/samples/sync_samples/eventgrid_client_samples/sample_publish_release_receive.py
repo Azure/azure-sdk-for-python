@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_publish_release_receive.py
+DESCRIPTION:
+    These samples demonstrate sending, receiving and releasing CloudEvents.
+USAGE:
+    python sample_publish_release_receive.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridClient
@@ -23,10 +36,10 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 try:
     # Publish a CloudEvent
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+    client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
     # Receive CloudEvents and parse out lock tokens
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+    receive_result = client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     lock_tokens_to_release = []
     for item in receive_result.value:
         lock_tokens_to_release.append(item.broker_properties.lock_token)
@@ -34,25 +47,23 @@ try:
     print("Received events:", receive_result.value)
 
     # Release a LockToken
-    release_token = ReleaseOptions(lock_tokens=lock_tokens_to_release)
-    release_events = client.release_cloud_events(
+    release_events = client.release(
         topic_name=TOPIC_NAME,
-        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
         release_delay_in_seconds=60,
-        release_options=release_token,
+        lock_tokens=lock_tokens_to_release,
     )
     print("Released Event:", release_events)
 
     # Receive CloudEvents again
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
+    receive_result = client.receive(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     print("Received events after release:", receive_result.value)
 
-    # Acknowledge a LockToken
-    acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
-    acknowledge_events = client.acknowledge_cloud_events(
+    # Acknowledge a LockToken that was released
+    acknowledge_events = client.acknowledge(
         topic_name=TOPIC_NAME,
-        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-        acknowledge_options=acknowledge_token,
+        subscription_name=EVENT_SUBSCRIPTION_NAME,
+        lock_tokens=lock_tokens_to_release,
     )
     print("Acknowledged events after release:", acknowledge_events)
 except HttpResponseError:
