@@ -9,6 +9,7 @@ import uuid
 import time
 import functools
 import collections
+import re
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
 from urllib.parse import urlparse
@@ -68,6 +69,8 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
+def _is_local_endpoint(endpoint: str) -> bool:
+  return re.match("127\.[\d.]+|[0:]+1|localhost", endpoint.lower())
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
@@ -128,10 +131,10 @@ def _parse_conn_str(
         raise ValueError("Connection string is either blank or malformed.")
     emulator = bool(use_emulator=="true") if use_emulator else False
     if emulator:
-        if "localhost" not in endpoint:
+        if not _is_local_endpoint(endpoint):
             raise ValueError("Invalid Endpoint on the Connection String. "
                              "For Development Connection Strings, the Endpoint should be "
-                             "the address of the local Service Bus Emulator, like localhost:9093.")
+                             "a localhost.")
         host = endpoint   
     else:
         parsed = urlparse(endpoint)
