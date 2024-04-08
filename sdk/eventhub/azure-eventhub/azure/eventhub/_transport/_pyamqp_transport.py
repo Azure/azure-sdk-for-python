@@ -507,6 +507,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             keep_alive_interval=keep_alive_interval,
             streaming_receive=streaming_receive,
             timeout=timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
