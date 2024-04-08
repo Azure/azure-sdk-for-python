@@ -245,6 +245,12 @@ jobs:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
 
+    - task: DownloadPipelineArtifact@2
+      condition: succeededOrFailed()
+      inputs:
+        artifactName: 'packages_extended'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
     - template: ../steps/analyze.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

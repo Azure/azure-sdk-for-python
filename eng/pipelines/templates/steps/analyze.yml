@@ -29,7 +29,7 @@ steps:
     displayName: 'Set Tox Environment Skips'
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-      arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}" ${{ parameters.AdditionalTestArgs }}'
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
@@ -81,28 +81,31 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
+     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
 
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: run_pyright.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
 
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
 
   - ${{ if parameters.ValidateFormatting }}:
     - template: run_black.yml
@@ -114,31 +117,25 @@ steps:
     displayName: 'Run Keyword Validation Check'
     inputs:
       scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
-
-  - task: DownloadPipelineArtifact@2
-    condition: succeededOrFailed()
-    inputs:
-      artifactName: 'packages_extended'
-      targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs }}
 
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:

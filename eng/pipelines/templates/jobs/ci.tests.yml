@@ -78,7 +78,6 @@ jobs:
     - name: InjectedPackages
       value: ${{ parameters.InjectedPackages }}
 
-
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
