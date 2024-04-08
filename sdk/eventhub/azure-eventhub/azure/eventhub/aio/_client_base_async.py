@@ -259,8 +259,7 @@ class ClientBaseAsync(ClientBase):
         )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        # Check if emulator is in use, unset tls if it is, and set the endpoint 
-        # as a custom endpoint address unless otherwise specified.
+        # Check if emulator is in use, unset tls if it is
         if emulator:
             kwargs["use_tls"] = False
         if token and token_expiry:
