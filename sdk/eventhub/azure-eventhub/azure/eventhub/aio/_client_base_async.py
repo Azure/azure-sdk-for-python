@@ -254,11 +254,16 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is, and set the endpoint 
+        # as a custom endpoint address unless otherwise specified.
+        if emulator or "localhost" in host:
+            # kwargs["custom_endpoint_address"] = host
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:

@@ -95,7 +95,7 @@ def _parse_conn_str(
             # only sas check is non case sensitive for both conn str properties and internal use
             if key.lower() == "sharedaccesssignature":
                 shared_access_signature = value
-        use_development_emulator = conn_settings.get("UseDevelopmentEmulator")
+        use_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     if not check_case:
         endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
@@ -105,7 +105,7 @@ def _parse_conn_str(
         shared_access_key = conn_settings.get("sharedaccesskey")
         entity_path = conn_settings.get("entitypath")
         shared_access_signature = conn_settings.get("sharedaccesssignature")
-        use_development_emulator = conn_settings.get("usedevelopmentemulator")
+        use_emulator = conn_settings.get("usedevelopmentemulator")
 
     if shared_access_signature:
         try:
@@ -156,7 +156,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
-        bool(use_development_emulator) if use_development_emulator else None,
+        bool(use_emulator=="true") if use_emulator else False
     )
 
 
@@ -331,8 +331,6 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-
-
         host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
@@ -345,6 +343,11 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is, and set the endpoint 
+        # as a custom endpoint address unless otherwise specified.
+        if emulator or "localhost" in host:
+            # kwargs["custom_endpoint_address"] = host
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
