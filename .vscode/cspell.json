@@ -1712,9 +1712,10 @@
       ]
     },
     {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/_client.py",
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/*.py",
       "words": [
-        "awps"
+        "awps",
+        "psutil",
       ]
     },
     {
