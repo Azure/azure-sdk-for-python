@@ -246,7 +246,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace_async
-    async def receive(
+    async def receive_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -297,7 +297,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace_async
-    async def acknowledge(
+    async def acknowledge_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -330,7 +330,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
-    async def release(
+    async def release_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -367,7 +367,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace_async
-    async def reject(
+    async def reject_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -399,7 +399,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    async def renew_locks(
+    async def renew_cloud_event_locks(
         self,
         topic_name: str,
         subscription_name: str,
