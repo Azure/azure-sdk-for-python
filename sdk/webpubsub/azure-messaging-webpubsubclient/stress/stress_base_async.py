@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from process_monitor import ProcessMonitor
-
 import os
 import time
 import asyncio
@@ -15,10 +13,12 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.messaging.webpubsubclient.models import (
     WebPubSubDataType,
 )
+from process_monitor import ProcessMonitor, get_base_logger
 from dotenv import load_dotenv
 
 
 async def main(log_file_name: str = "", log_interval: int = 5, duration: int = 24 * 3600, messages_num: int = 1000):
+    logger = get_base_logger(__name__, log_file_name)
     load_dotenv()
     service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
@@ -40,6 +40,7 @@ async def main(log_file_name: str = "", log_interval: int = 5, duration: int = 2
                 await asyncio.gather(
                     *[client.send_to_group(group_name, message, WebPubSubDataType.TEXT) for _ in range(messages_num)]
                 )
+                logger.info(f"Succeed to send {messages_num} messages")
 
 
 if __name__ == "__main__":

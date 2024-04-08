@@ -10,7 +10,7 @@ import threading
 import time
 
 
-def get_base_logger(logger_name: str, log_file_name: str):
+def get_base_logger(logger_name: str, log_file_name: str = ""):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter("%(asctime)s %(name)-12s %(levelname)-8s %(message)s")
