@@ -937,10 +937,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
-        """Play media to specific participant(s) in this call.
+        """Put participant on hold while playing audio.
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :param play_source: A PlaySource representing the source to play.
@@ -971,7 +971,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_uri=operation_callback_url,
             kwargs=kwargs
         )
 
@@ -985,7 +985,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         **kwargs
     )-> None:
-        """Play media to specific participant(s) in this call.
+        """Remove participant from hold.
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track this call and its associated events.
