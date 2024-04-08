@@ -8,12 +8,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Mapping, Any
 from azure.core.messaging import CloudEvent
-from .. import _model_base
 from ._models import (
     ReceiveDetails as InternalReceiveDetails,
     ReceiveResult as InternalReceiveResult,
     BrokerProperties as InternalBrokerProperties,
 )
+
 
 class ReceiveDetails(InternalReceiveDetails):
     """Receive operation details per Cloud Event.
@@ -32,8 +32,7 @@ class ReceiveDetails(InternalReceiveDetails):
         *,
         broker_properties: "BrokerProperties",
         event: "CloudEvent",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -42,9 +41,9 @@ class ReceiveDetails(InternalReceiveDetails):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(
+    def __init__(  # pylint: disable=useless-super-delegation
         self, *args: Any, **kwargs: Any
-    ) -> None:  # pylint: disable=useless-super-delegation
+    ) -> None:
         super().__init__(*args, **kwargs)
 
 
@@ -62,8 +61,7 @@ class ReceiveResult(InternalReceiveResult):
         self,
         *,
         value: List["ReceiveDetails"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -72,9 +70,9 @@ class ReceiveResult(InternalReceiveResult):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(
+    def __init__( # pylint: disable=useless-super-delegation
         self, *args: Any, **kwargs: Any
-    ) -> None:  # pylint: disable=useless-super-delegation
+    ) -> None:
         super().__init__(*args, **kwargs)
 
 
@@ -95,8 +93,7 @@ class BrokerProperties(InternalBrokerProperties):
         *,
         lock_token: str,
         delivery_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -105,9 +102,9 @@ class BrokerProperties(InternalBrokerProperties):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(
+    def __init__( # pylint: disable=useless-super-delegation
         self, *args: Any, **kwargs: Any
-    ) -> None:  # pylint: disable=useless-super-delegation
+    ) -> None:
         super().__init__(*args, **kwargs)
 
 

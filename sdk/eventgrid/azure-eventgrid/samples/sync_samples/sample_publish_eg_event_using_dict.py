@@ -19,7 +19,7 @@ USAGE:
 import os
 from datetime import datetime
 from msrest.serialization import UTC
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
@@ -29,7 +29,7 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 def publish():
     # [START publish_eg_event_dict]
     credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(endpoint, credential)
+    client = EventGridClient(endpoint, credential, level="Basic")
 
     event0 = {
         "eventType": "Contoso.Items.ItemReceived",

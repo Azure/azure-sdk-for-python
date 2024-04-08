@@ -18,7 +18,7 @@ USAGE:
 import os
 import asyncio
 from azure.eventgrid import EventGridEvent
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 domain_key = os.environ["EVENTGRID_DOMAIN_KEY"]
@@ -27,26 +27,26 @@ domain_hostname = os.environ["EVENTGRID_DOMAIN_ENDPOINT"]
 
 async def publish():
     credential = AzureKeyCredential(domain_key)
-    client = EventGridPublisherClient(domain_hostname, credential)
-
-    await client.send(
-        [
-            EventGridEvent(
-                topic="MyCustomDomainTopic1",
-                event_type="Contoso.Items.ItemReceived",
-                data={"itemSku": "Contoso Item SKU #1"},
-                subject="Door1",
-                data_version="2.0",
-            ),
-            EventGridEvent(
-                topic="MyCustomDomainTopic2",
-                event_type="Contoso.Items.ItemReceived",
-                data={"itemSku": "Contoso Item SKU #2"},
-                subject="Door1",
-                data_version="2.0",
-            ),
-        ]
-    )
+    client = EventGridClient(domain_hostname, credential, level="Basic")
+    async with client:
+        await client.send(
+            [
+                EventGridEvent(
+                    topic="MyCustomDomainTopic1",
+                    event_type="Contoso.Items.ItemReceived",
+                    data={"itemSku": "Contoso Item SKU #1"},
+                    subject="Door1",
+                    data_version="2.0",
+                ),
+                EventGridEvent(
+                    topic="MyCustomDomainTopic2",
+                    event_type="Contoso.Items.ItemReceived",
+                    data={"itemSku": "Contoso Item SKU #2"},
+                    subject="Door1",
+                    data_version="2.0",
+                ),
+            ]
+        )
 
 
 if __name__ == "__main__":

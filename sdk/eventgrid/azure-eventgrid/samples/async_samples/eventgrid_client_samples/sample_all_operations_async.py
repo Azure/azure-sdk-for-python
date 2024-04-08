@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_all_operations_async.py
+DESCRIPTION:
+    These samples demonstrate sending, receiving, acknowledging, and releasing CloudEvents.
+USAGE:
+    python sample_all_operations_async.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
@@ -36,8 +49,8 @@ async def run():
     async with client:
         # Publish a CloudEvent
         try:
-            await client.publish_cloud_events(
-                topic_name=TOPIC_NAME, body=cloud_event_reject
+            await client.send(
+                topic_name=TOPIC_NAME, events=cloud_event_reject
             )
         except HttpResponseError:
             raise
@@ -45,17 +58,17 @@ async def run():
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event_release, cloud_event_ack]
-            await client.publish_cloud_events(
-                topic_name=TOPIC_NAME, body=list_of_cloud_events
+            await client.send(
+                topic_name=TOPIC_NAME, events=list_of_cloud_events
             )
         except HttpResponseError:
             raise
 
         # Receive Published Cloud Events
         try:
-            receive_results = await client.receive_cloud_events(
+            receive_results = await client.receive(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,
                 max_wait_time=10,
             )
@@ -82,11 +95,10 @@ async def run():
 
         if len(release_events) > 0:
             try:
-                release_tokens = ReleaseOptions(lock_tokens=release_events)
-                release_result = await client.release_cloud_events(
+                release_result = await client.release(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    release_options=release_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=release_events,
                 )
             except HttpResponseError:
                 raise
@@ -96,11 +108,10 @@ async def run():
 
         if len(acknowledge_events) > 0:
             try:
-                ack_tokens = AcknowledgeOptions(lock_tokens=acknowledge_events)
-                ack_result = await client.acknowledge_cloud_events(
+                ack_result = await client.acknowledge(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    acknowledge_options=ack_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=acknowledge_events,
                 )
             except HttpResponseError:
                 raise
@@ -110,11 +121,10 @@ async def run():
 
         if len(reject_events) > 0:
             try:
-                reject_tokens = RejectOptions(lock_tokens=reject_events)
-                reject_result = await client.reject_cloud_events(
+                reject_result = await client.reject(
                     topic_name=TOPIC_NAME,
-                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    reject_options=reject_tokens,
+                    subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=reject_events,
                 )
             except HttpResponseError:
                 raise

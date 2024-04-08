@@ -17,31 +17,31 @@ USAGE:
 """
 # [START client_auth_with_key_cred_async]
 import os
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential_key = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential_key)
+client = EventGridClient(endpoint, credential_key, level="Basic")
 # [END client_auth_with_key_cred_async]
 
 # [START client_auth_with_sas_cred_async]
 import os
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.core.credentials import AzureSasCredential
 
 signature = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential_sas = AzureSasCredential(signature)
-client = EventGridPublisherClient(endpoint, credential_sas)
+client = EventGridClient(endpoint, credential_sas, level="Basic")
 # [END client_auth_with_sas_cred_async]
 
 # [START client_auth_with_token_cred_async]
 from azure.identity.aio import DefaultAzureCredential
-from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid import EventGridEvent
 
 event = EventGridEvent(
@@ -53,5 +53,5 @@ event = EventGridEvent(
 
 default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, default_az_credential)
+client = EventGridClient(endpoint, default_az_credential, level="Basic")
 # [END client_auth_with_token_cred_async]

@@ -22,7 +22,7 @@ import time
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridClient
 
 domain_key = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_KEY"]
 domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
@@ -30,7 +30,7 @@ domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(domain_key)
-client = EventGridPublisherClient(domain_endpoint, credential)
+client = EventGridClient(domain_endpoint, credential, level="Basic")
 
 
 def publish_event():

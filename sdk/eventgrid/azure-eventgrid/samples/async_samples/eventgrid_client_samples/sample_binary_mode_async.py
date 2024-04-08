@@ -3,6 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+"""
+FILE: sample_binary_mode_async.py
+DESCRIPTION:
+    These samples demonstrate sending CloudEvents in binary mode.
+USAGE:
+    python sample_binary_mode_async.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENTGRID_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_ENDPOINT - The namespace endpoint. Typically it exists in the format
+    "https://<YOUR-NAMESPACE-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    3) EVENTGRID_TOPIC_NAME - The namespace topic name.
+    4) EVENTGRID_EVENT_SUBSCRIPTION_NAME - The event subscription name.
+"""
 import os
 import asyncio
 import json
@@ -28,15 +41,15 @@ async def run():
         try:
             # Publish CloudEvent in binary mode with str encoded as bytes
             cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict, binary_mode=True)
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event_dict, binary_mode=True)
 
             # Publish CloudEvent in binary mode with json encoded as bytes
             cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event, binary_mode=True)
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event, binary_mode=True)
 
-            receive_result = await client.receive_cloud_events(
+            receive_result = await client.receive(
                 topic_name=TOPIC_NAME,
-                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,
                 max_wait_time=10,
             )

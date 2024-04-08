@@ -1,14 +1,17 @@
 # Release History
 
-## 4.19.1 (Unreleased)
+## 4.19.0b1 (2024-04-11)
 
 ### Features Added
 
+- This is a Beta of the EventGridClient
+  - EventGridClient `send` can be used for both Event Grid Namespace Resources and Event Grid Basic Resources.
+    - Added a kwarg `level` in the EventGridClient constructor. The default value is `Standard` which creates a client for an Event Grid Namespace Resource.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Removed the `AcknowledgeOptions`,`ReleaseOptions`, `RejectOptions`, and `RenewLockOptions` models. `lock_tokens` can now be specified as a `kwarg` on the operation.
+- Renamed `publish_cloud_events` to `send`
 
 ## 4.19.0 (2024-04-10)
 
@@ -16,7 +19,7 @@
 
 - Added new enum values to `SystemEventNames` related to Azure Communication Services.
 
-### Bugs Fixed
+### Breaking Changes 
 
 - Fixed a bug where the Api Version was being hardcoded to `2018-01-01` on any request sent to the service.
 
