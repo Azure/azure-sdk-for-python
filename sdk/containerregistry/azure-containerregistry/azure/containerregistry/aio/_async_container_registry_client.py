@@ -263,7 +263,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         repository: str,
         *,
-        order_by: Optional[Union[ArtifactManifestOrder, str]] = None,
+        order_by: Optional[Union["ArtifactManifestOrder", str]] = None,
         results_per_page: Optional[int] = None,
         **kwargs,
     ) -> AsyncItemPaged[ArtifactManifestProperties]:
@@ -473,7 +473,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         repository: str,
         *,
-        order_by: Optional[Union[ArtifactTagOrder, str]] = None,
+        order_by: Optional[Union["ArtifactTagOrder", str]] = None,
         results_per_page: Optional[int] = None,
         **kwargs,
     ) -> AsyncItemPaged[ArtifactTagProperties]:
