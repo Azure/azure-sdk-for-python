@@ -126,10 +126,18 @@ def _parse_conn_str(
     # check that endpoint is valid
     if not endpoint:
         raise ValueError("Connection string is either blank or malformed.")
-    parsed = urlparse(endpoint)
-    if not parsed.netloc:
-        raise ValueError("Invalid Endpoint on the Connection String.")
-    host = cast(str, parsed.netloc.strip())
+    emulator = bool(use_emulator=="true") if use_emulator else False
+    if emulator:
+        if "localhost" not in endpoint:
+            raise ValueError("Invalid Endpoint on the Connection String. "
+                             "For Development Connection Strings, the Endpoint should be "
+                             "the address of the local Service Bus Emulator, like localhost:9093.")
+        host = endpoint   
+    else:
+        parsed = urlparse(endpoint)
+        if not parsed.netloc:
+            raise ValueError("Invalid Endpoint on the Connection String.")
+        host = cast(str, parsed.netloc.strip())
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
@@ -156,7 +164,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
-        bool(use_emulator=="true") if use_emulator else False
+        emulator
     )
 
 
@@ -345,8 +353,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         kwargs["eventhub_name"] = entity
         # Check if emulator is in use, unset tls if it is, and set the endpoint 
         # as a custom endpoint address unless otherwise specified.
-        if emulator or "localhost" in host:
-            # kwargs["custom_endpoint_address"] = host
+        if emulator:
             kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
