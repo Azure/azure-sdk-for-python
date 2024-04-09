@@ -27,7 +27,6 @@ Previously in `azure-purview-catalog`, the client name is PurviewCatalogClient.
 ```python
 from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
-
 credential = DefaultAzureCredential()
 client = PurviewCatalogClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
@@ -37,7 +36,8 @@ Now in `azure-purview-datamap`, the client name is DataMapClient.
 ```python
 from azure.purview.datamap import DataMapClient
 from azure.identity import DefaultAzureCredential
-client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+credential = DefaultAzureCredential()
+client = DataMapClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ### Operation name
