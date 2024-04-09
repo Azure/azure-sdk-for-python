@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.sql import SqlManagementClient
+from azure.mgmt.migrationdiscoverysap import MigrationDiscoverySapMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-sql
+    pip install azure-mgmt-migrationdiscoverysap
 # USAGE
-    python distributed_availability_groups_create.py
+    python server_instances_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,27 +24,21 @@ from azure.mgmt.sql import SqlManagementClient
 
 
 def main():
-    client = SqlManagementClient(
+    client = MigrationDiscoverySapMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="6d875e77-e412-4d7d-9af4-8895278b4443",
     )
 
-    response = client.distributed_availability_groups.begin_create_or_update(
-        resource_group_name="testrg",
-        managed_instance_name="testcl",
-        distributed_availability_group_name="dag",
-        parameters={
-            "properties": {
-                "primaryAvailabilityGroupName": "BoxLocalAg1",
-                "secondaryAvailabilityGroupName": "testcl",
-                "sourceEndpoint": "TCP://SERVER:7022",
-                "targetDatabase": "testdb",
-            }
-        },
-    ).result()
+    response = client.server_instances.update(
+        resource_group_name="test-rg",
+        sap_discovery_site_name="SampleSite",
+        sap_instance_name="MPP_MPP",
+        server_instance_name="APP_SapServer1",
+        properties={"properties": {}},
+    )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-11-01-preview/examples/DistributedAvailabilityGroupsCreate.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/SAPDiscoverySites/preview/2023-10-01-preview/examples/ServerInstances_Update.json
 if __name__ == "__main__":
     main()
