@@ -8,8 +8,6 @@
 ### Breaking Changes
 - Please note, this package is no longer being maintained after 03/31/2024.
 
-### Bugs Fixed
-
 ### Other Changes
 Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
