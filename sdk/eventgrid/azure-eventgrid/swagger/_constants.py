@@ -66,5 +66,5 @@ additional_events = {
 
 EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData',
               'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData', 'HealthResourcesResourceEventData', 'AcsRouterJobEventData', 'AcsRouterWorkerEventData', 'AcsRouterEventData',
-              'AvsClusterEventData', 'AvsPrivateCloudEventData', 'AvsScriptExecutionEventData', "AcsAdvancedMessageEventData"
+              'AvsClusterEventData', 'AvsPrivateCloudEventData', 'AvsScriptExecutionEventData', "AcsMessageEventData"
               ]
