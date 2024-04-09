@@ -141,6 +141,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             link_properties=link_properties,
             properties=properties,
             client_name=client_name,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -227,6 +228,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             streaming_receive=streaming_receive,
             message_received_callback=message_received_callback,
             timeout=timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
