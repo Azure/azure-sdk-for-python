@@ -47,7 +47,7 @@ async def run():
             cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
             await client.send(topic_name=TOPIC_NAME, events=cloud_event, binary_mode=True)
 
-            receive_result = await client.receive(
+            receive_result = await client.receive_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 max_events=10,
