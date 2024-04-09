@@ -20,15 +20,6 @@ def add_sanitizers(test_proxy):
         value="fake-connection-string",
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "fake-connection-string"),
     )
-    add_general_regex_sanitizer(
-        value="fake-client-id", regex=os.environ.get("APPCONFIGURATION_CLIENT_ID", "fake-client-id")
-    )
-    add_general_regex_sanitizer(
-        value="fake-client-secret", regex=os.environ.get("APPCONFIGURATION_CLIENT_SECRET", "fake-client-secret")
-    )
-    add_general_regex_sanitizer(
-        value="fake-tenant-id", regex=os.environ.get("APPCONFIGURATION_TENANT_ID", "fake-tenant-id")
-    )
     add_general_string_sanitizer(
         value="https://fake-key-vault.vault.azure.net/",
         target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),

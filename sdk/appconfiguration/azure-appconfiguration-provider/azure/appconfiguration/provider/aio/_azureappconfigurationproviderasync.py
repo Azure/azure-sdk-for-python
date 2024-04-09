@@ -403,7 +403,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if not success:
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
-                self._on_refresh_success()
+                await self._on_refresh_success()
 
     async def _refresh_configuration_settings(self, **kwargs) -> bool:
         need_refresh = False
