@@ -8,10 +8,9 @@
   - EventGridClient `send` can be used for both Event Grid Namespace Resources and Event Grid Basic Resources.
     - Added a kwarg `level` in the EventGridClient constructor. The default value is `Standard` which creates a client for an Event Grid Namespace Resource.
 
-### Breaking Changes
-
-- Removed the `AcknowledgeOptions`,`ReleaseOptions`, `RejectOptions`, and `RenewLockOptions` models. `lock_tokens` can now be specified as a `kwarg` on the operation.
-- Renamed `publish_cloud_events` to `send`
+ ### Breaking Changes 
+  - Removed the `AcknowledgeOptions`,`ReleaseOptions`, `RejectOptions`, and `RenewLockOptions` models. `lock_tokens` can now be specified as a `kwarg` on the operation.
+  - Renamed `publish_cloud_events` to `send`.
 
 ## 4.19.0 (2024-04-10)
 

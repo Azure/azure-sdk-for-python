@@ -33,7 +33,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Receive CloudEvents
 try:
-    receive_result = client.receive(
+    receive_result = client.receive_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         max_events=10,
