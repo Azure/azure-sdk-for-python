@@ -13,6 +13,7 @@ from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
 from pathlib import Path
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.fixture
@@ -199,18 +200,18 @@ class TestModel(AzureRecordedTestCase):
         assert model.description == "This is evaluator."
         assert model.type == "custom_model"
 
-        # Check that we only return evaluators, but not models.
+        # Check that we only can create evaluators with the same name.
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_version = "2"
 
         model_entity = load_model(model_path)
         model_entity.name = model_name
         model_entity.version = model_version
-        model = ml_cli.models.create_or_update(model_entity)
+        with pytest.raises(ValidationException) as cm:
+            ml_cli.models.create_or_update(model_entity)
+        assert "previous version of model was marked as promptflow evaluator" in cm.value.args[0]
 
-        # We have created two models with the same name:
-        # one is a plane model, another one is evaluator
-        # we expect only evaluator to be returned
+        # Check that only one model was created.
         model_list = list(ml_cli.evaluators.list(model_name))
         assert len(model_list) == 1
         assert "is-promptflow" in model_list[0].properties and model_list[0].properties["is-promptflow"] == "true"

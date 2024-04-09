@@ -109,6 +109,21 @@ class EvaluatorOperations(_ScopeDependentOperations):
         model.properties.update(_get_evaluator_properties())
         return self._model_op.create_or_update(model)
 
+    def _raise_if_not_evaluator(self, properties: Optional[Dict[str, Any]], message: str) -> None:
+        """
+        :param properties: The properties of a model.
+        :type properties: dict[str, str]
+        :param message: The message to be set on exception.
+        :type message: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if model is not an
+                                                             evaluator.
+        """
+        if properties is not None and not _is_evaluator(properties):
+            raise ResourceNotFoundError(
+                message=message,
+                response=None,
+            )
+
     @monitor_with_activity(ops_logger, "Evaluator.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
@@ -126,11 +141,11 @@ class EvaluatorOperations(_ScopeDependentOperations):
         """
         model = self._model_op.get(name, version, label)
 
-        if model is not None and not _is_evaluator(model.properties):
-            raise ResourceNotFoundError(
-                message=f"Evaluator {name} with version {version} not found.",
-                response=None,
-            )
+        properties = None if model is None else model.properties
+        self._raise_if_not_evaluator(
+            properties,
+            f"Evaluator {name} with version {version} not found.",
+        )
 
         return model
 
@@ -177,8 +192,11 @@ class EvaluatorOperations(_ScopeDependentOperations):
         """
         # To validate that the model is a flow, we need to get it and check properties.
         # If there is no version, we cannot get the model.
-        if version:
-            self.get(name=name, version=version, label=label)
+        properties = self._model_op._get_model_properties(name, version, label)
+        self._raise_if_not_evaluator(
+            properties,
+            f"Evaluator {name} with version {version} not found.",
+        )
         self._model_op.archive(name, version, label, **kwargs)
 
     @monitor_with_activity(ops_logger, "Evaluator.Restore", ActivityType.PUBLICAPI)
@@ -209,8 +227,11 @@ class EvaluatorOperations(_ScopeDependentOperations):
         """
         # To validate that the model is a flow, we need to get it and check properties.
         # If there is no version, we cannot get the model.
-        if version:
-            self.get(name=name, version=version, label=label)
+        properties = self._model_op._get_model_properties(name, version, label)
+        self._raise_if_not_evaluator(
+            properties,
+            f"Evaluator {name} with version {version} not found.",
+        )
         self._model_op.restore(name, version, label, **kwargs)
 
     @monitor_with_activity(ops_logger, "Evaluator.List", ActivityType.PUBLICAPI)

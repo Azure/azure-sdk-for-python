@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Dict, Iterable, Optional
 from unittest.mock import Mock, patch
 import pytest
 
@@ -14,7 +14,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 
@@ -318,3 +318,149 @@ path: ./model.pkl"""
             from azure.ai.ml.entities import WorkspaceModelReference
         except ImportError:
             assert False, "WorkspaceModelReference class not found"
+
+    @pytest.mark.parametrize(
+        "old_properties,new_properties",
+        [
+            (None, {}),
+            ({"test": "test"}, {}),
+            ({}, {"test": "test"}),
+            ({}, {}),
+            ({"is-promptflow": "true", "is-evaluator": "true"}, {"is-promptflow": "true", "is-evaluator": "true"}),
+            (None, {"is-promptflow": "true", "is-evaluator": "true"}),
+        ],
+    )
+    def test_create_success(
+        self,
+        mock_workspace_scope: OperationScope,
+        mock_model_operation: ModelOperations,
+        tmp_path: Path,
+        old_properties: Dict[str, str],
+        new_properties: Dict[str, str],
+    ):
+        """Test that new version is created if models are of the same type."""
+        model_name = f"model_random_string"
+        p = tmp_path / "model_full.yml"
+        model_path = tmp_path / "model.pkl"
+        model_path.write_text("hello world")
+        p.write_text(
+            f"""
+name: {model_name}
+path: ./model.pkl
+version: 3"""
+        )
+
+        with patch(
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+            return_value=ArtifactStorageInfo(
+                name=model_name,
+                version="3",
+                relative_path="path",
+                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+                container_name="containerName",
+            ),
+        ) as mock_upload, patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=Model()
+        ), patch(
+            "azure.ai.ml.operations._model_operations.ModelOperations._get_model_properties",
+            return_value=old_properties,
+        ):
+            model = load_model(source=p)
+            model.properties = new_properties
+            path = Path(model._base_path, model.path).resolve()
+            mock_model_operation.create_or_update(model)
+            mock_upload.assert_called_once_with(
+                mock_workspace_scope,
+                mock_model_operation._datastore_operation,
+                path,
+                asset_name=model.name,
+                asset_version=model.version,
+                datastore_name=None,
+                asset_hash=None,
+                sas_uri=None,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=True,
+                ignore_file=None,
+                blob_uri=None,
+            )
+        mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
+
+    @pytest.mark.parametrize(
+        "old_properties,new_properties,message",
+        [
+            ({"is-promptflow": "true", "is-evaluator": "true"}, {}, "because previous version of model was marked"),
+            ({}, {"is-promptflow": "true", "is-evaluator": "true"}, "because this version of model was marked"),
+        ],
+    )
+    def test_create_raises_if_wrong_type(
+        self,
+        mock_model_operation: ModelOperations,
+        tmp_path: Path,
+        old_properties: Dict[str, str],
+        new_properties: Dict[str, str],
+        message: str,
+    ) -> None:
+        """Test exception if pre existing model is not of a correct type."""
+        model_name = f"model_random_string"
+        p = tmp_path / "model_full.yml"
+        model_path = tmp_path / "model.pkl"
+        model_path.write_text("hello world")
+        p.write_text(
+            f"""
+name: {model_name}
+path: ./model.pkl"""
+        )
+        new_model = load_model(source=p)
+        new_model.properties = new_properties
+        with patch(
+            "azure.ai.ml.operations._model_operations.ModelOperations._get_model_properties",
+            return_value=old_properties,
+        ):
+            with pytest.raises(ValidationException) as cm:
+                mock_model_operation.create_or_update(new_model)
+            assert message in cm.value.args[0]
+
+    @pytest.mark.parametrize(
+        "label,version,get_raises,latest_raises,expected",
+        [
+            ("lbl", None, False, False, {"model": "from_get"}),
+            ("lbl", "1", False, False, {"model": "from_get"}),
+            (None, "1", False, False, {"model": "from_get"}),
+            (None, None, False, False, {"model": "from_latest"}),
+            ("lbl", None, True, False, None),
+            (None, "1", True, False, None),
+            (None, None, True, False, {"model": "from_latest"}),
+            (None, None, True, True, None),
+        ],
+    )
+    def test_return_properties(
+        self,
+        mock_model_operation: ModelOperations,
+        tmp_path: Path,
+        label: Optional[str],
+        version: Optional[str],
+        get_raises: bool,
+        latest_raises: bool,
+        expected: Optional[Dict[str, str]],
+    ) -> None:
+        model_name = f"model_random_string"
+        p = tmp_path / "model_full.yml"
+        model_path = tmp_path / "model.pkl"
+        model_path.write_text("hello world")
+        p.write_text(
+            f"""
+name: {model_name}
+path: ./model.pkl"""
+        )
+        get_model = load_model(source=p)
+        get_model.properties = {"model": "from_get"}
+        latest_model = load_model(source=p)
+        latest_model.properties = {"model": "from_latest"}
+        get_kw = {"side_effect": ResourceNotFoundError("Mock") if get_raises else None, "return_value": get_model}
+        get_latest = {
+            "side_effect": ResourceNotFoundError("Mock") if latest_raises else None,
+            "return_value": latest_model,
+        }
+        with patch("azure.ai.ml.operations._model_operations.ModelOperations.get", **get_kw):
+            with patch("azure.ai.ml.operations._model_operations.ModelOperations._get_latest_version", **get_latest):
+                assert mock_model_operation._get_model_properties(model_name, version, label) == expected

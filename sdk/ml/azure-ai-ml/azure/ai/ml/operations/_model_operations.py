@@ -50,7 +50,7 @@ from azure.ai.ml._utils._registry_utils import (
     get_storage_details_for_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder, _is_evaluator
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
@@ -136,6 +136,31 @@ class ModelOperations(_ScopeDependentOperations):
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
         """
+        # Check if we have the model with the same name and it is an
+        # evaluator. In this aces raise the exception do not create the model.
+        if model.name is not None:
+            model_properties = self._get_model_properties(model.name)
+            if model_properties is not None and _is_evaluator(model_properties) != _is_evaluator(model.properties):
+                if _is_evaluator(model.properties):
+                    msg = (
+                        f"Unable to create the model with name {model.name} "
+                        "because this version of model was marked as promptflow evaluator, but the previous "
+                        "version is a regular model. "
+                        "Please change the model name and try again."
+                    )
+                else:
+                    msg = (
+                        f"Unable to create the model with name {model.name} "
+                        "because previous version of model was marked as promptflow evaluator, but this "
+                        "version is a regular model. "
+                        "Please change the model name and try again."
+                    )
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.MODEL,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
         try:
             name = model.name
             if not model.version and model._auto_increment_version:
@@ -753,3 +778,24 @@ class ModelOperations(_ScopeDependentOperations):
                     package_out = environment_operation.get(name=environment_name, version=environment_version)
 
         return package_out
+
+    def _get_model_properties(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Return the model propertes if the model with this name exists.
+
+        :param name: Model name.
+        :type name: str
+        :param version: Model version.
+        :type version: Optional[str]
+        :param label: model label.
+        :type label: Optional[str]
+        :return: Model properties, if the model exists, or None.
+        """
+        try:
+            if version or label:
+                return self.get(name, version, label).properties
+            return self._get_latest_version(name).properties
+        except (ResourceNotFoundError, ValidationException):
+            return None

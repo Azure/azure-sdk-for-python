@@ -97,7 +97,7 @@ class TestModelOperations:
             ),
         ) as mock_upload, patch(
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
-            return_value=Model(),
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
         ):
             model = _load_flow(eval_name)
             path = Path(model._base_path, model.path).resolve()
@@ -172,7 +172,6 @@ class TestModelOperations:
     @patch.object(Model, "_from_container_rest_object", new=Mock())
     def test_list(self, mock_eval_operation: EvaluatorOperations) -> None:
         mock_eval_operation._model_op._model_versions_operation.list.return_value = [Mock(Model) for _ in range(10)]
-        mock_eval_operation._model_op._model_container_operation.list.return_value = [Mock(Model) for _ in range(10)]
 
         mock_eval_operation.list(name="random_string")
         mock_eval_operation._model_op._model_versions_operation.list.assert_called_once()
@@ -189,8 +188,8 @@ class TestModelOperations:
         version = "1"
         mock_eval_operation._model_op._model_versions_operation.get.return_value = model_version
         with patch(
-            "azure.ai.ml.operations._evaluator_operations.EvaluatorOperations.get",
-            return_value=MagicMock(),
+            "azure.ai.ml.operations._evaluator_operations.ModelOperations.get",
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
         ):
             mock_eval_operation.archive(name=name, version=version)
         mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_once_with(
@@ -205,7 +204,11 @@ class TestModelOperations:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
         mock_eval_operation._model_op._model_container_operation.get.return_value = model_container
-        mock_eval_operation.archive(name=name)
+        with patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
+        ):
+            mock_eval_operation.archive(name=name)
         mock_eval_operation._model_op._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
             workspace_name=mock_eval_operation._model_op._workspace_name,
@@ -219,8 +222,8 @@ class TestModelOperations:
         version = "1"
         mock_eval_operation._model_op._model_versions_operation.get.return_value = model
         with patch(
-            "azure.ai.ml.operations._evaluator_operations.EvaluatorOperations.get",
-            return_value=MagicMock(),
+            "azure.ai.ml.operations._evaluator_operations.ModelOperations.get",
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
         ):
             mock_eval_operation.restore(name=name, version=version)
         mock_eval_operation._model_op._model_versions_operation.create_or_update.assert_called_with(
@@ -235,7 +238,11 @@ class TestModelOperations:
         name = "random_string"
         model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
         mock_eval_operation._model_op._model_container_operation.get.return_value = model_container
-        mock_eval_operation.restore(name=name)
+        with patch(
+            "azure.ai.ml.operations._evaluator_operations.ModelOperations._get_latest_version",
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
+        ):
+            mock_eval_operation.restore(name=name)
         mock_eval_operation._model_op._model_container_operation.create_or_update.assert_called_once_with(
             name=name,
             workspace_name=mock_eval_operation._model_op._workspace_name,
@@ -261,7 +268,7 @@ class TestModelOperations:
             ),
         ) as mock_upload, patch(
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
-            return_value=Model(),
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
         ):
             model = _load_flow(eval_name, version="3", datastore="workspaceartifactstore")
             path = Path(model._base_path, model.path).resolve()
@@ -298,7 +305,7 @@ class TestModelOperations:
             ),
         ), patch(
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
-            return_value=Model(properties={"mock": "mock"}),
+            return_value=Model(properties={"is-promptflow": "true", "is-evaluator": "true"}),
         ):
             mock_eval_operation.create_or_update(plane_model)
         assert plane_model.properties == {
