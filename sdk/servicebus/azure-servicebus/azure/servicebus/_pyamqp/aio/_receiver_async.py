@@ -29,12 +29,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class PendingDisposition(object):
     def __init__(self, **kwargs):
-        self.message = kwargs.get("message")
-        self.sent = False
-        self.frame = None
+        self.sent = kwargs.get("sent", False)
+        self.frame = kwargs.get("frame", None)
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
-        self.transfer_state = None
+        self.transfer_state = kwargs.get("transfer_state", None)
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
         self._network_trace_params = kwargs.get('network_trace_params')
@@ -142,7 +141,6 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
-        message: Optional["_MessageDelivery"] = None,
         on_disposition: Optional[Callable] = None,
     ):
         disposition_frame = DispositionFrame(
@@ -157,17 +155,15 @@ class ReceiverLink(Link):
         self._received_delivery_tags.remove(delivery_tag)
 
         # If trying to settle a message, keep track of the disposition
-        if message:
+        if on_disposition:
             delivery = PendingDisposition(
-                message = message,
                 on_delivery_settled = on_disposition,
+                frame=disposition_frame,
+                settled=settled,
+                transfer_state=state,
+                start=time.time(),
+                sent=True,
             )
-            delivery.frame = disposition_frame
-            delivery.settled = settled
-            delivery.transfer_state = state
-            delivery.start = time.time()
-            delivery.sent = True
-
             self._pending_receipts.append(delivery)
 
 
@@ -201,7 +197,6 @@ class ReceiverLink(Link):
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
-        message_delivery: Optional["_MessageDelivery"] = None,
         on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
@@ -211,7 +206,6 @@ class ReceiverLink(Link):
             settled,
             delivery_state,
             batchable,
-            message=message_delivery,
             on_disposition=on_disposition
         )
         if not settled:

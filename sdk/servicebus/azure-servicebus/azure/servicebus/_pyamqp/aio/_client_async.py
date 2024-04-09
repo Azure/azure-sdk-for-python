@@ -1043,7 +1043,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             delivery_state=state,
             batchable=batchable,
             wait=True,
-            message_delivery=message_delivery,
             on_disposition = on_disposition_received,
         )
 
