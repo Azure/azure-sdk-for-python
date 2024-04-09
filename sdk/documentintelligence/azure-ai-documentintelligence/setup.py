@@ -63,8 +63,8 @@ setup(
         "azure.ai.documentintelligence": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.30.0",
+        "isodate>=0.6.1",
+        "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.8",
