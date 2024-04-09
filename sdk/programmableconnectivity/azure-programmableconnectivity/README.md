@@ -9,7 +9,7 @@ Azure Programmable Connectivity (APC) is a cloud service that simplifies access 
 
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Programmableconnectivity instance. Follow this [doc](https://learn.microsoft.com/en-us/azure/programmable-connectivity/azure-programmable-connectivity-create-gateway) for instructions.
+- An existing Azure Programmable Connectivity Gateway. Follow this [doc](https://learn.microsoft.com/en-us/azure/programmable-connectivity/azure-programmable-connectivity-create-gateway) for instructions.
 
 ### Installing the package
 

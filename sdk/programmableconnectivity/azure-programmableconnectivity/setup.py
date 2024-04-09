@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-programmableconnectivity"
-PACKAGE_PPRINT_NAME = "Azure Programmableconnectivity"
+PACKAGE_PPRINT_NAME = "Azure Programmable Connectivity"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
