@@ -792,10 +792,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Preserve.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key

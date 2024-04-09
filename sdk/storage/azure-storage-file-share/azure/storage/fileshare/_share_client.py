@@ -770,7 +770,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: dict[str, str]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
