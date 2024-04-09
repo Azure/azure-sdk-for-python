@@ -40,6 +40,18 @@ from azure.identity import DefaultAzureCredential
 client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+### API call
+
+The interface names have also changed slightly from catalog to purview. The functionality remains the same. Check the below example for getting all types.
+
+```python
+// azure-purview-catalog
+response = client.types.get_all_type_definitions()
+
+// azure-purview-datamap
+response = client.type_definition.get()
+```
+
 ## Additional samples
 
-For more examples, see [Samples for Purview DataMap](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-catalog#examples).
+For more examples, see [Samples for Purview DataMap](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-datamap/samples).
