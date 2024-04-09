@@ -87,7 +87,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b23",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b24",
         "opentelemetry-instrumentation-django~=0.42b0",
         "opentelemetry-instrumentation-fastapi~=0.42b0",
         "opentelemetry-instrumentation-flask~=0.42b0",
@@ -95,7 +95,7 @@ setup(
         "opentelemetry-instrumentation-requests~=0.42b0",
         "opentelemetry-instrumentation-urllib~=0.42b0",
         "opentelemetry-instrumentation-urllib3~=0.42b0",
-        "opentelemetry-resource-detector-azure~=0.1.2",
+        "opentelemetry-resource-detector-azure~=0.1.4",
     ],
     entry_points={
         "opentelemetry_distro": [
