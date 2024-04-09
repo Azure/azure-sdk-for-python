@@ -48,7 +48,10 @@ def parse_single_response(response: dict) -> list:
         else:
             metric_value = np.nan
             reasoning = ""
-        parsed_harm_response[harm_type] = float(metric_value)
+        try:    
+            parsed_harm_response[harm_type] = float(metric_value)
+        except Exception:
+            parsed_harm_response[harm_type] = np.nan
         parsed_harm_response[harm_type + "_reason"] = reasoning
         parsed_response.append(parsed_harm_response)
     return parsed_response

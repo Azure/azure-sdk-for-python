@@ -42,6 +42,9 @@
 # Service team
 ####
 
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceLabel: %AI
+
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
 
@@ -135,7 +138,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
-# PRLabel: %Load Testing
+# PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
@@ -319,6 +322,8 @@
 
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
+# ServiceOwners: @trrwilson
+
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
@@ -689,7 +694,7 @@
 #/<NotInRepo>/          @NarayanThiru
 
 # ServiceLabel: %Azure Data Explorer %Service Attention
-#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft @sagivf
+#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Lab Services %Service Attention
 #/<NotInRepo>/          @Tanmayeekamath

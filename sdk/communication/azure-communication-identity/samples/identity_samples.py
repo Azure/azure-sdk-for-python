@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python identity_samples.py
     Set the environment variables with your own values before running the sample:
-    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your Communication Services resource
+    1) COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING - the connection string in your Communication Services resource
     2) AZURE_CLIENT_ID - the client ID of your active directory application
     3) AZURE_CLIENT_SECRET - the secret of your active directory application
     4) AZURE_TENANT_ID - the tenant ID of your active directory application
@@ -32,7 +32,7 @@ from msal import PublicClientApplication
 
 class CommunicationIdentityClientSamples(object):
     def __init__(self):
-        self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING", "")
+        self.connection_string = os.getenv("COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING", "")
         self.client_id = os.getenv("AZURE_CLIENT_ID")
         self.client_secret = os.getenv("AZURE_CLIENT_SECRET")
         self.tenant_id = os.getenv("AZURE_TENANT_ID")

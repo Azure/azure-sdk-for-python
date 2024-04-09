@@ -18,7 +18,7 @@ def is_service_available(flight: bool):
 
         if response.status_code != 200:
             print("Fail to get RAI service availability in this region.")
-            print(response.status_code)
+            print("Response_code: %d" % response.status_code)
         else:
             available_service = response.json()
             if "content harm" in available_service:
@@ -27,10 +27,12 @@ def is_service_available(flight: bool):
                 print("RAI service is not available in this region.")
             if "groundedness" in available_service and flight:
                 groundedness_service = True
-            else:
+            if not flight:
+                print("GroundednessServiceFlight is off.")
+            if  "groundedness" not in available_service:
                 print("AACS service is not available in this region.")
     except Exception:
-        print("Fail to get RAI service availability in this region.")
+        print("Failed to call checkannotation endpoint.")
     return {"content_harm_service": content_harm_service,
             "groundedness_service": groundedness_service
             }
@@ -53,6 +55,8 @@ def is_safety_metrics_selected(selected_metrics):
 
 
 def is_groundedness_metric_selected(selected_metrics: dict) -> bool:
+    if not selected_metrics["rag_metrics"]["gpt_groundedness"]:
+        print("gpt_groundedness is not selected.")
     return selected_metrics["rag_metrics"]["gpt_groundedness"]
 
 
@@ -75,8 +79,8 @@ def validate_safety_metric_input(
         chat: [dict],
         validate_chat_result: dict,
         flight: bool = True) -> dict:
-    service_available = is_service_available(flight)
     tracking_uri_set = is_tracking_uri_set()
+    service_available = is_service_available(flight)
     valid_chat = is_chat_valid(chat)
     groundedness_selected = is_groundedness_metric_selected(selected_metrics)
     content_harm_service = is_safety_metrics_selected(selected_metrics) \

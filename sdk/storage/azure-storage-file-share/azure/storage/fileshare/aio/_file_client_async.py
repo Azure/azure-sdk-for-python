@@ -11,7 +11,7 @@ import warnings
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -1279,14 +1279,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
     @distributed_trace_async
-    async def get_ranges_diff(  # type: ignore
-            self,
-            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
-            offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-            ):
-        # type: (...) -> tuple[list[dict[str, int]], list[dict[str, int]]]
+    async def get_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        include_renames: Optional[bool] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1300,6 +1301,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
+        :keyword Optional[bool] include_renames:
+            Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
+            a file that has been renamed or moved between the target snapshot (or live file) and the previous
+            snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
+            If set to False, the operation will result in a 409 (Conflict) response.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1319,6 +1325,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
+            support_rename=include_renames,
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)
