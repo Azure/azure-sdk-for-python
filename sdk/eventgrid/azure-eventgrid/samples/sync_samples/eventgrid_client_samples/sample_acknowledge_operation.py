@@ -34,7 +34,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 # Acknowledge a CloudEvent
 try:
     lock_tokens = ["token"]
-    ack_events = client.acknowledge(
+    ack_events = client.acknowledge_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         lock_tokens=lock_tokens,

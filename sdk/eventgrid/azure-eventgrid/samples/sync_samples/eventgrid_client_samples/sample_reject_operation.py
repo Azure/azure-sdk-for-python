@@ -33,7 +33,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 # Release a LockToken
 try:
     lock_tokens = ["token"]
-    reject_events = client.reject(
+    reject_events = client.reject_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         lock_tokens=lock_tokens,
