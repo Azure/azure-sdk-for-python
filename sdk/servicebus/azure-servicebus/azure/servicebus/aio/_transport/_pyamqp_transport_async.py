@@ -323,14 +323,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return await handler.settle_messages_async(message._delivery_id, 'accepted', message=message)
+                return await handler.settle_messages_async(message._delivery_id, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=False,
-                    message=message,
+                    undeliverable_here=False
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return await handler.settle_messages_async(
@@ -343,8 +342,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         }
-                    ),
-                    message=message,
+                    )
                 )
             if settle_operation == MESSAGE_DEFER:
                 return await handler.settle_messages_async(
@@ -352,7 +350,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=True,
-                    message=message,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae

@@ -786,14 +786,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, 'accepted', message=message)
+                return handler.settle_messages(message._delivery_id, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=False,
-                    message=message
+                    undeliverable_here=False
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
@@ -806,16 +805,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                             RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         }
-                    ),
-                    message=message,
+                    )
                 )
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=True,
-                    message=message,
+                    undeliverable_here=True
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
