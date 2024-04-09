@@ -13,10 +13,10 @@ For those new to the Purview Data Map library, please refer to the [`azure-purvi
 
 ## Migration benefits
 
-> Note: `azure-purview-catalog` has been [deprecated]. Please upgrade to `azure-purview-datamap` for continued support.
+> Note: `azure-purview-catalog` has been <b>deprecated</b>. Please upgrade to `azure-purview-datamap` for continued support.
 
 
-The new Purview DataMap library `azure-purview-datamap` includes the service models together with the GA DataMap APIs [API Document](https://learn.microsoft.com/rest/api/purview/datamapdataplane/operation-groups?view=rest-purview-datamapdataplane-2023-09-01). The client name and the operation names have slightly changed but the main functionality remains the same.
+The new Purview DataMap library `azure-purview-datamap` includes the service models together with the DataMap APIs [API Document](https://learn.microsoft.com/rest/api/purview/datamapdataplane/operation-groups?view=rest-purview-datamapdataplane-2023-09-01). The client name and the operation names have slightly changed but the main functionality remains the same.
 
 ## General changes
 
