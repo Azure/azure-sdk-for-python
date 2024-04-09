@@ -37,7 +37,7 @@ async def run():
     try:
         async with client:
             lock_tokens = ["token"]
-            ack_events = await client.acknowledge(
+            ack_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
                 lock_tokens=lock_tokens,

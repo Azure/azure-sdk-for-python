@@ -81,11 +81,11 @@ class TestEGDualClient(AzureRecordedTestCase):
 
         if level=="Basic":
             with pytest.raises(AttributeError):
-                client.receive(
+                client.receive_cloud_events(
                     topic_name=eventgrid_topic_name, subscription_name=eventgrid_event_subscription_name
                 )
         else:
-            client.receive(
+            client.receive_cloud_events(
                 topic_name=eventgrid_topic_name, subscription_name=eventgrid_event_subscription_name
             )
 

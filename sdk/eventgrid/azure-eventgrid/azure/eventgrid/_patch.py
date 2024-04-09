@@ -89,7 +89,10 @@ class EventGridClient(InternalEventGridClient):
             )
 
             self._send = self._publish_cloud_events
-
+        else:
+            raise ValueError(
+                "Unknown client level. Known values are `Standard` and `Basic`."
+            )
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
