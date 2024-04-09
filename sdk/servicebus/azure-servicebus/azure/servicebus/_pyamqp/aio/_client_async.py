@@ -903,14 +903,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 await self.close_async()
 
     async def _on_disposition_received_async(self, message_delivery, reason, state):
+        for state_key in state:
+            state_error = state[state_key]
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
-            # pylint: disable=too-many-boolean-expressions
-            if state and (SEND_DISPOSITION_ACCEPT in state or
-                SEND_DISPOSITION_RELEASE in state or
-                SEND_DISPOSITION_MODIFY in state or
-                SEND_DISPOSITION_RECEIVED in state or
-                (SEND_DISPOSITION_REJECT in state and state[SEND_DISPOSITION_REJECT][0] is None)):
+            if state and (len(state_error) == 0 or state_error[0] is None):
                 message_delivery.state = MessageDeliveryState.Ok
             else:
                 try:
