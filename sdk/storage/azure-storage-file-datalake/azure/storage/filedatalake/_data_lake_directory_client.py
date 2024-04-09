@@ -104,7 +104,8 @@ class DataLakeDirectoryClient(PathClient):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]
         :param directory_name:
             The name of directory to interact with. The directory is under file system.
         :type directory_name: str
@@ -241,6 +242,7 @@ class DataLakeDirectoryClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: None
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -299,6 +301,9 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties
 
         .. admonition:: Example:
@@ -392,7 +397,8 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient
+        :returns: A DataLakeDirectoryClient containing the renamed directory.
+        :rtype: DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -492,7 +498,8 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory.
+        :returns: A DataLakeDirectoryClient for the subdirectory.
+        :rtype: DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         subdir.create_directory(metadata=metadata, **kwargs)
@@ -536,7 +543,8 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory
+        :returns: A DataLakeDirectoryClient for the subdirectory.
+        :rtype: DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         subdir.delete_directory(**kwargs)
@@ -628,7 +636,8 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeFileClient
+        :returns: A DataLakeFileClient with the new file.
+        :rtype: DataLakeFileClient
         """
         file_client = self.get_file_client(file)
         file_client.create_file(**kwargs)
