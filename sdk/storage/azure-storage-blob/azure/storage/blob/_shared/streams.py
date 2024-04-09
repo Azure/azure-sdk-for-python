@@ -133,8 +133,12 @@ class StructuredMessageEncodeStream(IOBase):
         elif self._current_region == SMRegion.SEGMENT_HEADER:
             self._current_region_length = self._segment_header_length
         elif self._current_region == SMRegion.SEGMENT_CONTENT:
-            self._current_region_length = min(self._segment_size, self.content_length - self._content_offset) \
-                if self._current_segment_number == self._num_segments else self._segment_size
+            # Last segment size is remaining content
+            if self._current_segment_number == self._num_segments:
+                self._current_region_length = self.content_length - \
+                                              ((self._current_segment_number - 1) * self._segment_size)
+            else:
+                self._current_region_length = self._segment_size
         elif self._current_region == SMRegion.SEGMENT_FOOTER:
             self._current_region_length = self._segment_footer_length
         elif self._current_region == SMRegion.MESSAGE_FOOTER:
@@ -181,8 +185,6 @@ class StructuredMessageEncodeStream(IOBase):
     def seek(self, offset: int, whence: int = SEEK_SET) -> int:
         if not self.seekable():
             raise UnsupportedOperation("Inner stream is not seekable.")
-        if self._initial_content_position is None:
-            raise UnsupportedOperation("Inner stream did not support tell and therefore is not seekable.")
 
         if whence == SEEK_SET:
             position = offset
@@ -209,25 +211,33 @@ class StructuredMessageEncodeStream(IOBase):
             self._content_offset = self.content_length
             self._current_segment_number = self._num_segments
         else:
-            total_segment_size = self._segment_header_length + self._segment_size + self._segment_footer_length
-            new_segment_num = 1 + (position - self._message_header_length) // total_segment_size
-            segment_pos = (position - self._message_header_length) % total_segment_size
+            # The size of a "full" segment. Fine to use for calculating new segment number and pos
+            full_segment_size = self._segment_header_length + self._segment_size + self._segment_footer_length
+            new_segment_num = 1 + (position - self._message_header_length) // full_segment_size
+            segment_pos = (position - self._message_header_length) % full_segment_size
+            previous_segments_size = (new_segment_num - 1) * self._segment_size
+
+            # We need the size of the segment we are seeking to for some of the calculations below
+            new_segment_size = self._segment_size
+            if new_segment_num == self._num_segments:
+                # The last segment size is the remaining content length
+                new_segment_size = self.content_length - previous_segments_size
 
             # SEGMENT_HEADER
             if segment_pos < self._segment_header_length:
                 self._current_region = SMRegion.SEGMENT_HEADER
                 self._current_region_offset = segment_pos
-                self._content_offset = (new_segment_num - 1) * self._segment_size
+                self._content_offset = previous_segments_size
             # SEGMENT_CONTENT
-            elif segment_pos < self._segment_header_length + self._segment_size:
+            elif segment_pos < self._segment_header_length + new_segment_size:
                 self._current_region = SMRegion.SEGMENT_CONTENT
                 self._current_region_offset = segment_pos - self._segment_header_length
-                self._content_offset = (new_segment_num - 1) * self._segment_size + self._current_region_offset
+                self._content_offset = previous_segments_size + self._current_region_offset
             # SEGMENT_FOOTER
             else:
                 self._current_region = SMRegion.SEGMENT_FOOTER
-                self._current_region_offset = segment_pos - self._segment_header_length - self._segment_size
-                self._content_offset = new_segment_num * self._segment_size
+                self._current_region_offset = segment_pos - self._segment_header_length - new_segment_size
+                self._content_offset = previous_segments_size + new_segment_size
 
             self._current_segment_number = new_segment_num
 
