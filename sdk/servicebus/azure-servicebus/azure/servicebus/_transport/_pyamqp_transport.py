@@ -27,6 +27,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
+    AMQPLinkError
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -757,6 +758,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     ) -> None:
         # pylint: disable=protected-access
         try:
+            if message._receiver._handler._link.name != handler._link.name:  # pylint: disable=protected-access
+                raise AMQPLinkError("Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, "accepted")
             if settle_operation == MESSAGE_ABANDON:
@@ -791,9 +794,10 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-
+        except AMQPLinkError as le:
+            raise ServiceBusConnectionError("Link error occurred during settle operation.") from le
         except AMQPConnectionError as e:
-            raise RuntimeError("Connection lost during settle operation.") from e
+            raise ServiceBusConnectionError("Connection lost during settle operation.") from e
 
         except AMQPException as ae:
             if ae.condition == ErrorCondition.IllegalState:
