@@ -23,12 +23,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class PendingDisposition(object):
     def __init__(self, **kwargs):
-        self.message = kwargs.get("message")
-        self.sent = False
-        self.frame = None
+        self.sent = kwargs.get("sent")
+        self.frame = kwargs.get("frame")
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
-        self.transfer_state = None
+        self.transfer_state = kwargs.get("transfer_state")
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
         self._network_trace_params = kwargs.get('network_trace_params')
@@ -130,7 +129,6 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
         *,
-        message: Optional["_MessageDelivery"] = None,
         on_disposition: Optional[Callable] = None,
     ):
         disposition_frame = DispositionFrame(
@@ -141,17 +139,16 @@ class ReceiverLink(Link):
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
 
         # Track dispositions for settling messages
-        if message:
+        if on_disposition:
             delivery = PendingDisposition(
-                message = message,
-                on_delivery_settled = on_disposition,
-            )
-            delivery.frame = disposition_frame
-            delivery.settled = settled
-            delivery.transfer_state = state
+                on_delivery_settled=on_disposition,
+                frame=disposition_frame,
+                settled=settled,
+                transfer_state=state,
+                start=time.time(),
+                sent=True
 
-            delivery.start = time.time()
-            delivery.sent = True
+            )
             self._pending_receipts.append(delivery)
             
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
@@ -159,8 +156,9 @@ class ReceiverLink(Link):
 
     def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return
-        if not frame[3]:  # settled
-            return
+        # if not frame[3]:  # settled
+        #     return
+        # TODO: would we ever receive a not settled disposition?
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
         unsettled = []
@@ -189,7 +187,6 @@ class ReceiverLink(Link):
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
-        message_delivery: Optional["_MessageDelivery"] = None,
         on_disposition: Optional[Callable] = None,
     ):
         self._check_if_closed()
@@ -199,7 +196,6 @@ class ReceiverLink(Link):
             settled,
             delivery_state,
             batchable,
-            message=message_delivery,
             on_disposition=on_disposition
         )
         if not settled:
