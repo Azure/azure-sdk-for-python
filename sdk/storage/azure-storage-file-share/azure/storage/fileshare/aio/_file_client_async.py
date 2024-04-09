@@ -11,7 +11,7 @@ import warnings
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -256,13 +256,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -284,7 +284,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword Dict[str, str] metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
@@ -300,7 +300,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -372,13 +372,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -397,7 +397,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword Dict[str, str] metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
@@ -432,7 +432,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -571,7 +571,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: Dict[str, str]
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -586,7 +586,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: Response after data copying operation has been initiated.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -961,13 +961,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Preserve.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -985,7 +985,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :paramtype file_change_time: str or datetime
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1000,7 +1000,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1045,7 +1045,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: Dict[str, str]
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1060,7 +1060,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1223,7 +1223,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         :returns: Result after writing to the specified range of the destination Azure File endpoint.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,
@@ -1286,7 +1286,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             length=None,  # type: Optional[int]
             **kwargs  # type: Any
             ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        # type: (...) -> tuple[list[dict[str, int]], list[dict[str, int]]]
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1313,7 +1313,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :returns:
             A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled file ranges, the 2nd element is cleared file ranges.
-        :rtype: Tuple[List[Dict[str, str], List[Dict[str, str]]
+        :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
         options = self._get_ranges_options(
             offset=offset,

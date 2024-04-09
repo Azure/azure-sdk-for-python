@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
@@ -230,7 +230,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
@@ -291,7 +292,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
@@ -393,13 +395,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -421,7 +423,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword Dict[str, str] metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
@@ -437,7 +439,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -533,7 +535,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword Dict[str, str] metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
@@ -568,7 +570,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -622,7 +624,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def start_copy_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+        # type: (str, Any) -> dict[str, Any]
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 
@@ -704,7 +706,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: Dict[str, str]
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -719,7 +721,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: Response after data copying operation has been initiated.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -1088,13 +1090,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Preserve.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -1127,7 +1129,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1186,7 +1188,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1390,7 +1392,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         :returns: Result after writing to the specified range of the destination Azure File endpoint.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,
@@ -1480,12 +1482,12 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_ranges_diff(  # type: ignore
             self,
-            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
+            previous_sharesnapshot,  # type: Union[str, dict[str, Any]]
             offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
             **kwargs  # type: Any
             ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        # type: (...) -> tuple[list[dict[str, int]], list[dict[str, int]]]
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1512,7 +1514,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns:
             A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled file ranges, the 2nd element is cleared file ranges.
-        :rtype: Tuple[List[Dict[str, str], List[Dict[str, str]]
+        :rtype: tuple[list[dict[str, str], list[dict[str, str]]
         """
         options = self._get_ranges_options(
             offset=offset,
