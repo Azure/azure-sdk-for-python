@@ -60,6 +60,7 @@ from .._common.tracing import (
     SPAN_NAME_PEEK,
 )
 from ._async_utils import create_authentication
+from ..exceptions import ServiceBusConnectionError
 
 if TYPE_CHECKING:
     try:
@@ -516,7 +517,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",

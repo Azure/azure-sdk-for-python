@@ -51,6 +51,7 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
+from .exceptions import ServiceBusConnectionError
 
 if TYPE_CHECKING:
     try:
@@ -520,6 +521,12 @@ class ServiceBusReceiver(
         try:
             if not message._is_deferred_message:
                 try:
+                    # if not link_closed:
+                    # this should never retry b/c if you have lost the link to the message, you can't settle it
+                    # keep track of receiver link id and message id if receiver link 
+                    # doesnt match the receiver link we received the msg on skip straight to mgmt link
+
+                    # throw an error here if receiver link id is not the one the is msg received on
                     self._amqp_transport.settle_message_via_receiver_link(
                         self._handler,
                         message,
@@ -528,7 +535,11 @@ class ServiceBusReceiver(
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except (RuntimeError, ServiceBusConnectionError) as exception:
+                    # link_closed = true
+                    # hey if its a transport related error - try msgs settlement via mgmt link
+                    #else
+                    # continue to raise the exception
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
