@@ -42,31 +42,18 @@ class CreateClients(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "sampleTransactionAsync"
 
-    async def _create_entities(self):
-        from azure.core.exceptions import ResourceExistsError
-
-        self.entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
-        self.entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
-        self.entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
-        self.entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
-
-        entities = [self.entity2, self.entity3, self.entity4]
-
-        for entity in entities:
-            try:
-                await self.table_client.create_entity(entity)
-            except ResourceExistsError:
-                print("entity already exists")
-                pass
-
     async def sample_transaction(self):
-        # Instantiate a TableServiceClient using a connection string
+        entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
+        entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
+        entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
+        entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
 
         # [START batching]
         from azure.data.tables.aio import TableClient
         from azure.data.tables import TableTransactionError
         from azure.core.exceptions import ResourceExistsError
 
+        # Instantiate a TableServiceClient using a connection string
         self.table_client = TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name
         )
@@ -77,13 +64,15 @@ class CreateClients(object):
         except ResourceExistsError:
             print("Table already exists")
 
-        await self._create_entities()
+        await self.table_client.upsert_entity(entity2)
+        await self.table_client.upsert_entity(entity3)
+        await self.table_client.upsert_entity(entity4)
 
         operations: List[TransactionOperationType] = [
-            ("create", self.entity1),
-            ("delete", self.entity2),
-            ("upsert", self.entity3),
-            ("update", self.entity4, {"mode": "replace"}),
+            ("upsert", entity1),
+            ("delete", entity2),
+            ("upsert", entity3),
+            ("update", entity4, {"mode": "replace"}),
         ]
         try:
             await self.table_client.submit_transaction(operations)
