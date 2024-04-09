@@ -32,9 +32,6 @@ from ..constants import (
     LinkDeliverySettleReason,
     MESSAGE_DELIVERY_DONE_STATES,
     AUTH_TYPE_CBS,
-    SEND_DISPOSITION_MODIFY,
-    SEND_DISPOSITION_RELEASE,
-    SEND_DISPOSITION_RECEIVED,
 )
 from ..error import (
     AMQPError,
