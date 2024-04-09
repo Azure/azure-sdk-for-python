@@ -1,14 +1,9 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b3 (2024-04-09)
 
 ### Other Changes
+- Changed the default polling interval from 5s to 1s.
 
 ## 1.0.0b2 (2024-03-07)
 
