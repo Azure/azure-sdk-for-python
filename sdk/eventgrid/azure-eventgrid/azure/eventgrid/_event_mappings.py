@@ -94,6 +94,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsIncomingCallEventName = 'Microsoft.Communication.IncomingCall'
 
+    AcsMessageDeliveryStatusUpdatedEventName = 'Microsoft.Communication.AdvancedMessageDeliveryStatusUpdated'
+
+    AcsMessageReceivedEventName = 'Microsoft.Communication.AdvancedMessageReceived'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsRouterJobCancelledEventName = 'Microsoft.Communication.RouterJobCancelled'
@@ -137,6 +141,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AcsRouterWorkerOfferRevokedEventName = 'Microsoft.Communication.RouterWorkerOfferRevoked'
 
     AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
+
+    AcsRouterWorkerUpdatedEventName = 'Microsoft.Communication.RouterWorkerUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 

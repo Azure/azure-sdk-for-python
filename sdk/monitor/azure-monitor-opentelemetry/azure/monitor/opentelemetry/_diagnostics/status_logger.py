@@ -9,7 +9,7 @@ from os import getpid, makedirs
 from os.path import exists, join
 from platform import node
 
-from azure.monitor.opentelemetry._constants import (
+from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
     _IS_DIAGNOSTICS_ENABLED,
     _get_customer_ikey_from_env_var,
