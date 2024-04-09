@@ -228,7 +228,7 @@ class TableBatchOperations(object):
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
-            etag=etag, # type: ignore[arg-type] # Set None to skip checking etag.
+            etag=etag,  # type: ignore[arg-type] # Set None to skip checking etag.
             match_condition=_get_match_condition(
                 etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
             ),
