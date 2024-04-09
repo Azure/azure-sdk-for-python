@@ -1,14 +1,8 @@
 # Release History
 
-## 1.6.0b3 (Unreleased)
+## 1.6.0 (2024-04-09)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+Note: nothing changed since last beta.
 
 ## 1.6.0b2 (2024-03-21)
 
