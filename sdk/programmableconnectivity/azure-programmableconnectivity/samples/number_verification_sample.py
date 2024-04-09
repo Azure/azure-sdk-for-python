@@ -1,3 +1,8 @@
+## ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 from azure.programmableconnectivity import ProgrammableConnectivityClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
