@@ -1,5 +1,7 @@
 # Release History
 
+## 12.16.0b1 (Unreleased)
+
 ## 12.15.0b1 (Unreleased)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
