@@ -385,7 +385,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             http_request.url, **path_format_arguments
         )
 
-        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
                 http_request, stream=_stream, **kwargs
@@ -417,7 +416,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace
-    def receive(
+    def receive_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -468,7 +467,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace
-    def acknowledge(
+    def acknowledge_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -504,7 +503,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @api_version_validation(
         params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
-    def release(
+    def release_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -541,7 +540,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace
-    def reject(
+    def reject_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
@@ -576,7 +575,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @api_version_validation(
         method_added_on="2023-10-01-preview",
     )
-    def renew_locks(
+    def renew_cloud_event_locks(
         self,
         topic_name: str,
         subscription_name: str,

@@ -12,7 +12,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive`, `acknowledge` , `release`, `reject`, and `renew_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
+This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, `reject_cloud_events`, and `renew_cloud_event_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
 
 ## Getting started
 
@@ -316,32 +316,32 @@ sub_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 credential = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 
-events = client.receive(topic_name, sub_name, max_events=4)
+events = client.receive_cloud_events(topic_name, sub_name, max_events=4)
 
 for e in events:
     renew_tokens = e.broker_properties.lock_token
-    renew_result = client.renew_locks(
+    renew_result = client.renew_cloud_events_lock(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         lock_tokens=renew_tokens,
     )
 
 release_tokens = events[0].broker_properties.lock_token
-release_result = client.release(
+release_result = client.release_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
     lock_tokens=release_tokens,
 )
 
 ack_tokens = events[1].broker_properties.lock_token
-ack_result = client.acknowledge(
+ack_result = client.acknowledge_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
     lock_tokens=ack_tokens,
 )
 
 reject_tokens = events[2].broker_properties.lock_token
-reject_result = client.reject(
+reject_result = client.reject_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
     lock_tokens=reject_tokens,
@@ -459,7 +459,7 @@ These code samples show common champion scenario operations with the Azure Event
 
 #### Namespaces EventGrid Scenarios
 
-* Authenticate the client: [sample_eg_client_authentication.py][python-eg-client-auth-samples]
+* Authenticate the client: [sample_authentication.py][python-eg-auth] 
 * Sample of all operations: [sample_all_operations.py][python-eg-client-all-ops-sample]
 * Publish cloud event in binary mode: [sample_binary_mode_operation.py][python-eg-client-binary-mode-sample]
 
@@ -540,10 +540,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/consume_samples
 [python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
 
-
-[python-eg-client-aad-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_aad_auth_operation.py
-
-[python-eg-client-auth-samples]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_eg_client_authentication.py
 
 [python-eg-client-all-ops-sample]:https://github.com/Azure/azure-sdk-for-python/blob/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples/sample_all_operations.py
 

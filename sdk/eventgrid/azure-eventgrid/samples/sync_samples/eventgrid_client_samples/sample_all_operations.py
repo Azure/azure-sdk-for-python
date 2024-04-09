@@ -59,7 +59,7 @@ except HttpResponseError:
 
 # Receive Published Cloud Events
 try:
-    receive_results = client.receive(
+    receive_results = client.receive_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
         max_events=10,
@@ -88,7 +88,7 @@ for detail in receive_results.value:
 
 if len(release_events) > 0:
     try:
-        release_result = client.release(
+        release_result = client.release_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
             lock_tokens=release_events,
@@ -101,7 +101,7 @@ if len(release_events) > 0:
 
 if len(acknowledge_events) > 0:
     try:
-        ack_result = client.acknowledge(
+        ack_result = client.acknowledge_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
             lock_tokens=acknowledge_events,
@@ -114,7 +114,7 @@ if len(acknowledge_events) > 0:
 
 if len(reject_events) > 0:
     try:
-        reject_result = client.reject(
+        reject_result = client.reject_cloud_events(
             topic_name=TOPIC_NAME,
             subscription_name=EVENT_SUBSCRIPTION_NAME,
             lock_tokens=reject_events,
