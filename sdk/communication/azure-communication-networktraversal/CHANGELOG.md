@@ -1,22 +1,12 @@
 # Release History
 
-## 1.1.1 (2024-04-03)
-
-### Features Added
-
-### Breaking Changes
-- Please note, this package is no longer being maintained.
-
-### Bugs Fixed
-
-### Other Changes
-
-## 1.1.0b2 (Unreleased)
+## 1.1.0b2 (2024-04-10)
 
 ### Features Added
 - Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Breaking Changes
+- Please note, this package is no longer being maintained after 03/31/2024.
 
 ### Bugs Fixed
 
@@ -42,7 +32,7 @@ Python 3.6 is no longer supported. Please use Python version 3.7 or later. For m
 - Making parameters for get_relay_configuration keyword only
 
 ### Other Changes
-Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+Python 2.7 is no longer supported. Please use Python version 3.6/ or later.
 
 ## 1.0.0b2 (2021-11-18)
 
