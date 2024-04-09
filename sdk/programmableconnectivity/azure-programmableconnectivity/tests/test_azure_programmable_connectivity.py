@@ -130,4 +130,3 @@ class TestAzureProgrammableConnectivity(AzureRecordedTestCase):
             client.sim_swap.retrieve(body=content, apc_gateway_id=APC_GATEWAY_ID_BAD)
 
         assert exc_info.value.status_code == 400
-    
