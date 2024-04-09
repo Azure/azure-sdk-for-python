@@ -224,15 +224,14 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
-            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
-        )
         request = build_table_delete_entity_request(
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
-            etag=etag,
-            match_condition=match_condition,
+            etag=etag, # type: ignore[arg-type] # Set None to skip checking etag.
+            match_condition=_get_match_condition(
+                etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+            ),
             version=self._config.version,
             **kwargs,
         )

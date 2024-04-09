@@ -87,7 +87,7 @@ EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Unio
 Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
 may be explicitly create as EntityProperty objects but need not be. For example,
 the below with both create STRING typed properties on the entity:
-    
+
 .. code-block:: python
 
     entity = TableEntity()
