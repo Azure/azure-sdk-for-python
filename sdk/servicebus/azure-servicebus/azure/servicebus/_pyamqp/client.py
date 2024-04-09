@@ -46,9 +46,6 @@ from .constants import (
     OUTGOING_WINDOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES,
-    SEND_DISPOSITION_MODIFY,
-    SEND_DISPOSITION_RECEIVED,
-    SEND_DISPOSITION_RELEASE
 )
 
 from .management_operation import ManagementOperation
