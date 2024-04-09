@@ -804,4 +804,4 @@ additional questions or comments.
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
 [query_fields_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
-[service_prebuilt_document]: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-general-document#general-document-features
+[service_prebuilt_document]: https://docs.microsoft.com/azure/ai-services/document-intelligence/concept-general-document#general-document-features
