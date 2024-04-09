@@ -184,3 +184,11 @@ class TestScheduleEntity:
         with pytest.raises(Exception) as e:
             job_schedule._validate(raise_error=True)
         assert "Not a valid ISO8601-formatted datetime string" in str(e)
+    
+    ##findings question_answering is wrong task type which mention on https://github.com/Azure/azureml_run_specification/blob/momo-genai-spec/specs/momo-genai.md
+    ## it should be questionanswering
+    def test_schedule_create_out_of_box_monitoring_job(self):
+        test_path ="./tests/test_configs/schedule/out_of_box_monitoring.yaml"
+        schedule = load_schedule(test_path)
+        assert "genai_app_monitoring", schedule.name
+
