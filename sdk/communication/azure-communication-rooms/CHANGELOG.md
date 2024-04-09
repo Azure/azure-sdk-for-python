@@ -4,7 +4,6 @@
 
 ### Features Added
 - Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
-paolamvhz marked this conversation as resolved.
 
 ### Breaking Changes
 
