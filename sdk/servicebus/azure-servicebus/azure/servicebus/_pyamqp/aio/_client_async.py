@@ -949,8 +949,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -961,8 +960,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -974,8 +972,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -989,8 +986,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -1003,14 +999,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
     async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
         batchable = kwargs.pop('batchable', None)
-        message = kwargs.pop('message', None)
+        # TODO: timeout is not used, should it be?
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
@@ -1034,7 +1029,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         # Create a Message Delivery object for the Disposition
         message_delivery = _MessageDelivery(
-            message,
+            None,
             MessageDeliveryState.WaitingToBeSent,
             expire_time
         )

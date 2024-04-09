@@ -1076,8 +1076,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -1088,8 +1087,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -1101,8 +1099,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -1116,8 +1113,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
@@ -1130,14 +1126,13 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None,
-        **kwargs
+        batchable: Optional[bool] = None
     ):
         ...
 
     def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs):
         batchable = kwargs.pop("batchable", None)
-        message = kwargs.pop('message', None)
+        # TODO: timeout is not used here, should it be?
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
@@ -1161,7 +1156,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
 
 
         message_delivery = _MessageDelivery(
-            message,
+            None,
             MessageDeliveryState.WaitingToBeSent,
             expire_time
         )
