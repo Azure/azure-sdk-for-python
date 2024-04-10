@@ -612,15 +612,6 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_file_client]
-                :end-before: [END bsc_get_file_client]
-                :language: python
-                :dedent: 12
-                :caption: Getting the file client to interact with a specific file.
         """
         try:
             file_path = file.get('name')
@@ -649,15 +640,6 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_directory_client]
-                :end-before: [END bsc_get_directory_client]
-                :language: python
-                :dedent: 12
-                :caption: Getting the directory client to interact with a specific directory.
         """
         try:
             subdir_path = sub_directory.get('name')

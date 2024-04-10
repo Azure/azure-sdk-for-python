@@ -880,15 +880,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             #other-client--per-operation-configuration>`_.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START acquire_lease_on_file_system]
-                :end-before: [END acquire_lease_on_file_system]
-                :language: python
-                :dedent: 8
-                :caption: Acquiring a lease on the file_system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(lease_duration=lease_duration, **kwargs)

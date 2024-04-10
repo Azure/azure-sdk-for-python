@@ -150,12 +150,16 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :paramtype credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or Dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :return a DataLakeServiceClient
-        :rtype ~azure.storage.filedatalake.DataLakeServiceClient
+        :returns: A DataLakeServiceClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeServiceClient
 
         .. admonition:: Example:
 

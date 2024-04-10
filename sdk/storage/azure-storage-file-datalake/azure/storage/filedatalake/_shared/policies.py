@@ -42,7 +42,7 @@ except NameError:
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
         PipelineRequest,
         PipelineResponse
     )
@@ -412,7 +412,8 @@ class StorageRetryPolicy(HTTPPolicy):
         A function which sets the next host location on the request, if applicable.
 
         :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
-        :param PipelineRequest request: A pipeline request object.
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
         """
         if settings['hosts'] and all(settings['hosts'].values()):
             url = urlparse(request.url)
@@ -471,12 +472,14 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param PipelineRequest request: A pipeline request object.
-        :param Optional[PipelineResponse] response: A pipeline response object.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: A pipeline response object.
+        :type response: ~azure.core.pipeline.PipelineResponse or None
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Optional[AzureError]
+        :type error: ~azure.core.exceptions.AzureError or None
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
