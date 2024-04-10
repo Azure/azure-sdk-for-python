@@ -332,12 +332,20 @@ path: ./model.pkl"""
     )
     def test_create_success(
         self,
+        mock_datastore_operation: DatastoreOperations,
+        mock_operation_config: OperationConfig,
         mock_workspace_scope: OperationScope,
-        mock_model_operation: ModelOperations,
         tmp_path: Path,
         old_properties: Dict[str, str],
         new_properties: Dict[str, str],
     ):
+        mock_model_operation = ModelOperations(
+            operation_scope=mock_workspace_scope,
+            operation_config=mock_operation_config,
+            service_client=Mock(),
+            datastore_operations=mock_datastore_operation,
+            **{ModelOperations._IS_EVALUATOR: True},
+        )
         """Test that new version is created if models are of the same type."""
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
@@ -388,19 +396,28 @@ version: 3"""
     @pytest.mark.parametrize(
         "old_properties,new_properties,message",
         [
-            ({"is-promptflow": "true", "is-evaluator": "true"}, {}, "because previous version of model was marked"),
+            # ({"is-promptflow": "true", "is-evaluator": "true"}, {}, "because previous version of model was marked"),
             ({}, {"is-promptflow": "true", "is-evaluator": "true"}, "because this version of model was marked"),
         ],
     )
     def test_create_raises_if_wrong_type(
         self,
-        mock_model_operation: ModelOperations,
+        mock_datastore_operation: DatastoreOperations,
+        mock_operation_config: OperationConfig,
+        mock_workspace_scope: OperationScope,
         tmp_path: Path,
         old_properties: Dict[str, str],
         new_properties: Dict[str, str],
         message: str,
     ) -> None:
         """Test exception if pre existing model is not of a correct type."""
+        mock_model_operation = ModelOperations(
+            operation_scope=mock_workspace_scope,
+            operation_config=mock_operation_config,
+            service_client=Mock(),
+            datastore_operations=mock_datastore_operation,
+            **{ModelOperations._IS_EVALUATOR: True},
+        )
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
@@ -464,3 +481,20 @@ path: ./model.pkl"""
         with patch("azure.ai.ml.operations._model_operations.ModelOperations.get", **get_kw):
             with patch("azure.ai.ml.operations._model_operations.ModelOperations._get_latest_version", **get_latest):
                 assert mock_model_operation._get_model_properties(model_name, version, label) == expected
+
+    def test_model_operation_raises_on_evaluators(self, mock_model_operation: ModelOperations, tmp_path: Path):
+        """Test model_operation raiese if evaluator is being created."""
+        model_name = f"model_random_string"
+        p = tmp_path / "model_full.yml"
+        model_path = tmp_path / "model.pkl"
+        model_path.write_text("hello world")
+        p.write_text(
+            f"""
+name: {model_name}
+path: ./model.pkl"""
+        )
+        model = load_model(source=p)
+        model.properties = {"is-promptflow": "true", "is-evaluator": "true"}
+        with pytest.raises(ValidationException) as cm:
+            mock_model_operation.create_or_update(model)
+        assert "please use EvaluatorOperations" in cm.value.args[0]

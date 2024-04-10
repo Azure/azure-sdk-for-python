@@ -72,6 +72,7 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
+# pylint: disable=too-many-instance-attributes
 class ModelOperations(_ScopeDependentOperations):
     """ModelOperations.
 
@@ -94,6 +95,8 @@ class ModelOperations(_ScopeDependentOperations):
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
 
+    _IS_EVALUATOR = "__is_evaluator"
+
     # pylint: disable=unused-argument
     def __init__(
         self,
@@ -102,7 +105,7 @@ class ModelOperations(_ScopeDependentOperations):
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
-        **kwargs: Dict,
+        **kwargs,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -119,6 +122,7 @@ class ModelOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
+        self.__is_evaluator = kwargs.pop(ModelOperations._IS_EVALUATOR, False)
 
     @monitor_with_activity(ops_logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
@@ -138,6 +142,18 @@ class ModelOperations(_ScopeDependentOperations):
         """
         # Check if we have the model with the same name and it is an
         # evaluator. In this aces raise the exception do not create the model.
+        if not self.__is_evaluator and _is_evaluator(model.properties):
+            msg = (
+                "Unable to create the evaluator using ModelOperations. To create "
+                "evaluator, please use EvaluatorOperations by calling "
+                "ml_client.evaluators.create_or_update(model) instead."
+            )
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.MODEL,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         if model.name is not None:
             model_properties = self._get_model_properties(model.name)
             if model_properties is not None and _is_evaluator(model_properties) != _is_evaluator(model.properties):

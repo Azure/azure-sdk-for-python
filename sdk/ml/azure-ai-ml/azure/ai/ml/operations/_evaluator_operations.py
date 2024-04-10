@@ -75,9 +75,10 @@ class EvaluatorOperations(_ScopeDependentOperations):
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
-        **kwargs: Dict,
+        **kwargs,
     ):
         super(EvaluatorOperations, self).__init__(operation_scope, operation_config)
+
         ops_logger.update_info(kwargs)
         self._model_op = ModelOperations(
             operation_scope=operation_scope,
@@ -85,6 +86,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
             service_client=service_client,
             datastore_operations=datastore_operations,
             all_operations=all_operations,
+            **{ModelOperations._IS_EVALUATOR: True},
             **kwargs,
         )
         self._operation_scope = self._model_op._operation_scope
