@@ -115,12 +115,12 @@ class _QueryExecutionContextBase(object):
         :rtype: list
         """
         fetched_items = []
+        new_options = copy.deepcopy(self._options)
         while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
             # For read specific time the first fetch will return empty even if we have more pages.
             is_s_time_first_fetch = self._is_change_feed and self._options.get("startTime") and not self._has_started
 
-            new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
 
             response_headers = {}

@@ -880,7 +880,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                                                          partition_key="test")]
         assert len(queried_items) == 0
 
-    async def test_cosmos_query_retryable_error(self):
+    async def test_cosmos_query_retryable_error_async(self):
         async def query_items(database):
             # Tests to make sure 429 exception is surfaced when retries run out in the first page of a query.
             try:

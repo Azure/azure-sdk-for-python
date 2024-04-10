@@ -293,11 +293,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
         elif options.get("startTime"):
-            dt = options.get("startTime")
-            # If datetime is not in utc, convert to utc.
-            if isinstance(dt, datetime):
-                dt = dt.astimezone(timezone.utc)
-                headers[http_constants.HttpHeaders.IfModified_since] = dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
+            start_time = options.get("startTime")
+            headers[http_constants.HttpHeaders.IfModified_since] = start_time
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
 
