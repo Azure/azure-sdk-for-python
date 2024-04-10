@@ -158,7 +158,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 

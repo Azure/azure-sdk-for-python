@@ -411,7 +411,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param dict[str, Any]] settings: The configurable values pertaining to the next host location.
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
@@ -452,7 +452,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -472,7 +472,7 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param dict[str, Any]] settings: The configurable values pertaining to the increment operation.
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: A pipeline response object.
@@ -611,7 +611,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -663,7 +663,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

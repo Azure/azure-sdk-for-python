@@ -218,7 +218,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 

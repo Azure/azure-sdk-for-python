@@ -154,7 +154,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
-            str or Dict[str, str] or None
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -617,7 +617,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
         return get_datalake_service_properties(props)

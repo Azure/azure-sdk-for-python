@@ -279,7 +279,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -461,7 +461,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: filesystem-updated property dict (Etag and last modified).
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -514,7 +514,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: File System-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or ~datetime.datetime]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         return self._container_client.set_container_access_policy(signed_identifiers,
                                                                   public_access=public_access, **kwargs)

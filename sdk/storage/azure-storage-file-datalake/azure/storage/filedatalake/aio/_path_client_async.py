@@ -191,7 +191,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :return: A dictionary of response headers.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
@@ -242,7 +242,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary containing information about the deleted path.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
         # The pagination is only for ACL checks, the final request remains the atomic delete operation
@@ -833,7 +833,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file/directory-updated property dict (Etag and last modified)
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return await self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
