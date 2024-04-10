@@ -138,8 +138,6 @@ _START_TIMEOUT = 30.0
 class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClientBase
 
-    :param credential: The url to connect or credential to use when connecting. Required.
-    :type credential: str or WebPubSubClientCredential
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
     :keyword azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
@@ -170,7 +168,6 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=unused-argument
     def __init__(
         self,
-        credential: Union[WebPubSubClientCredential, str],
         *,
         message_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
         message_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
@@ -188,12 +185,6 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        if isinstance(credential, WebPubSubClientCredential):
-            self._credential = credential
-        elif isinstance(credential, str):
-            self._credential = WebPubSubClientCredential(credential)
-        else:
-            raise TypeError("type of credential must be str or WebPubSubClientCredential")
         self._auto_reconnect = reconnect_retry_total > 0
         self._auto_rejoin_groups = auto_rejoin_groups
         protocol_map = {
@@ -334,6 +325,12 @@ class WebPubSubClient(
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        if isinstance(credential, WebPubSubClientCredential):
+            self._credential = credential
+        elif isinstance(credential, str):
+            self._credential = WebPubSubClientCredential(credential)
+        else:
+            raise TypeError("type of credential must be str or WebPubSubClientCredential")
         super().__init__(
             credential=credential,
             message_retry_backoff_factor=message_retry_backoff_factor,

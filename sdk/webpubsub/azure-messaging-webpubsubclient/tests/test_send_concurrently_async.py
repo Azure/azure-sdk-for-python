@@ -16,7 +16,7 @@ class TestWebpubsubClientSendConcurrentlyAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_send_concurrently(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        client = await self.create_client(connection_string=webpubsubclient_connection_string)
         async with client:
             group_name = "test"
             await client.join_group(group_name)

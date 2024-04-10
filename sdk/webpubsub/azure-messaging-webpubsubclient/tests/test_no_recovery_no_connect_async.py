@@ -21,7 +21,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_disable_recovery_and_autoconnect(self, webpubsubclient_connection_string):
-        client = self.create_client(
+        client = await self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,
             protocol_type=WebPubSubProtocolType.JSON,
@@ -44,7 +44,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
     async def test_disable_recovery_and_autoconnect_send_concurrently(
         self, webpubsubclient_connection_string
     ):
-        client = self.create_client(
+        client = await self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,
             message_retry_total=3,

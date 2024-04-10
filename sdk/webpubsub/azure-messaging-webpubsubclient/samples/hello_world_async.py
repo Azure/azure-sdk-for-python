@@ -5,9 +5,8 @@
 # --------------------------------------------------------------------------
 import os
 import asyncio
-from azure.messaging.webpubsubclient.aio import WebPubSubClient
-from azure.messaging.webpubsubclient import WebPubSubClientCredential
-from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.messaging.webpubsubclient.aio import WebPubSubClient, WebPubSubClientCredential
+from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
 from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
@@ -42,12 +41,12 @@ async def main():
     service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
+    async def client_access_url_provider():
+        return (await service_client.get_client_access_token(
+            roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
+        ))["url"]
     client = WebPubSubClient(
-        credential=WebPubSubClientCredential(
-            client_access_url_provider=lambda: service_client.get_client_access_token(
-                roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
-            )["url"]
-        ),
+        credential=WebPubSubClientCredential(client_access_url_provider=client_access_url_provider),
     )
 
     async with client:

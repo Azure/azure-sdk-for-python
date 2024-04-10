@@ -5,17 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import List
-import functools
-import threading
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-from azure.messaging.webpubsubclient.aio import WebPubSubClient
-from azure.messaging.webpubsubclient import WebPubSubClientCredential
+from azure.messaging.webpubsubclient.aio import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs
-from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
 
 
 class WebpubsubClientTestAsync(AzureRecordedTestCase):
-    def create_client(
+    async def create_client(
         self,
         connection_string,
         hub: str = "Hub",
@@ -23,8 +20,10 @@ class WebpubsubClientTestAsync(AzureRecordedTestCase):
         **kwargs,
     ):
         service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+        async def client_access_url_provider():
+            return (await service_client.get_client_access_token(roles=roles))["url"]
         return WebPubSubClient(
-            credential=WebPubSubClientCredential(lambda: service_client.get_client_access_token(roles=roles)["url"]),
+            credential=WebPubSubClientCredential(client_access_url_provider),
             **kwargs,
         )
 

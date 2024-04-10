@@ -17,7 +17,7 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_auto_connect(self, webpubsubclient_connection_string):
-        client = self.create_client(
+        client = await self.create_client(
             connection_string=webpubsubclient_connection_string,
             protocol_type=WebPubSubProtocolType.JSON,
             message_retry_total=10,

@@ -17,7 +17,7 @@ class TestWebpubsubClientRecoveryAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_recovery(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=10)
+        client = await self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=10)
         name = "test_recovery_async"
         async with client:
             await asyncio.sleep(0.001)  # wait for connection_id to be updated

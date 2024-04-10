@@ -16,6 +16,7 @@ from typing import (
     List,
     Literal,
     Awaitable,
+    Coroutine,
 )
 import time
 import uuid
@@ -58,7 +59,6 @@ from ..models._enums import (
 )
 from .._client import (
     WebPubSubClientBase,
-    WebPubSubClientCredential,
     WebSocketAppBase,
     _RETRY_TOTAL,
     _RETRY_BACKOFF_FACTOR,
@@ -166,6 +166,33 @@ class WebSocketAppAsync(WebSocketAppBase):  # pylint: disable=too-many-instance-
         return not self.sock or self.sock.closed
 
 
+class WebPubSubClientCredential:
+    def __init__(self, client_access_url_provider: Union[str, Callable[[], Coroutine[Any, Any, str]]]) -> None:
+        """
+        Webpubsub client credential.
+
+        :param client_access_url_provider: Client access url. If it's awaitable callable, it will be called to
+         get the url. If it's str, it will be used directly. Please note that if you provide str, the
+         connection will be closed and can't be reconnected once it is expired.
+        :type client_access_url_provider: str or awaitable Callable
+        """
+        if isinstance(client_access_url_provider, str):
+
+            async def client_access_url_provider_func() -> str:
+                return client_access_url_provider
+
+            self._client_access_url_provider = client_access_url_provider_func
+        else:
+            self._client_access_url_provider = client_access_url_provider
+
+    async def get_client_access_url(self) -> str:
+        """Get client access url.
+        :return: Client access url.
+        :rtype: str
+        """
+        return await self._client_access_url_provider()
+
+
 class WebPubSubClient(
     WebPubSubClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
@@ -221,8 +248,13 @@ class WebPubSubClient(
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        if isinstance(credential, WebPubSubClientCredential):
+            self._credential = credential
+        elif isinstance(credential, str):
+            self._credential = WebPubSubClientCredential(credential)
+        else:
+            raise TypeError("type of credential must be str or WebPubSubClientCredential")
         super().__init__(
-            credential=credential,
             message_retry_backoff_factor=message_retry_backoff_factor,
             message_retry_backoff_max=message_retry_backoff_max,
             message_retry_mode=message_retry_mode,
@@ -903,7 +935,7 @@ class WebPubSubClient(
         self._reconnection_token = None
         self._url = ""
 
-        self._url = self._credential.get_client_access_url()
+        self._url = await self._credential.get_client_access_url()
         await self._connect(self._url, reconnect_tried_times)
 
     async def open(self) -> None:

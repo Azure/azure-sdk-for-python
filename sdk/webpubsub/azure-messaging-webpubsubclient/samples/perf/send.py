@@ -7,7 +7,9 @@ import os
 import time
 import asyncio
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient as WebPubSubServiceClientAsync
 from azure.messaging.webpubsubclient.aio import WebPubSubClient as AsyncClient
+from azure.messaging.webpubsubclient.aio import WebPubSubClientCredential as WebPubSubClientCredentialAsync
 from azure.messaging.webpubsubclient import WebPubSubClient as Client
 from azure.messaging.webpubsubclient import WebPubSubClientCredential
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
@@ -28,12 +30,20 @@ def client_access_url_provider():
         roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
     )["url"]
 
+async def client_access_url_provider_async():
+    service_client_async = WebPubSubServiceClientAsync.from_connection_string( # type: ignore
+        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    )
+    return (await service_client_async.get_client_access_token(
+        roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
+    ))["url"]
+
 
 def send() -> None:
     global TIME_COST
     client = Client(
         credential=WebPubSubClientCredential(
-            client_access_url_provider=client_access_url_provider()
+            client_access_url_provider=client_access_url_provider
         ),
     )
 
@@ -55,8 +65,8 @@ async def send_item_async(client_async, idx):
 async def send_async() -> None:
     global TIME_COST_ASYNC
     client_async = AsyncClient(
-        credential=WebPubSubClientCredential(
-            client_access_url_provider=client_access_url_provider()
+        credential=WebPubSubClientCredentialAsync(
+            client_access_url_provider=client_access_url_provider_async
         ),
     )
     async with client_async:
