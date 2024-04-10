@@ -6,7 +6,7 @@ from pytest_mock import MockFixture
 from azure.ai.ml import load_hub
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
-    Hub
+    Hub,
     Workspace,
 )
 from azure.ai.ml.operations import WorkspaceHubOperations

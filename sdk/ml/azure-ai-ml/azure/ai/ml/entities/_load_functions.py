@@ -234,6 +234,7 @@ def load_workspace(
     """
     return cast(Workspace, load_common(Workspace, source, relative_origin, **kwargs))
 
+
 @experimental
 def load_project(
     source: Union[str, PathLike, IO[AnyStr]],
@@ -242,6 +243,7 @@ def load_project(
     **kwargs: Any,
 ) -> Project:
     return cast(Project, load_common(Project, source, relative_origin, **kwargs))
+
 
 @experimental
 def load_hub(
@@ -907,6 +909,7 @@ def load_feature_store_entity(
     :rtype: FeatureStoreEntity
     """
     return cast(FeatureStoreEntity, load_common(FeatureStoreEntity, source, relative_origin, **kwargs))
+
 
 @experimental
 def load_model_package(

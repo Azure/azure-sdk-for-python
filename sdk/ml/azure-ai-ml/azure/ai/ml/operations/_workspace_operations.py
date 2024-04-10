@@ -72,7 +72,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         )
 
     @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP, kind: Optional[Union[str, List[str]]] = None) -> Iterable[Workspace]:
+    def list(
+        self, *, scope: str = Scope.RESOURCE_GROUP, kind: Optional[Union[str, List[str]]] = None
+    ) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"

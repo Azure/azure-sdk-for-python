@@ -913,9 +913,9 @@ class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_GREATER_THAN = "created_greater_than"
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
 
+
 class WorkspaceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of workspace categories.
-    """
+    """Enum of workspace categories."""
 
     DEFAULT = "default"
     HUB = "hub"

@@ -728,9 +728,7 @@ class WorkspaceOperationsBase(ABC):
 
         # Hub related params
         if workspace._kind and workspace._kind.lower() == WorkspaceKind.HUB:
-            _set_obj_val(
-                param["workspace_hub_config"], workspace._hub_values_to_rest_object() # type: ignore
-            )
+            _set_obj_val(param["workspace_hub_config"], workspace._hub_values_to_rest_object())  # type: ignore
             if workspace.existing_workspaces:  # type: ignore
                 _set_val(param["existing_workspaces"], workspace.existing_workspaces)  # type: ignore
             # A user-supplied resource ID (either AOAI or AI Services or null)
@@ -749,7 +747,11 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
 
         # Lean related param
-        if hasattr(workspace, "_kind") and workspace._kind is not None and workspace._kind.lower() == WorkspaceKind.PROJECT:
+        if (
+            hasattr(workspace, "_kind")
+            and workspace._kind is not None
+            and workspace._kind.lower() == WorkspaceKind.PROJECT
+        ):
             if hasattr(workspace, "hub"):
                 _set_val(param["workspace_hub"], workspace.hub)
 

@@ -17,7 +17,12 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants, WorkspaceKind
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    WorkspaceResourceConstants,
+    WorkspaceKind,
+)
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -311,7 +316,7 @@ class Workspace(Resource):
             hub_resource_id=self.hub,
             serverless_compute_settings=serverless_compute_settings,
         )
-    
+
     def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
         additional_workspace_storage_accounts = None
         default_workspace_resource_group = None

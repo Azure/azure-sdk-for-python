@@ -27,7 +27,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert hub1.display_name == hub2.display_name
         # "in" test because returned hub becomes UID, but input can be just the name.
         assert hub1.default_workspace_resource_group in hub2.default_workspace_resource_group
-        #if hub1.additional_workspace_storage_accounts: not set
+        # if hub1.additional_workspace_storage_accounts: not set
         #    assert hub2.additional_workspace_storage_accounts
         #    assert len(hub1.additional_workspace_storage_accounts) == len(hub2.additional_workspace_storage_accounts)
         #    for account in hub1.additional_workspace_storage_accounts:
@@ -62,12 +62,12 @@ class TestWorkspace(AzureRecordedTestCase):
         try:
             # Create hub with 2 child projects
             local_hub = Hub(
-                name=f"test_hub_{randstr('hub_name')}", 
+                name=f"test_hub_{randstr('hub_name')}",
                 description="hub description",
                 display_name="hub display name",
                 location="eastus",
                 default_workspace_resource_group=client.resource_group_name,
-                additional_workspace_storage_accounts=["test_account_1", "test_account_2"]
+                additional_workspace_storage_accounts=["test_account_1", "test_account_2"],
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
 
@@ -84,7 +84,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub=created_hub.id,
                 description="project2 description",
                 display_name="project2 display name",
-                #location="westus" cross location not supported
+                # location="westus" cross location not supported
             )
             created_project2 = client.workspaces.begin_create(workspace=local_project2).result()
 
@@ -105,8 +105,12 @@ class TestWorkspace(AzureRecordedTestCase):
             # Get various permutations of listed workspaces.
             listed_hubs = [hub for hub in client.workspaces.list(kind=WorkspaceKind.HUB)]
             listed_projects = [project for project in client.workspaces.list(kind=WorkspaceKind.PROJECT)]
-            listed_projects2 = [project for project in client.workspaces.list(kind=WorkspaceKind.HUB, scope="subscription")]
-            listed_projects_and_hubs = [stuff for stuff in client.workspaces.list(kind=[WorkspaceKind.HUB, WorkspaceKind.PROJECT])]
+            listed_projects2 = [
+                project for project in client.workspaces.list(kind=WorkspaceKind.HUB, scope="subscription")
+            ]
+            listed_projects_and_hubs = [
+                stuff for stuff in client.workspaces.list(kind=[WorkspaceKind.HUB, WorkspaceKind.PROJECT])
+            ]
             listed_workspaces = [workspace for workspace in client.workspaces.list(kind=[WorkspaceKind.DEFAULT])]
             normal_list = [stuff for stuff in client.workspaces.list()]
 
@@ -117,20 +121,22 @@ class TestWorkspace(AzureRecordedTestCase):
             self.check_listed_workspaces([], listed_workspaces)
             self.check_listed_workspaces([local_hub, local_project1, local_project2], normal_list)
 
-            import pdb; pdb.set_trace()
+            import pdb
+
+            pdb.set_trace()
 
         finally:
             if created_project1 is not None:
                 poller = client.workspaces.begin_delete(created_project1.name, delete_dependent_resources=True)
                 assert poller
                 assert isinstance(poller, LROPoller)
-                poller.wait() # Need to wait for projects to be cleaned before deleting parent hub.
+                poller.wait()  # Need to wait for projects to be cleaned before deleting parent hub.
 
             if created_project2 is not None:
                 poller = client.workspaces.begin_delete(created_project2.name, delete_dependent_resources=True)
                 assert poller
                 assert isinstance(poller, LROPoller)
-                poller.wait() # Need to wait for projects to be cleaned before deleting parent hub.
+                poller.wait()  # Need to wait for projects to be cleaned before deleting parent hub.
 
             if created_hub is not None:
                 poller = client.workspaces.begin_delete(created_hub.name, delete_dependent_resources=True)

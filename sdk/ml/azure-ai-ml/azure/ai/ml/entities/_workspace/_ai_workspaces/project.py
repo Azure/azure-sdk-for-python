@@ -18,8 +18,8 @@ from azure.ai.ml._schema.workspace import ProjectSchema
 class Project(Workspace):
     """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI resource.
     Unlike a standard workspace, a project does not have a variety of sub-resources directly associated with it.
-    Instead, it's parent hub has these resources, which are used by the project and any siblings. 
-    
+    Instead, it's parent hub has these resources, which are used by the project and any siblings.
+
     As a type of workspace, project management is controlled by an MLClient's workspace operations.
 
     :param name: The name of the project.
@@ -34,7 +34,7 @@ class Project(Workspace):
     :type display_name: Optional[str]
     :param location: The location of the project.
     :type location: Optional[str]
-    :param resource_group: The project's resource group name. 
+    :param resource_group: The project's resource group name.
     :type resource_group: Optional[str]
     """
 
@@ -63,7 +63,7 @@ class Project(Workspace):
         )
         self._hub = hub
         # TODO add getters/setters that prevent actual interaction with these values?
-        thoughts = '''
+        thoughts = """
         self.hbi_workspace = hbi_workspace
         self.storage_account = storage_account
         self.container_registry = container_registry
@@ -76,7 +76,7 @@ class Project(Workspace):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
-        '''
+        """
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -100,7 +100,6 @@ class Project(Workspace):
         loaded_schema = load_from_dict(ProjectSchema, data, context, **kwargs)
         return Project(**loaded_schema)
 
-    
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
         if not rest_obj:
@@ -114,7 +113,6 @@ class Project(Workspace):
             location=rest_obj.location,
             resource_group=rest_obj.group if hasattr(rest_obj, "group") else None,
         )
-
 
     @property
     def hub(self) -> str:

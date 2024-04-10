@@ -43,6 +43,5 @@ class HubSchema(WorkspaceSchema):
     workspace_hub_config = ExperimentalField(NestedField(HubConfigSchema))
     enable_data_isolation = fields.Bool()"""
 
-    
     additional_workspace_storage_accounts = fields.List(fields.Str(), required=False)
     default_workspace_resource_group = fields.Str(required=False)

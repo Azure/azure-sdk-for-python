@@ -132,7 +132,6 @@ class Hub(Workspace):
         self.default_workspace_resource_group = default_workspace_resource_group
         self.associated_workspaces: Optional[List[str]] = None
 
-
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         res: dict = HubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
@@ -155,7 +154,6 @@ class Hub(Workspace):
         loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
         return Hub(**loaded_schema)
 
-
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Hub"]:
         if not rest_obj:
@@ -165,10 +163,12 @@ class Hub(Workspace):
 
         additional_workspace_storage_accounts = None
         default_workspace_resource_group = None
-        
+
         if hasattr(rest_obj, "workspace_hub_config"):
             if rest_obj.workspace_hub_config and isinstance(rest_obj.workspace_hub_config, RestWorkspaceHubConfig):
-                additional_workspace_storage_accounts = rest_obj.workspace_hub_config.additional_workspace_storage_accounts
+                additional_workspace_storage_accounts = (
+                    rest_obj.workspace_hub_config.additional_workspace_storage_accounts
+                )
                 default_workspace_resource_group = rest_obj.workspace_hub_config.default_workspace_resource_group
 
         if workspace_object is not None:
