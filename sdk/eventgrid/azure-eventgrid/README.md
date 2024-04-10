@@ -24,20 +24,8 @@ This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient`
 
 ### Event Grid Resources
 
-Below is a brief synopsis of the differences between Azure Event Grid Namespaces and Azure Event Grid Basic.
+Azure Event Grid Namespaces supports both pull and push delivery. Azure Event Grid Basic supports only push delivery.
 More information on the two resource types can be found [here](https://learn.microsoft.com/azure/event-grid/choose-right-tier).
-
-|   Feature            | Namespaces (Standard) | Basic |
-| :---------------- | :------: | :----: |
-| Throughput        |   High   | Low |
-| MQTT           |   Yes   | No |
-| Publish and Subscribe to custom events    |  Yes   | Yes |
-| Push Delivery to Event Hubs |  Yes   | Yes |
-| Maximum message retention |  7 days   | 1 day |
-| Push Delivery to Azure Services |  No   | Yes |
-| Subscribe to Azure System Events |  No   | Yes |
-| Subscribe to Partner Events |  No   | Yes |
-| Domain Scope Subscriptions |  No   | Yes |
 
 **Note:** Azure Event Grid Namespaces only supports the Cloud Event v1.0 Schema.
 
@@ -62,18 +50,6 @@ az eventgrid namespace create --location <location> --resource-group <resource-g
 
 ```
 az eventgrid namespace create topic --location <location> --resource-group <resource-group-name> --name <resource-name>
-```
-
-#### Create an Event Grid Basic Topic
-
-```
-az eventgrid topic --create --location <location> --resource-group <resource-group-name> --name <resource-name>
-```
-
-#### Create an Event Grid Basic Domain
-
-```
-az eventgrid domain --create --location <location> --resource-group <resource-group-name> --name <resource-name>
 ```
 
 ### Authenticate the client
@@ -176,7 +152,7 @@ An **[event](https://docs.microsoft.com/azure/event-grid/concepts#events)** is t
 
 Event Grid supports multiple schemas for encoding events.
 
-##### System Topics
+#### System Topics
 A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
 
 The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
@@ -205,23 +181,9 @@ The following formats of events are allowed to be sent to an EventGrid Namespace
 
 Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
-
 ## Event Grid on Kubernetes with Azure Arc
 
 Event Grid on Kubernetes with Azure Arc is an offering that allows you to run Event Grid on your own Kubernetes cluster. This capability is enabled by the use of Azure Arc enabled Kubernetes. Through Azure Arc enabled Kubernetes, a supported Kubernetes cluster connects to Azure. Once connected, you are able to install Event Grid on it. Learn more about it [here](https://docs.microsoft.com/azure/event-grid/kubernetes/overview).
-
-### Support for CNCF Cloud Events
-
-Starting with v4.7.0, this package also supports publishing a CNCF cloud event from https://pypi.org/project/cloudevents/. You would be able to pass a CloudEvent object from this library to the `send` API.
-
-```python
-
-from cloudevents.http import CloudEvent
-
-event = CloudEvent(...)
-
-client.send(event)
-```
 
 ## Examples
 
