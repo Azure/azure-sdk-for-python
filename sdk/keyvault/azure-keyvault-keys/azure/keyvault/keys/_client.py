@@ -874,3 +874,7 @@ class KeyClient(KeyVaultClientBase):
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)
+
+    def __enter__(self) -> "KeyClient":
+        self._client.__enter__()
+        return self
