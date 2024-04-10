@@ -30,6 +30,7 @@ from ..._operations._operations import (
     build_model_get_chat_completions_request,
     build_model_get_embeddings_request,
     build_model_get_image_generations_request,
+    build_model_get_model_information_request,
 )
 from .._vendor import ModelClientMixinABC
 
@@ -49,7 +50,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: JSON,
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62,9 +62,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: JSON
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -123,8 +120,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
                     ],
-                    "stream": bool,  # Optional. A value indicating whether chat completions
-                      should be streamed for this request.
                     "temperature": 0.0,  # Optional. The sampling temperature to use that
                       controls the apparent creativity of generated completions. Higher values will
                       make output more random while lower values will make results more focused and
@@ -194,7 +189,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         *,
         messages: List[_models.ChatRequestMessage],
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
@@ -205,7 +199,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         max_tokens: Optional[int] = None,
         response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
-        stream_parameter: Optional[bool] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
@@ -225,9 +218,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -280,9 +270,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
-        :keyword stream_parameter: A value indicating whether chat completions should be streamed for
-         this request. Default value is None.
-        :paramtype stream_parameter: bool
         :keyword tools: The available tool definitions that the chat completions request can use,
          including caller-defined functions. Default value is None.
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
@@ -352,7 +339,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -365,9 +351,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: IO[bytes]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -432,7 +415,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
@@ -442,7 +424,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         max_tokens: Optional[int] = None,
         response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
-        stream_parameter: Optional[bool] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
@@ -464,9 +445,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
         :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -516,9 +494,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
-        :keyword stream_parameter: A value indicating whether chat completions should be streamed for
-         this request. Default value is None.
-        :paramtype stream_parameter: bool
         :keyword tools: The available tool definitions that the chat completions request can use,
          including caller-defined functions. Default value is None.
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
@@ -583,8 +558,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
                     ],
-                    "stream": bool,  # Optional. A value indicating whether chat completions
-                      should be streamed for this request.
                     "temperature": 0.0,  # Optional. The sampling temperature to use that
                       controls the apparent creativity of generated completions. Higher values will
                       make output more random while lower values will make results more focused and
@@ -674,7 +647,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                 "response_format": response_format,
                 "seed": seed,
                 "stop": stop,
-                "stream": stream_parameter,
                 "temperature": temperature,
                 "tool_choice": tool_choice,
                 "tools": tools,
@@ -689,7 +661,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_chat_completions_request(
-            extra_parameters=extra_parameters,
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -727,7 +698,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: JSON,
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -737,9 +707,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: JSON
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -812,7 +779,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         *,
         input: List[str],
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
@@ -824,9 +790,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
         :paramtype input: list[str]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -892,7 +855,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -902,9 +864,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: IO[bytes]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -961,7 +920,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[str] = _Unset,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -974,9 +932,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :type body: JSON or IO[bytes]
         :keyword input: Input texts to get embeddings for, encoded as a an array of strings. Required.
         :paramtype input: list[str]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -1077,7 +1032,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_embeddings_request(
-            extra_parameters=extra_parameters,
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1115,7 +1069,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: JSON,
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1125,9 +1078,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: JSON
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -1190,7 +1140,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         prompt: str,
         size: str,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         extras: Optional[Dict[str, str]] = None,
@@ -1208,9 +1157,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          ":code:`<Width>`x:code:`<Hight>`".
          For example: "1024x1024", "1792x1024". Required.
         :paramtype size: str
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -1268,7 +1214,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         self,
         body: IO[bytes],
         *,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1278,9 +1223,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         :param body: Required.
         :type body: IO[bytes]
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -1322,7 +1264,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         *,
         prompt: str = _Unset,
         size: str = _Unset,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         quality: Optional[Union[str, _models.ImageGenerationQuality]] = None,
@@ -1341,9 +1282,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
          ":code:`<Width>`x:code:`<Hight>`".
          For example: "1024x1024", "1792x1024". Required.
         :paramtype size: str
-        :keyword extra_parameters: Controls what happens if extra parameters are passed in the request
-         payload. Known values are: "error", "ignore", and "allow". Default value is None.
-        :paramtype extra_parameters: str or ~azure.ai.inference.models.ExtraParameters
         :keyword model_deployment: Name of the deployment to which you would like to route the request.
          Relevant only to Model-as-a-Platform (MaaP) deployments.
          Typically used when you want to target a test environment instead of production environment.
@@ -1450,7 +1388,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_image_generations_request(
-            extra_parameters=extra_parameters,
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1477,6 +1414,69 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ImageGenerations, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_model_information(self, **kwargs: Any) -> _models.ModelInformation:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInformation
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "model_name": "str",  # The name of the AI model. Required.
+                    "model_provider": "str",  # The model provider. Required.
+                    "model_type": "str"  # The type of the AI model. Required. Known values are:
+                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+
+        _request = build_model_get_model_information_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ModelInformation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

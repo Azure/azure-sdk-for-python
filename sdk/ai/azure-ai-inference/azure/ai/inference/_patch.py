@@ -43,15 +43,14 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-class ModelClient(ModelClientGenerated):
 
+class ModelClient(ModelClientGenerated):
     @distributed_trace
     def get_streaming_chat_completions(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: List[_models.ChatRequestMessage] = _Unset,
-        extra_parameters: Optional[Union[str, _models.ExtraParameters]] = None,
         model_deployment: Optional[str] = None,
         extras: Optional[Dict[str, str]] = None,
         frequency_penalty: Optional[float] = None,
@@ -109,7 +108,6 @@ class ModelClient(ModelClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_model_get_chat_completions_request(
-            extra_parameters=extra_parameters,
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,

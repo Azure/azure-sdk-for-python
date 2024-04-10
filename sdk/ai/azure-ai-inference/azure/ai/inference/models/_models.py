@@ -1115,3 +1115,46 @@ class ImageGenerations(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class ModelInformation(_model_base.Model):
+    """Represents some basic information about the AI model.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar model_type: The type of the AI model. Required. Known values are: "embeddings", "custom",
+     "chat", "text_generation", and "image_generation".
+    :vartype model_type: str or ~azure.ai.inference.models.ModelType
+    :ivar model_provider: The model provider. Required.
+    :vartype model_provider: str
+    :ivar model_name: The name of the AI model. Required.
+    :vartype model_name: str
+    """
+
+    model_type: Union[str, "_models.ModelType"] = rest_field()
+    """The type of the AI model. Required. Known values are: \"embeddings\", \"custom\", \"chat\",
+     \"text_generation\", and \"image_generation\"."""
+    model_provider: str = rest_field()
+    """The model provider. Required."""
+    model_name: str = rest_field()
+    """The name of the AI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_type: Union[str, "_models.ModelType"],
+        model_provider: str,
+        model_name: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)

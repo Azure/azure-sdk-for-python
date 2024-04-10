@@ -57,7 +57,7 @@ def sample_chat_completions():
     # Create Model Client for synchronous operations
     client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 
-    messages=[
+    messages = [
         ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
         ChatRequestUserMessage(content="Give me 5 good reasons why I should exercise every day"),
     ]
@@ -73,7 +73,7 @@ def sample_chat_completions():
         print("ChatCompletionsDelta:")
         for index, choice in enumerate(delta.choices):
             print(f"choices[{index}].delta.content: `{choice.delta.content}`")
-            if (choice.delta.content is not None):
+            if choice.delta.content is not None:
                 accumulated_content += choice.delta.content
             print(f"choices[{index}].delta.role: {choice.delta.role}")
             print(f"choices[{index}].finish_reason: {choice.finish_reason}")

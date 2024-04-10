@@ -15,6 +15,7 @@ from typing import List
 from .. import models as _models
 from azure.core.rest import HttpResponse
 
+
 class ChatCompletionsDeltaInterator:
     """Representation of the streaming response chat completions request.
     Completions support a wide variety of tasks and generate text that continues from or
@@ -22,11 +23,10 @@ class ChatCompletionsDeltaInterator:
     provided prompt data.
     """
 
-
     # Enable console logs for debugging
     ENABLE_CLASS_LOGS = False
 
-    # The prefix of each line in the SSE stream that contains a JSON string 
+    # The prefix of each line in the SSE stream that contains a JSON string
     # to deserialize into a ChatCompletionsDelta object
     SSE_DATA_EVENT_PREFIX = "data: "
 
@@ -82,7 +82,7 @@ class ChatCompletionsDeltaInterator:
 
         # Convert `bytes` to string and split the string by newline, while keeping the new line char.
         # the last may be a partial "line" that does not contain a newline char at the end.
-        line_list = re.split(r'(?<=\n)', element.decode('utf-8'))
+        line_list = re.split(r"(?<=\n)", element.decode("utf-8"))
         for index, element in enumerate(line_list):
 
             if self.ENABLE_CLASS_LOGS:
@@ -93,17 +93,17 @@ class ChatCompletionsDeltaInterator:
                 self._incomplete_json = ""
 
             if index == len(line_list) - 1 and not element.endswith("\n"):
-                self._incomplete_json  = element
+                self._incomplete_json = element
                 return
 
             if self.ENABLE_CLASS_LOGS:
                 print(f"[modified] {repr(element)}")
 
-            if element == "\n": # Empty line, indicating flush output to client
+            if element == "\n":  # Empty line, indicating flush output to client
                 continue
 
             if not element.startswith(self.SSE_DATA_EVENT_PREFIX):
-                    raise ValueError(f"SSE event not supported (line `{element}`)")
+                raise ValueError(f"SSE event not supported (line `{element}`)")
 
             if element.startswith(self.SSE_DATA_EVENT_DONE):
                 self._done = True
@@ -112,13 +112,17 @@ class ChatCompletionsDeltaInterator:
             # If you reached here, the line should contain `data: {...}\n`
             # where the curly braces contain a valid JSON object. Deserialize it into a ChatCompletionsDelta object
             # and add it to the queue.
-            self._queue.put(_models.ChatCompletionsDelta._deserialize(json.loads(element[len(self.SSE_DATA_EVENT_PREFIX):-1]), []))
+            self._queue.put(
+                _models.ChatCompletionsDelta._deserialize(json.loads(element[len(self.SSE_DATA_EVENT_PREFIX) : -1]), [])
+            )
 
             if self.ENABLE_CLASS_LOGS:
                 print("[added]")
 
 
-__all__: List[str] = ["ChatCompletionsDeltaInterator"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ChatCompletionsDeltaInterator"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

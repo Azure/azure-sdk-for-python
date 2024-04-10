@@ -21,7 +21,7 @@ def sample_chat_completions():
     # [START create_client]
     import os
     from azure.ai.inference import ModelClient
-    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ExtraParameters
+    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
     from azure.core.credentials import AzureKeyCredential
 
     # [START logging]
@@ -56,7 +56,11 @@ def sample_chat_completions():
         exit()
 
     # Create Model Client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
+    client = ModelClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        logging_enable=True,
+    )
     # [END create_client]
 
     # [START chat_completions]
@@ -68,7 +72,6 @@ def sample_chat_completions():
         ],
         # Examples of setting extra parameters (TODO: move this to advanced sample)
         extras=dict(key1="value1", key2="value2"),
-        extra_parameters=ExtraParameters.ALLOW,
     )
 
     # Print results the the console

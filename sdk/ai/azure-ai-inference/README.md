@@ -50,7 +50,7 @@ Once you define the environment variables, this Python code will create and auth
 ```python
 import os
 from azure.ai.inference import ModelClient
-from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ExtraParameters
+from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
 from azure.core.credentials import AzureKeyCredential
 
 # [START logging]
@@ -138,7 +138,6 @@ result = client.get_chat_completions(
     ],
     # Examples of setting extra parameters (TODO: move this to advanced sample)
     extras=dict(key1="value1", key2="value2"),
-    extra_parameters=ExtraParameters.ALLOW
 )
 
 # Print results the the console
@@ -152,6 +151,7 @@ print(f"id: {result.id}")
 print(f"created: {result.created}")
 print(f"model: {result.model}")
 print(f"object: {result.object}")
+print(f"usage.capacity_type: {result.usage.capacity_type}")
 print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
 print(f"usage.completion_tokens: {result.usage.completion_tokens}")
 print(f"usage.total_tokens: {result.usage.total_tokens}")
