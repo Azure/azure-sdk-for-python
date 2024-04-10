@@ -1,6 +1,6 @@
 # Release History
 
-## 4.19.0 (Unreleased)
+## 4.19.0 (2024-04-10)
 
 ### Features Added
 
@@ -9,8 +9,6 @@
 ### Bugs Fixed
 
 - Fixed a bug where the Api Version was being hardcoded to `2018-01-01` on any request sent to the service.
-
-### Other Changes
 
 ## 4.18.0 (2024-03-12)
 
