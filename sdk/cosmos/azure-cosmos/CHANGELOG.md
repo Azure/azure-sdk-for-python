@@ -8,7 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug where change feed pulls in Async clients weren't returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
+* Fixed a bug where change feed query in Async client was not returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 * Fixed bug when a retryable exception occurs in the first page of a query execution. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
 
 
