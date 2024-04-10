@@ -337,7 +337,7 @@ class TestQuery(unittest.TestCase):
         # Should equal batch size
         self.assertEqual(totalCount, batchSize)
 
-        # test an invalid value, results in error
+        # test an invalid value, will ignore start time option
         invalid_time = "Invalid value"
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
         totalCount = len(change_feed_iter)

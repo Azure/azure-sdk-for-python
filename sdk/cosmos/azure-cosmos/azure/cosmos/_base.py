@@ -294,8 +294,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             if_none_match_value = "*"
         elif options.get("startTime"):
             dt = options.get("startTime")
-            # If datetime has specified timezone, and it's not utc, convert to utc.
-            # Otherwise, assume it is in UTC.
+            # If datetime is not in utc, convert to utc.
             if isinstance(dt, datetime):
                 dt = dt.astimezone(timezone.utc)
                 headers[http_constants.HttpHeaders.IfModified_since] = dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
