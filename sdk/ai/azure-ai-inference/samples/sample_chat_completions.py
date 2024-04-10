@@ -82,6 +82,7 @@ def sample_chat_completions():
     print(f"created: {result.created}")
     print(f"model: {result.model}")
     print(f"object: {result.object}")
+    print(f"usage.capacity_type: {result.usage.capacity_type}")
     print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
     print(f"usage.completion_tokens: {result.usage.completion_tokens}")
     print(f"usage.total_tokens: {result.usage.total_tokens}")
