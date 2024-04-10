@@ -3,7 +3,7 @@
 ### 4.6.1 (Unreleased)
 
 #### Features Added
-* Added support for using the start time option for change feed pulls. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
+* Added support for using the start time option for change feed query API. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 
 #### Breaking Changes
 
