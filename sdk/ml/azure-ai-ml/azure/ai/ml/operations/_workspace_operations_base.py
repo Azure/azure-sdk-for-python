@@ -81,7 +81,7 @@ class WorkspaceOperationsBase(ABC):
         obj = self._operation.get(resource_group, workspace_name)
         if obj is not None and obj.kind.lower() == WorkspaceKind.HUB:
             return Hub._from_rest_object(obj)
-        elif obj is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
+        if obj is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
             return Project._from_rest_object(obj)
         return Workspace._from_rest_object(obj)
 
@@ -726,7 +726,6 @@ class WorkspaceOperationsBase(ABC):
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
 
-        # Hub related params
         if workspace._kind and workspace._kind.lower() == WorkspaceKind.HUB:
             _set_obj_val(param["workspace_hub_config"], workspace._hub_values_to_rest_object())  # type: ignore
             if workspace.existing_workspaces:  # type: ignore
@@ -752,8 +751,8 @@ class WorkspaceOperationsBase(ABC):
             and workspace._kind is not None
             and workspace._kind.lower() == WorkspaceKind.PROJECT
         ):
-            if hasattr(workspace, "hub"):
-                _set_val(param["workspace_hub"], workspace.hub)
+            if hasattr(workspace, "_hub_id"):
+                _set_val(param["workspace_hub"], workspace._hub_id)
 
         # Serverless compute related param
         serverless_compute = workspace.serverless_compute if workspace.serverless_compute else None

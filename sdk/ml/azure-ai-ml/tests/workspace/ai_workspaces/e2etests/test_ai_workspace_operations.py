@@ -40,7 +40,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert project1.location == project2.location
         assert project1.description == project2.description
         assert project1.display_name == project2.display_name
-        assert project1.hub == project2.hub
+        assert project1.hub_id == project2.hub_id
 
     def check_listed_workspaces(self, expected_workspaces: List[Workspace], listed_workspaces: List[Workspace]):
         target_names = [ws.name for ws in expected_workspaces]
@@ -73,7 +73,7 @@ class TestWorkspace(AzureRecordedTestCase):
 
             local_project1 = Project(
                 name=f"test_proj_1_{randstr('project_1_name')}",
-                hub=created_hub.id,
+                hub_id=created_hub.id,
                 description="project1 description",
                 display_name="project1 display name",
             )
@@ -81,7 +81,7 @@ class TestWorkspace(AzureRecordedTestCase):
 
             local_project2 = Project(
                 name=f"test_proj_2_{randstr('project_2_name')}",
-                hub=created_hub.id,
+                hub_id=created_hub.id,
                 description="project2 description",
                 display_name="project2 display name",
                 # location="westus" cross location not supported
@@ -121,11 +121,8 @@ class TestWorkspace(AzureRecordedTestCase):
             self.check_listed_workspaces([], listed_workspaces)
             self.check_listed_workspaces([local_hub, local_project1, local_project2], normal_list)
 
-            import pdb
-
-            pdb.set_trace()
-
         finally:
+            # Delete both projects and the hub.
             if created_project1 is not None:
                 poller = client.workspaces.begin_delete(created_project1.name, delete_dependent_resources=True)
                 assert poller

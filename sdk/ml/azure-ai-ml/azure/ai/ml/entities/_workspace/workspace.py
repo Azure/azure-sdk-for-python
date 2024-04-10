@@ -116,7 +116,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        hub: Optional[str] = None,
+        hub_id: Optional[str] = None,
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -143,9 +143,10 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
+        self.__hub_id = hub_id
         # Technically this is redundant with the introduction of projects as their own class in ~April 2024,
         # but this is still useful for minor backwards compatibility's sake.
-        if hub:
+        if hub_id:
             self._kind = WorkspaceKind.PROJECT.value
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
@@ -157,6 +158,32 @@ class Workspace(Resource):
         :rtype: str
         """
         return self._discovery_url
+
+    @property
+    def _hub_id(self) -> Optional[str]:
+        """The UID of the hub parent of the project. This is an internal property
+        that's surfaced by the Project sub-class, but exists here for backwards-compatibility
+        reasons.
+
+        :return: Resource ID of the parent hub.
+        :rtype: str
+        """
+        return self.__hub_id
+
+    @_hub_id.setter
+    def _hub_id(self, value: str):
+        """Set the hub of the project. This is an internal property
+        that's surfaced by the Project sub-class, but exists here for backwards-compatibility
+        reasons.
+
+
+        :param value: The hub id to assign to the project.
+            Note: cannot be reassigned after creation.
+        :type value: str
+        """
+        if not value:
+            return
+        self.__hub_id = value
 
     @property
     def mlflow_tracking_uri(self) -> Optional[str]:
@@ -277,12 +304,18 @@ class Workspace(Resource):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
-            hub=rest_obj.hub_resource_id,
+            hub_id=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
             serverless_compute=serverless_compute,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
+        """Note: Unlike most entities, the create operation for workspaces does NOTE use this function,
+        and instead relies on its own internal conversion process to produce a valid ARM template.
+
+        :return: The REST API object-equivalent of this workspace.
+        :rtype: RestWorkspace
+        """
         feature_store_settings = None
         if self._feature_store_settings:
             feature_store_settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
@@ -313,7 +346,7 @@ class Workspace(Resource):
             else None,  # pylint: disable=protected-access
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            hub_resource_id=self.hub,
+            hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )
 

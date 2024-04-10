@@ -19,7 +19,6 @@ class TestProjectEntity:
         assert project.resource_group == "my-test-rg-which-can-be-different-from-the-hubs-rg"
         assert project.tags == {"extra_data": "some value"}
         assert (
-            project.hub
+            project.hub_id
             == "/subscriptions/abc-123-drm-abc/resourceGroups/my-test-rg/providers/Microsoft.MachineLearningServices/workspaces/my-test-hub"
         )
-        hub = load_hub(source="./tests/test_configs/ai_workspaces/aihub_min.yml")

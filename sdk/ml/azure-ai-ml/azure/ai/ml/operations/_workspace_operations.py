@@ -95,10 +95,10 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 :caption: List the workspaces by resource group or subscription.
         """
 
-        # Kind should be a comma-separating string if multiple values are supplied.
+        # Kind should be converted to a comma-separating string if multiple values are supplied.
         formatted_kind = kind
-        if type(kind) == list:
-            formatted_kind = ",".join(kind)
+        if isinstance(kind, list):
+            formatted_kind = ",".join(kind)  # type: ignore[arg-type]
 
         if scope == Scope.SUBSCRIPTION:
             return cast(
@@ -264,7 +264,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         except HttpResponseError as error:
             if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
-                hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+                hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)
                 hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
                     rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
@@ -394,7 +394,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :return: An instance of LROPoller that returns a project Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
-        if not workspace.workspace_hub:
+        if not workspace._hub_id:
             raise ValidationError(
                 "{0} is not a Project workspace, join operation can only perform with workspaceHub provided".format(
                     workspace.name
@@ -402,8 +402,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             )
 
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        workspace_hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
-        rest_workspace_obj = self._operation.get(resource_group, workspace_hub_name)
+        hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
+        rest_workspace_obj = self._operation.get(resource_group, hub_name)
 
         # override the location to the same as the workspaceHub
         workspace.location = rest_workspace_obj.location
@@ -412,7 +412,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             workspace.identity = IdentityConfiguration(type="system_assigned")
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
+        workspace_base_uri = _get_workspace_base_url(workspace_operations, hub_name, self._requests_pipeline)
 
         # pylint:disable=unused-argument
         def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:
@@ -421,7 +421,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
             result = self.dataplane_workspace_operations.begin_hub_join(
                 resource_group_name=resource_group,
-                workspace_name=workspace_hub_name,
+                workspace_name=hub_name,
                 project_workspace_name=workspace.name,
                 body=workspace._to_rest_object(),
                 cls=callback,

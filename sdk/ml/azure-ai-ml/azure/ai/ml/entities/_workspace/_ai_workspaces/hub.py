@@ -19,8 +19,6 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
-from azure.ai.ml._schema.workspace import HubSchema
-
 
 @experimental
 class Hub(Workspace):
@@ -132,28 +130,6 @@ class Hub(Workspace):
         self.default_workspace_resource_group = default_workspace_resource_group
         self.associated_workspaces: Optional[List[str]] = None
 
-    def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
-        res: dict = HubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        return res
-
-    @classmethod
-    def _load(
-        cls,
-        data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
-        params_override: Optional[list] = None,
-        **kwargs: Any,
-    ) -> "Project":
-        data = data or {}
-        params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
-        loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
-        return Hub(**loaded_schema)
-
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Hub"]:
         if not rest_obj:
@@ -231,6 +207,6 @@ class Hub(Workspace):
 
     def _to_rest_object(self) -> RestWorkspace:
         restWorkspace = super()._to_rest_object()
-        restWorkspace.workspace_hub_config = (self.workspace_hub_config,)
+        restWorkspace.workspace_hub_config = self._hub_values_to_rest_object()
         restWorkspace.existing_workspaces = (self.existing_workspaces,)
         return restWorkspace

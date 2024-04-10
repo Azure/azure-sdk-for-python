@@ -24,8 +24,8 @@ class Project(Workspace):
 
     :param name: The name of the project.
     :type name: str
-    :param hub: The hub parent of the project, as a resource ID.
-    :type hub: str
+    :param hub_id: The hub parent of the project, as a resource ID.
+    :type hub_id: str
     :param description: The description of the project.
     :type description: Optional[str]
     :param tags: Tags associated with the project.
@@ -42,7 +42,7 @@ class Project(Workspace):
         self,
         *,
         name: str,
-        hub: str,
+        hub_id: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -58,25 +58,9 @@ class Project(Workspace):
             display_name=display_name,
             location=location,
             resource_group=resource_group,
-            hub=hub,
+            hub_id=hub_id,
             **kwargs,
         )
-        self._hub = hub
-        # TODO add getters/setters that prevent actual interaction with these values?
-        thoughts = """
-        self.hbi_workspace = hbi_workspace
-        self.storage_account = storage_account
-        self.container_registry = container_registry
-        self.key_vault = key_vault
-        self.application_insights = application_insights
-        self.customer_managed_key = customer_managed_key
-        self.image_build_compute = image_build_compute
-        self.public_network_access = public_network_access
-        self.identity = identity
-        self.primary_user_assigned_identity = primary_user_assigned_identity
-        self.managed_network = managed_network
-        self.enable_data_isolation = enable_data_isolation
-        """
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -106,7 +90,7 @@ class Project(Workspace):
             return None
         return Project(
             name=rest_obj.name,
-            hub=rest_obj.hub_resource_id,
+            hub_id=rest_obj.hub_resource_id,
             description=rest_obj.description if hasattr(rest_obj, "description") else None,
             tags=rest_obj.tags if hasattr(rest_obj, "tags") else None,
             display_name=rest_obj.friendly_name if hasattr(rest_obj, "friendly_name") else None,
@@ -115,22 +99,22 @@ class Project(Workspace):
         )
 
     @property
-    def hub(self) -> str:
+    def hub_id(self) -> str:
         """The UID of the hub parent of the project.
 
         :return: Resource ID of the parent hub.
         :rtype: str
         """
-        return self._hub
+        return self._hub_id if self._hub_id else ""
 
-    @hub.setter
-    def hub(self, value: str):
+    @hub_id.setter
+    def hub_id(self, value: str):
         """Set the hub of the project.
 
-        :param value: The description to assign to the project.
+        :param value: The hub id to assign to the project.
             Note: cannot be reassigned after creation.
         :type value: str
         """
         if not value:
             return
-        self._hub = value
+        self._hub_id = value
