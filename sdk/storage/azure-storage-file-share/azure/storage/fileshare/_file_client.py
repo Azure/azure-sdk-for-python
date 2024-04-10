@@ -624,7 +624,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def start_copy_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> dict[str, Any]
+        # type: (str, Any) -> Dict[str, Any]
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 

@@ -520,7 +520,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def set_share_metadata(self, metadata, **kwargs):
-        # type: (dict[str, Any], Any) ->  dict[str, Any]
+        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
         Each call to this operation replaces all existing metadata

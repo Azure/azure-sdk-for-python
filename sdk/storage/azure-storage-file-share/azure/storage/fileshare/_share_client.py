@@ -837,7 +837,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             marker=None,  # type: Optional[str]
             **kwargs  # type: Any
         ):
-        # type: (...) -> Iterable[dict[str, str]]
+        # type: (...) -> Iterable[Dict[str, str]]
         """Lists the directories and files under the share.
 
         :param str directory_name:
