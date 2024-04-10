@@ -472,34 +472,27 @@ class CallParticipant:
     :paramtype identifier: ~azure.communication.callautomation.CommunicationIdentifier
     :keyword is_muted: Is participant muted.
     :paramtype is_muted: bool
-    :keyword is_on_hold: Is participant on hold.
-    :paramtype is_on_hold: bool
     """
 
     identifier: Optional[CommunicationIdentifier]
     """Communication identifier of the participant."""
     is_muted: bool
     """Is participant muted."""
-    is_on_hold: bool
-    """Is participant on hold."""
 
     def __init__(
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: bool = False,
-        is_on_hold: bool = False,
+        is_muted: bool = False
     ):
         self.identifier = identifier
         self.is_muted = is_muted
-        self.is_on_hold = is_on_hold
 
     @classmethod
     def _from_generated(cls, call_participant_generated: 'CallParticipantRest'):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
-            is_muted=call_participant_generated.is_muted,
-            is_on_hold=call_participant_generated.is_on_hold
+            is_muted=call_participant_generated.is_muted
         )
 
 

@@ -29,8 +29,7 @@ class TestCallConnectionClient(unittest.TestCase):
     operation_context = "operationContext"
     call_participant = {
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
-        "isMuted": False,
-        "isOnHold": False
+        "isMuted": False
     }
     invitation_id = "invitationId"
 
