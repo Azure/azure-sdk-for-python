@@ -23,7 +23,6 @@
 """
 
 import base64
-from datetime import timezone, datetime
 from email.utils import formatdate
 import json
 import uuid
