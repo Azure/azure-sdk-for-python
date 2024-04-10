@@ -31,7 +31,10 @@ def _verify_extensions(module: str) -> None:
                          f"Please install this package and try again.")
 
 
-def parse_validation_option(validate_content: Union[bool, str]) -> Optional[Union[bool, str]]:
+def parse_validation_option(validate_content: Optional[Union[bool, str]]) -> Optional[Union[bool, str]]:
+    if validate_content is None:
+        return None
+
     # Legacy support for bool
     if isinstance(validate_content, bool):
         return validate_content

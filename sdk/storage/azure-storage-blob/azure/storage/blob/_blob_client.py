@@ -378,7 +378,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         ) -> Dict[str, Any]:
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-        validate_content = parse_validation_option(kwargs.pop('validate_content', False))
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
         if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
 
