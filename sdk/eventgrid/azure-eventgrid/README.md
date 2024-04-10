@@ -227,13 +227,9 @@ client.send(event)
 
 The following sections provide several code snippets covering some of the most common Event Grid tasks, including:
 
-* [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
 * [Send Multiple Events](#send-multiple-events)
-* [Send events as Dictionaries](#send-events-as-dictionaries)
-* [Receive events](#receive-events-from-namespace)
-* [Consume a payload from storage queue](#consume-from-storage-queue)
-* [Consume from ServiceBus](#consume-from-servicebus)
+* [Receive and Process Events from Namespace](#receive-and-process-events-from-namespace)
 
 ### Send a Cloud Event
 
@@ -318,7 +314,17 @@ client = EventGridClient(endpoint, credential, level=ClientLevel.STANDARD)
 
 events = client.receive_cloud_events(topic_name, sub_name, max_events=4)
 
-for e in events:
+for detail in events.value:
+    data = detail.event.data
+    broker_properties = detail.broker_properties
+    if data == "release":
+        release_events.append(broker_properties.lock_token)
+    elif data == "acknowledge":
+        acknowledge_events.append(broker_properties.lock_token)
+    else:
+        reject_events.append(broker_properties.lock_token)
+
+    # Renew all Locks
     renew_tokens = e.broker_properties.lock_token
     renew_result = client.renew_cloud_events_lock(
         topic_name=TOPIC_NAME,
@@ -326,25 +332,23 @@ for e in events:
         lock_tokens=renew_tokens,
     )
 
-release_tokens = events[0].broker_properties.lock_token
+
 release_result = client.release_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    lock_tokens=release_tokens,
+    lock_tokens=release_events,
 )
 
-ack_tokens = events[1].broker_properties.lock_token
 ack_result = client.acknowledge_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    lock_tokens=ack_tokens,
+    lock_tokens=acknowledge_events,
 )
 
-reject_tokens = events[2].broker_properties.lock_token
 reject_result = client.reject_cloud_events(
     topic_name=TOPIC_NAME,
     subscription_name=EVENT_SUBSCRIPTION_NAME,
-    lock_tokens=reject_tokens,
+    lock_tokens=reject_events,
 )
 
 ```
