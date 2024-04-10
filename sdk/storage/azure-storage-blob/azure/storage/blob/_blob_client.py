@@ -30,6 +30,7 @@ from ._shared.request_handlers import (
     read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
+from ._shared.validation import ChecksumAlgorithm, parse_validation_option
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
@@ -377,6 +378,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         ) -> Dict[str, Any]:
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
+        validate_content = parse_validation_option(kwargs.pop('validate_content', False))
+        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+            raise ValueError("Using encryption and content validation together is not currently supported.")
+
         encryption_options = {
             'required': self.require_encryption,
             'version': self.encryption_version,
@@ -403,7 +408,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
 
-        validate_content = kwargs.pop('validate_content', False)
         content_settings = kwargs.pop('content_settings', None)
         overwrite = kwargs.pop('overwrite', False)
         max_concurrency = kwargs.pop('max_concurrency', 1)
@@ -651,15 +655,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'md5', 'crc64']
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID. Value can be a BlobLeaseClient object
