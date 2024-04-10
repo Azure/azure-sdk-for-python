@@ -30,7 +30,7 @@ Python 3.6 is no longer supported. Please use Python version 3.7 or later. For m
 - Making parameters for get_relay_configuration keyword only
 
 ### Other Changes
-Python 2.7 is no longer supported. Please use Python version 3.6/ or later.
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.0.0b2 (2021-11-18)
 
