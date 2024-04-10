@@ -12,8 +12,9 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 from azure.ai.ml.constants._common import ArmConstants, Scope
-from azure.ai.ml.entities._workspace_hub._constants import ENDPOINT_AI_SERVICE_KIND, WORKSPACE_HUB_KIND
-from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
+from azure.ai.ml.constants._common import WorkspaceKind
+from azure.ai.ml.entities._workspace._ai_workspaces._constants import ENDPOINT_AI_SERVICE_KIND
+from azure.ai.ml.entities._workspace._ai_workspaces.hub import Hub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -26,7 +27,7 @@ module_logger = ops_logger.module_logger
 
 
 class WorkspaceHubOperations(WorkspaceOperationsBase):
-    """WorkspaceHubOperations.
+    """AIHubOperations.
 
     You should not instantiate this class directly. Instead, you should create an
     MLClient instance that instantiates it for you and attaches it as an attribute.
@@ -49,14 +50,14 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             **kwargs,
         )
 
-    @monitor_with_activity(ops_logger, "WorkspaceHub.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[WorkspaceHub]:
-        """List all WorkspaceHubs that the user has access to in the current resource group or subscription.
+    @monitor_with_activity(ops_logger, "AIHub.List", ActivityType.PUBLICAPI)
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Hub]:
+        """List all AIHubs that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
-        :return: An iterator like instance of WorkspaceHub objects
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.WorkspaceHub]
+        :return: An iterator like instance of AIHub objects
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.AIHub]
 
         .. admonition:: Example:
 
@@ -70,37 +71,37 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         if scope == Scope.SUBSCRIPTION:
             return cast(
-                Iterable[WorkspaceHub],
+                Iterable[Hub],
                 self._operation.list_by_subscription(
                     cls=lambda objs: [
-                        WorkspaceHub._from_rest_object(filterObj)
-                        for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
+                        Hub._from_rest_object(filterObj)
+                        for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.HUB, objs)
                     ]
                 ),
             )
         return cast(
-            Iterable[WorkspaceHub],
+            Iterable[Hub],
             self._operation.list_by_resource_group(
                 self._resource_group_name,
                 cls=lambda objs: [
-                    WorkspaceHub._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
+                    Hub._from_rest_object(filterObj)
+                    for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.HUB, objs)
                 ],
             ),
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "WorkspaceHub.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "AIHub.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed, arguments-differ
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
-        """Get a Workspace WorkspaceHub by name.
+    def get(self, name: str, **kwargs: Dict) -> Hub:
+        """Get a Workspace AIHub by name.
 
-        :param name: Name of the WorkspaceHub.
+        :param name: Name of the AIHub.
         :type name: str
         :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
             retrieved from the service.
-        :return: The WorkspaceHub with the provided name.
-        :rtype: ~azure.ai.ml.entities.WorkspaceHub
+        :return: The AIHub with the provided name.
+        :rtype: ~azure.ai.ml.entities.AIHub
 
         .. admonition:: Example:
 
@@ -115,29 +116,29 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         workspace_hub = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND:
-            workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
+        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB:
+            workspace_hub = Hub._from_rest_object(rest_workspace_obj)
 
         return workspace_hub  # type: ignore[return-value]
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "AIHub.BeginCreate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-differ
     def begin_create(
         self,
         *,
-        workspace_hub: WorkspaceHub,
+        workspace_hub: Hub,
         update_dependent_resources: bool = False,
         endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs: Dict,
-    ) -> LROPoller[WorkspaceHub]:
-        """Create a new WorkspaceHub.
+    ) -> LROPoller[Hub]:
+        """Create a new AIHub.
 
-        Returns the WorkspaceHub if already exists.
+        Returns the AIHub if already exists.
 
-        :keyword workspace_hub: WorkspaceHub definition.
-        :paramtype workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
+        :keyword workspace_hub: AIHub definition.
+        :paramtype workspace_hub: ~azure.ai.ml.entities.AIHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
         :keyword endpoint_resource_id: The UID of an AI service or Open AI resource.
@@ -151,8 +152,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             by the endpoint_resource_id field. Defaults to "AIServices". The only other valid
             input is "OpenAI".
         :paramtype endpoint_kind: str
-        :return: An instance of LROPoller that returns a WorkspaceHub.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
+        :return: An instance of LROPoller that returns a AIHub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.AIHub]
 
         .. admonition:: Example:
 
@@ -164,7 +165,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 :caption: Create the workspace hub.
         """
 
-        def get_callback() -> WorkspaceHub:
+        def get_callback() -> Hub:
             """Callback to be called after completion"""
             return self.get(name=workspace_hub.name)
 
@@ -178,22 +179,22 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "AIHub.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     def begin_update(
         self,
-        workspace_hub: WorkspaceHub,
+        workspace_hub: Hub,
         *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[WorkspaceHub]:
-        """Update Friendly Name, Description, Tags, PNA, Managed Network Settings, or Encryption of a WorkspaceHub.
+    ) -> LROPoller[Hub]:
+        """Update Friendly Name, Description, Tags, PNA, Managed Network Settings, or Encryption of a AIHub.
 
-        :param workspace_hub: WorkspaceHub resource.
-        :type workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
-        :return: An instance of LROPoller that returns a WorkspaceHub.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
-        :raises ~azure.ai.ml.ValidationException: Raised if workspace_hub is not a WorkspaceHub.
+        :param workspace_hub: AIHub resource.
+        :type workspace_hub: ~azure.ai.ml.entities.AIHub
+        :return: An instance of LROPoller that returns a AIHub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.AIHub]
+        :raises ~azure.ai.ml.ValidationException: Raised if workspace_hub is not a AIHub.
 
         .. admonition:: Example:
 
@@ -207,24 +208,24 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB
         ):
             raise ValidationException(
-                message="{0} is not a WorkspaceHub.".format(workspace_hub.name),
-                no_personal_data_message="The workspace_hub specified is not a WorkspaceHub.",
+                message="{0} is not a AIHub.".format(workspace_hub.name),
+                no_personal_data_message="The workspace_hub specified is not a AIHub.",
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        def deserialize_callback(rest_obj: Any) -> Optional[WorkspaceHub]:
+        def deserialize_callback(rest_obj: Any) -> Optional[Hub]:
             """Callback to be called after completion
 
             :param rest_obj: A rest representation of the Workspace.
             :type: Any
-            :return: WorkspaceHub deserialized.
-            :rtype: ~azure.ai.ml.entities.WorkspaceHub
+            :return: AIHub deserialized.
+            :rtype: ~azure.ai.ml.entities.AIHub
             """
-            return WorkspaceHub._from_rest_object(rest_obj=rest_obj)
+            return Hub._from_rest_object(rest_obj=rest_obj)
 
         return super().begin_update(
             workspace=workspace_hub,
@@ -234,15 +235,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "AIHub.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
     ) -> LROPoller[None]:
-        """Delete a WorkspaceHub.
+        """Delete a AIHub.
 
-        :param name: Name of the WorkspaceHub
+        :param name: Name of the AIHub
         :type name: str
-        :keyword delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the AIHub,
             i.e., container registry, storage account, key vault, application insights, log analytics.
             The default is False. Set to True to delete these resources.
         :paramtype delete_dependent_resources: bool
@@ -251,7 +252,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.ai.ml.ValidationException: Raised if workspace with name is not a WorkspaceHub.
+        :raises ~azure.ai.ml.ValidationException: Raised if workspace with name is not a AIHub.
 
         .. admonition:: Example:
 
@@ -265,11 +266,11 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB
         ):
             raise ValidationException(
-                message="{0} is not a WorkspaceHub.".format(name),
-                no_personal_data_message="The name of workspace specified is not a WorkspaceHub.",
+                message="{0} is not a AIHub.".format(name),
+                no_personal_data_message="The name of workspace specified is not a AIHub.",
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )

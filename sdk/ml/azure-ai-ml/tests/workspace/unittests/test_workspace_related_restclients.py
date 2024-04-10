@@ -88,7 +88,7 @@ class TestWorkspaceEntity:
 
     if you will update the restclient version for anything that is using workspace object
     and related operations (currently: workspace entities, workspacehub entities, network entities,
-    WorkspaceOperations, WorkspaceOutboundRuleOperations, FeatureStoreOperations, WorkspaceHubOperations)
+    WorkspaceOperations, WorkspaceOutboundRuleOperations, FeatureStoreOperations)
     then you will also need to update the restclient version to match in all these locations to avoid
     issues when unmarshalling.
     """

@@ -7,7 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, load_workspace_hub
+from azure.ai.ml import MLClient, load_hub
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.entities import WorkspaceHub, WorkspaceHubConfig
 from azure.core.paging import ItemPaged
@@ -47,7 +47,7 @@ class TestWorkspace(AzureRecordedTestCase):
             assert workspace_hub.public_network_access == PublicNetworkAccess.ENABLED
 
         workspace_hub = verify_entity_load_and_dump(
-            load_workspace_hub,
+            load_hub,
             workspace_validation,
             "./tests/test_configs/workspace/workspacehub_min.yaml",
             params_override=params_override,

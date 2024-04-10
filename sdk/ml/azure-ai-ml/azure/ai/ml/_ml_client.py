@@ -82,7 +82,6 @@ from azure.ai.ml.operations import (
     OnlineEndpointOperations,
     RegistryOperations,
     WorkspaceConnectionsOperations,
-    WorkspaceHubOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -658,15 +657,6 @@ class MLClient:
             **ops_kwargs,  # type: ignore[arg-type]
         )
 
-        self._workspace_hubs = WorkspaceHubOperations(
-            self._operation_scope,
-            self._service_client_08_2023_preview,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
-        )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
-
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
@@ -811,7 +801,8 @@ class MLClient:
 
     @property
     def workspaces(self) -> WorkspaceOperations:
-        """A collection of workspace-related operations.
+        """A collection of workspace-related operations. Also manages workspace
+        sub-classes like projects and hubs.
 
         :return: Workspace operations
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
@@ -853,16 +844,6 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.FeatureSetOperations
         """
         return self._featuresets
-
-    @property
-    @experimental
-    def workspace_hubs(self) -> WorkspaceHubOperations:
-        """A collection of workspace hub-related operations.
-
-        :return: Hub Operations
-        :rtype: HubOperations
-        """
-        return self._workspace_hubs
 
     @property
     def feature_store_entities(self) -> FeatureStoreEntityOperations:

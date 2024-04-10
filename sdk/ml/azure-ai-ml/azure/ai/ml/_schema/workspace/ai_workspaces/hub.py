@@ -12,14 +12,15 @@ from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
-from azure.ai.ml._schema._workspace_hub.workspace_hub_config import WorkspaceHubConfigSchema
 
 from azure.ai.ml._schema import ExperimentalField
+from azure.ai.ml._schema.workspace import WorkspaceSchema
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class WorkspaceHubSchema(PathAwareSchema):
+class HubSchema(WorkspaceSchema):
+    """todo determine if still needed
     name = fields.Str(required=True)
     location = fields.Str()
     id = fields.Str(dump_only=True)
@@ -39,5 +40,9 @@ class WorkspaceHubSchema(PathAwareSchema):
     primary_user_assigned_identity = fields.Str()
     managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))
     existing_workspaces = fields.List(fields.Str())
-    workspace_hub_config = ExperimentalField(NestedField(WorkspaceHubConfigSchema))
-    enable_data_isolation = fields.Bool()
+    workspace_hub_config = ExperimentalField(NestedField(HubConfigSchema))
+    enable_data_isolation = fields.Bool()"""
+
+    
+    additional_workspace_storage_accounts = fields.List(fields.Str(), required=False)
+    default_workspace_resource_group = fields.Str(required=False)

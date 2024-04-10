@@ -41,7 +41,7 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
+from azure.ai.ml.entities import Hub, Project
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -233,6 +233,53 @@ def load_workspace(
             :caption: Loading a Workspace from a YAML config file.
     """
     return cast(Workspace, load_common(Workspace, source, relative_origin, **kwargs))
+
+@experimental
+def load_project(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs: Any,
+) -> Project:
+    return cast(Project, load_common(Project, source, relative_origin, **kwargs))
+
+@experimental
+def load_hub(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs: Any,
+) -> Hub:
+    """Load a Hub object from a yaml file.
+
+    :param source: The local yaml source of a Hub. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: str
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :paramtype params_override: List[Dict]
+    :return: Loaded Hub object.
+    :rtype: Hub
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_hub]
+            :end-before: [END load_hub]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Hub from a YAML config file.
+    """
+    return cast(Hub, load_common(Hub, source, relative_origin, **kwargs))
 
 
 def load_registry(
@@ -860,46 +907,6 @@ def load_feature_store_entity(
     :rtype: FeatureStoreEntity
     """
     return cast(FeatureStoreEntity, load_common(FeatureStoreEntity, source, relative_origin, **kwargs))
-
-
-@experimental
-def load_workspace_hub(
-    source: Union[str, PathLike, IO[AnyStr]],
-    *,
-    relative_origin: Optional[str] = None,
-    **kwargs: Any,
-) -> WorkspaceHub:
-    """Load a WorkspaceHub object from a yaml file.
-
-    :param source: The local yaml source of a WorkspaceHub. Must be either a
-        path to a local file, or an already-open file.
-        If the source is a path, it will be open and read.
-        An exception is raised if the file does not exist.
-        If the source is an open file, the file will be read directly,
-        and an exception is raised if the file is not readable.
-    :type source: Union[PathLike, str, io.TextIOWrapper]
-    :keyword relative_origin: The origin to be used when deducing
-        the relative locations of files referenced in the parsed yaml.
-        Defaults to the inputted source's directory if it is a file or file path input.
-        Defaults to "./" if the source is a stream input with no name value.
-    :paramtype relative_origin: str
-    :keyword params_override: Fields to overwrite on top of the yaml file.
-        Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: List[Dict]
-    :return: Loaded WorkspaceHub object.
-    :rtype: WorkspaceHub
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/ml_samples_workspace.py
-            :start-after: [START load_workspace_hub]
-            :end-before: [END load_workspace_hub]
-            :language: python
-            :dedent: 8
-            :caption: Loading a Workspace Hub from a YAML config file.
-    """
-    return cast(WorkspaceHub, load_common(WorkspaceHub, source, relative_origin, **kwargs))
-
 
 @experimental
 def load_model_package(

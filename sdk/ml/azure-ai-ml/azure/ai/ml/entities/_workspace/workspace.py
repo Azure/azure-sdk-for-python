@@ -7,7 +7,7 @@
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
-
+from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
@@ -17,12 +17,11 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants, WorkspaceKind
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
@@ -78,8 +77,6 @@ class Workspace(Resource):
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
-    :param workspace_hub: The resource ID of an existing workspace hub to help create project workspace
-    :type workspace_hub: str
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
     :param kwargs: A dictionary of additional configuration parameters.
@@ -114,7 +111,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        workspace_hub: Optional[str] = None,
+        hub: Optional[str] = None,
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -141,9 +138,10 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
-        self.workspace_hub = workspace_hub
-        if workspace_hub:
-            self._kind = PROJECT_WORKSPACE_KIND
+        # Technically this is redundant with the introduction of projects as their own class in ~April 2024,
+        # but this is still useful for minor backwards compatibility's sake.
+        if hub:
+            self._kind = WorkspaceKind.PROJECT.value
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
@@ -274,7 +272,7 @@ class Workspace(Resource):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
-            workspace_hub=rest_obj.hub_resource_id,
+            hub=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
             serverless_compute=serverless_compute,
         )
@@ -310,6 +308,18 @@ class Workspace(Resource):
             else None,  # pylint: disable=protected-access
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            hub_resource_id=self.workspace_hub,
+            hub_resource_id=self.hub,
             serverless_compute_settings=serverless_compute_settings,
+        )
+    
+    def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
+        additional_workspace_storage_accounts = None
+        default_workspace_resource_group = None
+        if hasattr(self, "additional_workspace_storage_accounts"):
+            additional_workspace_storage_accounts = None
+        if hasattr(self, "default_workspace_resource_group"):
+            default_workspace_resource_group = None
+        return RestWorkspaceHubConfig(
+            additional_workspace_storage_accounts=additional_workspace_storage_accounts,
+            default_workspace_resource_group=default_workspace_resource_group,
         )

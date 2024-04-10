@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable, Optional, cast
+from typing import Any, Dict, Iterable, Optional, cast, List, Union
 
 from marshmallow import ValidationError
 
@@ -20,7 +20,7 @@ from azure.ai.ml._utils.utils import (
     get_resource_group_name_from_resource_group_id,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import AzureMLResourceType, Scope
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope, WorkspaceKind
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -31,7 +31,6 @@ from azure.ai.ml.entities import (
     WorkspaceKeys,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
@@ -44,7 +43,7 @@ module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations(WorkspaceOperationsBase):
-    """WorkspaceOperations.
+    """WorkspaceOperations. Handles workspaces and its subclasses, hubs and projects.
 
     You should not instantiate this class directly. Instead, you should create
     an MLClient instance that instantiates it for you and attaches it as an attribute.
@@ -73,11 +72,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         )
 
     @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP, kind: Optional[Union[str, List[str]]] = None) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
+        :keyword kind: The kind of workspace to list. If not provided, all workspaces will be listed.
+            Accepts either a single value, or a list of values.
+            Valid kind options include: "workspace", "project", and "hub".
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Workspace]
 
@@ -91,11 +93,17 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 :caption: List the workspaces by resource group or subscription.
         """
 
+        # Kind should be a comma-separating string if multiple values are supplied.
+        formatted_kind = kind
+        if type(kind) == list:
+            formatted_kind = ",".join(kind)
+
         if scope == Scope.SUBSCRIPTION:
             return cast(
                 Iterable[Workspace],
                 self._operation.list_by_subscription(
-                    cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+                    cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+                    kind=formatted_kind,
                 ),
             )
         return cast(
@@ -103,6 +111,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             self._operation.list_by_resource_group(
                 self._resource_group_name,
                 cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+                kind=formatted_kind,
             ),
         )
 
@@ -251,7 +260,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
-            if error.status_code == 403 and workspace._kind == PROJECT_WORKSPACE_KIND:
+            if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
                 hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)
