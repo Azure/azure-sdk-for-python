@@ -1,10 +1,6 @@
 # Release History
 
-## 5.11.7 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.11.7 (2024-04-10)
 
 ### Bugs Fixed
 
