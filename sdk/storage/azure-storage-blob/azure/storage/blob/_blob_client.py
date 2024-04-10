@@ -673,7 +673,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
                     internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
                     not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Literal['auto', 'md5', 'crc64']
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID. Value can be a BlobLeaseClient object

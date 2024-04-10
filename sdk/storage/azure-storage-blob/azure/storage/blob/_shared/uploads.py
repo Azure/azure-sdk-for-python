@@ -49,7 +49,6 @@ def upload_data_chunks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
-        validate_content=None,
         progress_hook=None,
         **kwargs):
 
@@ -64,7 +63,6 @@ def upload_data_chunks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        validate_content=validate_content,
         progress_hook=progress_hook,
         **kwargs)
     if parallel:
@@ -278,10 +276,10 @@ class BlockBlobChunkUploader(_ChunkUploader):
             block_id,
             chunk_info.length,
             chunk_info.data,
-            data_stream_total=self.total_size,
-            upload_stream_current=self.progress_total,
             transactional_content_md5=chunk_info.md5,
             transactional_content_crc64=chunk_info.crc64,
+            data_stream_total=self.total_size,
+            upload_stream_current=self.progress_total,
             **self.request_options
         )
         return index, block_id
@@ -317,9 +315,9 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             self.response_headers = self.service.upload_pages(
                 body=chunk_info.data,
                 content_length=chunk_info.length,
+                range=content_range,
                 transactional_content_md5=chunk_info.md5,
                 transactional_content_crc64=chunk_info.crc64,
-                range=content_range,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
