@@ -3,7 +3,7 @@
 
 import unittest
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from time import sleep
 import pytest
 
@@ -285,7 +285,7 @@ class TestQuery(unittest.TestCase):
         batchSize = 50
 
         def round_time():
-            utc_now = datetime.utcnow()
+            utc_now = datetime.now(timezone.utc)
             return utc_now - timedelta(microseconds=utc_now.microsecond)
         def create_random_items(container, batch_size):
             for _ in range(batch_size):
@@ -311,6 +311,7 @@ class TestQuery(unittest.TestCase):
         # wait for 1 second and record the time, then wait another second
         sleep(1)
         start_time = round_time()
+        not_utc_time = datetime.now()
         sleep(1)
 
         # now create another batch of items
@@ -330,12 +331,11 @@ class TestQuery(unittest.TestCase):
         # A future time should return 0
         self.assertEqual(totalCount, 0)
 
-        # test a date that is not utc, will ignore start time option
-        not_utc_time = datetime.now()
+        # test a date that is not utc, will be converted to utc by sdk
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=not_utc_time))
         totalCount = len(change_feed_iter)
-        # Should not equal batch size
-        self.assertNotEqual(totalCount, batchSize)
+        # Should equal batch size
+        self.assertEqual(totalCount, batchSize)
 
         # test an invalid value, results in error
         invalid_time = "Invalid value"

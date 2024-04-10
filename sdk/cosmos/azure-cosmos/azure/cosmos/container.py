@@ -322,8 +322,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
         :param datetime start_time: Specifies a point of time to start change feed. Start time in
-            http://www.ietf.org/rfc/rfc2616.txt format. Converts datetime to UTC if timezone is defined. Assumes
-            datetime is in UTC if timezone is not defined.
+            http://www.ietf.org/rfc/rfc2616.txt format. Converts datetime to UTC regardless of timezone.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param str continuation: e_tag value to be used as continuation for reading change feed.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.

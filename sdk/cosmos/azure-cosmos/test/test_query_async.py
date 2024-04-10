@@ -1,10 +1,10 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import asyncio
 import unittest
 import uuid
-from asyncio import sleep
-from datetime import datetime, timedelta
+from asyncio import sleep, gather
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -16,6 +16,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos._retry_options import RetryOptions
 
 
 @pytest.mark.cosmosEmulator
@@ -321,11 +322,11 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     @pytest.mark.asyncio
     async def test_query_change_feed_with_start_time(self):
         created_collection = await self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
-                                                                            PartitionKey(path="/pk"))
+                                                                                  PartitionKey(path="/pk"))
         batchSize = 50
 
         def round_time():
-            utc_now = datetime.utcnow()
+            utc_now = datetime.now(timezone.utc)
             return utc_now - timedelta(microseconds=utc_now.microsecond)
 
         async def create_random_items(container, batch_size):
@@ -352,6 +353,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # wait for 1 second and record the time, then wait another second
         await sleep(1)
         start_time = round_time()
+        not_utc_time = datetime.now()
         await sleep(1)
 
         # now create another batch of items
@@ -371,12 +373,11 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # A future time should return 0
         assert totalCount == 0
 
-        # test a date that is not utc, will ignore start time option
-        not_utc_time = datetime.now()
+        # test a date that is not utc, will be converted to utc by sdk
         change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=not_utc_time)]
         totalCount = len(change_feed_iter)
-        # Should not equal batch size
-        assert totalCount != batchSize
+        # Should equal batch size
+        assert totalCount == batchSize
 
         # test an invalid value, will ignore start time option
         invalid_time = "Invalid value"
@@ -878,6 +879,58 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         queried_items = [q async for q in created_collection.query_items(query='Select * from c Where c.cp_str_len = 3',
                                                                          partition_key="test")]
         assert len(queried_items) == 0
+
+    async def test_cosmos_query_retryable_error(self):
+        async def query_items(database):
+            # Tests to make sure 429 exception is surfaced when retries run out in the first page of a query.
+            try:
+                container = await database.create_container(
+                    id="query_retryable_error_test", partition_key=PartitionKey(path="/pk"), offer_throughput=400
+                )
+            except exceptions.CosmosResourceExistsError:
+                container = database.get_container_client("query_retryable_error_test")
+            query = "SELECT * FROM c"
+            try:
+                query_iterable = [d async for d in container.query_items(query, max_item_count=10)]
+                if len(query_iterable) == 0:
+                    # Query should not return empty if it has items to query on a retryable exception is raised
+                    pytest.fail("Expected 429 Exception.")
+            except exceptions.CosmosHttpResponseError as ex:
+                # A retryable exception should be surfaced when retries run out
+                assert ex.status_code == 429
+
+        created_collection = await self.created_db.create_container_if_not_exists("query_retryable_error_test",
+                                                                                  PartitionKey(path="/pk"))
+        # Created items to query
+        for _ in range(150):
+            # Generate a Random partition key
+            partition_key = 'pk' + str(uuid.uuid4())
+
+            # Generate a random item
+            item = {
+                'id': 'item' + str(uuid.uuid4()),
+                'partitionKey': partition_key,
+                'content': 'This is some random content',
+            }
+
+            try:
+                # Create the item in the container
+                await created_collection.upsert_item(item)
+            except exceptions.CosmosHttpResponseError as e:
+                pytest.fail(e)
+        # Set retry options to fail much more easily to avoid too much concurrency
+        retry_options = RetryOptions(max_retry_attempt_count=1,
+                                     fixed_retry_interval_in_milliseconds=1, max_wait_time_in_seconds=1)
+        old_retry = self.client.client_connection.connection_policy.RetryOptions
+        self.client.client_connection.connection_policy.RetryOptions = retry_options
+        created_collection = await self.created_db.create_container_if_not_exists("query_retryable_error_test",
+                                                                                  PartitionKey(path="/pk"))
+        # Force a 429 exception by having multiple concurrent queries.
+        num_queries = 4
+        await gather(*[query_items(self.created_db) for _ in range(num_queries)])
+
+        self.client.client_connection.connection_policy.RetryOptions = old_retry
+        await self.created_db.delete_container(created_collection.id)
 
 
 if __name__ == '__main__':
