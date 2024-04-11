@@ -14,7 +14,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
-    name: 'Standard'
+    name: 'Premium'
   }
   properties: {}
 }
