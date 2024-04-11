@@ -43,53 +43,50 @@ class CreateClients(object):
         self.table_name = "sampleTransactionAsync"
 
     async def sample_transaction(self):
-        entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
-        entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
-        entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
-        entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
-
         # [START batching]
         from azure.data.tables.aio import TableClient
         from azure.data.tables import TableTransactionError
         from azure.core.exceptions import ResourceExistsError
 
+        entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
+        entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
+        entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
+        entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
+
         # Instantiate a TableServiceClient using a connection string
-        self.table_client = TableClient.from_connection_string(
+        async with TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name
-        )
+        ) as table_client:
 
-        try:
-            await self.table_client.create_table()
-            print("Created table")
-        except ResourceExistsError:
-            print("Table already exists")
+            try:
+                await table_client.create_table()
+                print("Created table")
+            except ResourceExistsError:
+                print("Table already exists")
 
-        await self.table_client.upsert_entity(entity2)
-        await self.table_client.upsert_entity(entity3)
-        await self.table_client.upsert_entity(entity4)
+            await table_client.upsert_entity(entity2)
+            await table_client.upsert_entity(entity3)
+            await table_client.upsert_entity(entity4)
 
-        operations: List[TransactionOperationType] = [
-            ("upsert", entity1),
-            ("delete", entity2),
-            ("upsert", entity3),
-            ("update", entity4, {"mode": "replace"}),
-        ]
-        try:
-            await self.table_client.submit_transaction(operations)
-        except TableTransactionError as e:
-            print("There was an error with the transaction operation")
-            print(f"Error: {e}")
+            operations: List[TransactionOperationType] = [
+                ("create", entity1),
+                ("delete", entity2),
+                ("upsert", entity3),
+                ("update", entity4, {"mode": "replace"}),
+            ]
+            try:
+                await table_client.submit_transaction(operations)
+            except TableTransactionError as e:
+                print("There was an error with the transaction operation")
+                print(f"Error: {e}")
         # [END batching]
 
-    async def clean_up(self):
-        await self.table_client.delete_table()
-        await self.table_client.__aexit__()
+            await table_client.delete_table()
 
 
 async def main():
     sample = CreateClients()
     await sample.sample_transaction()
-    await sample.clean_up()
 
 
 if __name__ == "__main__":
