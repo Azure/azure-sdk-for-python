@@ -4,62 +4,40 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion response from the service using a synchronous client.
+    This sample demonstrates how to get a chat completions response from the service using a synchronous client.
 
 USAGE:
-    python sample_chat_completion.py
+    python sample_chat_completions.py
 
     Set these two environment variables before running the sample:
-    1) MODEL_ENDPOINT - Your endpoint URL, in the form https://<deployment-name>.<azure-region>.inference.ai.azure.com
-                        where `deployment-name` is your unique AI Model deployment name, and
-                        `azure-region` is the Azure region where your model is deployed.
-    2) MODEL_KEY - Your model key (a 32-character string). Keep it secret.
+    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+        where `your-deployment-name` is your unique AI Model deployment name, and
+        `your-azure-region` is the Azure region where your model is deployed.
+    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
-
 def sample_chat_completions():
-    # [START create_client]
     import os
-    from azure.ai.inference import ModelClient
     from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
-    from azure.core.credentials import AzureKeyCredential
-
-    # [START logging]
-    import sys
-    import logging
-
-    # Acquire the logger for this client library. Use 'azure' to affect both
-    # 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
-    logger = logging.getLogger("azure")
-
-    # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
-    logger.setLevel(logging.DEBUG)
-
-    # Direct logging output to stdout (the default):
-    handler = logging.StreamHandler(stream=sys.stdout)
-    # Or direct logging output to a file:
-    # handler = logging.FileHandler(filename = 'sample.log')
-    logger.addHandler(handler)
-
-    # Optional: change the default logging format. Here we add a timestamp.
-    formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-    handler.setFormatter(formatter)
-    # [END logging]
-
+    
     # Read the values of your model endpoint and key from environment variables
     try:
-        endpoint = os.environ["MODEL_ENDPOINT"]
-        key = os.environ["MODEL_KEY"]
+        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
+        key = os.environ["CHAT_COMPLETIONS_KEY"]
     except KeyError:
-        print("Missing environment variable 'MODEL_ENDPOINT' or 'MODEL_KEY'")
+        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
         print("Set them before running this sample.")
         exit()
+
+    # [START create_client]
+    from azure.ai.inference import ModelClient
+    from azure.core.credentials import AzureKeyCredential
 
     # Create Model Client for synchronous operations
     client = ModelClient(
         endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        logging_enable=True,
+        credential=AzureKeyCredential(key)
     )
     # [END create_client]
 
@@ -76,11 +54,10 @@ def sample_chat_completions():
 
     # Print results the the console
     print("Chat Completions:")
-    for index, choice in enumerate(result.choices):
-        print(f"choices[{index}].message.content: {choice.message.content}")
-        print(f"choices[{index}].message.role: {choice.message.role}")
-        print(f"choices[{index}].finish_reason: {choice.finish_reason}")
-        print(f"choices[{index}].index: {choice.index}")
+    print(f"choices[0].message.content: {result.choices[0].message.content}")
+    print(f"choices[0].message.role: {result.choices[0].message.role}")
+    print(f"choices[0].finish_reason: {result.choices[0].finish_reason}")
+    print(f"choices[0].index: {result.choices[0].index}")
     print(f"id: {result.id}")
     print(f"created: {result.created}")
     print(f"model: {result.model}")

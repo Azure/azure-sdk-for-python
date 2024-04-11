@@ -8,27 +8,30 @@ DESCRIPTION:
     from the service using a synchronous client.
 
 USAGE:
-    python sample_streaming_chat_completion.py
+    python sample_streaming_chat_completions.py
 
     Set these two environment variables before running the sample:
-    1) MODEL_ENDPOINT - Your endpoint URL, in the form https://<deployment-name>.<azure-region>.inference.ai.azure.com
-                        where `deployment-name` is your unique AI Model deployment name, and
-                        `azure-region` is the Azure region where your model is deployed.
-    2) MODEL_KEY - Your model key (a 32-character string). Keep it secret.
+    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form
+        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+        where `your-deployment-name` is your unique AI Model deployment name, and
+        `your-azure-region` is the Azure region where your model is deployed.
+    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
+
 import os
 from azure.ai.inference import ModelClient
 from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ChatCompletionsDelta
 from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.transport import RequestsTransport
 
 def sample_streaming_chat_completions():
 
     # Read the values of your model endpoint and key from environment variables
     try:
-        endpoint = os.environ["MODEL_ENDPOINT"]
-        key = os.environ["MODEL_KEY"]
+        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
+        key = os.environ["CHAT_COMPLETIONS_KEY"]
     except KeyError:
-        print("Missing environment variable 'MODEL_ENDPOINT' or 'MODEL_KEY'")
+        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
         print("Set them before running this sample.")
         exit()
 

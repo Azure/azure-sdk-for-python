@@ -1,15 +1,16 @@
 # Azure model client library for Python
 
-The Azure AI Model Client Library allows you to do inference against any of AI models in you deployed to Azure. It supports both "model as a service" and "models with hosted managed infrastructure". For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The ModelClient Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The ModelClient library makes services calls using REST AP version `2024-04-01-preview` specificed here (TODO: insert link). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
-Use the model client library to:
+Use the ModelClient library to:
 
 * Authenticate against the service
+* Get information about the model
 * Get chat completions
 * Get embeddings
 * Generate an image from a text prompt
 
-Note that for inference of OpenAI models hosted on azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
+Note that for inference using OpenAI models hosted on Azure you should be using the [OpenAI Python client library](https://github.com/openai/openai-python) instead of this client.
 
 [Product documentation](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview)
 | [Samples](https://aka.ms/azsdk/model-client/samples/python)
@@ -23,7 +24,11 @@ Note that for inference of OpenAI models hosted on azure you should be using the
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
-* A [TBD resource](https://azure.microsoft.com/) in your Azure subscription. You will need the key and endpoint from this resource to authenticate against the service.
+* An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio. To construct the `ModelClient`, you will need to pass in the endpoint URL and key associated with your deployed AI model.
+
+  * The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+
+  * The key is a 32-character string.
 
 ### Install the Model Client package
 
@@ -31,85 +36,59 @@ Note that for inference of OpenAI models hosted on azure you should be using the
 pip install azure-ai-inferencing
 ```
 
-### Set environment variables
-
-To authenticate the `ModelClient`, you will need the endpoint and key from your TBD resource in the [Azure Portal](https://portal.azure.com). The code snippet below assumes these values are stored in environment variables:
-
-* Set the environment variable `MODEL_ENDPOINT` to the endpoint URL. It has the form `https://your-model-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-model-deployment-name` is your unique TBD resource name.
-
-* Set the environment variable `MODEL_KEY` to the key. The key is a 32-character string.
-
-Note that the client library does not directly read these environment variable at run time. The endpoint and key must be provided to the constructor of `ModelClient` in your code. The code snippet below reads environment variables to promote the practice of not hard-coding secrets in your source code.
-
 ### Create and authenticate the client
 
-Once you define the environment variables, this Python code will create and authenticate a synchronous `ModelClient`:
+Assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ModelClient`:
 
 <!-- SNIPPET:sample_chat_completions.create_client -->
 
 ```python
-import os
 from azure.ai.inference import ModelClient
-from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
 from azure.core.credentials import AzureKeyCredential
 
-# [START logging]
-import sys
-import logging
-
-# Acquire the logger for this client library. Use 'azure' to affect both
-# 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
-logger = logging.getLogger("azure")
-
-# Set the desired logging level. logging.INFO or logging.DEBUG are good options.
-logger.setLevel(logging.DEBUG)
-
-# Direct logging output to stdout (the default):
-handler = logging.StreamHandler(stream=sys.stdout)
-# Or direct logging output to a file:
-# handler = logging.FileHandler(filename = 'sample.log')
-logger.addHandler(handler)
-
-# Optional: change the default logging format. Here we add a timestamp.
-formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-handler.setFormatter(formatter)
+# Create Model Client for synchronous operations
+client = ModelClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+)
 ```
 
 <!-- END SNIPPET -->
 
-A synchronous client supports synchronous inference methods, meaning they will block until the service responds with inference results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
+A synchronous client supports synchronous inference methods, meaning they will block until the service responds with inference results. For simplicity the code snippets below all use synchronous methods. The client offers equivalent asynchronous methods which are more commonly used in production.
 
-* Update the above code to import `ModelClient` from the `aio` namespace:
+To create an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
 
-    ```python
-    from azure.ai.inference.aio import ModelClient
-    ```
-
-* Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
-
-    ```bash
+```bash
     pip install aiohttp
-    ```
+```
+
+and update the code above to import `ModelClient` from the `aio` namespace:
+
+```python
+    import asyncio
+    from azure.ai.inference.aio import ModelClient
+```
 
 ## Key concepts
 
 ### Chat Completions
 
-TBD
+TODO: Add overview and link to explain chat completions.
 
-Target the `/v1/chat/completions` route
+Chat completion operations target the URL route `/v1/chat/completions` on the provided endpoint.
 
 ### Embeddings
 
-TBD
+TODO: Add overview and link to explain embeddings.
 
-Target the `/v1/embeddings` route
+Embeddings operations target the URL route `/v1/embeddings` on the provided endpoint.
 
 ### Image Generation
 
-TBD
+TODO: Add overview and link to explain image generation.
 
-Target the `/images/generations` route
+Image generation operations target the URL route `/images/generations` on the provided endpoint.
 
 ## Examples
 
@@ -125,7 +104,7 @@ See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai
 
 ### Chat completions example
 
-This example demonstrates how to generate chat completions.
+This example demonstrates how to generate a single chat completions.
 
 <!-- SNIPPET:sample_chat_completions.chat_completions -->
 
@@ -142,11 +121,10 @@ result = client.get_chat_completions(
 
 # Print results the the console
 print("Chat Completions:")
-for index, choice in enumerate(result.choices):
-    print(f"choices[{index}].message.content: {choice.message.content}")
-    print(f"choices[{index}].message.role: {choice.message.role}")
-    print(f"choices[{index}].finish_reason: {choice.finish_reason}")
-    print(f"choices[{index}].index: {choice.index}")
+print(f"choices[0].message.content: {result.choices[0].message.content}")
+print(f"choices[0].message.role: {result.choices[0].message.role}")
+print(f"choices[0].finish_reason: {result.choices[0].finish_reason}")
+print(f"choices[0].index: {result.choices[0].index}")
 print(f"id: {result.id}")
 print(f"created: {result.created}")
 print(f"model: {result.model}")
@@ -159,7 +137,7 @@ print(f"usage.total_tokens: {result.usage.total_tokens}")
 
 <!-- END SNIPPET -->
 
-To generate completions for additional messages, simply call `get_chat_completions` multiple times using the same `ModelClient`.
+To generate completions for additional messages, simply call `get_chat_completions` multiple times using the same `client`.
 
 ### Embeddings example
 
@@ -169,21 +147,17 @@ This example demonstrates how to get embeddings.
 
 ```python
 # Do a single embeddings operation. This will be a synchronously (blocking) call.
-result = client.get_embeddings(input=["first sentence", "second sentence", "third sentence"])
+result = client.get_embeddings(input=["first phrase", "second phrase", "third phrase"])
 
 # Print results the the console
 print("Embeddings result:")
-for index, item in enumerate(result.data):
-    len = item.embedding.__len__()
-    print(f"data[{index}].index: {item.index}")
-    print(f"data[{index}].embedding[0]: {item.embedding[0]}")
-    print(f"data[{index}].embedding[1]: {item.embedding[1]}")
-    print("...")
-    print(f"data[{index}].embedding[{len-2}]: {item.embedding[len-2]}")
-    print(f"data[{index}].embedding[{len-1}]: {item.embedding[len-1]}")
+for item in result.data:
+    length = len(item.embedding)
+    print(f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]")
 print(f"id: {result.id}")
 print(f"model: {result.model}")
 print(f"object: {result.object}")
+print(f"usage.input_tokens: {result.usage.input_tokens}")
 print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
 print(f"usage.total_tokens: {result.usage.total_tokens}")
 ```
@@ -289,7 +263,7 @@ None redacted logs are generated for log level `logging.DEBUG` only. Be sure to 
 
 ## Next steps
 
-* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for Image Analysis (all visual features, synchronous and asynchronous clients, from image file or URL).
+* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
 
 ## Contributing
 

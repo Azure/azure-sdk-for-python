@@ -51,19 +51,34 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 ## Set environment variables
 
-See [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#set-environment-variables) here.
+To construct the `ModelClient`, you will need to pass in the endpoint URL and key associated with your deployed AI model.
+
+* The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+
+* The key is a 32-character string.
+
+For convenience, and to promote the practice of not hard-coding secrets in your source code, all samples here assume the endpoint URL and key are stored in environment variables. You will need to set these environment variables before running the samples as-is. These are the environment variables used:
+
+| Sample type | Endpoint environment variable name | Key environment variable name  |
+|----------|----------|----------|
+| Chat completions | `CHAT_COMPLETIONS_ENDPOINT` | `CHAT_COMPLETIONS_KEY` |
+| Embeddings | `EMBEDDINGS_ENDPOINT` | `EMBEDDINGS_KEY` |
+| Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
+
+Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the `ModelClient` with this read values.
+
 
 ## Running the samples
 
 To run the first sample, type:
 ```bash
-python sample_chat_completion_async.py
+python sample_chat_completions.py
 ```
 similarly for the other samples.
 
 ## Example console output
 
-The sample `sample_chat_completion_async.py` sends the following system and user messages in a single call:
+The sample `sample_chat_completions.py` sends the following system and user messages in a single call:
 
 - System: "You are an AI assistant that helps people find information."
 - User: "How many feet are in a mile?"
@@ -72,17 +87,18 @@ And prints out the service response. It should look similar to the following:
 
 ```text
 Chat Completions:
-choices[0].message.content:   There are 5,280 feet in a mile.
+choices[0].message.content:   Hello! I'd be happy to help you find the answer to your question. There are 5,280 feet in a mile.
 choices[0].message.role: assistant
 choices[0].finish_reason: stop
 choices[0].index: 0
-id: 93f5bea2-11ec-4b31-af73-cb663196ebd5
-created: 1970-01-14 01:11:54+00:00
-model: Llama-2-70b-chat
+id: 77f08d7e-8127-431d-bed5-a814b78ddd80
+created: 1970-01-08 23:28:48+00:00
+model: Llama-2-13b-chat
 object: chat.completion
+usage.capacity_type: None
 usage.prompt_tokens: 41
-usage.completion_tokens: 15
-usage.total_tokens: 56
+usage.completion_tokens: 32
+usage.total_tokens: 73
 ```
 
 ## Troubleshooting

@@ -33,9 +33,9 @@ if LOGGING_ENABLED:
 
 ServicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "model",
-    model_endpoint="https://your-azure-resource-name.your-azure-region.inference.ai.azure.com",
-    model_key="00000000000000000000000000000000",
+    "chat_completions",
+    chat_completions_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    chat_completions_key="00000000000000000000000000000000",
 )
 
 
@@ -50,12 +50,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
     PRINT_CHAT_COMPLETION_RESULTS = True
 
     def _create_client_for_standard_test(self, sync: bool, get_connection_url: bool = False, **kwargs):
-        endpoint = kwargs.pop("model_endpoint")
-        key = kwargs.pop("model_key")
+        endpoint = kwargs.pop("chat_completions_endpoint")
+        key = kwargs.pop("chat_completions_key")
         self._create_client(endpoint, key, sync, get_connection_url)
 
     def _create_client_for_authentication_failure(self, sync: bool, **kwargs):
-        endpoint = kwargs.pop("model_endpoint")
+        endpoint = kwargs.pop("chat_completions_endpoint")
         key = "00000000000000000000000000000000"
         self._create_client(endpoint, key, sync, False)
 
