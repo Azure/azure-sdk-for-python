@@ -239,7 +239,7 @@ class TableBatchOperations(object):
         self.requests.append(request)
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
-        """Adds an upsert (update/merge) operation to the batch.
+        """Adds an upsert (merge or replace) operation to the batch.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]

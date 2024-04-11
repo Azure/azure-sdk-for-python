@@ -54,8 +54,8 @@ class TableClient(AsyncTablesBaseClient):
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
         AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
     :vartype credential:
-        ~azure.core.credentials.AzureNamedKeyCredential or \
-        ~azure.core.credentials.AzureSasCredential or \
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
     """
 
@@ -77,8 +77,8 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
             AzureSasCredential (azure-core), or an AsyncTokenCredential implementation from azure-identity.
         :paramtype credential:
-            ~azure.core.credentials.AzureNamedKeyCredential or \
-            ~azure.core.credentials.AzureSasCredential or \
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
@@ -127,7 +127,7 @@ class TableClient(AsyncTablesBaseClient):
             table URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
             AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
         :paramtype credential:
-            ~azure.core.credentials.AzureNamedKeyCredential or \
+            ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
@@ -629,7 +629,7 @@ class TableClient(AsyncTablesBaseClient):
     async def upsert_entity(
         self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs
     ) -> Mapping[str, Any]:
-        """Updates/Merges or Inserts an entity into a table.
+        """Updates (merge or replace) an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
