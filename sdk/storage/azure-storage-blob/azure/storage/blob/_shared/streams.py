@@ -3,14 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from __future__ import annotations
+
 import math
 import sys
 from enum import auto, Enum, IntFlag
-from io import BytesIO
-from typing import IO
+from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
+from typing import IO, Optional
 
 from azure.storage.extensions import crc64
-
 
 DEFAULT_MESSAGE_VERSION = 1
 DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
@@ -51,7 +52,7 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
-class StructuredMessageEncodeStream:
+class StructuredMessageEncodeStream(IOBase):
     message_version: int
     content_length: int
     message_length: int
@@ -61,14 +62,18 @@ class StructuredMessageEncodeStream:
     _segment_size: int
     _num_segments: int
 
+    _initial_content_position: Optional[int]
+    """Initial position of the inner stream, None if it did not implement tell()"""
     _content_offset: int
     _current_segment_number: int
     _current_region: SMRegion
     _current_region_length: int
     _current_region_offset: int
-    _current_region_content: bytes
+
+    _checksum_offset: int
+    """Tracks the offset the checksum has been calculated up to for seeking purposes"""
     _message_crc64: int
-    _segment_crc64: int
+    _segment_crc64s: dict[int, int]
 
     def __init__(
         self, inner_stream: IO[bytes],
@@ -95,10 +100,16 @@ class StructuredMessageEncodeStream:
         self._current_region = SMRegion.MESSAGE_HEADER
         self._current_region_length = self._message_header_length
         self._current_region_offset = 0
-        self._current_region_content = b''
 
+        self._checksum_offset = 0
         self._message_crc64 = 0
-        self._segment_crc64 = 0
+        self._segment_crc64s = {}
+
+        # Attempt to get starting position of inner stream. If we can't, this stream will not be seekable
+        try:
+            self._initial_content_position = self._inner_stream.tell()
+        except (AttributeError, UnsupportedOperation, OSError):
+            self._initial_content_position = None
 
     @property
     def _message_header_length(self) -> int:
@@ -116,8 +127,37 @@ class StructuredMessageEncodeStream:
     def _message_footer_length(self) -> int:
         return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
 
+    def _update_current_region_length(self) -> None:
+        if self._current_region == SMRegion.MESSAGE_HEADER:
+            self._current_region_length = self._message_header_length
+        elif self._current_region == SMRegion.SEGMENT_HEADER:
+            self._current_region_length = self._segment_header_length
+        elif self._current_region == SMRegion.SEGMENT_CONTENT:
+            # Last segment size is remaining content
+            if self._current_segment_number == self._num_segments:
+                self._current_region_length = self.content_length - \
+                                              ((self._current_segment_number - 1) * self._segment_size)
+            else:
+                self._current_region_length = self._segment_size
+        elif self._current_region == SMRegion.SEGMENT_FOOTER:
+            self._current_region_length = self._segment_footer_length
+        elif self._current_region == SMRegion.MESSAGE_FOOTER:
+            self._current_region_length = self._message_footer_length
+        else:
+            raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
+
     def __len__(self):
         return self.message_length
+
+    def readable(self) -> bool:
+        return True
+
+    def seekable(self) -> bool:
+        try:
+            # Only seekable if the inner stream is and we could get its initial position
+            return self._inner_stream.seekable() and self._initial_content_position is not None
+        except (AttributeError, UnsupportedOperation, OSError):
+            return False
 
     def tell(self) -> int:
         if self._current_region == SMRegion.MESSAGE_HEADER:
@@ -142,6 +182,69 @@ class StructuredMessageEncodeStream:
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
+    def seek(self, offset: int, whence: int = SEEK_SET) -> int:
+        if not self.seekable():
+            raise UnsupportedOperation("Inner stream is not seekable.")
+
+        if whence == SEEK_SET:
+            position = offset
+        elif whence == SEEK_CUR:
+            position = self.tell() + offset
+        elif whence == SEEK_END:
+            position = self.message_length + offset
+        else:
+            raise ValueError(f"Invalid value for whence: {whence}")
+
+        if position > self.tell():
+            raise UnsupportedOperation("This stream only supports seeking backwards.")
+
+        # MESSAGE_HEADER
+        if position < self._message_header_length:
+            self._current_region = SMRegion.MESSAGE_HEADER
+            self._current_region_offset = position
+            self._content_offset = 0
+            self._current_segment_number = 0
+        # MESSAGE_FOOTER
+        elif position >= self.message_length - self._message_footer_length:
+            self._current_region = SMRegion.MESSAGE_FOOTER
+            self._current_region_offset = position - (self.message_length - self._message_footer_length)
+            self._content_offset = self.content_length
+            self._current_segment_number = self._num_segments
+        else:
+            # The size of a "full" segment. Fine to use for calculating new segment number and pos
+            full_segment_size = self._segment_header_length + self._segment_size + self._segment_footer_length
+            new_segment_num = 1 + (position - self._message_header_length) // full_segment_size
+            segment_pos = (position - self._message_header_length) % full_segment_size
+            previous_segments_total_content_size = (new_segment_num - 1) * self._segment_size
+
+            # We need the size of the segment we are seeking to for some of the calculations below
+            new_segment_size = self._segment_size
+            if new_segment_num == self._num_segments:
+                # The last segment size is the remaining content length
+                new_segment_size = self.content_length - previous_segments_total_content_size
+
+            # SEGMENT_HEADER
+            if segment_pos < self._segment_header_length:
+                self._current_region = SMRegion.SEGMENT_HEADER
+                self._current_region_offset = segment_pos
+                self._content_offset = previous_segments_total_content_size
+            # SEGMENT_CONTENT
+            elif segment_pos < self._segment_header_length + new_segment_size:
+                self._current_region = SMRegion.SEGMENT_CONTENT
+                self._current_region_offset = segment_pos - self._segment_header_length
+                self._content_offset = previous_segments_total_content_size + self._current_region_offset
+            # SEGMENT_FOOTER
+            else:
+                self._current_region = SMRegion.SEGMENT_FOOTER
+                self._current_region_offset = segment_pos - self._segment_header_length - new_segment_size
+                self._content_offset = previous_segments_total_content_size + new_segment_size
+
+            self._current_segment_number = new_segment_num
+
+        self._update_current_region_length()
+        self._inner_stream.seek(self._initial_content_position + self._content_offset)
+        return position
+
     def read(self, size: int = -1) -> bytes:
         if size == 0:
             return b''
@@ -160,7 +263,7 @@ class StructuredMessageEncodeStream:
                     SMRegion.MESSAGE_FOOTER):
                 count += self._read_metadata_region(self._current_region, remaining, output)
             elif self._current_region == SMRegion.SEGMENT_CONTENT:
-                count += self._read_content(size, output)
+                count += self._read_content(remaining, output)
             else:
                 raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
@@ -173,68 +276,61 @@ class StructuredMessageEncodeStream:
         length += self._message_footer_length
         return length
 
-    def _buffer_metadata_region(self, region: SMRegion) -> None:
+    def _get_metadata_region(self, region: SMRegion) -> bytes:
         if region == SMRegion.MESSAGE_HEADER:
-            self._current_region_content = generate_message_header(
+            return generate_message_header(
                 self.message_version,
                 self.message_length,
                 self.flags,
                 self._num_segments)
 
         elif region == SMRegion.SEGMENT_HEADER:
-            self._current_segment_number += 1
             segment_size = min(self._segment_size, self.content_length - self._content_offset)
-            self._current_region_content = generate_segment_header(self._current_segment_number, segment_size)
+            return generate_segment_header(self._current_segment_number, segment_size)
 
         elif region == SMRegion.SEGMENT_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
-                self._current_region_content = (
-                    self._segment_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
+                return self._segment_crc64s[self._current_segment_number].to_bytes(
+                    StructuredMessageConstants.CRC64_LENGTH, 'little')
             else:
-                self._current_region_content = b''
+                return b''
 
         elif region == SMRegion.MESSAGE_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
-                self._current_region_content = (
-                    self._message_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
+                return self._message_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little')
             else:
-                self._current_region_content = b''
+                return b''
 
         else:
             raise StructuredMessageError(f"Invalid metadata SMRegion {self._current_region}")
 
     def _advance_region(self, current: SMRegion):
         self._current_region_offset = 0
-        self._current_region_content = b''
 
         if current == SMRegion.MESSAGE_HEADER:
             self._current_region = SMRegion.SEGMENT_HEADER
-            self._current_region_length = self._segment_header_length
+            self._increment_current_segment()
         elif current == SMRegion.SEGMENT_HEADER:
             self._current_region = SMRegion.SEGMENT_CONTENT
-            self._current_region_length = min(self._segment_size, self.content_length - self._content_offset)
-            self._segment_crc64 = 0
         elif current == SMRegion.SEGMENT_CONTENT:
             self._current_region = SMRegion.SEGMENT_FOOTER
-            self._current_region_length = self._segment_footer_length
         elif current == SMRegion.SEGMENT_FOOTER:
             # If we're at the end of the content
             if self._content_offset == self.content_length:
                 self._current_region = SMRegion.MESSAGE_FOOTER
-                self._current_region_length = self._message_footer_length
             else:
                 self._current_region = SMRegion.SEGMENT_HEADER
-                self._current_region_length = self._segment_header_length
+                self._increment_current_segment()
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
+        self._update_current_region_length()
+
     def _read_metadata_region(self, region: SMRegion, size: int, output: BytesIO) -> int:
-        # If nothing has been read, buffer the region
-        if self._current_region_offset == 0:
-            self._buffer_metadata_region(region)
+        metadata = self._get_metadata_region(region)
 
         read_size = min(size, self._current_region_length - self._current_region_offset)
-        content = self._current_region_content[self._current_region_offset: self._current_region_offset + read_size]
+        content = metadata[self._current_region_offset: self._current_region_offset + read_size]
         output.write(content)
 
         self._current_region_offset += read_size
@@ -245,20 +341,39 @@ class StructuredMessageEncodeStream:
         return read_size
 
     def _read_content(self, size: int, output: BytesIO) -> int:
+        # Will be non-zero if there is data to read that does not need to have checksum calculated.
+        # Will always be positive as stream can only seek backwards.
+        checksum_offset = self._checksum_offset - self._content_offset
+
         read_size = min(size, self._current_region_length - self._current_region_offset)
+        if checksum_offset != 0:
+            # Only read up to checksum offset this iteration
+            read_size = min(read_size, checksum_offset)
+
         content = self._inner_stream.read(read_size)
         output.write(content)
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            self._segment_crc64 = crc64.compute_crc64(content, self._segment_crc64)
-            self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
+            if checksum_offset == 0:
+                self._segment_crc64s[self._current_segment_number] = \
+                    crc64.compute_crc64(content, self._segment_crc64s[self._current_segment_number])
+                self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
 
         self._content_offset += read_size
+        # Only update the checksum offset if we've read new data
+        if self._content_offset > self._checksum_offset:
+            self._checksum_offset += read_size
         self._current_region_offset += read_size
         if self._current_region_offset == self._current_region_length:
             self._advance_region(SMRegion.SEGMENT_CONTENT)
 
         return read_size
+
+    def _increment_current_segment(self):
+        self._current_segment_number += 1
+        if StructuredMessageProperties.CRC64 in self.flags:
+            # If seek was used, we may already have this segment's CRC (could be partial), otherwise initialize to 0
+            self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
 class StructuredMessageDecodeStream:

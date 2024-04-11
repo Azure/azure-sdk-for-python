@@ -1,15 +1,21 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2024-04-09)
 
 ### Features Added
 
 - `InteractiveBrowserBrokerCredential` now supports a `use_default_broker_account` property to enable the use of the currently logged in operating system account for authentication rather than prompting for a credential.
 - Added `enable_support_logging` as a keyword argument to `InteractiveBrowserBrokerCredential`. This allows additional support logging which may contain PII.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

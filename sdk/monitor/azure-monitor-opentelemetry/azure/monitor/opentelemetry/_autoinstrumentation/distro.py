@@ -35,7 +35,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry._utils.configurations import (
     _get_otel_disabled_instrumentations,
 )
 
