@@ -171,7 +171,7 @@ class ReceiverLink(Link):
 
 
     def _remove_pending_deliveries(self):
-        pass
+        self._pending_receipts = []
         # TODO: Add in error handling
 
     def attach(self):
