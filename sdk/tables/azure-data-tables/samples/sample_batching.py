@@ -45,7 +45,7 @@ class CreateClients(object):
         # [START batching]
         from azure.data.tables import TableClient, TableTransactionError
         from azure.core.exceptions import ResourceExistsError
-        
+
         entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
         entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
         entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
@@ -77,7 +77,7 @@ class CreateClients(object):
             except TableTransactionError as e:
                 print("There was an error with the transaction operation")
                 print(f"Error: {e}")
-        # [END batching]
+            # [END batching]
 
             table_client.delete_table()
 

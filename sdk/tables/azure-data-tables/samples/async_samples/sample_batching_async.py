@@ -79,7 +79,7 @@ class CreateClients(object):
             except TableTransactionError as e:
                 print("There was an error with the transaction operation")
                 print(f"Error: {e}")
-        # [END batching]
+            # [END batching]
 
             await table_client.delete_table()
 
