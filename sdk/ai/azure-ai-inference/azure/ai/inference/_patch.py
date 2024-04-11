@@ -19,8 +19,8 @@ from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
 from ._vendor import ModelClientMixinABC
-from ._client import ModelClient as ModelClientGenerated
 from ._operations._operations import build_model_get_chat_completions_request
+from ._client import ModelClient as ModelClientGenerated
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -45,6 +45,7 @@ _SERIALIZER.client_side_validation = False
 
 
 class ModelClient(ModelClientGenerated):
+
     @distributed_trace
     def get_streaming_chat_completions(
         self,
@@ -66,7 +67,8 @@ class ModelClient(ModelClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ChatCompletionsDeltaInterator:
+    ) -> _models.ChatCompletionsDeltaIterator:
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -118,7 +120,7 @@ class ModelClient(ModelClientGenerated):
 
         _request.url = self._client.format_url(_request.url)
 
-        kwargs.pop("stream", True)
+        kwargs.pop("stream", True) # Remove stream from kwargs (ignore value set by the application)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=True, **kwargs
         )
@@ -130,8 +132,7 @@ class ModelClient(ModelClientGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        result = _models.ChatCompletionsDeltaInterator(response)
-        return result
+        return _models.ChatCompletionsDeltaIterator(response.iter_bytes())
 
 
 __all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level

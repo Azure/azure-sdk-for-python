@@ -18,6 +18,7 @@ The concepts are similar, you can easily modify any of the samples to your needs
 
 |**File Name**|**Description**|
 |----------------|-------------|
+|[sample_streaming_chat_completions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_streaming_chat_completions.py) | One chat completion operation using a synchronous client and streaming response. |
 |[sample_chat_completions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions.py) | One chat completion operation using a synchronous client. |
 |[sample_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings.py) | One embeddings operation using a synchronous client. |
 |[sample_image_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_generation.py) | Generate an image from a prompt using a synchronous client. |
@@ -26,6 +27,7 @@ The concepts are similar, you can easily modify any of the samples to your needs
 
 |**File Name**|**Description**|
 |----------------|-------------|
+|[sample_streaming_chat_completions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_streaming_chat_completions_async.py) | One chat completion operation using an asynchronous client and streaming response. |
 |[sample_chat_completions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_chat_completions_async.py) | One chat completion operation using an asynchronous client. |
 |[sample_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_embeddings_async.py) | One embeddings operation using an asynchronous client. |
 |[sample_image_generation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_generation_async.py) | Generate an image from a prompt using an asynchronous client. |

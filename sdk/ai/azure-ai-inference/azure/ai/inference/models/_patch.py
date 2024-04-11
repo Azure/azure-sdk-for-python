@@ -10,20 +10,20 @@ import queue
 import time
 import re
 import json
+import types
 
-from typing import List
+from typing import List, Union
 from .. import models as _models
 from azure.core.rest import HttpResponse
 
 
-class ChatCompletionsDeltaInterator:
-    """Representation of the streaming response chat completions request.
-    Completions support a wide variety of tasks and generate text that continues from or
-    "completes"
-    provided prompt data.
+class ChatCompletionsDeltaIterator:
+    """Represents an interator over ChatCompletionsDelta objects. It can be used for either synchronous or
+    asynchronous iterations. The class deserializes the Server Sent Events (SSE) response stream 
+    into chat completions updates, each one represented by a ChatCompletionsDelta object.
     """
 
-    # Enable console logs for debugging
+    # Enable console logs for debugging. For development only, will be removed before release.
     ENABLE_CLASS_LOGS = False
 
     # The prefix of each line in the SSE stream that contains a JSON string
@@ -33,45 +33,76 @@ class ChatCompletionsDeltaInterator:
     # The line indicating the end of the SSE stream
     SSE_DATA_EVENT_DONE = "data: [DONE]"
 
-    def __init__(self, response: HttpResponse):
-        self._response = response
-        self._bytes_iterator = response.iter_bytes()
+
+    def __init__(self, bytes_iterator: Union[types.AsyncGeneratorType, types.GeneratorType]):
+        self._bytes_iterator = bytes_iterator
+        self._is_async_iterator = isinstance(self._bytes_iterator, types.AsyncGeneratorType) 
         self._queue = queue.Queue()
         self._incomplete_json = ""
         self._done = False
 
-    def __iter__(self):
+
+    def __aiter__(self):
+        if (not self._is_async_iterator):
+            raise ValueError("This method is only supported for async iterators")
         return self
 
+
+    def __iter__(self):
+        if (self._is_async_iterator):
+            raise ValueError("This method is not supported for async iterators")
+        return self
+
+
+    async def __anext__(self):
+        if (not self._is_async_iterator):
+            raise ValueError("This method is only supported for async iterators")
+        if self._queue.empty():
+            await self._read_next_block_async()
+        if self._queue.empty():
+            await self.close()
+            raise StopAsyncIteration
+        return self._queue.get()
+
+
     def __next__(self):
+        if (self._is_async_iterator):
+            raise ValueError("This method is not supported for async iterators")
         if self._queue.empty():
             self._read_next_block()
         if self._queue.empty():
+            self.close()
             raise StopIteration
         return self._queue.get()
 
-    def __enter__(self):
-        return self
 
-    def __exit__(self, *args):
-        self._response.close()
-
-    def close(self):
-        self._response.close()
-
-    def __del__(self):
-        self._response.close()
-
-    def _read_next_block(self):
-
+    async def _read_next_block_async(self):
+        start_time = 0.0
         if self.ENABLE_CLASS_LOGS:
             start_time = time.time()
+        try:
+            element = await self._bytes_iterator.__anext__()
+        except StopAsyncIteration:
+            await self.close()
+            self._done = True
+            return
+        self._deserialize_and_add_to_queue(element, start_time)
 
+
+    def _read_next_block(self):
+        start_time = 0.0
+        if self.ENABLE_CLASS_LOGS:
+            start_time = time.time()
         try:
             element = next(self._bytes_iterator)
         except StopIteration:
+            self.close()
             self._done = True
             return
+        self._deserialize_and_add_to_queue(element, start_time)
+
+
+    def _deserialize_and_add_to_queue(self, element: bytes, start_time: float = 0.0):
 
         if self.ENABLE_CLASS_LOGS:
             print(f"Elapsed time: {int(1000*(time.time()- start_time))}ms")
@@ -120,8 +151,23 @@ class ChatCompletionsDeltaInterator:
                 print("[added]")
 
 
+    def __enter__(self):
+        return self
+
+
+    def __exit__(self) -> None:
+        self.close()
+
+
+    def close(self) -> None:
+        self._bytes_iterator.close()
+ 
+    async def close(self):
+        await self._bytes_iterator.aclose() 
+
+
 __all__: List[str] = [
-    "ChatCompletionsDeltaInterator"
+    "ChatCompletionsDeltaIterator"
 ]  # Add all objects you want publicly available to users at this package level
 
 

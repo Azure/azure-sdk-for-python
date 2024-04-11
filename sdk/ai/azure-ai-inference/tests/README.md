@@ -1,4 +1,4 @@
-# Azure Image Analysis client library tests for Python
+# Azure AI Model Inference client library tests for Python
 
 ## Running tests locally, on a Windows PC, against the live service
 
@@ -9,10 +9,10 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 ### Setup
 
 * Clone or download this sample repository.
-* Open a command prompt window in the folder `sdk\vision\azure-ai-vision-imageanalysis`.
+* Open a command prompt window in the folder `sdk\ai\azure-ai-inference`.
 * If you want to run tests against the latest public Image Analysis client library, install it by running:
    ```bash
-   pip install azure-ai-vision-imageanalysis
+   pip install azure-ai-inference
    ```
 * If you want to run tests against a locally built Image Analysis client library:
     * First build the wheel:
@@ -23,7 +23,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
         ```
     * Then install the resulting local wheel (update version `1.0.0b1` to the current one):
         ```bash
-        pip install dist\azure_ai_vision_imageanalysis-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_inference-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
 
@@ -33,9 +33,9 @@ See [Set environment variables](https://github.com/Azure/azure-sdk-for-python/bl
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 ```
-set VISION_TENANT_ID=not-used
-set VISION_CLIENT_ID=not-used
-set VISION_CLIENT_SECRET=not-used
+set AI_TENANT_ID=not-used
+set AI_CLIENT_ID=not-used
+set AI_CLIENT_SECRET=not-used
 ```
 
 ### Configure test proxy

@@ -17,7 +17,6 @@ USAGE:
 """
 import asyncio
 
-
 async def sample_chat_completions_async():
     import os
     from azure.ai.inference.aio import ModelClient
