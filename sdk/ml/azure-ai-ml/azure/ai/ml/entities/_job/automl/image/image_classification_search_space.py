@@ -18,7 +18,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     Multilabel tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type ams_gradient: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
     :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -85,7 +85,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     :param training_batch_size: Training batch size. Must be a positive integer.
     :type training_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
         'warmup_cosine'. Must be a float in the range [0, 1].
     :type warmup_cosine_lr_cycles: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution

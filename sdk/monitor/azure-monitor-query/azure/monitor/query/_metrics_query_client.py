@@ -38,6 +38,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
             :language: python
             :dedent: 4
             :caption: Creating the MetricsQueryClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_query_client_sovereign_cloud]
+            :end-before: [END create_metrics_query_client_sovereign_cloud]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsQueryClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -89,25 +98,41 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
          `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
         :paramtype aggregations: Optional[list[str]]
         :keyword max_results: The maximum number of records to retrieve.
-         Valid only if $filter is specified.
+         Valid only if 'filter' is specified.
          Defaults to 10.
         :paramtype max_results: Optional[int]
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
          Examples: sum asc.
         :paramtype order_by: Optional[str]
-        :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
-         Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
-         b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
-         eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
-         operator cannot separate two different metadata names. - Return all time series where A = a1, B
-         = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
-         where A = a1 **$filter=A eq 'a1' and B eq '*' and C eq '*'**. Special case: When dimension
-         name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
-         Instead of using **$filter= "dim (test) 1 eq '*'"** use **$filter= "dim %2528test%2529 1 eq '*'"**.
-         When dimension name is **dim (test) 3** and dimension value is **dim3 (test) val**, instead of using
-         **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
-         %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
+        :keyword filter: The **filter** is used to reduce the set of metric data returned. Default value is None.
+
+            Example: Metric contains metadata A, B and C.
+
+            - Return all time series of C where A = a1 and B = b1 or b2:
+
+              **filter="A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'"**
+
+            - Invalid variant:
+
+              **filter="A eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'"**. This is invalid because the
+              logical 'or' operator cannot separate two different metadata names.
+
+            - Return all time series where A = a1, B = b1 and C = c1:
+
+              **filter="A eq 'a1' and B eq 'b1' and C eq 'c1'"**
+
+            - Return all time series where A = a1:
+
+              **filter="A eq 'a1' and B eq '*' and C eq '*'"**
+
+            - Special case: When dimension name or dimension value uses round brackets. Example: When dimension name
+              is **dim (test) 1**, instead of using **filter="dim (test) 1 eq '*'"** use
+              **filter="dim %2528test%2529 1 eq '*'"**.
+
+              When dimension name is **dim (test) 3** and dimension value is
+              **dim3 (test) val**, instead of using **filter="dim (test) 3 eq 'dim3 (test) val'"**, use **filter="dim
+              %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**.
         :paramtype filter: Optional[str]
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: Optional[str]
@@ -137,7 +162,6 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
             orderby=order_by,
             filter=filter,
             metricnamespace=metric_namespace,
-            connection_verify=False,
             **kwargs
         )
         return MetricsQueryResult._from_generated(generated)  # pylint: disable=protected-access

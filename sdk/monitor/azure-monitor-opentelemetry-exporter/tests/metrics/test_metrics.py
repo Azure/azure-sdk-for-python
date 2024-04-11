@@ -213,6 +213,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_number(self):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd":"test_resource"})
+        scope = InstrumentationScope("test_scope")
         point=NumberDataPoint(
             attributes={
                 "test": "attribute",
@@ -221,7 +222,7 @@ class TestAzureMetricExporter(unittest.TestCase):
             time_unix_nano=1646865018558419457,
             value=10,
         )
-        envelope = exporter._point_to_envelope(point, "test name", resource)
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
@@ -230,6 +231,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
+        self.assertEqual(envelope.data.base_data.metrics[0].namespace, None)
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
@@ -260,6 +262,37 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
+
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN": "True",
+        },
+    )
+    def test_point_to_envelope_metric_namespace(self):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd":"test_resource"})
+        scope = InstrumentationScope("test_scope")
+        point=NumberDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
+        )
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
+        self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.data.base_type, 'MetricData')
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
+        self.assertEqual(len(envelope.data.base_data.metrics), 1)
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
+        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
+        self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
     def test_point_to_envelope_std_metric_client_duration(self):
         exporter = self._exporter

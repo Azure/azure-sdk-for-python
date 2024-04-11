@@ -53,7 +53,7 @@ def analyze_barcodes():
     # [START analyze_barcodes]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -68,17 +68,18 @@ def analyze_barcodes():
             features=[DocumentAnalysisFeature.BARCODES],
             content_type="application/octet-stream",
         )
-    result = poller.result()
+    result: AnalyzeResult = poller.result()
 
     # Iterate over extracted barcodes on each page.
     for page in result.pages:
         print(f"----Barcodes detected from page #{page.page_number}----")
-        print(f"Detected {len(page.barcodes)} barcodes:")
-        for barcode_idx, barcode in enumerate(page.barcodes):
-            print(f"- Barcode #{barcode_idx}: {barcode.value}")
-            print(f"  Kind: {barcode.kind}")
-            print(f"  Confidence: {barcode.confidence}")
-            print(f"  Bounding regions: {barcode.polygon}")
+        if page.barcodes:
+            print(f"Detected {len(page.barcodes)} barcodes:")
+            for barcode_idx, barcode in enumerate(page.barcodes):
+                print(f"- Barcode #{barcode_idx}: {barcode.value}")
+                print(f"  Kind: {barcode.kind}")
+                print(f"  Confidence: {barcode.confidence}")
+                print(f"  Bounding regions: {barcode.polygon}")
 
     print("----------------------------------------")
     # [END analyze_barcodes]

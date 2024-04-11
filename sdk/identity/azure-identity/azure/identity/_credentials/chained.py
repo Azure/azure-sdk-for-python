@@ -56,12 +56,12 @@ class ChainedTokenCredential:
         self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
-    def __enter__(self):
+    def __enter__(self) -> "ChainedTokenCredential":
         for credential in self.credentials:
             credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args: Any):
+    def __exit__(self, *args: Any) -> None:
         for credential in self.credentials:
             credential.__exit__(*args)  # type: ignore
 
@@ -78,7 +78,7 @@ class ChainedTokenCredential:
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

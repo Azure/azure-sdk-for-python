@@ -52,7 +52,7 @@ async def analyze_read():
 
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -66,7 +66,7 @@ async def analyze_read():
                 features=[DocumentAnalysisFeature.STYLE_FONT],
                 content_type="application/octet-stream",
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
     print("----Languages detected in the document----")
     if result.languages is not None:
@@ -83,11 +83,11 @@ async def analyze_read():
                 print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
                 print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
 
-    if result.pages:
-        for page in result.pages:
-            print(f"----Analyzing document from page #{page.page_number}----")
-            print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
+    for page in result.pages:
+        print(f"----Analyzing document from page #{page.page_number}----")
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
+        if page.lines:
             for line_idx, line in enumerate(page.lines):
                 words = get_words(page, line)
                 print(
@@ -97,18 +97,25 @@ async def analyze_read():
                 for word in words:
                     print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
-            if page.selection_marks:
-                for selection_mark in page.selection_marks:
-                    print(
-                        f"...Selection mark is '{selection_mark.state}' within bounding polygon "
-                        f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
-                    )
+        if page.selection_marks:
+            for selection_mark in page.selection_marks:
+                print(
+                    f"...Selection mark is '{selection_mark.state}' within bounding polygon "
+                    f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                )
 
-    if len(result.paragraphs) > 0:
+    if result.paragraphs:
         print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
         for paragraph in result.paragraphs:
             print(f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region")
             print(f"...with content: '{paragraph.content}'")
+
+        result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+        print("-----Print sorted paragraphs-----")
+        for idx, paragraph in enumerate(result.paragraphs):
+            print(
+                f"...paragraph:{idx} with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
+            )
 
     print("----------------------------------------")
 

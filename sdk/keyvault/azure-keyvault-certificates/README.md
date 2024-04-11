@@ -19,7 +19,7 @@ and other secrets
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.8 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install the package
@@ -33,7 +33,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.8 or later
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
 
 ### Authenticate the client
@@ -316,16 +316,15 @@ certificate = certificate_client.get_certificate(certificate_name="cert-name", l
 
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [hello_world.py][hello_world_sample] ([async version][hello_world_async_sample]) | create/get/update/delete certificates |
-| [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover certificates |
-| [import_certificate.py][import_certificate_sample] ([async version][import_certificate_async_sample]) | import PKCS#12 (PFX) and PEM-formatted certificates into Key Vault |
-| [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | list certificates |
-| [recover_purge_operations.py][recover_purge_operations_sample] ([async version][recover_purge_operations_async_sample]) | recover and purge certificates |
-| [issuers.py][issuers_sample] ([async version][issuers_async_sample]) | manage certificate issuers |
-| [contacts.py][contacts_sample] ([async version][contacts_async_sample]) | manage certificate contacts |
-| [parse_certificate.py][parse_sample] ([async version][parse_async_sample]) | extract a certificate's private key |
+
+- [Create/get/update/delete certificates][hello_world_sample] ([async version][hello_world_async_sample])
+- [Back up and recover certificates][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [Import PKCS#12 (PFX) and PEM-formatted certificates into Key Vault][import_certificate_sample] ([async version][import_certificate_async_sample])
+- [List certificates][list_operations_sample] ([async version][list_operations_async_sample])
+- [Recover and purge certificates][recover_purge_operations_sample] ([async version][recover_purge_operations_async_sample])
+- [Manage certificate issuers][issuers_sample] ([async version][issuers_async_sample])
+- [Manage certificate contacts][contacts_sample] ([async version][contacts_async_sample])
+- [Extract a certificate's private key][parse_sample] ([async version][parse_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].

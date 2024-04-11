@@ -65,7 +65,8 @@ class InternalBaseNode(BaseNode):
         BaseNode.__init__(
             self,
             type=type,
-            component=component,
+            component=component,  # type: ignore[arg-type]
+            # TODO: Bug 2881892
             inputs=inputs,
             outputs=outputs,
             compute=compute,

@@ -51,7 +51,7 @@ from ._utils import (  # pylint: disable=import-error
 )
 
 if TYPE_CHECKING:
-    from ..._schema_registry_client import SchemaRegistryClient
+    import azure.schemaregistry
     from ..._encoder_protocols import MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class JsonSchemaEncoder(object):
     def __init__(
         self,
         *,
-        client: "SchemaRegistryClient",
+        client: "azure.schemaregistry.SchemaRegistryClient",
         validate: Union[JsonSchemaDraftIdentifier, str, "SchemaContentValidate"],
         group_name: Optional[str] = None,
     ) -> None:

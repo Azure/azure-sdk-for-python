@@ -53,7 +53,8 @@ create_monitor:
           path: azureml:my_model_training_data:1
           type: mltable
         data_context: training
-        target_column_name: target
+        data_column_names:
+          target_column: target
       alert_enabled: true
       metric_thresholds:
         normalized_discounted_cumulative_gain: 0.2

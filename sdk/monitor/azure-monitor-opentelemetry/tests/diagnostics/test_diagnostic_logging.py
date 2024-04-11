@@ -41,7 +41,7 @@ def check_file_for_messages(file_path, level, messages):
             assert json["message"] == message
             properties = json["properties"]
             assert properties["operation"] == "Startup"
-            assert properties["sitename"] == TEST_SITE_NAME
+            assert properties["siteName"] == TEST_SITE_NAME
             assert properties["ikey"] == TEST_CUSTOMER_IKEY
             assert properties["extensionVersion"] == TEST_EXTENSION_VERSION
             assert properties["sdkVersion"] == TEST_VERSION

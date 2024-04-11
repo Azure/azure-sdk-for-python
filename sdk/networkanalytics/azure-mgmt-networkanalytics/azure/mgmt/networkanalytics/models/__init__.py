@@ -15,13 +15,18 @@ from ._models_py3 import DataProduct
 from ._models_py3 import DataProductInformation
 from ._models_py3 import DataProductListResult
 from ._models_py3 import DataProductNetworkAcls
+from ._models_py3 import DataProductProperties
 from ._models_py3 import DataProductUpdate
+from ._models_py3 import DataProductUpdateProperties
 from ._models_py3 import DataProductVersion
 from ._models_py3 import DataProductsCatalog
 from ._models_py3 import DataProductsCatalogListResult
+from ._models_py3 import DataProductsCatalogProperties
 from ._models_py3 import DataType
 from ._models_py3 import DataTypeListResult
+from ._models_py3 import DataTypeProperties
 from ._models_py3 import DataTypeUpdate
+from ._models_py3 import DataTypeUpdateProperties
 from ._models_py3 import EncryptionKeyDetails
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
@@ -70,13 +75,18 @@ __all__ = [
     "DataProductInformation",
     "DataProductListResult",
     "DataProductNetworkAcls",
+    "DataProductProperties",
     "DataProductUpdate",
+    "DataProductUpdateProperties",
     "DataProductVersion",
     "DataProductsCatalog",
     "DataProductsCatalogListResult",
+    "DataProductsCatalogProperties",
     "DataType",
     "DataTypeListResult",
+    "DataTypeProperties",
     "DataTypeUpdate",
+    "DataTypeUpdateProperties",
     "EncryptionKeyDetails",
     "ErrorAdditionalInfo",
     "ErrorDetail",

@@ -28,6 +28,7 @@ USAGE:
 
 import asyncio
 import os
+from typing import List, MutableMapping
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
@@ -37,9 +38,9 @@ from azure.monitor.ingestion.aio import LogsIngestionClient
 async def send_logs():
     endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
     rule_id = os.environ["LOGS_DCR_RULE_ID"]
-    body = [
-        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "sabhyrav-2"},
-        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer2", "AdditionalContext": "sabhyrav"},
+    body: List[MutableMapping[str, str]] = [
+        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "context-2"},
+        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer2", "AdditionalContext": "context"},
     ]
     credential = DefaultAzureCredential()
 

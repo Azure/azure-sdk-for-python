@@ -56,7 +56,7 @@ from azure.core.pipeline import AsyncPipeline
 
 from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
-from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
+from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper, get_file_items
 from .._tools import is_rest as _is_rest
 from .._tools_async import (
     handle_no_stream_rest_response as _handle_no_stream_rest_response,
@@ -180,7 +180,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if request.files:
             form_data = aiohttp.FormData(request.data or {})
-            for form_file, data in request.files.items():
+            for form_file, data in get_file_items(request.files):
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)

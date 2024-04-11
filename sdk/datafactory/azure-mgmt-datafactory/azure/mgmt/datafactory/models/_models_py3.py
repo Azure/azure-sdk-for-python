@@ -482,8 +482,8 @@ class LinkedService(_serialization.Model):
     CustomDataSourceLinkedService, DataworldLinkedService, Db2LinkedService, DrillLinkedService,
     DynamicsLinkedService, DynamicsAXLinkedService, DynamicsCrmLinkedService, EloquaLinkedService,
     FileServerLinkedService, FtpServerLinkedService, GoogleAdWordsLinkedService,
-    GoogleBigQueryLinkedService, GoogleCloudStorageLinkedService, GoogleSheetsLinkedService,
-    GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService,
+    GoogleBigQueryLinkedService, GoogleBigQueryV2LinkedService, GoogleCloudStorageLinkedService,
+    GoogleSheetsLinkedService, GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService,
     HDInsightOnDemandLinkedService, HdfsLinkedService, HiveLinkedService, HttpLinkedService,
     HubspotLinkedService, ImpalaLinkedService, InformixLinkedService, JiraLinkedService,
     LakeHouseLinkedService, MagentoLinkedService, MariaDBLinkedService, MarketoLinkedService,
@@ -491,17 +491,18 @@ class LinkedService(_serialization.Model):
     MongoDbV2LinkedService, MySqlLinkedService, NetezzaLinkedService, ODataLinkedService,
     OdbcLinkedService, Office365LinkedService, OracleLinkedService,
     OracleCloudStorageLinkedService, OracleServiceCloudLinkedService, PaypalLinkedService,
-    PhoenixLinkedService, PostgreSqlLinkedService, PrestoLinkedService, QuickBooksLinkedService,
-    QuickbaseLinkedService, ResponsysLinkedService, RestServiceLinkedService,
-    SalesforceLinkedService, SalesforceMarketingCloudLinkedService,
-    SalesforceServiceCloudLinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService,
+    PhoenixLinkedService, PostgreSqlLinkedService, PostgreSqlV2LinkedService, PrestoLinkedService,
+    QuickBooksLinkedService, QuickbaseLinkedService, ResponsysLinkedService,
+    RestServiceLinkedService, SalesforceLinkedService, SalesforceMarketingCloudLinkedService,
+    SalesforceServiceCloudLinkedService, SalesforceServiceCloudV2LinkedService,
+    SalesforceV2LinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService,
     SapEccLinkedService, SapHanaLinkedService, SapOdpLinkedService, SapOpenHubLinkedService,
-    SapTableLinkedService, ServiceNowLinkedService, SftpServerLinkedService,
-    SharePointOnlineListLinkedService, ShopifyLinkedService, SmartsheetLinkedService,
-    SnowflakeLinkedService, SparkLinkedService, SqlServerLinkedService, SquareLinkedService,
-    SybaseLinkedService, TeamDeskLinkedService, TeradataLinkedService, TwilioLinkedService,
-    VerticaLinkedService, WebLinkedService, XeroLinkedService, ZendeskLinkedService,
-    ZohoLinkedService
+    SapTableLinkedService, ServiceNowLinkedService, ServiceNowV2LinkedService,
+    SftpServerLinkedService, SharePointOnlineListLinkedService, ShopifyLinkedService,
+    SmartsheetLinkedService, SnowflakeLinkedService, SnowflakeV2LinkedService, SparkLinkedService,
+    SqlServerLinkedService, SquareLinkedService, SybaseLinkedService, TeamDeskLinkedService,
+    TeradataLinkedService, TwilioLinkedService, VerticaLinkedService, WarehouseLinkedService,
+    WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService
 
     All required parameters must be populated in order to send to Azure.
 
@@ -584,6 +585,7 @@ class LinkedService(_serialization.Model):
             "FtpServer": "FtpServerLinkedService",
             "GoogleAdWords": "GoogleAdWordsLinkedService",
             "GoogleBigQuery": "GoogleBigQueryLinkedService",
+            "GoogleBigQueryV2": "GoogleBigQueryV2LinkedService",
             "GoogleCloudStorage": "GoogleCloudStorageLinkedService",
             "GoogleSheets": "GoogleSheetsLinkedService",
             "Greenplum": "GreenplumLinkedService",
@@ -616,6 +618,7 @@ class LinkedService(_serialization.Model):
             "Paypal": "PaypalLinkedService",
             "Phoenix": "PhoenixLinkedService",
             "PostgreSql": "PostgreSqlLinkedService",
+            "PostgreSqlV2": "PostgreSqlV2LinkedService",
             "Presto": "PrestoLinkedService",
             "QuickBooks": "QuickBooksLinkedService",
             "Quickbase": "QuickbaseLinkedService",
@@ -624,6 +627,8 @@ class LinkedService(_serialization.Model):
             "Salesforce": "SalesforceLinkedService",
             "SalesforceMarketingCloud": "SalesforceMarketingCloudLinkedService",
             "SalesforceServiceCloud": "SalesforceServiceCloudLinkedService",
+            "SalesforceServiceCloudV2": "SalesforceServiceCloudV2LinkedService",
+            "SalesforceV2": "SalesforceV2LinkedService",
             "SapBW": "SapBWLinkedService",
             "SapCloudForCustomer": "SapCloudForCustomerLinkedService",
             "SapEcc": "SapEccLinkedService",
@@ -632,11 +637,13 @@ class LinkedService(_serialization.Model):
             "SapOpenHub": "SapOpenHubLinkedService",
             "SapTable": "SapTableLinkedService",
             "ServiceNow": "ServiceNowLinkedService",
+            "ServiceNowV2": "ServiceNowV2LinkedService",
             "Sftp": "SftpServerLinkedService",
             "SharePointOnlineList": "SharePointOnlineListLinkedService",
             "Shopify": "ShopifyLinkedService",
             "Smartsheet": "SmartsheetLinkedService",
             "Snowflake": "SnowflakeLinkedService",
+            "SnowflakeV2": "SnowflakeV2LinkedService",
             "Spark": "SparkLinkedService",
             "SqlServer": "SqlServerLinkedService",
             "Square": "SquareLinkedService",
@@ -645,6 +652,7 @@ class LinkedService(_serialization.Model):
             "Teradata": "TeradataLinkedService",
             "Twilio": "TwilioLinkedService",
             "Vertica": "VerticaLinkedService",
+            "Warehouse": "WarehouseLinkedService",
             "Web": "WebLinkedService",
             "Xero": "XeroLinkedService",
             "Zendesk": "ZendeskLinkedService",
@@ -856,22 +864,25 @@ class Dataset(_serialization.Model):
     DocumentDbCollectionDataset, DrillTableDataset, DynamicsAXResourceDataset,
     DynamicsCrmEntityDataset, DynamicsEntityDataset, EloquaObjectDataset, ExcelDataset,
     FileShareDataset, GoogleAdWordsObjectDataset, GoogleBigQueryObjectDataset,
-    GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset, HttpDataset,
-    HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset, JiraObjectDataset,
-    JsonDataset, LakeHouseTableDataset, MagentoObjectDataset, MariaDBTableDataset,
-    MarketoObjectDataset, MicrosoftAccessTableDataset, MongoDbAtlasCollectionDataset,
-    MongoDbCollectionDataset, MongoDbV2CollectionDataset, MySqlTableDataset, NetezzaTableDataset,
-    ODataResourceDataset, OdbcTableDataset, Office365Dataset, OracleServiceCloudObjectDataset,
-    OracleTableDataset, OrcDataset, ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset,
-    PostgreSqlTableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset,
+    GoogleBigQueryV2ObjectDataset, GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset,
+    HttpDataset, HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset,
+    JiraObjectDataset, JsonDataset, LakeHouseTableDataset, MagentoObjectDataset,
+    MariaDBTableDataset, MarketoObjectDataset, MicrosoftAccessTableDataset,
+    MongoDbAtlasCollectionDataset, MongoDbCollectionDataset, MongoDbV2CollectionDataset,
+    MySqlTableDataset, NetezzaTableDataset, ODataResourceDataset, OdbcTableDataset,
+    Office365Dataset, OracleServiceCloudObjectDataset, OracleTableDataset, OrcDataset,
+    ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset, PostgreSqlTableDataset,
+    PostgreSqlV2TableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset,
     ResponsysObjectDataset, RestResourceDataset, SalesforceMarketingCloudObjectDataset,
-    SalesforceObjectDataset, SalesforceServiceCloudObjectDataset, SapBwCubeDataset,
+    SalesforceObjectDataset, SalesforceServiceCloudObjectDataset,
+    SalesforceServiceCloudV2ObjectDataset, SalesforceV2ObjectDataset, SapBwCubeDataset,
     SapCloudForCustomerResourceDataset, SapEccResourceDataset, SapHanaTableDataset,
     SapOdpResourceDataset, SapOpenHubTableDataset, SapTableResourceDataset,
-    ServiceNowObjectDataset, SharePointOnlineListResourceDataset, ShopifyObjectDataset,
-    SnowflakeDataset, SparkObjectDataset, SqlServerTableDataset, SquareObjectDataset,
-    SybaseTableDataset, TeradataTableDataset, VerticaTableDataset, WebTableDataset,
-    XeroObjectDataset, XmlDataset, ZohoObjectDataset
+    ServiceNowObjectDataset, ServiceNowV2ObjectDataset, SharePointOnlineListResourceDataset,
+    ShopifyObjectDataset, SnowflakeDataset, SnowflakeV2Dataset, SparkObjectDataset,
+    SqlServerTableDataset, SquareObjectDataset, SybaseTableDataset, TeradataTableDataset,
+    VerticaTableDataset, WarehouseTableDataset, WebTableDataset, XeroObjectDataset, XmlDataset,
+    ZohoObjectDataset
 
     All required parameters must be populated in order to send to Azure.
 
@@ -957,6 +968,7 @@ class Dataset(_serialization.Model):
             "FileShare": "FileShareDataset",
             "GoogleAdWordsObject": "GoogleAdWordsObjectDataset",
             "GoogleBigQueryObject": "GoogleBigQueryObjectDataset",
+            "GoogleBigQueryV2Object": "GoogleBigQueryV2ObjectDataset",
             "GreenplumTable": "GreenplumTableDataset",
             "HBaseObject": "HBaseObjectDataset",
             "HiveObject": "HiveObjectDataset",
@@ -986,6 +998,7 @@ class Dataset(_serialization.Model):
             "PaypalObject": "PaypalObjectDataset",
             "PhoenixObject": "PhoenixObjectDataset",
             "PostgreSqlTable": "PostgreSqlTableDataset",
+            "PostgreSqlV2Table": "PostgreSqlV2TableDataset",
             "PrestoObject": "PrestoObjectDataset",
             "QuickBooksObject": "QuickBooksObjectDataset",
             "RelationalTable": "RelationalTableDataset",
@@ -994,6 +1007,8 @@ class Dataset(_serialization.Model):
             "SalesforceMarketingCloudObject": "SalesforceMarketingCloudObjectDataset",
             "SalesforceObject": "SalesforceObjectDataset",
             "SalesforceServiceCloudObject": "SalesforceServiceCloudObjectDataset",
+            "SalesforceServiceCloudV2Object": "SalesforceServiceCloudV2ObjectDataset",
+            "SalesforceV2Object": "SalesforceV2ObjectDataset",
             "SapBwCube": "SapBwCubeDataset",
             "SapCloudForCustomerResource": "SapCloudForCustomerResourceDataset",
             "SapEccResource": "SapEccResourceDataset",
@@ -1002,15 +1017,18 @@ class Dataset(_serialization.Model):
             "SapOpenHubTable": "SapOpenHubTableDataset",
             "SapTableResource": "SapTableResourceDataset",
             "ServiceNowObject": "ServiceNowObjectDataset",
+            "ServiceNowV2Object": "ServiceNowV2ObjectDataset",
             "SharePointOnlineListResource": "SharePointOnlineListResourceDataset",
             "ShopifyObject": "ShopifyObjectDataset",
             "SnowflakeTable": "SnowflakeDataset",
+            "SnowflakeV2Table": "SnowflakeV2Dataset",
             "SparkObject": "SparkObjectDataset",
             "SqlServerTable": "SqlServerTableDataset",
             "SquareObject": "SquareObjectDataset",
             "SybaseTable": "SybaseTableDataset",
             "TeradataTable": "TeradataTableDataset",
             "VerticaTable": "VerticaTableDataset",
+            "WarehouseTable": "WarehouseTableDataset",
             "WebTable": "WebTableDataset",
             "XeroObject": "XeroObjectDataset",
             "Xml": "XmlDataset",
@@ -1178,8 +1196,8 @@ class CopySource(_serialization.Model):
     ExcelSource, FileSystemSource, HdfsSource, HttpSource, JsonSource, LakeHouseTableSource,
     MicrosoftAccessSource, MongoDbAtlasSource, MongoDbSource, MongoDbV2Source, ODataSource,
     Office365Source, OracleSource, OrcSource, ParquetSource, RelationalSource, RestSource,
-    SalesforceServiceCloudSource, SharePointOnlineListSource, SnowflakeSource, TabularSource,
-    WebSource, XmlSource
+    SalesforceServiceCloudSource, SalesforceServiceCloudV2Source, SharePointOnlineListSource,
+    SnowflakeSource, SnowflakeV2Source, TabularSource, WebSource, XmlSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1250,8 +1268,10 @@ class CopySource(_serialization.Model):
             "RelationalSource": "RelationalSource",
             "RestSource": "RestSource",
             "SalesforceServiceCloudSource": "SalesforceServiceCloudSource",
+            "SalesforceServiceCloudV2Source": "SalesforceServiceCloudV2Source",
             "SharePointOnlineListSource": "SharePointOnlineListSource",
             "SnowflakeSource": "SnowflakeSource",
+            "SnowflakeV2Source": "SnowflakeV2Source",
             "TabularSource": "TabularSource",
             "WebSource": "WebSource",
             "XmlSource": "XmlSource",
@@ -1301,14 +1321,16 @@ class TabularSource(CopySource):
     AmazonMWSSource, AmazonRdsForSqlServerSource, AmazonRedshiftSource, AzureMariaDBSource,
     AzureMySqlSource, AzurePostgreSqlSource, AzureSqlSource, AzureTableSource, CassandraSource,
     ConcurSource, CouchbaseSource, Db2Source, DrillSource, DynamicsAXSource, EloquaSource,
-    GoogleAdWordsSource, GoogleBigQuerySource, GreenplumSource, HBaseSource, HiveSource,
-    HubspotSource, ImpalaSource, InformixSource, JiraSource, MagentoSource, MariaDBSource,
-    MarketoSource, MySqlSource, NetezzaSource, OdbcSource, OracleServiceCloudSource, PaypalSource,
-    PhoenixSource, PostgreSqlSource, PrestoSource, QuickBooksSource, ResponsysSource,
-    SalesforceMarketingCloudSource, SalesforceSource, SapBwSource, SapCloudForCustomerSource,
-    SapEccSource, SapHanaSource, SapOdpSource, SapOpenHubSource, SapTableSource, ServiceNowSource,
-    ShopifySource, SparkSource, SqlDWSource, SqlMISource, SqlServerSource, SqlSource, SquareSource,
-    SybaseSource, TeradataSource, VerticaSource, XeroSource, ZohoSource
+    GoogleAdWordsSource, GoogleBigQuerySource, GoogleBigQueryV2Source, GreenplumSource,
+    HBaseSource, HiveSource, HubspotSource, ImpalaSource, InformixSource, JiraSource,
+    MagentoSource, MariaDBSource, MarketoSource, MySqlSource, NetezzaSource, OdbcSource,
+    OracleServiceCloudSource, PaypalSource, PhoenixSource, PostgreSqlSource, PostgreSqlV2Source,
+    PrestoSource, QuickBooksSource, ResponsysSource, SalesforceMarketingCloudSource,
+    SalesforceSource, SalesforceV2Source, SapBwSource, SapCloudForCustomerSource, SapEccSource,
+    SapHanaSource, SapOdpSource, SapOpenHubSource, SapTableSource, ServiceNowSource,
+    ServiceNowV2Source, ShopifySource, SparkSource, SqlDWSource, SqlMISource, SqlServerSource,
+    SqlSource, SquareSource, SybaseSource, TeradataSource, VerticaSource, WarehouseSource,
+    XeroSource, ZohoSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1371,6 +1393,7 @@ class TabularSource(CopySource):
             "EloquaSource": "EloquaSource",
             "GoogleAdWordsSource": "GoogleAdWordsSource",
             "GoogleBigQuerySource": "GoogleBigQuerySource",
+            "GoogleBigQueryV2Source": "GoogleBigQueryV2Source",
             "GreenplumSource": "GreenplumSource",
             "HBaseSource": "HBaseSource",
             "HiveSource": "HiveSource",
@@ -1388,11 +1411,13 @@ class TabularSource(CopySource):
             "PaypalSource": "PaypalSource",
             "PhoenixSource": "PhoenixSource",
             "PostgreSqlSource": "PostgreSqlSource",
+            "PostgreSqlV2Source": "PostgreSqlV2Source",
             "PrestoSource": "PrestoSource",
             "QuickBooksSource": "QuickBooksSource",
             "ResponsysSource": "ResponsysSource",
             "SalesforceMarketingCloudSource": "SalesforceMarketingCloudSource",
             "SalesforceSource": "SalesforceSource",
+            "SalesforceV2Source": "SalesforceV2Source",
             "SapBwSource": "SapBwSource",
             "SapCloudForCustomerSource": "SapCloudForCustomerSource",
             "SapEccSource": "SapEccSource",
@@ -1401,6 +1426,7 @@ class TabularSource(CopySource):
             "SapOpenHubSource": "SapOpenHubSource",
             "SapTableSource": "SapTableSource",
             "ServiceNowSource": "ServiceNowSource",
+            "ServiceNowV2Source": "ServiceNowV2Source",
             "ShopifySource": "ShopifySource",
             "SparkSource": "SparkSource",
             "SqlDWSource": "SqlDWSource",
@@ -1411,6 +1437,7 @@ class TabularSource(CopySource):
             "SybaseSource": "SybaseSource",
             "TeradataSource": "TeradataSource",
             "VerticaSource": "VerticaSource",
+            "WarehouseSource": "WarehouseSource",
             "XeroSource": "XeroSource",
             "ZohoSource": "ZohoSource",
         }
@@ -4344,8 +4371,9 @@ class CopySink(_serialization.Model):
     CommonDataServiceForAppsSink, CosmosDbMongoDbApiSink, CosmosDbSqlApiSink, DelimitedTextSink,
     DocumentDbCollectionSink, DynamicsCrmSink, DynamicsSink, FileSystemSink, InformixSink,
     JsonSink, LakeHouseTableSink, MicrosoftAccessSink, MongoDbAtlasSink, MongoDbV2Sink, OdbcSink,
-    OracleSink, OrcSink, ParquetSink, RestSink, SalesforceServiceCloudSink, SalesforceSink,
-    SapCloudForCustomerSink, SnowflakeSink, SqlDWSink, SqlMISink, SqlServerSink, SqlSink
+    OracleSink, OrcSink, ParquetSink, RestSink, SalesforceServiceCloudSink,
+    SalesforceServiceCloudV2Sink, SalesforceSink, SalesforceV2Sink, SapCloudForCustomerSink,
+    SnowflakeSink, SnowflakeV2Sink, SqlDWSink, SqlMISink, SqlServerSink, SqlSink, WarehouseSink
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4424,13 +4452,17 @@ class CopySink(_serialization.Model):
             "ParquetSink": "ParquetSink",
             "RestSink": "RestSink",
             "SalesforceServiceCloudSink": "SalesforceServiceCloudSink",
+            "SalesforceServiceCloudV2Sink": "SalesforceServiceCloudV2Sink",
             "SalesforceSink": "SalesforceSink",
+            "SalesforceV2Sink": "SalesforceV2Sink",
             "SapCloudForCustomerSink": "SapCloudForCustomerSink",
             "SnowflakeSink": "SnowflakeSink",
+            "SnowflakeV2Sink": "SnowflakeV2Sink",
             "SqlDWSink": "SqlDWSink",
             "SqlMISink": "SqlMISink",
             "SqlServerSink": "SqlServerSink",
             "SqlSink": "SqlSink",
+            "WarehouseSink": "WarehouseSink",
         }
     }
 
@@ -5889,6 +5921,9 @@ class StoreWriteSettings(_serialization.Model):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -5901,6 +5936,7 @@ class StoreWriteSettings(_serialization.Model):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     _subtype_map = {
@@ -5922,6 +5958,7 @@ class StoreWriteSettings(_serialization.Model):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5936,6 +5973,9 @@ class StoreWriteSettings(_serialization.Model):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
@@ -5943,6 +5983,7 @@ class StoreWriteSettings(_serialization.Model):
         self.max_concurrent_connections = max_concurrent_connections
         self.disable_metrics_collection = disable_metrics_collection
         self.copy_behavior = copy_behavior
+        self.metadata = metadata
 
 
 class AzureBlobFSWriteSettings(StoreWriteSettings):
@@ -5963,6 +6004,9 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
     :vartype block_size_in_mb: JSON
@@ -5978,6 +6022,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "block_size_in_mb": {"key": "blockSizeInMB", "type": "object"},
     }
 
@@ -5988,6 +6033,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -6003,6 +6049,9 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type:
          integer (or Expression with resultType integer).
         :paramtype block_size_in_mb: JSON
@@ -6012,6 +6061,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureBlobFSWriteSettings"
@@ -6443,6 +6493,9 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
     :vartype block_size_in_mb: JSON
@@ -6458,6 +6511,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "block_size_in_mb": {"key": "blockSizeInMB", "type": "object"},
     }
 
@@ -6468,6 +6522,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -6483,6 +6538,9 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type:
          integer (or Expression with resultType integer).
         :paramtype block_size_in_mb: JSON
@@ -6492,6 +6550,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureBlobStorageWriteSettings"
@@ -8960,6 +9019,9 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar expiry_date_time: Specifies the expiry time of the written files. The time is applied to
      the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: string
      (or Expression with resultType string).
@@ -8976,6 +9038,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "expiry_date_time": {"key": "expiryDateTime", "type": "object"},
     }
 
@@ -8986,6 +9049,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         expiry_date_time: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -9001,6 +9065,9 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword expiry_date_time: Specifies the expiry time of the written files. The time is applied
          to the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type:
          string (or Expression with resultType string).
@@ -9011,6 +9078,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureDataLakeStoreWriteSettings"
@@ -9387,6 +9455,9 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -9399,6 +9470,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -9408,6 +9480,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9422,12 +9495,16 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureFileStorageWriteSettings"
@@ -9471,7 +9548,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: JSON
+    :vartype headers: dict[str, str]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -9497,7 +9574,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         "policy": {"key": "policy", "type": "ActivityPolicy"},
         "method": {"key": "typeProperties.method", "type": "str"},
         "function_name": {"key": "typeProperties.functionName", "type": "object"},
-        "headers": {"key": "typeProperties.headers", "type": "object"},
+        "headers": {"key": "typeProperties.headers", "type": "{str}"},
         "body": {"key": "typeProperties.body", "type": "object"},
     }
 
@@ -9515,7 +9592,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[JSON] = None,
+        headers: Optional[Dict[str, str]] = None,
         body: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -9551,7 +9628,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: JSON
+        :paramtype headers: dict[str, str]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON
@@ -9594,7 +9671,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar function_app_url: The endpoint of the Azure Function App. URL will be in the format
-     https://:code:`<accountName>`.azurewebsites.net. Required.
+     https://:code:`<accountName>`.azurewebsites.net. Type: string (or Expression with resultType
+     string). Required.
     :vartype function_app_url: JSON
     :ivar function_key: Function or Host key for Azure Function App.
     :vartype function_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -9603,7 +9681,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :vartype encrypted_credential: str
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
-    :ivar resource_id: Allowed token audiences for azure function.
+    :ivar resource_id: Allowed token audiences for azure function. Type: string (or Expression with
+     resultType string).
     :vartype resource_id: JSON
     :ivar authentication: Type of authentication (Required to specify MSI) used to connect to
      AzureFunction. Type: string (or Expression with resultType string).
@@ -9659,7 +9738,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword function_app_url: The endpoint of the Azure Function App. URL will be in the format
-         https://:code:`<accountName>`.azurewebsites.net. Required.
+         https://:code:`<accountName>`.azurewebsites.net. Type: string (or Expression with resultType
+         string). Required.
         :paramtype function_app_url: JSON
         :keyword function_key: Function or Host key for Azure Function App.
         :paramtype function_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -9668,7 +9748,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :paramtype encrypted_credential: str
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
-        :keyword resource_id: Allowed token audiences for azure function.
+        :keyword resource_id: Allowed token audiences for azure function. Type: string (or Expression
+         with resultType string).
         :paramtype resource_id: JSON
         :keyword authentication: Type of authentication (Required to specify MSI) used to connect to
          AzureFunction. Type: string (or Expression with resultType string).
@@ -10343,7 +10424,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
     :vartype ml_pipeline_parameters: JSON
     :ivar data_path_assignments: Dictionary used for changing data path assignments without
      retraining. Values will be passed in the dataPathAssignments property of the published pipeline
-     execution request. Type: object with key value pairs (or Expression with resultType object).
+     execution request. Type: object (or Expression with resultType object).
     :vartype data_path_assignments: JSON
     :ivar ml_parent_run_id: The parent Azure ML Service pipeline run id. This information will be
      passed in the ParentRunId property of the published pipeline execution request. Type: string
@@ -10446,7 +10527,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         :paramtype ml_pipeline_parameters: JSON
         :keyword data_path_assignments: Dictionary used for changing data path assignments without
          retraining. Values will be passed in the dataPathAssignments property of the published pipeline
-         execution request. Type: object with key value pairs (or Expression with resultType object).
+         execution request. Type: object (or Expression with resultType object).
         :paramtype data_path_assignments: JSON
         :keyword ml_parent_run_id: The parent Azure ML Service pipeline run id. This information will
          be passed in the ParentRunId property of the published pipeline execution request. Type: string
@@ -13064,7 +13145,8 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -13150,7 +13232,8 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -15679,9 +15762,9 @@ class CmdkeySetup(CustomSetupBase):
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
-    :ivar target_name: The server name of data source access. Required.
+    :ivar target_name: The server name of data source access. Type: string. Required.
     :vartype target_name: JSON
-    :ivar user_name: The user name of data source access. Required.
+    :ivar user_name: The user name of data source access. Type: string. Required.
     :vartype user_name: JSON
     :ivar password: The password of data source access. Required.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
@@ -15703,9 +15786,9 @@ class CmdkeySetup(CustomSetupBase):
 
     def __init__(self, *, target_name: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs: Any) -> None:
         """
-        :keyword target_name: The server name of data source access. Required.
+        :keyword target_name: The server name of data source access. Type: string. Required.
         :paramtype target_name: JSON
-        :keyword user_name: The user name of data source access. Required.
+        :keyword user_name: The user name of data source access. Type: string. Required.
         :paramtype user_name: JSON
         :keyword password: The password of data source access. Required.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
@@ -26026,6 +26109,54 @@ class Expression(_serialization.Model):
         self.value = value
 
 
+class ExpressionV2(_serialization.Model):
+    """Nested representation of a complex expression.
+
+    :ivar type: Type of expressions supported by the system. Type: string. Known values are:
+     "Constant", "Field", "Unary", and "Binary".
+    :vartype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
+    :ivar value: Value for Constant/Field Type: string.
+    :vartype value: str
+    :ivar operator: Expression operator value Type: string.
+    :vartype operator: str
+    :ivar operands: List of nested expressions.
+    :vartype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "operands": {"key": "operands", "type": "[ExpressionV2]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ExpressionV2Type"]] = None,
+        value: Optional[str] = None,
+        operator: Optional[str] = None,
+        operands: Optional[List["_models.ExpressionV2"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of expressions supported by the system. Type: string. Known values are:
+         "Constant", "Field", "Unary", and "Binary".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
+        :keyword value: Value for Constant/Field Type: string.
+        :paramtype value: str
+        :keyword operator: Expression operator value Type: string.
+        :paramtype operator: str
+        :keyword operands: List of nested expressions.
+        :paramtype operands: list[~azure.mgmt.datafactory.models.ExpressionV2]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.value = value
+        self.operator = operator
+        self.operands = operands
+
+
 class Resource(_serialization.Model):
     """Azure Data Factory top-level resource.
 
@@ -27071,6 +27202,9 @@ class FileServerWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -27083,6 +27217,7 @@ class FileServerWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -27092,6 +27227,7 @@ class FileServerWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27106,12 +27242,16 @@ class FileServerWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "FileServerWriteSettings"
@@ -29355,6 +29495,355 @@ class GoogleBigQuerySource(TabularSource):
         self.query = query
 
 
+class GoogleBigQueryV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Google BigQuery service linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar project_id: The default BigQuery project id to query against. Type: string (or Expression
+     with resultType string). Required.
+    :vartype project_id: JSON
+    :ivar authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
+     Required. Known values are: "ServiceAuthentication" and "UserAuthentication".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.GoogleBigQueryV2AuthenticationType
+    :ivar client_id: The client id of the google application used to acquire the refresh token.
+     Type: string (or Expression with resultType string).
+    :vartype client_id: JSON
+    :ivar client_secret: The client secret of the google application used to acquire the refresh
+     token.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar refresh_token: The refresh token obtained from Google for authorizing access to BigQuery
+     for UserAuthentication.
+    :vartype refresh_token: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar key_file_content: The content of the .json key file that is used to authenticate the
+     service account. Type: string (or Expression with resultType string).
+    :vartype key_file_content: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "project_id": {"required": True},
+        "authentication_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "project_id": {"key": "typeProperties.projectId", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "client_id": {"key": "typeProperties.clientId", "type": "object"},
+        "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
+        "refresh_token": {"key": "typeProperties.refreshToken", "type": "SecretBase"},
+        "key_file_content": {"key": "typeProperties.keyFileContent", "type": "SecretBase"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        project_id: JSON,
+        authentication_type: Union[str, "_models.GoogleBigQueryV2AuthenticationType"],
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        client_id: Optional[JSON] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        refresh_token: Optional["_models.SecretBase"] = None,
+        key_file_content: Optional["_models.SecretBase"] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword project_id: The default BigQuery project id to query against. Type: string (or
+         Expression with resultType string). Required.
+        :paramtype project_id: JSON
+        :keyword authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
+         Required. Known values are: "ServiceAuthentication" and "UserAuthentication".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.GoogleBigQueryV2AuthenticationType
+        :keyword client_id: The client id of the google application used to acquire the refresh token.
+         Type: string (or Expression with resultType string).
+        :paramtype client_id: JSON
+        :keyword client_secret: The client secret of the google application used to acquire the refresh
+         token.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword refresh_token: The refresh token obtained from Google for authorizing access to
+         BigQuery for UserAuthentication.
+        :paramtype refresh_token: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword key_file_content: The content of the .json key file that is used to authenticate the
+         service account. Type: string (or Expression with resultType string).
+        :paramtype key_file_content: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "GoogleBigQueryV2"
+        self.project_id = project_id
+        self.authentication_type = authentication_type
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.refresh_token = refresh_token
+        self.key_file_content = key_file_content
+        self.encrypted_credential = encrypted_credential
+
+
+class GoogleBigQueryV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """Google BigQuery service dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar table: The table name of the Google BigQuery. Type: string (or Expression with resultType
+     string).
+    :vartype table: JSON
+    :ivar dataset: The database name of the Google BigQuery. Type: string (or Expression with
+     resultType string).
+    :vartype dataset: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "table": {"key": "typeProperties.table", "type": "object"},
+        "dataset": {"key": "typeProperties.dataset", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        table: Optional[JSON] = None,
+        dataset: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword table: The table name of the Google BigQuery. Type: string (or Expression with
+         resultType string).
+        :paramtype table: JSON
+        :keyword dataset: The database name of the Google BigQuery. Type: string (or Expression with
+         resultType string).
+        :paramtype dataset: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "GoogleBigQueryV2Object"
+        self.table = table
+        self.dataset = dataset
+
+
+class GoogleBigQueryV2Source(TabularSource):
+    """A copy activity Google BigQuery service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    :ivar query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :vartype query: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query_timeout": {"key": "queryTimeout", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "query": {"key": "query", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query_timeout: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        query: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        :keyword query: A query to retrieve data from source. Type: string (or Expression with
+         resultType string).
+        :paramtype query: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            query_timeout=query_timeout,
+            additional_columns=additional_columns,
+            **kwargs
+        )
+        self.type: str = "GoogleBigQueryV2Source"
+        self.query = query
+
+
 class GoogleCloudStorageLinkedService(LinkedService):
     """Linked service for Google Cloud Storage.
 
@@ -31334,8 +31823,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
-    :ivar cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type:
-     string (or Expression with resultType string). Required.
+    :ivar cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type: int
+     (or Expression with resultType int). Required.
     :vartype cluster_size: JSON
     :ivar time_to_live: The allowed idle time for the on-demand HDInsight cluster. Specifies how
      long the on-demand HDInsight cluster stays alive after completion of an activity run if there
@@ -31552,7 +32041,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type:
-         string (or Expression with resultType string). Required.
+         int (or Expression with resultType int). Required.
         :paramtype cluster_size: JSON
         :keyword time_to_live: The allowed idle time for the on-demand HDInsight cluster. Specifies how
          long the on-demand HDInsight cluster stays alive after completion of an activity run if there
@@ -32836,7 +33325,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
      authentication.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar auth_headers: The additional HTTP headers in the request to RESTful API used for
-     authorization. Type: object (or Expression with resultType object).
+     authorization. Type: key value pairs (value should be string type).
     :vartype auth_headers: JSON
     :ivar embedded_cert_data: Base64 encoded certificate data for ClientCertificate authentication.
      For on-premises copy with ClientCertificate authentication, either CertThumbprint or
@@ -32926,7 +33415,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
          EmbeddedCertData authentication.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword auth_headers: The additional HTTP headers in the request to RESTful API used for
-         authorization. Type: object (or Expression with resultType object).
+         authorization. Type: key value pairs (value should be string type).
         :paramtype auth_headers: JSON
         :keyword embedded_cert_data: Base64 encoded certificate data for ClientCertificate
          authentication. For on-premises copy with ClientCertificate authentication, either
@@ -37272,6 +37761,9 @@ class LakeHouseWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -37284,6 +37776,7 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -37293,6 +37786,7 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37307,12 +37801,16 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "LakeHouseWriteSettings"
@@ -39516,7 +40014,7 @@ class MappingDataFlow(DataFlow):
         self.script_lines = script_lines
 
 
-class MariaDBLinkedService(LinkedService):
+class MariaDBLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """MariaDB server linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -39534,11 +40032,23 @@ class MariaDBLinkedService(LinkedService):
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar driver_version: The version of the MariaDB driver. Type: string. V1 or empty for legacy
+     driver, V2 for new driver. V1 can support connection string and property bag, V2 can only
+     support connection string.
+    :vartype driver_version: JSON
     :ivar connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
-    :ivar pwd: The Azure key vault secret reference of password in connection string.
-    :vartype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar server: Server name for connection. Type: string.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar username: Username for authentication. Type: string.
+    :vartype username: JSON
+    :ivar database: Database name for connection. Type: string.
+    :vartype database: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string.
+    :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -39555,8 +40065,13 @@ class MariaDBLinkedService(LinkedService):
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "driver_version": {"key": "typeProperties.driverVersion", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
-        "pwd": {"key": "typeProperties.pwd", "type": "AzureKeyVaultSecretReference"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "username": {"key": "typeProperties.username", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
@@ -39568,8 +40083,13 @@ class MariaDBLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        driver_version: Optional[JSON] = None,
         connection_string: Optional[JSON] = None,
-        pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        server: Optional[JSON] = None,
+        port: Optional[JSON] = None,
+        username: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -39585,11 +40105,23 @@ class MariaDBLinkedService(LinkedService):
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword driver_version: The version of the MariaDB driver. Type: string. V1 or empty for
+         legacy driver, V2 for new driver. V1 can support connection string and property bag, V2 can
+         only support connection string.
+        :paramtype driver_version: JSON
         :keyword connection_string: An ODBC connection string. Type: string, SecureString or
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
-        :keyword pwd: The Azure key vault secret reference of password in connection string.
-        :paramtype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword server: Server name for connection. Type: string.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword username: Username for authentication. Type: string.
+        :paramtype username: JSON
+        :keyword database: Database name for connection. Type: string.
+        :paramtype database: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string.
+        :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
@@ -39603,8 +40135,13 @@ class MariaDBLinkedService(LinkedService):
             **kwargs
         )
         self.type: str = "MariaDB"
+        self.driver_version = driver_version
         self.connection_string = connection_string
-        self.pwd = pwd
+        self.server = server
+        self.port = port
+        self.username = username
+        self.database = database
+        self.password = password
         self.encrypted_credential = encrypted_credential
 
 
@@ -41871,7 +42408,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
         self.additional_columns = additional_columns
 
 
-class MySqlLinkedService(LinkedService):
+class MySqlLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Linked service for MySQL data source.
 
     All required parameters must be populated in order to send to Azure.
@@ -41889,9 +42426,27 @@ class MySqlLinkedService(LinkedService):
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
+    :ivar driver_version: The version of the MySQL driver. Type: string. V1 or empty for legacy
+     driver, V2 for new driver. V1 can support connection string and property bag, V2 can only
+     support connection string.
+    :vartype driver_version: JSON
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar server: Server name for connection. Type: string.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar username: Username for authentication. Type: string.
+    :vartype username: JSON
+    :ivar database: Database name for connection. Type: string.
+    :vartype database: JSON
+    :ivar ssl_mode: SSL mode for connection. Type: integer. 0: disable, 1: prefer, 2: require, 3:
+     verify-ca, 4: verify-full.
+    :vartype ssl_mode: JSON
+    :ivar use_system_trust_store: Use system trust store for connection. Type: integer. 0: enable,
+     1: disable.
+    :vartype use_system_trust_store: JSON
     :ivar password: The Azure key vault secret reference of password in connection string.
     :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -41901,7 +42456,6 @@ class MySqlLinkedService(LinkedService):
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -41911,7 +42465,14 @@ class MySqlLinkedService(LinkedService):
         "description": {"key": "description", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
+        "driver_version": {"key": "typeProperties.driverVersion", "type": "object"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "username": {"key": "typeProperties.username", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "ssl_mode": {"key": "typeProperties.sslMode", "type": "object"},
+        "use_system_trust_store": {"key": "typeProperties.useSystemTrustStore", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
@@ -41919,12 +42480,19 @@ class MySqlLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        connection_string: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        driver_version: Optional[JSON] = None,
+        connection_string: Optional[JSON] = None,
+        server: Optional[JSON] = None,
+        port: Optional[JSON] = None,
+        username: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        ssl_mode: Optional[JSON] = None,
+        use_system_trust_store: Optional[JSON] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -41941,9 +42509,27 @@ class MySqlLinkedService(LinkedService):
         :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
+        :keyword driver_version: The version of the MySQL driver. Type: string. V1 or empty for legacy
+         driver, V2 for new driver. V1 can support connection string and property bag, V2 can only
+         support connection string.
+        :paramtype driver_version: JSON
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword server: Server name for connection. Type: string.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword username: Username for authentication. Type: string.
+        :paramtype username: JSON
+        :keyword database: Database name for connection. Type: string.
+        :paramtype database: JSON
+        :keyword ssl_mode: SSL mode for connection. Type: integer. 0: disable, 1: prefer, 2: require,
+         3: verify-ca, 4: verify-full.
+        :paramtype ssl_mode: JSON
+        :keyword use_system_trust_store: Use system trust store for connection. Type: integer. 0:
+         enable, 1: disable.
+        :paramtype use_system_trust_store: JSON
         :keyword password: The Azure key vault secret reference of password in connection string.
         :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
@@ -41959,7 +42545,14 @@ class MySqlLinkedService(LinkedService):
             **kwargs
         )
         self.type: str = "MySql"
+        self.driver_version = driver_version
         self.connection_string = connection_string
+        self.server = server
+        self.port = port
+        self.username = username
+        self.database = database
+        self.ssl_mode = ssl_mode
+        self.use_system_trust_store = use_system_trust_store
         self.password = password
         self.encrypted_credential = encrypted_credential
 
@@ -42611,7 +43204,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :ivar password: Password of the OData service.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar auth_headers: The additional HTTP headers in the request to RESTful API used for
-     authorization. Type: object (or Expression with resultType object).
+     authorization. Type: key value pairs (value should be string type).
     :vartype auth_headers: JSON
     :ivar tenant: Specify the tenant information (domain name or tenant ID) under which your
      application resides. Type: string (or Expression with resultType string).
@@ -42731,7 +43324,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword password: Password of the OData service.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword auth_headers: The additional HTTP headers in the request to RESTful API used for
-         authorization. Type: object (or Expression with resultType object).
+         authorization. Type: key value pairs (value should be string type).
         :paramtype auth_headers: JSON
         :keyword tenant: Specify the tenant information (domain name or tenant ID) under which your
          application resides. Type: string (or Expression with resultType string).
@@ -47859,6 +48452,445 @@ class PostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         self.schema_type_properties_schema = schema_type_properties_schema
 
 
+class PostgreSqlV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Linked service for PostgreSQLV2 data source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar server: Server name for connection. Type: string. Required.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar username: Username for authentication. Type: string. Required.
+    :vartype username: JSON
+    :ivar database: Database name for connection. Type: string. Required.
+    :vartype database: JSON
+    :ivar ssl_mode: SSL mode for connection. Type: integer. 0: disable, 1:allow, 2: prefer, 3:
+     require, 4: verify-ca, 5: verify-full. Type: integer. Required.
+    :vartype ssl_mode: JSON
+    :ivar schema: Sets the schema search path. Type: string.
+    :vartype schema: JSON
+    :ivar pooling: Whether connection pooling should be used. Type: boolean.
+    :vartype pooling: JSON
+    :ivar connection_timeout: The time to wait (in seconds) while trying to establish a connection
+     before terminating the attempt and generating an error. Type: integer.
+    :vartype connection_timeout: JSON
+    :ivar command_timeout: The time to wait (in seconds) while trying to execute a command before
+     terminating the attempt and generating an error. Set to zero for infinity. Type: integer.
+    :vartype command_timeout: JSON
+    :ivar trust_server_certificate: Whether to trust the server certificate without validating it.
+     Type: boolean.
+    :vartype trust_server_certificate: JSON
+    :ivar ssl_certificate: Location of a client certificate to be sent to the server. Type: string.
+    :vartype ssl_certificate: JSON
+    :ivar ssl_key: Location of a client key for a client certificate to be sent to the server.
+     Type: string.
+    :vartype ssl_key: JSON
+    :ivar ssl_password: Password for a key for a client certificate. Type: string.
+    :vartype ssl_password: JSON
+    :ivar read_buffer_size: Determines the size of the internal buffer uses when reading.
+     Increasing may improve performance if transferring large values from the database. Type:
+     integer.
+    :vartype read_buffer_size: JSON
+    :ivar log_parameters: When enabled, parameter values are logged when commands are executed.
+     Type: boolean.
+    :vartype log_parameters: JSON
+    :ivar timezone: Gets or sets the session timezone. Type: string.
+    :vartype timezone: JSON
+    :ivar encoding: Gets or sets the .NET encoding that will be used to encode/decode PostgreSQL
+     string data. Type: string.
+    :vartype encoding: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string. Type:
+     string.
+    :vartype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "server": {"required": True},
+        "username": {"required": True},
+        "database": {"required": True},
+        "ssl_mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "username": {"key": "typeProperties.username", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "ssl_mode": {"key": "typeProperties.sslMode", "type": "object"},
+        "schema": {"key": "typeProperties.schema", "type": "object"},
+        "pooling": {"key": "typeProperties.pooling", "type": "object"},
+        "connection_timeout": {"key": "typeProperties.connectionTimeout", "type": "object"},
+        "command_timeout": {"key": "typeProperties.commandTimeout", "type": "object"},
+        "trust_server_certificate": {"key": "typeProperties.trustServerCertificate", "type": "object"},
+        "ssl_certificate": {"key": "typeProperties.sslCertificate", "type": "object"},
+        "ssl_key": {"key": "typeProperties.sslKey", "type": "object"},
+        "ssl_password": {"key": "typeProperties.sslPassword", "type": "object"},
+        "read_buffer_size": {"key": "typeProperties.readBufferSize", "type": "object"},
+        "log_parameters": {"key": "typeProperties.logParameters", "type": "object"},
+        "timezone": {"key": "typeProperties.timezone", "type": "object"},
+        "encoding": {"key": "typeProperties.encoding", "type": "object"},
+        "password": {"key": "typeProperties.password", "type": "AzureKeyVaultSecretReference"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        server: JSON,
+        username: JSON,
+        database: JSON,
+        ssl_mode: JSON,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        port: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        pooling: Optional[JSON] = None,
+        connection_timeout: Optional[JSON] = None,
+        command_timeout: Optional[JSON] = None,
+        trust_server_certificate: Optional[JSON] = None,
+        ssl_certificate: Optional[JSON] = None,
+        ssl_key: Optional[JSON] = None,
+        ssl_password: Optional[JSON] = None,
+        read_buffer_size: Optional[JSON] = None,
+        log_parameters: Optional[JSON] = None,
+        timezone: Optional[JSON] = None,
+        encoding: Optional[JSON] = None,
+        password: Optional["_models.AzureKeyVaultSecretReference"] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword server: Server name for connection. Type: string. Required.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword username: Username for authentication. Type: string. Required.
+        :paramtype username: JSON
+        :keyword database: Database name for connection. Type: string. Required.
+        :paramtype database: JSON
+        :keyword ssl_mode: SSL mode for connection. Type: integer. 0: disable, 1:allow, 2: prefer, 3:
+         require, 4: verify-ca, 5: verify-full. Type: integer. Required.
+        :paramtype ssl_mode: JSON
+        :keyword schema: Sets the schema search path. Type: string.
+        :paramtype schema: JSON
+        :keyword pooling: Whether connection pooling should be used. Type: boolean.
+        :paramtype pooling: JSON
+        :keyword connection_timeout: The time to wait (in seconds) while trying to establish a
+         connection before terminating the attempt and generating an error. Type: integer.
+        :paramtype connection_timeout: JSON
+        :keyword command_timeout: The time to wait (in seconds) while trying to execute a command
+         before terminating the attempt and generating an error. Set to zero for infinity. Type:
+         integer.
+        :paramtype command_timeout: JSON
+        :keyword trust_server_certificate: Whether to trust the server certificate without validating
+         it. Type: boolean.
+        :paramtype trust_server_certificate: JSON
+        :keyword ssl_certificate: Location of a client certificate to be sent to the server. Type:
+         string.
+        :paramtype ssl_certificate: JSON
+        :keyword ssl_key: Location of a client key for a client certificate to be sent to the server.
+         Type: string.
+        :paramtype ssl_key: JSON
+        :keyword ssl_password: Password for a key for a client certificate. Type: string.
+        :paramtype ssl_password: JSON
+        :keyword read_buffer_size: Determines the size of the internal buffer uses when reading.
+         Increasing may improve performance if transferring large values from the database. Type:
+         integer.
+        :paramtype read_buffer_size: JSON
+        :keyword log_parameters: When enabled, parameter values are logged when commands are executed.
+         Type: boolean.
+        :paramtype log_parameters: JSON
+        :keyword timezone: Gets or sets the session timezone. Type: string.
+        :paramtype timezone: JSON
+        :keyword encoding: Gets or sets the .NET encoding that will be used to encode/decode PostgreSQL
+         string data. Type: string.
+        :paramtype encoding: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string. Type:
+         string.
+        :paramtype password: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "PostgreSqlV2"
+        self.server = server
+        self.port = port
+        self.username = username
+        self.database = database
+        self.ssl_mode = ssl_mode
+        self.schema = schema
+        self.pooling = pooling
+        self.connection_timeout = connection_timeout
+        self.command_timeout = command_timeout
+        self.trust_server_certificate = trust_server_certificate
+        self.ssl_certificate = ssl_certificate
+        self.ssl_key = ssl_key
+        self.ssl_password = ssl_password
+        self.read_buffer_size = read_buffer_size
+        self.log_parameters = log_parameters
+        self.timezone = timezone
+        self.encoding = encoding
+        self.password = password
+        self.encrypted_credential = encrypted_credential
+
+
+class PostgreSqlV2Source(TabularSource):
+    """A copy activity source for PostgreSQL databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    :ivar query: Database query. Type: string (or Expression with resultType string).
+    :vartype query: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query_timeout": {"key": "queryTimeout", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "query": {"key": "query", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query_timeout: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        query: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        :keyword query: Database query. Type: string (or Expression with resultType string).
+        :paramtype query: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            query_timeout=query_timeout,
+            additional_columns=additional_columns,
+            **kwargs
+        )
+        self.type: str = "PostgreSqlV2Source"
+        self.query = query
+
+
+class PostgreSqlV2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """The PostgreSQLV2 table dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar table: The PostgreSQL table name. Type: string (or Expression with resultType string).
+    :vartype table: JSON
+    :ivar schema_type_properties_schema: The PostgreSQL schema name. Type: string (or Expression
+     with resultType string).
+    :vartype schema_type_properties_schema: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "table": {"key": "typeProperties.table", "type": "object"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        table: Optional[JSON] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword table: The PostgreSQL table name. Type: string (or Expression with resultType string).
+        :paramtype table: JSON
+        :keyword schema_type_properties_schema: The PostgreSQL schema name. Type: string (or Expression
+         with resultType string).
+        :paramtype schema_type_properties_schema: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "PostgreSqlV2Table"
+        self.table = table
+        self.schema_type_properties_schema = schema_type_properties_schema
+
+
 class PowerQuerySink(DataFlowSink):
     """Power query sink.
 
@@ -50553,7 +51585,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
      string (or Expression with resultType string).
     :vartype request_method: JSON
     :ivar additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
-     string (or Expression with resultType string).
+     key value pairs (value should be string type).
     :vartype additional_headers: JSON
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
@@ -50563,7 +51595,8 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar request_interval: The time to await before sending next request, in milliseconds.
     :vartype request_interval: JSON
     :ivar http_compression_type: Http Compression Type to Send data in compressed format with
-     Optimal Compression Level, Default is None. And The Only Supported option is Gzip.
+     Optimal Compression Level, Default is None. And The Only Supported option is Gzip. Type: string
+     (or Expression with resultType string).
     :vartype http_compression_type: JSON
     """
 
@@ -50630,7 +51663,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
          Type: string (or Expression with resultType string).
         :paramtype request_method: JSON
         :keyword additional_headers: The additional HTTP headers in the request to the RESTful API.
-         Type: string (or Expression with resultType string).
+         Type: key value pairs (value should be string type).
         :paramtype additional_headers: JSON
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:01:40.
@@ -50640,7 +51673,8 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword request_interval: The time to await before sending next request, in milliseconds.
         :paramtype request_interval: JSON
         :keyword http_compression_type: Http Compression Type to Send data in compressed format with
-         Optimal Compression Level, Default is None. And The Only Supported option is Gzip.
+         Optimal Compression Level, Default is None. And The Only Supported option is Gzip. Type: string
+         (or Expression with resultType string).
         :paramtype http_compression_type: JSON
         """
         super().__init__(
@@ -50703,7 +51737,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
     :ivar request_interval: The time to await before sending next page request.
     :vartype request_interval: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
-     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+     key value pairs (value should be string type).
     :vartype additional_columns: JSON
     """
 
@@ -50780,7 +51814,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
         :keyword request_interval: The time to await before sending next page request.
         :paramtype request_interval: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
-         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+         key value pairs (value should be string type).
         :paramtype additional_columns: JSON
         """
         super().__init__(
@@ -52035,6 +53069,471 @@ class SalesforceServiceCloudSource(CopySource):
         self.additional_columns = additional_columns
 
 
+class SalesforceServiceCloudV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Linked service for Salesforce Service Cloud V2.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar environment_url: The URL of Salesforce Service Cloud instance. For example,
+     'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
+    :vartype environment_url: JSON
+    :ivar authentication_type: The authentication type to be used to connect to the Salesforce.
+     Currently, we only support OAuth2ClientCredentials, it is also the default value.
+    :vartype authentication_type: JSON
+    :ivar client_id: The client Id for OAuth 2.0 Client Credentials Flow authentication of the
+     Salesforce instance. Type: string (or Expression with resultType string).
+    :vartype client_id: JSON
+    :ivar client_secret: The client secret for OAuth 2.0 Client Credentials Flow authentication of
+     the Salesforce instance.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar api_version: The Salesforce API version used in ADF. The version must be larger than or
+     equal to 47.0 which is required by Salesforce BULK API 2.0. Type: string (or Expression with
+     resultType string).
+    :vartype api_version: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "environment_url": {"key": "typeProperties.environmentUrl", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "object"},
+        "client_id": {"key": "typeProperties.clientId", "type": "object"},
+        "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
+        "api_version": {"key": "typeProperties.apiVersion", "type": "object"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        environment_url: Optional[JSON] = None,
+        authentication_type: Optional[JSON] = None,
+        client_id: Optional[JSON] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        api_version: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword environment_url: The URL of Salesforce Service Cloud instance. For example,
+         'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
+        :paramtype environment_url: JSON
+        :keyword authentication_type: The authentication type to be used to connect to the Salesforce.
+         Currently, we only support OAuth2ClientCredentials, it is also the default value.
+        :paramtype authentication_type: JSON
+        :keyword client_id: The client Id for OAuth 2.0 Client Credentials Flow authentication of the
+         Salesforce instance. Type: string (or Expression with resultType string).
+        :paramtype client_id: JSON
+        :keyword client_secret: The client secret for OAuth 2.0 Client Credentials Flow authentication
+         of the Salesforce instance.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword api_version: The Salesforce API version used in ADF. The version must be larger than
+         or equal to 47.0 which is required by Salesforce BULK API 2.0. Type: string (or Expression with
+         resultType string).
+        :paramtype api_version: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "SalesforceServiceCloudV2"
+        self.environment_url = environment_url
+        self.authentication_type = authentication_type
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.api_version = api_version
+        self.encrypted_credential = encrypted_credential
+
+
+class SalesforceServiceCloudV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """The Salesforce Service Cloud V2 object dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar object_api_name: The Salesforce Service Cloud V2 object API name. Type: string (or
+     Expression with resultType string).
+    :vartype object_api_name: JSON
+    :ivar report_id: The Salesforce Service Cloud V2 reportId. Type: string (or Expression with
+     resultType string).
+    :vartype report_id: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "object_api_name": {"key": "typeProperties.objectApiName", "type": "object"},
+        "report_id": {"key": "typeProperties.reportId", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        object_api_name: Optional[JSON] = None,
+        report_id: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword object_api_name: The Salesforce Service Cloud V2 object API name. Type: string (or
+         Expression with resultType string).
+        :paramtype object_api_name: JSON
+        :keyword report_id: The Salesforce Service Cloud V2 reportId. Type: string (or Expression with
+         resultType string).
+        :paramtype report_id: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "SalesforceServiceCloudV2Object"
+        self.object_api_name = object_api_name
+        self.report_id = report_id
+
+
+class SalesforceServiceCloudV2Sink(CopySink):  # pylint: disable=too-many-instance-attributes
+    """A copy activity Salesforce Service Cloud V2 sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy sink type. Required.
+    :vartype type: str
+    :ivar write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :vartype write_batch_size: JSON
+    :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype write_batch_timeout: JSON
+    :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype sink_retry_count: JSON
+    :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype sink_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar write_behavior: The write behavior for the operation. Default is Insert. Known values
+     are: "Insert" and "Upsert".
+    :vartype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceV2SinkWriteBehavior
+    :ivar external_id_field_name: The name of the external ID field for upsert operation. Default
+     value is 'Id' column. Type: string (or Expression with resultType string).
+    :vartype external_id_field_name: JSON
+    :ivar ignore_null_values: The flag indicating whether or not to ignore null values from input
+     dataset (except key fields) during write operation. Default value is false. If set it to true,
+     it means ADF will leave the data in the destination object unchanged when doing upsert/update
+     operation and insert defined default value when doing insert operation, versus ADF will update
+     the data in the destination object to NULL when doing upsert/update operation and insert NULL
+     value when doing insert operation. Type: boolean (or Expression with resultType boolean).
+    :vartype ignore_null_values: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "write_batch_size": {"key": "writeBatchSize", "type": "object"},
+        "write_batch_timeout": {"key": "writeBatchTimeout", "type": "object"},
+        "sink_retry_count": {"key": "sinkRetryCount", "type": "object"},
+        "sink_retry_wait": {"key": "sinkRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "write_behavior": {"key": "writeBehavior", "type": "str"},
+        "external_id_field_name": {"key": "externalIdFieldName", "type": "object"},
+        "ignore_null_values": {"key": "ignoreNullValues", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        write_batch_size: Optional[JSON] = None,
+        write_batch_timeout: Optional[JSON] = None,
+        sink_retry_count: Optional[JSON] = None,
+        sink_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        write_behavior: Optional[Union[str, "_models.SalesforceV2SinkWriteBehavior"]] = None,
+        external_id_field_name: Optional[JSON] = None,
+        ignore_null_values: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword write_batch_size: Write batch size. Type: integer (or Expression with resultType
+         integer), minimum: 0.
+        :paramtype write_batch_size: JSON
+        :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype write_batch_timeout: JSON
+        :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype sink_retry_count: JSON
+        :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype sink_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
+         store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword write_behavior: The write behavior for the operation. Default is Insert. Known values
+         are: "Insert" and "Upsert".
+        :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceV2SinkWriteBehavior
+        :keyword external_id_field_name: The name of the external ID field for upsert operation.
+         Default value is 'Id' column. Type: string (or Expression with resultType string).
+        :paramtype external_id_field_name: JSON
+        :keyword ignore_null_values: The flag indicating whether or not to ignore null values from
+         input dataset (except key fields) during write operation. Default value is false. If set it to
+         true, it means ADF will leave the data in the destination object unchanged when doing
+         upsert/update operation and insert defined default value when doing insert operation, versus
+         ADF will update the data in the destination object to NULL when doing upsert/update operation
+         and insert NULL value when doing insert operation. Type: boolean (or Expression with resultType
+         boolean).
+        :paramtype ignore_null_values: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            write_batch_size=write_batch_size,
+            write_batch_timeout=write_batch_timeout,
+            sink_retry_count=sink_retry_count,
+            sink_retry_wait=sink_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "SalesforceServiceCloudV2Sink"
+        self.write_behavior = write_behavior
+        self.external_id_field_name = external_id_field_name
+        self.ignore_null_values = ignore_null_values
+
+
+class SalesforceServiceCloudV2Source(CopySource):
+    """A copy activity Salesforce Service Cloud V2 source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :vartype soql_query: JSON
+    :ivar include_deleted_objects: This property control whether query result contains Deleted
+     objects. Default is false. Type: boolean (or Expression with resultType boolean).
+    :vartype include_deleted_objects: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        soql_query: Optional[JSON] = None,
+        include_deleted_objects: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :paramtype soql_query: JSON
+        :keyword include_deleted_objects: This property control whether query result contains Deleted
+         objects. Default is false. Type: boolean (or Expression with resultType boolean).
+        :paramtype include_deleted_objects: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "SalesforceServiceCloudV2Source"
+        self.soql_query = soql_query
+        self.include_deleted_objects = include_deleted_objects
+        self.additional_columns = additional_columns
+
+
 class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
     """A copy activity Salesforce sink.
 
@@ -52271,6 +53770,480 @@ class SalesforceSource(TabularSource):
         self.type: str = "SalesforceSource"
         self.query = query
         self.read_behavior = read_behavior
+
+
+class SalesforceV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Linked service for Salesforce V2.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar environment_url: The URL of Salesforce instance. For example,
+     'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
+    :vartype environment_url: JSON
+    :ivar authentication_type: The authentication type to be used to connect to the Salesforce.
+     Currently, we only support OAuth2ClientCredentials, it is also the default value.
+    :vartype authentication_type: JSON
+    :ivar client_id: The client Id for OAuth 2.0 Client Credentials Flow authentication of the
+     Salesforce instance. Type: string (or Expression with resultType string).
+    :vartype client_id: JSON
+    :ivar client_secret: The client secret for OAuth 2.0 Client Credentials Flow authentication of
+     the Salesforce instance.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar api_version: The Salesforce API version used in ADF. The version must be larger than or
+     equal to 47.0 which is required by Salesforce BULK API 2.0. Type: string (or Expression with
+     resultType string).
+    :vartype api_version: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "environment_url": {"key": "typeProperties.environmentUrl", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "object"},
+        "client_id": {"key": "typeProperties.clientId", "type": "object"},
+        "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
+        "api_version": {"key": "typeProperties.apiVersion", "type": "object"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        environment_url: Optional[JSON] = None,
+        authentication_type: Optional[JSON] = None,
+        client_id: Optional[JSON] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        api_version: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword environment_url: The URL of Salesforce instance. For example,
+         'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
+        :paramtype environment_url: JSON
+        :keyword authentication_type: The authentication type to be used to connect to the Salesforce.
+         Currently, we only support OAuth2ClientCredentials, it is also the default value.
+        :paramtype authentication_type: JSON
+        :keyword client_id: The client Id for OAuth 2.0 Client Credentials Flow authentication of the
+         Salesforce instance. Type: string (or Expression with resultType string).
+        :paramtype client_id: JSON
+        :keyword client_secret: The client secret for OAuth 2.0 Client Credentials Flow authentication
+         of the Salesforce instance.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword api_version: The Salesforce API version used in ADF. The version must be larger than
+         or equal to 47.0 which is required by Salesforce BULK API 2.0. Type: string (or Expression with
+         resultType string).
+        :paramtype api_version: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "SalesforceV2"
+        self.environment_url = environment_url
+        self.authentication_type = authentication_type
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.api_version = api_version
+        self.encrypted_credential = encrypted_credential
+
+
+class SalesforceV2ObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """The Salesforce V2 object dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar object_api_name: The Salesforce V2 object API name. Type: string (or Expression with
+     resultType string).
+    :vartype object_api_name: JSON
+    :ivar report_id: The Salesforce V2 report Id. Type: string (or Expression with resultType
+     string).
+    :vartype report_id: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "object_api_name": {"key": "typeProperties.objectApiName", "type": "object"},
+        "report_id": {"key": "typeProperties.reportId", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        object_api_name: Optional[JSON] = None,
+        report_id: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword object_api_name: The Salesforce V2 object API name. Type: string (or Expression with
+         resultType string).
+        :paramtype object_api_name: JSON
+        :keyword report_id: The Salesforce V2 report Id. Type: string (or Expression with resultType
+         string).
+        :paramtype report_id: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "SalesforceV2Object"
+        self.object_api_name = object_api_name
+        self.report_id = report_id
+
+
+class SalesforceV2Sink(CopySink):  # pylint: disable=too-many-instance-attributes
+    """A copy activity Salesforce V2 sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy sink type. Required.
+    :vartype type: str
+    :ivar write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :vartype write_batch_size: JSON
+    :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype write_batch_timeout: JSON
+    :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype sink_retry_count: JSON
+    :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype sink_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar write_behavior: The write behavior for the operation. Default is Insert. Known values
+     are: "Insert" and "Upsert".
+    :vartype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceV2SinkWriteBehavior
+    :ivar external_id_field_name: The name of the external ID field for upsert operation. Default
+     value is 'Id' column. Type: string (or Expression with resultType string).
+    :vartype external_id_field_name: JSON
+    :ivar ignore_null_values: The flag indicating whether or not to ignore null values from input
+     dataset (except key fields) during write operation. Default value is false. If set it to true,
+     it means ADF will leave the data in the destination object unchanged when doing upsert/update
+     operation and insert defined default value when doing insert operation, versus ADF will update
+     the data in the destination object to NULL when doing upsert/update operation and insert NULL
+     value when doing insert operation. Type: boolean (or Expression with resultType boolean).
+    :vartype ignore_null_values: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "write_batch_size": {"key": "writeBatchSize", "type": "object"},
+        "write_batch_timeout": {"key": "writeBatchTimeout", "type": "object"},
+        "sink_retry_count": {"key": "sinkRetryCount", "type": "object"},
+        "sink_retry_wait": {"key": "sinkRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "write_behavior": {"key": "writeBehavior", "type": "str"},
+        "external_id_field_name": {"key": "externalIdFieldName", "type": "object"},
+        "ignore_null_values": {"key": "ignoreNullValues", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        write_batch_size: Optional[JSON] = None,
+        write_batch_timeout: Optional[JSON] = None,
+        sink_retry_count: Optional[JSON] = None,
+        sink_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        write_behavior: Optional[Union[str, "_models.SalesforceV2SinkWriteBehavior"]] = None,
+        external_id_field_name: Optional[JSON] = None,
+        ignore_null_values: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword write_batch_size: Write batch size. Type: integer (or Expression with resultType
+         integer), minimum: 0.
+        :paramtype write_batch_size: JSON
+        :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype write_batch_timeout: JSON
+        :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype sink_retry_count: JSON
+        :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype sink_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
+         store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword write_behavior: The write behavior for the operation. Default is Insert. Known values
+         are: "Insert" and "Upsert".
+        :paramtype write_behavior: str or ~azure.mgmt.datafactory.models.SalesforceV2SinkWriteBehavior
+        :keyword external_id_field_name: The name of the external ID field for upsert operation.
+         Default value is 'Id' column. Type: string (or Expression with resultType string).
+        :paramtype external_id_field_name: JSON
+        :keyword ignore_null_values: The flag indicating whether or not to ignore null values from
+         input dataset (except key fields) during write operation. Default value is false. If set it to
+         true, it means ADF will leave the data in the destination object unchanged when doing
+         upsert/update operation and insert defined default value when doing insert operation, versus
+         ADF will update the data in the destination object to NULL when doing upsert/update operation
+         and insert NULL value when doing insert operation. Type: boolean (or Expression with resultType
+         boolean).
+        :paramtype ignore_null_values: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            write_batch_size=write_batch_size,
+            write_batch_timeout=write_batch_timeout,
+            sink_retry_count=sink_retry_count,
+            sink_retry_wait=sink_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "SalesforceV2Sink"
+        self.write_behavior = write_behavior
+        self.external_id_field_name = external_id_field_name
+        self.ignore_null_values = ignore_null_values
+
+
+class SalesforceV2Source(TabularSource):
+    """A copy activity Salesforce V2 source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    :ivar soql_query: Database query. Type: string (or Expression with resultType string).
+    :vartype soql_query: JSON
+    :ivar include_deleted_objects: This property control whether query result contains Deleted
+     objects. Default is false. Type: boolean (or Expression with resultType boolean).
+    :vartype include_deleted_objects: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query_timeout": {"key": "queryTimeout", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "soql_query": {"key": "SOQLQuery", "type": "object"},
+        "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query_timeout: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        soql_query: Optional[JSON] = None,
+        include_deleted_objects: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        :keyword soql_query: Database query. Type: string (or Expression with resultType string).
+        :paramtype soql_query: JSON
+        :keyword include_deleted_objects: This property control whether query result contains Deleted
+         objects. Default is false. Type: boolean (or Expression with resultType boolean).
+        :paramtype include_deleted_objects: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            query_timeout=query_timeout,
+            additional_columns=additional_columns,
+            **kwargs
+        )
+        self.type: str = "SalesforceV2Source"
+        self.soql_query = soql_query
+        self.include_deleted_objects = include_deleted_objects
 
 
 class SapBwCubeDataset(Dataset):
@@ -56475,6 +58448,345 @@ class ServiceNowSource(TabularSource):
         self.query = query
 
 
+class ServiceNowV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """ServiceNowV2 server linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar endpoint: The endpoint of the ServiceNowV2 server. (i.e.
+     :code:`<instance>`.service-now.com). Required.
+    :vartype endpoint: JSON
+    :ivar authentication_type: The authentication type to use. Required. Known values are: "Basic"
+     and "OAuth2".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.ServiceNowV2AuthenticationType
+    :ivar username: The user name used to connect to the ServiceNowV2 server for Basic and OAuth2
+     authentication.
+    :vartype username: JSON
+    :ivar password: The password corresponding to the user name for Basic and OAuth2
+     authentication.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar client_id: The client id for OAuth2 authentication.
+    :vartype client_id: JSON
+    :ivar client_secret: The client secret for OAuth2 authentication.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar grant_type: GrantType for OAuth2 authentication. Default value is password.
+    :vartype grant_type: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "endpoint": {"required": True},
+        "authentication_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "endpoint": {"key": "typeProperties.endpoint", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "username": {"key": "typeProperties.username", "type": "object"},
+        "password": {"key": "typeProperties.password", "type": "SecretBase"},
+        "client_id": {"key": "typeProperties.clientId", "type": "object"},
+        "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
+        "grant_type": {"key": "typeProperties.grantType", "type": "object"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint: JSON,
+        authentication_type: Union[str, "_models.ServiceNowV2AuthenticationType"],
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        username: Optional[JSON] = None,
+        password: Optional["_models.SecretBase"] = None,
+        client_id: Optional[JSON] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        grant_type: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword endpoint: The endpoint of the ServiceNowV2 server. (i.e.
+         :code:`<instance>`.service-now.com). Required.
+        :paramtype endpoint: JSON
+        :keyword authentication_type: The authentication type to use. Required. Known values are:
+         "Basic" and "OAuth2".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.ServiceNowV2AuthenticationType
+        :keyword username: The user name used to connect to the ServiceNowV2 server for Basic and
+         OAuth2 authentication.
+        :paramtype username: JSON
+        :keyword password: The password corresponding to the user name for Basic and OAuth2
+         authentication.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword client_id: The client id for OAuth2 authentication.
+        :paramtype client_id: JSON
+        :keyword client_secret: The client secret for OAuth2 authentication.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword grant_type: GrantType for OAuth2 authentication. Default value is password.
+        :paramtype grant_type: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "ServiceNowV2"
+        self.endpoint = endpoint
+        self.authentication_type = authentication_type
+        self.username = username
+        self.password = password
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.grant_type = grant_type
+        self.encrypted_credential = encrypted_credential
+
+
+class ServiceNowV2ObjectDataset(Dataset):
+    """ServiceNowV2 server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar table_name: The table name. Type: string (or Expression with resultType string).
+    :vartype table_name: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "table_name": {"key": "typeProperties.tableName", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        table_name: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword table_name: The table name. Type: string (or Expression with resultType string).
+        :paramtype table_name: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "ServiceNowV2Object"
+        self.table_name = table_name
+
+
+class ServiceNowV2Source(TabularSource):
+    """A copy activity ServiceNowV2 server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    :ivar expression: Expression to filter data from source.
+    :vartype expression: ~azure.mgmt.datafactory.models.ExpressionV2
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query_timeout": {"key": "queryTimeout", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "expression": {"key": "expression", "type": "ExpressionV2"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query_timeout: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        expression: Optional["_models.ExpressionV2"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        :keyword expression: Expression to filter data from source.
+        :paramtype expression: ~azure.mgmt.datafactory.models.ExpressionV2
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            query_timeout=query_timeout,
+            additional_columns=additional_columns,
+            **kwargs
+        )
+        self.type: str = "ServiceNowV2Source"
+        self.expression = expression
+
+
 class ServicePrincipalCredential(Credential):
     """Service principal credential.
 
@@ -57056,6 +59368,9 @@ class SftpWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar operation_timeout: Specifies the timeout for writing each chunk to SFTP server. Default
      value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
     :vartype operation_timeout: JSON
@@ -57075,6 +59390,7 @@ class SftpWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "operation_timeout": {"key": "operationTimeout", "type": "object"},
         "use_temp_file_rename": {"key": "useTempFileRename", "type": "object"},
     }
@@ -57086,6 +59402,7 @@ class SftpWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         operation_timeout: Optional[JSON] = None,
         use_temp_file_rename: Optional[JSON] = None,
         **kwargs: Any
@@ -57102,6 +59419,9 @@ class SftpWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword operation_timeout: Specifies the timeout for writing each chunk to SFTP server.
          Default value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
         :paramtype operation_timeout: JSON
@@ -57115,6 +59435,7 @@ class SftpWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "SftpWriteSettings"
@@ -58414,6 +60735,496 @@ class SnowflakeSource(CopySource):
         self.export_settings = export_settings
 
 
+class SnowflakeV2Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """The snowflake dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar schema_type_properties_schema: The schema name of the Snowflake database. Type: string
+     (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
+    :ivar table: The table name of the Snowflake database. Type: string (or Expression with
+     resultType string).
+    :vartype table: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
+        "table": {"key": "typeProperties.table", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
+        table: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword schema_type_properties_schema: The schema name of the Snowflake database. Type: string
+         (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
+        :keyword table: The table name of the Snowflake database. Type: string (or Expression with
+         resultType string).
+        :paramtype table: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "SnowflakeV2Table"
+        self.schema_type_properties_schema = schema_type_properties_schema
+        self.table = table
+
+
+class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Snowflake linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar account_identifier: The account identifier of your Snowflake account, e.g.
+     xy12345.east-us-2.azure. Required.
+    :vartype account_identifier: JSON
+    :ivar user: The name of the Snowflake user.
+    :vartype user: JSON
+    :ivar password: The Azure key vault secret reference of password in connection string.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar database: The name of the Snowflake database. Required.
+    :vartype database: JSON
+    :ivar warehouse: The name of the Snowflake warehouse. Required.
+    :vartype warehouse: JSON
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "Basic", "KeyPair", and "AADServicePrincipal".
+    :vartype authentication_type: str or ~azure.mgmt.datafactory.models.SnowflakeAuthenticationType
+    :ivar client_id: The client ID of the application registered in Azure Active Directory for
+     AADServicePrincipal authentication.
+    :vartype client_id: JSON
+    :ivar client_secret: The Azure key vault secret reference of client secret for
+     AADServicePrincipal authentication.
+    :vartype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar tenant_id: The tenant ID of the application registered in Azure Active Directory for
+     AADServicePrincipal authentication.
+    :vartype tenant_id: JSON
+    :ivar scope: The scope of the application registered in Azure Active Directory for
+     AADServicePrincipal authentication.
+    :vartype scope: JSON
+    :ivar private_key: The Azure key vault secret reference of privateKey for KeyPair auth.
+    :vartype private_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar private_key_passphrase: The Azure key vault secret reference of private key password for
+     KeyPair auth with encrypted private key.
+    :vartype private_key_passphrase: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "account_identifier": {"required": True},
+        "database": {"required": True},
+        "warehouse": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "account_identifier": {"key": "typeProperties.accountIdentifier", "type": "object"},
+        "user": {"key": "typeProperties.user", "type": "object"},
+        "password": {"key": "typeProperties.password", "type": "SecretBase"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "warehouse": {"key": "typeProperties.warehouse", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "client_id": {"key": "typeProperties.clientId", "type": "object"},
+        "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
+        "tenant_id": {"key": "typeProperties.tenantId", "type": "object"},
+        "scope": {"key": "typeProperties.scope", "type": "object"},
+        "private_key": {"key": "typeProperties.privateKey", "type": "SecretBase"},
+        "private_key_passphrase": {"key": "typeProperties.privateKeyPassphrase", "type": "SecretBase"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        account_identifier: JSON,
+        database: JSON,
+        warehouse: JSON,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        user: Optional[JSON] = None,
+        password: Optional["_models.SecretBase"] = None,
+        authentication_type: Union[str, "_models.SnowflakeAuthenticationType"] = "Basic",
+        client_id: Optional[JSON] = None,
+        client_secret: Optional["_models.SecretBase"] = None,
+        tenant_id: Optional[JSON] = None,
+        scope: Optional[JSON] = None,
+        private_key: Optional["_models.SecretBase"] = None,
+        private_key_passphrase: Optional["_models.SecretBase"] = None,
+        encrypted_credential: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword account_identifier: The account identifier of your Snowflake account, e.g.
+         xy12345.east-us-2.azure. Required.
+        :paramtype account_identifier: JSON
+        :keyword user: The name of the Snowflake user.
+        :paramtype user: JSON
+        :keyword password: The Azure key vault secret reference of password in connection string.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword database: The name of the Snowflake database. Required.
+        :paramtype database: JSON
+        :keyword warehouse: The name of the Snowflake warehouse. Required.
+        :paramtype warehouse: JSON
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "Basic", "KeyPair", and "AADServicePrincipal".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.SnowflakeAuthenticationType
+        :keyword client_id: The client ID of the application registered in Azure Active Directory for
+         AADServicePrincipal authentication.
+        :paramtype client_id: JSON
+        :keyword client_secret: The Azure key vault secret reference of client secret for
+         AADServicePrincipal authentication.
+        :paramtype client_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword tenant_id: The tenant ID of the application registered in Azure Active Directory for
+         AADServicePrincipal authentication.
+        :paramtype tenant_id: JSON
+        :keyword scope: The scope of the application registered in Azure Active Directory for
+         AADServicePrincipal authentication.
+        :paramtype scope: JSON
+        :keyword private_key: The Azure key vault secret reference of privateKey for KeyPair auth.
+        :paramtype private_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword private_key_passphrase: The Azure key vault secret reference of private key password
+         for KeyPair auth with encrypted private key.
+        :paramtype private_key_passphrase: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "SnowflakeV2"
+        self.account_identifier = account_identifier
+        self.user = user
+        self.password = password
+        self.database = database
+        self.warehouse = warehouse
+        self.authentication_type = authentication_type
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.tenant_id = tenant_id
+        self.scope = scope
+        self.private_key = private_key
+        self.private_key_passphrase = private_key_passphrase
+        self.encrypted_credential = encrypted_credential
+
+
+class SnowflakeV2Sink(CopySink):
+    """A copy activity snowflake sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy sink type. Required.
+    :vartype type: str
+    :ivar write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :vartype write_batch_size: JSON
+    :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype write_batch_timeout: JSON
+    :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype sink_retry_count: JSON
+    :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype sink_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :vartype pre_copy_script: JSON
+    :ivar import_settings: Snowflake import settings.
+    :vartype import_settings: ~azure.mgmt.datafactory.models.SnowflakeImportCopyCommand
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "write_batch_size": {"key": "writeBatchSize", "type": "object"},
+        "write_batch_timeout": {"key": "writeBatchTimeout", "type": "object"},
+        "sink_retry_count": {"key": "sinkRetryCount", "type": "object"},
+        "sink_retry_wait": {"key": "sinkRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "pre_copy_script": {"key": "preCopyScript", "type": "object"},
+        "import_settings": {"key": "importSettings", "type": "SnowflakeImportCopyCommand"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        write_batch_size: Optional[JSON] = None,
+        write_batch_timeout: Optional[JSON] = None,
+        sink_retry_count: Optional[JSON] = None,
+        sink_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        pre_copy_script: Optional[JSON] = None,
+        import_settings: Optional["_models.SnowflakeImportCopyCommand"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword write_batch_size: Write batch size. Type: integer (or Expression with resultType
+         integer), minimum: 0.
+        :paramtype write_batch_size: JSON
+        :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype write_batch_timeout: JSON
+        :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype sink_retry_count: JSON
+        :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype sink_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
+         store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+         string).
+        :paramtype pre_copy_script: JSON
+        :keyword import_settings: Snowflake import settings.
+        :paramtype import_settings: ~azure.mgmt.datafactory.models.SnowflakeImportCopyCommand
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            write_batch_size=write_batch_size,
+            write_batch_timeout=write_batch_timeout,
+            sink_retry_count=sink_retry_count,
+            sink_retry_wait=sink_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "SnowflakeV2Sink"
+        self.pre_copy_script = pre_copy_script
+        self.import_settings = import_settings
+
+
+class SnowflakeV2Source(CopySource):
+    """A copy activity snowflake source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query: Snowflake Sql query. Type: string (or Expression with resultType string).
+    :vartype query: JSON
+    :ivar export_settings: Snowflake export settings. Required.
+    :vartype export_settings: ~azure.mgmt.datafactory.models.SnowflakeExportCopyCommand
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "export_settings": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query": {"key": "query", "type": "object"},
+        "export_settings": {"key": "exportSettings", "type": "SnowflakeExportCopyCommand"},
+    }
+
+    def __init__(
+        self,
+        *,
+        export_settings: "_models.SnowflakeExportCopyCommand",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query: Snowflake Sql query. Type: string (or Expression with resultType string).
+        :paramtype query: JSON
+        :keyword export_settings: Snowflake export settings. Required.
+        :paramtype export_settings: ~azure.mgmt.datafactory.models.SnowflakeExportCopyCommand
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "SnowflakeV2Source"
+        self.query = query
+        self.export_settings = export_settings
+
+
 class SparkConfigurationParametrizationReference(_serialization.Model):
     """Spark configuration reference.
 
@@ -59145,7 +61956,8 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
      is ReadCommitted. Type: string (or Expression with resultType string).
     :vartype isolation_level: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59228,7 +62040,8 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
          value is ReadCommitted. Type: string (or Expression with resultType string).
         :paramtype isolation_level: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59332,8 +62145,8 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: White behavior when copying data into azure SQL MI. Type:
-     SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: White behavior when copying data into azure SQL MI. Type: string (or
+     Expression with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59429,8 +62242,8 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: White behavior when copying data into azure SQL MI. Type:
-         SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: White behavior when copying data into azure SQL MI. Type: string (or
+         Expression with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59501,7 +62314,8 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59587,7 +62401,8 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59830,8 +62645,8 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: Write behavior when copying data into sql server. Type:
-     SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: Write behavior when copying data into sql server. Type: string (or
+     Expression with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59927,8 +62742,8 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: Write behavior when copying data into sql server. Type:
-         SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: Write behavior when copying data into sql server. Type: string (or
+         Expression with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59999,7 +62814,8 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60085,7 +62901,8 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60401,8 +63218,8 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: Write behavior when copying data into sql. Type: SqlWriteBehaviorEnum (or
-     Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: Write behavior when copying data into sql. Type: string (or Expression
+     with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -60498,8 +63315,8 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: Write behavior when copying data into sql. Type: SqlWriteBehaviorEnum
-         (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: Write behavior when copying data into sql. Type: string (or Expression
+         with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -60568,7 +63385,8 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
      is ReadCommitted. Type: string (or Expression with resultType string).
     :vartype isolation_level: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60650,7 +63468,8 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
          value is ReadCommitted. Type: string (or Expression with resultType string).
         :paramtype isolation_level: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -65620,6 +68439,568 @@ class WaitActivity(ControlActivity):
         self.wait_time_in_seconds = wait_time_in_seconds
 
 
+class WarehouseLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
+    """Microsoft Fabric Warehouse linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of linked service. Required.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[JSON]
+    :ivar artifact_id: The ID of Microsoft Fabric Warehouse artifact. Type: string (or Expression
+     with resultType string). Required.
+    :vartype artifact_id: JSON
+    :ivar endpoint: The endpoint of Microsoft Fabric Warehouse server. Type: string (or Expression
+     with resultType string). Required.
+    :vartype endpoint: JSON
+    :ivar workspace_id: The ID of Microsoft Fabric workspace. Type: string (or Expression with
+     resultType string).
+    :vartype workspace_id: JSON
+    :ivar service_principal_id: The ID of the application used to authenticate against Microsoft
+     Fabric Warehouse. Type: string (or Expression with resultType string).
+    :vartype service_principal_id: JSON
+    :ivar service_principal_key: The Key of the application used to authenticate against Microsoft
+     Fabric Warehouse.
+    :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
+     (or Expression with resultType string).
+    :vartype tenant: JSON
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string.
+    :vartype encrypted_credential: str
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "artifact_id": {"required": True},
+        "endpoint": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "connect_via": {"key": "connectVia", "type": "IntegrationRuntimeReference"},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "artifact_id": {"key": "typeProperties.artifactId", "type": "object"},
+        "endpoint": {"key": "typeProperties.endpoint", "type": "object"},
+        "workspace_id": {"key": "typeProperties.workspaceId", "type": "object"},
+        "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
+        "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "tenant": {"key": "typeProperties.tenant", "type": "object"},
+        "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+    }
+
+    def __init__(
+        self,
+        *,
+        artifact_id: JSON,
+        endpoint: JSON,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        workspace_id: Optional[JSON] = None,
+        service_principal_id: Optional[JSON] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        tenant: Optional[JSON] = None,
+        encrypted_credential: Optional[str] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_credential: Optional["_models.SecretBase"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[JSON]
+        :keyword artifact_id: The ID of Microsoft Fabric Warehouse artifact. Type: string (or
+         Expression with resultType string). Required.
+        :paramtype artifact_id: JSON
+        :keyword endpoint: The endpoint of Microsoft Fabric Warehouse server. Type: string (or
+         Expression with resultType string). Required.
+        :paramtype endpoint: JSON
+        :keyword workspace_id: The ID of Microsoft Fabric workspace. Type: string (or Expression with
+         resultType string).
+        :paramtype workspace_id: JSON
+        :keyword service_principal_id: The ID of the application used to authenticate against Microsoft
+         Fabric Warehouse. Type: string (or Expression with resultType string).
+        :paramtype service_principal_id: JSON
+        :keyword service_principal_key: The Key of the application used to authenticate against
+         Microsoft Fabric Warehouse.
+        :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
+         string (or Expression with resultType string).
+        :paramtype tenant: JSON
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string.
+        :paramtype encrypted_credential: str
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            connect_via=connect_via,
+            description=description,
+            parameters=parameters,
+            annotations=annotations,
+            **kwargs
+        )
+        self.type: str = "Warehouse"
+        self.artifact_id = artifact_id
+        self.endpoint = endpoint
+        self.workspace_id = workspace_id
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.encrypted_credential = encrypted_credential
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
+
+
+class WarehouseSink(CopySink):  # pylint: disable=too-many-instance-attributes
+    """A copy activity Microsoft Fabric Warehouse sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy sink type. Required.
+    :vartype type: str
+    :ivar write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :vartype write_batch_size: JSON
+    :ivar write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype write_batch_timeout: JSON
+    :ivar sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype sink_retry_count: JSON
+    :ivar sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype sink_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :vartype pre_copy_script: JSON
+    :ivar allow_copy_command: Indicates to use Copy Command to copy data into SQL Data Warehouse.
+     Type: boolean (or Expression with resultType boolean).
+    :vartype allow_copy_command: JSON
+    :ivar copy_command_settings: Specifies Copy Command related settings when allowCopyCommand is
+     true.
+    :vartype copy_command_settings: ~azure.mgmt.datafactory.models.DWCopyCommandSettings
+    :ivar table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :vartype table_option: JSON
+    :ivar write_behavior: Write behavior when copying data into azure Microsoft Fabric Data
+     Warehouse. Type: DWWriteBehaviorEnum (or Expression with resultType DWWriteBehaviorEnum).
+    :vartype write_behavior: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "write_batch_size": {"key": "writeBatchSize", "type": "object"},
+        "write_batch_timeout": {"key": "writeBatchTimeout", "type": "object"},
+        "sink_retry_count": {"key": "sinkRetryCount", "type": "object"},
+        "sink_retry_wait": {"key": "sinkRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "pre_copy_script": {"key": "preCopyScript", "type": "object"},
+        "allow_copy_command": {"key": "allowCopyCommand", "type": "object"},
+        "copy_command_settings": {"key": "copyCommandSettings", "type": "DWCopyCommandSettings"},
+        "table_option": {"key": "tableOption", "type": "object"},
+        "write_behavior": {"key": "writeBehavior", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        write_batch_size: Optional[JSON] = None,
+        write_batch_timeout: Optional[JSON] = None,
+        sink_retry_count: Optional[JSON] = None,
+        sink_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        pre_copy_script: Optional[JSON] = None,
+        allow_copy_command: Optional[JSON] = None,
+        copy_command_settings: Optional["_models.DWCopyCommandSettings"] = None,
+        table_option: Optional[JSON] = None,
+        write_behavior: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword write_batch_size: Write batch size. Type: integer (or Expression with resultType
+         integer), minimum: 0.
+        :paramtype write_batch_size: JSON
+        :keyword write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype write_batch_timeout: JSON
+        :keyword sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype sink_retry_count: JSON
+        :keyword sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype sink_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
+         store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+         string).
+        :paramtype pre_copy_script: JSON
+        :keyword allow_copy_command: Indicates to use Copy Command to copy data into SQL Data
+         Warehouse. Type: boolean (or Expression with resultType boolean).
+        :paramtype allow_copy_command: JSON
+        :keyword copy_command_settings: Specifies Copy Command related settings when allowCopyCommand
+         is true.
+        :paramtype copy_command_settings: ~azure.mgmt.datafactory.models.DWCopyCommandSettings
+        :keyword table_option: The option to handle sink table, such as autoCreate. For now only
+         'autoCreate' value is supported. Type: string (or Expression with resultType string).
+        :paramtype table_option: JSON
+        :keyword write_behavior: Write behavior when copying data into azure Microsoft Fabric Data
+         Warehouse. Type: DWWriteBehaviorEnum (or Expression with resultType DWWriteBehaviorEnum).
+        :paramtype write_behavior: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            write_batch_size=write_batch_size,
+            write_batch_timeout=write_batch_timeout,
+            sink_retry_count=sink_retry_count,
+            sink_retry_wait=sink_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            **kwargs
+        )
+        self.type: str = "WarehouseSink"
+        self.pre_copy_script = pre_copy_script
+        self.allow_copy_command = allow_copy_command
+        self.copy_command_settings = copy_command_settings
+        self.table_option = table_option
+        self.write_behavior = write_behavior
+
+
+class WarehouseSource(TabularSource):  # pylint: disable=too-many-instance-attributes
+    """A copy activity Microsoft Fabric Warehouse source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Copy source type. Required.
+    :vartype type: str
+    :ivar source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :vartype source_retry_count: JSON
+    :ivar source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype source_retry_wait: JSON
+    :ivar max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :vartype max_concurrent_connections: JSON
+    :ivar disable_metrics_collection: If true, disable data store metrics collection. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :vartype disable_metrics_collection: JSON
+    :ivar query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype query_timeout: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
+    :ivar sql_reader_query: Microsoft Fabric Warehouse reader query. Type: string (or Expression
+     with resultType string).
+    :vartype sql_reader_query: JSON
+    :ivar sql_reader_stored_procedure_name: Name of the stored procedure for a Microsoft Fabric
+     Warehouse source. This cannot be used at the same time as SqlReaderQuery. Type: string (or
+     Expression with resultType string).
+    :vartype sql_reader_stored_procedure_name: JSON
+    :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
+     object), itemType: StoredProcedureParameter.
+    :vartype stored_procedure_parameters: JSON
+    :ivar isolation_level: Specifies the transaction locking behavior for the Microsoft Fabric
+     Warehouse source. Allowed values:
+     ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value is
+     ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
+    :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+    :vartype partition_option: JSON
+    :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
+    :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "source_retry_count": {"key": "sourceRetryCount", "type": "object"},
+        "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
+        "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
+        "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
+        "query_timeout": {"key": "queryTimeout", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
+        "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
+        "partition_option": {"key": "partitionOption", "type": "object"},
+        "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        source_retry_count: Optional[JSON] = None,
+        source_retry_wait: Optional[JSON] = None,
+        max_concurrent_connections: Optional[JSON] = None,
+        disable_metrics_collection: Optional[JSON] = None,
+        query_timeout: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
+        sql_reader_query: Optional[JSON] = None,
+        sql_reader_stored_procedure_name: Optional[JSON] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
+        isolation_level: Optional[JSON] = None,
+        partition_option: Optional[JSON] = None,
+        partition_settings: Optional["_models.SqlPartitionSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword source_retry_count: Source retry count. Type: integer (or Expression with resultType
+         integer).
+        :paramtype source_retry_count: JSON
+        :keyword source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+         string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype source_retry_wait: JSON
+        :keyword max_concurrent_connections: The maximum concurrent connection count for the source
+         data store. Type: integer (or Expression with resultType integer).
+        :paramtype max_concurrent_connections: JSON
+        :keyword disable_metrics_collection: If true, disable data store metrics collection. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_metrics_collection: JSON
+        :keyword query_timeout: Query timeout. Type: string (or Expression with resultType string),
+         pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype query_timeout: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
+        :keyword sql_reader_query: Microsoft Fabric Warehouse reader query. Type: string (or Expression
+         with resultType string).
+        :paramtype sql_reader_query: JSON
+        :keyword sql_reader_stored_procedure_name: Name of the stored procedure for a Microsoft Fabric
+         Warehouse source. This cannot be used at the same time as SqlReaderQuery. Type: string (or
+         Expression with resultType string).
+        :paramtype sql_reader_stored_procedure_name: JSON
+        :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
+         Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
+         object), itemType: StoredProcedureParameter.
+        :paramtype stored_procedure_parameters: JSON
+        :keyword isolation_level: Specifies the transaction locking behavior for the Microsoft Fabric
+         Warehouse source. Allowed values:
+         ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value is
+         ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
+        :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+        :paramtype partition_option: JSON
+        :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
+        :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            source_retry_count=source_retry_count,
+            source_retry_wait=source_retry_wait,
+            max_concurrent_connections=max_concurrent_connections,
+            disable_metrics_collection=disable_metrics_collection,
+            query_timeout=query_timeout,
+            additional_columns=additional_columns,
+            **kwargs
+        )
+        self.type: str = "WarehouseSource"
+        self.sql_reader_query = sql_reader_query
+        self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
+        self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
+        self.partition_option = partition_option
+        self.partition_settings = partition_settings
+
+
+class WarehouseTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
+    """Microsoft Fabric Warehouse dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Type of dataset. Required.
+    :vartype type: str
+    :ivar description: Dataset description.
+    :vartype description: str
+    :ivar structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :vartype structure: JSON
+    :ivar schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :vartype schema: JSON
+    :ivar linked_service_name: Linked service reference. Required.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar parameters: Parameters for dataset.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the Dataset.
+    :vartype annotations: list[JSON]
+    :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :ivar schema_type_properties_schema: The schema name of the Microsoft Fabric Warehouse. Type:
+     string (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
+    :ivar table: The table name of the Microsoft Fabric Warehouse. Type: string (or Expression with
+     resultType string).
+    :vartype table: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "linked_service_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "structure": {"key": "structure", "type": "object"},
+        "schema": {"key": "schema", "type": "object"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
+        "annotations": {"key": "annotations", "type": "[object]"},
+        "folder": {"key": "folder", "type": "DatasetFolder"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
+        "table": {"key": "typeProperties.table", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_service_name: "_models.LinkedServiceReference",
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        structure: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[List[JSON]] = None,
+        folder: Optional["_models.DatasetFolder"] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
+        table: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword description: Dataset description.
+        :paramtype description: str
+        :keyword structure: Columns that define the structure of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetDataElement.
+        :paramtype structure: JSON
+        :keyword schema: Columns that define the physical type schema of the dataset. Type: array (or
+         Expression with resultType array), itemType: DatasetSchemaDataElement.
+        :paramtype schema: JSON
+        :keyword linked_service_name: Linked service reference. Required.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword parameters: Parameters for dataset.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the Dataset.
+        :paramtype annotations: list[JSON]
+        :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
+         the root level.
+        :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
+        :keyword schema_type_properties_schema: The schema name of the Microsoft Fabric Warehouse.
+         Type: string (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
+        :keyword table: The table name of the Microsoft Fabric Warehouse. Type: string (or Expression
+         with resultType string).
+        :paramtype table: JSON
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            description=description,
+            structure=structure,
+            schema=schema,
+            linked_service_name=linked_service_name,
+            parameters=parameters,
+            annotations=annotations,
+            folder=folder,
+            **kwargs
+        )
+        self.type: str = "WarehouseTable"
+        self.schema_type_properties_schema = schema_type_properties_schema
+        self.table = table
+
+
 class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Web activity.
 
@@ -65658,7 +69039,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: JSON
+    :vartype headers: dict[str, str]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -65666,6 +69047,15 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :vartype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
     :ivar disable_cert_validation: When set to true, Certificate validation will be disabled.
     :vartype disable_cert_validation: bool
+    :ivar http_request_timeout: Timeout for the HTTP request to get a response. Format is in
+     TimeSpan (hh:mm:ss). This value is the timeout to get a response, not the activity timeout. The
+     default value is 00:01:00 (1 minute). The range is from 1 to 10 minutes.
+    :vartype http_request_timeout: JSON
+    :ivar turn_off_async: Option to disable invoking HTTP GET on location given in response header
+     of a HTTP 202 Response. If set true, it stops invoking HTTP GET on http location given in
+     response header. If set false then continues to invoke HTTP GET call on location given in http
+     response headers.
+    :vartype turn_off_async: bool
     :ivar datasets: List of datasets passed to web endpoint.
     :vartype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :ivar linked_services: List of linked services passed to web endpoint.
@@ -65694,10 +69084,12 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         "policy": {"key": "policy", "type": "ActivityPolicy"},
         "method": {"key": "typeProperties.method", "type": "str"},
         "url": {"key": "typeProperties.url", "type": "object"},
-        "headers": {"key": "typeProperties.headers", "type": "object"},
+        "headers": {"key": "typeProperties.headers", "type": "{str}"},
         "body": {"key": "typeProperties.body", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "WebActivityAuthentication"},
         "disable_cert_validation": {"key": "typeProperties.disableCertValidation", "type": "bool"},
+        "http_request_timeout": {"key": "typeProperties.httpRequestTimeout", "type": "object"},
+        "turn_off_async": {"key": "typeProperties.turnOffAsync", "type": "bool"},
         "datasets": {"key": "typeProperties.datasets", "type": "[DatasetReference]"},
         "linked_services": {"key": "typeProperties.linkedServices", "type": "[LinkedServiceReference]"},
         "connect_via": {"key": "typeProperties.connectVia", "type": "IntegrationRuntimeReference"},
@@ -65717,10 +69109,12 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[JSON] = None,
+        headers: Optional[Dict[str, str]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         disable_cert_validation: Optional[bool] = None,
+        http_request_timeout: Optional[JSON] = None,
+        turn_off_async: Optional[bool] = None,
         datasets: Optional[List["_models.DatasetReference"]] = None,
         linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
@@ -65758,7 +69152,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: JSON
+        :paramtype headers: dict[str, str]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON
@@ -65766,6 +69160,15 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :paramtype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
         :keyword disable_cert_validation: When set to true, Certificate validation will be disabled.
         :paramtype disable_cert_validation: bool
+        :keyword http_request_timeout: Timeout for the HTTP request to get a response. Format is in
+         TimeSpan (hh:mm:ss). This value is the timeout to get a response, not the activity timeout. The
+         default value is 00:01:00 (1 minute). The range is from 1 to 10 minutes.
+        :paramtype http_request_timeout: JSON
+        :keyword turn_off_async: Option to disable invoking HTTP GET on location given in response
+         header of a HTTP 202 Response. If set true, it stops invoking HTTP GET on http location given
+         in response header. If set false then continues to invoke HTTP GET call on location given in
+         http response headers.
+        :paramtype turn_off_async: bool
         :keyword datasets: List of datasets passed to web endpoint.
         :paramtype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
         :keyword linked_services: List of linked services passed to web endpoint.
@@ -65792,6 +69195,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         self.body = body
         self.authentication = authentication
         self.disable_cert_validation = disable_cert_validation
+        self.http_request_timeout = http_request_timeout
+        self.turn_off_async = turn_off_async
         self.datasets = datasets
         self.linked_services = linked_services
         self.connect_via = connect_via
@@ -66089,7 +69494,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :vartype headers: JSON
+    :vartype headers: dict[str, str]
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
     :vartype body: JSON
@@ -66122,7 +69527,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         "method": {"key": "typeProperties.method", "type": "str"},
         "url": {"key": "typeProperties.url", "type": "object"},
         "timeout": {"key": "typeProperties.timeout", "type": "str"},
-        "headers": {"key": "typeProperties.headers", "type": "object"},
+        "headers": {"key": "typeProperties.headers", "type": "{str}"},
         "body": {"key": "typeProperties.body", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "WebActivityAuthentication"},
         "report_status_on_call_back": {"key": "typeProperties.reportStatusOnCallBack", "type": "object"},
@@ -66142,7 +69547,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         user_properties: Optional[List["_models.UserProperty"]] = None,
         policy: Optional["_models.SecureInputOutputPolicy"] = None,
         timeout: Optional[str] = None,
-        headers: Optional[JSON] = None,
+        headers: Optional[Dict[str, str]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         report_status_on_call_back: Optional[JSON] = None,
@@ -66181,7 +69586,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
          "application/json" }. Type: string (or Expression with resultType string).
-        :paramtype headers: JSON
+        :paramtype headers: dict[str, str]
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
         :paramtype body: JSON

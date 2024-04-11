@@ -69,7 +69,6 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.snapshots.begin_delete(group_name, snapshot_name)
         result = result.result()
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_galleries(self, resource_group):
@@ -308,6 +307,9 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Delete a gallery image.[delete]
         result = self.mgmt_client.gallery_images.begin_delete(resource_group.name, GALLERY_NAME, IMAGE_NAME)
         result = result.result()
+
+        import time
+        time.sleep(180)
 
         # TODO: need finish
         # # Delete a gallery Application Version.[delete]

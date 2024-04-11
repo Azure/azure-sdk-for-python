@@ -64,7 +64,7 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -141,7 +141,7 @@ Renders single source-language text to multiple target-language texts with a sin
 ```python
 try:
     target_languages = ["cs", "es", "de"]
-    input_text_elements = [InputTextItem(text="This is a test")]
+    input_text_elements = ["This is a test"]
 
     response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
@@ -156,8 +156,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -178,7 +179,7 @@ try:
     language = "zh-Hans"
     from_script = "Hans"
     to_script = "Latn"
-    input_text_elements = [InputTextItem(text="这是个测试。")]
+    input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
         request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
@@ -212,7 +213,7 @@ Identifies the positioning of sentence boundaries in a piece of text.
 try:
     include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
+    input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
         request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
@@ -232,8 +233,9 @@ try:
                 print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -252,7 +254,7 @@ Returns equivalent words for the source term in the target language.
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [InputTextItem(text="fly")]
+    input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
         request_body=input_text_elements, from_parameter=source_language, to=target_language

@@ -27,7 +27,7 @@ def analyze_documents_output_in_markdown():
     # [START analyze_documents_output_in_markdown]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, ContentFormat
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, ContentFormat, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -39,7 +39,7 @@ def analyze_documents_output_in_markdown():
         AnalyzeDocumentRequest(url_source=url),
         output_content_format=ContentFormat.MARKDOWN,
     )
-    result = poller.result()
+    result: AnalyzeResult = poller.result()
 
     print(f"Here's the full content in format {result.content_format}:\n")
     print(result.content)

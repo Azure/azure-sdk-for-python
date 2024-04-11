@@ -17,10 +17,12 @@ from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     AzureMonitorLogExporter,
     _get_log_export_result,
     _get_severity_level,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -141,7 +143,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._exc_data_blank = _logs.LogData(
+        cls._exc_data_with_exc_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp = 1646865018558419456,
                 trace_id = 125960616039069540489478540494783893221,
@@ -149,7 +151,49 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "EXCEPTION",
                 trace_flags = None,
                 severity_number = SeverityNumber.FATAL,
-                body = "Test message",
+                body = Exception("test exception message"),
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute",
+                    SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
+                    SpanAttributes.EXCEPTION_MESSAGE: "division by zero",
+                    SpanAttributes.EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._exc_data_blank_exception = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "EXCEPTION",
+                trace_flags = None,
+                severity_number = SeverityNumber.FATAL,
+                body = "test exception",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute",
+                    SpanAttributes.EXCEPTION_TYPE: "",
+                    SpanAttributes.EXCEPTION_MESSAGE: "",
+                    SpanAttributes.EXCEPTION_STACKTRACE: ""
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._exc_data_empty = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "EXCEPTION",
+                trace_flags = None,
+                severity_number = SeverityNumber.FATAL,
+                body = "",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
                 ),
@@ -302,7 +346,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, 'MessageData')
         self.assertEqual(envelope.data.base_data.message, "n/a")
 
-    def test_log_to_envelope_exception(self):
+    def test_log_to_envelope_exception_with_string_message(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
         record = self._log_data.log_record
@@ -313,13 +357,28 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
         self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
-        self.assertEqual(envelope.data.base_data.exceptions[0].message, "division by zero")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "Test message")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
 
-    def test_log_to_envelope_exception_blank(self):
+    def test_log_to_envelope_exception_with_exc_message(self):
         exporter = self._exporter
-        envelope = exporter._log_to_envelope(self._exc_data_blank)
+        envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_data.severity_level, 4)
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "test exception message")
+        self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
+
+    def test_log_to_envelope_exception_empty(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._exc_data_empty)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
@@ -329,6 +388,21 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
         self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "Exception")
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "Exception")
+        self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
+
+    def test_log_to_envelope_exception_with_blank_exception(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._exc_data_blank_exception)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_data.severity_level, 4)
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "Exception")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "test exception")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
 

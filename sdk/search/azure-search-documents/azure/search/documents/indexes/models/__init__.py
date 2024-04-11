@@ -46,11 +46,12 @@ from .._generated.models import (
     BlobIndexerImageAction,
     BlobIndexerParsingMode,
     BlobIndexerPDFTextRotationAlgorithm,
-    BM25Similarity,
+    BM25SimilarityAlgorithm,
     CharFilter,
     CharFilterName,
     CjkBigramTokenFilter,
-    ClassicSimilarity,
+    CjkBigramTokenFilterScripts,
+    ClassicSimilarityAlgorithm,
     ClassicTokenizer,
     CognitiveServicesAccount,
     CognitiveServicesAccountKey,
@@ -92,10 +93,12 @@ from .._generated.models import (
     ImageAnalysisSkill,
     ImageAnalysisSkillLanguage,
     ImageDetail,
+    IndexerExecutionEnvironment,
     IndexerExecutionResult,
     IndexerExecutionStatus,
     IndexProjectionMode,
     IndexerStatus,
+    IndexingMode,
     IndexingParameters,
     IndexingParametersConfiguration,
     IndexingSchedule,
@@ -114,6 +117,7 @@ from .._generated.models import (
     LexicalTokenizer,
     LexicalTokenizerName,
     LimitTokenFilter,
+    LineEnding,
     LuceneStandardAnalyzer,
     LuceneStandardTokenizer,
     MagnitudeScoringFunction,
@@ -124,6 +128,7 @@ from .._generated.models import (
     MicrosoftLanguageTokenizer,
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
+    NativeBlobSoftDeleteDeletionDetectionPolicy,
     NGramTokenFilter,
     NGramTokenizer,
     OcrSkill,
@@ -138,6 +143,8 @@ from .._generated.models import (
     PIIDetectionSkill,
     PIIDetectionSkillMaskingMode,
     RegexFlags,
+    ScalarQuantizationCompressionConfiguration,
+    ScalarQuantizationParameters,
     ScoringFunction,
     ScoringFunctionAggregation,
     ScoringFunctionInterpolation,
@@ -164,6 +171,10 @@ from .._generated.models import (
     SearchIndexerSkill,
     SearchIndexerStatus,
     SearchIndexerWarning,
+    SearchServiceCounters,
+    SearchServiceLimits,
+    SearchServiceStatistics,
+    SearchSuggester,
     SemanticConfiguration,
     SemanticField,
     SemanticPrioritizedFields,
@@ -171,7 +182,7 @@ from .._generated.models import (
     SentimentSkillLanguage,
     ShaperSkill,
     ShingleTokenFilter,
-    Similarity,
+    SimilarityAlgorithm,
     SnowballTokenFilter,
     SnowballTokenFilterLanguage,
     SoftDeleteColumnDeletionDetectionPolicy,
@@ -184,7 +195,6 @@ from .._generated.models import (
     StopAnalyzer,
     StopwordsList,
     StopwordsTokenFilter,
-    Suggester,
     SynonymTokenFilter,
     TagScoringFunction,
     TagScoringParameters,
@@ -202,6 +212,8 @@ from .._generated.models import (
     VectorSearchAlgorithmConfiguration,
     VectorSearchAlgorithmKind,
     VectorSearchAlgorithmMetric,
+    VectorSearchCompressionConfiguration,
+    VectorSearchCompressionTargetDataType,
     VectorSearchProfile,
     VectorSearchVectorizer,
     VectorSearchVectorizerKind,
@@ -227,27 +239,11 @@ from ._models import (
 SearchFieldDataType = _edm
 
 
-class BM25SimilarityAlgorithm(BM25Similarity):
-    pass
-
-
-class ClassicSimilarityAlgorithm(ClassicSimilarity):
-    pass
-
-
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
 
 
 class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
-    pass
-
-
-class SimilarityAlgorithm(Similarity):
-    pass
-
-
-class SearchSuggester(Suggester):
     pass
 
 
@@ -269,6 +265,7 @@ __all__ = (
     "CharFilter",
     "CharFilterName",
     "CjkBigramTokenFilter",
+    "CjkBigramTokenFilterScripts",
     "ClassicSimilarityAlgorithm",
     "ClassicTokenizer",
     "CognitiveServicesAccount",
@@ -316,13 +313,12 @@ __all__ = (
     "ImageAnalysisSkill",
     "ImageAnalysisSkillLanguage",
     "ImageDetail",
-    "IndexingSchedule",
-    "IndexingParameters",
-    "IndexingParametersConfiguration",
+    "IndexerExecutionEnvironment",
     "IndexerExecutionResult",
     "IndexerExecutionStatus",
     "IndexProjectionMode",
     "IndexerStatus",
+    "IndexingMode",
     "IndexingParameters",
     "IndexingParametersConfiguration",
     "IndexingSchedule",
@@ -341,6 +337,7 @@ __all__ = (
     "LexicalTokenizer",
     "LexicalTokenizerName",
     "LimitTokenFilter",
+    "LineEnding",
     "LuceneStandardAnalyzer",
     "LuceneStandardTokenizer",
     "MagnitudeScoringFunction",
@@ -351,6 +348,7 @@ __all__ = (
     "MicrosoftLanguageTokenizer",
     "MicrosoftStemmingTokenizerLanguage",
     "MicrosoftTokenizerLanguage",
+    "NativeBlobSoftDeleteDeletionDetectionPolicy",
     "NGramTokenFilter",
     "NGramTokenizer",
     "OcrSkill",
@@ -367,10 +365,13 @@ __all__ = (
     "PhoneticEncoder",
     "PhoneticTokenFilter",
     "RegexFlags",
+    "ScalarQuantizationCompressionConfiguration",
+    "ScalarQuantizationParameters",
     "ScoringFunction",
     "ScoringFunctionAggregation",
     "ScoringFunctionInterpolation",
     "ScoringProfile",
+    "SearchableField",
     "SearchField",
     "SearchIndex",
     "SearchIndexer",
@@ -398,7 +399,10 @@ __all__ = (
     "SearchIndexerStatus",
     "SearchIndexerWarning",
     "SearchResourceEncryptionKey",
-    "SearchableField",
+    "SearchServiceCounters",
+    "SearchServiceLimits",
+    "SearchServiceStatistics",
+    "SearchSuggester",
     "SemanticConfiguration",
     "SemanticField",
     "SemanticPrioritizedFields",
@@ -422,7 +426,6 @@ __all__ = (
     "StopAnalyzer",
     "StopwordsList",
     "StopwordsTokenFilter",
-    "SearchSuggester",
     "SuggestOptions",
     "SynonymMap",
     "SynonymTokenFilter",
@@ -442,6 +445,8 @@ __all__ = (
     "VectorSearchAlgorithmConfiguration",
     "VectorSearchAlgorithmKind",
     "VectorSearchAlgorithmMetric",
+    "VectorSearchCompressionConfiguration",
+    "VectorSearchCompressionTargetDataType",
     "VectorSearchProfile",
     "VectorSearchVectorizer",
     "VectorSearchVectorizerKind",

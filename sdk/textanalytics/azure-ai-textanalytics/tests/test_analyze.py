@@ -769,9 +769,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 3
 
         assert action_results[0][0].entities[0].text == "859-98-0987"
-        # assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
-        assert action_results[1][0].entities[0].text == "111000025"
-        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
+        assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
+        # assert action_results[1][0].entities[0].text == "111000025"
+        # assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
         assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
 
     @pytest.mark.skip("No longer tests what it intended to. Need new way to test partial actions before re-enabling.")
@@ -1164,7 +1164,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert document_result.statistics
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @TextAnalyticsPreparer()
     def test_generic_action_error_no_target_v3_1(

@@ -60,9 +60,6 @@ jobs:
           fi
 
           # install autorest
-          sudo npm install -g n
-          sudo n 16.15.0
-          export PATH=/usr/local/n/versions/node/16.15.0/bin:$PATH
           sudo npm init -f
           sudo npm install -g autorest --save
 

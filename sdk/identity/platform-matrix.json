@@ -8,10 +8,10 @@
   "include": [
     {
       "Config": {
-        "ubuntu_20.04_3.7_msal": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": "3.7",
+        "ubuntu_20.04_3.8_msal": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.8",
           "CoverageArg": "--disablecov",
           "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
           "UnsupportedToxEnvironments": "mindependency,latestdependency"

@@ -120,7 +120,7 @@ else:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubSharedKeyCredential(object):
+class EventHubSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -140,7 +140,7 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class EventHubSASTokenCredential(object):
+class EventHubSASTokenCredential:
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
@@ -169,7 +169,7 @@ class EventHubSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureNamedKeyTokenCredentialAsync(object): # pylint: disable=name-too-long
+class EventhubAzureNamedKeyTokenCredentialAsync: # pylint: disable=name-too-long
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -189,7 +189,7 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object): # pylint: disable=name-
         return _generate_sas_token(scopes[0], name, key)
 
 
-class EventhubAzureSasTokenCredentialAsync(object):
+class EventhubAzureSasTokenCredentialAsync:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 

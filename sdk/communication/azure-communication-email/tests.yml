@@ -6,8 +6,8 @@ parameters:
   type: boolean
   default: false
 
-stages:
-  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: 'azure-communication-email'
       JobName: email

@@ -56,6 +56,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
     # Aliases end here
+    AcsAdvancedMessageDeliveryStatusUpdatedEventName = 'Microsoft.Communication.AdvancedMessageDeliveryStatusUpdated'
+
+    AcsAdvancedMessageReceivedEventName = 'Microsoft.Communication.AdvancedMessageReceived'
+
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -138,11 +142,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
 
+    AcsRouterWorkerUpdatedEventName = 'Microsoft.Communication.RouterWorkerUpdated'
+
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
     AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
+
+    ApiCenterApiDefinitionAddedEventName = 'Microsoft.ApiCenter.ApiDefinitionAdded'
+
+    ApiCenterApiDefinitionUpdatedEventName = 'Microsoft.ApiCenter.ApiDefinitionUpdated'
 
     ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.APICreated'
 
@@ -203,6 +213,30 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
 
     AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
+    AvsClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
+
+    AvsClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
+
+    AvsClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
+
+    AvsClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+
+    AvsClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+
+    AvsPrivateCloudFailedEventName = 'Microsoft.AVS.PrivateCloudFailed'
+
+    AvsPrivateCloudUpdatedEventName = 'Microsoft.AVS.PrivateCloudUpdated'
+
+    AvsPrivateCloudUpdatingEventName = 'Microsoft.AVS.PrivateCloudUpdating'
+
+    AvsScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
+
+    AvsScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
+
+    AvsScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
+
+    AvsScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
 
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
@@ -419,6 +453,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageTaskAssignmentCompletedEventName = 'Microsoft.Storage.StorageTaskAssignmentCompleted'
+
+    StorageTaskAssignmentQueuedEventName = 'Microsoft.Storage.StorageTaskAssignmentQueued'
 
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 

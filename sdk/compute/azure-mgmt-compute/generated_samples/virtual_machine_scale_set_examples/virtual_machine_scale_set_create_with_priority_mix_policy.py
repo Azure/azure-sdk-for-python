@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.compute import ComputeManagementClient
 
 """
@@ -37,13 +40,11 @@ def main():
             "properties": {
                 "orchestrationMode": "Flexible",
                 "priorityMixPolicy": {"baseRegularPriorityCount": 4, "regularPriorityPercentageAboveBase": 50},
-                "platformFaultDomainCount": 1,
                 "singlePlacementGroup": False,
                 "virtualMachineProfile": {
                     "billingProfile": {"maxPrice": -1},
                     "evictionPolicy": "Deallocate",
                     "networkProfile": {
-                        "networkApiVersion": "2020-11-01",
                         "networkInterfaceConfigurations": [
                             {
                                 "name": "{vmss-name}",

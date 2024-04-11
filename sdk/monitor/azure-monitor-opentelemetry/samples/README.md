@@ -8,7 +8,7 @@ products:
 urlFragment: azure-template-samples
 ---
 
-# Azure Template samples
+# Azure Monitor OpenTelemetry distro samples
 
 Provide an overview of all the samples and explain how to run them.
 
@@ -32,7 +32,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[tracing/http_urllib.py][http_urllib] | Instrument the URLLib library |
 |[tracing/http_urllib3.py][http_urllib3] | Instrument the URLLib library |
 |[tracing/instrumentation_options.py][instrumentation_options] | Enable and disable instrumentations |
-|[tracing/manual.py][manual] | Manually add instrumentation |
+|[tracing/manually_instrumented.py][manual] | Manually add instrumentation |
 |[tracing/sampling.py][sampling] | Sample distributed tracing telemetry |
 |[tracing/tracing_simple.py][tracing_simple] | Produce manual spans |
 
@@ -76,7 +76,7 @@ To learn more, see the [Azure Monitor OpenTelemetry Distro documentation][distro
 [http_urllib]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib.py
 [http_urllib3]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib3.py
 [instrumentation_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/instrumentation_options.py
-[manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manual.py
+[manual]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manually_instrumented.py
 [sampling]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/sampling.py
 [tracing_simple]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/simple.py
 [pip]: https://pypi.org/project/pip/

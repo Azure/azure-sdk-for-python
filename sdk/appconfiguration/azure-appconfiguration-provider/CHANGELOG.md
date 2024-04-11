@@ -1,6 +1,33 @@
 # Release History
 
-## 1.1.0b3 (2023-12-18)
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+* Enable loading of feature flags with `feature_flag_enabled`
+* Select Feature Flags to load with `feature_flag_selectors`
+* Enable/Disable Feature Flag Refresh with `feature_flag_refresh_enabled`
+
+### Breaking Changes
+
+### Bugs Fixed
+
+* Fixes issue where loading configurations were slower do to returning a copy of the configurations.
+
+### Other Changes
+
+## 1.1.0 (2024-01-29)
+
+### Features Added
+
+* New API for Azure App Configuration Provider, `refresh`, which can be used to refresh the configuration from the Azure App Configuration service. `refresh` by default can check every 30 seconds for changes to specified sentinel keys. If a change is detected then all configurations are reloaded. Sentinel keys can be set by passing a list of `SentinelKey`'s to `refresh_on`.
+* Added new options `on_refresh_success` and `on_refresh_failure` callbacks to the load method. These callbacks are called when the refresh method successfully refreshes the configuration or fails to refresh the configuration.
+
+### Bugs Fixed
+
+* Verifies that the `refresh_interval` is at least 1 second.
+
+## 1.1.0b3 (2023-12-19)
 
 ### Features Added
 

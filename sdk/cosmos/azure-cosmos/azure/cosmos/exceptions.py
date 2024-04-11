@@ -21,7 +21,7 @@
 
 """Service-specific Exceptions in the Azure Cosmos database service.
 """
-from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-import
+from azure.core.exceptions import (
     AzureError,
     HttpResponseError,
     ResourceExistsError,
@@ -66,8 +66,27 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
 
 
 class CosmosBatchOperationError(HttpResponseError):
-    """A transactional batch request to the Azure Cosmos database service has failed."""
+    """A transactional batch request to the Azure Cosmos database service has failed.
 
+    :ivar int error_index: Index of operation within the batch that caused the error.
+    :ivar headers: Error headers.
+    :vartype headers: dict[str, Any]
+    :ivar status_code: HTTP response code.
+    :vartype status_code: int
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar operation_responses: List of failed operations' responses.
+    :vartype operation_responses: List[dict[str, Any]]
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/document_management.py
+            :start-after: [START handle_batch_error]
+            :end-before: [END handle_batch_error]
+            :language: python
+            :dedent: 0
+            :caption: Handle a CosmosBatchOperationError:
+            :name: handle_batch_error
+    """
     def __init__(
             self,
             error_index=None,
@@ -76,13 +95,6 @@ class CosmosBatchOperationError(HttpResponseError):
             message=None,
             operation_responses=None,
             **kwargs):
-        """
-        :param int error_index: Index of operation within the batch that caused the error.
-        :param str headers: Error headers.
-        :param int status_code: HTTP response code.
-        :param str message: Error message.
-        :param list operation_responses: List of failed operations' responses.
-        """
         self.error_index = error_index
         self.headers = headers
         self.sub_status = None

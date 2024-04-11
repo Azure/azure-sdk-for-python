@@ -14,7 +14,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation
-    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
+    <https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow>`__ for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
@@ -50,11 +50,11 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "AuthorizationCodeCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -74,7 +74,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
@@ -86,7 +86,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
           ``response`` attribute.
         """
         # pylint:disable=useless-super-delegation
-        return super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return super(AuthorizationCodeCredential, self).get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
+        )
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

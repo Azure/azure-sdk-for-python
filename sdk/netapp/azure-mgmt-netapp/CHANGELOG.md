@@ -1,5 +1,43 @@
 # Release History
 
+## 12.0.0 (2024-03-18)
+
+### Breaking Changes
+
+  - Model VolumeGroupMetaData no longer has parameter deployment_spec_id
+
+## 12.0.0b1 (2023-12-22)
+
+### Features Added
+
+  - Added operation AccountsOperations.begin_migrate_encryption_key
+  - Added operation BackupsOperations.begin_create
+  - Added operation BackupsOperations.begin_delete
+  - Added operation BackupsOperations.begin_update
+  - Added operation BackupsOperations.get
+  - Added operation BackupsOperations.get_latest_status
+  - Added operation BackupsOperations.list_by_vault
+  - Added operation VolumesOperations.begin_split_clone_from_parent
+  - Added operation group AccountBackupsOperations
+  - Added operation group BackupVaultsOperations
+  - Added operation group BackupsUnderAccountOperations
+  - Added operation group BackupsUnderBackupVaultOperations
+  - Added operation group BackupsUnderVolumeOperations
+  - Added operation group NetAppResourceRegionInfosOperations
+  - Model NetAppAccount has a new parameter is_multi_ad_enabled
+  - Model NetAppAccount has a new parameter nfs_v4_id_domain
+  - Model NetAppAccountPatch has a new parameter is_multi_ad_enabled
+  - Model NetAppAccountPatch has a new parameter nfs_v4_id_domain
+  - Model ReplicationObject has a new parameter remote_path
+  - Model Volume has a new parameter inherited_size_in_bytes
+  - Model VolumeGroupVolumeProperties has a new parameter inherited_size_in_bytes
+  - Model VolumePatchPropertiesDataProtection has a new parameter backup
+  - Model VolumePropertiesDataProtection has a new parameter backup
+
+### Breaking Changes
+
+  - Model VolumeGroupMetaData no longer has parameter deployment_spec_id
+
 ## 11.0.0 (2023-10-23)
 
 ### Features Added

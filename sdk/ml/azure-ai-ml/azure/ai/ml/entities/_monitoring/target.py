@@ -5,11 +5,9 @@
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
 
-@experimental
 class MonitoringTarget:
     """Monitoring target.
 

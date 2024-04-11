@@ -7,6 +7,14 @@ version of the file used for AzureML's ARM APIs, which is defined [here](https:/
 
 ---
 
+## Usage
+
+For instructions for regenerating the _restclient using these arguments, see the `docs/dev_setup.md` in the AML CLI repo.
+For a quick example, Run this command from azure-sdk-for-python/sdk/ml/azure-ai-ml/:
+```
+python .\scripts\regenerate_restclient.py -a v2022-01-01-preview
+```
+
 ## Configuration
 
 ### Basic Information
@@ -238,6 +246,7 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceFeatures.json
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/mfe.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_01_01_preview
 ```
 

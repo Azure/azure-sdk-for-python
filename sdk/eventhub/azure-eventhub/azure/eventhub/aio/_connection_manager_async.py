@@ -43,7 +43,7 @@ if TYPE_CHECKING:
             pass
 
 
-class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
+class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs) -> None:
         self._loop = kwargs.get("loop")
         self._lock = Lock(loop=self._loop)
@@ -103,7 +103,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 self._conn = None
 
 
-class _SeparateConnectionManager(object):
+class _SeparateConnectionManager:
     def __init__(self, **kwargs) -> None:
         pass
 

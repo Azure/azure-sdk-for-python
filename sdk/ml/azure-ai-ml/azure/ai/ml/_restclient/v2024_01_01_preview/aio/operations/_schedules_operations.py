@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -21,7 +27,14 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._schedules_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
+from ...operations._schedules_operations import (
+    build_create_or_update_request_initial,
+    build_delete_request_initial,
+    build_get_request,
+    build_list_request,
+    build_trigger_request,
+)
+
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -465,3 +478,75 @@ class SchedulesOperations:
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
+
+    @distributed_trace_async
+    async def trigger(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        name: str,
+        body: "_models.TriggerOnceRequest",
+        **kwargs: Any
+    ) -> "_models.TriggerRunSubmissionDto":
+        """Trigger run.
+
+        Trigger run.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param name: Schedule name.
+        :type name: str
+        :param body: Request body for trigger once.
+        :type body: ~azure.mgmt.machinelearningservices.models.TriggerOnceRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TriggerRunSubmissionDto, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.TriggerRunSubmissionDto
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerRunSubmissionDto"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'TriggerOnceRequest')
+
+        request = build_trigger_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            name=name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.trigger.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('TriggerRunSubmissionDto', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    trigger.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}/trigger"}  # type: ignore
+

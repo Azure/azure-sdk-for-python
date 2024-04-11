@@ -35,7 +35,11 @@ def wrap_exceptions(fn):
 
 
 def resolve_tenant(
-    default_tenant: str, tenant_id: Optional[str] = None, *, additionally_allowed_tenants: List[str] = [], **_
+    default_tenant: str,
+    tenant_id: Optional[str] = None,
+    *,
+    additionally_allowed_tenants: Optional[List[str]] = None,
+    **_
 ) -> str:
     """Returns the correct tenant for a token request given a credential's configuration.
 
@@ -59,6 +63,8 @@ def resolve_tenant(
         return default_tenant
     if not default_tenant:
         return tenant_id
+    if additionally_allowed_tenants is None:
+        additionally_allowed_tenants = []
     if "*" in additionally_allowed_tenants or tenant_id in additionally_allowed_tenants:
         _LOGGER.info(
             "A token was requested for a different tenant than was configured on the credential, "

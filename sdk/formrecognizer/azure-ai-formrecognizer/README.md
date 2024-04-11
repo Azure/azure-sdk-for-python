@@ -18,11 +18,16 @@ Azure Document Intelligence ([previously known as Form Recognizer][service-renam
 | [Samples][python-fr-samples]
 
 
+## _Disclaimer_
+
+_This package supports the following service API versions: 2.0, 2.1, 2022-08-31 and 2023-07-31. Service API version 2023-10-31-preview and later are supported in package `azure-ai-documentintelligence`. Please refer this [doc][fr_to_di_migration_guideline] for migration details._
+
+
 ## Getting started
 
 ### Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
@@ -753,6 +758,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 [fr-models]: https://aka.ms/azsdk/formrecognizer/models
 [fr-errors]: https://aka.ms/azsdk/formrecognizer/errors
+[fr_to_di_migration_guideline]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/MIGRATION_GUIDE.md
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions

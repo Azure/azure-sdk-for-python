@@ -4,8 +4,8 @@
 
 
 import logging
-from pathlib import Path
 import os
+from pathlib import Path
 from typing import Dict
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
@@ -108,7 +108,8 @@ class AzureMlImageContext(object):
         :return: The conda file name
         :rtype: str
         """
-        return self._docker_conda_file_name  # pylint: disable=no-member
+        # pylint: disable=no-member
+        return self._docker_conda_file_name  # type: ignore[attr-defined]
 
     @property
     def volumes(self) -> Dict[str, Dict[str, Dict[str, str]]]:

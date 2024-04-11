@@ -108,10 +108,6 @@ content_packages = sorted(
 )
 
 # Install tests dep first
-if "azure-devtools" in content_packages:
-    content_packages.remove("azure-devtools")
-content_packages.insert(0, "azure-devtools")
-
 if "azure-sdk-tools" in content_packages:
     content_packages.remove("azure-sdk-tools")
 content_packages.insert(1, "azure-sdk-tools")

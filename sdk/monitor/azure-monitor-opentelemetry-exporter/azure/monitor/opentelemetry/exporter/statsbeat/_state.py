@@ -13,6 +13,8 @@ _STATSBEAT_STATE = {
     "INITIAL_FAILURE_COUNT": 0,
     "INITIAL_SUCCESS": False,
     "SHUTDOWN": False,
+    "CUSTOM_EVENTS_FEATURE_SET": False,
+    "LIVE_METRICS_FEATURE_SET": False,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
@@ -47,3 +49,21 @@ def get_statsbeat_initial_success():
 
 def get_statsbeat_shutdown():
     return _STATSBEAT_STATE["SHUTDOWN"]
+
+
+def get_statsbeat_custom_events_feature_set():
+    return _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"]
+
+
+def set_statsbeat_custom_events_feature_set():
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
+
+
+def get_statsbeat_live_metrics_feature_set():
+    return _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"]
+
+
+def set_statsbeat_live_metrics_feature_set():
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True

@@ -23,7 +23,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class FeatureStoreEntityOperations(_ScopeDependentOperations):
@@ -49,7 +49,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -62,7 +62,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
-        Default: ACTIVE_ONLY.
+            Default: ACTIVE_ONLY.
         :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
@@ -84,7 +84,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -95,8 +95,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
+    @monitor_with_activity(ops_logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:  # type: ignore
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
@@ -115,7 +115,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self, feature_store_entity: FeatureStoreEntity, **kwargs: Dict
     ) -> LROPoller[FeatureStoreEntity]:
@@ -139,7 +139,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -165,7 +165,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,

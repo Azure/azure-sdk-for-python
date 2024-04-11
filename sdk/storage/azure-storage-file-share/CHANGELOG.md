@@ -2,8 +2,13 @@
 
 ## 12.16.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
 ### Features Added
 - Added `exists` method to `ShareFileClient` to check if a file exists.
+- Added support for service version 2024-05-04.
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 
 ### Bugs Fixed
 - Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`
@@ -12,6 +17,10 @@ pointing to the root of the file share would raise an `InvalidResourceName` on a
 Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
+- Fixed an issue where parameter `delete_snapshots` to `delete_share` API did not support all possible enums. This change
+makes `delete_snapshots` now accept string literals 'include' and 'include-leased'.
+- Fixed an issue where specifying datetime objects with less than 7 digits of precision as input could incorrectly raise
+`InvalidHeaderValue` due to improper precision parsing.
 
 ## 12.15.0 (2023-11-07)
 
@@ -243,7 +252,7 @@ was not generating the proper SAS signature.
 - Preview feature `get_ranges` on ShareFileClient
 
 **New features**
-- Added `set_share_properties` which allows setting share tier. 
+- Added `set_share_properties` which allows setting share tier.
 
 **Notes**
 - Updated dependency `azure-core` from  azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
@@ -263,7 +272,7 @@ was not generating the proper SAS signature.
 **New features**
 - Added `undelete_share` on FileShareServiceClient so that users can restore deleted share on share soft delete enabled account. Users can also list deleted shares when `list_shares` by specifying `include_deleted=True`.
 
-## 12.1.2 
+## 12.1.2
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 
@@ -272,7 +281,7 @@ was not generating the proper SAS signature.
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
-## 12.1.0 
+## 12.1.0
 
 **New features**
 - Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
@@ -287,7 +296,7 @@ was not generating the proper SAS signature.
 **Fixes**
 - Responses are always decoded as UTF8
 
-## 12.0.0 
+## 12.0.0
 
 **New features**
 - Added `delete_directory` method to the `share_client`.
@@ -299,7 +308,7 @@ was not generating the proper SAS signature.
 **Breaking changes**
 - `close_handle(handle)` and `close_all_handles()` no longer return int. These functions return a dictionary which has the number of handles closed and number of handles failed to be closed.
 
-## 12.0.0b5 
+## 12.0.0b5
 
 **Important: This package was previously named azure-storage-file**
 
@@ -354,7 +363,7 @@ the following APIs:
 - `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 
-## 12.0.0b4 
+## 12.0.0b4
 
 **Breaking changes**
 
@@ -370,7 +379,7 @@ the following APIs:
 - `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which
 takes parameters as a string.
 
-## 12.0.0b3 
+## 12.0.0b3
 
 **New features**
 - Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
@@ -390,7 +399,7 @@ takes parameters as a string.
 - Fix where content-type was being added in the request when not mentioned explicitly.
 
 
-## 12.0.0b2 
+## 12.0.0b2
 
 **Breaking changes**
 - Renamed `copy_file_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_file_properties` operation.
@@ -419,7 +428,7 @@ takes parameters as a string.
 - General refactor of duplicate and shared code.
 
 
-## 12.0.0b1 
+## 12.0.0b1
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Files. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://aka.ms/azure-sdk-preview1-python.
@@ -460,36 +469,36 @@ https://aka.ms/azure-sdk-preview1-python.
 - No longer have specific operations for `exists` - use `get_properties` instead.
 - Operation `update_range` has been renamed to `upload_range`.
 
-## 2.0.1 
+## 2.0.1
 - Updated dependency on azure-storage-common.
 
-## 2.0.0 
+## 2.0.0
 - Support for 2018-11-09 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Added an option to get share stats in bytes.
 - Added support for listing and closing file handles.
 
-## 1.4.0 
+## 1.4.0
 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 
-## 1.3.1 
+## 1.3.1
 
 - Fixed design flaw where get_file_to_* methods buffer entire file when max_connections is set to 1.
 
-## 1.3.0 
+## 1.3.0
 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## 1.2.0rc1 
+## 1.2.0rc1
 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## 1.1.0 
+## 1.1.0
 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0 
+## 1.0.0
 
 - The package has switched from Apache 2.0 to the MIT license.
 - Fixed bug where get_file_to_* cannot get a single byte when start_range and end_range are both equal to 0.

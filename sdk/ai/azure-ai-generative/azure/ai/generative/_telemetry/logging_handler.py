@@ -9,6 +9,7 @@
 import logging
 import platform
 import traceback
+from typing import Union, Dict
 import os
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
@@ -45,7 +46,7 @@ class ActivityLogger:
         self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: Dict[str, Union[str, Dict]] = {}
 
     def update_info(self) -> None:
         self.package_logger.addHandler(get_appinsights_log_handler(USER_AGENT))
@@ -84,7 +85,9 @@ def get_appinsights_log_handler(
         if not in_jupyter_notebook() or enable_telemetry == "False":
             return logging.NullHandler()
 
-        if not user_agent or not any(name in user_agent.lower() for name in ["azure-ai-generative", "azure-ai-resources"]):
+        if not user_agent or not any(
+            name in user_agent.lower() for name in ["azure-ai-generative", "azure-ai-resources"]
+        ):
             return logging.NullHandler()
 
         if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
@@ -220,6 +223,8 @@ def create_envelope(instrumentation_key, record):
         "traceId",
         "00000000000000000000000000000000",
     )
-    envelope.tags["ai.generative.operation.parentId"] = f"|{envelope.tags.get('ai.generative.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
+    envelope.tags[
+        "ai.generative.operation.parentId"
+    ] = f"|{envelope.tags.get('ai.generative.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
 
     return envelope

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import re
+from typing import Any
 
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
@@ -11,7 +12,7 @@ from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
-def _validate_spark_configurations(obj):
+def _validate_spark_configurations(obj: Any) -> None:
     # skip validation when component of node is from remote
     if hasattr(obj, "component") and isinstance(obj.component, str):
         return
@@ -99,7 +100,7 @@ def _validate_spark_configurations(obj):
             )
 
 
-def _validate_compute_or_resources(compute, resources):
+def _validate_compute_or_resources(compute: Any, resources: Any) -> None:
     # if resources is set, then ensure it is valid before
     # checking mutual exclusiveness against compute existence
     if compute is None and resources is None:
@@ -122,7 +123,7 @@ def _validate_compute_or_resources(compute, resources):
 
 # Only "direct" mode is supported for spark job inputs and outputs
 # pylint: disable=no-else-raise, too-many-boolean-expressions
-def _validate_input_output_mode(inputs, outputs):
+def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
     for input_name, input_value in inputs.items():
         if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
             # For standalone job input

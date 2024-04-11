@@ -1,5 +1,19 @@
 # Release History
 
+## 3.0.0 (2024-03-04)
+
+### Features Added
+
+  - Added operation DatabasesOperations.begin_flush
+  - Model Cluster has a new parameter encryption
+  - Model Cluster has a new parameter identity
+  - Model ClusterUpdate has a new parameter encryption
+  - Model ClusterUpdate has a new parameter identity
+
+### Breaking Changes
+
+  - Renamed operation PrivateEndpointConnectionsOperations.delete to PrivateEndpointConnectionsOperations.begin_delete
+
 ## 2.1.0b2 (2023-04-20)
 
 ### Features Added

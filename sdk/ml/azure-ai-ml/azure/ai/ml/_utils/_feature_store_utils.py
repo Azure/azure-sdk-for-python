@@ -94,7 +94,7 @@ def _archive_or_restore(
 
     version_resource.properties.is_archived = is_archived
     version_resource.properties.stage = "Archived" if is_archived else "Development"
-    version_operation.begin_create_or_update(
+    poller = version_operation.begin_create_or_update(
         name=name,
         version=version,
         resource_group_name=resource_group_name,
@@ -102,6 +102,7 @@ def _archive_or_restore(
         body=version_resource,
         **kwargs,
     )
+    poller.result()
 
 
 def _datetime_to_str(datetime_obj: Union[str, datetime]):

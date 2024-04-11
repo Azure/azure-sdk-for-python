@@ -11,12 +11,13 @@ from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Type, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -83,11 +84,11 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
         services: Optional[Dict[str, JobService]] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> None:
-        self._type = kwargs.pop("type", JobType.COMMAND)
-        self._status = kwargs.pop("status", None)
-        self._log_files = kwargs.pop("log_files", None)
+        self._type: Optional[str] = kwargs.pop("type", JobType.COMMAND)
+        self._status: Optional[str] = kwargs.pop("status", None)
+        self._log_files: Optional[Dict] = kwargs.pop("log_files", None)
 
         super().__init__(
             name=name,
@@ -99,7 +100,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
         self.display_name = display_name
         self.experiment_name = experiment_name
-        self.compute = compute
+        self.compute: Any = compute
         self.services = services
 
     @property
@@ -156,11 +157,12 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :rtype: Optional[str]
         """
         if self.services and (JobServices.STUDIO in self.services.keys()):
-            return self.services[JobServices.STUDIO].endpoint
+            res: Optional[str] = self.services[JobServices.STUDIO].endpoint
+            return res
 
         return studio_url_from_job_id(self.id) if self.id else None
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dumps the job content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -176,7 +178,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def _get_base_info_dict(self):
+    def _get_base_info_dict(self) -> OrderedDict:
         return OrderedDict(
             [
                 ("Experiment", self.experiment_name),
@@ -186,7 +188,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             ]
         )
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         info = self._get_base_info_dict()
         if self.studio_url:
             info.update(
@@ -194,17 +196,19 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                     ("Details Page", make_link(self.studio_url, "Link to Azure Machine Learning studio")),
                 ]
             )
-        return to_html(info)
+        res: str = to_html(info)
+        return res
 
     @abstractmethod
     def _to_dict(self) -> Dict:
         pass
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
@@ -224,6 +228,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             job_type = AutoMLJob
         elif type_str == JobType.PIPELINE:
             job_type = PipelineJob
+        elif type_str == JobType.FINE_TUNING:
+            job_type = FineTuningJob
         else:
             msg = f"Unsupported job type: {type_str}."
             raise ValidationException(
@@ -241,7 +247,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Job":
         """Load a job object from a yaml file.
 
@@ -267,7 +273,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         job_type, type_str = cls._resolve_cls_and_type(data, params_override)
-        job = job_type._load_from_dict(
+        job: Job = job_type._load_from_dict(
             data=data,
             context=context,
             additional_message=f"If you are trying to configure a job that is not of type {type_str}, please specify "
@@ -280,13 +286,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, JobBase_2308, Run]
+        cls, obj: Union[JobBase, JobBase_2401, Run]
     ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 
@@ -302,15 +309,20 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
 
-                return Command._load_from_rest_job(obj)
+                res_command: Job = Command._load_from_rest_job(obj)
+                return res_command
             if obj.properties.job_type == RestJobType.SPARK:
-                return Spark._load_from_rest_job(obj)
+                res_spark: Job = Spark._load_from_rest_job(obj)
+                return res_spark
             if obj.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
+            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+                return FineTuningJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.PIPELINE:
-                return PipelineJob._load_from_rest(obj)
+                res_pipeline: Job = PipelineJob._load_from_rest(obj)
+                return res_pipeline
         except PipelineChildJobError as ex:
             raise ex
         except Exception as ex:
@@ -332,11 +344,11 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
 
-    def _get_telemetry_values(self):  # pylint: disable=arguments-differ
+    def _get_telemetry_values(self) -> Dict:  # pylint: disable=arguments-differ
         telemetry_values = {"type": self.type}
         return telemetry_values
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
         pass

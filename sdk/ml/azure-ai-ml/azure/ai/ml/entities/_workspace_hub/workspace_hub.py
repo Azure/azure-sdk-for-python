@@ -7,19 +7,18 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
-
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
-from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHubConfig
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-from azure.ai.ml.entities import Workspace, CustomerManagedKey
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities import CustomerManagedKey, Workspace
+from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHubConfig
 
 from ._constants import WORKSPACE_HUB_KIND
 
@@ -96,7 +95,7 @@ class WorkspaceHub(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
         workspace_hub_config: Optional[WorkspaceHubConfig] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
@@ -120,10 +119,10 @@ class WorkspaceHub(Workspace):
         )
         self.existing_workspaces = existing_workspaces
         self.workspace_hub_config = workspace_hub_config
-        self.associated_workspaces = None
+        self.associated_workspaces: Optional[List[str]] = None
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "WorkspaceHub":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["WorkspaceHub"]:
         if not rest_obj:
             return None
 
@@ -136,29 +135,32 @@ class WorkspaceHub(Workspace):
                     rest_obj.workspace_hub_config
                 )
 
-        workspacehub_object = WorkspaceHub(
-            name=workspace_object.name,
-            description=workspace_object.description,
-            tags=workspace_object.tags,
-            display_name=workspace_object.display_name,
-            location=workspace_object.location,
-            resource_group=workspace_object.resource_group,
-            managed_network=workspace_object.managed_network,
-            customer_managed_key=workspace_object.customer_managed_key,
-            public_network_access=workspace_object.public_network_access,
-            identity=workspace_object.identity,
-            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            storage_account=rest_obj.storage_account,
-            key_vault=rest_obj.key_vault,
-            container_registry=rest_obj.container_registry,
-            existing_workspaces=rest_obj.existing_workspaces,
-            workspace_id=rest_obj.workspace_id,
-            enable_data_isolation=rest_obj.enable_data_isolation,
-            workspace_hub_config=workspace_hub_config,
-            id=rest_obj.id,
-        )
-        workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
-        return workspacehub_object
+        if workspace_object is not None:
+            workspacehub_object = WorkspaceHub(
+                name=workspace_object.name if workspace_object.name is not None else "",
+                description=workspace_object.description,
+                tags=workspace_object.tags,
+                display_name=workspace_object.display_name,
+                location=workspace_object.location,
+                resource_group=workspace_object.resource_group,
+                managed_network=workspace_object.managed_network,
+                customer_managed_key=workspace_object.customer_managed_key,
+                public_network_access=workspace_object.public_network_access,
+                identity=workspace_object.identity,
+                primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+                storage_account=rest_obj.storage_account,
+                key_vault=rest_obj.key_vault,
+                container_registry=rest_obj.container_registry,
+                existing_workspaces=rest_obj.existing_workspaces,
+                workspace_id=rest_obj.workspace_id,
+                enable_data_isolation=rest_obj.enable_data_isolation,
+                workspace_hub_config=workspace_hub_config,
+                id=rest_obj.id,
+            )
+            workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
+            return workspacehub_object
+
+        return None
 
     @classmethod
     def _load(
@@ -166,7 +168,7 @@ class WorkspaceHub(Workspace):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "WorkspaceHub":
         data = data or {}
         params_override = params_override or []
@@ -177,7 +179,7 @@ class WorkspaceHub(Workspace):
         loaded_schema = load_from_dict(WorkspaceHubSchema, data, context, **kwargs)
         return WorkspaceHub(**loaded_schema)
 
-    def set_associated_workspaces(self, value: List[str]):
+    def set_associated_workspaces(self, value: List[str]) -> None:
         """Sets the workspaces associated with the hub, not meant for use by the user.
 
         :param value: List of workspace ARM ids.
@@ -187,7 +189,8 @@ class WorkspaceHub(Workspace):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceHubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = WorkspaceHubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _to_rest_object(self) -> RestWorkspace:
         restWorkspace = super()._to_rest_object()

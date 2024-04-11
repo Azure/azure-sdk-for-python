@@ -51,7 +51,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeatureStoreSettings) -> "FeatureStoreSettings":
+    def _from_rest_object(cls, obj: RestFeatureStoreSettings) -> Optional["FeatureStoreSettings"]:
         if not obj:
             return None
         return FeatureStoreSettings(

@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.applications.begin_delete(
+    client.applications.begin_delete(
         resource_group_name="resRg",
         cluster_name="myCluster",
         application_name="myApp",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ApplicationDeleteOperation_example.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-12-01-preview/examples/ApplicationDeleteOperation_example.json
 if __name__ == "__main__":
     main()

@@ -6,10 +6,10 @@
 
 import os
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._utils._arm_id_utils import parse_name_version, parse_name_label
+from azure.ai.ml._utils._arm_id_utils import parse_name_label, parse_name_version
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineDeployment
@@ -23,9 +23,7 @@ def get_environment_artifacts(
     deployment: OnlineDeployment,
     environment_operations: EnvironmentOperations,
     download_path: str,
-) -> Union[
-    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
-]:
+) -> Optional[Tuple]:
     """Validates and returns artifacts from environment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -82,16 +80,14 @@ def get_environment_artifacts(
             required_artifact_type=str(Environment),
             deployment_name=deployment.name,
         )
-    return _get_local_environment_artifacts(deployment.base_path, deployment.environment)
+    return _get_local_environment_artifacts(deployment.base_path, deployment.environment)  # type: ignore[arg-type]
 
 
 def _get_cloud_environment_artifacts(
     environment_operations: EnvironmentOperations,
     environment_asset: Environment,
     download_path: str,
-) -> Union[
-    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
-]:
+) -> Tuple:
     """Retrieves the cloud environment's artifacts
 
     :param environment_operations: The environment operations
@@ -111,12 +107,12 @@ def _get_cloud_environment_artifacts(
     """
     if environment_asset.build and environment_asset.build.path and is_url(environment_asset.build.path):
         environment_build_directory = download_artifact_from_storage_url(
-            blob_url=environment_asset.build.path,
+            blob_url=str(environment_asset.build.path),
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
             datastore_name="workspaceartifactstore",
         )
-        dockerfile_path = Path(environment_build_directory, environment_asset.build.dockerfile_path)
+        dockerfile_path = Path(environment_build_directory, str(environment_asset.build.dockerfile_path))
         dockerfile_contents = dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
         return (
             None,
@@ -137,11 +133,7 @@ def _get_cloud_environment_artifacts(
     )
 
 
-def _get_local_environment_artifacts(
-    base_path: Union[str, os.PathLike], environment: Environment
-) -> Union[
-    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
-]:
+def _get_local_environment_artifacts(base_path: Union[str, os.PathLike], environment: Environment) -> Optional[Tuple]:
     """Retrieves the local environment's artifacts
 
     :param base_path: The base path
@@ -168,7 +160,7 @@ def _get_local_environment_artifacts(
             environment.inference_config,
         )
     if environment.build and environment.build.dockerfile_path:
-        absolute_build_directory = Path(base_path, environment.build.path).resolve()
+        absolute_build_directory = Path(base_path, str(environment.build.path)).resolve()
         absolute_dockerfile_path = Path(absolute_build_directory, environment.build.dockerfile_path).resolve()
         dockerfile_contents = absolute_dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
         return (
@@ -205,4 +197,6 @@ def _cloud_environment_is_valid(environment: Environment):
 
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
-    return isinstance(deployment.environment, str) or deployment.environment.id is not None
+    return isinstance(deployment.environment, str) or (
+        deployment.environment is not None and deployment.environment.id is not None
+    )

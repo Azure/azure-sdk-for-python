@@ -18,11 +18,12 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from typing import Dict, Iterable, Tuple
+from typing import Any, Dict, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
 from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
@@ -68,7 +69,7 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         :type activity_info: str
         """
         self._activity_info = activity_info
-        super(ActivityLoggerAdapter, self).__init__(logger, None)
+        super(ActivityLoggerAdapter, self).__init__(logger, None)  # type: ignore[arg-type]
 
     @property
     def activity_info(self) -> str:
@@ -79,7 +80,7 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         """
         return self._activity_info
 
-    def process(self, msg: str, kwargs: Dict) -> Tuple[str, Dict]:
+    def process(self, msg: str, kwargs: Dict) -> Tuple[str, Dict]:  # type: ignore[override]
         """Process the log message.
 
         :param msg: The log message.
@@ -158,7 +159,7 @@ def log_activity(
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-) -> Iterable[ActivityLoggerAdapter]:
+) -> Any:
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -190,7 +191,7 @@ def log_activity(
     completion_status = ActivityCompletionStatus.SUCCESS
 
     message = "ActivityStarted, {}".format(activity_name)
-    activityLogger = ActivityLoggerAdapter(logger, activity_info)
+    activityLogger = ActivityLoggerAdapter(logger, activity_info)  # type: ignore[arg-type]
     activityLogger.info(message)
     exception = None
 
@@ -207,7 +208,8 @@ def log_activity(
                 in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
                 "errorCategory" in activityLogger.activity_info
-                and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
+                and activityLogger.activity_info["errorCategory"]  # type: ignore[index]
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ):
                 raise Exception("Got InternalSDKError", e) from e
             raise
@@ -217,25 +219,28 @@ def log_activity(
             end_time = datetime.utcnow()
             duration_ms = round((end_time - start_time).total_seconds() * 1000, 2)
 
-            activityLogger.activity_info["completionStatus"] = completion_status
-            activityLogger.activity_info["durationMs"] = duration_ms
+            activityLogger.activity_info["completionStatus"] = completion_status  # type: ignore[index]
+            activityLogger.activity_info["durationMs"] = duration_ms  # type: ignore[index]
             message = "ActivityCompleted: Activity={}, HowEnded={}, Duration={} [ms]".format(
                 activity_name, completion_status, duration_ms
             )
             if exception:
                 message += ", Exception={}".format(type(exception).__name__)
-                activityLogger.activity_info["exception"] = type(exception).__name__
+                activityLogger.activity_info["exception"] = type(exception).__name__  # type: ignore[index]
                 if isinstance(exception, MlException):
-                    activityLogger.activity_info[
+                    activityLogger.activity_info[  # type: ignore[index]
                         "errorMessage"
                     ] = exception.no_personal_data_message  # pylint: disable=no-member
-                    activityLogger.activity_info["errorTarget"] = exception.target  # pylint: disable=no-member
-                    activityLogger.activity_info[
+                    # pylint: disable=no-member
+                    activityLogger.activity_info["errorTarget"] = exception.target  # type: ignore[index]
+                    activityLogger.activity_info[  # type: ignore[index]
                         "errorCategory"
                     ] = exception.error_category  # pylint: disable=no-member
                     if exception.inner_exception:  # pylint: disable=no-member
                         # pylint: disable=no-member
-                        activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
+                        activityLogger.activity_info["innerException"] = type(  # type: ignore[index]
+                            exception.inner_exception
+                        ).__name__
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
@@ -256,8 +261,8 @@ def monitor_with_activity(
     To monitor, use the ``@monitor_with_activity`` decorator. As an alternative, you can also wrap the
     logical block of code with the ``log_activity()`` method.
 
-    :param logger: The logger adapter.
-    :type logger: logging.LoggerAdapter
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
+    :type logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -271,8 +276,19 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
-                return f(*args, **kwargs)
+            tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
+            if tracer:
+                with tracer.span():
+                    with log_activity(
+                        logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
+                    ):
+                        return f(*args, **kwargs)
+            elif hasattr(logger, "package_logger"):
+                with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
+            else:
+                with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
 
         return wrapper
 
@@ -296,7 +312,7 @@ def monitor_with_telemetry_mixin(
     will collect from return value.
     To monitor, use the ``@monitor_with_telemetry_mixin`` decorator.
 
-    :param logger: The logger adapter.
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
     :type logger: logging.LoggerAdapter
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
@@ -310,6 +326,8 @@ def monitor_with_telemetry_mixin(
     :type extra_keys: list[str]
     :return:
     """
+
+    logger = logger.package_logger if isinstance(logger, OpsLogger) else logger
 
     def monitor(f):
         def _collect_from_parameters(f, args, kwargs, extra_keys):

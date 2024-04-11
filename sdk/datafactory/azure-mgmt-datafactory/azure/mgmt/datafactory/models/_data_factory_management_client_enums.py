@@ -271,6 +271,15 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+
+
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
@@ -318,6 +327,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -721,6 +737,13 @@ class SalesforceSourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     QUERY_ALL = "QueryAll"
 
 
+class SalesforceV2SinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The write behavior for the operation. Default is Insert."""
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+
+
 class SapCloudForCustomerSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The write behavior for the operation. Default is 'Insert'."""
 
@@ -812,6 +835,13 @@ class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     O_AUTH2 = "OAuth2"
 
 
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
 class ServicePrincipalCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available servicePrincipalCredentialType values."""
 
@@ -825,6 +855,14 @@ class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
     MULTI_FACTOR = "MultiFactor"
+
+
+class SnowflakeAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    BASIC = "Basic"
+    KEY_PAIR = "KeyPair"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -114,8 +114,9 @@ class CachingType(str, Enum):
 
 class StorageAccountType(str, Enum):
 
-    standard_lrs = "standard_lrs"  #: The data disk should use standard locally redundant storage.
-    premium_lrs = "premium_lrs"  #: The data disk should use premium locally redundant storage.
+    standard_lrs = "standard_lrs"  #: The data disk / OS disk should use standard locally redundant storage.
+    premium_lrs = "premium_lrs"  #: The data disk / OS disk should use premium locally redundant storage.
+    standard_ssdlrs = "standardssd_lrs"  #: The data disk / OS disk should use standard SSD locally redundant storage.
 
 
 class ContainerType(str, Enum):
@@ -139,6 +140,11 @@ class NodePlacementPolicyType(str, Enum):
 class DiffDiskPlacement(str, Enum):
 
     cache_disk = "CacheDisk"  #: The Ephemeral OS Disk is stored on the VM cache.
+
+
+class SecurityTypes(str, Enum):
+
+    trusted_launch = "trustedLaunch"  #: Trusted launch protects against advanced and persistent attack techniques.
 
 
 class DynamicVNetAssignmentScope(str, Enum):
@@ -171,6 +177,13 @@ class NodeCommunicationMode(str, Enum):
     default = "default"  #: The node communication mode is automatically set by the Batch service.
     classic = "classic"  #: Nodes using the classic communication mode require inbound TCP communication on ports 29876 and 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags.
     simplified = "simplified"  #: Nodes using the simplified communication mode require outbound TCP communication on port 443 to the "BatchNodeManagement.{region}" service tag. No open inbound ports are required.
+
+
+class UpgradeMode(str, Enum):
+
+    automatic = "automatic"  #: All virtual machines in the scale set are automatically updated at the same time.
+    manual = "manual"  #: You control the application of updates to virtual machines in the scale set. You do this by using the manualUpgrade action.
+    rolling = "rolling"  #: The existing instances in a scale set are brought down in batches to be upgraded. Once the upgraded batch is complete, the instances will begin taking traffic again and the next batch will begin. This continues until all instances brought up-to-date.
 
 
 class PoolLifetimeOption(str, Enum):
@@ -304,6 +317,7 @@ class ComputeNodeState(str, Enum):
     leaving_pool = "leavingpool"  #: The Compute Node is leaving the Pool, either because the user explicitly removed it or because the Pool is resizing or autoscaling down.
     offline = "offline"  #: The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute Node is disabled.
     preempted = "preempted"  #: The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available.
+    upgrading_os = "upgradingos"  #: The Compute Node is undergoing an OS upgrade operation.
 
 
 class SchedulingState(str, Enum):

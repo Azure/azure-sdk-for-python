@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,35 @@
 
 ### Other Changes
 
+## 1.0.0b3 (2024-04-09)
+
+### Other Changes
+- Changed the default polling interval from 5s to 1s.
+
+## 1.0.0b2 (2024-03-07)
+
+### Features Added
+
+- Added model `AnalyzeResultOperation` and `Warning`.
+- Added property `base_classifier_id` to model `BuildDocumentClassifierRequest`.
+- Added property `base_classifier_id` and `warnings` to model `DocumentClassifierDetails`.
+- Added property `warnings` to model `DocumentModelDetails`.
+- Added property `value_selection_group` to model `DocumentField`.
+- Added value `selectionGroup` to enum `DocumentFieldType`.
+- Added value `completed` to enum `OperationStatus`.
+
+### Breaking Changes
+
+- Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
+- Changed property name from `base64_source` to `bytes_source` in model `AnalyzeDocumentRequest` and `ClassifyDocumentRequest`.
+
+### Other Changes
+
 - Changed the default polling interval from 30s to 5s.
+- Changed the default service API version to `2024-02-29-preview`.
+- Bumped minimum dependency on `azure-core` to `>=1.30.0`.
+- Bumped minimum dependency on `typing-extensions` to `>=4.6.0`.
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 1.0.0b1 (2023-11-17)
 

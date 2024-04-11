@@ -68,19 +68,18 @@ class TroubleshootersOperations:
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -107,19 +106,18 @@ class TroubleshootersOperations:
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -144,19 +142,18 @@ class TroubleshootersOperations:
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -245,8 +242,9 @@ class TroubleshootersOperations:
         Troubleshooter workflow. This API requires the Troubleshooter resource name that was created
         using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -316,8 +314,9 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -348,8 +347,9 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -378,8 +378,9 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -463,8 +464,9 @@ class TroubleshootersOperations:
     ) -> None:
         """Ends the troubleshooter action.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -526,8 +528,9 @@ class TroubleshootersOperations:
         input.:code:`<br/>` It returns new resource name which should be used in subsequent request.
         The old resource name is obsolete after this API is invoked.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str

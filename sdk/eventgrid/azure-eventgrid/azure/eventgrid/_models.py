@@ -103,11 +103,12 @@ class EventGridEvent(InternalEventGridEvent):
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
         :param event: The json string that should be converted into a EventGridEvent. This can also be
-         a storage QueueMessage, eventhub's EventData or ServiceBusMessage
+        a storage QueueMessage, eventhub's EventData or ServiceBusMessage
         :type event: object
         :rtype: EventGridEvent
         :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
+
         """
         dict_event = _get_json_content(event)
         return cast(EventGridEvent, EventGridEvent.from_dict(dict_event))

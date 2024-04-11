@@ -28,13 +28,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.linkers.delete_dryrun(
+    client.linkers.delete_dryrun(
         resource_uri="subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
         dryrun_name="dryrunName",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2022-11-01-preview/examples/DeleteDryrun.json
+# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/DeleteDryrun.json
 if __name__ == "__main__":
     main()

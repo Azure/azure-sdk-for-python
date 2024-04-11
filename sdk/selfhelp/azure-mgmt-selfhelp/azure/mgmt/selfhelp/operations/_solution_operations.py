@@ -240,15 +240,17 @@ class SolutionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SolutionResource]:
-        """Creates a solution for the specific Azure resource or subscription using the triggering
-        criteria ‘solutionId and requiredInputs’ from discovery solutions.:code:`<br/>` Solutions are a
-        rich, insightful and a centralized self help experience that brings all the relevant content to
-        troubleshoot an Azure issue into a unified experience. Solutions include the following
-        components : Text, Diagnostics , Troubleshooters, Images , Video tutorials, Tables , custom
-        charts, images , AzureKB, etc, with capabilities to support new solutions types in the future.
-        Each solution type may require one or more ‘requiredParameters’ that are required to execute
-        the individual solution component. In the absence of the ‘requiredParameters’ it is likely that
-        some of the solutions might fail execution, and you might see an empty response.
+        """Creates a solution for the specific Azure resource or subscription using the inputs ‘solutionId
+        and requiredInputs’ from discovery solutions. :code:`<br/>` Azure solutions comprise a
+        comprehensive library of self-help resources that have been thoughtfully curated by Azure
+        engineers to aid customers in resolving typical troubleshooting issues. These solutions
+        encompass (1.) dynamic and context-aware diagnostics, guided troubleshooting wizards, and data
+        visualizations, (2.) rich instructional video tutorials and illustrative diagrams and images,
+        and (3.) thoughtfully assembled textual troubleshooting instructions. All these components are
+        seamlessly converged into unified solutions tailored to address a specific support problem
+        area. Each solution type may require one or more ‘requiredParameters’ that are required to
+        execute the individual solution component. In the absence of the ‘requiredParameters’ it is
+        likely that some of the solutions might fail execution, and you might see an empty response.
         :code:`<br/>`:code:`<br/>` :code:`<b>Note:</b>`  :code:`<br/>`1. ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘parameters’ in the request body of Solutions
         API. :code:`<br/>`2. ‘requiredParameters’ from the Solutions response is the same as ‘
@@ -256,8 +258,9 @@ class SolutionOperations:
         the Solutions response is the same as ‘properties.parameters’ in the request for
         Troubleshooters.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -291,15 +294,17 @@ class SolutionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SolutionResource]:
-        """Creates a solution for the specific Azure resource or subscription using the triggering
-        criteria ‘solutionId and requiredInputs’ from discovery solutions.:code:`<br/>` Solutions are a
-        rich, insightful and a centralized self help experience that brings all the relevant content to
-        troubleshoot an Azure issue into a unified experience. Solutions include the following
-        components : Text, Diagnostics , Troubleshooters, Images , Video tutorials, Tables , custom
-        charts, images , AzureKB, etc, with capabilities to support new solutions types in the future.
-        Each solution type may require one or more ‘requiredParameters’ that are required to execute
-        the individual solution component. In the absence of the ‘requiredParameters’ it is likely that
-        some of the solutions might fail execution, and you might see an empty response.
+        """Creates a solution for the specific Azure resource or subscription using the inputs ‘solutionId
+        and requiredInputs’ from discovery solutions. :code:`<br/>` Azure solutions comprise a
+        comprehensive library of self-help resources that have been thoughtfully curated by Azure
+        engineers to aid customers in resolving typical troubleshooting issues. These solutions
+        encompass (1.) dynamic and context-aware diagnostics, guided troubleshooting wizards, and data
+        visualizations, (2.) rich instructional video tutorials and illustrative diagrams and images,
+        and (3.) thoughtfully assembled textual troubleshooting instructions. All these components are
+        seamlessly converged into unified solutions tailored to address a specific support problem
+        area. Each solution type may require one or more ‘requiredParameters’ that are required to
+        execute the individual solution component. In the absence of the ‘requiredParameters’ it is
+        likely that some of the solutions might fail execution, and you might see an empty response.
         :code:`<br/>`:code:`<br/>` :code:`<b>Note:</b>`  :code:`<br/>`1. ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘parameters’ in the request body of Solutions
         API. :code:`<br/>`2. ‘requiredParameters’ from the Solutions response is the same as ‘
@@ -307,8 +312,9 @@ class SolutionOperations:
         the Solutions response is the same as ‘properties.parameters’ in the request for
         Troubleshooters.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -340,15 +346,17 @@ class SolutionOperations:
         solution_request_body: Optional[Union[_models.SolutionResource, IO]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.SolutionResource]:
-        """Creates a solution for the specific Azure resource or subscription using the triggering
-        criteria ‘solutionId and requiredInputs’ from discovery solutions.:code:`<br/>` Solutions are a
-        rich, insightful and a centralized self help experience that brings all the relevant content to
-        troubleshoot an Azure issue into a unified experience. Solutions include the following
-        components : Text, Diagnostics , Troubleshooters, Images , Video tutorials, Tables , custom
-        charts, images , AzureKB, etc, with capabilities to support new solutions types in the future.
-        Each solution type may require one or more ‘requiredParameters’ that are required to execute
-        the individual solution component. In the absence of the ‘requiredParameters’ it is likely that
-        some of the solutions might fail execution, and you might see an empty response.
+        """Creates a solution for the specific Azure resource or subscription using the inputs ‘solutionId
+        and requiredInputs’ from discovery solutions. :code:`<br/>` Azure solutions comprise a
+        comprehensive library of self-help resources that have been thoughtfully curated by Azure
+        engineers to aid customers in resolving typical troubleshooting issues. These solutions
+        encompass (1.) dynamic and context-aware diagnostics, guided troubleshooting wizards, and data
+        visualizations, (2.) rich instructional video tutorials and illustrative diagrams and images,
+        and (3.) thoughtfully assembled textual troubleshooting instructions. All these components are
+        seamlessly converged into unified solutions tailored to address a specific support problem
+        area. Each solution type may require one or more ‘requiredParameters’ that are required to
+        execute the individual solution component. In the absence of the ‘requiredParameters’ it is
+        likely that some of the solutions might fail execution, and you might see an empty response.
         :code:`<br/>`:code:`<br/>` :code:`<b>Note:</b>`  :code:`<br/>`1. ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘parameters’ in the request body of Solutions
         API. :code:`<br/>`2. ‘requiredParameters’ from the Solutions response is the same as ‘
@@ -356,8 +364,9 @@ class SolutionOperations:
         the Solutions response is the same as ‘properties.parameters’ in the request for
         Troubleshooters.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -432,8 +441,9 @@ class SolutionOperations:
     def get(self, scope: str, solution_resource_name: str, **kwargs: Any) -> _models.SolutionResource:
         """Get the solution using the applicable solutionResourceName while creating the solution.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -577,8 +587,9 @@ class SolutionOperations:
     ) -> LROPoller[_models.SolutionResource]:
         """Update the requiredInputs or additional information needed to execute the solution.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -614,8 +625,9 @@ class SolutionOperations:
     ) -> LROPoller[_models.SolutionResource]:
         """Update the requiredInputs or additional information needed to execute the solution.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str
@@ -649,8 +661,9 @@ class SolutionOperations:
     ) -> LROPoller[_models.SolutionResource]:
         """Update the requiredInputs or additional information needed to execute the solution.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param solution_resource_name: Solution resource Name. Required.
         :type solution_resource_name: str

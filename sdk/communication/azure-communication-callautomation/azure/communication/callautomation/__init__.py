@@ -8,6 +8,7 @@ import warnings
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
+from .streaming.streaming_data_parser import StreamingDataParser
 from ._models import (
     CallConnectionProperties,
     FileSource,
@@ -29,6 +30,7 @@ from ._models import (
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
+    MicrosoftTeamsAppIdentifier,
     MicrosoftTeamsUserIdentifier,
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
@@ -51,10 +53,18 @@ from ._generated.models._enums import (
     RecordingState,
     VoiceKind
 )
+from .streaming.models import (
+    TranscriptionMetadata,
+    TranscriptionData
+)
+
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
+
+    # parser
+    "StreamingDataParser",
 
     # models for input
     "FileSource",
@@ -79,11 +89,16 @@ __all__ = [
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",
+    "MicrosoftTeamsAppIdentifier",
     "MicrosoftTeamsUserIdentifier",
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
+
+    # streaming models
+    "TranscriptionMetadata",
+    "TranscriptionData",
 
     # enums
     "CallRejectReason",
@@ -127,7 +142,8 @@ def __getattr__(name):
         from ._models import ServerCallLocator
         return ServerCallLocator
     if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
-        from ._shared.models  import _MicrosoftBotIdentifier
+        warnings.warn(f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
+                       DeprecationWarning)
+        from ._shared.models import _MicrosoftBotIdentifier
         return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

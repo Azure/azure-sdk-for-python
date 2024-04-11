@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     )
 
 
-class EventProcessorMixin(object):
+class EventProcessorMixin:
 
     _eventhub_client: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]] = None
     _consumer_group: str = ""

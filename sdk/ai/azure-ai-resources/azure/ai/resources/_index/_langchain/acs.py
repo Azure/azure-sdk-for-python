@@ -4,7 +4,7 @@
 """Azure Cognitive Search vector store."""
 import base64
 import json
-from typing import Any, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from azure.ai.resources._index._utils.logging import get_logger
 from azure.ai.resources._index._utils.requests import send_post_request
@@ -76,7 +76,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
     def _similarity_search_by_vector_with_relevance_scores(self, query: Optional[str], embedded_query: List[float], k: int = 4, **kwargs) -> List[Tuple[Document, float]]:
         post_url = f"{self.endpoint}/indexes/{self.index_name}/docs/search?api-version=2023-07-01-Preview"
         headers = get_acs_headers(self.credential)
-        post_payload = {}
+        post_payload: Dict[str, Any] = {}
 
         if query is not None:
             logger.info(f"Query: {query}")
@@ -124,7 +124,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
 
         return []
 
-    def add_texts(self, texts: Iterable[str], metadatas: Optional[List[dict]] = None, **kwargs: Any) -> List[str]:
+    def add_texts(self, texts: Iterable[str], metadata: Optional[List[dict]] = None, **kwargs: Any) -> List[str]:
         """Add texts to the vector store."""
         raise NotImplementedError
 
@@ -141,6 +141,6 @@ class AzureCognitiveSearchVectorStore(VectorStore):
         return [doc for (doc, _) in self._similarity_search_by_vector_with_relevance_scores(None, vector, k, **kwargs)]
 
     @classmethod
-    def from_texts(cls, texts: Iterable[str], metadatas: Optional[List[dict]] = None, **kwargs: Any) -> VectorStore:
+    def from_texts(cls, texts: Iterable[str], metadata: Optional[List[dict]] = None, **kwargs: Any) -> VectorStore:
         """Create a vector store from a list of texts."""
         raise NotImplementedError

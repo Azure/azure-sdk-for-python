@@ -26,7 +26,7 @@ from azure.mgmt.sql import SqlManagementClient
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="20d7082a-0fc7-4468-82bd-542694d5042b",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
     response = client.managed_instances.get(
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedInstanceGetWithExpandEqualsAdministrators.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ManagedInstanceGetWithExpandEqualsAdministrators.json
 if __name__ == "__main__":
     main()

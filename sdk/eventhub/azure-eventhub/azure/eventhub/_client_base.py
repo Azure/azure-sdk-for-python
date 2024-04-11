@@ -193,7 +193,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     return min(backoff_max, backoff_value)
 
 
-class EventHubSharedKeyCredential(object):
+class EventHubSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -211,7 +211,7 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class EventhubAzureNamedKeyTokenCredential(object):
+class EventhubAzureNamedKeyTokenCredential:
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -229,7 +229,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class EventHubSASTokenCredential(object):
+class EventHubSASTokenCredential:
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
@@ -256,7 +256,7 @@ class EventHubSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -286,7 +286,7 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, cast(int, expiry))
 
 
-class ClientBase(object):  # pylint:disable=too-many-instance-attributes
+class ClientBase:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -311,7 +311,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
             self._credential = credential  # type: ignore
-        self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(

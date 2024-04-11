@@ -62,6 +62,7 @@ class TableClient(TablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
+        api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -84,7 +85,7 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
@@ -266,18 +267,25 @@ class TableClient(TablesBaseClient):
 
     @overload
     def delete_entity(
-        self, partition_key: str, row_key: str, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs: Any
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
         :param str partition_key: The partition key of the entity.
         :param str row_key: The row key of the entity.
-        :keyword str etag: Etag of the entity
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-            The default value is Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -296,18 +304,24 @@ class TableClient(TablesBaseClient):
 
     @overload
     def delete_entity(
-        self, entity: EntityType, *, encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER, **kwargs: Any
+        self,
+        entity: EntityType,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
         :param entity: The entity to delete.
         :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword str etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-            The default value is Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -325,16 +339,24 @@ class TableClient(TablesBaseClient):
         """
     
     @overload
-    def delete_entity(self, entity: T,  *, encoder: TableEntityEncoder[T], **kwargs: Any) -> None:
+    def delete_entity(
+        self,
+        entity: T,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        encoder: TableEntityEncoder[T],
+        **kwargs: Any
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
         :param entity: The entity to delete.
-        :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword str etag: Etag of the entity.
+        :type entity: Custom entity type
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -383,7 +405,13 @@ class TableClient(TablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
 
     @overload
-    def create_entity(self, entity: EntityType, *, encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER, **kwargs) -> Dict[str, Any]:
+    def create_entity(
+        self,
+        entity: EntityType,
+        *,
+        encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER,
+        **kwargs
+    ) -> Dict[str, Any]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -442,18 +470,27 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)
 
     @overload
-    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs) -> Dict[str, Any]:
+    def update_entity(
+        self,
+        entity: EntityType,
+        mode: UpdateMode = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        **kwargs,
+    ) -> Dict[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-            The default value is Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -472,17 +509,25 @@ class TableClient(TablesBaseClient):
         """
     
     @overload
-    def update_entity(self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+    def update_entity(
+        self,
+        entity: T,
+        mode: UpdateMode = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        encoder: TableEntityEncoder[T],
+        **kwargs
+    ) -> Dict[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
+        :type entity: Custom entity type
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity.
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -543,7 +588,13 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)
 
     @distributed_trace
-    def list_entities(self, **kwargs) -> ItemPaged[TableEntity]:
+    def list_entities(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        **kwargs,
+    ) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities returned per service request.
@@ -562,22 +613,28 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: List all entities held within a table
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
-        top = kwargs.pop("results_per_page", None)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
-            select=user_select,
+            results_per_page=results_per_page,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
-    def query_entities(self, query_filter: str, **kwargs) -> ItemPaged[TableEntity]:
+    def query_entities(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> ItemPaged[TableEntity]:
         # pylint: disable=line-too-long
         """Lists entities in a table.
 
@@ -601,27 +658,30 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Query entities held within a table
         """
-        parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        top = kwargs.pop("results_per_page", None)
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
+            results_per_page=results_per_page,
             filter=query_filter,
-            select=user_select,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
     def get_entity(
-        self, partition_key: str, row_key: str, *, encoder: TableEntityEncoder = DEFAULT_ENCODER, **kwargs
-    ) -> Dict[str, Any]:
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        select: Optional[Union[str, List[str]]] = None,
+        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        **kwargs,
+    ) -> TableEntity:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -629,7 +689,7 @@ class TableClient(TablesBaseClient):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or list[str]
+        :paramtype select: str or list[str] or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
         :type encoder: ~azure.data.Tables.TableEntityEncoder
@@ -646,9 +706,11 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Get a single entity from a table
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        user_select = None
+        if select and not isinstance(select, str):
+            user_select = ",".join(select)
+        elif isinstance(select, str):
+            user_select = select
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
@@ -663,7 +725,12 @@ class TableClient(TablesBaseClient):
 
     @overload
     def upsert_entity(
-        self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[TableEntityEncoder] = DEFAULT_ENCODER, **kwargs
+        self,
+        entity: EntityType,
+        mode: UpdateMode = UpdateMode.MERGE,
+        *,
+        encoder: TableEntityEncoder[TableEntityEncoder] = DEFAULT_ENCODER,
+        **kwargs
     ) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
 
@@ -689,11 +756,18 @@ class TableClient(TablesBaseClient):
         """
 
     @overload
-    def upsert_entity(self, entity: T, mode: UpdateMode = UpdateMode.MERGE, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+    def upsert_entity(
+        self,
+        entity: T,
+        mode: UpdateMode = UpdateMode.MERGE,
+        *,
+        encoder: TableEntityEncoder[T],
+        **kwargs
+    ) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
+        :type entity: Custom entity type
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.

@@ -49,25 +49,29 @@ class EventHubProducerClient(
      then publish. Default is False.
     :keyword on_success: The callback to be called once a batch has been successfully published.
      The callback takes two parameters:
-        - `events`: The list of events that have been successfully published
-        - `partition_id`: The partition id that the events in the list have been published to.
+     - `events`: The list of events that have been successfully published
+     - `partition_id`: The partition id that the events in the list have been published to.
+
      The callback function should be defined like: `on_success(events, partition_id)`.
      Required when `buffered_mode` is True while optional if `buffered_mode` is False.
     :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], Awaitable[None]]]
     :keyword on_error: The callback to be called once a batch has failed to be published.
      Required when in `buffered_mode` is True while optional if `buffered_mode` is False.
      The callback function should be defined like: `on_error(events, partition_id, error)`, where:
-        - `events`: The list of events that failed to be published,
-        - `partition_id`: The partition id that the events in the list have been tried to be published to and
-        - `error`: The exception related to the sending failure.
+     - `events`: The list of events that failed to be published,
+     - `partition_id`: The partition id that the events in the list have been tried to be published to and
+     - `error`: The exception related to the sending failure.
+
      If `buffered_mode` is False, `on_error` callback is optional and errors will be handled as follows:
-        - If an `on_error` callback is passed during the producer client instantiation,
-            then error information will be passed to the `on_error` callback, which will then be called.
-        - If an `on_error` callback is not passed in during client instantiation,
-            then the error will be raised by default.
+     - If an `on_error` callback is passed during the producer client instantiation,
+     then error information will be passed to the `on_error` callback, which will then be called.
+     - If an `on_error` callback is not passed in during client instantiation,
+     then the error will be raised by default.
+
      If `buffered_mode` is True, `on_error` callback is required and errors will be handled as follows:
-        - If events fail to enqueue within the given timeout, then an error will be directly raised.
-        - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
+     - If events fail to enqueue within the given timeout, then an error will be directly raised.
+     - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
+
     :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
     :keyword int max_buffer_length: Buffered mode only.
      The total number of events per partition that can be buffered before a flush will be triggered.
@@ -184,6 +188,7 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
+        self._keep_alive = kwargs.get("keep_alive", None)
         self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
         }
@@ -365,6 +370,7 @@ class EventHubProducerClient(
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
             amqp_transport = self._amqp_transport,
+            keep_alive = self._keep_alive,
             **self._internal_kwargs
         )
         return handler
@@ -428,24 +434,28 @@ class EventHubProducerClient(
          then publish. Default is False.
         :keyword on_success: The callback to be called once a batch has been successfully published.
          The callback takes two parameters:
-            - `events`: The list of events that have been successfully published
-            - `partition_id`: The partition id that the events in the list have been published to.
+         - `events`: The list of events that have been successfully published
+         - `partition_id`: The partition id that the events in the list have been published to.
+
          The callback function should be defined like: `on_success(events, partition_id)`.
          It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
         :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], Awaitable[None]]]
         :keyword on_error: The callback to be called once a batch has failed to be published.
          The callback function should be defined like: `on_error(events, partition_id, error)`, where:
-            - `events`: The list of events that failed to be published,
-            - `partition_id`: The partition id that the events in the list have been tried to be published to and
-            - `error`: The exception related to the sending failure.
+         - `events`: The list of events that failed to be published,
+         - `partition_id`: The partition id that the events in the list have been tried to be published to and
+         - `error`: The exception related to the sending failure.
+
          If `buffered_mode` is False, `on_error` callback is optional and errors will be handled as follows:
-            - If an `on_error` callback is passed during the producer client instantiation,
-                then error information will be passed to the `on_error` callback, which will then be called.
-            - If an `on_error` callback is not passed in during client instantiation,
-                then the error will be raised by default.
+         - If an `on_error` callback is passed during the producer client instantiation,
+         then error information will be passed to the `on_error` callback, which will then be called.
+         - If an `on_error` callback is not passed in during client instantiation,
+         then the error will be raised by default.
+
          If `buffered_mode` is True, `on_error` callback is required and errors will be handled as follows:
-            - If events fail to enqueue within the given timeout, then an error will be directly raised.
-            - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
+         - If events fail to enqueue within the given timeout, then an error will be directly raised.
+         - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
+
         :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
         :keyword int max_buffer_length: Buffered mode only.
          The total number of events per partition that can be buffered before a flush will be triggered.
@@ -547,7 +557,8 @@ class EventHubProducerClient(
         :keyword float timeout: The maximum wait time to send the event data in non-buffered mode or the
          maximum wait time to enqueue the event data into the buffer in buffered mode.
          In non-buffered mode, the default wait time specified when the producer
-         was created will be used. In buffered mode, the default wait time is None.
+         was created will be used. In buffered mode, the default wait time is None indicating that the event will be
+         scheduled to send immediately.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
          A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because
@@ -724,6 +735,7 @@ class EventHubProducerClient(
                 :language: python
                 :dedent: 4
                 :caption: Create EventDataBatch object within limited size
+
         :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:

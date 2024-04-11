@@ -82,7 +82,7 @@ class AccountPreparer(AzureMgmtPreparer):
             storage = self._get_storage_account(**kwargs)
             if storage:
                 storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
-                    self.test_class_instance.settings.SUBSCRIPTION_ID,
+                    self.test_class_instance.settings.get("AZURE_SUBSCRIPTION_ID"),
                     group.name,
                     storage.name
                 )

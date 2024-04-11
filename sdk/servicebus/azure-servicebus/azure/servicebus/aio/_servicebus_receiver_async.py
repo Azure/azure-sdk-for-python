@@ -88,8 +88,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     The two primary channels for message receipt are `receive()` to make a single request for messages,
     and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
-    **Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.aio.ServiceBusClient to create a
-    ServiceBusReceiver instance.**
+    Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.aio.ServiceBusClient to create a
+    ServiceBusReceiver instance.
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -117,8 +117,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      if the client fails to process the message.
      The default mode is PEEK_LOCK.
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
-     will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+     to a session. If connection errors are occurring due to write timing out,the connection timeout
+     value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -137,7 +141,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
      `max_message_count` (if provided) within its request to the service.
-     **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+     WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
      Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -294,8 +298,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+         to a session. If connection errors are occurring due to write timing out,the connection timeout
+         value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -311,7 +319,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
          `max_message_count` (if provided) within its request to the service.
-         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -649,7 +657,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
-         timeout period, an empty list will be returned.
+         timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
+         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 

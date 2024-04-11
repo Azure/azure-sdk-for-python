@@ -57,7 +57,8 @@ P = ParamSpec("P")
 
 # Overload the returns a decorator when func is None
 @overload
-def pipeline(
+def pipeline(  # type: ignore[misc]
+    # TODO: Bug 2875164
     func: None = None,
     *,
     name: Optional[str] = None,
@@ -74,7 +75,7 @@ def pipeline(
 # Overload the returns a decorated function when func isn't None
 @overload
 def pipeline(
-    func: Callable[P, T] = None,
+    func: Optional[Callable[P, T]] = None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -137,7 +138,8 @@ def pipeline(
     get_component = kwargs.get("get_component", False)
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
-        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
+        # pylint: disable=isinstance-second-argument-not-valid-type
+        if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
@@ -245,10 +247,10 @@ def pipeline(
                 )
 
             return built_pipeline
-
-        wrapper._is_dsl_func = True
-        wrapper._job_settings = job_settings
-        wrapper._pipeline_builder = pipeline_builder
+        
+        wrapper._is_dsl_func = True  # type: ignore[attr-defined]
+        wrapper._job_settings = job_settings  # type: ignore[attr-defined]
+        wrapper._pipeline_builder = pipeline_builder  # type: ignore[attr-defined]
         return wrapper
 
     # enable use decorator without "()" if all arguments are default values

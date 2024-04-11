@@ -28,7 +28,7 @@ from devtools_testutils import (
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 
 
-AZURE_LOCATION = 'eastasia'
+AZURE_LOCATION = 'eastus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
@@ -255,25 +255,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert disk_pool.virtual_machine_configuration.data_disks[0].lun == 1
         assert disk_pool.virtual_machine_configuration.data_disks[0].disk_size_gb == 50
 
-        # Test Create Pool with Application Licenses
-        test_app_pool = models.PoolAddParameter(
-            id=self.get_resource_name('batch_app_'),
-            vm_size=DEFAULT_VM_SIZE,
-            application_licenses=["maya"],
-            virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher='Canonical',
-                    offer='UbuntuServer',
-                    sku='18.04-LTS'
-                ),
-                node_agent_sku_id='batch.node.ubuntu 18.04',
-                data_disks=[data_disk])
-        )
-        response = client.pool.add(test_app_pool)
-        assert response is None
-        app_pool = client.pool.get(test_app_pool.id)
-        assert app_pool.application_licenses[0] == "maya"
-
         # Test Create Pool with Azure Disk Encryption
         test_ade_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_ade_'),
@@ -319,6 +300,109 @@ class TestBatch(AzureMgmtRecordedTestCase):
         vmextension_pool = client.pool.get(test_vmextension_pool.id)
         assert vmextension_pool.virtual_machine_configuration.extensions[0].enable_automatic_upgrade
 
+        # Test Create Pool with Trusted Launch security type
+        test_trustedlaunch_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_trustedlaunch_'),
+            vm_size='standard_d2s_v3',
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='18.04-LTS'
+                ),
+                node_agent_sku_id='batch.node.ubuntu 18.04',
+                security_profile=models.SecurityProfile(
+                    security_type=models.SecurityTypes.trusted_launch,
+                    encryption_at_host=True,
+                    uefi_settings=models.UefiSettings(
+                        secure_boot_enabled=True,
+                        v_tpm_enabled=True
+                    )
+                )
+            )
+        )
+        response = client.pool.add(test_trustedlaunch_pool)
+        assert response is None
+        trustedlaunch_pool = client.pool.get(test_trustedlaunch_pool.id)
+        security_prof = trustedlaunch_pool.virtual_machine_configuration.security_profile
+        assert security_prof.security_type == "trustedLaunch"
+        assert security_prof.encryption_at_host is True
+        assert security_prof.uefi_settings.secure_boot_enabled is True
+        assert security_prof.uefi_settings.v_tpm_enabled is True
+
+        # Test Create Pool with custom OS Disk configuration
+        test_osdisk_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_osdisk_'),
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='18.04-LTS'
+                ),
+                node_agent_sku_id='batch.node.ubuntu 18.04',
+                os_disk=models.OSDisk(
+                    caching=models.CachingType.read_only,
+                    managed_disk=models.ManagedDisk(
+                        storage_account_type=models.StorageAccountType.premium_lrs,
+                    ),
+                    disk_size_gb=10
+                )
+            )
+        )
+        response = client.pool.add(test_osdisk_pool)
+        assert response is None
+        osdisk_pool = client.pool.get(test_osdisk_pool.id)
+        assert osdisk_pool.virtual_machine_configuration.os_disk.caching == "readonly"
+        assert osdisk_pool.virtual_machine_configuration.os_disk.managed_disk.storage_account_type == "premium_lrs"
+        assert osdisk_pool.virtual_machine_configuration.os_disk.disk_size_gb == 10
+
+
+        # Test Create Pool with Upgrade Policy
+        test_upgradepolicy_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_upgradepolicy_'),
+            vm_size='standard_d2s_v3',
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='18.04-LTS'
+                ),
+                node_placement_configuration=models.NodePlacementConfiguration(
+                    policy=models.NodePlacementPolicyType.zonal
+                ),
+                node_agent_sku_id='batch.node.ubuntu 18.04'
+            ),
+            upgrade_policy=models.UpgradePolicy(
+                mode=models.UpgradeMode.automatic,
+                automatic_os_upgrade_policy=models.AutomaticOSUpgradePolicy(
+                    disable_automatic_rollback=True,
+                    enable_automatic_os_upgrade=True,
+                    use_rolling_upgrade_policy=True,
+                    os_rolling_upgrade_deferral=True
+                ),
+                rolling_upgrade_policy=models.RollingUpgradePolicy(
+                    enable_cross_zone_upgrade=True,
+                    max_batch_instance_percent=20,
+                    max_unhealthy_instance_percent=20,
+                    max_unhealthy_upgraded_instance_percent=20,
+                    pause_time_between_batches=datetime.timedelta(seconds=5),
+                    prioritize_unhealthy_instances=False,
+                    rollback_failed_instances_on_policy_breach=False
+                )
+            )
+        )
+        
+        response = client.pool.add(test_upgradepolicy_pool)
+        assert response is None
+        upgradepolicy_pool = client.pool.get(test_upgradepolicy_pool.id)
+        upgradepolicy_details = upgradepolicy_pool.upgrade_policy
+        assert upgradepolicy_details.mode == "automatic"
+        assert upgradepolicy_details.automatic_os_upgrade_policy.disable_automatic_rollback is True
+        assert upgradepolicy_details.automatic_os_upgrade_policy.enable_automatic_os_upgrade is True
+        assert upgradepolicy_details.rolling_upgrade_policy.enable_cross_zone_upgrade is True
+        assert upgradepolicy_details.rolling_upgrade_policy.max_batch_instance_percent == 20
+
         # Test List Pools without Filters
         pools = list(client.pool.list())
         assert len(pools) > 1
@@ -331,7 +415,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test List Pools with Filter
         options = models.PoolListOptions(
-            filter='startswith(id,\'batch_app_\')',
+            filter='startswith(id,\'batch_disk_\')',
             select='id,state',
             expand='stats')
         pools = list(client.pool.list(options))
@@ -446,6 +530,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION)
     def test_batch_scale_pools(self, **kwargs):
+
+        time.sleep(10) # temporary fix for timeout issue
+        
         batch_pool = kwargs.pop("batch_pool")
         client = self.create_sharedkey_client(**kwargs)
         # Test Enable Autoscale

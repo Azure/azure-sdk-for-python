@@ -63,7 +63,7 @@ async def analyze_fonts():
     # [START analyze_fonts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -78,7 +78,7 @@ async def analyze_fonts():
                 features=[DocumentAnalysisFeature.STYLE_FONT],
                 content_type="application/octet-stream",
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
     # DocumentStyle has the following font related attributes:
     similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
@@ -87,10 +87,11 @@ async def analyze_fonts():
     font_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
     font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
 
-    if any([style.is_handwritten for style in result.styles]):
+    if result.styles and any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
     else:
         print("Document does not contain handwritten content")
+        return
 
     print("\n----Fonts styles detected in the document----")
 

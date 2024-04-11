@@ -34,6 +34,7 @@ def sample_manage_classifiers():
         AzureBlobContentSource,
         ClassifierDocumentTypeDetails,
         BuildDocumentClassifierRequest,
+        DocumentClassifierDetails,
     )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
@@ -50,27 +51,24 @@ def sample_manage_classifiers():
             classifier_id=str(uuid.uuid4()),
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    azure_blob_source=AzureBlobContentSource(
-                        container_url=container_sas_url, prefix="IRS-1040-A/train"
-                    )
+                    azure_blob_source=AzureBlobContentSource(container_url=container_sas_url, prefix="IRS-1040-A/train")
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    azure_blob_source=AzureBlobContentSource(
-                        container_url=container_sas_url, prefix="IRS-1040-D/train"
-                    )
+                    azure_blob_source=AzureBlobContentSource(container_url=container_sas_url, prefix="IRS-1040-D/train")
                 ),
             },
             description="IRS document classifier",
         )
     )
-    classifier = poller.result()
+    classifier: DocumentClassifierDetails = poller.result()
     print(f"Built classifier with ID: {classifier.classifier_id}")
     print(f"API version used to build the classifier model: {classifier.api_version}")
     print(f"Classifier description: {classifier.description}")
     print(f"Document classes used for training the model:")
-    for doc_type, details in classifier                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         .doc_types.items():
+    for doc_type, details in classifier.doc_types.items():
         print(f"Document type: {doc_type}")
-        print(f"Container source: {details.azure_blob_source.container_url}\n")
+        if details.azure_blob_source:
+            print(f"Container source: {details.azure_blob_source.container_url}\n")
     # [END build_classifier]
 
     # Next, we get a paged list of all of our document classifiers
@@ -96,11 +94,11 @@ def sample_manage_classifiers():
     # [END delete_document_classifier]
 
     from azure.core.exceptions import ResourceNotFoundError
+
     try:
         document_intelligence_admin_client.get_classifier(classifier_id=my_classifier.classifier_id)
     except ResourceNotFoundError:
         print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
-    
 
 
 if __name__ == "__main__":

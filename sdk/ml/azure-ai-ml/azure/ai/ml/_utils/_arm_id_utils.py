@@ -330,8 +330,8 @@ def parse_name_version(name: str) -> Tuple[str, Optional[str]]:
     return name, ":".join(version)
 
 
-def parse_name_label(name: str) -> Tuple[str, Optional[str]]:
-    if name.find("/") != -1 and name[0] != "/":
+def parse_name_label(name: Optional[str]) -> Tuple[str, Optional[str]]:
+    if not name or (name.find("/") != -1 and name[0] != "/"):
         raise ValidationException(
             f"Could not parse {name}. If providing an ARM id, it should start with a '/'.",
             no_personal_data_message=f"Could not parse {name}.",
