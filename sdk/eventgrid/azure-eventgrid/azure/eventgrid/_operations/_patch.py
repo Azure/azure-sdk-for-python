@@ -98,7 +98,7 @@ def use_standard_only(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self._level == "Basic":  # pylint: disable=protected-access
-            raise AttributeError(
+            raise ValueError(
                 "The basic client is not supported for this operation."
             )
         return func(self, *args, **kwargs)
