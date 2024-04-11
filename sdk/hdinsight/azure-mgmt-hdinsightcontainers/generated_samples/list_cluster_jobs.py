@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 
 """
@@ -26,7 +27,7 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 def main():
     client = HDInsightContainersMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="10e32bab-26da-4cc4-a441-52b318f824e6",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.cluster_jobs.list(
@@ -38,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-06-01-preview/examples/ListClusterJobs.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/ListClusterJobs.json
 if __name__ == "__main__":
     main()
