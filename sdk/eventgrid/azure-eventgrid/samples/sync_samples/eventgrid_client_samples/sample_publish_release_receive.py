@@ -50,7 +50,7 @@ try:
     release_events = client.release_cloud_events(
         topic_name=TOPIC_NAME,
         subscription_name=EVENT_SUBSCRIPTION_NAME,
-        release_delay_in_seconds=60,
+        release_delay=60,
         lock_tokens=lock_tokens_to_release,
     )
     print("Released Event:", release_events)
