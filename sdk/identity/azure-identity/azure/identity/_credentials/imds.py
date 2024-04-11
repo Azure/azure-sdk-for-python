@@ -111,8 +111,8 @@ class ImdsCredential(GetTokenMixin):
         except HttpResponseError as ex:
             # 400 in response to a token request indicates managed identity is disabled,
             # or the identity with the specified client_id is not available
+            error_message = "ManagedIdentityCredential authentication unavailable. "
             if ex.status_code == 400:
-                error_message = "ManagedIdentityCredential authentication unavailable. "
                 if self._user_assigned_identity:
                     error_message += "The requested identity has not been assigned to this resource."
                 else:
