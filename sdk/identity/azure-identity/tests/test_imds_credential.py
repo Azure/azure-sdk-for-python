@@ -52,9 +52,6 @@ def test_html_parsing_error():
         assert "claims" not in kwargs
         assert "tenant_id" not in kwargs
         return mock_response(status_code=504)
-    
-    mock_send = mock.Mock(send=send)
-    mock_send.side_effect = ValueError("HTML parsing error")
 
     credential = ImdsCredential(transport=mock.Mock(send=send))
 

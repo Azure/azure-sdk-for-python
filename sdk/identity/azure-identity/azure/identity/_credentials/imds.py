@@ -88,12 +88,17 @@ class ImdsCredential(GetTokenMixin):
                 self._client.request_token(*scopes, connection_timeout=1, retry_total=0)
                 self._endpoint_available = True
             except HttpResponseError as ex:
+                if ex.status_code == 504:
+                    error_message = "ManagedIdentityCredential authentication unavailable. "
+                    error_message += "The request timed out."
+
+                    if ex.message:
+                        error_message += f" Error: {ex.message}"
+
+                    raise CredentialUnavailableError(message=error_message) from ex
+
                 # IMDS responded
-                try:
-                    _check_forbidden_response(ex)
-                except Exception as ex: # pylint:disable=broad-except
-                    error_message = "ManagedIdentityCredential authentication unavailable, error parsing the response from the server."
-                    raise CredentialUnavailableError(error_message) from ex
+                _check_forbidden_response(ex)
                 self._endpoint_available = True
             except Exception as ex:  # pylint:disable=broad-except
                 error_message = (
@@ -117,12 +122,15 @@ class ImdsCredential(GetTokenMixin):
                     error_message += f" Error: {ex.message}"
 
                 raise CredentialUnavailableError(message=error_message) from ex
+            elif ex.status_code == 504:
+                error_message += "The request timed out."
 
-            try:
-                _check_forbidden_response(ex)
-            except Exception as ex: # pylint:disable=broad-except
-                error_message = "ManagedIdentityCredential authentication unavailable, error parsing the response from the server."
-                raise CredentialUnavailableError(error_message) from ex
+                if ex.message:
+                    error_message += f" Error: {ex.message}"
+
+                raise CredentialUnavailableError(message=error_message) from ex
+
+            _check_forbidden_response(ex)
             # any other error is unexpected
             raise ClientAuthenticationError(message=ex.message, response=ex.response) from ex
         except Exception as ex:  # pylint:disable=broad-except
