@@ -21,6 +21,7 @@ location = None
 
 
 def callback(response):
+    global location
     location = response.http_response.headers.get("location")
 
 
