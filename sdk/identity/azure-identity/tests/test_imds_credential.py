@@ -44,6 +44,24 @@ def test_identity_not_available():
         credential.get_token("scope")
 
 
+def test_html_parsing_error():
+    """The credential should raise CredentialUnavailableError when the endpoint returns a non-JSON response"""
+
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` kwargs from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
+        return mock_response(status_code=504)
+    
+    mock_send = mock.Mock(send=send)
+    mock_send.side_effect = ValueError("HTML parsing error")
+
+    credential = ImdsCredential(transport=mock.Mock(send=send))
+
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token("scope")
+
+
 def test_unexpected_error():
     """The credential should raise ClientAuthenticationError when the endpoint returns an unexpected error"""
 
