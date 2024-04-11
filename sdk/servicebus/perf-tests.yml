@@ -14,23 +14,23 @@ Tests:
 - Test: send-queue-messages-batch
   Class: SendQueueMessageBatchTest
   Arguments:
-  - --message-size 1000000 --batch-size 100
-  - --message-size 1000000 --batch-size 100 --transport-type 1
+  - --message-size 10000 --batch-size 10
+  - --message-size 10000 --batch-size 10 --transport-type 1
 
 - Test: receive-queue-messages-batch
   Class: ReceiveQueueMessageBatchTest
   Arguments:
-  - --message-size 1000000 --num-messages 50 --preload 10000
-  - --message-size 1000000 --num-messages 50 --preload 10000 --transport-type 1
+  - --message-size 10000 --num-messages 50 --preload 1000
+  - --message-size 10000 --num-messages 50 --preload 1000 --transport-type 1
 
 - Test: send-subscription-messages-batch
   Class: SendTopicMessageBatchTest
   Arguments:
-  - --message-size 1000000 --batch-size 100
-  - --message-size 1000000 --batch-size 100 --transport-type 1
+  - --message-size 10000 --batch-size 10
+  - --message-size 10000 --batch-size 10 --transport-type 1
 
 - Test: receive-subscription-messages-batch
   Class: ReceiveSubscriptionMessageBatchTest
   Arguments:
-  - --message-size 1000000 --num-messages 50 --preload 10000
-  - --message-size 1000000 --num-messages 50 --preload 10000 --transport-type 1
+  - --message-size 10000 --num-messages 50 --preload 1000
+  - --message-size 10000 --num-messages 50 --preload 1000 --transport-type 1
