@@ -2601,11 +2601,85 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         self._setup(storage_account_name, storage_account_key)
-        info = self.bsc.get_account_information()
+        bsc_info = self.bsc.get_account_information()
+        container_client = self.bsc.get_container_client(self.container_name)
+        cc_info = container_client.get_account_information()
+        blob_client = self._create_blob()
+        bc_info = blob_client.get_account_information()
 
         # Assert
-        assert info.get('sku_name') is not None
-        assert info.get('account_kind') is not None
+        assert bsc_info.get('sku_name') is not None
+        assert bsc_info.get('account_kind') is not None
+        assert not bsc_info.get('is_hns_enabled')
+        assert cc_info.get('sku_name') is not None
+        assert cc_info.get('account_kind') is not None
+        assert not cc_info.get('is_hns_enabled')
+        assert bc_info.get('sku_name') is not None
+        assert bc_info.get('account_kind') is not None
+        assert not bc_info.get('is_hns_enabled')
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_account_information_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+
+        account_token = self.generate_sas(
+            generate_account_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        container_token = self.generate_sas(
+            generate_container_sas,
+            account_name=storage_account_name,
+            container_name=self.container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            container_name=self.container_name,
+            blob_name=self._get_blob_reference(),
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=account_token)
+        bsc_info = bsc.get_account_information()
+        container_client = ContainerClient(
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            credential=container_token)
+        cc_info = container_client.get_account_information()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            self._get_blob_reference(),
+            credential=blob_token)
+        bc_info = blob_client.get_account_information()
+
+        # Assert
+        assert bsc_info.get('sku_name') is not None
+        assert bsc_info.get('account_kind') is not None
+        assert not bsc_info.get('is_hns_enabled')
+        assert cc_info.get('sku_name') is not None
+        assert cc_info.get('account_kind') is not None
+        assert not cc_info.get('is_hns_enabled')
+        assert bc_info.get('sku_name') is not None
+        assert bc_info.get('account_kind') is not None
+        assert not bc_info.get('is_hns_enabled')
 
     @BlobPreparer()
     @recorded_by_proxy
