@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import io
+
 import math
 import os
 import random
-from io import BytesIO
+from io import BytesIO, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
 from typing import List, Optional, Tuple, Union
 
 import pytest
@@ -19,6 +19,8 @@ from azure.storage.blob._shared.streams import (
     StructuredMessageProperties,
 )
 from azure.storage.extensions import crc64
+
+from test_helpers import NonSeekableStream
 
 
 def _write_segment(
@@ -157,6 +159,8 @@ class TestStructuredMessageEncodeStream:
         content = b''
         while read < len(stream):
             chunk = stream.read(chunk_size)
+            assert len(chunk) == min(chunk_size, len(stream) - read)
+
             content += chunk
             read += chunk_size
 
@@ -187,6 +191,208 @@ class TestStructuredMessageEncodeStream:
 
         expected = _build_structured_message(data, segment_size, StructuredMessageProperties.CRC64)[0].getvalue()
         assert content == expected
+
+    def test_seekable(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+
+        assert sm_stream.seekable()
+
+    def test_not_seekable(self):
+        data = os.urandom(10)
+        inner_stream = NonSeekableStream(BytesIO(data))
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+
+        assert not sm_stream.seekable()
+        with pytest.raises(UnsupportedOperation):
+            sm_stream.seek(0)
+
+    def test_seek_whence(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+        # Read so we can seek backwards
+        sm_stream.read(25)
+
+        pos = sm_stream.seek(10, SEEK_SET)
+        assert pos == 10
+        pos = sm_stream.seek(-len(sm_stream) + 9, SEEK_END)
+        assert pos == 9
+        pos = sm_stream.seek(-5, SEEK_CUR)
+        assert pos == 4
+
+    def test_seek_forward(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+
+        sm_stream.read(5)
+        with pytest.raises(UnsupportedOperation):
+            sm_stream.seek(10)
+
+    @pytest.mark.parametrize("initial_read, segment_size, flags", [
+        # Single segment
+        (5000, 2048, StructuredMessageProperties.NONE),  # End -> Beginning
+        (5000, 2048, StructuredMessageProperties.CRC64),  # End -> Beginning
+        (5, 2048, StructuredMessageProperties.NONE),  # Message header
+        (5, 2048, StructuredMessageProperties.CRC64),
+        (20, 2048, StructuredMessageProperties.NONE),  # Segment header
+        (20, 2048, StructuredMessageProperties.CRC64),
+        (100, 2048, StructuredMessageProperties.NONE),  # First segment content
+        (100, 2048, StructuredMessageProperties.CRC64),
+        (1000, 2048, StructuredMessageProperties.NONE),  # Second segment content
+        (1000, 2048, StructuredMessageProperties.CRC64),
+        (525, 2048, StructuredMessageProperties.CRC64),  # Segment footer
+        (1092, 2048, StructuredMessageProperties.CRC64),  # Message footer
+        # Multiple segments
+        (5000, 500, StructuredMessageProperties.NONE),  # End -> Beginning
+        (5000, 500, StructuredMessageProperties.CRC64),  # End -> Beginning
+        (5, 500, StructuredMessageProperties.NONE),  # Message header
+        (5, 500, StructuredMessageProperties.CRC64),
+        (20, 500, StructuredMessageProperties.NONE),  # Segment header
+        (20, 500, StructuredMessageProperties.CRC64),
+        (100, 500, StructuredMessageProperties.NONE),  # First segment content
+        (100, 500, StructuredMessageProperties.CRC64),
+        (1000, 500, StructuredMessageProperties.NONE),  # Second segment content
+        (1000, 500, StructuredMessageProperties.CRC64),
+        (525, 500, StructuredMessageProperties.CRC64),  # Segment footer
+        (1092, 500, StructuredMessageProperties.CRC64),  # Message footer
+    ])
+    def test_seek_reverse_beginning(self, initial_read, segment_size, flags):
+        data = os.urandom(1024)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
+        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
+
+        initial = sm_stream.read(initial_read)
+        assert initial == expected[:initial_read]
+
+        sm_stream.seek(0)
+        result = sm_stream.read()
+        assert result == expected
+
+    @pytest.mark.parametrize("initial_read, seek_offset, segment_size, flags", [
+        # Single segment
+        (10, 5, 2048, StructuredMessageProperties.NONE),  # Message header -> Message header
+        (10, 5, 2048, StructuredMessageProperties.CRC64),
+        (20, 15, 2048, StructuredMessageProperties.NONE),  # Segment header -> Segment header
+        (20, 15, 2048, StructuredMessageProperties.CRC64),
+        (100, 50, 2048, StructuredMessageProperties.NONE),  # First segment content -> First segment content
+        (100, 50, 2048, StructuredMessageProperties.CRC64),
+        (1000, 900, 2048, StructuredMessageProperties.NONE),  # Second segment content -> Second segment content
+        (1000, 900, 2048, StructuredMessageProperties.CRC64),
+        (530, 525, 2048, StructuredMessageProperties.CRC64),  # Segment footer -> Segment footer
+        (1060, 1050, 2048, StructuredMessageProperties.CRC64),  # Message footer -> Segment footer
+        (1000, 100, 2048, StructuredMessageProperties.NONE),  # Second segment content -> First segment content
+        (1000, 100, 2048, StructuredMessageProperties.CRC64),
+        (1000, 20, 2048, StructuredMessageProperties.NONE),  # Second segment content -> First segment header
+        (1000, 20, 2048, StructuredMessageProperties.CRC64),
+        (1000, 530, 2048, StructuredMessageProperties.CRC64),  # Second segment content -> First segment footer
+        (1097, 100, 2048, StructuredMessageProperties.CRC64),  # Message footer -> First segment content
+        # Multiple segments
+        (10, 5, 500, StructuredMessageProperties.NONE),  # Message header -> Message header
+        (10, 5, 500, StructuredMessageProperties.CRC64),
+        (20, 15, 500, StructuredMessageProperties.NONE),  # Segment header -> Segment header
+        (20, 15, 500, StructuredMessageProperties.CRC64),
+        (100, 50, 500, StructuredMessageProperties.NONE),  # First segment content -> First segment content
+        (100, 50, 500, StructuredMessageProperties.CRC64),
+        (1000, 900, 500, StructuredMessageProperties.NONE),  # Second segment content -> Second segment content
+        (1000, 900, 500, StructuredMessageProperties.CRC64),
+        (530, 525, 500, StructuredMessageProperties.CRC64),  # Segment footer -> Segment footer
+        (1097, 1090, 500, StructuredMessageProperties.CRC64),  # Message footer -> Segment footer
+        (1000, 100, 500, StructuredMessageProperties.NONE),  # Second segment content -> First segment content
+        (1000, 100, 500, StructuredMessageProperties.CRC64),
+        (1000, 20, 500, StructuredMessageProperties.NONE),  # Second segment content -> First segment header
+        (1000, 20, 500, StructuredMessageProperties.CRC64),
+        (1000, 530, 500, StructuredMessageProperties.CRC64),  # Second segment content -> First segment footer
+        (1097, 100, 500, StructuredMessageProperties.CRC64),  # Message footer -> First segment content
+    ])
+    def test_seek_reverse_middle(self, initial_read, seek_offset, segment_size, flags):
+        data = os.urandom(1024)
+        inner_stream = BytesIO(data)
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
+        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
+
+        initial = sm_stream.read(initial_read)
+        assert initial == expected[:initial_read]
+
+        sm_stream.seek(seek_offset)
+        result = sm_stream.read()
+        assert result == expected[seek_offset:]
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_seek_reverse_random(self, flags):
+        data = os.urandom(1024)
+        inner_stream = BytesIO(data)
+        expected = _build_structured_message(data, 500, flags)[0].getvalue()
+
+        for _ in range(10):
+            inner_stream.seek(0)
+            sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=500)
+
+            initial_read = random.randint(5, len(data))
+            seek_offset = random.randint(0, initial_read)
+
+            initial = sm_stream.read(initial_read)
+            assert initial == expected[:initial_read]
+
+            sm_stream.seek(seek_offset)
+            result = sm_stream.read()
+            assert result == expected[seek_offset:]
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_read(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        result = sm_stream.read()
+        assert result == expected
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_seek_beginning(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        initial = sm_stream.read(101)
+        assert initial == expected[:101]
+
+        sm_stream.seek(0)
+        assert inner_stream.tell() == partial_read
+
+        result = sm_stream.read()
+        assert result == expected
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_partial_stream_seek_middle(self, flags):
+        data = os.urandom(1024)
+        partial_read = 100
+
+        inner_stream = BytesIO(data)
+        inner_stream.seek(partial_read)
+        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
+
+        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
+        initial = sm_stream.read(501)
+        assert initial == expected[:501]
+
+        sm_stream.seek(100)
+        assert inner_stream.tell() == partial_read + (100 -
+                                                      StructuredMessageConstants.V1_HEADER_LENGTH -
+                                                      StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH)
+
+        result = sm_stream.read()
+        assert result == expected[100:]
 
 
 class TestStructuredMessageDecodeStream:
@@ -333,7 +539,7 @@ class TestStructuredMessageDecodeStream:
 
         # Stream already set to front
         message_stream.write(b'\xFF')
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
@@ -345,9 +551,9 @@ class TestStructuredMessageDecodeStream:
         data = os.urandom(1024)
         message_stream, length = _build_structured_message(data, 512, flags)
 
-        message_stream.seek(1, io.SEEK_SET)
+        message_stream.seek(1)
         message_stream.write(int.to_bytes(message_length, 8, 'little'))
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
@@ -359,9 +565,9 @@ class TestStructuredMessageDecodeStream:
         data = os.urandom(1024)
         message_stream, length = _build_structured_message(data, 256, flags)
 
-        message_stream.seek(11, io.SEEK_SET)
+        message_stream.seek(11)
         message_stream.write(int.to_bytes(segment_count, 2, 'little'))
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
@@ -378,9 +584,9 @@ class TestStructuredMessageDecodeStream:
                     StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH +
                     256 +
                     (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0))
-        message_stream.seek(position, io.SEEK_SET)
+        message_stream.seek(position)
         message_stream.write(int.to_bytes(segment_number, 2, 'little'))
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
@@ -398,9 +604,9 @@ class TestStructuredMessageDecodeStream:
                     256 +
                     (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0) +
                     2)
-        message_stream.seek(position, io.SEEK_SET)
+        message_stream.seek(position)
         message_stream.write(int.to_bytes(segment_size, 2, 'little'))
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
@@ -412,9 +618,9 @@ class TestStructuredMessageDecodeStream:
         data = os.urandom(256)
         message_stream, length = _build_structured_message(data, 256, flags)
 
-        message_stream.seek(15, io.SEEK_SET)
+        message_stream.seek(15)
         message_stream.write(int.to_bytes(segment_size, 2, 'little'))
-        message_stream.seek(0, io.SEEK_SET)
+        message_stream.seek(0)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
