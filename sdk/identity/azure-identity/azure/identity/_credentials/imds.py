@@ -89,7 +89,11 @@ class ImdsCredential(GetTokenMixin):
                 self._endpoint_available = True
             except HttpResponseError as ex:
                 # IMDS responded
-                _check_forbidden_response(ex)
+                try:
+                    _check_forbidden_response(ex)
+                except Exception as ex: # pylint:disable=broad-except
+                    error_message = "ManagedIdentityCredential authentication unavailable, error parsing the response from the server."
+                    raise CredentialUnavailableError(error_message) from ex
                 self._endpoint_available = True
             except Exception as ex:  # pylint:disable=broad-except
                 error_message = (
@@ -114,7 +118,11 @@ class ImdsCredential(GetTokenMixin):
 
                 raise CredentialUnavailableError(message=error_message) from ex
 
-            _check_forbidden_response(ex)
+            try:
+                _check_forbidden_response(ex)
+            except Exception as ex: # pylint:disable=broad-except
+                error_message = "ManagedIdentityCredential authentication unavailable, error parsing the response from the server."
+                raise CredentialUnavailableError(error_message) from ex
             # any other error is unexpected
             raise ClientAuthenticationError(message=ex.message, response=ex.response) from ex
         except Exception as ex:  # pylint:disable=broad-except
