@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- For IMDS requests in `ManagedIdentityCredential`, a try/catch clause was added to the _check_forbidden_response which was previously crashing the ChainedIdentityCredential chain if the response gave a HttpResponseException with an error message in HTML (i.e. from a proxy server or gateway)
+
 ### Other Changes
 
 ## 1.16.0 (2024-04-09)
