@@ -7,7 +7,7 @@ from azure.ai.ml.entities import (
     ServiceTagDestination,
     PrivateEndpointDestination,
     FeatureStore,
-    WorkspaceHub,
+    Hub,
 )
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
@@ -87,7 +87,7 @@ class TestWorkspaceEntity:
     marshalling and unmarshalling between REST and SDK client objects.
 
     if you will update the restclient version for anything that is using workspace object
-    and related operations (currently: workspace entities, workspacehub entities, network entities,
+    and related operations (currently: workspace entities, hub entities, network entities,
     WorkspaceOperations, WorkspaceOutboundRuleOperations, FeatureStoreOperations)
     then you will also need to update the restclient version to match in all these locations to avoid
     issues when unmarshalling.
@@ -107,7 +107,6 @@ class TestWorkspaceEntity:
             client._workspace_outbound_rules._rule_operation, RestClientManagedNetworkSettingsRuleOperations
         )
         assert isinstance(client.workspaces._operation, RestClientWorkspacesOperations)
-        assert isinstance(client.workspace_hubs._operation, RestClientWorkspacesOperations)
         assert isinstance(client.feature_stores._operation, RestClientWorkspacesOperations)
 
     def test_workspace_entity_from_rest_object_managednetwork_restclient_versions_match(self):
@@ -143,7 +142,7 @@ class TestWorkspaceEntity:
     def test_workspace_hub_entity_from_rest_to_ensure_restclient_versions_match(self):
         rest_ws = get_test_rest_workspace_with_all_details()
 
-        sdk_hub = WorkspaceHub._from_rest_object(rest_ws)
+        sdk_hub = Hub._from_rest_object(rest_ws)
         assert sdk_hub.managed_network is not None
         assert sdk_hub.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
         rules = sdk_hub.managed_network.outbound_rules
@@ -164,9 +163,9 @@ class TestWorkspaceEntity:
         assert sdk_hub.identity.type == "system_assigned"
 
         # specific to hub
-        assert "sa1" in sdk_hub.workspace_hub_config.additional_workspace_storage_accounts
-        assert "sa2" in sdk_hub.workspace_hub_config.additional_workspace_storage_accounts
-        assert sdk_hub.workspace_hub_config.default_workspace_resource_group == "somerg"
+        assert "sa1" in sdk_hub.additional_workspace_storage_accounts
+        assert "sa2" in sdk_hub.additional_workspace_storage_accounts
+        assert sdk_hub.default_workspace_resource_group == "somerg"
 
     def test_feature_store_entity_from_rest_to_ensure_restclient_versions_match(self):
         rest_ws = get_test_rest_workspace_with_all_details()
