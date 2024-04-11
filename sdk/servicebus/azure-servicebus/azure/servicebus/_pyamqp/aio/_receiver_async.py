@@ -187,6 +187,9 @@ class ReceiverLink(Link):
         await super().attach()
         self._received_payload = bytearray()
 
+    async def _remove_pending_deliveries(self):
+        self._pending_receipts = []
+
     async def send_disposition(
         self,
         *,
