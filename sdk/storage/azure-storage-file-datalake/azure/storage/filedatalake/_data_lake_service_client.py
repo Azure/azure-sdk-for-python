@@ -150,7 +150,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :paramtype credential:
+        :type credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
