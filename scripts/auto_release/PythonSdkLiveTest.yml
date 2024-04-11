@@ -78,6 +78,7 @@ jobs:
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
+        export TENANT_ID=$(ENV-TENANT-ID)
         export SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export AZURE_TENANT_ID=$(ENV-TENANT-ID)
         export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)

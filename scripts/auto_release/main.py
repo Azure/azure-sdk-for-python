@@ -257,7 +257,7 @@ class CodegenTestPR:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        self.install_package_locally()
+        print_check(f"pip install {self.get_whl_package}")
         module = importlib.import_module(self.whole_package_name.replace("-", "."))
         title = ""
         for item in getattr(module, "__all__"):
@@ -555,6 +555,10 @@ class CodegenTestPR:
     def get_private_package(self) -> List[str]:
         content = self.get_autorest_result()
         return content["packages"][0]["artifacts"]
+
+    @property
+    def get_whl_package(self) -> str:
+        return [package for package in self.get_private_package() if package.endswith('.whl')][0]
 
     def upload_private_package_proc(self, container_name: str):
         container_client = ContainerClient.from_connection_string(conn_str=self.conn_str, container_name=container_name)
