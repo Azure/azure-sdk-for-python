@@ -1,20 +1,19 @@
 inputs:
   question:
     type: string
-    default: Which tent is the most waterproof?
+    default: ""
     is_chat_input: false
   answer:
     type: string
-    default: The Alpine Explorer Tent is the most waterproof.
+    default: ""
     is_chat_input: false
   context:
     type: string
-    default: From the our product list, the alpine explorer tent is the most
-      waterproof. The Adventure Dining Tabbe has higher weight.
+    default: ""
     is_chat_input: false
   ground_truth:
     type: string
-    default: The Alpine Explorer Tent has the highest rainfly waterproof rating at 3000m
+    default: ""
     is_chat_input: false
   metrics:
     type: string
@@ -24,46 +23,44 @@ inputs:
     type: int
     default: 4
     is_chat_input: false
+  groundedness_service_flight:
+    type: bool
+    default: true
+    is_chat_input: false
 outputs:
   gpt_coherence:
     type: string
     reference: ${concat_scores.output.gpt_coherence}
-  hate_fairness_score:
-    type: string
-    reference: ${concat_scores.output.hate_fairness_score}
-  ada_similarity:
-    type: string
-    reference: ${concat_scores.output.ada_similarity}
   gpt_relevance:
     type: string
     reference: ${concat_scores.output.gpt_relevance}
-  self_harm_reasoning:
-    type: string
-    reference: ${concat_scores.output.self_harm_reasoning}
   self_harm:
     type: string
     reference: ${concat_scores.output.self_harm}
+  violence_reason:
+    type: string
+    reference: ${concat_scores.output.violence_reason}
+  sexual_reason:
+    type: string
+    reference: ${concat_scores.output.sexual_reason}
+  hate_unfairness:
+    type: string
+    reference: ${concat_scores.output.hate_unfairness}
   sexual_score:
     type: string
     reference: ${concat_scores.output.sexual_score}
   violence_score:
     type: string
     reference: ${concat_scores.output.violence_score}
-  hate_fairness_reasoning:
-    type: string
-    reference: ${concat_scores.output.hate_fairness_reasoning}
-  hate_fairness:
-    type: string
-    reference: ${concat_scores.output.hate_fairness}
   gpt_groundedness:
     type: string
     reference: ${concat_scores.output.gpt_groundedness}
+  gpt_groundedness_reason:
+    type: string
+    reference: ${concat_scores.output.gpt_groundedness_reason}
   gpt_similarity:
     type: string
     reference: ${concat_scores.output.gpt_similarity}
-  sexual_reasoning:
-    type: string
-    reference: ${concat_scores.output.sexual_reasoning}
   gpt_fluency:
     type: string
     reference: ${concat_scores.output.gpt_fluency}
@@ -73,12 +70,18 @@ outputs:
   self_harm_score:
     type: string
     reference: ${concat_scores.output.self_harm_score}
-  violence_reasoning:
+  hate_unfairness_reason:
     type: string
-    reference: ${concat_scores.output.violence_reasoning}
+    reference: ${concat_scores.output.hate_unfairness_reason}
   violence:
     type: string
     reference: ${concat_scores.output.violence}
+  hate_unfairness_score:
+    type: string
+    reference: ${concat_scores.output.hate_unfairness_score}
+  self_harm_reason:
+    type: string
+    reference: ${concat_scores.output.self_harm_reason}
   f1_score:
     type: string
     reference: ${concat_scores.output.f1_score}
@@ -111,11 +114,9 @@ nodes:
     type: code
     path: concat_quality_scores.py
   inputs:
-    ada_cosine_similarity: ${ada_similarity.output}
     f1_score: ${f1_score.output}
     gpt_coherence_score: ${gpt_coherence.output}
     gpt_fluency_score: ${gpt_fluency.output}
-    gpt_groundedness_score: ${gpt_groundedness.output}
     gpt_relevance_score: ${gpt_relevance.output}
     gpt_similarity_score: ${gpt_similarity.output}
   use_variants: false
@@ -132,8 +133,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
+    ground_truth: ${inputs.ground_truth}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -155,8 +156,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    context: ${inputs.context}
     question: ${inputs.question}
+    context: ${inputs.context}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -199,28 +200,6 @@ nodes:
     when: ${validate_input.output.f1_score}
     is: true
   use_variants: false
-- name: gpt_groundedness
-  type: llm
-  source:
-    type: code
-    path: gpt_groundedness_prompt.jinja2
-  inputs:
-    deployment_name: GPT-4-Prod
-    temperature: 0
-    top_p: 1
-    max_tokens: 1
-    presence_penalty: 0
-    frequency_penalty: 0
-    answer: ${inputs.answer}
-    context: ${inputs.context}
-  provider: AzureOpenAI
-  connection: Default_AzureOpenAI
-  api: chat
-  module: promptflow.tools.aoai
-  activate:
-    when: ${validate_input.output.gpt_groundedness}
-    is: true
-  use_variants: false
 - name: aggregate_variants_results
   type: python
   source:
@@ -240,44 +219,6 @@ nodes:
   inputs:
     metrics: ${inputs.metrics}
   use_variants: false
-- name: embeded_ground_truth
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.ground_truth}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: embeded_answer
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.answer}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: ada_similarity
-  type: python
-  source:
-    type: code
-    path: ada_cosine_similarity_score.py
-  inputs:
-    a: ${embeded_ground_truth.output}
-    b: ${embeded_answer.output}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
 - name: validate_input
   type: python
   source:
@@ -290,14 +231,6 @@ nodes:
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   use_variants: false
-- name: validate_safety_metric_input
-  type: python
-  source:
-    type: code
-    path: validate_safety_metric_input.py
-  inputs:
-    selected_metrics: ${select_metrics.output}
-  use_variants: false
 - name: construct_service_request
   type: python
   source:
@@ -305,12 +238,10 @@ nodes:
     path: construct_service_request.py
   inputs:
     answer: ${inputs.answer}
-    context: ${inputs.context}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_safety_metric_input.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: call_rai_service
@@ -321,7 +252,7 @@ nodes:
   inputs:
     request_body: ${construct_service_request.output}
   activate:
-    when: ${validate_safety_metric_input.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: parse_service_response
@@ -333,7 +264,7 @@ nodes:
     batch_response: ${call_rai_service.output}
     selected_label_keys: ${select_metrics.output}
   activate:
-    when: ${validate_safety_metric_input.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: format_service_output
@@ -344,7 +275,7 @@ nodes:
   inputs:
     parsed_responses: ${parse_service_response.output}
   activate:
-    when: ${validate_safety_metric_input.output}
+    when: ${validate_service.output.content_harm_service}
     is: true
   use_variants: false
 - name: concat_scores
@@ -353,8 +284,75 @@ nodes:
     type: code
     path: concat_results.py
   inputs:
+    groundedness_results: ${parse_groundedness_response.output}
     quality_results: ${concat_quality_scores.output}
     safety_results: ${format_service_output.output}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: validate_service
+  type: python
+  source:
+    type: code
+    path: validate_groundedness_service.py
+  inputs:
+    flight: ${inputs.groundedness_service_flight}
+    selected_metrics: ${select_metrics.output}
+    validate_input_result: ${validate_input.output}
+  use_variants: false
+- name: construct_groundedness_request
+  type: python
+  source:
+    type: code
+    path: construct_groundedness_request.py
+  inputs:
+    answer: ${inputs.answer}
+    context: ${inputs.context}
+    question: ${inputs.question}
+  activate:
+    when: ${validate_service.output.groundedness_service}
+    is: true
+  use_variants: false
+- name: call_groundedness_service
+  type: python
+  source:
+    type: code
+    path: call_groundedness_service.py
+  inputs:
+    request_body: ${construct_groundedness_request.output}
+  activate:
+    when: ${validate_service.output.groundedness_service}
+    is: true
+  use_variants: false
+- name: parse_groundedness_response
+  type: python
+  source:
+    type: code
+    path: parse_groundedness_response.py
+  inputs:
+    batch_response: ${call_groundedness_service.output}
+    is_service_available: ${validate_service.output}
+    llm_groundedness_response: ${gpt_groundedness.output}
+  use_variants: false
+- name: gpt_groundedness
+  type: llm
+  source:
+    type: code
+    path: gpt_groundedness_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 1
+    top_p: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    context: ${inputs.context}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_service.output.groundedness_prompt}
+    is: true
   use_variants: false
 node_variants: {}
 $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json

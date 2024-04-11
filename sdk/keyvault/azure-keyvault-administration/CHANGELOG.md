@@ -1,5 +1,17 @@
 # Release History
 
+## 4.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Typing errors from using Key Vault clients as context managers have been fixed
+  ([#34744](https://github.com/Azure/azure-sdk-for-python/issues/34744))
+
+### Other Changes
+
 ## 4.4.0 (2024-02-22)
 
 ### Features Added

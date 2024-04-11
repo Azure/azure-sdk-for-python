@@ -81,7 +81,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": None
+            "amqpLink": ""
         }
 
         self._token_status_code: Optional[int] = None
@@ -280,7 +280,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 utc_from_timestamp(self._expires_on),
             )
 
-    def handle_token(self) -> bool: # pylint: disable=inconsistent-return-statements
+    def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
         if not self._cbs_link_ready():
             return False
         self._update_status()

@@ -142,6 +142,7 @@ class DirectoryProperties(DictMixin):
     :ivar str group: The owning group of the file or directory.
     :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
         Each individual permission is in [r,w,x,-]{3} format.
+    :ivar str acl: The POSIX ACL permissions of the file or directory.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
@@ -178,6 +179,7 @@ class DirectoryProperties(DictMixin):
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
+        self.acl = kwargs.get('acl', None)
 
 
 class FileProperties(DictMixin):
@@ -187,6 +189,7 @@ class FileProperties(DictMixin):
     :ivar str group: The owning group of the file or directory.
     :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
         Each individual permission is in [r,w,x,-]{3} format.
+    :ivar str acl: The POSIX ACL permissions of the file or directory.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
@@ -229,6 +232,7 @@ class FileProperties(DictMixin):
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
+        self.acl = kwargs.get('acl', None)
 
 
 class PathProperties(DictMixin):
@@ -656,9 +660,8 @@ class AccessPolicy(BlobAccessPolicy):
     :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :paramtype start: ~datetime.datetime or str
     """
 

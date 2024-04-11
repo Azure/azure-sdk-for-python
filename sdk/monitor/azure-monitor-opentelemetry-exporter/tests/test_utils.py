@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import datetime
 import os
 import platform
+import time
 import unittest
 
 from azure.monitor.opentelemetry.exporter import _utils
@@ -43,6 +45,21 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(ns_to_duration(60 * 1000000000), "0.00:01:00.000")
         self.assertEqual(ns_to_duration(3600 * 1000000000), "0.01:00:00.000")
         self.assertEqual(ns_to_duration(86400 * 1000000000), "1.00:00:00.000")
+
+    
+    @patch("time.time")
+    def test_ticks_since_dot_net_epoch(self, time_mock):
+        current_time = time.time()
+        shift_time = int(
+            (
+                datetime.datetime(1970, 1, 1, 0, 0, 0) -
+                datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
+            ) * (10 ** 7)
+        time_mock.return_value = current_time
+        ticks = _utils._ticks_since_dot_net_epoch()
+        expected_ticks = int(current_time * (10**7)) + shift_time
+        self.assertEqual(ticks, expected_ticks)
+
 
     def test_populate_part_a_fields(self):
         resource = Resource(
@@ -87,110 +104,161 @@ class TestUtils(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
-    # Unknown
+    # Unknown SDK Version Prefix
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uum_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
     def test_get_sdk_version_prefix_linux(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ulm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
     def test_get_sdk_version_prefix_windows(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uwm_")
 
-    # App Service
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
+    def test_get_sdk_version_prefix_attach(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "uui_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_sdk_version_prefix_attach_linux(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "uli_")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    def test_get_sdk_version_prefix_attach_windows(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "uwi_")
+
+    # App Service SDK Version Prefix
+
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_app_service(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "aum_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
     def test_get_sdk_version_prefix_app_service_linux(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "alm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
     def test_get_sdk_version_prefix_app_service_windows(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_app_service_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "aui_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
     def test_get_sdk_version_prefix_app_service_linux_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ali_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
     def test_get_sdk_version_prefix_app_service_windows_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awi_")
 
-    # Function
+    # Function SDK Version Prefix
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_function(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fum_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
     def test_get_sdk_version_prefix_function_linux(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "flm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
     def test_get_sdk_version_prefix_function_windows(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_function_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fui_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
     def test_get_sdk_version_prefix_function_linux_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fli_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME})
-    @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME}, clear=True)
+    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
     def test_get_sdk_version_prefix_function_windows_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwi_")
+
+    # Attach
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    def test_attach_enabled(self, mock_isdir):
+        self.assertEqual(
+            _utils._is_attach_enabled(), True
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=False,
+    )
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    def test_attach_app_service_disabled(self, mock_isdir):
+        self.assertEqual(
+            _utils._is_attach_enabled(), False
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {}, clear=True)
+    def test_attach_off_app_service_with_agent(self, mock_isdir):
+        # This is not an expected scenario and just tests the default
+        self.assertEqual(
+            _utils._is_attach_enabled(), False
+        ) 

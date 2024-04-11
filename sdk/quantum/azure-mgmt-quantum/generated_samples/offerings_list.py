@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.quantum import AzureQuantumManagementClient
+from azure.mgmt.quantum import AzureQuantumMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.quantum import AzureQuantumManagementClient
 
 
 def main():
-    client = AzureQuantumManagementClient(
+    client = AzureQuantumMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="1C4B2828-7D49-494F-933D-061373BE28C2",
     )
@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2022-01-10-preview/examples/offeringsList.json
+# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2023-11-13-preview/examples/offeringsList.json
 if __name__ == "__main__":
     main()

@@ -97,7 +97,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         poller = client.begin_recognize_invoices_from_url(None, continuation_token=cont_token)
         result = poller.result()
         assert result is not None
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})

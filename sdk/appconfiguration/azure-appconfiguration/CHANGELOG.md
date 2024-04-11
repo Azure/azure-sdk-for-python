@@ -1,15 +1,30 @@
 # Release History
 
-## 1.5.1 (Unreleased)
+## 1.6.0 (2024-04-09)
 
 ### Features Added
-
-### Breaking Changes
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
+- Supported to get page ETag while iterating `list_configuration_setting()` result by page.
 
 ### Bugs Fixed
 - Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
+- Changed invalid default value `None` to `False` for property `enabled` in `FeatureFlagConfigurationSetting`.
+- Fixed the issue that `description`, `display_name` and other customer fields are missing when de/serializing `FeatureFlagConfigurationSetting` objects.
 
-### Other Changes
+## 1.6.0b2 (2024-03-21)
+
+### Bugs Fixed
+- Changed invalid default value `None` to `False` for property `enabled` in `FeatureFlagConfigurationSetting`.
+- Fixed the issue that `description`, `display_name` and other customer fields are missing when de/serializing `FeatureFlagConfigurationSetting` objects.
+
+## 1.6.0b1 (2024-03-14)
+
+### Features Added
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
+- Supported to get page ETag while iterating `list_configuration_setting()` result by page.
+
+### Bugs Fixed
+- Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
 
 ## 1.5.0 (2023-11-09)
 

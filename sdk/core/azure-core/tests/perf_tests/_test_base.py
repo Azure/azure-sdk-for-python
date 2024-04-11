@@ -59,9 +59,9 @@ class _ServiceTest(PerfStressTest):
         self.account_key = self.get_from_env("AZURE_STORAGE_ACCOUNT_KEY")
         async_transport_types = {"aiohttp": AioHttpTransport, "requests": AsyncioRequestsTransport}
         sync_transport_types = {"requests": RequestsTransport}
-        self.tenant_id = os.environ["CORE_TENANT_ID"]
-        self.client_id = os.environ["CORE_CLIENT_ID"]
-        self.client_secret = os.environ["CORE_CLIENT_SECRET"]
+        self.tenant_id = os.environ["AZURE-CORE_TENANT_ID"]
+        self.client_id = os.environ["AZURE-CORE_CLIENT_ID"]
+        self.client_secret = os.environ["AZURE-CORE_CLIENT_SECRET"]
         self.storage_scope = "https://storage.azure.com/.default"
 
         # defaults transports
@@ -159,7 +159,7 @@ class _ServiceTest(PerfStressTest):
         return AsyncPipelineClient(self.account_endpoint, pipeline=async_pipeline)
 
     def _set_auth_policies(self):
-        if not self.args.aad:
+        if not self.args.use_entra_id:
             # if tables, create table credential policy, else blob policy
             if "tables" in self.sdk_moniker:
                 self.sync_auth_policy = TableSharedKeyCredentialPolicy(
@@ -199,7 +199,9 @@ class _ServiceTest(PerfStressTest):
             """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
             default=None,
         )
-        parser.add_argument("--aad", action="store_true", help="Use AAD authentication instead of shared key.")
+        parser.add_argument(
+            "--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of shared key."
+        )
 
 
 class _BlobTest(_ServiceTest):
