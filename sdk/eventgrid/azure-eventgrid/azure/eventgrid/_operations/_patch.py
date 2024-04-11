@@ -633,7 +633,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
 
     # content_type must be CloudEvent DataContentType when in binary mode
     if not event.datacontenttype:
-        raise TypeError("CloudEvent datacontenttype must be set when in binary mode.")
+        raise ValueError("CloudEvent datacontenttype must be set when in binary mode.")
     content_type: str = event.datacontenttype
 
     api_version: str = kwargs.pop(
