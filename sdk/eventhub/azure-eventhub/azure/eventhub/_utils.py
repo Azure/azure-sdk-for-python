@@ -20,7 +20,7 @@ from typing import (
     Iterable,
     Tuple,
     Mapping,
-    Callable
+    Callable,
 )
 
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
@@ -45,6 +45,7 @@ if TYPE_CHECKING:
         uamqp_types = None
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
+    from ._constants import SequenceNumberReplicationSegment
 
     MessagesType = Union[
         AmqpAnnotatedMessage,
@@ -153,11 +154,12 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def event_position_selector(value, inclusive=False):    # TODO: update to use seq number
-    # type: (Union[int, str, datetime.datetime], bool) -> bytes
+def event_position_selector(value, inclusive=False):
+    # type: (Union[int, str, datetime.datetime, SequenceNumberReplicationSegment], bool) -> bytes
     """Creates a selector expression of the offset.
 
-    :param int or str or datetime.datetime value: The offset value to use for the offset.
+    :param value: The offset value to use for the offset.
+    :type value: int or str or datetime.datetime or SequenceNumberReplicationSegment
     :param bool inclusive: Whether to include the value in the range.
     :rtype: bytes
     :return: The selector filter expression.
@@ -174,10 +176,16 @@ def event_position_selector(value, inclusive=False):    # TODO: update to use se
         return (
             f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
         ).encode("utf-8")
-    elif isinstance(value, tuple):  # TODO: figure out best way to represent replication segment to user
-        return (
-            f"amqp.annotation.x-opt-sequence-number {operator} '{value[1]}:{value[0]}'"
-        ).encode("utf-8")
+    elif isinstance(value, dict):  # TODO: should this be a TypedDict/NamedTuple? I think TypedDict makes most sense here.
+        try:
+            return (
+                f"amqp.annotation.x-opt-sequence-number {operator} '{value['replication_segment']}:{value['sequence_number']}'"
+            ).encode("utf-8")
+        except KeyError:
+            # check error we get if we pass this to a non-georeplication endpoint
+            # if dict, can replication segment of -1 be passed here? if a dict with just one value or the other is passed, should we raise a ValueError?
+            raise ValueError(f"Missing one or both of expected keys [`replication_segment`, `sequence_number`] in event_position: {value}")
+
     return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode(
         "utf-8"
     )
