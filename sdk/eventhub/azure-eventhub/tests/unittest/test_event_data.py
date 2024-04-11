@@ -87,7 +87,7 @@ def test_sys_properties(uamqp_transport):
         properties.group_sequence = 1
         properties.reply_to_group_id = "reply_to_group_id"
         message = uamqp.message.Message(properties=properties)
-        message.annotations = {_common.PROP_OFFSET: "@latest"}
+        message.annotations = {_common.PROP_OFFSET: "@latest", _common.PROP_SEQ_NUMBER_EPOCH: "5"}
     else:
         properties = Properties(
             message_id="message_id",
@@ -104,11 +104,12 @@ def test_sys_properties(uamqp_transport):
             group_sequence=1,
             reply_to_group_id="reply_to_group_id"
         )
-        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message_annotations = {_common.PROP_OFFSET: "@latest", _common.PROP_SEQ_NUMBER_EPOCH: "5"}
         message = Message(properties=properties, message_annotations=message_annotations)
     ed = EventData._from_message(message)  # type: EventData
 
     assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
+    assert ed.system_properties[_common.PROP_SEQ_NUMBER_EPOCH] == "5"
     assert ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
     assert ed.system_properties[_common.PROP_MESSAGE_ID] == properties.message_id
     assert ed.system_properties[_common.PROP_CONTENT_ENCODING] == properties.content_encoding

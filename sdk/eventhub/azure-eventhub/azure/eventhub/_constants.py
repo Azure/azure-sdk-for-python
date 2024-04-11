@@ -9,6 +9,7 @@ from typing_extensions import TypedDict
 
 
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"
+PROP_SEQ_NUMBER_EPOCH = b"x-opt-sequence-number-epoch"
 PROP_OFFSET = b"x-opt-offset"
 PROP_PARTITION_KEY = b"x-opt-partition-key"
 PROP_TIMESTAMP = b"x-opt-enqueued-time"

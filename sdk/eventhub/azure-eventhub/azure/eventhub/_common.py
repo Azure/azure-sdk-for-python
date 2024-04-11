@@ -30,6 +30,7 @@ from ._utils import (
 from ._tracing import trace_message
 from ._constants import (
     PROP_SEQ_NUMBER,
+    PROP_SEQ_NUMBER_EPOCH,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
     PROP_TIMESTAMP,
@@ -313,15 +314,15 @@ class EventData(object):
             return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
 
     @property
-    def replication_segment(self) -> Optional[int]: # TODO: remove optional?
-        """The replication segment associated with the event. Used with the sequence number if using a
-         a geo-replication enabled Event Hub.
+    def replication_segment(self) -> Optional[int]:
+        """The replication segment associated with the event. Used with the sequence number if
+         geo-replication is enabled on the Event Hub.
 
         :rtype: int or None
         """
         try:
-            return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None).split(":")[2]
-        except AttributeError:  # if replication segment not in included in sequence number
+            return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER_EPOCH, None).split(":")[0]
+        except AttributeError:
             return -1
 
     @property
@@ -379,6 +380,7 @@ class EventData(object):
         of the event data.
 
             - b"x-opt-sequence-number" (int)
+            - b"x-opt-sequence-number-epoch" (int)
             - b"x-opt-offset" (bytes)
             - b"x-opt-partition-key" (bytes)
             - b"x-opt-enqueued-time" (int)

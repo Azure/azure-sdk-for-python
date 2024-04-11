@@ -509,14 +509,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             output["beginning_sequence_number"] = partition_info[
                 b"begin_sequence_number"
             ]
-            output["beginning_sequence_number_epoch"] = partition_info[
+            output["beginning_replication_segment"] = partition_info[
                 b"begin_sequence_number_epoch"
             ]
             output["last_enqueued_sequence_number"] = partition_info[
                 b"last_enqueued_sequence_number"
             ]
-            output["last_enqueued_sequence_number_epoch"] = partition_info[
-                b"last_enqueued_sequence_number"
+            output["last_enqueued_replication_segment"] = partition_info[
+                b"last_enqueued_sequence_number_epoch"
             ]
 
             output["last_enqueued_offset"] = partition_info[
