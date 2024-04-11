@@ -60,7 +60,7 @@ class ChatCompletionsDeltaIterator:
         if self._queue.empty():
             await self._read_next_block_async()
         if self._queue.empty():
-            await self.close()
+            await self.aclose()
             raise StopAsyncIteration
         return self._queue.get()
 
@@ -83,7 +83,7 @@ class ChatCompletionsDeltaIterator:
         try:
             element = await self._bytes_iterator.__anext__()
         except StopAsyncIteration:
-            await self.close()
+            await self.aclose()
             self._done = True
             return
         self._deserialize_and_add_to_queue(element, start_time)
@@ -161,8 +161,8 @@ class ChatCompletionsDeltaIterator:
 
     def close(self) -> None:
         self._bytes_iterator.close()
- 
-    async def close(self) -> None:
+
+    async def aclose(self) -> None:
         await self._bytes_iterator.aclose() 
 
 
