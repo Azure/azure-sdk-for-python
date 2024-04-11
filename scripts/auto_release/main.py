@@ -99,22 +99,6 @@ def current_time_month() -> str:
     date = time.localtime(time.time())
     return '{}-{:02d}'.format(date.tm_year, date.tm_mon)
 
-
-def set_test_env_var():
-    setting_path = str(Path(os.getenv('SCRIPT_PATH')) / 'mgmt_settings_real_.py')
-    # edit mgmt_settings_real.py
-    with open(setting_path, 'r') as file_in:
-        list_in = file_in.readlines()
-
-    for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('ENV_TENANT_ID', os.environ['TENANT_ID'])
-        list_in[i] = list_in[i].replace('ENV_CLIENT_ID', os.environ['CLIENT_ID'])
-        list_in[i] = list_in[i].replace('ENV_CLIENT_SECRET', os.environ['CLIENT_SECRET'])
-        list_in[i] = list_in[i].replace('ENV_SUBSCRIPTION_ID', os.environ['SUBSCRIPTION_ID'])
-    with open(str(Path('tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py')), 'w') as file_out:
-        file_out.writelines(list_in)
-
-
 class CodegenTestPR:
     """
     This class can generate SDK code, run live test and create RP
@@ -460,7 +444,6 @@ class CodegenTestPR:
 
     def prepare_test_env(self):
         self.install_package_locally()
-        set_test_env_var()
     
     @staticmethod
     def is_live_test()-> bool:
