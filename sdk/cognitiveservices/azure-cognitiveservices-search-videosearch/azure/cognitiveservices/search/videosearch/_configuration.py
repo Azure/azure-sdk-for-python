@@ -26,16 +26,26 @@ class VideoSearchClientConfiguration(Configuration):
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
+    :param api_suffix: Suffix of the URL, e.g. '/v7.0'. The default value is
+      '/bing/v7.0' for cognitive services endpoints and '/v7.0' for 
+      api.bing.microsoft.com endpoints.
+    :type api_suffix: str
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, endpoint, credentials, api_suffix=None):
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/bing/v7.0'
+
+        if api_suffix:
+            base_url = '{Endpoint}{api_suffix}'
+        elif 'api.bing.microsoft.com' in endpoint:
+            base_url = '{Endpoint}/v7.0'
+        else:
+            base_url = '{Endpoint}/bing/v7.0'
 
         super(VideoSearchClientConfiguration, self).__init__(base_url)
 
