@@ -501,7 +501,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @use_standard_only
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
+        params_added_on={"2023-10-01-preview": ["release_delay"]},
     )
     def release_cloud_events(
         self,
@@ -509,7 +509,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         subscription_name: str,
         *,
         lock_tokens: List[str],
-        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
+        release_delay: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -522,9 +522,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type subscription_name: str
         :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
         :paramtype lock_tokens: List[str]
-        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+        :keyword release_delay: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
+        :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -534,7 +534,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             topic_name=topic_name,
             event_subscription_name=subscription_name,
             release_options=options,
-            release_delay_in_seconds=release_delay_in_seconds,
+            release_delay_in_seconds=release_delay,
             **kwargs,
         )
 
