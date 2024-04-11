@@ -40,7 +40,7 @@ async def run():
             release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME,
                 subscription_name=EVENT_SUBSCRIPTION_NAME,
-                release_delay_in_seconds=10,
+                release_delay=10,
                 lock_tokens=tokens,
             )
             print(release_events)
