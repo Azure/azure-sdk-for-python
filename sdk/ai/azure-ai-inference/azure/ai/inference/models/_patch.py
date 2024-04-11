@@ -54,7 +54,7 @@ class ChatCompletionsDeltaIterator:
         return self
 
 
-    async def __anext__(self):
+    async def __anext__(self) -> _models.ChatCompletionsDelta:
         if (not self._is_async_iterator):
             raise ValueError("This method is only supported for async iterators")
         if self._queue.empty():
@@ -65,7 +65,7 @@ class ChatCompletionsDeltaIterator:
         return self._queue.get()
 
 
-    def __next__(self):
+    def __next__(self) -> _models.ChatCompletionsDelta:
         if (self._is_async_iterator):
             raise ValueError("This method is not supported for async iterators")
         if self._queue.empty():
@@ -162,7 +162,7 @@ class ChatCompletionsDeltaIterator:
     def close(self) -> None:
         self._bytes_iterator.close()
  
-    async def close(self):
+    async def close(self) -> None:
         await self._bytes_iterator.aclose() 
 
 

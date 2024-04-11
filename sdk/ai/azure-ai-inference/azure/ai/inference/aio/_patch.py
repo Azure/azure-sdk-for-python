@@ -60,7 +60,7 @@ class ModelClient(ModelClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> bool: # _models.ChatCompletionsDeltaIterator:
+    ) -> _models.ChatCompletionsDeltaIterator:
 
         error_map = {
             401: ClientAuthenticationError,
