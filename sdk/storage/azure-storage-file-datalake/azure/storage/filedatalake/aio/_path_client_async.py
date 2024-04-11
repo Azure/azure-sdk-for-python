@@ -325,7 +325,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict (Etag and last modified).
+        :returns: dict containing access control options after setting modifications (Etag and last modified).
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
         """
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
@@ -377,7 +378,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict.
+        :returns: response dict containing access control options (Etag and last modified).
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
@@ -668,6 +670,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: response dict containing information about the renamed path.
+        :rtype: dict[str, Any]
         """
         options = self._rename_path_options(
             rename_source,
@@ -722,6 +726,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties or FileProperties
         """
         upn = kwargs.pop('upn', None)
@@ -792,6 +799,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 

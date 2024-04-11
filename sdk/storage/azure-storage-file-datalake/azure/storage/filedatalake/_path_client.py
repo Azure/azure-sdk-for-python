@@ -449,9 +449,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict (Etag and last modified).
-        :returns: A dictionary containing access control options after setting modifications.
-        :rtype: dict[str, Union[str, datetime]]
+        :returns: response dict containing access control options (Etag and last modified).
+        :rtype: dict[str, Union[str, ~datetime.datetime]]
         """
         if not any([owner, group, permissions, acl]):
             raise ValueError("At least one parameter should be set for set_access_control API")
@@ -521,8 +520,7 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict.
-        :returns: A dictionary containing access control options with no modifications.
+        :returns: response dict containing access control options with no modifications.
         :rtype: dict[str, Any]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
@@ -883,7 +881,7 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A dictionary containing information about the renamed path.
+        :returns: response dict containing information about the renamed path.
         :rtype: dict[str, Any]
         """
         options = self._rename_path_options(

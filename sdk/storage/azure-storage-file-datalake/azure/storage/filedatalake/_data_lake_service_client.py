@@ -291,7 +291,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A FileSystemClient under the specified account.
+        :returns: FileSystemClient under the specified account.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
@@ -327,7 +327,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A FileSystemClient with the newly specified name.
+        :returns: FileSystemClient with the newly specified name.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
@@ -405,7 +405,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A FileSystemClient after marking the specified file system for deletion.
+        :returns: FileSystemClient after marking the specified file system for deletion.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
