@@ -8,6 +8,7 @@ from testcase import WebpubsubPowerShellPreparer
 from testcase_async import WebpubsubAsyncTest
 from devtools_testutils.aio import recorded_by_proxy_async
 
+@pytest.mark.live_test_only
 class TestWebpubsubSmokeAsync(WebpubsubAsyncTest):
 
     @WebpubsubPowerShellPreparer()

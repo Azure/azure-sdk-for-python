@@ -11,6 +11,7 @@ from azure.messaging.webpubsubservice._operations._operations import build_send_
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from devtools_testutils import recorded_by_proxy
 
+@pytest.mark.live_test_only
 class TestWebpubsubSmoke(WebpubsubTest):
 
 

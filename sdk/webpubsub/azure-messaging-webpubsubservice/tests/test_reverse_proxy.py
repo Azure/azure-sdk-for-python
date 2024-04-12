@@ -12,6 +12,7 @@ from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.identity import DefaultAzureCredential
 from devtools_testutils import recorded_by_proxy
 
+@pytest.mark.live_test_only
 class TestWebpubsubReverseProxy(WebpubsubTest):
 
     @recorded_by_proxy
