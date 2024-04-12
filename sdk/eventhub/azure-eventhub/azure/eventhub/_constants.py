@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 
 from enum import Enum
-from typing_extensions import TypedDict
+from typing import NamedTuple
 
 
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"
@@ -66,8 +66,8 @@ CUSTOM_CONDITION_BACKOFF = {
     b"com.microsoft:container-close": 4
 }
 
-class SequenceNumberReplicationSegment(TypedDict):
-    """Used for event position selection when georeplication feature is enabled
+class ReplicationSegment(NamedTuple):
+    """Used for starting event position selection when georeplication feature is enabled
     on the Event Hub. A dict with required keys:
     - `sequence_number`
     - `replication_segment`

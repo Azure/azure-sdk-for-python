@@ -7,7 +7,7 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from ._constants import TransportType
+from ._constants import TransportType, ReplicationSegment
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._client_base import EventHubSharedKeyCredential
@@ -32,4 +32,5 @@ __all__ = [
     "PartitionContext",
     "parse_connection_string",
     "EventHubConnectionStringProperties",
+    "ReplicationSegment",
 ]
