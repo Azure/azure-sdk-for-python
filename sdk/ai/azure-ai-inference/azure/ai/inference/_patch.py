@@ -18,9 +18,9 @@ from azure.core.utils import case_insensitive_dict
 from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
-from ._vendor import ModelClientMixinABC
-from ._operations._operations import build_model_get_chat_completions_request
-from ._client import ModelClient as ModelClientGenerated
+from ._vendor import ChatCompletionsClientMixinABC
+from ._operations._operations import build_chat_completions_create_request
+from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -44,9 +44,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-class ModelClient(ModelClientGenerated):
+class ChatCompletionsClient(ChatCompletionsClientGenerated):
     @distributed_trace
-    def get_streaming_chat_completions(
+    def create_streaming(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -108,7 +108,7 @@ class ModelClient(ModelClientGenerated):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_get_chat_completions_request(
+        _request = build_chat_completions_create_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -116,8 +116,10 @@ class ModelClient(ModelClientGenerated):
             headers=_headers,
             params=_params,
         )
-
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         kwargs.pop("stream", True)  # Remove stream from kwargs (ignore value set by the application)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -134,7 +136,9 @@ class ModelClient(ModelClientGenerated):
         return _models.StreamingChatCompletions(response.iter_bytes())
 
 
-__all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ChatCompletionsClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

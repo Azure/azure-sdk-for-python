@@ -21,7 +21,7 @@ import asyncio
 
 async def sample_image_generation_async():
     import os
-    from azure.ai.inference.aio import ModelClient
+    from azure.ai.inference.aio import ImageGenerationClient
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -34,11 +34,11 @@ async def sample_image_generation_async():
         exit()
 
     # Create an Model for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential("key"))
+    client = ImageGenerationClient(endpoint=endpoint, credential=AzureKeyCredential("key"))
 
     # Generate an image from text prompt. This will be an asynchronously (non-blocking) call.
     future = asyncio.ensure_future(
-        client.generate_images(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
+        client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
     )
 
     # Loop until the operation is done

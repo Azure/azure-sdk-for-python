@@ -21,7 +21,7 @@ import asyncio
 
 async def sample_embeddings_async():
     import os
-    from azure.ai.inference.aio import ModelClient
+    from azure.ai.inference.aio import EmbeddingsClient
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -34,10 +34,10 @@ async def sample_embeddings_async():
         exit()
 
     # Create an Image Analysis client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single embeddings operation. Start the operation and get a Future object.
-    future = asyncio.ensure_future(client.get_embeddings(input=["first phrase", "second phrase", "third phrase"]))
+    future = asyncio.ensure_future(client.create(input=["first phrase", "second phrase", "third phrase"]))
 
     # Loop until the operation is done
     while not future.done():

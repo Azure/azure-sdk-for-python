@@ -13,9 +13,9 @@ from azure.core import CaseInsensitiveEnumMeta
 class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether your capacity has been affected by the usage amount (token count) reported here."""
 
-    ERROR = "usage"
+    USAGE = "usage"
     """Your capacity has been affected by the usage amount (token count) reported here."""
-    IGNORE = "fixed"
+    FIXED = "fixed"
     """Your capacity has not been affected by the usage amount (token count) reported here."""
 
 

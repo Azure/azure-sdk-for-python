@@ -42,8 +42,8 @@ ServicePreparer = functools.partial(
 # The test class name needs to start with "Test" to get collected by pytest
 class ModelClientTestBase(AzureRecordedTestCase):
 
-    client: sdk.ModelClient
-    async_client: async_sdk.ModelClient
+    client: sdk.ChatCompletionsClient
+    async_client: async_sdk.ChatCompletionsClient
     connection_url: str
 
     # Set to True to print out all analysis results
@@ -62,7 +62,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_client(self, endpoint: str, key: str, sync: bool, get_connection_url: bool):
         credential = AzureKeyCredential(key)
         if sync:
-            self.client = sdk.ModelClient(
+            self.client = sdk.ChatCompletionsClient(
                 endpoint=endpoint,
                 credential=credential,
                 logging_enable=LOGGING_ENABLED,
@@ -70,7 +70,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             )
             assert self.client is not None
         else:
-            self.async_client = async_sdk.ModelClient(
+            self.async_client = async_sdk.ChatCompletionsClient(
                 endpoint=endpoint,
                 credential=credential,
                 logging_enable=LOGGING_ENABLED,
@@ -88,7 +88,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        result = self.client.get_chat_completions(messages=kwargs.get("messages"), params=query_params)
+        result = self.client.create(messages=kwargs.get("messages"), params=query_params)
 
         # Optional: console printout of all results
         if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
@@ -109,7 +109,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         start_time = time.time()
 
         # Start the operation and get a Future object
-        future = asyncio.ensure_future(self.async_client.get_chat_completions(messages=kwargs.get("messages")))
+        future = asyncio.ensure_future(self.async_client.create(messages=kwargs.get("messages")))
 
         # Loop until the operation is done
         while not future.done():
@@ -138,7 +138,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = self.client.get_chat_completions(messages=kwargs.get("messages"))
+            result = self.client.create(messages=kwargs.get("messages"))
 
         except AzureError as e:
             print(e)
@@ -156,7 +156,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     ):
 
         try:
-            result = await self.async_client.get_chat_completions(messages=kwargs.get("messages"))
+            result = await self.async_client.create(messages=kwargs.get("messages"))
 
         except AzureError as e:
             print(e)

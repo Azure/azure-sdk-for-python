@@ -19,12 +19,12 @@ USAGE:
 """
 import asyncio
 import os
-from azure.ai.inference.aio import ModelClient
+from azure.ai.inference.aio import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
 from azure.core.credentials import AzureKeyCredential
 
 
-async def sample_streaming_chat_completions_async():
+async def sample_chat_completions_streaming_async():
 
     # Read the values of your model endpoint and key from environment variables
     try:
@@ -35,8 +35,8 @@ async def sample_streaming_chat_completions_async():
         print("Set them before running this sample.")
         exit()
 
-    # Create Model Client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    # Create chat completions client for synchronous operations
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single streaming chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
@@ -58,9 +58,9 @@ async def sample_streaming_chat_completions_async():
 
     # Iterate on the result to get chat completion updates, as they arrive from the service
     accumulated_content = ""
-    async for element in result:
-        accumulated_content += element.choices[0].delta.content if element.choices[0].delta.content is not None else ""
-        print_chat_completions_delta(element)
+    async for update in result:
+        accumulated_content += update.choices[0].delta.content if update.choices[0].delta.content is not None else ""
+        print_chat_completions_delta(update)
 
     print(f"Accumulated content: {accumulated_content}")
 
@@ -68,25 +68,25 @@ async def sample_streaming_chat_completions_async():
     await client.close()
 
 
-def print_chat_completions_delta(element: ChatCompletionsUpdate):
+def print_chat_completions_delta(update: ChatCompletionsUpdate):
     print(
-        f"content: {repr(element.choices[0].delta.content)}, "
-        f"role: {element.choices[0].delta.role}, "
-        f"finish_reason: {element.choices[0].finish_reason}, "
-        f"index: {element.choices[0].index}"
+        f"content: {repr(update.choices[0].delta.content)}, "
+        f"role: {update.choices[0].delta.role}, "
+        f"finish_reason: {update.choices[0].finish_reason}, "
+        f"index: {update.choices[0].index}"
     )
-    print(f"id: {element.id}, created: {element.created}, model: {element.model}, object: {element.object}")
-    if element.usage is not None:
+    print(f"id: {update.id}, created: {update.created}, model: {update.model}, object: {update.object}")
+    if update.usage is not None:
         print(
-            f"usage: capacity_type: {element.usage.capacity_type}, "
-            f"prompt_tokens: {element.usage.prompt_tokens}, "
-            f"completion_tokens: {element.usage.completion_tokens}, "
-            f"usage.total_tokens: {element.usage.total_tokens}"
+            f"usage: capacity_type: {update.usage.capacity_type}, "
+            f"prompt_tokens: {update.usage.prompt_tokens}, "
+            f"completion_tokens: {update.usage.completion_tokens}, "
+            f"usage.total_tokens: {update.usage.total_tokens}"
         )
 
 
 async def main():
-    await sample_streaming_chat_completions_async()
+    await sample_chat_completions_streaming_async()
 
 
 if __name__ == "__main__":

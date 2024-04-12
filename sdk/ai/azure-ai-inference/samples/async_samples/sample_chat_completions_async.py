@@ -4,7 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion response from the service using an asynchronous client.
+    This sample demonstrates how to get a chat completion response 
+    from the service using an asynchronous client.
 
 USAGE:
     python sample_chat_completion_async.py
@@ -21,7 +22,7 @@ import asyncio
 
 async def sample_chat_completions_async():
     import os
-    from azure.ai.inference.aio import ModelClient
+    from azure.ai.inference.aio import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
@@ -35,13 +36,13 @@ async def sample_chat_completions_async():
         exit()
 
     # Create a Model Client for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Do a single chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
-        client.get_chat_completions(
+        client.create(
             messages=[
-                SystemMessage(content="You are an AI assistant that helps people find information."),
+                SystemMessage(content="You are a helpful assistant."),
                 UserMessage(content="How many feet are in a mile?"),
             ]
         )

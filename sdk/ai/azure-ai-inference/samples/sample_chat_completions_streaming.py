@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client.
+    This sample demonstrates how to get a chat completion streaming response 
+    from the service using a synchronous client.
 
 USAGE:
-    python sample_chat_completions.py
+    python sample_chat_completions_streaming.py
 
     Set these two environment variables before running the sample:
-    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
@@ -19,7 +19,7 @@ USAGE:
 """
 
 
-def sample_chat_completions():
+def sample_chat_completions_streaming():
     import os
 
     try:
@@ -30,23 +30,24 @@ def sample_chat_completions():
         print("Set them before running this sample.")
         exit()
 
-    # [START chat_completions]
+    # [START chat_completions_streaming]
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    result = client.create(
+    result = client.create_streaming(
         messages=[
             SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
+            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
         ]
     )
 
-    print(result.choices[0].message.content)
-    # [END chat_completions]
+    for update in result:
+        print(update.choices[0].delta.content, end="")
+    # [END chat_completions_streaming]
 
 
 if __name__ == "__main__":
-    sample_chat_completions()
+    sample_chat_completions_streaming()

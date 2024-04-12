@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,12 +27,14 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_model_generate_images_request,
-    build_model_get_chat_completions_request,
-    build_model_get_embeddings_request,
-    build_model_get_model_info_request,
+    build_chat_completions_create_request,
+    build_chat_completions_get_model_info_request,
+    build_embeddings_create_request,
+    build_embeddings_get_model_info_request,
+    build_image_generation_create_request,
+    build_image_generation_get_model_info_request,
 )
-from .._vendor import ModelClientMixinABC
+from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, ImageGenerationClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,9 +46,9 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ModelClientOperationsMixin(ModelClientMixinABC):
+class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
     @overload
-    async def get_chat_completions(
+    async def create(
         self,
         body: JSON,
         *,
@@ -174,7 +176,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def get_chat_completions(
+    async def create(
         self,
         *,
         messages: List[_models.ChatRequestMessage],
@@ -324,7 +326,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def get_chat_completions(
+    async def create(
         self,
         body: IO[bytes],
         *,
@@ -399,7 +401,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @distributed_trace_async
-    async def get_chat_completions(
+    async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -599,7 +601,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -638,7 +640,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_get_chat_completions_request(
+        _request = build_chat_completions_create_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -646,7 +648,10 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -671,8 +676,76 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInformation
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "model_name": "str",  # The name of the AI model. Required.
+                    "model_provider": "str",  # The model provider. Required.
+                    "model_type": "str"  # The type of the AI model. Required. Known values are:
+                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+
+        _request = build_chat_completions_get_model_info_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ModelInformation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
     @overload
-    async def get_embeddings(
+    async def create(
         self,
         body: JSON,
         *,
@@ -753,7 +826,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def get_embeddings(
+    async def create(
         self,
         *,
         input: List[str],
@@ -829,7 +902,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def get_embeddings(
+    async def create(
         self,
         body: IO[bytes],
         *,
@@ -893,7 +966,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @distributed_trace_async
-    async def get_embeddings(
+    async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -983,7 +1056,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1009,7 +1082,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_get_embeddings_request(
+        _request = build_embeddings_create_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1017,7 +1090,10 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -1042,8 +1118,76 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
+        # pylint: disable=line-too-long
+        """Returns information about the AI model.
+
+        :return: ModelInformation. The ModelInformation is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ModelInformation
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "model_name": "str",  # The name of the AI model. Required.
+                    "model_provider": "str",  # The model provider. Required.
+                    "model_type": "str"  # The type of the AI model. Required. Known values are:
+                      "embeddings", "custom", "chat", "text_generation", and "image_generation".
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
+
+        _request = build_embeddings_get_model_info_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ModelInformation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ImageGenerationClientOperationsMixin(ImageGenerationClientMixinABC):
     @overload
-    async def generate_images(
+    async def create(
         self,
         body: JSON,
         *,
@@ -1113,7 +1257,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def generate_images(
+    async def create(
         self,
         *,
         prompt: str,
@@ -1188,7 +1332,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    async def generate_images(
+    async def create(
         self,
         body: IO[bytes],
         *,
@@ -1236,7 +1380,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @distributed_trace_async
-    async def generate_images(
+    async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1330,7 +1474,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                     "model": "str"  # The model used for the image generation. Required.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1365,7 +1509,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_generate_images_request(
+        _request = build_image_generation_create_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1373,7 +1517,10 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -1418,7 +1565,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                       "embeddings", "custom", "chat", "text_generation", and "image_generation".
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1431,12 +1578,15 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
 
-        _request = build_model_get_model_info_request(
+        _request = build_image_generation_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access

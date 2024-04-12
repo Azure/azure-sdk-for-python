@@ -11,7 +11,7 @@ import json
 import sys
 from typing import List
 from .. import models as _models
-from ._client import ModelClient as ModelClientGenerated
+from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from typing import Callable, Any, Union, IO, Optional, Dict, TypeVar
 from azure.core.utils import case_insensitive_dict
 from azure.core.pipeline import PipelineResponse
@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from .._operations._operations import build_model_get_chat_completions_request
+from .._operations._operations import build_chat_completions_create_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -38,7 +38,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ModelClient(ModelClientGenerated):
+class ChatCompletionsClient(ChatCompletionsClientGenerated):
     @distributed_trace_async
     async def get_streaming_chat_completions(
         self,
@@ -102,7 +102,7 @@ class ModelClient(ModelClientGenerated):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_get_chat_completions_request(
+        _request = build_chat_completions_create_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -110,7 +110,10 @@ class ModelClient(ModelClientGenerated):
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         kwargs.pop("stream", True)  # Remove stream from kwargs (ignore value set by the application)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -127,7 +130,9 @@ class ModelClient(ModelClientGenerated):
         return _models.StreamingChatCompletions(response.iter_bytes())
 
 
-__all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ChatCompletionsClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

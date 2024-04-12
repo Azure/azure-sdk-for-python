@@ -1,8 +1,8 @@
-# Azure model client library for Python
+# Azure model inference client library for Python
 
-The ModelClient Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The ModelClient library makes services calls using REST AP version `2024-04-01-preview` specificed here (TODO: insert link). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+The client Library allows you to do inference using AI models you deployed to Azure. It supports both serverless endpoints (aka "model as a service" (MaaS) or "pay as you go") and selfhosted endpoints (aka "model as a platform" (MaaP) or "real-time endpoints"). The client library makes services calls using REST AP version `2024-04-01-preview` specificed here (TODO: insert link). For more information see [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
 
-Use the ModelClient library to:
+Use the model inference client library to:
 
 * Authenticate against the service
 * Get information about the model
@@ -24,36 +24,31 @@ Note that for inference using OpenAI models hosted on Azure you should be using 
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
-* An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio. To construct the `ModelClient`, you will need to pass in the endpoint URL and key associated with your deployed AI model.
+* An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio. To construct the client library, you will need to pass in the endpoint URL and key associated with your deployed AI model.
 
   * The endpoint URL has the form `https://your-deployment-name.your-azure-region.inference.ai.azure.com`, where `your-deployment-name` is your unique model deployment name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
 
   * The key is a 32-character string.
 
-### Install the Model Client package
+### Install the package
 
 ```bash
 pip install azure-ai-inferencing
 ```
 
-### Create and authenticate the client
+### Create and authenticate clients
 
-Assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ModelClient`:
-
-<!-- SNIPPET:sample_chat_completions.create_client -->
+The package includes three clients `ChatCompletionsClient`, `EmbeddingsClient` and `ImageGenerationClients`. They are all created in the similar manner. For example, assuming `endpoint` and `key` are strings holding your endpoint URL and key, this Python code will create and authenticate a synchronous `ChatCompletionsClient`:
 
 ```python
-from azure.ai.inference import ModelClient
+from azure.ai.inference import ChatCompletionsClient
 from azure.core.credentials import AzureKeyCredential
 
-# Create Model Client for synchronous operations
-client = ModelClient(
+client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key)
 )
 ```
-
-<!-- END SNIPPET -->
 
 A synchronous client supports synchronous inference methods, meaning they will block until the service responds with inference results. For simplicity the code snippets below all use synchronous methods. The client offers equivalent asynchronous methods which are more commonly used in production.
 
@@ -63,11 +58,17 @@ To create an asynchronous client, Install the additional package [aiohttp](https
     pip install aiohttp
 ```
 
-and update the code above to import `ModelClient` from the `aio` namespace:
+and update the code above to import `ChatCompletionsClient` from the `aio` namespace:
 
 ```python
-    import asyncio
-    from azure.ai.inference.aio import ModelClient
+import asyncio
+from azure.ai.inference.aio import ChatCompletionsClient
+from azure.core.credentials import AzureKeyCredential
+
+client = ChatCompletionsClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+)
 ```
 
 ## Key concepts
@@ -95,10 +96,11 @@ Image generation operations target the URL route `/images/generations` on the pr
 The following sections provide code snippets covering these common scenarios:
 
 * [Chat completions](#chat-completions-example)
+* [Streaming chat completions](#streaming-chat-completions-example)
 * [Embeddings](#embeddings-example)
 * [Image geneartion](#image-generation-example)
 
-These snippets use the synchronous `client` from [Create and authenticate the client](#create-and-authenticate-the-client).
+These snippets use the synchronous `client` from [Create and authenticate clients](#create-and-authenticate-clients).
 
 See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for fully working samples for synchronous and asynchronous clients.
 
@@ -109,35 +111,57 @@ This example demonstrates how to generate a single chat completions.
 <!-- SNIPPET:sample_chat_completions.chat_completions -->
 
 ```python
-# Do a single chat completion operation. This will be a synchronously (blocking) call.
-result = client.get_chat_completions(
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
+
+client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create(
     messages=[
-        SystemMessage(content="You are an AI assistant that helps people find information."),
+        SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="How many feet are in a mile?"),
-    ],
-    # Examples of setting extra parameters (TODO: move this to advanced sample)
-    extras=dict(key1="value1", key2="value2"),
+    ]
 )
 
-# Print results the the console
-print("Chat Completions:")
-print(f"choices[0].message.content: {result.choices[0].message.content}")
-print(f"choices[0].message.role: {result.choices[0].message.role}")
-print(f"choices[0].finish_reason: {result.choices[0].finish_reason}")
-print(f"choices[0].index: {result.choices[0].index}")
-print(f"id: {result.id}")
-print(f"created: {result.created}")
-print(f"model: {result.model}")
-print(f"object: {result.object}")
-print(f"usage.capacity_type: {result.usage.capacity_type}")
-print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-print(f"usage.completion_tokens: {result.usage.completion_tokens}")
-print(f"usage.total_tokens: {result.usage.total_tokens}")
+print(result.choices[0].message.content)
 ```
 
 <!-- END SNIPPET -->
 
-To generate completions for additional messages, simply call `get_chat_completions` multiple times using the same `client`.
+The printed result of course depends on the model. You may get something like this: `Hello! I'd be happy to help answer your question. There are 5,280 feet in a mile`.
+
+To generate completions for additional messages, simply call `client.create` multiple times using the same `client`.
+
+### Streaming chat completions example
+
+This example demonstrates how to generate a single chat completions with streaming response.
+
+<!-- SNIPPET:sample_chat_completions_streaming.chat_completions_streaming -->
+
+```python
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
+
+client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create_streaming(
+    messages=[
+        SystemMessage(content="You are a helpful assistant."),
+        UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+    ]
+)
+
+for update in result:
+    print(update.choices[0].delta.content, end="")
+```
+
+<!-- END SNIPPET -->
+
+The printed result of course depends on the model, but you should see the answer progressively get longer as updates get streamed to the client.
+
+To generate completions for additional messages, simply call `client.create_streaming` multiple times using the same `client`.
 
 ### Embeddings example
 
@@ -146,44 +170,48 @@ This example demonstrates how to get embeddings.
 <!-- SNIPPET:sample_embeddings.embeddings -->
 
 ```python
-# Do a single embeddings operation. This will be a synchronously (blocking) call.
-result = client.get_embeddings(input=["first phrase", "second phrase", "third phrase"])
+from azure.ai.inference import EmbeddingsClient
+from azure.core.credentials import AzureKeyCredential
 
-# Print results the the console
-print("Embeddings result:")
+client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create(input=["first phrase", "second phrase", "third phrase"])
+
 for item in result.data:
     length = len(item.embedding)
-    print(f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]")
-print(f"id: {result.id}")
-print(f"model: {result.model}")
-print(f"object: {result.object}")
-print(f"usage.input_tokens: {result.usage.input_tokens}")
-print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-print(f"usage.total_tokens: {result.usage.total_tokens}")
+    print(
+        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+    )
 ```
 
 <!-- END SNIPPET -->
 
+The printed result of course depends on the model. You should see something like this:
+```txt
+data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
+data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
+data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747]
+```
+
+To generate embeddings for additional phrases, simply call `client.create` multiple times using the same `client`.
+
 ### Image generation example
 
-This example demonstrates how to generate and image from a text prompt
+This example demonstrates how to generate an image of size 1024x768 from a text prompt, and save the resulting image to a `image.png` file.
 
 <!-- SNIPPET:sample_image_generation.image_generation -->
 
 ```python
-# Generate a single image from a text prompt. This will be a synchronously (blocking) call.
-result = client.generate_images(
-    prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
-)
+from azure.ai.inference import ImageGenerationClient
+from azure.core.credentials import AzureKeyCredential
 
-# Save generated image to file and print other results the the console
-print("Image generation result:")
-for index, item in enumerate(result.data):
-    with open(f"image_{index}.png", "wb") as image:
-        image.write(item.b64_json.decode("base64"))
-print(f"id: {result.id}")
-print(f"model: {result.model}")
-print(f"created: {result.created}")
+client = ImageGenerationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+result = client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
+
+with open(f"image.png", "wb") as image:
+    image.write(result.data[0].b64_json.decode("base64"))
 ```
 
 <!-- END SNIPPET -->
@@ -192,7 +220,7 @@ print(f"created: {result.created}")
 
 ### Exceptions
 
-The `get_chat_completions`, `get_embeddings` and `get_image_geneartions` methods raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `create` and `get_model_info` methods on the clients raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -200,7 +228,7 @@ from azure.core.exceptions import HttpResponseError
 ...
 
 try:
-    result = client.get_chat_completions( ... )
+    result = client.create( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
     print(f"{e}")
@@ -248,11 +276,11 @@ formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct `ModelClient`, or when you call any of the client's operation methods (e.g. `get_chat_completions`).
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you construct the client library, or when you call any of the client's `create` methods.
 
 ```python
 # Create a Model Client with none redacted log
-client = ModelClient(
+client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key),
     logging_enable=True

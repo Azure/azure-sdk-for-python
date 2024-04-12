@@ -4,7 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to generate an image from a prompt.
+    This sample demonstrates how to generate an image from a prompt
+    using a synchronous client.
 
 USAGE:
     python sample_image_generation.py
@@ -20,10 +21,7 @@ USAGE:
 
 def sample_image_generation():
     import os
-    from azure.ai.inference import ModelClient
-    from azure.core.credentials import AzureKeyCredential
 
-    # Read the values of your model endpoint and key from environment variables
     try:
         endpoint = os.environ["IMAGE_GENERATION_ENDPOINT"]
         key = os.environ["IMAGE_GENERATION_KEY"]
@@ -32,23 +30,16 @@ def sample_image_generation():
         print("Set them before running this sample.")
         exit()
 
-    # Create an Model for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
     # [START image_generation]
-    # Generate a single image from a text prompt. This will be a synchronously (blocking) call.
-    result = client.generate_images(
-        prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
-    )
+    from azure.ai.inference import ImageGenerationClient
+    from azure.core.credentials import AzureKeyCredential
 
-    # Save generated image to file and print other results the the console
-    print("Image generation result:")
-    for index, item in enumerate(result.data):
-        with open(f"image_{index}.png", "wb") as image:
-            image.write(item.b64_json.decode("base64"))
-    print(f"id: {result.id}")
-    print(f"model: {result.model}")
-    print(f"created: {result.created}")
+    client = ImageGenerationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+    result = client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
+
+    with open(f"image.png", "wb") as image:
+        image.write(result.data[0].b64_json.decode("base64"))
     # [END image_generation]
 
 

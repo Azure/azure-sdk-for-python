@@ -4,7 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get embeddings for a list of sentences using a synchronous client.
+    This sample demonstrates how to get embeddings for a list of sentences 
+    using a synchronous client.
 
 USAGE:
     python sample_embeddings.py
@@ -20,10 +21,7 @@ USAGE:
 
 def sample_embeddings():
     import os
-    from azure.ai.inference import ModelClient
-    from azure.core.credentials import AzureKeyCredential
 
-    # Read the values of your model endpoint and key from environment variables
     try:
         endpoint = os.environ["EMBEDDINGS_ENDPOINT"]
         key = os.environ["EMBEDDINGS_KEY"]
@@ -32,26 +30,20 @@ def sample_embeddings():
         print("Set them before running this sample.")
         exit()
 
-    # Create an Model for synchronous operations
-    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
-
     # [START embeddings]
-    # Do a single embeddings operation. This will be a synchronously (blocking) call.
-    result = client.get_embeddings(input=["first phrase", "second phrase", "third phrase"])
+    from azure.ai.inference import EmbeddingsClient
+    from azure.core.credentials import AzureKeyCredential
 
-    # Print results the the console
-    print("Embeddings result:")
+    client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+    result = client.create(input=["first phrase", "second phrase", "third phrase"])
+
     for item in result.data:
         length = len(item.embedding)
         print(
-            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+            f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
         )
-    print(f"id: {result.id}")
-    print(f"model: {result.model}")
-    print(f"object: {result.object}")
-    print(f"usage.input_tokens: {result.usage.input_tokens}")
-    print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
-    print(f"usage.total_tokens: {result.usage.total_tokens}")
     # [END embeddings]
 
 

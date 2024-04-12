@@ -136,7 +136,9 @@ class StreamingChatCompletions:
             # where the curly braces contain a valid JSON object. Deserialize it into a ChatCompletionsUpdate object
             # and add it to the queue.
             self._queue.put(
-                _models.ChatCompletionsUpdate._deserialize(json.loads(element[len(self.SSE_DATA_EVENT_PREFIX) : -1]), [])
+                _models.ChatCompletionsUpdate._deserialize(
+                    json.loads(element[len(self.SSE_DATA_EVENT_PREFIX) : -1]), []
+                )
             )
 
             if self.ENABLE_CLASS_LOGS:
