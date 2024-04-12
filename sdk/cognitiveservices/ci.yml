@@ -41,8 +41,6 @@ extends:
       safeName: azurecognitiveserviceslanguagetextanalytics
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure-cognitiveservices-search-websearch
-      safeName: azurecognitiveservicessearchwebsearch
     - name: azure-cognitiveservices-esvisionface
     - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices
