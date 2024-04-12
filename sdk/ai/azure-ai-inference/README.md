@@ -93,16 +93,16 @@ Image generation operations target the URL route `/images/generations` on the pr
 
 ## Examples
 
-The following sections provide code snippets covering these common scenarios:
+In the following sections you will find simple examples of:
 
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Embeddings](#embeddings-example)
 * [Image geneartion](#image-generation-example)
 
-These snippets use the synchronous `client` from [Create and authenticate clients](#create-and-authenticate-clients).
+The examples create a synchronous client as mentioned in [Create and authenticate clients](#create-and-authenticate-clients). Only mandatory input settings are shown for simplicity.
 
-See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for fully working samples for synchronous and asynchronous clients.
+See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
 
 ### Chat completions example
 
@@ -129,7 +129,7 @@ print(result.choices[0].message.content)
 
 <!-- END SNIPPET -->
 
-The printed result of course depends on the model. You may get something like this: `Hello! I'd be happy to help answer your question. There are 5,280 feet in a mile`.
+The printed result of course depends on the model, but you should get something like this: `Hello! I'd be happy to help answer your question. There are 5,280 feet in a mile`.
 
 To generate completions for additional messages, simply call `client.create` multiple times using the same `client`.
 
@@ -187,7 +187,7 @@ for item in result.data:
 
 <!-- END SNIPPET -->
 
-The printed result of course depends on the model. You should see something like this:
+The printed result of course depends on the model, but you should see something like this:
 ```txt
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
 data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
@@ -240,7 +240,7 @@ For example, when you provide a wrong authentication key:
 Status code: 401 (Unauthorized)
 Operation returned an invalid status 'Unauthorized'
 Content: {"status": "Invalid auth token"}
-```
+```v
 
 Or for example when you call `get_embeddings` on a model that does not support the `/v1/embeddings` route:
 
