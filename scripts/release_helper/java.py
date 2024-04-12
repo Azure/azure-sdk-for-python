@@ -3,7 +3,7 @@ from typing import Any, List
 
 # assignee dict which will be assigned to handle issues
 _JAVA_OWNER = {'azure-sdk'}
-_JS_ASSIGNEE = {'weidongxu-microsoft', 'haolingdong-msft', 'XiaofeiCao', 'v-hongli1'}
+_JAVA_ASSIGNEE = {'weidongxu-microsoft', 'haolingdong-msft', 'XiaofeiCao', 'v-hongli1'}
 
 
 class IssueProcessJava(IssueProcess):
@@ -19,4 +19,4 @@ class Java(Common):
 
 
 def java_process(issues: List[Any]) -> Java:
-    return Java(issues, _JAVA_OWNER, _JS_ASSIGNEE)
+    return Java(issues, _JAVA_OWNER, _JAVA_ASSIGNEE)
