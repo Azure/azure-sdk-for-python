@@ -186,12 +186,12 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def set_table_access_policy(
-        self, signed_identifiers: Dict[str, Optional[TableAccessPolicy]], **kwargs
+        self, signed_identifiers: Mapping[str, Optional[TableAccessPolicy]], **kwargs
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table.
-        :type signed_identifiers: dict[str, ~azure.data.tables.TableAccessPolicy] or dict[str, None]
+        :type signed_identifiers: Mapping[str, ~azure.data.tables.TableAccessPolicy] or Mapping[str, None]
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """

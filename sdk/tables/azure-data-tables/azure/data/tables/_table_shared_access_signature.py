@@ -92,7 +92,7 @@ def generate_table_sas(
     credential: AzureNamedKeyCredential,
     table_name: str,
     *,
-    permission: Optional[TableSasPermissions] = None,
+    permission: Optional[Union[TableSasPermissions, str]] = None,
     expiry: Optional[Union[datetime, str]] = None,
     start: Optional[Union[datetime, str]] = None,
     ip_address_or_range: Optional[str] = None,
@@ -118,7 +118,7 @@ def generate_table_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :paramtype permission: ~azure.data.tables.TableSasPermissions or None
+    :paramtype permission: ~azure.data.tables.TableSasPermissions or str or None
     :keyword expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -191,7 +191,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
     def generate_table(
         self,
         table_name,
-        permission: Optional[TableSasPermissions] = None,
+        permission: Optional[Union[TableSasPermissions, str]] = None,
         expiry: Optional[Union[datetime, str]] = None,
         start: Optional[Union[datetime, str]] = None,
         policy_id: Optional[str] = None,
@@ -214,7 +214,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: ~azure.data.table.TableSasPermissions or None
+        :type permission: ~azure.data.table.TableSasPermissions or str or None
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
