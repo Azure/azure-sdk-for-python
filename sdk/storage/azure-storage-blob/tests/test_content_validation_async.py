@@ -38,7 +38,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
         await self.container.create_container()
 
-    async def teardown_method(self, _):
+    # TODO: Figure out how to get this to run automatically
+    async def _teardown(self):
         if self.container:
             try:
                 await self.container.delete_container()
@@ -83,6 +84,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
@@ -103,6 +105,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
@@ -121,6 +124,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
@@ -141,6 +145,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
@@ -170,6 +175,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert resp1
         assert resp2
         assert resp3
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
@@ -201,3 +207,4 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert resp1
         assert resp2
         assert resp3
+        await self._teardown()
