@@ -47,7 +47,7 @@ class IssueProcessPython(IssueProcess):
         return ""
 
     def multi_api_policy(self) -> None:
-        if (_MultiAPI in self.issue_package.labels_name) and (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name):
+        if self.has_label(_MultiAPI) and not self.has_label(_AUTO_ASK_FOR_CHECK):
             self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
@@ -55,12 +55,12 @@ class IssueProcessPython(IssueProcess):
 
     @property
     def is_multiapi(self):
-        return _MultiAPI in self.issue_package.labels_name
+        return self.has_label(_MultiAPI)
 
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        if _CONFIGURED in self.issue_package.labels_name:
+        if self.has_label(_CONFIGURED):
             return False
         if 'package-' not in self.target_readme_tag:
             return True
@@ -72,7 +72,7 @@ class IssueProcessPython(IssueProcess):
         return whether_change_readme
 
     def auto_reply(self) -> None:
-        if (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name) or (_CONFIGURED in self.issue_package.labels_name):
+        if not self.has_label(_AUTO_ASK_FOR_CHECK) or self.has_label(_CONFIGURED):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
                 try:
@@ -92,16 +92,15 @@ class IssueProcessPython(IssueProcess):
                         self.log(f'{issue_number} run pipeline fail')
                 except Exception as e:
                     self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
-                if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
-                    self.add_label(_AUTO_ASK_FOR_CHECK)
+                self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
 
-            if _CONFIGURED in self.issue_package.labels_name:
+            if self.has_label(_CONFIGURED):
                 self.issue_package.issue.remove_from_labels(_CONFIGURED)
 
     def attention_policy(self):
-        if _BRANCH_ATTENTION in self.issue_package.labels_name:
+        if self.has_label(_BRANCH_ATTENTION):
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
     def auto_bot_advice(self):
@@ -110,7 +109,7 @@ class IssueProcessPython(IssueProcess):
         self.attention_policy()
 
     def auto_close(self) -> None:
-        if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
+        if self.has_label(AUTO_CLOSE_LABEL):
             return
         last_version, last_time = get_last_released_date(self.package_name)
         if last_version and last_time > self.created_time:
