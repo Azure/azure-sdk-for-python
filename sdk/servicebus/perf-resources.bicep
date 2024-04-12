@@ -47,7 +47,7 @@ resource serviceBusTopic 'Microsoft.ServiceBus/namespaces/topics@2017-04-01' = {
     enableBatchedOperations: true
     enableExpress: false
     enablePartitioning: false
-    maxSizeInMegabytes: 4096
+    maxSizeInMegabytes: 80000
     requiresDuplicateDetection: false
     status: 'Active'
     supportOrdering: true
