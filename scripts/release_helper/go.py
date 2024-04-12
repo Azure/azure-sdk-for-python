@@ -15,7 +15,8 @@ class IssueProcessGo(IssueProcess):
 class Go(Common):
     def __init__(self, issues, language_owner, sdk_assignees):
         super(Go, self).__init__(issues, language_owner, sdk_assignees)
-        self.file_out_name = 'release_go_status.md'
+        if not self.for_test():
+            self.file_out_name = 'release_go_status.md'
 
 
 def go_process(issues: List[Any]) -> Go:

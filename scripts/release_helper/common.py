@@ -383,6 +383,10 @@ class Common:
         for assignee in self.assignee_candidates:
             self.request_repo_dict[assignee] = Github(assignee_token).get_repo(REQUEST_REPO)
 
+    @staticmethod
+    def for_test():
+        return bool(os.getenv("TEST_ISSUE_NUMBER"))
+
     def log_error(self, message: str) -> None:
         _LOG.error(message)
 

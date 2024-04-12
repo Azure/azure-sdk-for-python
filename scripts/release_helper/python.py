@@ -180,8 +180,9 @@ class IssueProcessPython(IssueProcess):
 class Python(Common):
     def __init__(self, issues, language_owner, sdk_assignees):
         super(Python, self).__init__(issues, language_owner, sdk_assignees)
-        self.file_out_name = 'release_python_status.md'
         self.issue_process_function = IssueProcessPython
+        if not self.for_test():
+            self.file_out_name = 'release_python_status.md'
 
     def duplicated_policy(self):
         counter = Counter([item.package_name for item in self.result])
