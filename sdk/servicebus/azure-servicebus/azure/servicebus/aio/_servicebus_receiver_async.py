@@ -834,6 +834,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         *,
         max_message_count: Optional[int] = None,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
+        timeout: Optional[float] = None,
     ) -> int:
         """
         This operation deletes messages in the queue that are older than the specified enqueued time.
@@ -842,10 +843,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          meaning it will attempt to delete up to 4,000 messages.
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: int
 
         """
         self._check_live()
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         await self._open()
 
         message_count = max_message_count if max_message_count else 4000
@@ -859,7 +864,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
         deleted = await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
         )
 
         links = get_receive_links(deleted)
@@ -870,6 +875,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self,
         *,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
+        timeout: Optional[float] = None,
     ) -> int:
         """
         This operation purges as many messages as possible in the queue that are older than the specified enqueued time.
@@ -877,10 +883,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages from the current time and before 
          in the queue will be considered.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: int
 
         """
         self._check_live()
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         await self._open()
 
         message = {
@@ -896,7 +906,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         deleted = None
         while deleted != 0:
             deleted = await self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+                REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
             )
             batch_count += deleted
 
