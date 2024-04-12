@@ -60,8 +60,8 @@ jobs:
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
-        export TYPESPEC_JSON = $(pwd)/file-storage/data/typespec.json
-        export TEST_ISSUE_NUMBER = $(TEST_ISSUE_NUMBER)
+        export TYPESPEC_JSON=$(pwd)/file-storage/data/typespec.json
+        export TEST_ISSUE_NUMBER=$(TEST_ISSUE_NUMBER)
 
         # create virtual env
         python -m venv venv-sdk
