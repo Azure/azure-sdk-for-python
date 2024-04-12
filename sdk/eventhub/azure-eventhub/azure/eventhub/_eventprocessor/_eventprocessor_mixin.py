@@ -46,6 +46,7 @@ class EventProcessorMixin:
         partition_id: str,
         checkpoint: Optional[Dict[str, Any]]
         ) -> Tuple[Union[str, int, datetime], bool]:
+        # TODO: check sequence number/replication segment instead
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
 
         event_position_inclusive = False
