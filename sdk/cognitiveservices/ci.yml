@@ -41,8 +41,6 @@ extends:
       safeName: azurecognitiveserviceslanguagetextanalytics
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure-cognitiveservices-search-customsearch
-      safeName: azurecognitiveservicessearchcustomsearch
     - name: azure-cognitiveservices-search-entitysearch
       safeName: azurecognitiveservicessearchentitysearch
     - name: azure-cognitiveservices-search-imagesearch
