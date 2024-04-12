@@ -210,12 +210,13 @@ class IssueProcess:
                          f' your **Readme Tag** is `{self.target_readme_tag}`, but in [readme.md]({self.readme_link}#basic-information) '
                          f'it is still `{self.default_readme_tag}`, please modify the readme.md or your '
                          f'**Readme Tag** above ')
-            
+
     def get_package_name(self) -> None:
         issue_body_list = self.get_issue_body()
         for line in issue_body_list:
             if line.strip('\r\n ').startswith('package-name:'):
                 self.package_name = line.split(':')[-1].strip('\r\n ')
+                break
 
     def auto_parse(self) -> None:
         if self.has_label(AUTO_ASSIGN_LABEL):
