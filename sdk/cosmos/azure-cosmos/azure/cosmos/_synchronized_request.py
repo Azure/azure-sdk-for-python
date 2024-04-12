@@ -21,7 +21,7 @@
 
 """Synchronized request in the Azure Cosmos database service.
 """
-
+import copy
 import json
 import time
 
@@ -139,7 +139,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         )
 
     response = response.http_response
-    headers = dict(response.headers)
+    headers = copy.copy(response.headers)
 
     data = response.body()
     if data:

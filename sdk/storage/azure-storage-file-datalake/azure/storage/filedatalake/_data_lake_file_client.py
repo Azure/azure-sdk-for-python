@@ -114,12 +114,16 @@ class DataLakeFileClient(PathClient):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :return a DataLakeFileClient
-        :rtype ~azure.storage.filedatalake.DataLakeFileClient
+        :returns: A DataLakeFileClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(

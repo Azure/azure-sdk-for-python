@@ -106,11 +106,13 @@ def analyze_read():
         for paragraph in result.paragraphs:
             print(f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region")
             print(f"...with content: '{paragraph.content}'")
-        
+
         result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
         print("-----Print sorted paragraphs-----")
         for idx, paragraph in enumerate(result.paragraphs):
-            print(f"...paragraph:{idx} with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
+            print(
+                f"...paragraph:{idx} with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
+            )
 
     print("----------------------------------------")
 

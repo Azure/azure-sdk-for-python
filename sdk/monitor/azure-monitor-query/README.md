@@ -110,10 +110,10 @@ Each set of metric values is a time series with the following characteristics:
 ## Examples
 
 - [Logs query](#logs-query)
+  - [Resource-centric logs query](#resource-centric-logs-query)
   - [Specify timespan](#specify-timespan)
   - [Handle logs query response](#handle-logs-query-response)
 - [Batch logs query](#batch-logs-query)
-- [Resource logs query](#resource-logs-query)
 - [Advanced logs query scenarios](#advanced-logs-query-scenarios)
   - [Set logs query timeout](#set-logs-query-timeout)
   - [Query multiple workspaces](#query-multiple-workspaces)
@@ -127,6 +127,39 @@ Each set of metric values is a time series with the following characteristics:
 ### Logs query
 
 This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [`pandas`](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use `pandas`.
+
+#### Resource-centric logs query
+
+The following example demonstrates how to query logs directly from an Azure resource without the use of a Log Analytics workspace. Here, the `query_resource` method is used instead of `query_workspace`. Instead of a workspace ID, an Azure resource identifier is passed in. For example, `/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}`.
+
+```python
+import os
+import pandas as pd
+from datetime import timedelta
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+
+credential  = DefaultAzureCredential()
+client = LogsQueryClient(credential)
+
+query = """AzureActivity | take 5"""
+
+try:
+    response = client.query_resource(os.environ['LOGS_RESOURCE_ID'], query, timespan=timedelta(days=1))
+    if response.status == LogsQueryStatus.PARTIAL:
+        error = response.partial_error
+        data = response.partial_data
+        print(error)
+    elif response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    for table in data:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        print(df)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print(err)
+```
 
 #### Specify timespan
 
@@ -278,39 +311,6 @@ for res in results:
 
 ```
 
-### Resource logs query
-
-The following example demonstrates how to query logs directly from an Azure resource without the use of a Log Analytics workspace. Here, the `query_resource` method is used instead of `query_workspace`. Instead of a workspace ID, an Azure resource identifier is passed in. For example, `/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}`.
-
-```python
-import os
-import pandas as pd
-from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
-
-credential  = DefaultAzureCredential()
-client = LogsQueryClient(credential)
-
-query = """AzureActivity | take 5"""
-
-try:
-    response = client.query_resource(os.environ['LOGS_RESOURCE_ID'], query, timespan=timedelta(days=1))
-    if response.status == LogsQueryStatus.PARTIAL:
-        error = response.partial_error
-        data = response.partial_data
-        print(error)
-    elif response.status == LogsQueryStatus.SUCCESS:
-        data = response.tables
-    for table in data:
-        df = pd.DataFrame(data=table.rows, columns=table.columns)
-        print(df)
-except HttpResponseError as err:
-    print("something fatal happened")
-    print(err)
-```
-
 ### Advanced logs query scenarios
 
 #### Set logs query timeout
@@ -362,7 +362,7 @@ A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/
 To get logs query execution statistics, such as CPU and memory consumption:
 
 1. Set the `include_statistics` parameter to `True`.
-2. Access the `statistics` field inside the `LogsQueryResult` object.
+1. Access the `statistics` field inside the `LogsQueryResult` object.
 
 The following example prints the query execution time:
 
@@ -546,7 +546,10 @@ Each Azure resource must reside in:
 - The same region as the endpoint specified when creating the client.
 - The same Azure subscription.
 
-Furthermore, the metric namespace containing the metrics to be queried must be provided. For a list of metric namespaces, see [Supported metrics and log categories by resource type][metric_namespaces].
+Furthermore:
+
+- The user must be authorized to read monitoring data at the Azure subscription level. For example, the [Monitoring Reader role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/monitor#monitoring-reader) on the subscription to be queried.
+- The metric namespace containing the metrics to be queried must be provided. For a list of metric namespaces, see [Supported metrics and log categories by resource type][metric_namespaces].
 
 ```python
 from datetime import timedelta
