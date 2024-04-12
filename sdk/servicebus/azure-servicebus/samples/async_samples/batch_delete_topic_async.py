@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending message(s) to a Service Bus Topic.
+Example to show deleting message(s) from a Service Bus Topic.
 """
 
 import os
@@ -14,7 +14,7 @@ import asyncio
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.management import ServiceBusAdministrationClient
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import ResourceExistsError
 
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
@@ -46,8 +46,10 @@ async def send_batch_message(sender):
 
 async def main():
     servicebus_mgmt_client = ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR)
+    
     # Create subscriptions.
     create_subscription(servicebus_mgmt_client, 'sb-allmsgs-sub')
+    
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
     async with servicebus_client:
         sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)
@@ -60,10 +62,9 @@ async def main():
                 subscription_name='sb-allmsgs-sub'
             )
         async with receiver:
-            from datetime import datetime, timezone, timedelta
-            received_msgs = await receiver.delete_messages(max_message_count=20, before_enqueued_time_utc=datetime.now(timezone.utc) + timedelta(hours=10))
-            print(received_msgs)
+            deleted_msgs = await receiver.delete_messages(max_message_count=20)
+            print(deleted_msgs)
 
-    print("delete message is done.")
+    print("Delete message is done.")
 
 asyncio.run(main())

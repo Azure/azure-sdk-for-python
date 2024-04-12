@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending message(s) to a Service Bus Queue.
+Example to show deleting message(s) from a Service Bus Session Queue.
 """
 
 import os
@@ -37,13 +37,9 @@ async def run():
         receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
         async with receiver:
 
-            # Peek before deleting to see enqueued times
-            peeked_msgs = await receiver.peek_messages(max_message_count=10)
-            for msg in peeked_msgs:
-                print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
-
             # Deleting Messages
             new_time = datetime.now(timezone.utc) + timedelta(hours=10)
+
             print(f"Deleting messages that are older than {new_time}")
             deleted_msgs = await receiver.delete_messages(
                 max_message_count=10,
@@ -51,12 +47,12 @@ async def run():
             )
             print(f"{deleted_msgs} messages deleted.")
 
-            # Try to peek after deleting
+            # Try to peek after deleting to see what is left
             peeked_msgs = await receiver.peek_messages(max_message_count=10)
             for msg in peeked_msgs:
                 print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
 
-            # Try to receive after deleting
+            # Clear out the queue if any messages didn't delete
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 print(f"{msg} received.")
