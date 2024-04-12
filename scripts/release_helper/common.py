@@ -24,6 +24,7 @@ _ASSIGNEE_TOKEN = os.getenv('AZURESDK_BOT_TOKEN')
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI", "TypeSpec"]
 
 
 class IssueProcess:
@@ -300,12 +301,18 @@ class IssueProcess:
         if self.remind_logic():
             self.bot_advice.append('close to release date. ')
 
+    def hint_policy(self):
+        for item in _HINTS:
+            if item in self.issue_package.labels_name:
+                self.bot_advice.append(item)
+
     def auto_bot_advice(self):
         self.new_issue_policy()
         self.new_comment_policy()
         self.multi_link_policy()
         self.date_remind_policy()
         self.inconsistent_tag_policy()
+        self.hint_policy()
 
     def get_target_date(self):
         body = self.get_issue_body()

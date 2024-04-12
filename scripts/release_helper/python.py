@@ -19,7 +19,6 @@ _BRANCH_ATTENTION = 'base-branch-attention'
 _MultiAPI = 'MultiAPI'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
-_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI"]
 
 
 class IssueProcessPython(IssueProcess):
@@ -102,16 +101,10 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
-    def hint_policy(self):
-        for item in _HINTS:
-            if item in self.issue_package.labels_name:
-                self.bot_advice.append(item)
-
     def auto_bot_advice(self):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
-        self.hint_policy()
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
