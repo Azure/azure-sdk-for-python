@@ -308,10 +308,7 @@ class EventData(object):
 
         :rtype: int or None
         """
-        try:
-            return int(self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None).split(":")[1])
-        except AttributeError:  # if not in "replication segment: sequence number" format
-            return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
+        return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
 
     @property
     def replication_segment(self) -> Optional[int]:

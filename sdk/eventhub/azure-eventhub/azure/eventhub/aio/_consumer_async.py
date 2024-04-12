@@ -62,8 +62,8 @@ class EventHubConsumer(
     :type client: ~azure.eventhub.aio.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
     :type source: ~uamqp.address.Source
-    :keyword event_position: The position from which to start receiving.
-    :paramtype event_position: int, str, datetime.datetime
+    :keyword event_position: The position from which to start receiving. If georeplication
+    :paramtype event_position: int, str, datetime.datetime, ~azure.eventhub.SequenceNumberReplicationSegment
     :keyword int prefetch: The number of events to prefetch from the service
         for processing. Default is 300.
     :keyword int owner_level: The priority of the exclusive consumer. An exclusive

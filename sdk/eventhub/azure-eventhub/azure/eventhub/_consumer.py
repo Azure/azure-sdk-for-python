@@ -63,7 +63,8 @@ class EventHubConsumer(
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
     :type source: ~azure.eventhub._pyamqp.endpoints.Source or ~uamqp.address.Source
-    :keyword event_position: The position from which to start receiving. If georeplication
+    :keyword event_position: The position from which to start receiving. If receiving from a 
+     georeplication-enabled Event Hub, ReplicationSegment may be passed in.
     :paramtype event_position: int, str, datetime.datetime, ~azure.eventhub.ReplicationSegment
     :keyword int prefetch: The number of events to prefetch from the service
         for processing. Default is 300.

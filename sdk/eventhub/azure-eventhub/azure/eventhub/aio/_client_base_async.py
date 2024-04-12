@@ -431,9 +431,15 @@ class ClientBaseAsync(ClientBase):
             output["beginning_sequence_number"] = cast(
                 int, partition_info[b"begin_sequence_number"]
             )
+            output["beginning_replication_segment"] = partition_info[
+                b"begin_sequence_number_epoch"
+            ]
             output["last_enqueued_sequence_number"] = cast(
                 int, partition_info[b"last_enqueued_sequence_number"]
             )
+            output["last_enqueued_replication_segment"] = partition_info[
+                b"last_enqueued_sequence_number_epoch"
+            ]
             output["last_enqueued_offset"] = cast(
                 bytes, partition_info[b"last_enqueued_offset"]
             ).decode("utf-8")
