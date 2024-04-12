@@ -315,3 +315,35 @@ async def test_decompress_compressed_header_offline(port, http_request):
         data = response.stream_download(client._pipeline, decompress=True)
         decoded = b"".join([d async for d in data]).decode("utf-8")
         assert decoded == "test"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_streaming_request_iterable(port, http_request):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    class Content:
+        async def __aiter__(self):
+            yield b"test 123"
+
+    client = AsyncPipelineClient("")
+    request = http_request(method="POST", url=url, data=Content())
+    response = await client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_streaming_request_generator(port, http_request):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    async def content():
+        yield b"test 123"
+        yield b"test 456"
+
+    client = AsyncPipelineClient("")
+    request = http_request(method="POST", url=url, data=content())
+    response = await client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123test 456"

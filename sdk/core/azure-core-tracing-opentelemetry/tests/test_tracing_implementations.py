@@ -12,6 +12,7 @@ import pytest
 import requests
 
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing import SpanKind, AbstractSpan
 from azure.core import __version__ as core_version
@@ -369,3 +370,20 @@ class TestOpentelemetryWrapper:
 
             with pytest.raises(ValueError):
                 wrapped_class.kind = "somethingstuid"
+
+    def test_error_type_attribute_builtin_error(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
+            with pytest.raises(ValueError):
+                with OpenTelemetrySpan() as wrapped_class:
+                    raise ValueError("This is a test error")
+            assert wrapped_class.span_instance.attributes.get("error.type") == "ValueError"
+
+    def test_error_type_attribute_azure_error(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
+            with pytest.raises(ClientAuthenticationError):
+                with OpenTelemetrySpan() as wrapped_class:
+                    raise ClientAuthenticationError("This is a test error")
+            assert (
+                wrapped_class.span_instance.attributes.get("error.type")
+                == "azure.core.exceptions.ClientAuthenticationError"
+            )

@@ -21,8 +21,8 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
 from azure.monitor.opentelemetry._constants import (
-    _is_attach_enabled,
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
     _PREVIEW_ENTRY_POINT_WARNING,
@@ -35,7 +35,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry._utils.configurations import (
     _get_otel_disabled_instrumentations,
 )
 
