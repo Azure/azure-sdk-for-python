@@ -7,7 +7,9 @@ _GO_ASSIGNEE = {'Alancere'}
 
 
 class IssueProcessGo(IssueProcess):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language_name = 'go'
 
 
 class Go(Common):

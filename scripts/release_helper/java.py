@@ -7,7 +7,9 @@ _JS_ASSIGNEE = {'weidongxu-microsoft', 'haolingdong-msft', 'XiaofeiCao'}
 
 
 class IssueProcessJava(IssueProcess):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language_name = 'java'
 
 
 class Java(Common):

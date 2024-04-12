@@ -8,6 +8,10 @@ _JS_ASSIGNEE = {'qiaozha', 'MaryGao'}
 
 
 class IssueProcessJs(IssueProcess):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language_name = 'js'
+
     def auto_assign_policy(self) -> str:
         weeks = datetime.datetime.now().isocalendar()[1]
         assignees = list(self.assignee_candidates)

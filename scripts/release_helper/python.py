@@ -1,6 +1,6 @@
 from datetime import datetime
-from collections import Counter
 import re
+import yaml
 from typing import Any, List, Dict, Set
 
 from github.Repository import Repository
@@ -26,10 +26,11 @@ class IssueProcessPython(IssueProcess):
     def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
                  assignee_candidates: Set[str], language_owner: Set[str]):
         IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
-        self.output_folder = ''
+        self.output_folder = '' # network of sdk/network/azure-mgmt-XXX
         self.delay_time = self.get_delay_time()
         self.python_tag = ''
         self.rest_repo_hash = ''
+        self.language_name = 'python'
 
     def get_delay_time(self):
         q = [comment.updated_at
@@ -119,27 +120,49 @@ class IssueProcessPython(IssueProcess):
             self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT, last_version)
 
-    def auto_parse(self):
-        super().auto_parse()
-        issue_body_list = self.get_issue_body()
-        self.readme_link = issue_body_list[0].strip("\r\n ")
-        if not re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
-            return
-
-        # Get the specified tag and rest repo hash in issue body
-        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
-        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
-
+    def package_name_output_folder_from_readme(self):
         try:
             contents = self.get_local_file_content('readme.python.md')
-        except Exception as e:
-            raise Exception(f"fail to read readme.python.md: {e}")
+        except Exception as e: # pylint: disable=too-broad-except
+            print(f"fail to read readme.python.md: {e}")
+            return
         pattern_package = re.compile(r'package-name: [\w+-.]+')
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
         if ('multi-api' in contents) and (_MultiAPI not in self.issue_package.labels_name):
             self.add_label(_MultiAPI)
+
+    def package_name_output_folder_from_tspconfig(self):
+        try:
+            contents = self.get_local_file_content('tspconfig.yaml')
+        except Exception as e: # pylint: disable=too-broad-except
+            print(f"fail to read tspconfig.yaml: {e}")
+            return
+        yaml_contents = yaml.safe_load(contents)
+        # tspconfig.yaml example: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/contosowidgetmanager/Contoso.WidgetManager/tspconfig.yaml
+        self.output_folder = yaml_contents.get("parameters", {}).get("service-dir", {}).get("default", "").split('/')[-1]
+        emitters = yaml_contents.get("options", {})
+        for emitter_name in emitters:
+            if "/typespec-python" in emitter_name:
+                self.package_name = emitters[emitter_name].get("package-dir", "")
+                break
+
+    def auto_parse(self):
+        super().auto_parse()
+        issue_body_list = self.get_issue_body()
+        self.readme_link = issue_body_list[0].strip("\r\n ")
+
+        if not self.package_name and ".Management" in self.readme_link:
+            self.package_name_output_folder_from_tspconfig()
+        if not self.package_name and re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
+            self.package_name_output_folder_from_readme()
+        if not self.package_name:
+            raise Exception(f"package name not found in readme.python.md or tspconfig.yaml")
+
+        # Get the specified tag and rest repo hash in issue body
+        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
+        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
 
 
     def run(self) -> None:

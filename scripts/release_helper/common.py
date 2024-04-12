@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import logging
 import time
 import urllib.parse
@@ -11,7 +12,7 @@ from github import Github
 from github.Repository import Repository
 
 from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
-    MULTI_LINK_LABEL, INCONSISTENT_TAG
+    MULTI_LINK_LABEL, INCONSISTENT_TAG, TYPESPEC_LABEL
 
 _LOG = logging.getLogger(__name__)
 
@@ -19,12 +20,11 @@ _LOG = logging.getLogger(__name__)
 _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
-_BOT_NAME = 'azure-sdk'
 _ASSIGNEE_TOKEN = os.getenv('AZURESDK_BOT_TOKEN')
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
-_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI", "TypeSpec"]
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI", TYPESPEC_LABEL]
 
 
 class IssueProcess:
@@ -68,6 +68,17 @@ class IssueProcess:
         self.is_open = True
         self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
         self.spec_repo = Path(os.getenv('SPEC_REPO'))
+        self.typespec_json = Path(os.getenv('TYPESPEC_JSON'))
+        self.language_name = "common"
+
+    @property
+    def for_typespec(self) -> bool:
+        with open(str(self.typespec_json), "r") as file:
+            data = json.load(file)
+        return self.package_name in data.get(self.language_name, [])
+
+    def has_label(self, label: str) -> bool:
+        return label in self.issue_package.labels_name
 
     @property
     def created_date_format(self) -> str:
@@ -199,9 +210,16 @@ class IssueProcess:
                          f' your **Readme Tag** is `{self.target_readme_tag}`, but in [readme.md]({self.readme_link}#basic-information) '
                          f'it is still `{self.default_readme_tag}`, please modify the readme.md or your '
                          f'**Readme Tag** above ')
+            
+    def get_package_name(self) -> None:
+        issue_body_list = self.get_issue_body()
+        for line in issue_body_list:
+            if line.strip('\r\n ').startswith('package-name:'):
+                self.package_name = line.split(':')[-1].strip('\r\n ')
 
     def auto_parse(self) -> None:
-        if AUTO_PARSE_LABEL in self.issue_package.labels_name:
+        if self.has_label(AUTO_ASSIGN_LABEL):
+            self.get_package_name()
             return
 
         self.add_label(AUTO_PARSE_LABEL)
@@ -222,8 +240,9 @@ class IssueProcess:
         self.edit_issue_body()
 
     def add_label(self, label: str) -> None:
-        self.issue_package.issue.add_to_labels(label)
-        self.issue_package.labels_name.add(label)
+        if not self.has_label(label):
+            self.issue_package.issue.add_to_labels(label)
+            self.issue_package.labels_name.add(label)
 
     def update_assignee(self, assignee_to_del: str, assignee_to_add: str) -> None:
         if assignee_to_del:
@@ -246,7 +265,7 @@ class IssueProcess:
         return assignees[random_idx]
 
     def auto_assign(self) -> None:
-        if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
+        if self.has_label(AUTO_PARSE_LABEL):
             self.update_issue_instance()
             return
         # assign averagely
@@ -284,11 +303,11 @@ class IssueProcess:
             self.bot_advice.append('new comment.')
 
     def multi_link_policy(self):
-        if MULTI_LINK_LABEL in self.issue_package.labels_name:
+        if self.has_label(MULTI_LINK_LABEL):
             self.bot_advice.append('multi readme link!')
 
     def inconsistent_tag_policy(self):
-        if INCONSISTENT_TAG in self.issue_package.labels_name:
+        if self.has_label(INCONSISTENT_TAG):
             self.bot_advice.append('Attention to inconsistent tag')
 
     def remind_logic(self) -> bool:
@@ -303,11 +322,16 @@ class IssueProcess:
 
     def hint_policy(self):
         for item in _HINTS:
-            if item in self.issue_package.labels_name:
+            if self.has_label(item):
                 self.bot_advice.append(item)
+
+    def typespec_policy(self):
+        if self.for_typespec:
+            self.add_label(TYPESPEC_LABEL)
 
     def auto_bot_advice(self):
         self.new_issue_policy()
+        self.typespec_policy()
         self.new_comment_policy()
         self.multi_link_policy()
         self.date_remind_policy()
