@@ -58,7 +58,10 @@ from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
+from ._models import HoldFailed
+from ._models import HoldRequest
 from ._models import MediaStreamingConfiguration
+from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
 from ._models import MuteParticipantsResult
@@ -109,6 +112,7 @@ from ._models import TranscriptionUpdate
 from ._models import TranscriptionUpdated
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
+from ._models import UnholdRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
 from ._models import UpdateDialogRequest
@@ -195,7 +199,10 @@ __all__ = [
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
+    "HoldFailed",
+    "HoldRequest",
     "MediaStreamingConfiguration",
+    "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
     "MuteParticipantsResult",
@@ -246,6 +253,7 @@ __all__ = [
     "TranscriptionUpdated",
     "TransferCallResponse",
     "TransferToParticipantRequest",
+    "UnholdRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
     "UpdateDialogRequest",

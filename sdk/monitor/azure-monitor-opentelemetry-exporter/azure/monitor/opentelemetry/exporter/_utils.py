@@ -50,7 +50,9 @@ def _is_on_functions():
     return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
 
 def _is_attach_enabled():
-    return isdir("/agents/python/")
+    if _is_on_app_service():
+        return isdir("/agents/python/")
+    return False
 
 
 # AKS
