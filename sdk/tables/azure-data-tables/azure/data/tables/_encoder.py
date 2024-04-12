@@ -13,12 +13,7 @@ _ODATA_SUFFIX = "@odata.type"
 T = TypeVar("T")
 
 
-@abc.ABC
-class TableEntityEncoder(Generic[T]):
-    # @abc.abstractmethod
-    # def __init__(self, entity_type: Type[T]) -> None:
-    #     self._entity_type = entity_type
-
+class TableEntityEncoderABC(abc.ABC, Generic[T]):
     def prepare_key(self, key: str) -> str:
         """Duplicate the single quote char to escape."""
         try:
@@ -78,9 +73,13 @@ class TableEntityEncoder(Generic[T]):
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
         """Encode an entity object into JSON format to send out.
         """
+    
+    @abc.abstractmethod
+    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> T:
+        ...
 
-        
-class _TableEntityEncoder(TableEntityEncoder[Union[Mapping[str, Any], TableEntity]]):
+
+class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEntity]]):
     
     def encode_entity(self, entity: Union[Mapping[str, Any], TableEntity]) -> Dict[str, Union[str, int, float, bool]]:
         """This method currently behaves the same as the existing serialization function in that
@@ -111,9 +110,8 @@ class _TableEntityEncoder(TableEntityEncoder[Union[Mapping[str, Any], TableEntit
             encoded[key] = value
         return encoded
     
-    @abc.abstractmethod
-    def decode_entity(self, entity: Mapping[str, Union[str, int, float, bool]]) -> T:
-        return self._entity_type(_convert_to_entity(entity))
+    def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
+        return _convert_to_entity(entity)
 
 
 # class TableEntityJSONEncoder(JSONEncoder, TableEntityEncoder):

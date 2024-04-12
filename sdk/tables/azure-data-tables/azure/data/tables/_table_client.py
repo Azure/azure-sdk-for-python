@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._encoder import TableEntityEncoder, _TableEntityEncoder
+from ._encoder import TableEntityEncoder, TableEntityEncoderABC
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
@@ -35,7 +35,7 @@ from ._table_batch import TableBatchOperations, EntityType, TransactionOperation
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
 
 T = TypeVar("T")
-DEFAULT_ENCODER: TableEntityEncoder[TableEntity] = _TableEntityEncoder()
+DEFAULT_ENCODER = TableEntityEncoder()
 
 
 class TableClient(TablesBaseClient):
@@ -273,7 +273,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -288,7 +288,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -309,7 +309,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -324,7 +324,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -345,7 +345,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoder[T],
+        encoder: TableEntityEncoderABC[T],
         **kwargs: Any
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -359,7 +359,7 @@ class TableClient(TablesBaseClient):
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
@@ -409,7 +409,7 @@ class TableClient(TablesBaseClient):
         self,
         entity: EntityType,
         *,
-        encoder: TableEntityEncoder[TableEntity] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
         **kwargs
     ) -> Dict[str, Any]:
         """Insert entity in a table.
@@ -418,7 +418,7 @@ class TableClient(TablesBaseClient):
         :type entity: Union[TableEntity, Mapping[str, Any]]
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -434,13 +434,13 @@ class TableClient(TablesBaseClient):
         """
     
     @overload
-    def create_entity(self, entity: T, *, encoder: TableEntityEncoder[T], **kwargs) -> Dict[str, Any]:
+    def create_entity(self, entity: T, *, encoder: TableEntityEncoderABC[T], **kwargs) -> Dict[str, Any]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -477,7 +477,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
         """Update entity in a table.
@@ -493,7 +493,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -516,7 +516,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoder[T],
+        encoder: TableEntityEncoderABC[T],
         **kwargs
     ) -> Dict[str, Any]:
         """Update entity in a table.
@@ -530,7 +530,7 @@ class TableClient(TablesBaseClient):
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -679,7 +679,7 @@ class TableClient(TablesBaseClient):
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        encoder: TableEntityEncoder = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs,
     ) -> TableEntity:
         """Get a single entity in a table.
@@ -692,7 +692,7 @@ class TableClient(TablesBaseClient):
         :paramtype select: str or list[str] or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -729,7 +729,7 @@ class TableClient(TablesBaseClient):
         entity: EntityType,
         mode: UpdateMode = UpdateMode.MERGE,
         *,
-        encoder: TableEntityEncoder[TableEntityEncoder] = DEFAULT_ENCODER,
+        encoder: TableEntityEncoderABC[TableEntity] = DEFAULT_ENCODER,
         **kwargs
     ) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
@@ -740,7 +740,7 @@ class TableClient(TablesBaseClient):
         :type mode: ~azure.data.tables.UpdateMode
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -761,7 +761,7 @@ class TableClient(TablesBaseClient):
         entity: T,
         mode: UpdateMode = UpdateMode.MERGE,
         *,
-        encoder: TableEntityEncoder[T],
+        encoder: TableEntityEncoderABC[T],
         **kwargs
     ) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
@@ -771,7 +771,7 @@ class TableClient(TablesBaseClient):
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
+        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
