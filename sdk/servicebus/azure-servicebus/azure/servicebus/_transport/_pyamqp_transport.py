@@ -786,8 +786,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         try:
-            if message._receiver._handler._link.name != handler._link.name:  # pylint: disable=protected-access
-                raise AMQPLinkError("Message received on a different link than the current receiver link.")
+            if handler._link._is_closed:  # pylint: disable=protected-access
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
+                    description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, 'accepted')
             if settle_operation == MESSAGE_ABANDON:

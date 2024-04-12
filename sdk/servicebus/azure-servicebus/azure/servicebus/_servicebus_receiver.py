@@ -517,16 +517,11 @@ class ServiceBusReceiver(
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        # TODO: Fix error handling here, only supports uamqp
         try:
+            # if self._amqp_transport
+            # TODO: If uamqp --- raise the error still, else 
             if not message._is_deferred_message:
                 try:
-                    # if not link_closed:
-                    # this should never retry b/c if you have lost the link to the message, you can't settle it
-                    # keep track of receiver link id and message id if receiver link 
-                    # doesnt match the receiver link we received the msg on skip straight to mgmt link
-
-                    # throw an error here if receiver link id is not the one the is msg received on
                     self._amqp_transport.settle_message_via_receiver_link(
                         self._handler,
                         message,
@@ -536,10 +531,6 @@ class ServiceBusReceiver(
                     )
                     return
                 except (RuntimeError, ServiceBusConnectionError) as exception:
-                    # link_closed = true
-                    # hey if its a transport related error - try msgs settlement via mgmt link
-                    #else
-                    # continue to raise the exception
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",

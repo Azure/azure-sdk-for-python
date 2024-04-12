@@ -323,11 +323,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
+        from ..._pyamqp.error import ErrorCondition
         try:
             # If receiver Link is not the same as the one that received the message, we need to settle the message over mgmt
-            if message._receiver._handler._link.name != handler._link.name:  # pylint: disable=protected-access
-                raise AMQPLinkError("Message received on a different link than the current receiver link.")
 
+            if handler._link._is_closed:  # pylint: disable=protected-access
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
+                                    description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -362,7 +364,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         except AMQPLinkError as le:
             # Remove all Dispositions sent because we have lost the link sent on
             await message._receiver._handler._link._remove_pending_deliveries()  # pylint: disable=protected-access
-            raise ServiceBusConnectionError("Link error occurred during settle operation.") from le
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
         raise ValueError(
