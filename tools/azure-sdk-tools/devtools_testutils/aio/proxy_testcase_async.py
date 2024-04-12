@@ -10,8 +10,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from ..helpers import is_live_and_not_recording
+from ..helpers import is_live_and_not_recording, trim_kwargs_from_test_function
 from ..proxy_testcase import (
     get_test_id,
     start_record_or_playback,

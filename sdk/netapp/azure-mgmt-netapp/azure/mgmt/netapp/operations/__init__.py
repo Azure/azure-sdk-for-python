@@ -15,7 +15,6 @@ from ._volumes_operations import VolumesOperations
 from ._snapshots_operations import SnapshotsOperations
 from ._snapshot_policies_operations import SnapshotPoliciesOperations
 from ._backups_operations import BackupsOperations
-from ._account_backups_operations import AccountBackupsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._volume_quota_rules_operations import VolumeQuotaRulesOperations
 from ._volume_groups_operations import VolumeGroupsOperations
@@ -35,7 +34,6 @@ __all__ = [
     "SnapshotsOperations",
     "SnapshotPoliciesOperations",
     "BackupsOperations",
-    "AccountBackupsOperations",
     "BackupPoliciesOperations",
     "VolumeQuotaRulesOperations",
     "VolumeGroupsOperations",

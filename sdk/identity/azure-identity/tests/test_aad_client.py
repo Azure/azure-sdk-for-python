@@ -45,7 +45,7 @@ def test_error_reporting():
         functools.partial(client.obtain_token_by_refresh_token, ("scope",), "refresh token"),
     ]
 
-    # exceptions raised for AAD errors should contain AAD's error description
+    # exceptions raised for Microsoft Entra errors should contain Microsoft Entra's error description
     for fn in fns:
         with pytest.raises(ClientAuthenticationError) as ex:
             fn()
@@ -81,10 +81,10 @@ def test_exceptions_do_not_expose_secrets():
             assert transport.send.call_count == 1
             transport.send.reset_mock()
 
-    # AAD errors shouldn't provoke exceptions exposing secrets
+    # Microsoft Entra errors shouldn't provoke exceptions exposing secrets
     assert_secrets_not_exposed()
 
-    # neither should unexpected AAD responses
+    # neither should unexpected Microsoft Entra responses
     del body["error"]
     assert_secrets_not_exposed()
 
@@ -193,7 +193,7 @@ def test_refresh_token():
 
 
 def test_evicts_invalid_refresh_token():
-    """when AAD rejects a refresh token, the client should evict that token from its cache"""
+    """when Microsoft Entra ID rejects a refresh token, the client should evict that token from its cache"""
 
     tenant_id = "tenant-id"
     client_id = "client-id"

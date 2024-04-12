@@ -2,13 +2,25 @@
 # Licensed under the MIT License.
 # cSpell:disable
 
+from opentelemetry.semconv.metrics import MetricInstruments
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+_WEBSITE_SITE_NAME = "WEBSITE_SITE_NAME"
+_WEBSITE_HOME_STAMPNAME = "WEBSITE_HOME_STAMPNAME"
+_WEBSITE_HOSTNAME = "WEBSITE_HOSTNAME"
+_FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
+_AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 
 # Network
+
+_INVALID_STATUS_CODES = (
+    400, # Invalid Instrumentation Key/data
+)
 
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
@@ -42,6 +54,10 @@ _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
 
+# Feature constants
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
+_AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
+
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
@@ -66,6 +82,28 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
         _REQ_THROTTLE_NAME,
     ]
 )
+_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME = "APPLICATIONINSIGHTS_STATS_CONNECTION_STRING"
+_APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL"
+_APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL"
+# pylint: disable=line-too-long
+_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
+_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
+_EU_ENDPOINTS = [
+    "westeurope",
+    "northeurope",
+    "francecentral",
+    "francesouth",
+    "germanywestcentral",
+    "norwayeast",
+    "norwaywest",
+    "swedencentral",
+    "switzerlandnorth",
+    "switzerlandwest",
+    "uksouth",
+    "ukwest",
+]
 
 # Instrumentations
 
@@ -115,6 +153,8 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    "cassandra",
+    "tortoiseorm",
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -122,15 +162,14 @@ _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(
 # Standard metrics
 
 # List of metric instrument names that are autocollected from instrumentations
-# TODO: switch to semconv constants
 _AUTOCOLLECTED_INSTRUMENT_NAMES = (
-    "http.server.duration",
-    "http.server.request.size",
-    "http.server.response.size",
-    "http.server.active_requests",
-    "http.client.duration",
-    "http.client.request.size",
-    "http.client.response.size",
+    MetricInstruments.HTTP_SERVER_DURATION,
+    MetricInstruments.HTTP_SERVER_REQUEST_SIZE,
+    MetricInstruments.HTTP_SERVER_RESPONSE_SIZE,
+    MetricInstruments.HTTP_SERVER_ACTIVE_REQUESTS,
+    MetricInstruments.HTTP_CLIENT_DURATION,
+    MetricInstruments.HTTP_CLIENT_REQUEST_SIZE,
+    MetricInstruments.HTTP_CLIENT_RESPONSE_SIZE,
 )
 
 # Temporary solution for checking which instrumentations support metric collection

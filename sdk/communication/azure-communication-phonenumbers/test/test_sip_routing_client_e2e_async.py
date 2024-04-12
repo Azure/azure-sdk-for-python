@@ -7,7 +7,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from _shared.utils import async_create_token_credential, get_http_logging_policy
+from _shared.utils import async_create_token_credential, get_http_logging_policy, get_header_policy
 from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_routes_are_equal, setup_configuration
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
@@ -26,7 +26,9 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     def setup_method(self):
         super(TestSipRoutingClientE2EAsync, self).setUp(use_dynamic_resource = True)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
-            self.connection_str, http_logging_policy=get_http_logging_policy()
+            self.connection_str,
+            http_logging_policy=get_http_logging_policy(),
+            headers_policy=get_header_policy()
         )
         setup_configuration(self.connection_str,trunks=[self.first_trunk, self.second_trunk])
 
@@ -197,7 +199,11 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     def _get_sip_client_managed_identity(self):
         endpoint, *_ = parse_connection_str(self.connection_str)
         credential = async_create_token_credential()
-        return SipRoutingClient(endpoint, credential, http_logging_policy=get_http_logging_policy())
+        return SipRoutingClient(
+            endpoint,
+            credential,
+            http_logging_policy=get_http_logging_policy(),
+            headers_policy=get_header_policy())
     
     async def _get_as_list(self,iter):
         assert iter is not None, "No iterable was returned."

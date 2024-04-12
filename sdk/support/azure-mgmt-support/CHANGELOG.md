@@ -1,5 +1,50 @@
 # Release History
 
+## 6.1.0b3 (2024-03-18)
+
+### Features Added
+
+  - Added operation ChatTranscriptsNoSubscriptionOperations.list
+  - Added operation CommunicationsNoSubscriptionOperations.list
+  - Added operation ProblemClassificationsOperations.classify_problems
+  - Added operation group LookUpResourceIdOperations
+  - Added operation group ProblemClassificationsNoSubscriptionOperations
+  - Added operation group ServiceClassificationsNoSubscriptionOperations
+  - Added operation group ServiceClassificationsOperations
+  - Model ProblemClassification has a new parameter metadata
+  - Model ProblemClassification has a new parameter parent_problem_classification
+  - Model Service has a new parameter metadata
+  - Model SupportTicketDetails has a new parameter is_temporary_ticket
+
+### Breaking Changes
+
+  - Removed operation group SupportTicketChatTranscriptsNoSubscriptionOperations
+  - Removed operation group SupportTicketCommunicationsNoSubscriptionOperations
+
+## 6.1.0b2 (2023-10-23)
+
+### Features Added
+
+  - Added operation group ChatTranscriptsNoSubscriptionOperations
+  - Added operation group ChatTranscriptsOperations
+  - Added operation group CommunicationsNoSubscriptionOperations
+  - Added operation group FileWorkspacesNoSubscriptionOperations
+  - Added operation group FileWorkspacesOperations
+  - Added operation group FilesNoSubscriptionOperations
+  - Added operation group FilesOperations
+  - Added operation group SupportTicketChatTranscriptsNoSubscriptionOperations
+  - Added operation group SupportTicketCommunicationsNoSubscriptionOperations
+  - Added operation group SupportTicketsNoSubscriptionOperations
+  - Model ProblemClassification has a new parameter secondary_consent_enabled
+  - Model SupportTicketDetails has a new parameter advanced_diagnostic_consent
+  - Model SupportTicketDetails has a new parameter file_workspace_name
+  - Model SupportTicketDetails has a new parameter problem_scoping_questions
+  - Model SupportTicketDetails has a new parameter secondary_consent
+  - Model SupportTicketDetails has a new parameter support_plan_display_name
+  - Model SupportTicketDetails has a new parameter support_plan_id
+  - Model UpdateSupportTicket has a new parameter advanced_diagnostic_consent
+  - Model UpdateSupportTicket has a new parameter secondary_consent
+
 ## 6.1.0b1 (2022-10-28)
 ### Other Changes
 

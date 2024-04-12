@@ -45,11 +45,11 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -62,10 +62,10 @@ setup(
             "azure.search",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-core<2.0.0,>=1.24.0",
-        "azure-common~=1.1",
+        "azure-core>=1.28.0",
+        "azure-common>=1.1",
         "isodate>=0.6.0",
     ],
 )

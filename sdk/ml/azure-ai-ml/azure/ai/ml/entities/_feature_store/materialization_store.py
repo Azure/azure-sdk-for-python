@@ -3,10 +3,8 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._utils._arm_id_utils import AzureResourceId
-from azure.ai.ml._utils._experimental import experimental
 
 
-@experimental
 class MaterializationStore:
     """Materialization Store
 
@@ -31,7 +29,7 @@ class MaterializationStore:
         self.__target = target
 
     @property
-    def target(self):
+    def target(self) -> str:
         """Get target value
 
         :return: returns the ID of the target
@@ -40,7 +38,7 @@ class MaterializationStore:
         return self.__target
 
     @target.setter
-    def target(self, value: str):
+    def target(self, value: str) -> None:
         """Set target value
 
         :param value: the ID of the target

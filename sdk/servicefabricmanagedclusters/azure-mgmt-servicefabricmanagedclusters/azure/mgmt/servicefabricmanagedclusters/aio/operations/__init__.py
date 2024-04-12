@@ -12,6 +12,8 @@ from ._applications_operations import ApplicationsOperations
 from ._services_operations import ServicesOperations
 from ._managed_clusters_operations import ManagedClustersOperations
 from ._managed_az_resiliency_status_operations import ManagedAzResiliencyStatusOperations
+from ._managed_maintenance_window_status_operations import ManagedMaintenanceWindowStatusOperations
+from ._managed_apply_maintenance_window_operations import ManagedApplyMaintenanceWindowOperations
 from ._managed_cluster_version_operations import ManagedClusterVersionOperations
 from ._managed_unsupported_vm_sizes_operations import ManagedUnsupportedVMSizesOperations
 from ._operation_status_operations import OperationStatusOperations
@@ -31,6 +33,8 @@ __all__ = [
     "ServicesOperations",
     "ManagedClustersOperations",
     "ManagedAzResiliencyStatusOperations",
+    "ManagedMaintenanceWindowStatusOperations",
+    "ManagedApplyMaintenanceWindowOperations",
     "ManagedClusterVersionOperations",
     "ManagedUnsupportedVMSizesOperations",
     "OperationStatusOperations",

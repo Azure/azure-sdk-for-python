@@ -23,7 +23,8 @@ jobs:
       job_data_path: ${{parent.inputs.pipeline_job_data_path}}
     outputs:
       job_output_path:
-
+    identity:
+      type: user_identity
     mini_batch_size: "1"
     mini_batch_error_threshold: 1
     max_concurrency_per_instance: 1

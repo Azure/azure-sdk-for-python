@@ -221,14 +221,25 @@ async def test_urlencoded_content(send_request):
     )
 
 
-# @pytest.mark.asyncio
-# async def test_multipart_files_content(send_request):
-#     request = HttpRequest(
-#         "POST",
-#         "/multipart/basic",
-#         files={"fileContent": io.BytesIO(b"<file content>")},
-#     )
-#     await send_request(request)
+@pytest.mark.asyncio
+async def test_multipart_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/basic",
+        files={"fileContent": io.BytesIO(b"<file content>")},
+    )
+    await send_request(request)
+
+
+@pytest.mark.asyncio
+async def test_multipart_data_and_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/data-and-files",
+        data={"message": "Hello, world!"},
+        files={"fileContent": io.BytesIO(b"<file content>")},
+    )
+    await send_request(request)
 
 
 @pytest.mark.asyncio

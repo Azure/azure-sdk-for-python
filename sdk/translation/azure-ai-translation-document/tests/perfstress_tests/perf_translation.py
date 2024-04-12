@@ -5,7 +5,7 @@
 import os
 import uuid
 import datetime
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 from azure.ai.translation.document.aio import DocumentTranslationClient as AsyncDocumentTranslationClient

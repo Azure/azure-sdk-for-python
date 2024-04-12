@@ -2,10 +2,10 @@ import asyncio
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 
 
-class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
+class AzureMgmtAsyncTestCase(AzureMgmtRecordedTestCase):
     def setUp(self):
         super(AzureMgmtAsyncTestCase, self).setUp()
 

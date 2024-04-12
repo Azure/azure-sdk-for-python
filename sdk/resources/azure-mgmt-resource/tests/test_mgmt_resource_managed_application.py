@@ -10,19 +10,20 @@
 #   applications: 10/10
 #   application_definitions: 7/7
 
+import pytest
 import unittest
 
 import azure.mgmt.resource
 # import azure.mgmt.managementgroups
 import azure.mgmt.resource.resources.v2019_10_01
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 
-@unittest.skip("Hard to test, skip them")
-class MgmtResourceLinksTest(AzureMgmtTestCase):
+@pytest.mark.skip("Hard to test, skip them")
+class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setUp(self):
-        super(MgmtResourceLinksTest, self).setUp()
+        super(TestMgmtResourceLinks, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.resource.ApplicationClient
         )

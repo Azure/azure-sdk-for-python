@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
+# pylint: disable=unused-argument
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 import calendar
 import struct
@@ -11,6 +12,7 @@ import uuid
 from datetime import datetime
 from typing import (
     Iterable,
+    NamedTuple,
     Union,
     Tuple,
     Dict,
@@ -29,6 +31,8 @@ try:
     from typing import TypeAlias  # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
+
+from typing_extensions import Buffer
 
 
 from .types import (
@@ -67,15 +71,14 @@ if TYPE_CHECKING:
 
 _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b"\x00"
+AQMPSimpleType = Union[bool, float, str, bytes, uuid.UUID, None]
 
 
-def _construct(byte, construct):
-    # type: (bytes, bool) -> bytes
+def _construct(byte: bytes, construct: bool) -> bytes:
     return byte if construct else b""
 
 
-def encode_null(output, *args, **kwargs):  # pylint: disable=unused-argument
-    # type: (bytearray, Any, Any) -> None
+def encode_null(output: bytearray, *args: Any, **kwargs: Any) -> None:
     """
     encoding code="0x40" category="fixed" width="0" label="the null value"
 
@@ -86,9 +89,8 @@ def encode_null(output, *args, **kwargs):  # pylint: disable=unused-argument
 
 
 def encode_boolean(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, bool, bool, Any) -> None
+    output: bytearray, value: bool, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding name="true" code="0x41" category="fixed" width="0" label="the boolean value true"/>
     <encoding name="false" code="0x42" category="fixed" width="0" label="the boolean value false"/>
@@ -109,9 +111,8 @@ def encode_boolean(
 
 
 def encode_ubyte(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, Union[int, bytes], bool, Any) -> None
+    output: bytearray, value: Union[int, bytes], with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding code="0x50" category="fixed" width="1" label="8-bit unsigned integer"/>
 
@@ -132,9 +133,8 @@ def encode_ubyte(
 
 
 def encode_ushort(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, int, bool, Any) -> None
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding code="0x60" category="fixed" width="2" label="16-bit unsigned integer in network byte order"/>
 
@@ -150,8 +150,7 @@ def encode_ushort(
         raise ValueError("Unsigned byte value must be 0-65535") from exc
 
 
-def encode_uint(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, int, bool, bool) -> None
+def encode_uint(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True) -> None:
     """
     <encoding name="uint0" code="0x43" category="fixed" width="0" label="the uint value 0"/>
     <encoding name="smalluint" code="0x52" category="fixed" width="1"
@@ -178,8 +177,7 @@ def encode_uint(output, value, with_constructor=True, use_smallest=True):
         raise ValueError("Value supplied for unsigned int invalid: {}".format(value)) from exc
 
 
-def encode_ulong(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, int, bool, bool) -> None
+def encode_ulong(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True) -> None:
     """
     <encoding name="ulong0" code="0x44" category="fixed" width="0" label="the ulong value 0"/>
     <encoding name="smallulong" code="0x53" category="fixed" width="1"
@@ -207,9 +205,8 @@ def encode_ulong(output, value, with_constructor=True, use_smallest=True):
 
 
 def encode_byte(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, int, bool, Any) -> None
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding code="0x51" category="fixed" width="1" label="8-bit two's-complement integer"/>
 
@@ -226,9 +223,8 @@ def encode_byte(
 
 
 def encode_short(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, int, bool, Any) -> None
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding code="0x61" category="fixed" width="2" label="16-bit two's-complement integer in network byte order"/>
 
@@ -244,8 +240,7 @@ def encode_short(
         raise ValueError("Short value must be -32768-32767") from exc
 
 
-def encode_int(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, int, bool, bool) -> None
+def encode_int(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True) -> None:
     """
     <encoding name="smallint" code="0x54" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x71" category="fixed" width="4" label="32-bit two's-complement integer in network byte order"/>
@@ -267,22 +262,25 @@ def encode_int(output, value, with_constructor=True, use_smallest=True):
         raise ValueError("Value supplied for int invalid: {}".format(value)) from exc
 
 
-def encode_long(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, int, bool, bool) -> None
+def encode_long(
+        output: bytearray,
+        value: Union[int, datetime],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="smalllong" code="0x55" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x81" category="fixed" width="8" label="64-bit two's-complement integer in network byte order"/>
 
     :param bytearray output: The output buffer to write to.
-    :param int value: The UUID to encode.
+    :param int or datetime value: The UUID to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     if isinstance(value, datetime):
-        value = (calendar.timegm(value.utctimetuple()) * 1000) + (
+        value = int((calendar.timegm(value.utctimetuple()) * 1000) + (
             value.microsecond / 1000
-        )
-    value = int(value)
+        ))
     try:
         if use_smallest and (-128 <= value <= 127):
             output.extend(_construct(ConstructorBytes.long_small, with_constructor))
@@ -295,9 +293,8 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
 
 
 def encode_float(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, float, bool, Any) -> None
+    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding name="ieee-754" code="0x72" category="fixed" width="4" label="IEEE 754-2008 binary32"/>
 
@@ -311,9 +308,8 @@ def encode_float(
 
 
 def encode_double(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, float, bool, Any) -> None
+    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding name="ieee-754" code="0x82" category="fixed" width="8" label="IEEE 754-2008 binary64"/>
 
@@ -327,9 +323,8 @@ def encode_double(
 
 
 def encode_timestamp(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, Union[int, datetime], bool, Any) -> None
+    output: bytearray, value: Union[int, datetime], with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding name="ms64" code="0x83" category="fixed" width="8"
         label="64-bit two's-complement integer representing milliseconds since the unix epoch"/>
@@ -338,21 +333,17 @@ def encode_timestamp(
     :param int or datetime value: The timestamp to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     """
-    value = cast(datetime, value)
     if isinstance(value, datetime):
-        value = cast(
-            int,
-            (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000),
-        )
-    value = int(cast(int, value))
+        value = int((calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000))
+
+    value = int(value)
     output.extend(_construct(ConstructorBytes.timestamp, with_constructor))
     output.extend(struct.pack(">q", value))
 
 
 def encode_uuid(
-    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
-):
-    # type: (bytearray, Union[uuid.UUID, str, bytes], bool, Any) -> None
+    output: bytearray, value: Union[uuid.UUID, str, bytes], with_constructor: bool = True, **kwargs: Any
+) -> None:
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
 
@@ -372,8 +363,12 @@ def encode_uuid(
     output.extend(value)
 
 
-def encode_binary(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Union[bytes, bytearray], bool, bool) -> None
+def encode_binary(
+        output: bytearray,
+        value: Union[bytes, bytearray],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="vbin8" code="0xa0" category="variable" width="1" label="up to 2^8 - 1 octets of binary data"/>
     <encoding name="vbin32" code="0xb0" category="variable" width="4" label="up to 2^32 - 1 octets of binary data"/>
@@ -397,8 +392,12 @@ def encode_binary(output, value, with_constructor=True, use_smallest=True):
         raise ValueError("Binary data to long to encode") from exc
 
 
-def encode_string(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Union[bytes, str], bool, bool) -> None
+def encode_string(
+        output: bytearray,
+        value: Union[bytes, str],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="str8-utf8" code="0xa1" category="variable" width="1"
         label="up to 2^8 - 1 octets worth of UTF-8 Unicode (with no byte order mark)"/>
@@ -426,8 +425,12 @@ def encode_string(output, value, with_constructor=True, use_smallest=True):
         raise ValueError("String value too long to encode.") from exc
 
 
-def encode_symbol(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Union[bytes, str], bool, bool) -> None
+def encode_symbol(
+        output: bytearray,
+        value: Union[bytes, str],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="sym8" code="0xa3" category="variable" width="1"
         label="up to 2^8 - 1 seven bit ASCII characters representing a symbolic value"/>
@@ -455,8 +458,12 @@ def encode_symbol(output, value, with_constructor=True, use_smallest=True):
         raise ValueError("Symbol value too long to encode.") from exc
 
 
-def encode_list(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Iterable[Any], bool, bool) -> None
+def encode_list(
+        output: bytearray,
+        value: Sequence[Any],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="list0" code="0x45" category="fixed" width="0"
         label="the empty list (i.e. the list with no elements)"/>
@@ -466,7 +473,7 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^32 - 1 list elements with total size less than 2^32 octets"/>
 
     :param bytearray output: The output buffer to write to.
-    :param iterable value: The list to encode.
+    :param sequence value: The list to encode.
     :param bool with_constructor: Whether to include the constructor in the output.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
@@ -492,8 +499,12 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
             raise ValueError("List is too large or too long to be encoded.") from exc
     output.extend(encoded_values)
 
-def encode_map(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Union[Dict[Any, Any], Iterable[Tuple[Any, Any]]], bool, bool) -> None
+def encode_map(
+        output: bytearray,
+        value: Union[Dict[Any, Any], Iterable[Tuple[Any, Any]]],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="map8" code="0xc1" category="compound" width="1"
         label="up to 2^8 - 1 octets of encoded map data"/>
@@ -508,11 +519,11 @@ def encode_map(output, value, with_constructor=True, use_smallest=True):
     count = len(cast(Sized, value)) * 2
     encoded_size = 0
     encoded_values = bytearray()
-    try:
-        value = cast(Dict, value)
-        items = cast(Iterable, value.items())
-    except AttributeError:
-        items = cast(Iterable, value)
+    if isinstance(value, dict):
+        items: Iterable[Any] = value.items()
+    elif isinstance(value, Iterable):
+        items = value
+
     for key, data in items:
         encode_value(encoded_values, key, with_constructor=True)
         encode_value(encoded_values, data, with_constructor=True)
@@ -531,7 +542,7 @@ def encode_map(output, value, with_constructor=True, use_smallest=True):
     output.extend(encoded_values)
 
 
-def _check_element_type(item, element_type):
+def _check_element_type(item: Dict[str, Any], element_type: Any) -> Any:
     if not element_type:
         try:
             return item["TYPE"]
@@ -546,8 +557,12 @@ def _check_element_type(item, element_type):
     return element_type
 
 
-def encode_array(output, value, with_constructor=True, use_smallest=True):
-    # type: (bytearray, Iterable[Any], bool, bool) -> None
+def encode_array(
+        output: bytearray,
+        value: Sequence[Any],
+        with_constructor: bool = True,
+        use_smallest: bool = True
+    ) -> None:
     """
     <encoding name="array8" code="0xe0" category="array" width="1"
         label="up to 2^8 - 1 array elements with total size less than 2^8 octets"/>
@@ -555,7 +570,7 @@ def encode_array(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>
 
     :param bytearray output: The output buffer to write to.
-    :param iterable value: The array to encode.
+    :param sequence value: The array to encode.
     :param bool with_constructor: Whether to include the constructor in the output.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
@@ -594,8 +609,7 @@ def encode_described(output: bytearray, value: Tuple[Any, Any], _: bool = None, 
     encode_value(output, value[1], **kwargs)
 
 
-def encode_fields(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_fields(value: Optional[Dict[bytes, Any]]) -> Dict[str, Any]:
     """A mapping from field name to value.
 
     The fields type is a map where the keys are restricted to be of type symbol (this excludes the possibility
@@ -618,8 +632,7 @@ def encode_fields(value):
     return fields
 
 
-def encode_annotations(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_annotations(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[str, Any]:
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
 
     All ulong keys, and all symbolic keys except those beginning with "x-" are reserved.
@@ -650,8 +663,9 @@ def encode_annotations(value):
     return fields
 
 
-def encode_application_properties(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_application_properties(
+        value: Optional[Dict[Union[str, bytes], AQMPSimpleType]]
+    ) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">
@@ -668,14 +682,13 @@ def encode_application_properties(value):
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
+    fields: Dict[Union[str, bytes], Any] = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
     for key, data in value.items():
         cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data))
     return fields
 
 
-def encode_message_id(value):
-    # type: (Any) -> Dict[str, Union[int, uuid.UUID, bytes, str]]
+def encode_message_id(value: Union[int, uuid.UUID, bytes, str]) -> Dict[str, Union[int, uuid.UUID, bytes, str]]:
     """
     <type name="message-id-ulong" class="restricted" source="ulong" provides="message-id"/>
     <type name="message-id-uuid" class="restricted" source="uuid" provides="message-id"/>
@@ -697,8 +710,7 @@ def encode_message_id(value):
     raise TypeError("Unsupported Message ID type.")
 
 
-def encode_node_properties(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_node_properties(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """Properties of a node.
 
     <type name="node-properties" class="restricted" source="fields"/>
@@ -736,8 +748,7 @@ def encode_node_properties(value):
     return fields
 
 
-def encode_filter_set(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_filter_set(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """A set of predicates to filter the Messages admitted onto the Link.
 
     <type name="filter-set" class="restricted" source="map"/>
@@ -765,14 +776,19 @@ def encode_filter_set(value):
         else:
             if isinstance(name, str):
                 name = name.encode("utf-8")  # type: ignore
-            try:
-                descriptor, filter_value = data
-                described_filter = {
-                    TYPE: AMQPTypes.described,
-                    VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
-                }
-            except ValueError:
-                described_filter = data
+            if isinstance(data, (str, bytes)):
+                described_filter = data # type: ignore
+            # handle the situation when data is a tuple or list of length 2
+            else:
+                try:
+                    descriptor, filter_value = data
+                    described_filter = {
+                        TYPE: AMQPTypes.described,
+                        VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
+                    }
+                # if its not a type that is known, raise the error from the server
+                except (ValueError, TypeError):
+                    described_filter = data
 
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
@@ -780,8 +796,7 @@ def encode_filter_set(value):
     return fields
 
 
-def encode_unknown(output, value, **kwargs):
-    # type: (bytearray, Optional[Any], Any) -> None
+def encode_unknown(output: bytearray, value: Optional[object], **kwargs: Any) -> None:
     """
     Dynamic encoding according to the type of `value`.
     :param bytearray output: The output buffer.
@@ -813,7 +828,7 @@ def encode_unknown(output, value, **kwargs):
         raise TypeError("Unable to encode unknown value: {}".format(value))
 
 
-_FIELD_DEFINITIONS = {
+_FIELD_DEFINITIONS: Dict[FieldDefinition, Callable[[Any], Any]] = {
     FieldDefinition.fields: encode_fields,
     FieldDefinition.annotations: encode_annotations,
     FieldDefinition.message_id: encode_message_id,
@@ -848,16 +863,14 @@ _ENCODE_MAP = {
 }
 
 
-def encode_value(output, value, **kwargs):
-    # type: (bytearray, Any, Any) -> None
+def encode_value(output: bytearray, value: Any, **kwargs: Any) -> None:
     try:
         cast(Callable, _ENCODE_MAP[value[TYPE]])(output, value[VALUE], **kwargs)
     except (KeyError, TypeError):
         encode_unknown(output, value, **kwargs)
 
 
-def describe_performative(performative):
-    # type: (Performative) -> Dict[str, Sequence[Collection[str]]]
+def describe_performative(performative: NamedTuple) -> Dict[str, Sequence[Collection[str]]]:
     body: List[Dict[str, Any]] = []
     for index, value in enumerate(performative):
         # TODO: fix mypy
@@ -871,11 +884,11 @@ def describe_performative(performative):
                 body.append(
                     {
                         TYPE: AMQPTypes.array,
-                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],
+                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],  # type: ignore
                     }
                 )
             else:
-                body.append(_FIELD_DEFINITIONS[field.type](value))
+                body.append(_FIELD_DEFINITIONS[field.type](value))  # type: ignore
         elif isinstance(field.type, ObjDefinition):
             body.append(describe_performative(value))
         else:
@@ -898,8 +911,7 @@ def describe_performative(performative):
     }
 
 
-def encode_payload(output, payload):
-    # type: (bytearray, Message) -> bytes
+def encode_payload(output: bytearray, payload: Message) -> bytes:
 
     if payload[0]:  # header
         # TODO: Header and Properties encoding can be optimized to
@@ -1016,8 +1028,7 @@ def encode_payload(output, payload):
     return output
 
 
-def encode_frame(frame, frame_type=_FRAME_TYPE):
-    # type: (Optional[Performative], bytes) -> Tuple[bytes, Optional[bytes]]
+def encode_frame(frame: Optional[NamedTuple], frame_type: bytes = _FRAME_TYPE) -> Tuple[bytes, Optional[bytes]]:
     # TODO: allow passing type specific bytes manually, e.g. Empty Frame needs padding
     if frame is None:
         size = 8
@@ -1028,7 +1039,8 @@ def encode_frame(frame, frame_type=_FRAME_TYPE):
     frame_data = bytearray()
     encode_value(frame_data, frame_description)
     if isinstance(frame, performatives.TransferFrame):
-        frame_data += frame.payload
+        # casting from Optional[Buffer] since payload will not be None at this point
+        frame_data += cast(Buffer, frame.payload)
 
     size = len(frame_data) + 8
     header = size.to_bytes(4, "big") + _FRAME_OFFSET + frame_type

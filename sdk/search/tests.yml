@@ -1,7 +1,7 @@
 trigger: none
 
-stages:
-  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-search-documents
       # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue

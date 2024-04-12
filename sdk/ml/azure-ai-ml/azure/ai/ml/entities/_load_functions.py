@@ -6,7 +6,7 @@ import logging
 import warnings
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Optional, Type, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
@@ -50,11 +50,11 @@ _DEFAULT_RELATIVE_ORIGIN = "./"
 
 
 def load_common(
-    cls: Type[Resource],
+    cls: Any,
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: str,
+    relative_origin: Optional[str] = None,
     params_override: Optional[list] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Resource:
     """Private function to load a yaml file to an entity object.
 
@@ -68,7 +68,7 @@ def load_common(
         functions that call this.
     :type relative_origin: str
     :param params_override: List of values to override in loaded yaml
-    :type params_override: Optional[list]
+    :type params_override: Optional[List]
     :return: The loaded resource
     :rtype: Resource
     """
@@ -83,7 +83,7 @@ def load_common(
 
     if relative_origin is None:
         if isinstance(source, (str, PathLike)):
-            relative_origin = source
+            relative_origin = str(source)
         else:
             try:
                 relative_origin = source.name
@@ -111,7 +111,7 @@ def load_common(
                     f"type in the 'type' property."
                 )
 
-            def build_error(message, _):
+            def build_error(message: str, _: Any) -> ValidationError:
                 from azure.ai.ml.entities._util import decorate_validation_error
 
                 return ValidationError(
@@ -150,21 +150,22 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 
 def _load_common_raising_marshmallow_error(
-    cls: Type[Resource],
-    yaml_dict,
-    relative_origin: Union[PathLike, str],
+    cls: Any,
+    yaml_dict: Dict,
+    relative_origin: Optional[Union[PathLike, str, IO[AnyStr]]],
     params_override: Optional[list] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Resource:
     # pylint: disable=protected-access
-    return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
+    res: Resource = cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
+    return res
 
 
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Job:
     """Constructs a Job object from a YAML file.
 
@@ -177,7 +178,7 @@ def load_job(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Job object.
@@ -192,14 +193,14 @@ def load_job(
             :dedent: 8
             :caption: Loading a Job from a YAML config file.
     """
-    return load_common(Job, source, relative_origin, **kwargs)
+    return cast(Job, load_common(Job, source, relative_origin, **kwargs))
 
 
 def load_workspace(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Workspace:
     """Load a workspace object from a yaml file.
 
@@ -231,14 +232,14 @@ def load_workspace(
             :dedent: 8
             :caption: Loading a Workspace from a YAML config file.
     """
-    return load_common(Workspace, source, relative_origin, **kwargs)
+    return cast(Workspace, load_common(Workspace, source, relative_origin, **kwargs))
 
 
 def load_registry(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Registry:
     """Load a registry object from a yaml file.
 
@@ -261,14 +262,14 @@ def load_registry(
     :return: Loaded registry object.
     :rtype: Registry
     """
-    return load_common(Registry, source, relative_origin, **kwargs)
+    return cast(Registry, load_common(Registry, source, relative_origin, **kwargs))
 
 
 def load_datastore(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Datastore:
     """Construct a datastore object from a yaml file.
 
@@ -292,14 +293,14 @@ def load_datastore(
     :return: Loaded datastore object.
     :rtype: Datastore
     """
-    return load_common(Datastore, source, relative_origin, **kwargs)
+    return cast(Datastore, load_common(Datastore, source, relative_origin, **kwargs))
 
 
 def load_code(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Code:
     """Construct a code object from a yaml file.
 
@@ -317,13 +318,13 @@ def load_code(
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
         Details will be provided in the error message.
     :return: Loaded code object.
     :rtype: ~azure.ai.ml.entities._assets._artifacts.code.Code
     """
-    return load_common(Code, source, relative_origin, **kwargs)
+    return cast(Code, load_common(Code, source, relative_origin, **kwargs))
 
 
 def load_compute(
@@ -331,7 +332,7 @@ def load_compute(
     *,
     relative_origin: Optional[str] = None,
     params_override: Optional[List[Dict[str, str]]] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Compute:
     """Construct a compute object from a yaml file.
 
@@ -362,14 +363,14 @@ def load_compute(
             :dedent: 8
             :caption: Loading a Compute object from a YAML file and overriding its description.
     """
-    return load_common(Compute, source, relative_origin, params_override=params_override, **kwargs)
+    return cast(Compute, load_common(Compute, source, relative_origin, params_override=params_override, **kwargs))
 
 
 def load_component(
     source: Optional[Union[str, PathLike, IO[AnyStr]]] = None,
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
 
@@ -419,14 +420,14 @@ def load_component(
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.MISSING_FIELD,
         )
-    return component_entity
+    return cast(Union[CommandComponent, ParallelComponent, PipelineComponent], component_entity)
 
 
 def load_model(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Model:
     """Constructs a Model object from a YAML file.
 
@@ -439,7 +440,7 @@ def load_model(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Model object.
@@ -454,14 +455,14 @@ def load_model(
             :dedent: 8
             :caption: Loading a Model from a YAML config file, overriding the name and version parameters.
     """
-    return load_common(Model, source, relative_origin, **kwargs)
+    return cast(Model, load_common(Model, source, relative_origin, **kwargs))
 
 
 def load_data(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Data:
     """Construct a data object from yaml file.
 
@@ -485,14 +486,14 @@ def load_data(
     :return: Constructed Data or DataImport object.
     :rtype: Data
     """
-    return load_common(Data, source, relative_origin, **kwargs)
+    return cast(Data, load_common(Data, source, relative_origin, **kwargs))
 
 
 def load_environment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Environment:
     """Construct a environment object from yaml file.
 
@@ -516,14 +517,14 @@ def load_environment(
     :return: Constructed environment object.
     :rtype: Environment
     """
-    return load_common(Environment, source, relative_origin, **kwargs)
+    return cast(Environment, load_common(Environment, source, relative_origin, **kwargs))
 
 
 def load_online_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> OnlineDeployment:
     """Construct a online deployment object from yaml file.
 
@@ -547,14 +548,14 @@ def load_online_deployment(
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
     """
-    return load_common(OnlineDeployment, source, relative_origin, **kwargs)
+    return cast(OnlineDeployment, load_common(OnlineDeployment, source, relative_origin, **kwargs))
 
 
 def load_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchDeployment:
     """Construct a batch deployment object from yaml file.
 
@@ -577,14 +578,14 @@ def load_batch_deployment(
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
     """
-    return load_common(BatchDeployment, source, relative_origin, **kwargs)
+    return cast(BatchDeployment, load_common(BatchDeployment, source, relative_origin, **kwargs))
 
 
 def load_model_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> ModelBatchDeployment:
     """Construct a model batch deployment object from yaml file.
 
@@ -607,14 +608,14 @@ def load_model_batch_deployment(
     :return: Constructed model batch deployment object.
     :rtype: ModelBatchDeployment
     """
-    return load_common(ModelBatchDeployment, source, relative_origin, **kwargs)
+    return cast(ModelBatchDeployment, load_common(ModelBatchDeployment, source, relative_origin, **kwargs))
 
 
 def load_pipeline_component_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> PipelineComponentBatchDeployment:
     """Construct a pipeline component batch deployment object from yaml file.
 
@@ -637,14 +638,17 @@ def load_pipeline_component_batch_deployment(
     :return: Constructed pipeline component batch deployment object.
     :rtype: PipelineComponentBatchDeployment
     """
-    return load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs)
+    return cast(
+        PipelineComponentBatchDeployment,
+        load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs),
+    )
 
 
 def load_online_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> OnlineEndpoint:
     """Construct a online endpoint object from yaml file.
 
@@ -668,13 +672,13 @@ def load_online_endpoint(
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
     """
-    return load_common(OnlineEndpoint, source, relative_origin, **kwargs)
+    return cast(OnlineEndpoint, load_common(OnlineEndpoint, source, relative_origin, **kwargs))
 
 
 def load_batch_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchEndpoint:
     """Construct a batch endpoint object from yaml file.
 
@@ -697,14 +701,14 @@ def load_batch_endpoint(
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
     """
-    return load_common(BatchEndpoint, source, relative_origin, **kwargs)
+    return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, **kwargs))
 
 
 def load_workspace_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> WorkspaceConnection:
     """Construct a workspace connection object from yaml file.
 
@@ -736,13 +740,13 @@ def load_workspace_connection(
             :dedent: 8
             :caption: Loading a Workspace Connection from a YAML config file.
     """
-    return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
+    return cast(WorkspaceConnection, load_common(WorkspaceConnection, source, relative_origin, **kwargs))
 
 
 def load_schedule(
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Schedule:
     """Construct a schedule object from yaml file.
 
@@ -761,20 +765,20 @@ def load_schedule(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]
-
     :return: Constructed schedule object.
     :rtype: Schedule
     """
-    return load_common(Schedule, source, relative_origin, **kwargs)
+    return cast(Schedule, load_common(Schedule, source, relative_origin, **kwargs))
 
 
 def load_feature_store(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> FeatureStore:
     """Load a feature store object from a yaml file.
+
     :param source: The local yaml source of a feature store. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -793,14 +797,14 @@ def load_feature_store(
     :return: Loaded feature store object.
     :rtype: FeatureStore
     """
-    return load_common(FeatureStore, source, relative_origin, **kwargs)
+    return cast(FeatureStore, load_common(FeatureStore, source, relative_origin, **kwargs))
 
 
 def load_feature_set(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> FeatureSet:
     """Construct a FeatureSet object from yaml file.
 
@@ -824,14 +828,14 @@ def load_feature_set(
     :return: Constructed FeatureSet object.
     :rtype: FeatureSet
     """
-    return load_common(FeatureSet, source, relative_origin, **kwargs)
+    return cast(FeatureSet, load_common(FeatureSet, source, relative_origin, **kwargs))
 
 
 def load_feature_store_entity(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> FeatureStoreEntity:
     """Construct a FeatureStoreEntity object from yaml file.
 
@@ -855,7 +859,7 @@ def load_feature_store_entity(
     :return: Constructed FeatureStoreEntity object.
     :rtype: FeatureStoreEntity
     """
-    return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+    return cast(FeatureStoreEntity, load_common(FeatureStoreEntity, source, relative_origin, **kwargs))
 
 
 @experimental
@@ -863,7 +867,7 @@ def load_workspace_hub(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> WorkspaceHub:
     """Load a WorkspaceHub object from a yaml file.
 
@@ -894,7 +898,7 @@ def load_workspace_hub(
             :dedent: 8
             :caption: Loading a Workspace Hub from a YAML config file.
     """
-    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
+    return cast(WorkspaceHub, load_common(WorkspaceHub, source, relative_origin, **kwargs))
 
 
 @experimental
@@ -902,7 +906,7 @@ def load_model_package(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> ModelPackage:
     """Constructs a ModelPackage object from a YAML file.
 
@@ -915,7 +919,7 @@ def load_model_package(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded ModelPackage object.
@@ -930,14 +934,14 @@ def load_model_package(
             :dedent: 8
             :caption: Loading a ModelPackage from a YAML config file.
     """
-    return load_common(ModelPackage, source, relative_origin, **kwargs)
+    return cast(ModelPackage, load_common(ModelPackage, source, relative_origin, **kwargs))
 
 
 def load_feature_set_backfill_request(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> FeatureSetBackfillRequest:
     """Construct a FeatureSetBackfillRequest object from yaml file.
 
@@ -961,4 +965,4 @@ def load_feature_set_backfill_request(
     :return: Constructed FeatureSetBackfillRequest object.
     :rtype: FeatureSetBackfillRequest
     """
-    return load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs)
+    return cast(FeatureSetBackfillRequest, load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs))

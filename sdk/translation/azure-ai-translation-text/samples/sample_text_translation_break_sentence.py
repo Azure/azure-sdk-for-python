@@ -25,28 +25,33 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import (InputTextItem)
 
 # -------------------------------------------------------------------------
 # Text translation client
 # -------------------------------------------------------------------------
 import sample_text_translation_client
+
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
+
 
 def get_text_sentence_boundaries():
     # [START get_text_sentence_boundaries]
     try:
         source_language = "zh-Hans"
         source_script = "Latn"
-        input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
+        input_text_elements = ["zhè shì gè cè shì。"]
 
-        response = text_translator.find_sentence_boundaries(content = input_text_elements, language = source_language, script = source_script)
+        response = text_translator.find_sentence_boundaries(
+            request_body=input_text_elements, language=source_language, script=source_script
+        )
         sentence_boundaries = response[0] if response else None
 
         if sentence_boundaries:
             detected_language = sentence_boundaries.detected_language
             if detected_language:
-                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+                print(
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                )
             print(f"The detected sentence boundaries:")
             for boundary in sentence_boundaries.sent_len:
                 print(boundary)
@@ -57,26 +62,28 @@ def get_text_sentence_boundaries():
             print(f"Message: {exception.error.message}")
         raise
     # [END get_text_sentence_boundaries]
-    
+
+
 def get_text_sentence_boundaries_auto():
     # [START get_text_sentence_boundaries_auto]
     try:
-        input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
+        input_text_elements = ["This is a test. This is the second sentence."]
 
-        response = text_translator.find_sentence_boundaries(content = input_text_elements)
+        response = text_translator.find_sentence_boundaries(request_body=input_text_elements)
         sentence_boundaries = response[0] if response else None
 
         if sentence_boundaries:
             detected_language = sentence_boundaries.detected_language
             if detected_language:
-                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+                print(
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                )
             print(f"The detected sentence boundaries:")
             for boundary in sentence_boundaries.sent_len:
                 print(boundary)
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_sentence_boundaries_auto]
-
-   

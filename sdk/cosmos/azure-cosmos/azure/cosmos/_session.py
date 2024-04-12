@@ -98,7 +98,7 @@ class SessionContainer(object):
                 # session token for this request
                 alt_content_path = ""
                 alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
-                response_result_id_key = u"id"
+                response_result_id_key = "id"
                 response_result_id = None
                 if alt_content_path_key in response_headers:
                     alt_content_path = response_headers[http_constants.HttpHeaders.AlternateContentPath]

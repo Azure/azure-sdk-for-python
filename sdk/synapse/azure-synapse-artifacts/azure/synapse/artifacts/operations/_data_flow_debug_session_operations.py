@@ -37,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:
+def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -59,7 +59,9 @@ def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_query_data_flow_debug_sessions_by_workspace_request(**kwargs: Any) -> HttpRequest:
+def build_query_data_flow_debug_sessions_by_workspace_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -100,7 +102,7 @@ def build_add_data_flow_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:
+def build_delete_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -189,24 +191,23 @@ class DataFlowDebugSessionOperations:
         else:
             _json = self._serialize.body(request, "CreateDataFlowDebugSessionRequest")
 
-        request = build_create_data_flow_debug_session_request(
+        _request = build_create_data_flow_debug_session_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_data_flow_debug_session_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -224,11 +225,9 @@ class DataFlowDebugSessionOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_data_flow_debug_session_initial.metadata = {"url": "/createDataFlowDebugSession"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_data_flow_debug_session(
@@ -236,7 +235,7 @@ class DataFlowDebugSessionOperations:
         request: _models.CreateDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.CreateDataFlowDebugSessionResponse]:
         """Creates a data flow debug session.
 
@@ -329,14 +328,14 @@ class DataFlowDebugSessionOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("CreateDataFlowDebugSessionResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -360,10 +359,8 @@ class DataFlowDebugSessionOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_data_flow_debug_session.metadata = {"url": "/createDataFlowDebugSession"}
-
     @distributed_trace
-    def query_data_flow_debug_sessions_by_workspace(
+    def query_data_flow_debug_sessions_by_workspace(  # pylint: disable=name-too-long
         self, **kwargs: Any
     ) -> Iterable["_models.DataFlowDebugSessionInfo"]:
         """Query all active data flow debug sessions.
@@ -391,31 +388,30 @@ class DataFlowDebugSessionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_query_data_flow_debug_sessions_by_workspace_request(
+                _request = build_query_data_flow_debug_sessions_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.query_data_flow_debug_sessions_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("QueryDataFlowDebugSessionsResponse", pipeline_response)
@@ -425,11 +421,11 @@ class DataFlowDebugSessionOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -440,8 +436,6 @@ class DataFlowDebugSessionOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    query_data_flow_debug_sessions_by_workspace.metadata = {"url": "/queryDataFlowDebugSessions"}
 
     @overload
     def add_data_flow(
@@ -517,24 +511,23 @@ class DataFlowDebugSessionOperations:
         else:
             _json = self._serialize.body(request, "DataFlowDebugPackage")
 
-        request = build_add_data_flow_request(
+        _request = build_add_data_flow_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.add_data_flow.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -546,11 +539,9 @@ class DataFlowDebugSessionOperations:
         deserialized = self._deserialize("AddDataFlowToDebugSessionResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    add_data_flow.metadata = {"url": "/addDataFlowToDebugSession"}
+        return deserialized  # type: ignore
 
     @overload
     def delete_data_flow_debug_session(  # pylint: disable=inconsistent-return-statements
@@ -558,7 +549,7 @@ class DataFlowDebugSessionOperations:
         request: _models.DeleteDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Deletes a data flow debug session.
 
@@ -630,24 +621,23 @@ class DataFlowDebugSessionOperations:
         else:
             _json = self._serialize.body(request, "DeleteDataFlowDebugSessionRequest")
 
-        request = build_delete_data_flow_debug_session_request(
+        _request = build_delete_data_flow_debug_session_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.delete_data_flow_debug_session.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -657,9 +647,7 @@ class DataFlowDebugSessionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_data_flow_debug_session.metadata = {"url": "/deleteDataFlowDebugSession"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     def _execute_command_initial(
         self, request: Union[_models.DataFlowDebugCommandRequest, IO], **kwargs: Any
@@ -687,24 +675,23 @@ class DataFlowDebugSessionOperations:
         else:
             _json = self._serialize.body(request, "DataFlowDebugCommandRequest")
 
-        request = build_execute_command_request(
+        _request = build_execute_command_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._execute_command_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -722,11 +709,9 @@ class DataFlowDebugSessionOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _execute_command_initial.metadata = {"url": "/executeDataFlowDebugCommand"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_execute_command(
@@ -823,14 +808,14 @@ class DataFlowDebugSessionOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DataFlowDebugCommandResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -853,5 +838,3 @@ class DataFlowDebugSessionOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_execute_command.metadata = {"url": "/executeDataFlowDebugCommand"}

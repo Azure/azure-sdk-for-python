@@ -9,7 +9,6 @@ from testcase import TextTranslationTest
 
 
 class TestGetLanguages(TextTranslationTest):
-
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_all_scopes(self, **kwargs):

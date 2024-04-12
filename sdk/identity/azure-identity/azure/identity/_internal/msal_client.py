@@ -43,16 +43,16 @@ class MsalResponse:
         if ContentDecodePolicy.CONTEXT_NAME in self._response.context:
             content = self._response.context[ContentDecodePolicy.CONTEXT_NAME]
             if not content:
-                message = "Unexpected response from Azure Active Directory"
+                message = "Unexpected response from Microsoft Entra ID"
             elif "error" in content or "error_description" in content:
                 message = "Authentication failed: {}".format(content.get("error_description") or content.get("error"))
             else:
                 for secret in ("access_token", "refresh_token"):
                     if secret in content:
                         content[secret] = "***"
-                message = 'Unexpected response from Azure Active Directory: "{}"'.format(content)
+                message = 'Unexpected response from Microsoft Entra ID: "{}"'.format(content)
         else:
-            message = "Unexpected response from Azure Active Directory"
+            message = "Unexpected response from Microsoft Entra ID"
 
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 
@@ -64,11 +64,11 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         self._local = threading.local()
         self._pipeline = build_pipeline(**kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "MsalClient":
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._pipeline.__exit__(*args)
 
     def close(self) -> None:
@@ -131,3 +131,14 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
             if content and "error" in content:
                 self._local.error = (content["error"], response.http_response)
+
+    def __getstate__(self) -> Dict[str, Any]:  # pylint:disable=client-method-name-no-double-underscore
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_local"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:  # pylint:disable=client-method-name-no-double-underscore
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self._local = threading.local()

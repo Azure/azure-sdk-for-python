@@ -110,11 +110,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -173,11 +175,14 @@ def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
     mock_aml_services_2022_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2022_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 

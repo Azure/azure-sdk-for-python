@@ -1,6 +1,18 @@
 
 # Azure AI Content Safety client library for Python
-[Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful.
+
+[Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful:
+
+* Text Analysis API: Scans text for sexual content, violence, hate, and self-harm with multi-severity levels.
+* Image Analysis API: Scans images for sexual content, violence, hate, and self-harm with multi-severity levels.
+* Text Blocklist Management APIs: The default AI classifiers are sufficient for most content safety needs; however, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.
+
+## Documentation
+
+Various documentation is available to help you get started
+
+- [API reference documentation][api_reference_docs]
+- [Product documentation][product_documentation]
 
 ## Getting started
 
@@ -8,7 +20,7 @@
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing [Azure AI Content Safety][contentsafety_overview] instance.
+- An [Azure AI Content Safety][contentsafety_overview] resource, if no existing resource, you could [create a new one](https://aka.ms/acs-create).
 
 ### Install the package
 
@@ -19,6 +31,7 @@ pip install azure-ai-contentsafety
 ### Authenticate the client
 
 #### Get the endpoint
+
 You can find the endpoint for your Azure AI Content Safety service resource using the [Azure Portal][azure_portal] or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
@@ -26,70 +39,107 @@ You can find the endpoint for your Azure AI Content Safety service resource usin
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
-#### Get the API key
+#### Create a ContentSafetyClient/BlocklistClient with API key
 
+To use an API key as the `credential` parameter.
+
+- Step 1: Get the API key. 
 The API key can be found in the [Azure Portal][azure_portal] or by running the following [Azure CLI][azure_cli_key_lookup] command:
 
-```bash
-az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
-```
+    ```bash
+    az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
+    ```
 
-#### Create a ContentSafetyClient with AzureKeyCredential
+- Step 2: Pass the key as a string into an instance of `AzureKeyCredential`.
 
-To use an API key as the `credential` parameter, pass the key as a string into an instance of `AzureKeyCredential`.
+    ```python
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
+    
+    endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+    credential = AzureKeyCredential("<api_key>")
+    content_safety_client = ContentSafetyClient(endpoint, credential)
+    blocklist_client = BlocklistClient(endpoint, credential)
+    ```
 
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.contentsafety import ContentSafetyClient
+#### Create a ContentSafetyClient/BlocklistClient with Microsoft Entra ID token credential
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-client = ContentSafetyClient(endpoint, credential)
-```
+- Step 1: Enable Microsoft Entra ID for your resource.
+    Please refer to this document [Authenticate with Microsoft Entra ID][authenticate_with_microsoft_entra_id] for the steps to enable Microsoft Entra ID for your resource.
+
+    The main steps are:
+  - Create resource with a custom subdomain.
+  - Create Service Principal and assign Cognitive Services User role to it.
+
+- Step 2: Set the values of the client ID, tenant ID, and client secret of the Microsoft Entra application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+
+  DefaultAzureCredential will use the values from these environment variables.
+
+    ```python
+    from azure.identity import DefaultAzureCredential
+    from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
+    
+    endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+    credential = DefaultAzureCredential()
+    content_safety_client = ContentSafetyClient(endpoint, credential)
+    blocklist_client = BlocklistClient(endpoint, credential)
+    ```
 
 ## Key concepts
 
 ### Available features
+
 There are different types of analysis available from this service. The following table describes the currently available APIs.
 
 |Feature  |Description  |
 |---------|---------|
-|Text Analysis API|Scans text for sexual content, violence, hate, and self harm with multi-severity levels.|
-|Image Analysis API|Scans images for sexual content, violence, hate, and self harm with multi-severity levels.|
+|Text Analysis API|Scans text for sexual content, violence, hate, and self-harm with multi-severity levels.|
+|Image Analysis API|Scans images for sexual content, violence, hate, and self-harm with multi-severity levels.|
 | Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.|
 
 ### Harm categories
+
 Content Safety recognizes four distinct categories of objectionable content.
 
 |Category|Description|
 |---------|---------|
-|Hate	|Hate refers to any content that attacks or uses pejorative or discriminatory language in reference to a person or identity group based on certain differentiating attributes of that group. This includes but is not limited to race, ethnicity, nationality, gender identity and expression, sexual orientation, religion, immigration status, ability status, personal appearance, and body size.|
-|Sexual	|Sexual describes content related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, pregnancy, physical sexual acts—including those acts portrayed as an assault or a forced sexual violent act against one’s will—, prostitution, pornography, and abuse.|
-|Violence	|Violence describes content related to physical actions intended to hurt, injure, damage, or kill someone or something. It also includes weapons, guns and related entities, such as manufacturers, associations, legislation, and similar.|
-|Self-harm	|Self-harm describes content related to physical actions intended to purposely hurt, injure, or damage one’s body or kill oneself.|
+|Hate |Hate and fairness-related harms refer to any content that attacks or uses pejorative or discriminatory language with reference to a person or identity group based on certain differentiating attributes of these groups including but not limited to race, ethnicity, nationality, gender identity and expression, sexual orientation, religion, immigration status, ability status, personal appearance, and body size.|
+|Sexual |Sexual describes language related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, pregnancy, physical sexual acts, including those portrayed as an assault or a forced sexual violent act against one's will, prostitution, pornography, and abuse.|
+|Violence |Violence describes language related to physical actions intended to hurt, injure, damage, or kill someone or something; describes weapons, guns and related entities, such as manufacturers, associations, legislation, and so on.|
+|Self-harm |Self-harm describes language related to physical actions intended to purposely hurt, injure, damage one's body or kill oneself.|
 
 Classification can be multi-labeled. For example, when a text sample goes through the text moderation model, it could be classified as both Sexual content and Violence.
 
 ### Severity levels
+
 Every harm category the service applies also comes with a severity level rating. The severity level is meant to indicate the severity of the consequences of showing the flagged content.
 
-|Severity|Label|
-|---------|---------|
-|0	|Safe|
-|2	|Low|
-|4	|Medium|
-|6	|High|
+**Text**: The current version of the text model supports the full 0-7 severity scale. By default, the response will output 4 values: 0, 2, 4, and 6. Each two adjacent levels are mapped to a single level. Users could use "outputType" in request and set it as "EightSeverityLevels" to get 8 values in output: 0,1,2,3,4,5,6,7. You can refer [text content severity levels definitions][text_severity_levels] for details.
+
+- [0,1] -> 0
+- [2,3] -> 2
+- [4,5] -> 4
+- [6,7] -> 6
+
+**Image**: The current version of the image model supports the trimmed version of the full 0-7 severity scale. The classifier only returns severities 0, 2, 4, and 6; each two adjacent levels are mapped to a single level. You can refer [image content severity levels definitions][image_severity_levels] for details.
+
+- [0,1] -> 0
+- [2,3] -> 2
+- [4,5] -> 4
+- [6,7] -> 6
 
 ### Text blocklist management
+
 Following operations are supported to manage your text blocklist:
+
 - Create or modify a blocklist
 - List all blocklists
 - Get a blocklist by blocklistName
-- Add blockItems to a blocklist
-- Remove blockItems from a blocklist
-- List all blockItems in a blocklist by blocklistName
-- Get a blockItem in a blocklist by blockItemId and blocklistName
-- Delete a blocklist and all of its blockItems
+- Add blocklistItems to a blocklist
+- Remove blocklistItems from a blocklist
+- List all blocklistItems in a blocklist by blocklistName
+- Get a blocklistItem in a blocklist by blocklistItemId and blocklistName
+- Delete a blocklist and all of its blocklistItems
 
 You can set the blocklists you want to use when analyze text, then you can get blocklist match result from returned response.
 
@@ -112,6 +162,7 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
 
     import os
     from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety.models import TextCategory
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
     from azure.ai.contentsafety.models import AnalyzeTextOptions
@@ -119,7 +170,7 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
+    # Create a Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     # Construct a request
@@ -137,14 +188,19 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
         print(e)
         raise
 
-    if response.hate_result:
-        print(f"Hate severity: {response.hate_result.severity}")
-    if response.self_harm_result:
-        print(f"SelfHarm severity: {response.self_harm_result.severity}")
-    if response.sexual_result:
-        print(f"Sexual severity: {response.sexual_result.severity}")
-    if response.violence_result:
-        print(f"Violence severity: {response.violence_result.severity}")
+    hate_result = next(item for item in response.categories_analysis if item.category == TextCategory.HATE)
+    self_harm_result = next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM)
+    sexual_result = next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL)
+    violence_result = next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE)
+
+    if hate_result:
+        print(f"Hate severity: {hate_result.severity}")
+    if self_harm_result:
+        print(f"SelfHarm severity: {self_harm_result.severity}")
+    if sexual_result:
+        print(f"Sexual severity: {sexual_result.severity}")
+    if violence_result:
+        print(f"Violence severity: {violence_result.severity}")
 ```
 
 <!-- END SNIPPET -->
@@ -163,7 +219,7 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
+    # Create a Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
@@ -171,12 +227,16 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
 
     try:
         # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
-        analysis_result = client.analyze_text(AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], break_by_blocklists=False))
-        if analysis_result and analysis_result.blocklists_match_results:
+        analysis_result = client.analyze_text(
+            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], halt_on_blocklist_hit=False)
+        )
+        if analysis_result and analysis_result.blocklists_match:
             print("\nBlocklist match results: ")
-            for match_result in analysis_result.blocklists_match_results:
-                print(f"Block item was hit in text, Offset={match_result.offset}, Length={match_result.length}.")
-                print(f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.block_item_id}, BlockItemText: {match_result.block_item_text}")
+            for match_result in analysis_result.blocklists_match:
+                print(
+                    f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.blocklist_item_id}, "
+                    f"BlockItemText: {match_result.blocklist_item_text}"
+                )
     except HttpResponseError as e:
         print("\nAnalyze text failed: ")
         if e.error:
@@ -195,43 +255,49 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
 
 ```python
 
-import os
-from azure.ai.contentsafety import ContentSafetyClient
-from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError
-from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety.models import ImageCategory
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+    from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
-key = os.environ["CONTENT_SAFETY_KEY"]
-endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+    image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
 
-# Create an Content Safety client
-client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
-# Build request
-with open(image_path, "rb") as file:
-    request = AnalyzeImageOptions(image=ImageData(content=file.read()))
+    # Build request
+    with open(image_path, "rb") as file:
+        request = AnalyzeImageOptions(image=ImageData(content=file.read()))
 
-# Analyze image
-try:
-    response = client.analyze_image(request)
-except HttpResponseError as e:
-    print("Analyze image failed.")
-    if e.error:
-        print(f"Error code: {e.error.code}")
-        print(f"Error message: {e.error.message}")
+    # Analyze image
+    try:
+        response = client.analyze_image(request)
+    except HttpResponseError as e:
+        print("Analyze image failed.")
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
+            raise
+        print(e)
         raise
-    print(e)
-    raise
 
-if response.hate_result:
-    print(f"Hate severity: {response.hate_result.severity}")
-if response.self_harm_result:
-    print(f"SelfHarm severity: {response.self_harm_result.severity}")
-if response.sexual_result:
-    print(f"Sexual severity: {response.sexual_result.severity}")
-if response.violence_result:
-    print(f"Violence severity: {response.violence_result.severity}")
+    hate_result = next(item for item in response.categories_analysis if item.category == ImageCategory.HATE)
+    self_harm_result = next(item for item in response.categories_analysis if item.category == ImageCategory.SELF_HARM)
+    sexual_result = next(item for item in response.categories_analysis if item.category == ImageCategory.SEXUAL)
+    violence_result = next(item for item in response.categories_analysis if item.category == ImageCategory.VIOLENCE)
+
+    if hate_result:
+        print(f"Hate severity: {hate_result.severity}")
+    if self_harm_result:
+        print(f"SelfHarm severity: {self_harm_result.severity}")
+    if sexual_result:
+        print(f"Sexual severity: {sexual_result.severity}")
+    if violence_result:
+        print(f"Violence severity: {violence_result.severity}")
 ```
 
 <!-- END SNIPPET -->
@@ -244,21 +310,25 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
+    from azure.ai.contentsafety.models import TextBlocklist
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
     blocklist_description = "Test blocklist management."
 
     try:
-        blocklist = client.create_or_update_text_blocklist(blocklist_name=blocklist_name, resource={"description": blocklist_description})
+        blocklist = client.create_or_update_text_blocklist(
+            blocklist_name=blocklist_name,
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
+        )
         if blocklist:
             print("\nBlocklist created or updated: ")
             print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
@@ -280,15 +350,15 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     try:
         blocklists = client.list_text_blocklists()
@@ -314,15 +384,15 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
 
@@ -349,15 +419,15 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
 
@@ -382,34 +452,30 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
+    from azure.ai.contentsafety.models import AddOrUpdateTextBlocklistItemsOptions, TextBlocklistItem
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import (
-        TextBlockItemInfo,
-        AddBlockItemsOptions
-    )
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
     block_item_text_1 = "k*ll"
     block_item_text_2 = "h*te"
 
-    block_items = [TextBlockItemInfo(text=block_item_text_1), TextBlockItemInfo(text=block_item_text_2)]
+    block_items = [TextBlocklistItem(text=block_item_text_1), TextBlocklistItem(text=block_item_text_2)]
     try:
-        result = client.add_block_items(
-            blocklist_name=blocklist_name,
-            body=AddBlockItemsOptions(block_items=block_items),
+        result = client.add_or_update_blocklist_items(
+            blocklist_name=blocklist_name, options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
         )
-        if result and result.value:
-            print("\nBlock items added: ")
-            for block_item in result.value:
-                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
+        for block_item in result.blocklist_items:
+            print(
+                f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+            )
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
         if e.error:
@@ -428,15 +494,15 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
 
@@ -445,7 +511,10 @@ if response.violence_result:
         if block_items:
             print("\nList block items: ")
             for block_item in block_items:
-                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
+                print(
+                    f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, "
+                    f"Description: {block_item.description}"
+                )
     except HttpResponseError as e:
         print("\nList block items failed: ")
         if e.error:
@@ -464,37 +533,36 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions
+    from azure.ai.contentsafety.models import TextBlocklistItem, AddOrUpdateTextBlocklistItemsOptions
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
     block_item_text_1 = "k*ll"
 
     try:
         # Add a blockItem
-        add_result = client.add_block_items(
+        add_result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name,
-            body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
+            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
         )
-        if not add_result or not add_result.value or len(add_result.value) <= 0:
+        if not add_result or not add_result.blocklist_items or len(add_result.blocklist_items) <= 0:
             raise RuntimeError("BlockItem not created.")
-        block_item_id = add_result.value[0].block_item_id
+        block_item_id = add_result.blocklist_items[0].blocklist_item_id
 
         # Get this blockItem by blockItemId
-        block_item = client.get_text_blocklist_item(
-            blocklist_name=blocklist_name,
-            block_item_id= block_item_id
-        )
+        block_item = client.get_text_blocklist_item(blocklist_name=blocklist_name, blocklist_item_id=block_item_id)
         print("\nGet blockitem: ")
-        print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
+        print(
+            f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+        )
     except HttpResponseError as e:
         print("\nGet block item failed: ")
         if e.error:
@@ -513,40 +581,39 @@ if response.violence_result:
 ```python
 
     import os
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.contentsafety.models import (
-        TextBlockItemInfo,
-        AddBlockItemsOptions,
-        RemoveBlockItemsOptions
+        TextBlocklistItem,
+        AddOrUpdateTextBlocklistItemsOptions,
+        RemoveTextBlocklistItemsOptions,
     )
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    # Create a Blocklist client
+    client = BlocklistClient(endpoint, AzureKeyCredential(key))
 
     blocklist_name = "TestBlocklist"
     block_item_text_1 = "k*ll"
 
     try:
         # Add a blockItem
-        add_result = client.add_block_items(
+        add_result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name,
-            body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
+            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
         )
-        if not add_result or not add_result.value or len(add_result.value) <= 0:
+        if not add_result or not add_result.blocklist_items or len(add_result.blocklist_items) <= 0:
             raise RuntimeError("BlockItem not created.")
-        block_item_id = add_result.value[0].block_item_id
+        block_item_id = add_result.blocklist_items[0].blocklist_item_id
 
         # Remove this blockItem by blockItemId
-        client.remove_block_items(
-            blocklist_name=blocklist_name,
-            body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
+        client.remove_blocklist_items(
+            blocklist_name=blocklist_name, options=RemoveTextBlocklistItemsOptions(blocklist_item_ids=[block_item_id])
         )
-        print(f"\nRemoved blockItem: {add_result.value[0].block_item_id}")
+        print(f"\nRemoved blockItem: {add_result.blocklist_items[0].blocklist_item_id}")
     except HttpResponseError as e:
         print("\nRemove block item failed: ")
         if e.error:
@@ -624,3 +691,8 @@ additional questions or comments.
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_cli_key_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account/keys?view=azure-cli-latest#az-cognitiveservices-account-keys-list
 [azure_core_exception]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
+[authenticate_with_microsoft_entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
+[text_severity_levels]: https://learn.microsoft.com/azure/ai-services/content-safety/concepts/harm-categories?tabs=definitions#text-content
+[image_severity_levels]: https://learn.microsoft.com/azure/ai-services/content-safety/concepts/harm-categories?tabs=definitions#image-content
+[product_documentation]: https://learn.microsoft.com/azure/cognitive-services/content-safety/
+[api_reference_docs]: https://azure.github.io/azure-sdk-for-python/cognitiveservices.html#azure-ai-contentsafety

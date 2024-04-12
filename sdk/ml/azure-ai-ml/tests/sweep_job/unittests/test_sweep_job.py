@@ -323,3 +323,49 @@ class TestSweepJob:
         assert sweep_job.inputs == sweep.inputs
         assert sweep_job.outputs == sweep.outputs
         assert sweep_job.identity == sweep.identity
+
+    @pytest.mark.parametrize(
+        "resources",
+        [
+            (JobResourceConfiguration(instance_type="d2", instance_count=2)),
+            (JobResourceConfiguration(instance_type="d2")),
+            (JobResourceConfiguration(instance_count=2)),
+        ],
+    )
+    def test_sweep_job_resources_to_rest(self, resources) -> None:
+        command_job = CommandJob(
+            code="./src",
+            command="python train.py --ss {search_space.ss}",
+            inputs={"input1": Input(path="trial.csv")},
+            outputs={"default": Output(path="./foo")},
+            compute="trial",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            limits=CommandJobLimits(timeout=120),
+        )
+
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
+            inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
+            compute="top_level",
+            limits=SweepJobLimits(trial_timeout=600),
+            identity=UserIdentityConfiguration(),
+            resources=resources,
+        )
+
+        rest_obj = sweep._to_rest_object()
+        rest_obj.properties.resources == resources._to_rest_object() if resources else None
+
+        # validate from rest scenario
+        sweep_job: SweepJob = Job._from_rest_object(rest_obj)
+        assert sweep_job.compute == sweep.compute
+        assert sweep_job.limits == sweep.limits
+        assert sweep_job.inputs == sweep.inputs
+        assert sweep_job.outputs == sweep.outputs
+        assert sweep_job.identity == sweep.identity
+        if sweep_job.resources:
+            if "instance_type" in sweep.resources:
+                assert sweep_job.resources.instance_type == sweep.resources["instance_type"]
+            if "instance_count" in sweep.resources:
+                assert sweep_job.resources.instance_count == sweep.resources["instance_count"]

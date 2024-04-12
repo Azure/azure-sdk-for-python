@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class GetTokenMixin(abc.ABC):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
@@ -27,7 +27,7 @@ class GetTokenMixin(abc.ABC):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
 
         :return: An access token with the desired scopes if successful; otherwise, None.
         :rtype: ~azure.core.credentials.AccessToken or None
@@ -39,7 +39,7 @@ class GetTokenMixin(abc.ABC):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -54,7 +54,12 @@ class GetTokenMixin(abc.ABC):
         return True
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -62,7 +67,7 @@ class GetTokenMixin(abc.ABC):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
@@ -80,14 +85,20 @@ class GetTokenMixin(abc.ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = await self._acquire_token_silently(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = await self._acquire_token_silently(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
             if not token:
                 self._last_request_time = int(time.time())
-                token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                token = await self._request_token(
+                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                )
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                    token = await self._request_token(
+                        *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                    )
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.log(

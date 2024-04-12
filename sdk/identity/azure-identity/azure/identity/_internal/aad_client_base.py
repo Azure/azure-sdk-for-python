@@ -57,6 +57,10 @@ class AadClientBase(abc.ABC):
         self._cache = cache
         self._cae_cache = cae_cache
         self._cache_options = kwargs.pop("cache_persistence_options", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -143,7 +147,7 @@ class AadClientBase(abc.ABC):
                 for invalid_token in cache_entries:
                     cache.remove_rt(invalid_token)
             if "refresh_token" in content:
-                # AAD returned a new refresh token -> update the cache entry
+                # Microsoft Entra ID returned a new refresh token -> update the cache entry
                 cache_entries = cache.find(
                     TokenCache.CredentialType.REFRESH_TOKEN,
                     query={"secret": response.http_request.body["refresh_token"]},
@@ -162,9 +166,7 @@ class AadClientBase(abc.ABC):
             expires_on = request_time + int(content["expires_in"])
         else:
             _scrub_secrets(content)
-            raise ClientAuthenticationError(
-                message="Unexpected response from Azure Active Directory: {}".format(content)
-            )
+            raise ClientAuthenticationError(message="Unexpected response from Microsoft Entra ID: {}".format(content))
 
         token = AccessToken(content["access_token"], expires_on)
 
@@ -298,8 +300,11 @@ class AadClientBase(abc.ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
-            "client_info": 1,  # request AAD include home_account_id in its response
+            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
         }
+        client_secret = kwargs.pop("client_secret", None)
+        if client_secret:
+            data["client_secret"] = client_secret
 
         claims = _merge_claims_challenge_and_capabilities(
             ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
@@ -322,7 +327,7 @@ class AadClientBase(abc.ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
-            "client_info": 1,  # request AAD include home_account_id in its response
+            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
         }
         claims = _merge_claims_challenge_and_capabilities(
             ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
@@ -348,6 +353,21 @@ class AadClientBase(abc.ABC):
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
 
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None
+
 
 def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):
     # Represent capabilities as {"access_token": {"xms_cc": {"values": capabilities}}}
@@ -372,7 +392,7 @@ def _raise_for_error(response: PipelineResponse, content: Dict) -> None:
 
     _scrub_secrets(content)
     if "error_description" in content:
-        message = "Azure Active Directory error '({}) {}'".format(content["error"], content["error_description"])
+        message = "Microsoft Entra ID error '({}) {}'".format(content["error"], content["error_description"])
     else:
-        message = "Azure Active Directory error '{}'".format(content)
+        message = "Microsoft Entra ID error '{}'".format(content)
     raise ClientAuthenticationError(message=message, response=response.http_response)

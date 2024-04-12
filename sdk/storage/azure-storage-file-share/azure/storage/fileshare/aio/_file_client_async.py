@@ -16,7 +16,7 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _datetime_to_str, _get_file_permission
@@ -211,6 +211,29 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         return lease
 
     @distributed_trace_async
+    async def exists(self, **kwargs: Any) -> bool:
+        """
+        Returns True if the file exists and returns False otherwise.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
+        :returns: True if the file exists, False otherwise.
+        :rtype: bool
+        """
+        try:
+            await self._client.file.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
+
+    @distributed_trace_async
     async def create_file(  # type: ignore
         self,
         size,  # type: int
@@ -233,7 +256,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or ~datetime.datetime
@@ -261,7 +284,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword dict(str,str) metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
@@ -277,7 +300,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -341,6 +364,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param data:
             Content of the file.
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
         :param file_attributes:
@@ -373,7 +397,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
-        :keyword dict(str,str) metadata:
+        :keyword dict[str, str] metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
@@ -408,7 +432,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -547,7 +571,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -561,7 +585,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
-        :rtype: dict(str, Any)
+        :returns: Response after data copying operation has been initiated.
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -936,7 +961,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
         :type file_creation_time: str or ~datetime.datetime
@@ -975,7 +1000,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1020,7 +1045,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1035,7 +1060,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: dict[str, Any]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
@@ -1197,6 +1222,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Result after writing to the specified range of the destination Azure File endpoint.
+        :rtype: dict[str, Any]
         """
         options = self._upload_range_from_url_options(
             source_url=source_url,
@@ -1252,14 +1279,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
     @distributed_trace_async
-    async def get_ranges_diff(  # type: ignore
-            self,
-            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
-            offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs  # type: Any
-            ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+    async def get_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        include_renames: Optional[bool] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1273,6 +1301,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
+        :keyword Optional[bool] include_renames:
+            Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
+            a file that has been renamed or moved between the target snapshot (or live file) and the previous
+            snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
+            If set to False, the operation will result in a 409 (Conflict) response.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1286,12 +1319,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :returns:
             A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled file ranges, the 2nd element is cleared file ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
         options = self._get_ranges_options(
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
+            support_rename=include_renames,
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)

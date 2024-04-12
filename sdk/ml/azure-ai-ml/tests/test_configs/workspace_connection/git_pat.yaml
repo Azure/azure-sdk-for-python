@@ -4,4 +4,3 @@ target: https://test-git-feed.com
 credentials:
   type: pat
   pat: dummy_pat
-metadata: ~

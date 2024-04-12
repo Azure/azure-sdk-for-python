@@ -30,12 +30,10 @@ from dotenv import find_dotenv, load_dotenv
 class QueryTables(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
 
     async def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
@@ -52,16 +50,16 @@ class QueryTables(object):
                 # List all the tables in the service
                 print("Listing tables:")
                 async for table in table_service.list_tables():
-                    print("\t{}".format(table.name))
+                    print(f"\t{table.name}")
                 # [END tsc_list_tables]
 
                 # [START tsc_query_tables]
                 # Query for "table1" in the tables created
                 table_name = "mytableasync1"
-                name_filter = "TableName eq '{}'".format(table_name)
+                name_filter = f"TableName eq '{table_name}'"
                 print("Queried_tables")
                 async for table in table_service.query_tables(name_filter):
-                    print("\t{}".format(table.name))
+                    print(f"\t{table.name}")
                 # [END tsc_query_tables]
 
             finally:

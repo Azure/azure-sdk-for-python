@@ -10,18 +10,17 @@ parameters:
         Location: eastus2euap
         MatrixReplace:
           - TestSamples=.*/true
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 270
+  
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: ml
-      MatrixConfigs:
-        - Name: ml_ci_matrix
-          Path: eng/pipelines/templates/stages/platform-matrix-ml.json
-          Selection: sparse
-          GenerateVMJobs: true
       MatrixReplace:
         - TestSamples=.*/true
-      TestTimeoutInMinutes: 270
+      TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       CloudConfig: ${{ parameters.CloudConfig }}
       EnvVars:

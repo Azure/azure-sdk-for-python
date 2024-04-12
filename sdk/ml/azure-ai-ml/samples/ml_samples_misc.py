@@ -57,10 +57,10 @@ class MiscConfigurationOptions(object):
         retrieved_job = ml_client.jobs.get(job_name)
         # [END job_operations_get]
 
-        # [START job_operations_cancel]
+        # [START job_operations_begin_cancel]
         cancel_poller = ml_client.jobs.begin_cancel(job_name)
         print(cancel_poller.result())
-        # [END job_operations_cancel]
+        # [END job_operations_begin_cancel]
 
         # [START job_operations_validate]
         from azure.ai.ml import load_job
@@ -111,7 +111,16 @@ class MiscConfigurationOptions(object):
             },
             stage="Production",
         )
+        ml_client.models.create_or_update(model)
         # [END model_entity_create]
+
+        # [START model_operations_archive]
+        ml_client.models.archive(name="model1", version="5")
+        # [END model_operations_archive]
+
+        # [START model_operations_restore]
+        ml_client.models.restore(name="model1", version="5")
+        # [END model_operations_restore]
 
         # [START model_batch_deployment_settings_entity_create]
         from azure.ai.ml.entities._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
@@ -699,6 +708,7 @@ class MiscConfigurationOptions(object):
             }
             ```
             """
+        # [END validation_result]
 
     @handle_resource_exists_error
     def ml_misc_config_3(self):

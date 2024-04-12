@@ -22,9 +22,10 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 import warnings
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -46,12 +47,21 @@ __all__ = ("DatabaseProxy",)
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
+def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
+    if isinstance(database_or_id, str):
+        return "dbs/{}".format(database_or_id)
+    if isinstance(database_or_id, DatabaseProxy):
+        return database_or_id.database_link
+    database_id = database_or_id["id"]
+    return "dbs/{}".format(database_id)
+
+
 class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the
-    :func:`~azure.cosmos.aio.cosmos_client.CosmosClient.get_database_client` method to get an existing
-    database, or the :func:`~azure.cosmos.aio.cosmos_client.CosmosClient.create_database` method to create
+    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to get an existing
+    database, or the :func:`~azure.cosmos.aio.CosmosClient.create_database` method to create
     a new database.
 
     A database contains one or more containers, each of which can contain items,
@@ -75,10 +85,10 @@ class DatabaseProxy(object):
     """
 
     def __init__(
-            self,
-            client_connection: CosmosClientConnection,
-            id: str,  # pylint: disable=redefined-builtin
-            properties: Dict[str, Any] = None
+        self,
+        client_connection: CosmosClientConnection,
+        id: str,
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
@@ -87,33 +97,28 @@ class DatabaseProxy(object):
         """
         self.client_connection = client_connection
         self.id = id
-        self.database_link = u"dbs/{}".format(self.id)
+        self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    @staticmethod
-    def _get_container_id(container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
+    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
-        try:
-            return cast("ContainerProxy", container_or_id).id
-        except AttributeError:
-            pass
-        return cast("Dict[str, str]", container_or_id)["id"]
+        if isinstance(container_or_id, ContainerProxy):
+            return container_or_id.id
+        return str(container_or_id["id"])
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
-        return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+        return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
-    def _get_user_link(self, user_or_id: Union[UserProxy, str, Dict[str, Any]]) -> str:
+    def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
         if isinstance(user_or_id, str):
-            return u"{}/users/{}".format(self.database_link, user_or_id)
-        try:
-            return cast("UserProxy", user_or_id).user_link
-        except AttributeError:
-            pass
-        return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+            return "{}/users/{}".format(self.database_link, user_or_id)
+        if isinstance(user_or_id, UserProxy):
+            return user_or_id.user_link
+        return "{}/users/{}".format(self.database_link, user_or_id["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
@@ -121,7 +126,13 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace_async
-    async def read(self, **kwargs: Any) -> Dict[str, Any]:
+    async def read(
+        self,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Read the database properties.
 
         :keyword str session_token: Token for use with Session consistency.
@@ -132,27 +143,35 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        # TODO this helper function should be extracted from CosmosClient
-        from ._cosmos_client import CosmosClient
-
-        database_link = CosmosClient._get_database_link(self)
+        database_link = _get_database_link(self)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         self._properties = await self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
 
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
-
-        return cast('Dict[str, Any]', self._properties)
+        return self._properties
 
     @distributed_trace_async
     async def create_container(
         self,
-        id: str,  # pylint: disable=redefined-builtin
+        id: str,
         partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -175,6 +194,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -205,7 +227,6 @@ class DatabaseProxy(object):
         definition: Dict[str, Any] = dict(id=id)
         if partition_key is not None:
             definition["partitionKey"] = partition_key
-        indexing_policy = kwargs.pop('indexing_policy', None)
         if indexing_policy is not None:
             if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
                 warnings.warn(
@@ -213,38 +234,50 @@ class DatabaseProxy(object):
                     DeprecationWarning
                 )
             definition["indexingPolicy"] = indexing_policy
-        default_ttl = kwargs.pop('default_ttl', None)
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
         if unique_key_policy is not None:
             definition["uniqueKeyPolicy"] = unique_key_policy
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
+        computed_properties = kwargs.pop('computed_properties', None)
+        if computed_properties:
+            definition["computedProperties"] = computed_properties
 
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        offer_throughput = kwargs.pop('offer_throughput', None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
-
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace_async
     async def create_container_if_not_exists(
         self,
-        id: str,  # pylint: disable=redefined-builtin
+        id: str,
         partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -269,6 +302,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -278,15 +314,14 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-        indexing_policy = kwargs.pop('indexing_policy', None)
-        default_ttl = kwargs.pop('default_ttl', None)
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
-        offer_throughput = kwargs.pop('offer_throughput', None)
+        computed_properties = kwargs.pop("computed_properties", None)
         try:
             container_proxy = self.get_container_client(id)
-            await container_proxy.read(**kwargs)
+            await container_proxy.read(
+                session_token=session_token,
+                initial_headers=initial_headers,
+                **kwargs
+            )
             return container_proxy
         except CosmosResourceNotFoundError:
             return await self.create_container(
@@ -297,7 +332,13 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl
+                analytical_storage_ttl=analytical_storage_ttl,
+                computed_properties=computed_properties,
+                etag=etag,
+                match_condition=match_condition,
+                session_token=session_token,
+                initial_headers=initial_headers,
+                **kwargs
             )
 
     def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:
@@ -319,20 +360,21 @@ class DatabaseProxy(object):
                 :caption: Get an existing container, handling a failure if encountered:
                 :name: get_container
         """
-
-        try:
+        if isinstance(container, str):
+            id_value = container
+        elif isinstance(container, ContainerProxy):
             id_value = container.id
-        except AttributeError:
-            try:
-                id_value = container['id']
-            except TypeError:
-                id_value = container
-
+        else:
+            id_value = str(container['id'])
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
     def list_containers(
         self,
+        *,
+        session_token: Optional[str] = None,
+        max_item_count: Optional[int] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -355,9 +397,12 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -371,6 +416,12 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_containers(
         self,
+        query: str,
+        *,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        session_token: Optional[str] = None,
+        max_item_count: Optional[int] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -387,14 +438,15 @@ class DatabaseProxy(object):
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        parameters = kwargs.pop('parameters', None)
-        query = kwargs.pop('query', None)
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -408,8 +460,17 @@ class DatabaseProxy(object):
     @distributed_trace_async
     async def replace_container(
         self,
-        container: Union[str, ContainerProxy, Dict[str, Any]],
+        container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -432,14 +493,14 @@ class DatabaseProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
-            This includes if the container with given id does not exist.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.aio.ContainerProxy
 
         .. admonition:: Example:
@@ -452,15 +513,18 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
-        indexing_policy = kwargs.pop('indexing_policy', None)
-        default_ttl = kwargs.pop('default_ttl', None)
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         parameters = {
             key: value
             for key, value in {
@@ -477,10 +541,6 @@ class DatabaseProxy(object):
         container_properties = await self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, container_properties)
-
         return ContainerProxy(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
@@ -488,7 +548,12 @@ class DatabaseProxy(object):
     @distributed_trace_async
     async def delete_container(
         self,
-        container: Union[str, ContainerProxy, Dict[str, Any]],
+        container: Union[str, ContainerProxy, Mapping[str, Any]],
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -508,22 +573,31 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         collection_link = self._get_container_link(container)
-        result = await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
+        await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
 
     @distributed_trace_async
-    async def create_user(self, body: Dict[str, Any], **kwargs: Any) -> UserProxy:  # body should just be id?
+    async def create_user(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> UserProxy:  # body should just be id?
         """Create a new user in the container.
 
         To update or replace an existing user, use the
         :func:`ContainerProxy.upsert_user` method.
 
-        :param Dict[str, Any] body: A dict-like object with an `id` key and value representing the user to be created.
+        :param Dict[str, Any] body: A dict object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
@@ -542,19 +616,18 @@ class DatabaseProxy(object):
                 :name: create_user
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = await self.client_connection.CreateUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def get_user_client(self, user: Union[str, UserProxy, Dict[str, Any]]) -> UserProxy:
+    def get_user_client(
+        self,
+        user: Union[str, UserProxy, Mapping[str, Any]]
+    ) -> UserProxy:
         """Get a `UserProxy` for a user with specified ID.
 
         :param user: The ID (name), dict representing the properties, or :class:`UserProxy`
@@ -563,18 +636,21 @@ class DatabaseProxy(object):
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.aio.UserProxy
         """
-        try:
+        if isinstance(user, str):
+            id_value = user
+        elif isinstance(user, UserProxy):
             id_value = user.id
-        except AttributeError:
-            try:
-                id_value = user['id']
-            except TypeError:
-                id_value = user
-
+        else:
+            id_value = str(user['id'])
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace
-    def list_users(self, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
+    def list_users(
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the users in the container.
 
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
@@ -585,7 +661,6 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -599,12 +674,15 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_users(
         self,
-        query: Union[str, Dict[str, Any]],
+        query: str,
+        *,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
 
-        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -617,11 +695,9 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        parameters = kwargs.pop('parameters', None)
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -633,7 +709,11 @@ class DatabaseProxy(object):
         return result
 
     @distributed_trace_async
-    async def upsert_user(self, body: Dict[str, Any], **kwargs: Any) -> UserProxy:
+    async def upsert_user(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> UserProxy:
         """Insert or update the specified user.
 
         If the user already exists in the container, it is replaced. If the user
@@ -647,32 +727,27 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.aio.UserProxy
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = await self.client_connection.UpsertUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
-
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
     @distributed_trace_async
     async def replace_user(
-            self,
-            user: Union[str, UserProxy, Dict[str, Any]],
-            body: Dict[str, Any],
-            **kwargs: Any
+        self,
+        user: Union[str, UserProxy, Mapping[str, Any]],
+        body: Dict[str, Any],
+        **kwargs: Any
     ) -> UserProxy:
         """Replaces the specified user if it exists in the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
         :type user: Union[str, Dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :param Dict[str, Any] body: A dict-like object representing the user to replace.
+        :param Dict[str, Any] body: A dict object representing the user to replace.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
@@ -681,13 +756,9 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.aio.UserProxy
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
-        replaced_user: Dict[str, Any] = await self.client_connection.ReplaceUser(
+        replaced_user = await self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, replaced_user)
 
         return UserProxy(
             client_connection=self.client_connection,
@@ -697,7 +768,11 @@ class DatabaseProxy(object):
         )
 
     @distributed_trace_async
-    async def delete_user(self, user: Union[str, UserProxy, Dict[str, Any]], **kwargs: Any) -> None:
+    async def delete_user(
+        self,
+        user: Union[str, UserProxy, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Delete the specified user from the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
@@ -710,13 +785,10 @@ class DatabaseProxy(object):
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
-        result = await self.client_connection.DeleteUser(
+        await self.client_connection.DeleteUser(
             user_link=self._get_user_link(user), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
     async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
@@ -751,8 +823,11 @@ class DatabaseProxy(object):
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> \
-            ThroughputProperties:
+    async def replace_throughput(
+        self,
+        throughput: Union[int, ThroughputProperties],
+        **kwargs: Any
+    ) -> ThroughputProperties:
         """Replace the database-level throughput.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
@@ -766,7 +841,6 @@ class DatabaseProxy(object):
         :returns: ThroughputProperties for the database, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -784,6 +858,5 @@ class DatabaseProxy(object):
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
+
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

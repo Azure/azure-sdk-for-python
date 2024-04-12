@@ -29,21 +29,25 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.galleryimages.begin_create_or_update(
+    response = client.gallery_images.begin_create_or_update(
         resource_group_name="test-rg",
-        galleryimages_name="test-gallery-image",
-        galleryimages={
+        gallery_image_name="test-gallery-image",
+        gallery_images={
             "extendedLocation": {
                 "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
                 "type": "CustomLocation",
             },
             "location": "West US2",
-            "properties": {"containerName": "Default_Container", "imagePath": "C:\\test.vhdx"},
+            "properties": {
+                "containerId": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.AzureStackHCI/storageContainers/test-storage-container",
+                "imagePath": "C:\\test.vhdx",
+                "osType": "Linux",
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/PutGalleryImage.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/PutGalleryImage.json
 if __name__ == "__main__":
     main()

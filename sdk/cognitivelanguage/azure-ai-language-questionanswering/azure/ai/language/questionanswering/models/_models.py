@@ -26,7 +26,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 class AnswersFromTextOptions(_serialization.Model):
     """The question and text record parameters to answer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar question: User question to query against the given text records. Required.
     :vartype question: str
@@ -262,7 +262,7 @@ class AnswersResult(_serialization.Model):
 class Error(_serialization.Model):
     """The error object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required. Known values are:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
@@ -354,7 +354,7 @@ class InnerErrorModel(_serialization.Model):
     guidelines -
     https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required. Known values are:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
@@ -500,7 +500,7 @@ class KnowledgeBaseAnswer(_serialization.Model):
 class KnowledgeBaseAnswerContext(_serialization.Model):
     """Context object with previous QnA's information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar previous_qna_id: Previous turn top answer result QnA ID. Required.
     :vartype previous_qna_id: int
@@ -686,7 +686,7 @@ class ShortAnswerOptions(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enable: Enable or disable Answer Span prediction. Required. Default value is True.
     :vartype enable: bool
@@ -793,7 +793,7 @@ class TextAnswer(_serialization.Model):
 class TextDocument(_serialization.Model):
     """Represent input text record to be queried.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique identifier for the text record. Required.
     :vartype id: str

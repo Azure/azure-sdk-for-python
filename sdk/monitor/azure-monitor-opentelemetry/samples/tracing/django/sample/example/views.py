@@ -4,11 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from django.http import HttpResponse
-
-# Configure Azure monitor collection telemetry pipeline
-configure_azure_monitor()
 
 
 # Requests sent to the django application will be automatically captured

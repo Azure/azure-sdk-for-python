@@ -42,9 +42,8 @@ def remove_unsupported_values(selected_set: List[str], unsupported_values: List[
             selected_set.remove(unsupported_tox_env)
 
 
-def process_ci_skips(service: str) -> None:
+def process_ci_skips(glob_string: str, service: str ) -> None:
     checks_with_global_skip = ["pylint", "verifywhl", "verifysdist" "bandit", "mypy", "pyright", "verifytypes"]
-
     root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
     if service:
@@ -52,7 +51,7 @@ def process_ci_skips(service: str) -> None:
     else:
         target_dir = root_dir
 
-    targeted_packages = discover_targeted_packages("azure*", target_dir)
+    targeted_packages = discover_targeted_packages(glob_string, target_dir)
 
     for check in checks_with_global_skip:
         packages_running_check = []
@@ -76,6 +75,15 @@ if __name__ == "__main__":
         description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which tox environments should be run for the current job. "
         + "When running against a specific service directory, attempts to find entire analysis steps that can be skipped. EG if pylint is disabled for every package in a given service directory, that "
         + "step should never actually run."
+    )
+
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages. "
+            'Examples: All == "azure-*", Single = "azure-keyvault"'
+        ),
     )
 
     parser.add_argument("-t", "--team-project", dest="team_project", help="", required=True)
@@ -127,4 +135,4 @@ if __name__ == "__main__":
     set_devops_value(selected_set)
 
     if args.service:
-        process_ci_skips(args.service)
+        process_ci_skips(args.glob_string, args.service)

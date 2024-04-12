@@ -10,9 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ChatAttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of attachment."""
+
+    IMAGE = "image"
+    FILE = "file"
+
+
 class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The chat message type.
-    """
+    """The chat message type."""
 
     TEXT = "text"
     HTML = "html"
@@ -20,10 +26,20 @@ class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PARTICIPANT_ADDED = "participantAdded"
     PARTICIPANT_REMOVED = "participantRemoved"
 
+
 class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The cloud that the identifier belongs to.
-    """
+    """The cloud that the identifier belongs to."""
 
     PUBLIC = "public"
     DOD = "dod"
     GCCH = "gcch"
+
+
+class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
+
+    UNKNOWN = "unknown"
+    COMMUNICATION_USER = "communicationUser"
+    PHONE_NUMBER = "phoneNumber"
+    MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"

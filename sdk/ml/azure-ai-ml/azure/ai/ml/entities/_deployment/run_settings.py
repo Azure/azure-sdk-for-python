@@ -35,7 +35,7 @@ class RunSettings:
         description: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,
         settings: Optional[Dict[str, Any]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):  # pylint: disable=unused-argument
         self.name = name
         self.display_name = display_name
@@ -46,4 +46,5 @@ class RunSettings:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return RunSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = RunSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

@@ -29,7 +29,7 @@ class EnvironmentCredential:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -38,7 +38,7 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
       - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -47,9 +47,9 @@ class EnvironmentCredential:
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password
       - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
-        If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
+        If not provided, defaults to the 'organizations' tenant, which supports only Microsoft Entra work or
         school accounts.
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -108,12 +108,12 @@ class EnvironmentCredential:
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    def __enter__(self):
+    def __enter__(self) -> "EnvironmentCredential":
         if self._credential:
             self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         if self._credential:
             self._credential.__exit__(*args)
 
@@ -131,7 +131,7 @@ class EnvironmentCredential:
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

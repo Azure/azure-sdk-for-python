@@ -41,7 +41,7 @@ def build_validate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -93,7 +93,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: _models.ValidateOperationRequest,
+        parameters: _models.ValidateOperationRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107,7 +107,7 @@ class OperationOperations:
         :type resource_group_name: str
         :param parameters: resource validate operation request. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequest
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -150,7 +150,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.ValidateOperationRequest, IO],
+        parameters: Union[_models.ValidateOperationRequestResource, IO],
         **kwargs: Any
     ) -> _models.ValidateOperationsResponse:
         """Validate operation for specified backed up item. This is a synchronous operation.
@@ -160,10 +160,10 @@ class OperationOperations:
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
-        :param parameters: resource validate operation request. Is either a ValidateOperationRequest
-         type or a IO type. Required.
+        :param parameters: resource validate operation request. Is either a
+         ValidateOperationRequestResource type or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequest or IO
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationRequestResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -193,7 +193,7 @@ class OperationOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "ValidateOperationRequest")
+            _json = self._serialize.body(parameters, "ValidateOperationRequestResource")
 
         request = build_validate_request(
             vault_name=vault_name,

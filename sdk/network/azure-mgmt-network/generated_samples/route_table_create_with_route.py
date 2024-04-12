@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-05-01/examples/RouteTableCreateWithRoute.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-09-01/examples/RouteTableCreateWithRoute.json
 if __name__ == "__main__":
     main()

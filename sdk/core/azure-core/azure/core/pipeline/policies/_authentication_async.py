@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
@@ -15,6 +14,7 @@ from azure.core.pipeline.policies._authentication import (
 )
 from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.utils._utils import get_running_async_lock
 
 from .._tools_async import await_result
 
@@ -38,10 +38,16 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
-        self._lock = asyncio.Lock()
         self._scopes = scopes
+        self._lock_instance = None
         self._token: Optional["AccessToken"] = None
         self._enable_cae: bool = kwargs.get("enable_cae", False)
+
+    @property
+    def _lock(self):
+        if self._lock_instance is None:
+            self._lock_instance = get_running_async_lock()
+        return self._lock_instance
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -90,6 +96,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
             response = await self.next.send(request)
         except Exception:  # pylint:disable=broad-except

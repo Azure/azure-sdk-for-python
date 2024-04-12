@@ -10,24 +10,25 @@ from copy import deepcopy
 from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import MonitorBatchMetricsClientConfiguration
-from .operations import MetricsOperations
+from .operations import MetricsBatchOperations
 
 
 class MonitorBatchMetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Monitor Batch Metrics Python Client.
 
-    :ivar metrics: MetricsOperations operations
-    :vartype metrics: monitor_batch_metrics_client.aio.operations.MetricsOperations
+    :ivar metrics_batch: MetricsBatchOperations operations
+    :vartype metrics_batch: monitor_batch_metrics_client.aio.operations.MetricsBatchOperations
     :param endpoint: The regional endpoint to use, for example
      https://eastus.metrics.monitor.azure.com. The region should match the region of the requested
      resources. For global resources, the region should be 'global'. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-05-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -36,14 +37,33 @@ class MonitorBatchMetricsClient:  # pylint: disable=client-accepts-api-version-k
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = MonitorBatchMetricsClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.metrics = MetricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.metrics_batch = MetricsBatchOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -67,7 +87,7 @@ class MonitorBatchMetricsClient:  # pylint: disable=client-accepts-api-version-k
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

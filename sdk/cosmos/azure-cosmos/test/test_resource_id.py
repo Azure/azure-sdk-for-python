@@ -1,39 +1,20 @@
 # The MIT License (MIT)
-# Copyright (c) 2023 Microsoft Corporation
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
-
 import uuid
+
 import pytest
+
+import azure.cosmos
 import test_config
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
-
-pytestmark = pytest.mark.cosmosEmulator
+from azure.cosmos import PartitionKey, cosmos_client
 
 
-@pytest.mark.usefixtures("teardown")
-class ResourceIdTests(unittest.TestCase):
-    configs = test_config._test_config
+@pytest.mark.cosmosEmulator
+class TestResourceIds(unittest.TestCase):
+    client: azure.cosmos.CosmosClient = None
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
@@ -47,22 +28,21 @@ class ResourceIdTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
 
     def test_id_unicode_validation(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'  # cspell:disable-line
+        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' + str(uuid.uuid4())  # cspell:disable-line
 
         # Special allowed chars for Id
-        resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
+        resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
 
         # verify that databases are created with specified IDs
-        created_db1 = self.client.create_database(resource_id1)
-        created_db2 = self.client.create_database(resource_id2)
+        created_db1 = self.client.create_database_if_not_exists(resource_id1)
+        created_db2 = self.client.create_database_if_not_exists(resource_id2)
 
-        self.assertEqual(resource_id1, created_db1.id)
-        self.assertEqual(resource_id2, created_db2.id)
+        assert resource_id1 == created_db1.id
+        assert resource_id2 == created_db2.id
 
         # verify that collections are created with specified IDs
         created_collection1 = created_db1.create_container(
@@ -72,17 +52,20 @@ class ResourceIdTests(unittest.TestCase):
             id=resource_id2,
             partition_key=PartitionKey(path='/id', kind='Hash'))
 
-        self.assertEqual(resource_id1, created_collection1.id)
-        self.assertEqual(resource_id2, created_collection2.id)
+        assert resource_id1 == created_collection1.id
+        assert resource_id2 == created_collection2.id
 
-        # verify that collections are created with specified IDs
-        item1 = created_collection1.create_item({"id": resource_id1})
-        item2 = created_collection1.create_item({"id": resource_id2})
+        # verify that items are created with specified IDs
+        item1 = created_collection1.upsert_item({"id": resource_id1})
+        item2 = created_collection1.upsert_item({"id": resource_id2})
 
-        self.assertEqual(resource_id1, item1.get("id"))
-        self.assertEqual(resource_id2, item2.get("id"))
+        assert resource_id1 == item1.get("id")
+        assert resource_id2 == item2.get("id")
 
-    def test_create_illegal_characters(self):
+        self.client.delete_database(resource_id1)
+        self.client.delete_database(resource_id2)
+
+    def test_create_illegal_characters_async(self):
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -91,8 +74,7 @@ class ResourceIdTests(unittest.TestCase):
         created_container = created_database.create_container(id=container_id, partition_key=partition_key)
 
         # Define errors returned by checks
-        illegal_chars_string = 'Id contains illegal chars.'
-        space_chars_string = 'Id ends with a space.'
+        error_strings = ['Id contains illegal chars.', 'Id ends with a space or newline.']
 
         # Define illegal strings
         illegal_strings = [
@@ -103,34 +85,38 @@ class ResourceIdTests(unittest.TestCase):
             "ID_with_tab\t",
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
+            "ID_with_newline\n2",
+            "ID_with_more_than_255" + "_" * 255,
             "ID_with_trailing_spaces   "
         ]
 
         # test illegal resource id's for all resources
-        error_string = illegal_chars_string
         for resource_id in illegal_strings:
-            if resource_id == "ID_with_trailing_spaces   ":
-                error_string = space_chars_string
             try:
                 self.client.create_database(resource_id)
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) in error_strings
 
             try:
                 created_database.create_container(id=resource_id, partition_key=partition_key)
                 self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) in error_strings
 
             try:
                 created_container.create_item({"id": resource_id})
                 self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) in error_strings
             try:
                 created_container.upsert_item({"id": resource_id})
                 self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) in error_strings
 
+        self.client.delete_database(database_id)
+
+
+if __name__ == '__main__':
+    unittest.main()

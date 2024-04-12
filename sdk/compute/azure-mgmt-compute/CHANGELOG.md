@@ -1,5 +1,70 @@
 # Release History
 
+## 30.6.0 (2024-03-15)
+
+### Features Added
+
+  - Model GalleryArtifactVersionFullSource has a new parameter virtual_machine_id
+
+### Bugs Fixed
+
+  - Fix api_version in next_link for paging operation
+
+## 30.5.0 (2024-01-22)
+
+### Features Added
+
+  - Model CreationData has a new parameter provisioned_bandwidth_copy_speed
+  - Model PurchasePlan has a new parameter promotion_code
+
+## 30.4.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation DedicatedHostsOperations.begin_redeploy
+  - Added operation VirtualMachineScaleSetVMsOperations.begin_approve_rolling_upgrade
+  - Added operation VirtualMachineScaleSetVMsOperations.begin_attach_detach_data_disks
+  - Added operation VirtualMachineScaleSetsOperations.begin_approve_rolling_upgrade
+  - Added operation VirtualMachinesOperations.begin_attach_detach_data_disks
+  - Model AutomaticOSUpgradePolicy has a new parameter os_rolling_upgrade_deferral
+  - Model CapacityReservationGroup has a new parameter sharing_profile
+  - Model CapacityReservationGroupInstanceView has a new parameter shared_subscription_ids
+  - Model CapacityReservationGroupUpdate has a new parameter sharing_profile
+  - Model CommunityGallery has a new parameter artifact_tags
+  - Model CommunityGallery has a new parameter community_metadata
+  - Model CommunityGallery has a new parameter disclaimer
+  - Model CommunityGalleryImage has a new parameter artifact_tags
+  - Model CommunityGalleryImage has a new parameter disclaimer
+  - Model CommunityGalleryImageVersion has a new parameter artifact_tags
+  - Model CommunityGalleryImageVersion has a new parameter disclaimer
+  - Model GalleryImageVersion has a new parameter security_profile
+  - Model GalleryImageVersionUpdate has a new parameter security_profile
+  - Model RestorePointSourceVMStorageProfile has a new parameter disk_controller_type
+  - Model SecurityProfile has a new parameter encryption_identity
+  - Model SecurityProfile has a new parameter proxy_agent_settings
+  - Model SharedGallery has a new parameter artifact_tags
+  - Model SharedGalleryImage has a new parameter artifact_tags
+  - Model SharedGalleryImageVersion has a new parameter artifact_tags
+  - Model VirtualMachine has a new parameter etag
+  - Model VirtualMachine has a new parameter managed_by
+  - Model VirtualMachineInstanceView has a new parameter is_vm_in_standby_pool
+  - Model VirtualMachineScaleSet has a new parameter etag
+  - Model VirtualMachineScaleSet has a new parameter resiliency_policy
+  - Model VirtualMachineScaleSetUpdate has a new parameter resiliency_policy
+  - Model VirtualMachineScaleSetVM has a new parameter etag
+  - Model VirtualMachineScaleSetVMProfile has a new parameter time_created
+  - Operation SshPublicKeysOperations.generate_key_pair has a new optional parameter parameters
+  - Operation VirtualMachineScaleSetVMsOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetVMsOperations.begin_update has a new optional parameter if_none_match
+  - Operation VirtualMachineScaleSetsOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetsOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation VirtualMachineScaleSetsOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetsOperations.begin_update has a new optional parameter if_none_match
+  - Operation VirtualMachinesOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation VirtualMachinesOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation VirtualMachinesOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachinesOperations.begin_update has a new optional parameter if_none_match
+
 ## 30.3.0 (2023-10-23)
 
 ### Features Added

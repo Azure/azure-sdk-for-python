@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Callable, Iterable
 from unittest.mock import Mock, patch
@@ -33,11 +34,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -46,6 +49,7 @@ def mock_data_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
     mock_datastore_operation: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
@@ -53,6 +57,7 @@ def mock_data_operations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
+        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
@@ -64,6 +69,7 @@ def mock_data_operations_in_registry(
     mock_registry_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
     mock_datastore_operation: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
@@ -71,6 +77,7 @@ def mock_data_operations_in_registry(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
+        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
@@ -570,3 +577,38 @@ class TestDataOperations:
                 ignore_file=None,
                 blob_uri=None,
             )
+
+    def test_mount_persistent(
+        self,
+        mock_data_operations: DataOperations,
+    ):
+        mock_data_operations._compute_operation.get.return_value = Mock(
+            properties=Mock(
+                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
+            )
+        )
+        with patch("uuid.uuid4", return_value="random_uuid"), patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri"
+        ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            mock_data_operations.mount(
+                path="azureml:random_name:random_version",
+                mount_point="/tmp/mount/random-local-path-for-data/",
+                persistent=True,
+            )
+            mock_build_uri.assert_called_once()
+            mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
+
+    def test_mount_non_persistent(
+        self,
+        mock_data_operations: DataOperations,
+    ):
+        with patch("azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri") as mock_build_uri, patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess"
+        ) as mock_start_subprocess:
+            mock_data_operations.mount(
+                path="azureml:random_name:random_version",
+                mount_point="/tmp/mount/random-local-path-for-data/",
+                persistent=False,
+            )
+            mock_build_uri.assert_called_once()
+            mock_start_subprocess.assert_called_once()

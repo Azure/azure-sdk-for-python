@@ -12,7 +12,7 @@ from .checkpoint_store import CheckpointStore
 _LOGGER = logging.getLogger(__name__)
 
 
-class _TrieNode(object):
+class _TrieNode:
     def __init__(self, value, is_leaf):
         self.value = value
         self.is_leaf = is_leaf
@@ -64,7 +64,7 @@ def _set_ele_trie(root, ele, keys_path, path_index):
     _set_ele_trie(next_node, ele, keys_path, path_index + 1)
 
 
-class _DictTrie(object):
+class _DictTrie:
     def __init__(self, root_name, keys_path):
         self._root = _TrieNode(root_name, False)
         self._keys_path = keys_path

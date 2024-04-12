@@ -6,22 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._health_reports_operations import HealthReportsOperations
+from ._health_report_operations import HealthReportOperations
 from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
 from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations
-from ._health_reports_operations import HealthReportsOperations
-from ._health_report_operations import HealthReportOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "HealthReportsOperations",
+    "HealthReportOperations",
     "SqlVulnerabilityAssessmentBaselineRulesOperations",
     "SqlVulnerabilityAssessmentScansOperations",
     "SqlVulnerabilityAssessmentScanResultsOperations",
-    "HealthReportsOperations",
-    "HealthReportOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

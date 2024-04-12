@@ -155,7 +155,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 
@@ -230,7 +231,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
+        :type cors: list[~azure.storage.fileshare.CorsRule]
         :param protocol:
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
@@ -334,7 +335,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword dict(str,str) metadata:
+        :keyword dict[str, str] metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
         :keyword int quota:

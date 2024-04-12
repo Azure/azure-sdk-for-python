@@ -50,11 +50,11 @@ setup(
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -66,16 +66,16 @@ setup(
         'tests.queue',
         'tests.common'
     ]),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-core<2.0.0,>=1.28.0",
+        "azure-core>=1.28.0",
         "cryptography>=2.1.4",
-        "typing-extensions>=4.3.0",
+        "typing-extensions>=4.6.0",
         "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]<2.0.0,>=1.28.0",
+            "azure-core[aio]>=1.28.0",
         ],
     },
 )

@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.core.rest import HttpResponse
 
 from ._enums import KeyVaultSettingType
-from ._generated_models import (
+from ._generated.models import (
     FullBackupOperation,
     Permission,
     RoleAssignment,
@@ -29,7 +29,7 @@ class KeyVaultPermission(object):
      other role definitions assigned to a principal.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.actions = kwargs.get("actions")
         self.not_actions = kwargs.get("not_actions")
         self.data_actions = kwargs.get("data_actions")
@@ -54,7 +54,7 @@ class KeyVaultRoleAssignment(object):
     :ivar str type: type of the assignment
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get("name")
         self.properties = kwargs.get("properties")
         self.role_assignment_id = kwargs.get("role_assignment_id")
@@ -85,7 +85,7 @@ class KeyVaultRoleAssignmentProperties(object):
     :ivar str scope: the scope of the assignment
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.principal_id = kwargs.get("principal_id")
         self.role_definition_id = kwargs.get("role_definition_id")
         self.scope = kwargs.get("scope")
@@ -123,7 +123,7 @@ class KeyVaultRoleDefinition(object):
     :ivar str type: type of the role definition
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.assignable_scopes = kwargs.get("assignable_scopes")
         self.description = kwargs.get("description")
         self.id = kwargs.get("id")
@@ -140,13 +140,15 @@ class KeyVaultRoleDefinition(object):
     def _from_generated(cls, definition: RoleDefinition) -> "KeyVaultRoleDefinition":
         # pylint:disable=protected-access
         return cls(
-            assignable_scopes=definition.assignable_scopes,
-            description=definition.description,
+            assignable_scopes=definition.properties.assignable_scopes if definition.properties else None,
+            description=definition.properties.description if definition.properties else None,
             id=definition.id,
             name=definition.name,
-            permissions=[KeyVaultPermission._from_generated(p) for p in definition.permissions or []],
-            role_name=definition.role_name,
-            role_type=definition.role_type,
+            permissions=[KeyVaultPermission._from_generated(p) for p in definition.properties.permissions or []]
+            if definition.properties
+            else None,
+            role_name=definition.properties.role_name if definition.properties else None,
+            role_type=definition.properties.role_type if definition.properties else None,
             type=definition.type,
         )
 
@@ -159,7 +161,7 @@ class KeyVaultBackupResult(object):
 
     # pylint:disable=unused-argument
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.folder_url: Optional[str] = kwargs.get("folder_url")
 
     @classmethod
@@ -171,6 +173,11 @@ class KeyVaultBackupResult(object):
 
 class KeyVaultSetting(object):
     """A Key Vault setting.
+
+    :ivar str name: The name of the account setting.
+    :ivar str value: The value of the account setting.
+    :ivar setting_type: The type specifier of the value.
+    :vartype setting_type: str or KeyVaultSettingType or None
 
     :param str name: The name of the account setting.
     :param str value: The value of the account setting.
@@ -207,7 +214,7 @@ class KeyVaultSetting(object):
         :returns: The account setting value as a boolean.
         :rtype: bool
 
-        :raises: ValueError if the ``setting_type`` is not boolean or the value cannot be represented as a boolean.
+        :raises ValueError: if the ``setting_type`` is not boolean or the value cannot be represented as a boolean.
         """
         if self.setting_type == KeyVaultSettingType.BOOLEAN:
             if self.value == "true":

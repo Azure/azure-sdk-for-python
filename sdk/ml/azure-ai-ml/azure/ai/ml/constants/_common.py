@@ -17,6 +17,7 @@ TYPE = "type"
 JOBLIMITSTYPE = "JobLimitsType"
 DATA_ARM_TYPE = "data"
 ARM_ID_PREFIX = "azureml:"
+PROMPTFLOW_AZUREML_OVERRIDE_KEY = "azureml"
 CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
@@ -182,6 +183,11 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+CONNECTION_API_VERSION_KEY = "ApiVersion"
+CONNECTION_API_TYPE_KEY = "ApiType"
+CONNECTION_KIND_KEY = "Kind"
+CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
+CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
 
 
 class DefaultOpenEncoding:
@@ -303,11 +309,13 @@ class ArmConstants:
     ENVIRONMENT_TYPE = "environment"
     ENVIRONMENT_VERSION_TYPE = "environment_version"
     ONLINE_ENDPOINT_TYPE = "online_endpoint"
+    MULTIPLE_ENDPOINTS_TYPE = "endpoints"
     ONLINE_DEPLOYMENT_TYPE = "online_deployment"
     UPDATE_ONLINE_ENDPOINT_TYPE = "update_online_endpoint"
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    ROLE_ASSIGNMENTS = "roleAssignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
     WORKSPACE_PROJECT = "workspace_project"
@@ -324,10 +332,12 @@ class ArmConstants:
     DEFAULT_VALUE = "defaultValue"
 
     STORAGE = "StorageAccount"
+    STORAGE_CONTAINER = "StorageContainer"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
+    CONTAINER_REGISTRY = "ContainerRegistry"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
     AZURE_MGMT_STORAGE_API_VERSION = "2019-06-01"
@@ -780,6 +790,13 @@ class InputOutputModes:
     """Evaluation download asset type."""
     DIRECT = "direct"
     """Direct asset type."""
+
+
+class WorkspaceConnectionTypes:
+    """Names for workspace connection types that are different from that underlying api enum values
+    from the ConnectionCategory class."""
+
+    CUSTOM = "custom"  # Corresponds to "custom_keys".
 
 
 class LegacyAssetTypes:

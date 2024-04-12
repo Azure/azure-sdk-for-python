@@ -25,7 +25,7 @@ def start_proxy(test_proxy):
 
     add_general_regex_sanitizer(regex="https://[^/]+", value="https://sanitized")
     add_body_key_sanitizer(json_path="callbackUri", value="https://sanitized")
-    add_body_key_sanitizer(json_path="$..fileSource.uri", value="https://REDACTED/prompt.wav")
+    add_body_key_sanitizer(json_path="$..file.uri", value="https://REDACTED/prompt.wav")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")
     add_header_regex_sanitizer(key="Date", value="sanitized")
     add_header_regex_sanitizer(key="Cookie", value="sanitized")

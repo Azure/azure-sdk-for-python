@@ -38,6 +38,19 @@ def main():
             "properties": {
                 "apiKey": "Enabled",
                 "deterministicOutboundIP": "Enabled",
+                "enterpriseConfigurations": {"marketplaceAutoRenew": "Enabled", "marketplacePlanId": "myPlanId"},
+                "grafanaConfigurations": {
+                    "smtp": {
+                        "enabled": True,
+                        "fromAddress": "test@sendemail.com",
+                        "fromName": "emailsender",
+                        "host": "smtp.sendemail.com:587",
+                        "password": "<password>",
+                        "skipVerify": True,
+                        "startTLSPolicy": "OpportunisticStartTLS",
+                        "user": "username",
+                    }
+                },
                 "grafanaIntegrations": {
                     "azureMonitorWorkspaceIntegrations": [
                         {
@@ -45,6 +58,8 @@ def main():
                         }
                     ]
                 },
+                "grafanaMajorVersion": "9",
+                "grafanaPlugins": {"sample-plugin-id": {}},
                 "publicNetworkAccess": "Enabled",
                 "zoneRedundancy": "Enabled",
             },
@@ -55,6 +70,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2022-08-01/examples/Grafana_Create.json
+# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/Grafana_Create.json
 if __name__ == "__main__":
     main()

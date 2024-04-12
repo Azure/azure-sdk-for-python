@@ -6,93 +6,76 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AddChatParticipantsRequest
-    from ._models_py3 import AddChatParticipantsResult
-    from ._models_py3 import ChatError
-    from ._models_py3 import ChatMessage
-    from ._models_py3 import ChatMessageContent
-    from ._models_py3 import ChatMessageReadReceipt
-    from ._models_py3 import ChatMessageReadReceiptsCollection
-    from ._models_py3 import ChatMessagesCollection
-    from ._models_py3 import ChatParticipant
-    from ._models_py3 import ChatParticipantsCollection
-    from ._models_py3 import ChatThreadItem
-    from ._models_py3 import ChatThreadProperties
-    from ._models_py3 import ChatThreadsItemCollection
-    from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import CommunicationIdentifierModel
-    from ._models_py3 import CommunicationUserIdentifierModel
-    from ._models_py3 import CreateChatThreadRequest
-    from ._models_py3 import CreateChatThreadResult
-    from ._models_py3 import MicrosoftTeamsUserIdentifierModel
-    from ._models_py3 import PhoneNumberIdentifierModel
-    from ._models_py3 import SendChatMessageRequest
-    from ._models_py3 import SendChatMessageResult
-    from ._models_py3 import SendReadReceiptRequest
-    from ._models_py3 import SendTypingNotificationRequest
-    from ._models_py3 import UpdateChatMessageRequest
-    from ._models_py3 import UpdateChatThreadRequest
-except (SyntaxError, ImportError):
-    from ._models import AddChatParticipantsRequest  # type: ignore
-    from ._models import AddChatParticipantsResult  # type: ignore
-    from ._models import ChatError  # type: ignore
-    from ._models import ChatMessage  # type: ignore
-    from ._models import ChatMessageContent  # type: ignore
-    from ._models import ChatMessageReadReceipt  # type: ignore
-    from ._models import ChatMessageReadReceiptsCollection  # type: ignore
-    from ._models import ChatMessagesCollection  # type: ignore
-    from ._models import ChatParticipant  # type: ignore
-    from ._models import ChatParticipantsCollection  # type: ignore
-    from ._models import ChatThreadItem  # type: ignore
-    from ._models import ChatThreadProperties  # type: ignore
-    from ._models import ChatThreadsItemCollection  # type: ignore
-    from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import CommunicationIdentifierModel  # type: ignore
-    from ._models import CommunicationUserIdentifierModel  # type: ignore
-    from ._models import CreateChatThreadRequest  # type: ignore
-    from ._models import CreateChatThreadResult  # type: ignore
-    from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
-    from ._models import PhoneNumberIdentifierModel  # type: ignore
-    from ._models import SendChatMessageRequest  # type: ignore
-    from ._models import SendChatMessageResult  # type: ignore
-    from ._models import SendReadReceiptRequest  # type: ignore
-    from ._models import SendTypingNotificationRequest  # type: ignore
-    from ._models import UpdateChatMessageRequest  # type: ignore
-    from ._models import UpdateChatThreadRequest  # type: ignore
+from ._models_py3 import AddChatParticipantsRequest
+from ._models_py3 import AddChatParticipantsResult
+from ._models_py3 import ChatAttachment
+from ._models_py3 import ChatError
+from ._models_py3 import ChatMessage
+from ._models_py3 import ChatMessageContent
+from ._models_py3 import ChatMessageReadReceipt
+from ._models_py3 import ChatMessageReadReceiptsCollection
+from ._models_py3 import ChatMessagesCollection
+from ._models_py3 import ChatParticipant
+from ._models_py3 import ChatParticipantsCollection
+from ._models_py3 import ChatThreadItem
+from ._models_py3 import ChatThreadProperties
+from ._models_py3 import ChatThreadsItemCollection
+from ._models_py3 import CommunicationErrorResponse
+from ._models_py3 import CommunicationIdentifierModel
+from ._models_py3 import CommunicationUserIdentifierModel
+from ._models_py3 import CreateChatThreadRequest
+from ._models_py3 import CreateChatThreadResult
+from ._models_py3 import MicrosoftTeamsAppIdentifierModel
+from ._models_py3 import MicrosoftTeamsUserIdentifierModel
+from ._models_py3 import PhoneNumberIdentifierModel
+from ._models_py3 import SendChatMessageRequest
+from ._models_py3 import SendChatMessageResult
+from ._models_py3 import SendReadReceiptRequest
+from ._models_py3 import SendTypingNotificationRequest
+from ._models_py3 import UpdateChatMessageRequest
+from ._models_py3 import UpdateChatThreadRequest
 
-from ._azure_communication_chat_service_enums import (
-    ChatMessageType,
-    CommunicationCloudEnvironmentModel,
-)
+from ._azure_communication_chat_service_enums import ChatAttachmentType
+from ._azure_communication_chat_service_enums import ChatMessageType
+from ._azure_communication_chat_service_enums import CommunicationCloudEnvironmentModel
+from ._azure_communication_chat_service_enums import CommunicationIdentifierModelKind
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AddChatParticipantsRequest',
-    'AddChatParticipantsResult',
-    'ChatError',
-    'ChatMessage',
-    'ChatMessageContent',
-    'ChatMessageReadReceipt',
-    'ChatMessageReadReceiptsCollection',
-    'ChatMessagesCollection',
-    'ChatParticipant',
-    'ChatParticipantsCollection',
-    'ChatThreadItem',
-    'ChatThreadProperties',
-    'ChatThreadsItemCollection',
-    'CommunicationErrorResponse',
-    'CommunicationIdentifierModel',
-    'CommunicationUserIdentifierModel',
-    'CreateChatThreadRequest',
-    'CreateChatThreadResult',
-    'MicrosoftTeamsUserIdentifierModel',
-    'PhoneNumberIdentifierModel',
-    'SendChatMessageRequest',
-    'SendChatMessageResult',
-    'SendReadReceiptRequest',
-    'SendTypingNotificationRequest',
-    'UpdateChatMessageRequest',
-    'UpdateChatThreadRequest',
-    'ChatMessageType',
-    'CommunicationCloudEnvironmentModel',
+    "AddChatParticipantsRequest",
+    "AddChatParticipantsResult",
+    "ChatAttachment",
+    "ChatError",
+    "ChatMessage",
+    "ChatMessageContent",
+    "ChatMessageReadReceipt",
+    "ChatMessageReadReceiptsCollection",
+    "ChatMessagesCollection",
+    "ChatParticipant",
+    "ChatParticipantsCollection",
+    "ChatThreadItem",
+    "ChatThreadProperties",
+    "ChatThreadsItemCollection",
+    "CommunicationErrorResponse",
+    "CommunicationIdentifierModel",
+    "CommunicationUserIdentifierModel",
+    "CreateChatThreadRequest",
+    "CreateChatThreadResult",
+    "MicrosoftTeamsAppIdentifierModel",
+    "MicrosoftTeamsUserIdentifierModel",
+    "PhoneNumberIdentifierModel",
+    "SendChatMessageRequest",
+    "SendChatMessageResult",
+    "SendReadReceiptRequest",
+    "SendTypingNotificationRequest",
+    "UpdateChatMessageRequest",
+    "UpdateChatThreadRequest",
+    "ChatAttachmentType",
+    "ChatMessageType",
+    "CommunicationCloudEnvironmentModel",
+    "CommunicationIdentifierModelKind",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

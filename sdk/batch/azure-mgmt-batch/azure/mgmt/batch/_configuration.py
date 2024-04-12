@@ -30,14 +30,14 @@ class BatchManagementClientConfiguration(Configuration):  # pylint: disable=too-
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(BatchManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-05-01")
+        api_version: str = kwargs.pop("api_version", "2024-02-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

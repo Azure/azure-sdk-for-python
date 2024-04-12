@@ -1,5 +1,188 @@
 # Release History
 
+## 6.1.0 (2024-03-18)
+
+### Features Added
+
+  - Added model ExpressionV2
+  - Added model ExpressionV2Type
+  - Added model GoogleBigQueryV2AuthenticationType
+  - Added model GoogleBigQueryV2LinkedService
+  - Added model GoogleBigQueryV2ObjectDataset
+  - Added model GoogleBigQueryV2Source
+  - Added model PostgreSqlV2LinkedService
+  - Added model PostgreSqlV2Source
+  - Added model PostgreSqlV2TableDataset
+  - Added model ServiceNowV2AuthenticationType
+  - Added model ServiceNowV2LinkedService
+  - Added model ServiceNowV2ObjectDataset
+  - Added model ServiceNowV2Source
+
+## 6.0.0 (2024-03-04)
+
+### Features Added
+
+  - Model SalesforceServiceCloudV2LinkedService has a new parameter authentication_type
+  - Model SalesforceServiceCloudV2Source has a new parameter include_deleted_objects
+  - Model SalesforceV2LinkedService has a new parameter authentication_type
+  - Model SalesforceV2Source has a new parameter include_deleted_objects
+
+### Breaking Changes
+
+  - Model SalesforceServiceCloudV2Source no longer has parameter read_behavior
+  - Model SalesforceV2Source no longer has parameter read_behavior
+
+## 5.0.0 (2024-01-26)
+
+### Features Added
+
+  - Model AzureBlobFSWriteSettings has a new parameter metadata
+  - Model AzureBlobStorageWriteSettings has a new parameter metadata
+  - Model AzureDataLakeStoreWriteSettings has a new parameter metadata
+  - Model AzureFileStorageWriteSettings has a new parameter metadata
+  - Model FileServerWriteSettings has a new parameter metadata
+  - Model LakeHouseWriteSettings has a new parameter metadata
+  - Model MariaDBLinkedService has a new parameter database
+  - Model MariaDBLinkedService has a new parameter driver_version
+  - Model MariaDBLinkedService has a new parameter password
+  - Model MariaDBLinkedService has a new parameter port
+  - Model MariaDBLinkedService has a new parameter server
+  - Model MariaDBLinkedService has a new parameter username
+  - Model MySqlLinkedService has a new parameter database
+  - Model MySqlLinkedService has a new parameter driver_version
+  - Model MySqlLinkedService has a new parameter port
+  - Model MySqlLinkedService has a new parameter server
+  - Model MySqlLinkedService has a new parameter ssl_mode
+  - Model MySqlLinkedService has a new parameter use_system_trust_store
+  - Model MySqlLinkedService has a new parameter username
+  - Model SftpWriteSettings has a new parameter metadata
+  - Model StoreWriteSettings has a new parameter metadata
+  - Model WebActivity has a new parameter http_request_timeout
+  - Model WebActivity has a new parameter turn_off_async
+
+### Breaking Changes
+
+  - Model MariaDBLinkedService no longer has parameter pwd
+
+## 4.0.0 (2023-11-20)
+
+### Features Added
+
+  - Added operation group ChangeDataCaptureOperations
+  - Model Activity has a new parameter on_inactive_mark_as
+  - Model Activity has a new parameter state
+  - Model AmazonRdsForSqlServerSource has a new parameter isolation_level
+  - Model AppendVariableActivity has a new parameter on_inactive_mark_as
+  - Model AppendVariableActivity has a new parameter state
+  - Model AzureDataExplorerCommandActivity has a new parameter on_inactive_mark_as
+  - Model AzureDataExplorerCommandActivity has a new parameter state
+  - Model AzureFunctionActivity has a new parameter on_inactive_mark_as
+  - Model AzureFunctionActivity has a new parameter state
+  - Model AzureMLBatchExecutionActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLBatchExecutionActivity has a new parameter state
+  - Model AzureMLExecutePipelineActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLExecutePipelineActivity has a new parameter state
+  - Model AzureMLServiceLinkedService has a new parameter authentication
+  - Model AzureMLUpdateResourceActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLUpdateResourceActivity has a new parameter state
+  - Model AzureSqlSource has a new parameter isolation_level
+  - Model ControlActivity has a new parameter on_inactive_mark_as
+  - Model ControlActivity has a new parameter state
+  - Model CopyActivity has a new parameter on_inactive_mark_as
+  - Model CopyActivity has a new parameter state
+  - Model CustomActivity has a new parameter on_inactive_mark_as
+  - Model CustomActivity has a new parameter state
+  - Model DataLakeAnalyticsUSQLActivity has a new parameter on_inactive_mark_as
+  - Model DataLakeAnalyticsUSQLActivity has a new parameter state
+  - Model DatabricksNotebookActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksNotebookActivity has a new parameter state
+  - Model DatabricksSparkJarActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksSparkJarActivity has a new parameter state
+  - Model DatabricksSparkPythonActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksSparkPythonActivity has a new parameter state
+  - Model DeleteActivity has a new parameter on_inactive_mark_as
+  - Model DeleteActivity has a new parameter state
+  - Model ExecuteDataFlowActivity has a new parameter on_inactive_mark_as
+  - Model ExecuteDataFlowActivity has a new parameter state
+  - Model ExecutePipelineActivity has a new parameter on_inactive_mark_as
+  - Model ExecutePipelineActivity has a new parameter state
+  - Model ExecuteSSISPackageActivity has a new parameter on_inactive_mark_as
+  - Model ExecuteSSISPackageActivity has a new parameter state
+  - Model ExecuteWranglingDataflowActivity has a new parameter on_inactive_mark_as
+  - Model ExecuteWranglingDataflowActivity has a new parameter state
+  - Model ExecutionActivity has a new parameter on_inactive_mark_as
+  - Model ExecutionActivity has a new parameter state
+  - Model FailActivity has a new parameter on_inactive_mark_as
+  - Model FailActivity has a new parameter state
+  - Model FilterActivity has a new parameter on_inactive_mark_as
+  - Model FilterActivity has a new parameter state
+  - Model ForEachActivity has a new parameter on_inactive_mark_as
+  - Model ForEachActivity has a new parameter state
+  - Model GetMetadataActivity has a new parameter on_inactive_mark_as
+  - Model GetMetadataActivity has a new parameter state
+  - Model GoogleAdWordsLinkedService has a new parameter google_ads_api_version
+  - Model GoogleAdWordsLinkedService has a new parameter login_customer_id
+  - Model GoogleAdWordsLinkedService has a new parameter private_key
+  - Model GoogleAdWordsLinkedService has a new parameter support_legacy_data_types
+  - Model HDInsightHiveActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightHiveActivity has a new parameter state
+  - Model HDInsightMapReduceActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightMapReduceActivity has a new parameter state
+  - Model HDInsightPigActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightPigActivity has a new parameter state
+  - Model HDInsightSparkActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightSparkActivity has a new parameter state
+  - Model HDInsightStreamingActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightStreamingActivity has a new parameter state
+  - Model HttpReadSettings has a new parameter additional_columns
+  - Model IfConditionActivity has a new parameter on_inactive_mark_as
+  - Model IfConditionActivity has a new parameter state
+  - Model IntegrationRuntimeDataFlowProperties has a new parameter custom_properties
+  - Model LookupActivity has a new parameter on_inactive_mark_as
+  - Model LookupActivity has a new parameter state
+  - Model MongoDbAtlasLinkedService has a new parameter driver_version
+  - Model ParquetSource has a new parameter format_settings
+  - Model PipelineExternalComputeScaleProperties has a new parameter number_of_external_nodes
+  - Model PipelineExternalComputeScaleProperties has a new parameter number_of_pipeline_nodes
+  - Model ScriptActivity has a new parameter on_inactive_mark_as
+  - Model ScriptActivity has a new parameter state
+  - Model SelfHostedIntegrationRuntime has a new parameter self_contained_interactive_authoring_enabled
+  - Model SelfHostedIntegrationRuntimeStatus has a new parameter self_contained_interactive_authoring_enabled
+  - Model SetVariableActivity has a new parameter on_inactive_mark_as
+  - Model SetVariableActivity has a new parameter policy
+  - Model SetVariableActivity has a new parameter set_system_variable
+  - Model SetVariableActivity has a new parameter state
+  - Model SqlDWSource has a new parameter isolation_level
+  - Model SqlMISource has a new parameter isolation_level
+  - Model SqlServerSource has a new parameter isolation_level
+  - Model SqlServerStoredProcedureActivity has a new parameter on_inactive_mark_as
+  - Model SqlServerStoredProcedureActivity has a new parameter state
+  - Model SwitchActivity has a new parameter on_inactive_mark_as
+  - Model SwitchActivity has a new parameter state
+  - Model SynapseNotebookActivity has a new parameter configuration_type
+  - Model SynapseNotebookActivity has a new parameter on_inactive_mark_as
+  - Model SynapseNotebookActivity has a new parameter spark_config
+  - Model SynapseNotebookActivity has a new parameter state
+  - Model SynapseNotebookActivity has a new parameter target_spark_configuration
+  - Model SynapseSparkJobDefinitionActivity has a new parameter on_inactive_mark_as
+  - Model SynapseSparkJobDefinitionActivity has a new parameter state
+  - Model UntilActivity has a new parameter on_inactive_mark_as
+  - Model UntilActivity has a new parameter state
+  - Model ValidationActivity has a new parameter on_inactive_mark_as
+  - Model ValidationActivity has a new parameter state
+  - Model WaitActivity has a new parameter on_inactive_mark_as
+  - Model WaitActivity has a new parameter state
+  - Model WebActivity has a new parameter on_inactive_mark_as
+  - Model WebActivity has a new parameter state
+  - Model WebHookActivity has a new parameter on_inactive_mark_as
+  - Model WebHookActivity has a new parameter policy
+  - Model WebHookActivity has a new parameter state
+
+### Breaking Changes
+
+  - Model HttpReadSettings no longer has parameter enable_partition_discovery
+  - Model HttpReadSettings no longer has parameter partition_root_path
+
 ## 3.1.0 (2023-03-20)
 
 ### Features Added

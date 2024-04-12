@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_functions.begin_execute_request(
+    client.network_functions.begin_execute_request(
         resource_group_name="rg",
         network_function_name="testNetworkfunction",
         parameters={
@@ -42,9 +42,8 @@ def main():
             "serviceEndpoint": "serviceEndpoint",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/preview/2022-01-01-preview/examples/NetworkFunctionsExecuteRequest.json
+# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/stable/2023-09-01/examples/NetworkFunctionsExecuteRequest.json
 if __name__ == "__main__":
     main()

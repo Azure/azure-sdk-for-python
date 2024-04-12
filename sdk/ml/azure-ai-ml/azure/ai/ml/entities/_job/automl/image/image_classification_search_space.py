@@ -18,7 +18,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     Multilabel tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type ams_gradient: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
     :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -85,7 +85,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     :param training_batch_size: Training batch size. Must be a positive integer.
     :type training_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
         'warmup_cosine'. Must be a float in the range [0, 1].
     :type warmup_cosine_lr_cycles: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -108,6 +108,15 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
         0 or 1 or 2.
     :type weighted_loss: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_search_space]
+            :end-before: [END automl.automl_image_job.image_classification_search_space]
+            :language: python
+            :dedent: 8
+            :caption: Defining an automl image classification search space
     """
 
     def __init__(

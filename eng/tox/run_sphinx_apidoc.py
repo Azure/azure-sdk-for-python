@@ -15,6 +15,7 @@ import logging
 from prep_sphinx_env import should_build_docs
 import sys
 import shutil
+from pathlib import Path
 
 from ci_tools.parsing import ParsedSetup
 
@@ -31,16 +32,16 @@ def copy_existing_docs(source, target):
         logging.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def sphinx_apidoc(working_directory):
+def sphinx_apidoc(working_directory: str, namespace: str) -> None:
     working_doc_folder = os.path.join(args.working_directory, "unzipped", "doc")
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(args.working_directory, "unzipped/docgen"),
-            os.path.join(args.working_directory, "unzipped/"),
-            os.path.join(args.working_directory, "unzipped/test*"),
+            os.path.join(args.working_directory, "unzipped/docgen"),   # This is the output folder
+            os.path.join(args.working_directory, "unzipped/"),         # This is the input folder
+            os.path.join(args.working_directory, "unzipped/test*"),    # Starting here this, is excluded
             os.path.join(args.working_directory, "unzipped/example*"),
             os.path.join(args.working_directory, "unzipped/sample*"),
             os.path.join(args.working_directory, "unzipped/setup.py"),
@@ -48,16 +49,25 @@ def sphinx_apidoc(working_directory):
 
     try:
         # if a `doc` folder exists, just leverage the sphinx sources found therein.
-        if os.path.exists(working_doc_folder): 
+        if os.path.exists(working_doc_folder):
             logging.info("Copying files into sphinx source folder.")
             copy_existing_docs(working_doc_folder, os.path.join(args.working_directory, "unzipped/docgen"))
 
         # otherwise, we will run sphinx-apidoc to generate the sources
-        else: 
+        else:
             logging.info("Sphinx api-doc command: {}".format(command_array))
             check_call(
                 command_array
             )
+            # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
+            # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
+            base_path = Path(os.path.join(args.working_directory, "unzipped/docgen/"))
+            namespace = namespace.rpartition('.')[0]
+            while namespace:
+                rst_file_to_delete = base_path / f"{namespace}.rst"
+                logging.info(f"Removing {rst_file_to_delete}")
+                rst_file_to_delete.unlink()
+                namespace = namespace.rpartition('.')[0]
     except CalledProcessError as e:
         logging.error(
             "sphinx-apidoc failed for path {} exited with error {}".format(
@@ -124,6 +134,6 @@ if __name__ == "__main__":
         if is_mgmt_package(pkg_details.name):
             mgmt_apidoc(output_directory, pkg_details.folder)
         else:
-            sphinx_apidoc(args.working_directory)
+            sphinx_apidoc(args.working_directory, pkg_details.namespace)
     else:
         logging.info("Skipping sphinx source generation for {}".format(pkg_details.name))

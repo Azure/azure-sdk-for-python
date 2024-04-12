@@ -37,16 +37,19 @@ def main():
             "location": "centralus",
             "properties": {
                 "devBoxDefinitionName": "WebDevBox",
+                "displayName": "Developer Pool",
                 "licenseType": "Windows_Client",
                 "localAdministrator": "Enabled",
                 "networkConnectionName": "Network1-westus2",
+                "singleSignOnStatus": "Disabled",
                 "stopOnDisconnect": {"gracePeriodMinutes": 60, "status": "Enabled"},
+                "virtualNetworkType": "Unmanaged",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Pools_Put.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2023-10-01-preview/examples/Pools_Put.json
 if __name__ == "__main__":
     main()

@@ -13,6 +13,15 @@ class NlpFeaturizationSettings(FeaturizationSettings):
 
     :ivar type: Specifies the type of FeaturizationSettings. Set automatically to "NLP" for this class.
     :vartype type: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_featurization_settings]
+                :end-before: [END automl.nlp_featurization_settings]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp featurization settings
     """
 
     type = FeaturizationSettingsType.NLP

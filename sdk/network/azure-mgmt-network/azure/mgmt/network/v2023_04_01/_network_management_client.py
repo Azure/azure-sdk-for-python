@@ -89,7 +89,6 @@ from .operations import (
     NetworkManagersOperations,
     NetworkProfilesOperations,
     NetworkSecurityGroupsOperations,
-    NetworkVirtualApplianceConnectionsOperations,
     NetworkVirtualAppliancesOperations,
     NetworkWatchersOperations,
     Operations,
@@ -520,10 +519,6 @@ class NetworkManagementClient(
     :ivar express_route_connections: ExpressRouteConnectionsOperations operations
     :vartype express_route_connections:
      azure.mgmt.network.v2023_04_01.operations.ExpressRouteConnectionsOperations
-    :ivar network_virtual_appliance_connections: NetworkVirtualApplianceConnectionsOperations
-     operations
-    :vartype network_virtual_appliance_connections:
-     azure.mgmt.network.v2023_04_01.operations.NetworkVirtualApplianceConnectionsOperations
     :ivar virtual_hub_bgp_connection: VirtualHubBgpConnectionOperations operations
     :vartype virtual_hub_bgp_connection:
      azure.mgmt.network.v2023_04_01.operations.VirtualHubBgpConnectionOperations
@@ -932,9 +927,6 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize, "2023-04-01"
         )
         self.express_route_connections = ExpressRouteConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2023-04-01"
-        )
-        self.network_virtual_appliance_connections = NetworkVirtualApplianceConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2023-04-01"
         )
         self.virtual_hub_bgp_connection = VirtualHubBgpConnectionOperations(

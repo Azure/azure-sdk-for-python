@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+
+from typing import Any
+
 from azure.ai.ml._restclient.v2022_10_01.models import SystemData as RestSystemData
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -39,7 +42,7 @@ class SystemData(RestTranslatableMixin):
     :paramtype last_modified_at: datetime
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.created_by = kwargs.get("created_by", None)
         self.created_by_type = kwargs.get("created_by_type", None)
         self.created_at = kwargs.get("created_at", None)

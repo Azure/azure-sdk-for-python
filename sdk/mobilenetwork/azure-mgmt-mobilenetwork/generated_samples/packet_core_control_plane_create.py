@@ -37,6 +37,10 @@ def main():
             "properties": {
                 "controlPlaneAccessInterface": {"name": "N2"},
                 "coreNetworkTechnology": "5GC",
+                "eventHub": {
+                    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.EventHub/namespaces/contosoNamespace/eventHubs/contosoHub",
+                    "reportingInterval": 60,
+                },
                 "installation": {"desiredState": "Installed"},
                 "localDiagnosticsAccess": {
                     "authenticationType": "AAD",
@@ -56,6 +60,7 @@ def main():
                     },
                     "type": "AKS-HCI",
                 },
+                "signaling": {"nasReroute": {"macroMmeGroupId": 1024}},
                 "sites": [
                     {
                         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.MobileNetwork/mobileNetworks/testMobileNetwork/sites/testSite"
@@ -70,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/PacketCoreControlPlaneCreate.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-02-01/examples/PacketCoreControlPlaneCreate.json
 if __name__ == "__main__":
     main()

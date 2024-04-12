@@ -29,7 +29,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Azure Purview Workflow Service Client Library for Python",
+    description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     license="MIT License",
@@ -64,7 +64,7 @@ setup(
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.28.0",
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
     ],
     python_requires=">=3.7",

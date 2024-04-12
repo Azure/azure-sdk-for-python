@@ -25,12 +25,12 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import (InputTextItem)
 
 # -------------------------------------------------------------------------
 # Text translation client
 # -------------------------------------------------------------------------
 import sample_text_translation_client
+
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
 # -------------------------------------------------------------------------
@@ -42,13 +42,17 @@ def get_text_transliteration():
         language = "zh-Hans"
         from_script = "Hans"
         to_script = "Latn"
-        input_text_elements = [ InputTextItem(text = "这是个测试。") ]
+        input_text_elements = ["这是个测试。"]
 
-        response = text_translator.transliterate(content = input_text_elements, language = language, from_script = from_script, to_script = to_script)
+        response = text_translator.transliterate(
+            request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        )
         transliteration = response[0] if response else None
 
         if transliteration:
-            print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
+            print(
+                f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'."
+            )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -56,4 +60,3 @@ def get_text_transliteration():
             print(f"Message: {exception.error.message}")
         raise
     # [END get_text_transliteration]
-

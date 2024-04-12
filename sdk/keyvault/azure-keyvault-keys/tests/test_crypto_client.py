@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
+from datetime import datetime, timezone
 import hashlib
 import os
 import time
@@ -22,10 +23,11 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
 )
 from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 import pytest
+
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto import (
     CryptographyClient,
     EncryptionAlgorithm,
@@ -34,21 +36,19 @@ from azure.keyvault.keys.crypto import (
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
-from azure.keyvault.keys._generated_models import KeySignParameters
+from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
-from azure.mgmt.keyvault.models import KeyPermissions, Permissions
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_decorator
 from _keys_test_case import KeysTestCase
 
-# without keys/get, a CryptographyClient created with a key ID performs all ops remotely
-NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
-only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
-no_get = get_decorator(permissions=NO_GET)
+only_vault_default = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
+only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 
 
 def _to_bytes(hex):
@@ -203,8 +203,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
-    @pytest.mark.parametrize("api_version,is_hsm", no_get)
-    @KeysClientPreparer(permissions=NO_GET)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
         set_bodiless_matcher()
@@ -212,6 +212,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         assert result.key_id == imported_key.id
@@ -221,7 +222,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert EncryptionAlgorithm.rsa_oaep == result.algorithm
         assert self.plaintext == result.plaintext
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key(self, key_client, **kwargs):
@@ -229,6 +230,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
+        # Use the key's ID to create the client, ensuring the material is fetched when the RSA key is created
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
         # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
@@ -252,8 +254,54 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_plaintext = crypto_private_key.decrypt(ciphertext=crypto_ciphertext, padding=padding)
         assert crypto_plaintext == plaintext
 
-    @pytest.mark.parametrize("api_version,is_hsm", no_get)
-    @KeysClientPreparer(permissions=NO_GET)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_default)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_encrypt_and_decrypt_with_managed_key_no_get(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        key_name = self.get_resource_name("keycrypt")
+
+        imported_key = self._import_test_key(key_client, key_name)
+        # Use the key's ID to create the client, ensuring the we don't have the material
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
+
+        # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
+        algorithm = SHA1()
+        mgf = MGF1(algorithm)
+        padding = OAEP(mgf, algorithm, None)
+        ciphertext = public_key.encrypt(self.plaintext, padding)
+
+        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        plaintext = private_key.decrypt(ciphertext=ciphertext, padding=padding)
+        assert self.plaintext == plaintext
+
+        # Ensure we raise for operations that can't be performed without local key material
+        with pytest.raises(ValueError) as ex:
+            public_key.public_numbers()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            public_key.public_bytes(None, None)
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            public_key.key_size()
+        assert "key material" in str(ex.value).lower()
+        assert public_key != imported_key.key  # Even though the keys are equal, we can't compare without key material
+
+        with pytest.raises(ValueError) as ex:
+            private_key.private_numbers()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            private_key.private_bytes(None, None, None)
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            private_key.key_size()
+        assert "key material" in str(ex.value).lower()
+
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
     @recorded_by_proxy
     def test_sign_and_verify(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keysign")
@@ -264,6 +312,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         result = crypto_client.sign(SignatureAlgorithm.rs256, digest)
         assert result.key_id == imported_key.id
@@ -273,14 +322,15 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.algorithm == SignatureAlgorithm.rs256
         assert verified.is_valid
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
-    @KeysClientPreparer(permissions=NO_GET)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+    @KeysClientPreparer()
     @recorded_by_proxy
     def test_sign_and_verify_with_managed_key(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keysign")
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         # Create a KeyVaultRSAPrivateKey that can perform signing with `cryptography`'s interface
         private_key = crypto_client.create_rsa_private_key()
@@ -307,8 +357,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_public_key.verify(crypto_signature, self.plaintext, padding, algorithm)
         crypto_public_key.verify(signature, self.plaintext, padding, algorithm)
 
-    @pytest.mark.parametrize("api_version,is_hsm", no_get)
-    @KeysClientPreparer(permissions=NO_GET)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
         set_bodiless_matcher()
@@ -317,6 +367,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         created_key = self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
         assert created_key is not None
         crypto_client = self.create_crypto_client(created_key.id, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
@@ -670,7 +721,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_4_plus)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_send_request(self, key_client, is_hsm, **kwargs):

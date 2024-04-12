@@ -150,11 +150,6 @@ class AMQPClientAsync(AMQPClientSync):
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    _logger.debug(
-                        "Keeping %r connection alive.",
-                        self.__class__.__name__,
-                        extra=self._network_trace_params
-                    )
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
                         batch=self._link.current_link_credit))
                     start_time = current_time
@@ -304,8 +299,8 @@ class AMQPClientAsync(AMQPClientSync):
         if self._keep_alive_thread:
             await self._keep_alive_thread
             self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = None
-        self._network_trace_params["amqpSession"] = None
+        self._network_trace_params["amqpConnection"] = ""
+        self._network_trace_params["amqpSession"] = ""
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during
@@ -747,7 +742,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit == 0:
+            if self._link.current_link_credit <= 0:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

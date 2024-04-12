@@ -6,6 +6,7 @@ Only certain instrumentations support metrics collection, refer to https://githu
 for the full list. Calls made with the underlying instrumented libraries will track metrics information in the
 metrics explorer view in Application Insights.
 """
+# mypy: disable-error-code="attr-defined"
 import flask
 import os
 import requests

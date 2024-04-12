@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -24,7 +24,22 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
-    """Configuration for AutoML Image Instance Segmentation job."""
+    """Configuration for AutoML Image Instance Segmentation job.
+
+    :keyword primary_metric: The primary metric to use for optimization.
+    :paramtype primary_metric: Optional[str, ~azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
+    :keyword kwargs: Job-specific arguments.
+    :paramtype kwargs: Dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_instance_segmentation_job]
+            :end-before: [END automl.automl_image_job.image_instance_segmentation_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl image instance segmentation job
+    """
 
     _DEFAULT_PRIMARY_METRIC = InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
@@ -32,13 +47,8 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         self,
         *,
         primary_metric: Optional[Union[str, InstanceSegmentationPrimaryMetrics]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
-        """Initialize a new AutoML Image Instance Segmentation job.
-
-        :param primary_metric: The primary metric to use for optimization
-        :param kwargs: Job-specific arguments
-        """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)
@@ -56,11 +66,11 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         self.primary_metric = primary_metric or ImageInstanceSegmentationJob._DEFAULT_PRIMARY_METRIC
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Union[str, InstanceSegmentationPrimaryMetrics]:
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, InstanceSegmentationPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, InstanceSegmentationPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -172,7 +182,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ImageInstanceSegmentationJob":
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
@@ -212,10 +222,11 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = ImageInstanceSegmentationNodeSchema(
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
@@ -225,7 +236,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
 
         return schema_dict
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ImageInstanceSegmentationJob):
             return NotImplemented
 
@@ -234,5 +245,5 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

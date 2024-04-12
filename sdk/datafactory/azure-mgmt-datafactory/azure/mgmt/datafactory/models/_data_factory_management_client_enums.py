@@ -10,6 +10,25 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActivityOnInactiveMarkAs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status result of the activity when the state is set to Inactive. This is an optional property
+    and if not provided when the activity is inactive, the status will be Succeeded by default.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    SKIPPED = "Skipped"
+
+
+class ActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Activity state. This is an optional property and if not provided, the state will be Active by
+    default.
+    """
+
+    ACTIVE = "Active"
+    INACTIVE = "Inactive"
+
+
 class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AmazonRdsForOraclePartitionOption."""
 
@@ -112,6 +131,12 @@ class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ARTIFACT = "Artifact"
 
 
+class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of connection via linked service or dataset."""
+
+    LINKEDSERVICETYPE = "linkedservicetype"
+
+
 class CopyBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available types of copy behavior."""
 
@@ -121,22 +146,10 @@ class CopyBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CosmosDbConnectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The connection mode used to access CosmosDB account. Type: string (or Expression with
-    resultType string).
-    """
+    """The connection mode used to access CosmosDB account. Type: string."""
 
     GATEWAY = "Gateway"
     DIRECT = "Direct"
-
-
-class CosmosDbServicePrincipalCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The service principal credential type to use in Server-To-Server authentication.
-    'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
-    Expression with resultType string).
-    """
-
-    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
-    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
 
 class CredentialReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -258,12 +271,29 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+
+
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
+class FrequencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency of period in terms of 'Hour', 'Minute' or 'Second'."""
+
+    HOUR = "Hour"
+    MINUTE = "Minute"
+    SECOND = "Second"
 
 
 class FtpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -297,6 +327,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -489,6 +526,14 @@ class ManagedVirtualNetworkReferenceType(str, Enum, metaclass=CaseInsensitiveEnu
     MANAGED_VIRTUAL_NETWORK_REFERENCE = "ManagedVirtualNetworkReference"
 
 
+class MappingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the CDC attribute mapping. Note: 'Advanced' mapping type is also saved as 'Derived'."""
+
+    DIRECT = "Direct"
+    DERIVED = "Derived"
+    AGGREGATE = "Aggregate"
+
+
 class MongoDbAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to be used to connect to the MongoDB database."""
 
@@ -650,6 +695,7 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_EQUALS = "NotEquals"
     IN = "In"
     NOT_IN = "NotIn"
+    IN_ENUM = "In"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -685,10 +731,17 @@ class SalesforceSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SalesforceSourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The read behavior for the operation. Default is Query."""
+    """The Salesforce read behavior for the operation."""
 
     QUERY = "Query"
     QUERY_ALL = "QueryAll"
+
+
+class SalesforceV2SinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The write behavior for the operation. Default is Insert."""
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
 
 
 class SapCloudForCustomerSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -782,6 +835,13 @@ class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     O_AUTH2 = "OAuth2"
 
 
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
 class ServicePrincipalCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available servicePrincipalCredentialType values."""
 
@@ -795,6 +855,14 @@ class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
     MULTI_FACTOR = "MultiFactor"
+
+
+class SnowflakeAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    BASIC = "Basic"
+    KEY_PAIR = "KeyPair"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -835,9 +903,7 @@ class SparkThriftTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class SqlAlwaysEncryptedAkvAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sql always encrypted AKV authentication type. Type: string (or Expression with resultType
-    string).
-    """
+    """Sql always encrypted AKV authentication type. Type: string."""
 
     SERVICE_PRINCIPAL = "ServicePrincipal"
     MANAGED_IDENTITY = "ManagedIdentity"

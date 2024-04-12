@@ -19,12 +19,12 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 sdk_dir = os.path.join(root_dir, "sdk")
 
 
-def run_black(service_dir):
+def run_black(glob_string, service_dir):
     results = []
     logging.info("Running black for {}".format(service_dir))
 
     discovered_packages = discover_targeted_packages(
-        "azure*", os.path.join(root_dir, "sdk", service_dir)
+        glob_string, os.path.join(root_dir, "sdk", service_dir)
     )
 
     for package in discovered_packages:
@@ -73,6 +73,15 @@ def run_black(service_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run black to verify formatted code.")
+
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+        ),
+    )
     parser.add_argument(
         "--service_directory", help="Directory of the package being tested"
     )
@@ -81,7 +90,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     if args.validate != "False":
-        results = run_black(args.service_directory)
+        results = run_black(args.glob_string, args.service_directory)
 
         if len(results) > 0:
             for result in results:

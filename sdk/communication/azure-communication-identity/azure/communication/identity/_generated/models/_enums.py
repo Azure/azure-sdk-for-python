@@ -14,4 +14,13 @@ class CommunicationTokenScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """List of scopes for an access token."""
 
     CHAT = "chat"
+    """Use this for full access to Chat APIs."""
     VOIP = "voip"
+    """Use this for full access to Calling APIs."""
+    CHAT_JOIN = "chat.join"
+    """Access to Chat APIs but without the authorization to create, delete or update chat threads."""
+    CHAT_JOIN_LIMITED = "chat.join.limited"
+    """A more limited version of chat.join that doesn't allow to add or remove participants. Use this
+    #: scope when the token bearer is not fully trusted, for example in guest scenarios."""
+    VOIP_JOIN = "voip.join"
+    """Access to Calling APIs but without the authorization to start new calls."""

@@ -55,7 +55,6 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
-    @pytest.mark.skip(reason="model performance not supported in PuP")
     def test_model_performance_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/model_performance_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/model_performance.yaml"
@@ -87,10 +86,10 @@ class TestMonitorSchedule:
 
         # null out lookback
         for signal in schedule.create_monitor.monitoring_signals.values():
-            signal.production_data.data_window_size = None
+            signal.production_data.data_window.lookback_window_size = None
 
         # test minute
-        override_frequency_interval_and_check_window_size(schedule, "minute", 1, 1)
+        override_frequency_interval_and_check_window_size(schedule, "minute", 5, 1)
         override_frequency_interval_and_check_window_size(schedule, "hour", 5, 1)
         override_frequency_interval_and_check_window_size(schedule, "day", 6, 6)
         override_frequency_interval_and_check_window_size(schedule, "week", 2, 14)
@@ -102,8 +101,9 @@ def override_frequency_interval_and_check_window_size(
 ):
     schedule.trigger.frequency = frequency
     schedule.trigger.interval = interval
+
     for signal in schedule.create_monitor.monitoring_signals.values():
-        signal.production_data.data_window_size = None
+        signal.production_data.data_window.lookback_window_size = None
 
     to_rest_schedule = schedule._to_rest_object()
     for signal in to_rest_schedule.properties.action.monitor_definition.signals.values():

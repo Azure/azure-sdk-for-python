@@ -4,10 +4,9 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import FeatureDataType, IndexColumn
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -36,7 +35,6 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 }
 
 
-@experimental
 class DataColumn(RestTranslatableMixin):
     """A dataframe column
 
@@ -58,7 +56,7 @@ class DataColumn(RestTranslatableMixin):
             :caption: Using DataColumn when creating an index column for a feature store entity
     """
 
-    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs) -> None:
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs: Any):
         if isinstance(type, str):
             type = DataColumnType[type]
         elif not isinstance(type, DataColumnType):

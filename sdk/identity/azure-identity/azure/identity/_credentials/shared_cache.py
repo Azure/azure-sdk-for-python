@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, TypeVar
 from azure.core.credentials import AccessToken
 
 from .silent import SilentAuthenticationCredential
@@ -16,16 +16,19 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
+T = TypeVar("T", bound="_SharedTokenCacheCredential")
+
+
 class SharedTokenCacheCredential:
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username: Username (typically an email address) of the user to authenticate as. This is used when the
         local cache contains tokens for multiple identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
@@ -40,12 +43,12 @@ class SharedTokenCacheCredential:
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
-    def __enter__(self):
-        self._credential.__enter__()
+    def __enter__(self) -> "SharedTokenCacheCredential":
+        self._credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args):
-        self._credential.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        self._credential.__exit__(*args)  # type: ignore
 
     def close(self) -> None:
         """Close the credential's transport session."""
@@ -53,7 +56,12 @@ class SharedTokenCacheCredential:
 
     @log_get_token("SharedTokenCacheCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -63,7 +71,7 @@ class SharedTokenCacheCredential:
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
         :keyword str tenant_id: not used by this credential; any value provided will be ignored.
@@ -77,7 +85,7 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     @staticmethod
     def supported() -> bool:
@@ -92,9 +100,9 @@ class SharedTokenCacheCredential:
 class _SharedTokenCacheCredential(SharedTokenCacheBase):
     """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
 
-    def __enter__(self):
+    def __enter__(self: T) -> T:
         if self._client:
-            self._client.__enter__()
+            self._client.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *args):
@@ -102,7 +110,12 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
             self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -110,7 +123,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = bool(kwargs.get("enable_cae", False))
+        is_cae = enable_cae
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.

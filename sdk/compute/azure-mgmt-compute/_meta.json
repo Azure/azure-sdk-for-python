@@ -1,12 +1,12 @@
 {
-  "commit": "0ebd4949e8e1cd9537ca5a07384c7661162cc7a6",
+  "commit": "475747ff6322e9bf180b8911d871561b264379c3",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.13.7",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.7 --use=@autorest/modelerfour@4.27.0 --version=3.9.7 --version-tolerant=False",
   "readme": "specification/compute/resource-manager/readme.md",
   "package-2023-03-01-only": "2023-04-17 22:42:05 -0400 b06a6f45e472dd07c2e0dab06b1e52dfe2684c88 Microsoft.Compute/ComputeRP/stable/2023-03-01/virtualMachineScaleSet.json",
   "package-2023-01-02-only": "2023-06-28 00:48:15 -0400 b1d41f8dc643415d4dc6ee82bdb2fef04ef45bc9 Microsoft.Compute/DiskRP/stable/2023-01-02/snapshot.json",
@@ -48,5 +48,9 @@
   "package-compute-2016-03": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2016-03-30/compute.json",
   "package-compute-2015-06": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2015-06-15/compute.json",
   "package-2023-07-01-only": "2023-08-10 16:21:40 -0400 1a925d1afe288a5f20d078bbc89214a36a0e4287 Microsoft.Compute/ComputeRP/stable/2023-07-01/virtualMachineScaleSet.json",
-  "package-2023-04-02-only": "2023-08-07 20:58:57 -0400 b9403296f0b0e112b0d8222ad05fd1d79ee10e03 Microsoft.Compute/DiskRP/stable/2023-04-02/snapshot.json"
+  "package-2023-04-02-only": "2023-08-07 20:58:57 -0400 b9403296f0b0e112b0d8222ad05fd1d79ee10e03 Microsoft.Compute/DiskRP/stable/2023-04-02/snapshot.json",
+  "package-2023-09-01-only": "2023-12-05 16:05:55 -0500 378977e71101fdf224414b86e9f7d8c776cd07ec Microsoft.Compute/ComputeRP/stable/2023-09-01/virtualMachineScaleSet.json",
+  "package-2022-08-03-only": "2023-11-28 14:37:35 -0500 a4d77e0bd0f00b66d42940a9be143fdb38534b1e Microsoft.Compute/GalleryRP/stable/2022-08-03/sharedGallery.json",
+  "package-2023-10-02-only": "2023-12-19 03:18:52 -0500 4a4e7c0083937d49061641e857bc876043bb1f5b Microsoft.Compute/DiskRP/stable/2023-10-02/snapshot.json",
+  "package-2023-07-03-only": "2024-02-08 13:16:01 -0500 f715b7fee5e648d06b17467b08473f6cbeee84e0 Microsoft.Compute/GalleryRP/stable/2023-07-03/sharedGallery.json"
 }

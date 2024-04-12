@@ -1,5 +1,76 @@
 # Release History
 
+## 9.0.0b1 (2023-11-20)
+
+### Features Added
+
+  - Added operation MachinesOperations.begin_assess_patches
+  - Added operation MachinesOperations.begin_install_patches
+  - Added operation group AgentVersionOperations
+  - Added operation group ExtensionMetadataOperations
+  - Added operation group HybridIdentityMetadataOperations
+  - Added operation group LicenseProfilesOperations
+  - Added operation group LicensesOperations
+  - Added operation group NetworkProfileOperations
+  - Model AgentConfiguration has a new parameter config_mode
+  - Model Machine has a new parameter ad_fqdn
+  - Model Machine has a new parameter agent_configuration
+  - Model Machine has a new parameter agent_upgrade
+  - Model Machine has a new parameter agent_version
+  - Model Machine has a new parameter client_public_key
+  - Model Machine has a new parameter cloud_metadata
+  - Model Machine has a new parameter detected_properties
+  - Model Machine has a new parameter display_name
+  - Model Machine has a new parameter dns_fqdn
+  - Model Machine has a new parameter domain_name
+  - Model Machine has a new parameter error_details
+  - Model Machine has a new parameter extensions
+  - Model Machine has a new parameter kind
+  - Model Machine has a new parameter last_status_change
+  - Model Machine has a new parameter license_profile
+  - Model Machine has a new parameter location_data
+  - Model Machine has a new parameter machine_fqdn
+  - Model Machine has a new parameter mssql_discovered
+  - Model Machine has a new parameter network_profile
+  - Model Machine has a new parameter os_name
+  - Model Machine has a new parameter os_profile
+  - Model Machine has a new parameter os_sku
+  - Model Machine has a new parameter os_type
+  - Model Machine has a new parameter os_version
+  - Model Machine has a new parameter parent_cluster_resource_id
+  - Model Machine has a new parameter private_link_scope_resource_id
+  - Model Machine has a new parameter provisioning_state
+  - Model Machine has a new parameter resources
+  - Model Machine has a new parameter service_statuses
+  - Model Machine has a new parameter status
+  - Model Machine has a new parameter vm_id
+  - Model Machine has a new parameter vm_uuid
+  - Model MachineExtensionUpdate has a new parameter auto_upgrade_minor_version
+  - Model MachineExtensionUpdate has a new parameter enable_automatic_upgrade
+  - Model MachineExtensionUpdate has a new parameter force_update_tag
+  - Model MachineExtensionUpdate has a new parameter protected_settings
+  - Model MachineExtensionUpdate has a new parameter publisher
+  - Model MachineExtensionUpdate has a new parameter settings
+  - Model MachineExtensionUpdate has a new parameter type
+  - Model MachineExtensionUpdate has a new parameter type_handler_version
+  - Model MachineUpdate has a new parameter agent_upgrade
+  - Model MachineUpdate has a new parameter cloud_metadata
+  - Model MachineUpdate has a new parameter kind
+  - Model MachineUpdate has a new parameter location_data
+  - Model MachineUpdate has a new parameter os_profile
+  - Model MachineUpdate has a new parameter parent_cluster_resource_id
+  - Model MachineUpdate has a new parameter private_link_scope_resource_id
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Operation MachinesOperations.list_by_resource_group has a new optional parameter expand
+
+### Breaking Changes
+
+  - Model Machine no longer has parameter properties
+  - Model MachineExtensionUpdate no longer has parameter properties
+  - Model MachineUpdate no longer has parameter properties
+
 ## 8.0.0 (2023-02-15)
 
 ### Features Added

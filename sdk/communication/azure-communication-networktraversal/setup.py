@@ -45,13 +45,16 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 7 - Inactive",
 
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
@@ -64,10 +67,10 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
         "msrest>=0.7.1",
-        "azure-core<2.0.0,>=1.24.0"
+        "azure-core>=1.24.0"
     ],
     extras_require={
         ":python_version<'3.8'": ["typing-extensions"]

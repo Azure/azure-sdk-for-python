@@ -69,7 +69,7 @@ class AzurePowerShellCredential(AsyncContextManager):
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
@@ -108,12 +108,19 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
-        if sys.platform.startswith("win") and b"' is not recognized" in stderr:
+        if sys.platform.startswith("win") and (b"' is not recognized" in stderr or proc.returncode == 9009):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout)
 
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(
+            message="Timed out waiting for Azure PowerShell.\n"
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        ) from ex
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
         error = CredentialUnavailableError(
@@ -122,13 +129,6 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
             "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(command_line[0])
         )
         raise error from ex
-    except asyncio.TimeoutError as ex:
-        proc.kill()
-        raise CredentialUnavailableError(
-            message="Timed out waiting for Azure PowerShell.\n"
-            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
-        ) from ex
 
     decoded_stdout = stdout.decode()
 

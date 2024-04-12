@@ -24,14 +24,14 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client_id: str,
-        client_credential: Optional[Union[str, Dict]] = None,
+        client_credential: Optional[Union[str, Dict[str, str]]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
         authority: Optional[str] = None,
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
         enable_support_logging: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -51,15 +51,19 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         self._cache = kwargs.pop("_cache", None)
         self._cae_cache = kwargs.pop("_cae_cache", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
         self._cache_options = kwargs.pop("cache_persistence_options", None)
 
         super(MsalCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "MsalCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -112,3 +116,22 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
             )
 
         return client_applications_map[tenant_id]
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_client_applications"]
+        del state["_cae_client_applications"]
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self._client_applications = {}
+        self._cae_client_applications = {}
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None

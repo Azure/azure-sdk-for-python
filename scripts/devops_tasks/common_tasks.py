@@ -26,7 +26,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, lambda_filter_azure_pkg, str_to_bool
+from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -126,6 +126,7 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
             )
         )
         or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
     ):
         return True
     else:
@@ -238,7 +239,7 @@ def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
 
 
 def find_tools_packages(root_path):
-    """Find packages in tools directory. For e.g. azure-sdk-tools, azure-devtools"""
+    """Find packages in tools directory. For e.g. azure-sdk-tools"""
     glob_string = os.path.join(root_path, "tools", "*", "setup.py")
     pkgs = [os.path.basename(os.path.dirname(p)) for p in glob.glob(glob_string)]
     logging.info("Packages in tools: {}".format(pkgs))

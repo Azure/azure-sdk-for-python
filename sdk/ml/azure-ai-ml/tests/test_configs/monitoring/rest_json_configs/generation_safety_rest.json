@@ -30,7 +30,7 @@
                     "correlation_id": "inference_correlation_id"
                   },
                   "windowSize": "P7D",
-                  "windowOffset": "P7D"
+                  "windowOffset": "P0D"
                 },
                 {
                   "inputDataType": "Trailing",
@@ -42,7 +42,7 @@
                     "prediction_probability": "is_fraud_probability"
                   },
                   "windowSize": "P7D",
-                  "windowOffset": "P7D"
+                  "windowOffset": "P0D"
                 }
               ],
               "metricThresholds": [

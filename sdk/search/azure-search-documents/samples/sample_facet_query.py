@@ -20,6 +20,7 @@ USAGE:
     3) AZURE_SEARCH_API_KEY - your search API key
 """
 
+from typing import List, Dict, cast
 import os
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
@@ -36,7 +37,7 @@ def filter_query():
 
     results = search_client.search(search_text="WiFi", facets=["category,count:3", "parkingIncluded"])
 
-    facets = results.get_facets()
+    facets: Dict[str, List[str]] = cast(Dict[str, List[str]], results.get_facets())
 
     print("Catgory facet counts for hotels:")
     for facet in facets["category"]:

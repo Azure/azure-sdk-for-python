@@ -19,6 +19,7 @@ from .operations import (
     AttachedDataNetworksOperations,
     DataNetworksOperations,
     DiagnosticsPackagesOperations,
+    ExtendedUeInformationOperations,
     MobileNetworksOperations,
     Operations,
     PacketCapturesOperations,
@@ -31,6 +32,7 @@ from .operations import (
     SimsOperations,
     SitesOperations,
     SlicesOperations,
+    UeInformationOperations,
 )
 
 if TYPE_CHECKING:
@@ -77,13 +79,18 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype sites: azure.mgmt.mobilenetwork.aio.operations.SitesOperations
     :ivar slices: SlicesOperations operations
     :vartype slices: azure.mgmt.mobilenetwork.aio.operations.SlicesOperations
+    :ivar extended_ue_information: ExtendedUeInformationOperations operations
+    :vartype extended_ue_information:
+     azure.mgmt.mobilenetwork.aio.operations.ExtendedUeInformationOperations
+    :ivar ue_information: UeInformationOperations operations
+    :vartype ue_information: azure.mgmt.mobilenetwork.aio.operations.UeInformationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -131,6 +138,10 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.slices = SlicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extended_ue_information = ExtendedUeInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ue_information = UeInformationOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

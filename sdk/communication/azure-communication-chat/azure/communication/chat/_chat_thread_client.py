@@ -99,7 +99,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            endpoint,
+            endpoint=self._endpoint,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
@@ -373,7 +373,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get messages up to.
-        The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+            The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -543,14 +543,11 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 add_chat_participants_request=add_thread_participants_request,
                 **kwargs)
 
-
-            if hasattr(add_chat_participants_result, 'invalid_participants') and \
-                    add_chat_participants_result.invalid_participants is not None:
-                response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
+            if hasattr(add_chat_participants_result, 'invalid_participants'):
+                response = CommunicationErrorResponseConverter.convert(
                     participants=thread_participants,
                     chat_errors=add_chat_participants_result.invalid_participants
                 )
-
         return response
 
     @distributed_trace

@@ -29,6 +29,10 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar sql_vulnerability_assessment_baseline_rules:
+     SqlVulnerabilityAssessmentBaselineRulesOperations operations
+    :vartype sql_vulnerability_assessment_baseline_rules:
+     azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
     :vartype sql_vulnerability_assessment_scans:
      azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentScansOperations
@@ -36,10 +40,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
      SqlVulnerabilityAssessmentScanResultsOperations operations
     :vartype sql_vulnerability_assessment_scan_results:
      azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentScanResultsOperations
-    :ivar sql_vulnerability_assessment_baseline_rules:
-     SqlVulnerabilityAssessmentBaselineRulesOperations operations
-    :vartype sql_vulnerability_assessment_baseline_rules:
-     azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -59,14 +59,14 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
+        )
         self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
         self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

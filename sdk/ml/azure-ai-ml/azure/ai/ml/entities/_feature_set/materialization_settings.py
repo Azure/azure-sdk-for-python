@@ -2,18 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationSettings as RestMaterializationSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationStoreType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationSettings as RestMaterializationSettings
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationStoreType
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._notification.notification import Notification
 from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 
 
-@experimental
 class MaterializationSettings(RestTranslatableMixin):
     """Defines materialization settings.
 
@@ -51,7 +49,8 @@ class MaterializationSettings(RestTranslatableMixin):
         notification: Optional[Notification] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
@@ -82,7 +81,7 @@ class MaterializationSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "MaterializationSettings":
+    def _from_rest_object(cls, obj: RestMaterializationSettings) -> Optional["MaterializationSettings"]:
         if not obj:
             return None
         return MaterializationSettings(

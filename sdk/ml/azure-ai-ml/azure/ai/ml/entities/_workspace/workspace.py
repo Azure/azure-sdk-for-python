@@ -6,18 +6,22 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 
 from .customer_managed_key import CustomerManagedKey
@@ -76,6 +80,8 @@ class Workspace(Resource):
     :type enable_data_isolation: bool
     :param workspace_hub: The resource ID of an existing workspace hub to help create project workspace
     :type workspace_hub: str
+    :param serverless_compute: The serverless compute settings for the workspace.
+    :type: ~azure.ai.ml.entities.ServerlessComputeSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -109,12 +115,13 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
         workspace_hub: Optional[str] = None,
-        **kwargs,
+        serverless_compute: Optional[ServerlessComputeSettings] = None,
+        **kwargs: Any,
     ):
         self._kind = kwargs.pop("kind", "default")
         self.print_as_yaml = True
-        self._discovery_url = kwargs.pop("discovery_url", None)
-        self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
+        self._mlflow_tracking_uri: Optional[str] = kwargs.pop("mlflow_tracking_uri", None)
         self._workspace_id = kwargs.pop("workspace_id", None)
         self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
@@ -137,9 +144,10 @@ class Workspace(Resource):
         self.workspace_hub = workspace_hub
         if workspace_hub:
             self._kind = PROJECT_WORKSPACE_KIND
+        self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
-    def discovery_url(self) -> str:
+    def discovery_url(self) -> Optional[str]:
         """Backend service base URLs for the workspace.
 
         :return: Backend service URLs of the workspace
@@ -148,7 +156,7 @@ class Workspace(Resource):
         return self._discovery_url
 
     @property
-    def mlflow_tracking_uri(self) -> str:
+    def mlflow_tracking_uri(self) -> Optional[str]:
         """MLflow tracking uri for the workspace.
 
         :return: Returns mlflow tracking uri of the workspace.
@@ -156,7 +164,7 @@ class Workspace(Resource):
         """
         return self._mlflow_tracking_uri
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace spec into a file in yaml format.
 
         :param dest: The destination to receive this workspace's spec.
@@ -173,7 +181,8 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _load(
@@ -181,7 +190,7 @@ class Workspace(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Workspace":
         data = data or {}
         params_override = params_override or []
@@ -193,7 +202,7 @@ class Workspace(Resource):
         return Workspace(**loaded_schema)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -231,6 +240,16 @@ class Workspace(Resource):
             feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
+        serverless_compute = None
+        # TODO: Remove attribute check once serverless_compute_settings is in API response contract
+        if hasattr(rest_obj, "serverless_compute_settings"):
+            if rest_obj.serverless_compute_settings and isinstance(
+                rest_obj.serverless_compute_settings, RestServerlessComputeSettings
+            ):
+                serverless_compute = ServerlessComputeSettings._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.serverless_compute_settings
+                )
+
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -257,6 +276,7 @@ class Workspace(Resource):
             enable_data_isolation=rest_obj.enable_data_isolation,
             workspace_hub=rest_obj.hub_resource_id,
             workspace_id=rest_obj.workspace_id,
+            serverless_compute=serverless_compute,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -264,6 +284,9 @@ class Workspace(Resource):
         if self._feature_store_settings:
             feature_store_settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
+        serverless_compute_settings = None
+        if self.serverless_compute:
+            serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
@@ -288,4 +311,5 @@ class Workspace(Resource):
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
             hub_resource_id=self.workspace_hub,
+            serverless_compute_settings=serverless_compute_settings,
         )

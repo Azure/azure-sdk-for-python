@@ -29,13 +29,12 @@ def main():
         subscription_id="daefabc0-95b4-48b3-b645-8a753a63c4fa",
     )
 
-    response = client.workspaces.delete(
+    client.workspaces.delete(
         resource_group_name="resourceGroup1",
         workspace_name="workspace1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2022-09-09/examples/Workspace_Delete.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/Workspace_Delete.json
 if __name__ == "__main__":
     main()

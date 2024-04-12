@@ -29,14 +29,14 @@ class KustoManagementClientConfiguration(Configuration):  # pylint: disable=too-
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-05-02". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-08-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(KustoManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-05-02")
+        api_version: str = kwargs.pop("api_version", "2023-08-15")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

@@ -5,14 +5,14 @@
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
 
-@experimental
 class MonitoringTarget:
     """Monitoring target.
 
+    :keyword ml_task: Type of task. Allowed values: Classification, Regression, and QuestionAnswering
+    :paramtype ml_task: Optional[Union[str, MonitorTargetTasks]]
     :keyword endpoint_deployment_id: The ARM ID of the target deployment. Mutually exclusive with model_id.
     :paramtype endpoint_deployment_id: Optional[str]
     :keyword model_id: ARM ID of the target model ID. Mutually exclusive with endpoint_deployment_id.

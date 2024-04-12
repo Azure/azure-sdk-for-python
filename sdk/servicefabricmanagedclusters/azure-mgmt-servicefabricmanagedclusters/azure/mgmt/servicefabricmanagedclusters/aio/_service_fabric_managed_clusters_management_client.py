@@ -19,9 +19,11 @@ from .operations import (
     ApplicationTypeVersionsOperations,
     ApplicationTypesOperations,
     ApplicationsOperations,
+    ManagedApplyMaintenanceWindowOperations,
     ManagedAzResiliencyStatusOperations,
     ManagedClusterVersionOperations,
     ManagedClustersOperations,
+    ManagedMaintenanceWindowStatusOperations,
     ManagedUnsupportedVMSizesOperations,
     NodeTypeSkusOperations,
     NodeTypesOperations,
@@ -36,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,name-too-long
+class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Service Fabric Managed Clusters Management Client.
 
     :ivar application_types: ApplicationTypesOperations operations
@@ -56,6 +58,12 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
     :ivar managed_az_resiliency_status: ManagedAzResiliencyStatusOperations operations
     :vartype managed_az_resiliency_status:
      azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedAzResiliencyStatusOperations
+    :ivar managed_maintenance_window_status: ManagedMaintenanceWindowStatusOperations operations
+    :vartype managed_maintenance_window_status:
+     azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedMaintenanceWindowStatusOperations
+    :ivar managed_apply_maintenance_window: ManagedApplyMaintenanceWindowOperations operations
+    :vartype managed_apply_maintenance_window:
+     azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedApplyMaintenanceWindowOperations
     :ivar managed_cluster_version: ManagedClusterVersionOperations operations
     :vartype managed_cluster_version:
      azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedClusterVersionOperations
@@ -81,7 +89,7 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-02-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-12-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -116,6 +124,12 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_az_resiliency_status = ManagedAzResiliencyStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_maintenance_window_status = ManagedMaintenanceWindowStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_apply_maintenance_window = ManagedApplyMaintenanceWindowOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_cluster_version = ManagedClusterVersionOperations(

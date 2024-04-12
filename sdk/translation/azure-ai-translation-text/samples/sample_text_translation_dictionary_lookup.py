@@ -25,12 +25,12 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import (InputTextItem)
 
 # -------------------------------------------------------------------------
 # Text translation client
 # -------------------------------------------------------------------------
 import sample_text_translation_client
+
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
 # -------------------------------------------------------------------------
@@ -41,14 +41,18 @@ def get_text_translation_dictionary_lookup():
     try:
         source_language = "en"
         target_language = "es"
-        input_text_elements = [ InputTextItem(text = "fly") ]
+        input_text_elements = ["fly"]
 
-        response = text_translator.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
+        response = text_translator.lookup_dictionary_entries(
+            request_body=input_text_elements, from_parameter=source_language, to=target_language
+        )
         dictionary_entry = response[0] if response else None
 
         if dictionary_entry:
             print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
-            print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
+            print(
+                f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
+            )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -56,4 +60,3 @@ def get_text_translation_dictionary_lookup():
             print(f"Message: {exception.error.message}")
         raise
     # [END get_text_translation_dictionary_lookup]
-

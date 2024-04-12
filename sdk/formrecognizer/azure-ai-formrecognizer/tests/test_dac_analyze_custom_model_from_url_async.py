@@ -60,9 +60,6 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
-
-
-
             poller = await da_client.begin_analyze_document_from_url(
                 model_id=model.model_id,
                 document_url=self.selection_mark_url_pdf,

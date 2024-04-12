@@ -106,6 +106,13 @@ class CacheType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
 
 
+class CanMigrateDefaultSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recommended sku for the migration."""
+
+    STANDARD_AZURE_FRONT_DOOR = "Standard_AzureFrontDoor"
+    PREMIUM_AZURE_FRONT_DOOR = "Premium_AzureFrontDoor"
+
+
 class CdnCertificateSourceParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CdnCertificateSourceParametersTypeName."""
 
@@ -478,6 +485,17 @@ class ManagedRuleEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+
+
 class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If this rule is a match should the rules engine continue running the remaining rules or stop.
     If not present, defaults to Continue.
@@ -485,6 +503,7 @@ class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTINUE = "Continue"
     STOP = "Stop"
+    CONTINUE_ENUM = "Continue"
 
 
 class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -511,16 +530,16 @@ class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SSL_PROTOCOL = "SslProtocol"
 
 
-class MetricsResponseGranularity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MetricsResponseGranularity."""
+class MetricsGranularity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MetricsGranularity."""
 
     PT5_M = "PT5M"
     PT1_H = "PT1H"
     P1_D = "P1D"
 
 
-class MetricsResponseSeriesItemUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MetricsResponseSeriesItemUnit."""
+class MetricsSeriesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MetricsSeriesUnit."""
 
     COUNT = "count"
     BYTES = "bytes"
@@ -708,6 +727,11 @@ class ProfileResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = "Active"
     DELETING = "Deleting"
     DISABLED = "Disabled"
+    MIGRATING = "Migrating"
+    MIGRATED = "Migrated"
+    PENDING_MIGRATION_COMMIT = "PendingMigrationCommit"
+    COMMITTING_MIGRATION = "CommittingMigration"
+    ABORTING_MIGRATION = "AbortingMigration"
 
 
 class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1216,16 +1240,16 @@ class WafMetric(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_REQUEST_COUNT = "clientRequestCount"
 
 
-class WafMetricsResponseGranularity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WafMetricsResponseGranularity."""
+class WafMetricsGranularity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WafMetricsGranularity."""
 
     PT5_M = "PT5M"
     PT1_H = "PT1H"
     P1_D = "P1D"
 
 
-class WafMetricsResponseSeriesItemUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WafMetricsResponseSeriesItemUnit."""
+class WafMetricsSeriesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WafMetricsSeriesUnit."""
 
     COUNT = "count"
 

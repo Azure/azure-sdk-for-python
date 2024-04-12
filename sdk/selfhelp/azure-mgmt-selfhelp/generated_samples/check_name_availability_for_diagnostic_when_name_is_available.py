@@ -28,12 +28,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.diagnostics.check_name_availability(
+    response = client.check_name_availability.post(
         scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6",
     )
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/stable/2023-06-01/examples/CheckNameAvailabilityForDiagnosticWhenNameIsAvailable.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/CheckNameAvailabilityForDiagnosticWhenNameIsAvailable.json
 if __name__ == "__main__":
     main()

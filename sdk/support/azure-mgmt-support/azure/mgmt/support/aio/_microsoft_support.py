@@ -9,17 +9,31 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MicrosoftSupportConfiguration
 from .operations import (
+    ChatTranscriptsNoSubscriptionOperations,
+    ChatTranscriptsOperations,
+    CommunicationsNoSubscriptionOperations,
     CommunicationsOperations,
+    FileWorkspacesNoSubscriptionOperations,
+    FileWorkspacesOperations,
+    FilesNoSubscriptionOperations,
+    FilesOperations,
+    LookUpResourceIdOperations,
     Operations,
+    ProblemClassificationsNoSubscriptionOperations,
     ProblemClassificationsOperations,
+    ServiceClassificationsNoSubscriptionOperations,
+    ServiceClassificationsOperations,
     ServicesOperations,
+    SupportTicketsNoSubscriptionOperations,
     SupportTicketsOperations,
 )
 
@@ -28,28 +42,61 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword
+class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Microsoft Azure Support Resource Provider.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.support.aio.operations.Operations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.support.aio.operations.ServicesOperations
+    :ivar service_classifications_no_subscription: ServiceClassificationsNoSubscriptionOperations
+     operations
+    :vartype service_classifications_no_subscription:
+     azure.mgmt.support.aio.operations.ServiceClassificationsNoSubscriptionOperations
+    :ivar service_classifications: ServiceClassificationsOperations operations
+    :vartype service_classifications:
+     azure.mgmt.support.aio.operations.ServiceClassificationsOperations
+    :ivar problem_classifications_no_subscription: ProblemClassificationsNoSubscriptionOperations
+     operations
+    :vartype problem_classifications_no_subscription:
+     azure.mgmt.support.aio.operations.ProblemClassificationsNoSubscriptionOperations
     :ivar problem_classifications: ProblemClassificationsOperations operations
     :vartype problem_classifications:
      azure.mgmt.support.aio.operations.ProblemClassificationsOperations
     :ivar support_tickets: SupportTicketsOperations operations
     :vartype support_tickets: azure.mgmt.support.aio.operations.SupportTicketsOperations
+    :ivar support_tickets_no_subscription: SupportTicketsNoSubscriptionOperations operations
+    :vartype support_tickets_no_subscription:
+     azure.mgmt.support.aio.operations.SupportTicketsNoSubscriptionOperations
     :ivar communications: CommunicationsOperations operations
     :vartype communications: azure.mgmt.support.aio.operations.CommunicationsOperations
+    :ivar communications_no_subscription: CommunicationsNoSubscriptionOperations operations
+    :vartype communications_no_subscription:
+     azure.mgmt.support.aio.operations.CommunicationsNoSubscriptionOperations
+    :ivar chat_transcripts: ChatTranscriptsOperations operations
+    :vartype chat_transcripts: azure.mgmt.support.aio.operations.ChatTranscriptsOperations
+    :ivar chat_transcripts_no_subscription: ChatTranscriptsNoSubscriptionOperations operations
+    :vartype chat_transcripts_no_subscription:
+     azure.mgmt.support.aio.operations.ChatTranscriptsNoSubscriptionOperations
+    :ivar file_workspaces: FileWorkspacesOperations operations
+    :vartype file_workspaces: azure.mgmt.support.aio.operations.FileWorkspacesOperations
+    :ivar file_workspaces_no_subscription: FileWorkspacesNoSubscriptionOperations operations
+    :vartype file_workspaces_no_subscription:
+     azure.mgmt.support.aio.operations.FileWorkspacesNoSubscriptionOperations
+    :ivar files: FilesOperations operations
+    :vartype files: azure.mgmt.support.aio.operations.FilesOperations
+    :ivar files_no_subscription: FilesNoSubscriptionOperations operations
+    :vartype files_no_subscription: azure.mgmt.support.aio.operations.FilesNoSubscriptionOperations
+    :ivar look_up_resource_id: LookUpResourceIdOperations operations
+    :vartype look_up_resource_id: azure.mgmt.support.aio.operations.LookUpResourceIdOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Azure subscription Id. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2020-04-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -63,21 +110,73 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = MicrosoftSupportConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service_classifications_no_subscription = ServiceClassificationsNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service_classifications = ServiceClassificationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.problem_classifications_no_subscription = ProblemClassificationsNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.problem_classifications = ProblemClassificationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.support_tickets = SupportTicketsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.support_tickets_no_subscription = SupportTicketsNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.communications = CommunicationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.communications_no_subscription = CommunicationsNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.chat_transcripts = ChatTranscriptsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.chat_transcripts_no_subscription = ChatTranscriptsNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file_workspaces = FileWorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.file_workspaces_no_subscription = FileWorkspacesNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.files = FilesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.files_no_subscription = FilesNoSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.look_up_resource_id = LookUpResourceIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -97,7 +196,7 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
@@ -106,5 +205,5 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

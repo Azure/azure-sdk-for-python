@@ -7,6 +7,14 @@ version of the file used for AzureML's ARM APIs, which is defined [here](https:/
 
 ---
 
+## Usage
+
+For instructions for regenerating the _restclient using these arguments, see the `docs/dev_setup.md` in the AML CLI repo.
+For a quick example, Run this command from azure-sdk-for-python/sdk/ml/azure-ai-ml/:
+```
+python .\scripts\regenerate_restclient.py -a v2022-01-01-preview
+```
+
 ## Configuration
 
 ### Basic Information
@@ -100,6 +108,16 @@ These settings apply only when `--tag=runhistory` is specified on the command li
 input-file:
   - Microsoft.MachineLearningServices/preview/runhistory/run-history.json
 output-folder: $(python-sdks-folder)/runhistory
+```
+
+### Tag: workspace-dataplane
+
+These settings apply only when `--tag=workspace-dataplane` is specified on the command line.
+
+```yaml $(tag) == 'workspace-dataplane'
+input-file:
+  - Microsoft.MachineLearningServices/preview/workspace-dataplane/swagger.json
+output-folder: $(python-sdks-folder)/workspace_dataplane
 ```
 
 ### Tag: registry-discovery
@@ -217,6 +235,21 @@ input-file:
   - Microsoft.MachineLearningServices/stable/2023-10-01/mfe.json
 output-folder: $(python-sdks-folder)/v2023_10_01
 ```
+
+### Tag: v2024-01-01-preview
+
+These settings apply only when `--tag=v2024-01-01-preview` is specified on the command line.
+
+```yaml $(tag) == 'v2024-01-01-preview'
+input-file:
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/machineLearningServices.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceFeatures.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/mfe.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceRP.json
+output-folder: $(python-sdks-folder)/v2024_01_01_preview
+```
+
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.
@@ -240,6 +273,7 @@ batch:
   - tag: v2023-06-01-preview
   - tag: v2023-08-01-preview
   - tag: v2023-10-01
+  - tag: v2024-01-01-preview
   #unstable tags
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true

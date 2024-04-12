@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.compute import ComputeManagementClient
 
 """
@@ -32,11 +35,23 @@ def main():
     response = client.capacity_reservation_groups.create_or_update(
         resource_group_name="myResourceGroup",
         capacity_reservation_group_name="myCapacityReservationGroup",
-        parameters={"location": "westus", "tags": {"department": "finance"}, "zones": ["1", "2"]},
+        parameters={
+            "location": "westus",
+            "properties": {
+                "sharingProfile": {
+                    "subscriptionIds": [
+                        {"id": "/subscriptions/{subscription-id1}"},
+                        {"id": "/subscriptions/{subscription-id2}"},
+                    ]
+                }
+            },
+            "tags": {"department": "finance"},
+            "zones": ["1", "2"],
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-07-01/examples/capacityReservationExamples/CapacityReservationGroup_CreateOrUpdate.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/capacityReservationExamples/CapacityReservationGroup_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

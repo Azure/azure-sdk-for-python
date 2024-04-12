@@ -1,19 +1,11 @@
 [tool.azure-sdk-build]
-mypy = false
+mypy = true
 pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = true
+strict_sphinx = true
 
-[tool.interrogate]
-fail-under = 75
-verbose = 2
-ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
-ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
-ignore-private = true
-ignore-semiprivate = true
-ignore-magic = true
 
 [tool.isort]
 profile = "black"
@@ -28,11 +20,20 @@ extend_skip_glob = [
 ]
 
 [tool.mypy] 
-exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 
-disallow_untyped_defs = true 
-warn_unused_ignores = true 
-warn_return_any = true 
-warn_unreachable = true 
-ignore_missing_imports = true 
-follow_imports = "skip" 
-follow_imports_for_stubs = "skip"
+python_version = "3.10"
+exclude = [
+  "azure/ai/ml/_restclient",
+  "azure/ai/ml/_vendor/",
+  "azure/ai/ml/_schema/",
+  "azure/ai/ml/_arm_deployments/",
+  "tests",
+  "setup.py",
+  "samples",
+  "azure/ai/ml/_utils",
+  "azure/ai/ml/exceptions.py",
+  "azure/ai/ml/_exception_helper.py",
+]   
+warn_unused_configs = true 
+follow_imports = "skip"
+ignore_missing_imports = true
+follow_imports_for_stubs = false

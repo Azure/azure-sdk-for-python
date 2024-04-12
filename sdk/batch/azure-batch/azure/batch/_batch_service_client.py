@@ -67,7 +67,7 @@ class BatchServiceClient(SDKClient):
         super(BatchServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2023-05-01.17.0'
+        self.api_version = '2024-02-01.19.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

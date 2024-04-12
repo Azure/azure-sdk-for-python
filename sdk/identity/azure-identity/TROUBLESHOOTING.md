@@ -26,7 +26,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot AzurePowerShellCredential authentication issues](#troubleshoot-azurepowershellcredential-authentication-issues)
 - [Troubleshoot WorkloadIdentityCredential authentication issues](#troubleshoot-workloadidentitycredential-authentication-issues)
 - [Troubleshoot multi-tenant authentication issues](#troubleshoot-multi-tenant-authentication-issues)
-- [Troubleshoot WAM+MSA login issues](#troubleshoot-wammsa-login-issues)
+- [Troubleshoot Web Account Manager (WAM) brokered authentication issues](#troubleshoot-web-account-manager-wam-brokered-authentication-issues)
 - [Get additional help](#get-additional-help)
 
 ## Handle Azure Identity errors
@@ -60,14 +60,14 @@ Calls to service clients resulting in `HttpResponseError` with a `StatusCode` of
 
 ## Find relevant information in error messages
 
-`ClientAuthenticationError` is raised when unexpected errors occurred while a credential is authenticating. This can include errors received from requests to the AAD STS and often contains information helpful to diagnosis. Consider the following `ClientAuthenticationError` message.
+`ClientAuthenticationError` is raised when unexpected errors occurred while a credential is authenticating. This can include errors received from requests to the Microsoft Entra STS and often contains information helpful to diagnosis. Consider the following `ClientAuthenticationError` message.
 
 ![ClientAuthenticationError Message Example](./images/AuthFailedErrorMessageExample.png)
 
 This error contains several pieces of information:
 
 - __Failing Credential Type__: The type of credential that failed to authenticate. This can be helpful when diagnosing issues with chained credential types such as `DefaultAzureCredential` or `ChainedTokenCredential`.
-- __STS Error Code and Message__: The error code and message returned from the Azure AD STS. This can give insight into the specific reason the request failed. For instance in this specific case because the provided client secret is incorrect. More information on STS error codes can be found [here](https://learn.microsoft.com//azure/active-directory/develop/reference-aadsts-error-codes#aadsts-error-codes).
+- __STS Error Code and Message__: The error code and message returned from the Microsoft Entra STS. This can give insight into the specific reason the request failed. For instance in this specific case because the provided client secret is incorrect. More information on STS error codes can be found [here](https://learn.microsoft.com/entra/identity-platform/reference-error-codes#aadsts-error-codes).
 
 ## Logging
 
@@ -102,17 +102,17 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 | Error Code | Issue | Mitigation |
 |---|---|---|
-|AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
-|AADSTS7000222|An expired client secret was provided.|Create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
-|AADSTS700016|The specified application wasn't found in the specified tenant.|Ensure the specified `clientId` and `tenantId` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).|
+|AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
+|AADSTS7000222|An expired client secret was provided.|Create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
+|AADSTS700016|The specified application wasn't found in the specified tenant.|Ensure the specified `clientId` and `tenantId` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal).|
 
 ## Troubleshoot `CertificateCredential` authentication issues
 
 `ClientAuthenticationError`
 | Error Code | Description | Mitigation |
 |---|---|---|
-|AADSTS700027|Client assertion contains an invalid signature.|Ensure the specified certificate has been uploaded to the AAD application registration. Instructions for uploading certificates to the application registration can be found [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).|
-|AADSTS700016|The specified application wasn't found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).
+|AADSTS700027|Client assertion contains an invalid signature.|Ensure the specified certificate has been uploaded to the Microsoft Entra application registration. Instructions for uploading certificates to the application registration can be found [here](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal#option-1-upload-a-certificate).|
+|AADSTS700016|The specified application wasn't found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal).
 
 ## Troubleshoot `ClientAssertionCredential` authentication issues
 
@@ -120,9 +120,9 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 | Error Code | Description | Mitigation |
 |---|---|---|
-|AADSTS700021| Client assertion application identifier doesn't match 'client_id' parameter. Review the documentation at https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials. | Ensure the JWT assertion created has the correct values specified for the `sub` and `issuer` value of the payload, both of these should have the value be equal to `clientId`. Refer documentation for [client assertion format](https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials).|
-|AADSTS700023| Client assertion audience claim does not match Realm issuer. Review the documentation at https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials. | Ensure the audience `aud` field in the JWT assertion created has the correct value for the audience specified in the payload. This should be set to `https://login.microsoftonline.com/{tenantId}/v2`.|
-|AADSTS50027| JWT token is invalid or malformed. | Ensure the JWT assertion token is in the valid format. Refer to the documentation for [client assertion format](https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials).|
+|AADSTS700021| Client assertion application identifier doesn't match 'client_id' parameter. Review the documentation at https://learn.microsoft.com/entra/identity-platform/certificate-credentials. | Ensure the JWT assertion created has the correct values specified for the `sub` and `issuer` value of the payload, both of these should have the value be equal to `clientId`. Refer documentation for [client assertion format](https://learn.microsoft.com/entra/identity-platform/certificate-credentials).|
+|AADSTS700023| Client assertion audience claim does not match Realm issuer. Review the documentation at https://learn.microsoft.com/entra/identity-platform/certificate-credentials. | Ensure the audience `aud` field in the JWT assertion created has the correct value for the audience specified in the payload. This should be set to `https://login.microsoftonline.com/{tenantId}/v2`.|
+|AADSTS50027| JWT token is invalid or malformed. | Ensure the JWT assertion token is in the valid format. Refer to the documentation for [client assertion format](https://learn.microsoft.com/entra/identity-platform/certificate-credentials).|
 
 ## Troubleshoot `UsernamePasswordCredential` authentication issues
 
@@ -141,7 +141,7 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 |Azure Arc|[Configuration](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)||
 |Azure Kubernetes Service|[Configuration](https://azure.github.io/aad-pod-identity/docs/)|[Troubleshooting](#azure-kubernetes-service-managed-identity)|
 |Azure Service Fabric|[Configuration](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)||
-|Azure Virtual Machines and Scale Sets|[Configuration](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm)|[Troubleshooting](#azure-virtual-machine-managed-identity)|
+|Azure Virtual Machines and Scale Sets|[Configuration](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-portal-windows-vm)|[Troubleshooting](#azure-virtual-machine-managed-identity)|
 
 ### Azure Virtual Machine managed identity
 
@@ -149,10 +149,10 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 
 | Error Message |Description| Mitigation |
 |---|---|---|
-|The requested identity hasn't been assigned to this resource.|The IMDS endpoint responded with a status code of 400, indicating the requested identity isn't assigned to the VM.|If using a user assigned identity, ensure the specified `client_id` is correct.<p/><p/>If using a system assigned identity, make sure it has been enabled properly. Instructions to enable the system assigned identity on an Azure VM can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm#enable-system-assigned-managed-identity-on-an-existing-vm).|
+|The requested identity hasn't been assigned to this resource.|The IMDS endpoint responded with a status code of 400, indicating the requested identity isn't assigned to the VM.|If using a user assigned identity, ensure the specified `client_id` is correct.<p/><p/>If using a system assigned identity, make sure it has been enabled properly. Instructions to enable the system assigned identity on an Azure VM can be found [here](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-portal-windows-vm#enable-system-assigned-managed-identity-on-an-existing-vm).|
 |The request failed due to a gateway error.|The request to the IMDS endpoint failed due to a gateway error, 502 or 504 status code.|Calls via proxy or gateway aren't supported by IMDS. Disable proxies or gateways running on the VM for calls to the IMDS endpoint `http://169.254.169.254/`|
-|No response received from the managed identity endpoint.|No response was received for the request to IMDS or the request timed out.|<ul><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verifying-imds-is-available-on-the-vm) for instructions.</li></ul>|
-|Multiple attempts failed to obtain a token from the managed identity endpoint.|Retries to retrieve a token from the IMDS endpoint have been exhausted.|<ul><li>Refer to inner exception messages for more details on specific failures. If the data has been truncated, more detail can be obtained by [collecting logs](#logging).</li><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verify-imds-is-available-on-the-vm) for instructions.</li></ul>|
+|No response received from the managed identity endpoint.|No response was received for the request to IMDS or the request timed out.|<ul><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verify-imds-is-available-on-the-vm) for instructions.</li></ul>|
+|Multiple attempts failed to obtain a token from the managed identity endpoint.|Retries to retrieve a token from the IMDS endpoint have been exhausted.|<ul><li>Refer to inner exception messages for more details on specific failures. If the data has been truncated, more detail can be obtained by [collecting logs](#logging).</li><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verify-imds-is-available-on-the-vm) for instructions.</li></ul>|
 
 #### __Verify IMDS is available on the VM__
 
@@ -284,7 +284,7 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 
 | Error Message |Description| Mitigation |
 |---|---|---|
-|WorkloadIdentityCredential authentication unavailable. The workload options are not fully configured|The `WorkloadIdentityCredential` requires `client_id`, `tenant_id` and `token_file_path` to authenticate with Azure Active Directory.| <ul><li>If using `DefaultAzureCredential` then:</li><ul><li>Ensure client ID is specified via the `workload_identity_client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure tenant ID is specified via the `AZURE_TENANT_ID` env variable.</li><li>Ensure token file path is specified via `AZURE_FEDERATED_TOKEN_FILE` env variable.</li><li>Ensure authority host is specified via `AZURE_AUTHORITY_HOST` env variable.</ul><li>If using `WorkloadIdentityCredential` then:</li><ul><li>Ensure tenant ID is specified via the `tenant_id` keyword argument or the `AZURE_TENANT_ID` env variable.</li><li>Ensure client ID is specified via the `client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure token file path is specified via the `token_file_path` keyword argument or the `AZURE_FEDERATED_TOKEN_FILE` environment variable. </li></ul></li><li>Consult the [product troubleshooting guide](https://azure.github.io/azure-workload-identity/docs/troubleshooting.html) for other issues.</li></ul>
+|WorkloadIdentityCredential authentication unavailable. The workload options are not fully configured|The `WorkloadIdentityCredential` requires `client_id`, `tenant_id` and `token_file_path` to authenticate with Microsoft Entra ID.| <ul><li>If using `DefaultAzureCredential` then:</li><ul><li>Ensure client ID is specified via the `workload_identity_client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure tenant ID is specified via the `AZURE_TENANT_ID` env variable.</li><li>Ensure token file path is specified via `AZURE_FEDERATED_TOKEN_FILE` env variable.</li><li>Ensure authority host is specified via `AZURE_AUTHORITY_HOST` env variable.</ul><li>If using `WorkloadIdentityCredential` then:</li><ul><li>Ensure tenant ID is specified via the `tenant_id` keyword argument or the `AZURE_TENANT_ID` env variable.</li><li>Ensure client ID is specified via the `client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure token file path is specified via the `token_file_path` keyword argument or the `AZURE_FEDERATED_TOKEN_FILE` environment variable. </li></ul></li><li>Consult the [product troubleshooting guide](https://azure.github.io/azure-workload-identity/docs/troubleshooting.html) for other issues.</li></ul>
 
 ## Troubleshoot multi-tenant authentication issues
 
@@ -294,17 +294,23 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |The current credential is not configured to acquire tokens for tenant <tenant ID>|<p>The application must configure the credential to allow token acquisition from the requested tenant.|Make one of the following changes in your app:<ul><li>Add the requested tenant ID to `additionally_allowed_tenants` on the credential options.</li><li>Add `*` to `additionally_allowed_tenants` to allow token acquisition for any tenant.</li></ul></p><p>This exception was added as part of a breaking change to multi-tenant authentication in version 1.11.0. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110).</p> |
 
-## Troubleshoot WAM+MSA login issues
+## Troubleshoot Web Account Manager (WAM) brokered authentication issues
 
-When using `InteractiveBrowserCredential`, by default, only AAD account is listed:
+| Error Message |Description| Mitigation |
+|---|---|---|
+|AADSTS50011|The application is missing the expected redirect URI.|Ensure that one of redirect URIs registered for the Microsoft Entra application matches the following URI pattern: `ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}`|
 
-![MSA AAD only](./images/MSA1.png)
+### Unable to log in with Microsoft account (MSA) on Windows
 
-If you choose "Use another account" and type in an MSA outlook.com account, it fails:
+When using `InteractiveBrowserBrokerCredential` via the `azure-identity-broker` package on Windows, only Microsoft Entra accounts are listed by default:
+
+![MSA Microsoft Entra only](./images/MSA1.png)
+
+If you choose "Use another account", and type in an MSA outlook.com account, it fails:
 
 ![Fail on use another account](./images/MSA2.png)
 
-Since azure-identity 1.15.0b1, you can set `enable_msa_passthrough`` to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
+When constructing the credential, you can set the `enable_msa_passthrough` keyword argument to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
 
 ![Enable MSA](./images/MSA3.png)
 

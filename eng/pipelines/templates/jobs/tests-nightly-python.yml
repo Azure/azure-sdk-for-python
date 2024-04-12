@@ -31,7 +31,7 @@ jobs:
           runProxy: false
 
       - script: |
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
+          python ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
@@ -78,7 +78,7 @@ jobs:
       - script: |
           find /usr/lib -name "libffi.so*"
           ln -s /usr/lib/x86_64-linux-gnu/libffi.so.7 /usr/lib/x86_64-linux-gnu/libffi.so.6
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
+          python ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
@@ -134,7 +134,7 @@ jobs:
           python3 -m pip install tox packaging twine beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
-          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"
+          python3 ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         env:
           YARL_NO_EXTENSIONS: 1

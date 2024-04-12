@@ -65,6 +65,12 @@
                 "description": "Specifies the name of the resource group."
             }
         },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
         "update_offline_store_role_assignment": {
             "type": "string",
             "defaultValue": "false",
@@ -102,20 +108,34 @@
     "resources": [
         {
             "condition": "[and(not(empty(parameters('materialization_identity_resource_id'))), equals(parameters('update_workspace_role_assignment'), 'true'))]",
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(parameters('materialization_identity_resource_id'), parameters('resource_group_name'), parameters('workspace_name'), 'azureml ds role')]",
-            "scope": "[resourceId(parameters('resource_group_name'), 'Microsoft.MachineLearningServices/workspaces', parameters('workspace_name'))]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('workspace-role-assign-', guid(parameters('materialization_identity_resource_id'), parameters('resource_group_name'), parameters('workspace_name'), 'azureml ds role'))]",
+            "apiVersion": "2020-06-01",
             "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
-                "principalId": "[reference(parameters('materialization_identity_resource_id'), '2018-11-30').principalId]",
-                "principalType": "ServicePrincipal"
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(parameters('materialization_identity_resource_id'), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspace_name')), 'azureml ds role')]",
+                            "scope": "[resourceId(parameters('resource_group_name'), 'Microsoft.MachineLearningServices/workspaces', parameters('workspace_name'))]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
+                                "principalId": "[reference(parameters('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
             "condition": "[and(not(empty(parameters('materialization_identity_resource_id'))), equals(parameters('update_offline_store_role_assignment'), 'true'), not(empty(parameters('offline_store_target'))))]",
             "type": "Microsoft.Resources/deployments",
-            "name": "offline-store-role-assignment",
+            "name": "[concat('offline-store-role-assign-', guid(parameters('materialization_identity_resource_id'), parameters('offline_store_target'), 'storage blob data contributor'))]",
             "apiVersion": "2020-06-01",
             "resourceGroup": "[If(empty(parameters('offline_store_resource_group_name')), resourceGroup().name, parameters('offline_store_resource_group_name'))]",
             "subscriptionId": "[If(empty(parameters('offline_store_subscription_id')), subscription().subscriptionId, parameters('offline_store_subscription_id'))]",
@@ -130,6 +150,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(parameters('materialization_identity_resource_id'), parameters('offline_store_target'), 'storage blob data contributor')]",
                             "scope": "[parameters('offline_store_target')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
                                 "principalId": "[reference(parameters('materialization_identity_resource_id'), '2023-01-31').principalId]",
@@ -143,7 +164,7 @@
         {
             "condition": "[and(not(empty(parameters('materialization_identity_resource_id'))), equals(parameters('update_online_store_role_assignment'), 'true'), not(empty(parameters('online_store_target'))))]",
             "type": "Microsoft.Resources/deployments",
-            "name": "online-store-role-assignment",
+            "name": "[concat('online-store-role-assign-', guid(parameters('materialization_identity_resource_id'), parameters('online_store_target'), 'contributor'))]",
             "apiVersion": "2020-06-01",
             "resourceGroup": "[If(empty(parameters('online_store_resource_group_name')), resourceGroup().name, parameters('online_store_resource_group_name'))]",
             "subscriptionId": "[If(empty(parameters('online_store_subscription_id')), subscription().subscriptionId, parameters('online_store_subscription_id'))]",
@@ -158,6 +179,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(parameters('materialization_identity_resource_id'), parameters('online_store_target'), 'contributor')]",
                             "scope": "[parameters('online_store_target')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
                                 "principalId": "[reference(parameters('materialization_identity_resource_id'), '2023-01-31').principalId]",

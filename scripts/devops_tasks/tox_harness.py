@@ -18,7 +18,9 @@ from common_tasks import (
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-from ci_tools.functions import build_whl_for_req, cleanup_directory
+from ci_tools.scenario.generation import replace_dev_reqs
+from ci_tools.functions import cleanup_directory
+from ci_tools.parsing import ParsedSetup
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
@@ -110,33 +112,6 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
             # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
             f.write("\n".join(all_adjustments))
-
-
-def replace_dev_reqs(file, pkg_root):
-    adjusted_req_lines = []
-
-    with open(file, "r") as f:
-        for line in f:
-            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-            amended_line = " ".join(args)
-
-            if amended_line.endswith("]"):
-                trim_amount = amended_line[::-1].index("[") + 1
-                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
-
-            adjusted_req_lines.append(amended_line)
-
-    req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
-    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    with open(file, "w") as f:
-        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
-        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
-        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
-        f.write("\n".join(adjusted_req_lines))
 
 
 def collect_log_files(working_dir):
@@ -255,7 +230,7 @@ def execute_tox_serial(tox_command_tuples):
     return return_code
 
 
-def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, options_array: List[str] = []) -> None:
+def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> None:
     """
     Primary entry point for tox invocations during CI runs.
 
@@ -266,6 +241,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         When invoking of "tox run -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
         passed directly to the pytest invocation.
     """
+    options_array: List[str] = []
     if parsed_args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
 
@@ -277,6 +253,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     skipped_tox_checks = {}
 
     for index, package_dir in enumerate(targeted_packages):
+        parsed_package = ParsedSetup.from_path(package_dir)
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
@@ -323,9 +300,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
                 file.write("\n")
 
         if in_ci():
-            replace_dev_reqs(destination_dev_req, package_dir)
-            replace_dev_reqs(test_tools_path, package_dir)
-            replace_dev_reqs(dependency_tools_path, package_dir)
+            replace_dev_reqs(destination_dev_req, package_dir, parsed_args.wheel_dir)
+            replace_dev_reqs(test_tools_path, package_dir, parsed_args.wheel_dir)
+            replace_dev_reqs(dependency_tools_path, package_dir, parsed_args.wheel_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         inject_custom_reqs(destination_dev_req, parsed_args.injected_packages, package_dir)
@@ -341,7 +318,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
                         if check not in skipped_tox_checks:
                             skipped_tox_checks[check] = []
 
-                    skipped_tox_checks[check].append(package_name)
+                    skipped_tox_checks[check].append(parsed_package)
 
             if not filtered_tox_environment_set:
                 logging.info(
@@ -367,7 +344,10 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     if in_ci() and skipped_tox_checks:
         warning_content = ""
         for check in skipped_tox_checks:
-            warning_content += f"{check} is skipped by packages: {sorted(set(skipped_tox_checks[check]))}. \n"
+            packages_with_suppression = [pkg.name for pkg in skipped_tox_checks[check] if not pkg.is_reporting_suppressed(check)]
+
+            if packages_with_suppression:
+                warning_content += f"{check} is skipped by packages: {sorted(set(packages_with_suppression))}. \n"
 
         if warning_content:
             output_ci_warning(

@@ -46,7 +46,7 @@ def id_token_claims(iss, sub, aud, exp=None, iat=None, **claims):
     )
 
 
-def build_aad_response(  # simulate a response from AAD
+def build_aad_response(  # simulate a response from Microsoft Entra ID
     uid=None,
     utid=None,  # If present, they will form client_info
     access_token=None,
@@ -59,7 +59,7 @@ def build_aad_response(  # simulate a response from AAD
     **kwargs
 ):
     response = {}
-    if uid and utid:  # Mimic the AAD behavior for "client_info=1" request
+    if uid and utid:  # Mimic the Microsoft Entra ID behavior for "client_info=1" request
         response["client_info"] = base64.b64encode(json.dumps({"uid": uid, "utid": utid}).encode()).decode("utf-8")
     if error:
         response["error"] = error

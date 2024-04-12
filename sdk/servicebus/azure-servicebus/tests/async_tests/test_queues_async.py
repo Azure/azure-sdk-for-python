@@ -60,16 +60,16 @@ from azure.servicebus.exceptions import (
     MessageSizeExceededError,
     OperationTimeoutError
 )
-from devtools_testutils import AzureMgmtRecordedTestCase, AzureTestCase
-from servicebus_preparer import (
+from devtools_testutils import AzureMgmtRecordedTestCase, AzureRecordedTestCase
+from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from utilities import get_logger, print_message, sleep_until_expired
+from tests.utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
-from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
@@ -1756,7 +1756,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 await receiver.complete_message(messages[0])
 
     @pytest.mark.skip('hard to test')
-    @AzureTestCase.await_prepared_test
+    @AzureRecordedTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration
         # ever changes, it may break this (since it adjusts renew period if it is not short enough)
@@ -1839,7 +1839,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             assert not results
             assert not errors
 
-    @AzureTestCase.await_prepared_test
+    @AzureRecordedTestCase.await_prepared_test
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
