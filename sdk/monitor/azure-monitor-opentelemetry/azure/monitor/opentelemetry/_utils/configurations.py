@@ -56,10 +56,6 @@ _logger = getLogger(__name__)
 def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     configurations = {}
 
-    for key, val in kwargs.items():
-        configurations[key] = val
-    configurations[DISTRO_VERSION_ARG] = VERSION
-
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
@@ -68,6 +64,10 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
+
+    for key, val in kwargs.items():
+        configurations[key] = val
+    configurations[DISTRO_VERSION_ARG] = VERSION
 
     return configurations
 
