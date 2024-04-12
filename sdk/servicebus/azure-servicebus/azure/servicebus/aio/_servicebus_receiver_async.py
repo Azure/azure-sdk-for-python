@@ -845,6 +845,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: The number of deleted messages.
         :rtype: int
 
         """
@@ -870,7 +871,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         links = get_receive_links(deleted)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
             return deleted
-        
+
     async def purge_messages(
         self,
         *,
@@ -881,10 +882,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         This operation purges as many messages as possible in the queue that are older than the specified enqueued time.
 
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
-         should be deleted. The default value is None, meaning all messages from the current time and before 
+         should be deleted. The default value is None, meaning all messages from the current time and before
          in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: The number of deleted messages.
         :rtype: int
 
         """
@@ -901,7 +903,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
-        
+
         batch_count = 0
         deleted = None
         while deleted != 0:

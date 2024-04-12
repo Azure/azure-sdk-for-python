@@ -872,6 +872,7 @@ class ServiceBusReceiver(
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: The number of messages deleted.
         :rtype: int
 
         """
@@ -909,10 +910,11 @@ class ServiceBusReceiver(
         This operation purges as many messages as possible in the queue that are older than the specified enqueued time.
 
         :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
-         should be deleted. The default value is None, meaning all messages from the current time and before 
+         should be deleted. The default value is None, meaning all messages from the current time and before
          in the queue will be considered.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: The number of messages deleted.
         :rtype: int
 
         """
