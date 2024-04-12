@@ -419,13 +419,13 @@ class EventHubConsumerClient(
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
-        :keyword starting_position: Start receiving from this event position
-         if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
-         a dict with partition ID as the key and position as the value for individual partitions, or a single
-         value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
-         values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-         Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,any]
+        :keyword starting_position: Start receiving from this event position if there is no checkpoint data for a partition.
+         Checkpoint data will be used if available. This can be a a dict with partition ID as the key and position as the value
+         for individual partitions, or a single value for all partitions. The value type can be str, int, or datetime.datetime.
+         When geo-replication is enabled for the Event Hubs namespace, the value type can be ReplicationSegment.
+         Also supported are the values "-1" for receiving from the beginning of the stream, and "@latest" for
+         receiving only new events. Default value is "@latest".
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,any] or ~azure.eventhub.ReplicationSegment
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
@@ -502,15 +502,13 @@ class EventHubConsumerClient(
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
-        :keyword starting_position: Start receiving from this event position
-         if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
-         a dict with partition ID as the key and position as the value for individual partitions, or a single
-         value for all partitions. The value type can be str, int, tuple[int, str], or datetime.datetime.
-         When geo-replication is enabled for the Event Hubs namespace, the sequence number and replication segment
-         must be provided as a tuple: (int sequence number, str replication segment). Also supported are the
-         values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-         Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,any] or tuple[int, str]
+        :keyword starting_position: Start receiving from this event position if there is no checkpoint data for a partition.
+         Checkpoint data will be used if available. This can be a a dict with partition ID as the key and position as the value
+         for individual partitions, or a single value for all partitions. The value type can be str, int, or datetime.datetime.
+         When geo-replication is enabled for the Event Hubs namespace, the value type can be ReplicationSegment.
+         Also supported are the values "-1" for receiving from the beginning of the stream, and "@latest" for
+         receiving only new events. Default value is "@latest".
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,any] or ~azure.eventhub.ReplicationSegment
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
