@@ -24,7 +24,7 @@ resource serviceBusQueue 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   name: serviceBusQueueName
   properties: {
     lockDuration: 'PT5M'
-    maxSizeInMegabytes: 4096
+    maxSizeInMegabytes: 80000
     requiresDuplicateDetection: false
     requiresSession: false
     defaultMessageTimeToLive: 'P10675199DT2H48M5.4775807S'
