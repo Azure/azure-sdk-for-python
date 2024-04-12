@@ -24,7 +24,7 @@ resource serviceBusQueue 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   name: serviceBusQueueName
   properties: {
     lockDuration: 'PT5M'
-    maxSizeInMegabytes: 80000
+    maxSizeInMegabytes: 81920
     requiresDuplicateDetection: false
     requiresSession: false
     defaultMessageTimeToLive: 'P10675199DT2H48M5.4775807S'
@@ -47,7 +47,7 @@ resource serviceBusTopic 'Microsoft.ServiceBus/namespaces/topics@2017-04-01' = {
     enableBatchedOperations: true
     enableExpress: false
     enablePartitioning: false
-    maxSizeInMegabytes: 80000
+    maxSizeInMegabytes: 81920
     requiresDuplicateDetection: false
     status: 'Active'
     supportOrdering: true
