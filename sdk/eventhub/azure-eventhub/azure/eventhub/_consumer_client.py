@@ -581,12 +581,14 @@ class EventHubConsumerClient(
             - `eventhub_name` (str)
             - `id` (str)
             - `beginning_sequence_number` (int)
-            - `beginning_replication_segment` (int)
             - `last_enqueued_sequence_number` (int)
-            - `last_enqueued_replication_segment` (int)
             - `last_enqueued_offset` (str)
             - `last_enqueued_time_utc` (UTC datetime.datetime)
             - `is_empty` (bool)
+
+        If using a georeplication-enabled Event Hub, the following keys will also be included:
+            - `beginning_replication_segment` (int)
+            - `last_enqueued_replication_segment` (int)
 
         :param partition_id: The target partition ID.
         :type partition_id: str
