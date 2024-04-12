@@ -3272,9 +3272,15 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            for i in range(10):
-                message = ServiceBusMessage("message no. {}".format(i))
-                sender.send_messages(message)
+            batch_message = sender.create_message_batch()
+            for _ in range(10):
+                try:
+                    batch_message.add_message(ServiceBusMessage("Message inside a ServiceBusMessageBatch"))
+                except ValueError:
+                    # ServiceBusMessageBatch object reaches max_size.
+                    # New ServiceBusMessageBatch object can be created here to send more data.
+                    break
+            sender.send_messages(batch_message)
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             number_deleted_messages = 0
