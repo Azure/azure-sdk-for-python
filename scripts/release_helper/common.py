@@ -309,7 +309,7 @@ class IssueProcess:
 
     def inconsistent_tag_policy(self):
         if self.has_label(INCONSISTENT_TAG):
-            self.bot_advice.append('Attention to inconsistent tag')
+            self.bot_advice.append('Attention to inconsistent tag.')
 
     def remind_logic(self) -> bool:
         return abs(self.date_from_target) <= 2
@@ -319,12 +319,12 @@ class IssueProcess:
 
     def date_remind_policy(self):
         if self.remind_logic():
-            self.bot_advice.append('close to release date. ')
+            self.bot_advice.append('close to release date.')
 
     def hint_policy(self):
         for item in _HINTS:
             if self.has_label(item):
-                self.bot_advice.append(item)
+                self.bot_advice.append(f"{item}.")
 
     def typespec_policy(self):
         if self.for_typespec:
