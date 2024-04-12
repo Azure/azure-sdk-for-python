@@ -131,7 +131,7 @@ class IssueProcessPython(IssueProcess):
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        if ('multi-api' in contents) and (_MultiAPI not in self.issue_package.labels_name):
+        if 'multi-api' in contents:
             self.add_label(_MultiAPI)
 
     def package_name_output_folder_from_tspconfig(self):
