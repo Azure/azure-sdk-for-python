@@ -835,12 +835,13 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         max_message_count: Optional[int] = None,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
-        """  This operation deletes messages in the queue that are older than the specified enqueued time,
-         up to 4,000 messages at a time.
+        """
+        This operation deletes messages in the queue that are older than the specified enqueued time.
 
-        :param int or None max_message_count: The maximum number of messages to delete. The default value is 1.
-        :param datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
-         should be deleted.The default value is None, meaning all messages in the queue will be considered.
+        :keyword int or None max_message_count: The maximum number of messages to delete. The default value is None,
+         meaning it will attempt to delete up to 4,000 messages.
+        :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
+         should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :rtype: int
 
         """
@@ -870,10 +871,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         *,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
-        """  This operation purges messages in the queue that are older than the specified enqueued time.
+        """
+        This operation purges as many messages as possible in the queue that are older than the specified enqueued time.
 
-        :param datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
-         should be deleted.The default value is None, meaning all messages in the queue will be considered.
+        :keyword datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
+         should be deleted. The default value is None, meaning all messages from the current time and before 
+         in the queue will be considered.
         :rtype: int
 
         """
