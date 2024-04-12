@@ -56,6 +56,8 @@ PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
+AAD_TOKEN = "aadtoken"
+AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
