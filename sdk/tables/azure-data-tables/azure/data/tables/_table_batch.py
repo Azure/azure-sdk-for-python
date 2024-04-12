@@ -138,7 +138,8 @@ class TableBatchOperations(object):
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str or None etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
@@ -206,7 +207,8 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
-        :keyword str etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
