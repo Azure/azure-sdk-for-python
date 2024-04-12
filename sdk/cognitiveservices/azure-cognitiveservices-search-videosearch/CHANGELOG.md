@@ -2,7 +2,7 @@
 
 ## 2.0.0.post1 (2024-04-15)
 
-This package is no longer being maintained. Please refer to the [Bing Video Search REST API](https://learn.microsoft.com/en-us/bing/search-apis/bing-video-search/quickstarts/rest/python) instead.
+This package is no longer being maintained. Please refer to the [Bing Video Search REST API](https://learn.microsoft.com/bing/search-apis/bing-video-search/quickstarts/rest/python) instead.
 
 For additional support, please open a new issue in the [Issues](https://github.com/microsoft/bing-search-sdk-for-python/issues) section of the Microsoft Bing Search SDK for Python repo.
 
