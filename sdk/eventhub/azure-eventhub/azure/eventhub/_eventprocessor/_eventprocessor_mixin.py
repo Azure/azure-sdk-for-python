@@ -19,6 +19,7 @@ from typing import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from .._common import EventData
+    from .._constants import ReplicationSegment
     from .._consumer import EventHubConsumer
     from ..aio._consumer_async import (
         EventHubConsumer as EventHubConsumerAsync
@@ -45,10 +46,7 @@ class EventProcessorMixin:
         self,
         partition_id: str,
         checkpoint: Optional[Dict[str, Any]]
-        ) -> Tuple[Union[str, int, datetime], bool]:
-        # TODO: check sequence number/replication segment instead
-        checkpoint_offset = checkpoint.get("offset") if checkpoint else None
-
+        ) -> Tuple[Union[str, int, datetime, ReplicationSegment], bool]:
         event_position_inclusive = False
         if isinstance(self._initial_event_position_inclusive, dict):
             event_position_inclusive = self._initial_event_position_inclusive.get(
@@ -58,13 +56,25 @@ class EventProcessorMixin:
             event_position_inclusive = self._initial_event_position_inclusive
 
         event_position: Union[str, int, datetime] = "-1"
-        if checkpoint_offset:
+
+        checkpoint_sequence_number = checkpoint.get("sequence_number") if checkpoint else None
+        checkpoint_offset = checkpoint_sequence_number.get("offset") if checkpoint else None
+
+        # Prioritize checking sequence number/replication segment, since offset may not 
+        # match offset from primary region when data is replicated to a secondary region.
+        if checkpoint_sequence_number:
+            replication_segment = checkpoint.get('replication_segment', -1)
+            event_position = ReplicationSegment(
+                sequence_number=checkpoint_sequence_number,
+                replication_segment=replication_segment
+            )
+        elif checkpoint_offset:
             event_position = checkpoint_offset
         elif isinstance(self._initial_event_position, dict):
             event_position = self._initial_event_position.get(partition_id, "-1")  # type: ignore
         else:
             event_position = cast(
-                Union[int, str, datetime], self._initial_event_position
+                Union[int, str, datetime, ReplicationSegment], self._initial_event_position
             )
 
         return event_position, event_position_inclusive
