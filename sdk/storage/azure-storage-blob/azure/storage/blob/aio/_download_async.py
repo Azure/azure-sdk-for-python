@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+# mypy: disable-error-code=override
 
 import sys
 import warnings
@@ -71,7 +72,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         self.stream_lock_async = asyncio.Lock() if kwargs.get('parallel') else None
         self.progress_lock_async = asyncio.Lock() if kwargs.get('parallel') else None
 
-    async def process_chunk(self, chunk_start: int) -> None:  # type: ignore [override]
+    async def process_chunk(self, chunk_start: int) -> None:
         chunk_start, chunk_end = self._calculate_range(chunk_start)
         chunk_data = await self._download_chunk(chunk_start, chunk_end - 1)
         length = chunk_end - chunk_start
@@ -79,29 +80,30 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             await self._write_to_stream(chunk_data, chunk_start)
             await self._update_progress(length)
 
-    async def yield_chunk(self, chunk_start: int) -> bytes:  # type: ignore [override]
+    async def yield_chunk(self, chunk_start: int) -> bytes:
         chunk_start, chunk_end = self._calculate_range(chunk_start)
         return await self._download_chunk(chunk_start, chunk_end - 1)
 
-    async def _update_progress(self, length: int) -> None:  # type: ignore [override]
+    async def _update_progress(self, length: int) -> None:
         if self.progress_lock_async:
-            async with self.progress_lock_async:  # pylint: disable=not-async-context-manager
+            async with self.progress_lock_async:
                 self.progress_total += length
         else:
             self.progress_total += length
 
         if self.progress_hook:
-            await cast(Callable[[int, Optional[int]], Awaitable[Any]], self.progress_hook)(self.progress_total, self.total_size)  # pylint: disable=line-too-long
+            await cast(Callable[[int, Optional[int]], Awaitable[Any]], self.progress_hook)(
+                self.progress_total, self.total_size)
 
-    async def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:  # type: ignore [override]
+    async def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:
         if self.stream_lock_async:
-            async with self.stream_lock_async:  # pylint: disable=not-async-context-manager
+            async with self.stream_lock_async:
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
                 self.stream.write(chunk_data)
         else:
             self.stream.write(chunk_data)
 
-    async def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:  # type: ignore [override]
+    async def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:
         if self.encryption_options is None:
             raise ValueError("Required argument is missing: encryption_options")
         download_range, offset = process_range_and_offset(
@@ -290,7 +292,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         else:
             initial_request_end = initial_request_start + self._first_get_size - 1
 
-        self._initial_range, self._initial_offset = process_range_and_offset(  # pylint: disable=W0201
+        # pylint: disable-next=attribute-defined-outside-init
+        self._initial_range, self._initial_offset = process_range_and_offset(
             initial_request_start,
             initial_request_end,
             self._end_range,
@@ -523,15 +526,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
-                progress_hook=self._progress_hook,  # pylint: disable=consider-using-set-comprehension
+                progress_hook=self._progress_hook,
                 **self._request_options
             )
 
             dl_tasks = downloader.get_chunk_offsets()
-            running_futures = [  # pylint: disable=consider-using-set-comprehension
+            running_futures = {
                 asyncio.ensure_future(downloader.process_chunk(d))
                 for d in islice(dl_tasks, 0, self._max_concurrency)
-            ]
+            }
             while running_futures:
                 # Wait for some download to finish before adding a new one
                 done, running_futures = await asyncio.wait(
@@ -681,15 +684,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             encryption_data=self._encryption_data,
-            use_location=self._location_mode,  # pylint: disable=consider-using-set-comprehension
+            use_location=self._location_mode,
             progress_hook=self._progress_hook,
             **self._request_options)
 
         dl_tasks = downloader.get_chunk_offsets()
-        running_futures = [  # pylint: disable=consider-using-set-comprehension
+        running_futures = {
             asyncio.ensure_future(downloader.process_chunk(d))
             for d in islice(dl_tasks, 0, self._max_concurrency)
-        ]
+        }
         while running_futures:
             # Wait for some download to finish before adding a new one
             done, running_futures = await asyncio.wait(
