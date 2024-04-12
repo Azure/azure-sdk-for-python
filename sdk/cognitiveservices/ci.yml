@@ -41,8 +41,6 @@ extends:
       safeName: azurecognitiveserviceslanguagetextanalytics
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure-cognitiveservices-search-autosuggest
-      safeName: azurecognitiveservicessearchautosuggest
     - name: azure-cognitiveservices-search-customimagesearch
       safeName: azurecognitiveservicessearchcustomimagesearch
     - name: azure-cognitiveservices-search-customsearch
@@ -59,13 +57,6 @@ extends:
       safeName: azurecognitiveservicessearchvisualsearch
     - name: azure-cognitiveservices-search-websearch
       safeName: azurecognitiveservicessearchwebsearch
-    - name: azure-cognitiveservices-vision-computervision
-      safeName: azurecognitiveservicesvisioncomputervision
-    - name: azure-cognitiveservices-vision-contentmoderator
-      safeName: azurecognitiveservicesvisioncontentmoderator
-    - name: azure-cognitiveservices-vision-customvision
-      safeName: azurecognitiveservicesvisioncustomvision
-    - name: azure-cognitiveservices-vision-face
-      safeName: azurecognitiveservicesvisionface
+    - name: azure-cognitiveservices-esvisionface
     - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices
