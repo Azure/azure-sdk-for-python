@@ -112,8 +112,8 @@ This example demonstrates how to generate a single chat completions.
 # Do a single chat completion operation. This will be a synchronously (blocking) call.
 result = client.get_chat_completions(
     messages=[
-        ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-        ChatRequestUserMessage(content="How many feet are in a mile?"),
+        SystemMessage(content="You are an AI assistant that helps people find information."),
+        UserMessage(content="How many feet are in a mile?"),
     ],
     # Examples of setting extra parameters (TODO: move this to advanced sample)
     extras=dict(key1="value1", key2="value2"),
@@ -172,7 +172,7 @@ This example demonstrates how to generate and image from a text prompt
 
 ```python
 # Generate a single image from a text prompt. This will be a synchronously (blocking) call.
-result = client.get_image_generations(
+result = client.generate_images(
     prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
 )
 

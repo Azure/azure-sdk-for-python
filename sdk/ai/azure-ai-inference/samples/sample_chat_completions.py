@@ -17,10 +17,11 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_chat_completions():
     import os
-    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
-    
+    from azure.ai.inference.models import SystemMessage, UserMessage
+
     # Read the values of your model endpoint and key from environment variables
     try:
         endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
@@ -35,18 +36,15 @@ def sample_chat_completions():
     from azure.core.credentials import AzureKeyCredential
 
     # Create Model Client for synchronous operations
-    client = ModelClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     # [END create_client]
 
     # [START chat_completions]
     # Do a single chat completion operation. This will be a synchronously (blocking) call.
     result = client.get_chat_completions(
         messages=[
-            ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-            ChatRequestUserMessage(content="How many feet are in a mile?"),
+            SystemMessage(content="You are an AI assistant that helps people find information."),
+            UserMessage(content="How many feet are in a mile?"),
         ],
         # Examples of setting extra parameters (TODO: move this to advanced sample)
         extras=dict(key1="value1", key2="value2"),

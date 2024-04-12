@@ -20,8 +20,9 @@ USAGE:
 import asyncio
 import os
 from azure.ai.inference.aio import ModelClient
-from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ChatCompletionsDelta
+from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
 from azure.core.credentials import AzureKeyCredential
+
 
 async def sample_streaming_chat_completions_async():
 
@@ -41,13 +42,13 @@ async def sample_streaming_chat_completions_async():
     future = asyncio.ensure_future(
         client.get_streaming_chat_completions(
             messages=[
-                ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-                ChatRequestUserMessage(content="Give me 5 good reasons why I should exercise every day."),
+                SystemMessage(content="You are an AI assistant that helps people find information."),
+                UserMessage(content="Give me 5 good reasons why I should exercise every day."),
             ]
         )
     )
 
-    # Loop until you get the HTTP response headers from the service 
+    # Loop until you get the HTTP response headers from the service
     while not future.done():
         await asyncio.sleep(0.1)
         print("Waiting...")
@@ -67,17 +68,21 @@ async def sample_streaming_chat_completions_async():
     await client.close()
 
 
-def print_chat_completions_delta(element: ChatCompletionsDelta):
-    print(f"content: {repr(element.choices[0].delta.content)}, "\
-        f"role: {element.choices[0].delta.role}, "\
-        f"finish_reason: {element.choices[0].finish_reason}, "\
-        f"index: {element.choices[0].index}") 
+def print_chat_completions_delta(element: ChatCompletionsUpdate):
+    print(
+        f"content: {repr(element.choices[0].delta.content)}, "
+        f"role: {element.choices[0].delta.role}, "
+        f"finish_reason: {element.choices[0].finish_reason}, "
+        f"index: {element.choices[0].index}"
+    )
     print(f"id: {element.id}, created: {element.created}, model: {element.model}, object: {element.object}")
     if element.usage is not None:
-        print(f"usage: capacity_type: {element.usage.capacity_type}, "\
-            f"prompt_tokens: {element.usage.prompt_tokens}, "\
-            f"completion_tokens: {element.usage.completion_tokens}, "\
-            f"usage.total_tokens: {element.usage.total_tokens}")
+        print(
+            f"usage: capacity_type: {element.usage.capacity_type}, "
+            f"prompt_tokens: {element.usage.prompt_tokens}, "
+            f"completion_tokens: {element.usage.completion_tokens}, "
+            f"usage.total_tokens: {element.usage.total_tokens}"
+        )
 
 
 async def main():

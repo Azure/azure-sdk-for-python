@@ -24,7 +24,7 @@ class TestImageAnalysisAsyncClient(ModelClientTestBase):
 
         self._create_client_for_standard_test(sync=False, **kwargs)
 
-        messages = [sdk.models.ChatRequestUserMessage(content="How many feet are in a mile?")]
+        messages = [sdk.models.UserMessage(content="How many feet are in a mile?")]
 
         await self._do_async_chat_completions(messages=messages, **kwargs)
 

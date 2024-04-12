@@ -90,9 +90,7 @@ def build_model_get_embeddings_request(*, model_deployment: Optional[str] = None
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_model_get_image_generations_request(  # pylint: disable=name-too-long
-    *, model_deployment: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_model_generate_images_request(*, model_deployment: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -116,7 +114,7 @@ def build_model_get_image_generations_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_model_get_model_information_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_model_get_model_info_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -168,19 +166,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         Example:
             .. code-block:: python
 
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "json_object":
-                chat_completions_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "text":
-                chat_completions_response_format = {
-                    "type": "text"
-                }
-
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "messages": [
@@ -203,7 +188,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                       of generated tokens appearing based on their existing presence in generated text.
                       Positive values will make tokens less likely to appear when they already exist
                       and increase the model's likelihood to output new topics.
-                    "response_format": chat_completions_response_format,
+                    "response_format": "str",  # Optional. An object specifying the format that
+                      the model must output. Used to enable JSON mode. Known values are: "text" and
+                      "json_object".
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
                       parameters should return the same result. Determinism is not guaranteed.".
@@ -288,7 +275,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -356,8 +343,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
         :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -513,7 +500,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -580,8 +567,8 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
         :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -606,19 +593,6 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         Example:
             .. code-block:: python
 
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "json_object":
-                chat_completions_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "text":
-                chat_completions_response_format = {
-                    "type": "text"
-                }
-
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "messages": [
@@ -641,7 +615,9 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
                       of generated tokens appearing based on their existing presence in generated text.
                       Positive values will make tokens less likely to appear when they already exist
                       and increase the model's likelihood to output new topics.
-                    "response_format": chat_completions_response_format,
+                    "response_format": "str",  # Optional. An object specifying the format that
+                      the model must output. Used to enable JSON mode. Known values are: "text" and
+                      "json_object".
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
                       parameters should return the same result. Determinism is not guaranteed.".
@@ -1156,7 +1132,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def get_image_generations(
+    def generate_images(
         self,
         body: JSON,
         *,
@@ -1226,7 +1202,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    def get_image_generations(
+    def generate_images(
         self,
         *,
         prompt: str,
@@ -1301,7 +1277,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @overload
-    def get_image_generations(
+    def generate_images(
         self,
         body: IO[bytes],
         *,
@@ -1349,7 +1325,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         """
 
     @distributed_trace
-    def get_image_generations(
+    def generate_images(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1478,7 +1454,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_model_get_image_generations_request(
+        _request = build_model_generate_images_request(
             model_deployment=model_deployment,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1512,7 +1488,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_model_information(self, **kwargs: Any) -> _models.ModelInformation:
+    def get_model_info(self, **kwargs: Any) -> _models.ModelInformation:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
 
@@ -1544,7 +1520,7 @@ class ModelClientOperationsMixin(ModelClientMixinABC):
 
         cls: ClsType[_models.ModelInformation] = kwargs.pop("cls", None)
 
-        _request = build_model_get_model_information_request(
+        _request = build_model_get_model_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

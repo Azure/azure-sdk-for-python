@@ -25,7 +25,7 @@ class TestModelClient(ModelClientTestBase):
 
         self._create_client_for_standard_test(sync=True, **kwargs)
 
-        messages = [sdk.models.ChatRequestUserMessage(content="How many feet are in a mile?")]
+        messages = [sdk.models.UserMessage(content="How many feet are in a mile?")]
 
         self._do_chat_completions(messages=messages, **kwargs)
 

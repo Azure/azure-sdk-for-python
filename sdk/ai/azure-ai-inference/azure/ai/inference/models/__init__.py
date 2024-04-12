@@ -6,23 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models import AssistantMessage
 from ._models import ChatChoice
-from ._models import ChatChoiceDelta
+from ._models import ChatChoiceUpdate
 from ._models import ChatCompletions
-from ._models import ChatCompletionsDelta
 from ._models import ChatCompletionsFunctionToolCall
 from ._models import ChatCompletionsFunctionToolDefinition
-from ._models import ChatCompletionsJsonResponseFormat
 from ._models import ChatCompletionsNamedToolSelection
-from ._models import ChatCompletionsResponseFormat
-from ._models import ChatCompletionsTextResponseFormat
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
-from ._models import ChatRequestAssistantMessage
+from ._models import ChatCompletionsUpdate
 from ._models import ChatRequestMessage
-from ._models import ChatRequestSystemMessage
-from ._models import ChatRequestToolMessage
-from ._models import ChatRequestUserMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
 from ._models import EmbeddingItem
@@ -33,8 +27,12 @@ from ._models import FunctionDefinition
 from ._models import ImageGenerationData
 from ._models import ImageGenerations
 from ._models import ModelInformation
+from ._models import SystemMessage
+from ._models import ToolMessage
+from ._models import UserMessage
 
 from ._enums import CapacityType
+from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
@@ -47,23 +45,17 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AssistantMessage",
     "ChatChoice",
-    "ChatChoiceDelta",
+    "ChatChoiceUpdate",
     "ChatCompletions",
-    "ChatCompletionsDelta",
     "ChatCompletionsFunctionToolCall",
     "ChatCompletionsFunctionToolDefinition",
-    "ChatCompletionsJsonResponseFormat",
     "ChatCompletionsNamedToolSelection",
-    "ChatCompletionsResponseFormat",
-    "ChatCompletionsTextResponseFormat",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
-    "ChatRequestAssistantMessage",
+    "ChatCompletionsUpdate",
     "ChatRequestMessage",
-    "ChatRequestSystemMessage",
-    "ChatRequestToolMessage",
-    "ChatRequestUserMessage",
     "ChatResponseMessage",
     "CompletionsUsage",
     "EmbeddingItem",
@@ -74,7 +66,11 @@ __all__ = [
     "ImageGenerationData",
     "ImageGenerations",
     "ModelInformation",
+    "SystemMessage",
+    "ToolMessage",
+    "UserMessage",
     "CapacityType",
+    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
     "CompletionsFinishReason",

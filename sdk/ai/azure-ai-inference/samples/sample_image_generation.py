@@ -17,6 +17,7 @@ USAGE:
     2) IMAGE_GENERATION_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
+
 def sample_image_generation():
     import os
     from azure.ai.inference import ModelClient
@@ -36,7 +37,7 @@ def sample_image_generation():
 
     # [START image_generation]
     # Generate a single image from a text prompt. This will be a synchronously (blocking) call.
-    result = client.get_image_generations(
+    result = client.generate_images(
         prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768"
     )
 

@@ -27,7 +27,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from .._operations._operations import build_model_get_chat_completions_request
- 
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -60,7 +60,7 @@ class ModelClient(ModelClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ChatCompletionsDeltaIterator:
+    ) -> _models.StreamingChatCompletions:
 
         error_map = {
             401: ClientAuthenticationError,
@@ -112,11 +112,11 @@ class ModelClient(ModelClientGenerated):
         )
         _request.url = self._client.format_url(_request.url)
 
-        kwargs.pop("stream", True) # Remove stream from kwargs (ignore value set by the application)
+        kwargs.pop("stream", True)  # Remove stream from kwargs (ignore value set by the application)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=True, **kwargs
         )
-    
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -124,7 +124,7 @@ class ModelClient(ModelClientGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return _models.ChatCompletionsDeltaIterator(response.iter_bytes())
+        return _models.StreamingChatCompletions(response.iter_bytes())
 
 
 __all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level

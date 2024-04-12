@@ -45,7 +45,6 @@ _SERIALIZER.client_side_validation = False
 
 
 class ModelClient(ModelClientGenerated):
-
     @distributed_trace
     def get_streaming_chat_completions(
         self,
@@ -67,7 +66,7 @@ class ModelClient(ModelClientGenerated):
         ] = None,
         seed: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ChatCompletionsDeltaIterator:
+    ) -> _models.StreamingChatCompletions:
 
         error_map = {
             401: ClientAuthenticationError,
@@ -120,7 +119,7 @@ class ModelClient(ModelClientGenerated):
 
         _request.url = self._client.format_url(_request.url)
 
-        kwargs.pop("stream", True) # Remove stream from kwargs (ignore value set by the application)
+        kwargs.pop("stream", True)  # Remove stream from kwargs (ignore value set by the application)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=True, **kwargs
         )
@@ -132,7 +131,7 @@ class ModelClient(ModelClientGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return _models.ChatCompletionsDeltaIterator(response.iter_bytes())
+        return _models.StreamingChatCompletions(response.iter_bytes())
 
 
 __all__: List[str] = ["ModelClient"]  # Add all objects you want publicly available to users at this package level

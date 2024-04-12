@@ -19,6 +19,20 @@ class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Your capacity has not been affected by the usage amount (token count) reported here."""
 
 
+class ChatCompletionsResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An representation of a response format configuration usable by Chat Completions. Can be used to
+    enable JSON
+    mode.
+    """
+
+    TEXT = "text"
+    """The standard Chat Completions response format that can freely generate text and is not
+    guaranteed to produce response
+    content that adheres to a specific schema."""
+    JSON_OBJECT = "json_object"
+    """A response format for Chat Completions that restricts responses to emitting valid JSON objects."""
+
+
 class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a generic policy for how a chat completions tool may be selected."""
 

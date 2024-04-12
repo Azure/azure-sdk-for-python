@@ -20,9 +20,10 @@ USAGE:
 
 import os
 from azure.ai.inference import ModelClient
-from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage, ChatCompletionsDelta
+from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.transport import RequestsTransport
+
 
 def sample_streaming_chat_completions():
 
@@ -39,8 +40,8 @@ def sample_streaming_chat_completions():
     client = ModelClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     messages = [
-        ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-        ChatRequestUserMessage(content="Give me 5 good reasons why I should exercise every day."),
+        SystemMessage(content="You are an AI assistant that helps people find information."),
+        UserMessage(content="Give me 5 good reasons why I should exercise every day."),
     ]
 
     # [START streaming_chat_completions]
@@ -57,17 +58,22 @@ def sample_streaming_chat_completions():
     # [END streaming_chat_completions]
 
 
-def print_chat_completions_delta(element: ChatCompletionsDelta):
-    print(f"content: {repr(element.choices[0].delta.content)}, "\
-        f"role: {element.choices[0].delta.role}, "\
-        f"finish_reason: {element.choices[0].finish_reason}, "\
-        f"index: {element.choices[0].index}") 
+def print_chat_completions_delta(element: ChatCompletionsUpdate):
+    print(
+        f"content: {repr(element.choices[0].delta.content)}, "
+        f"role: {element.choices[0].delta.role}, "
+        f"finish_reason: {element.choices[0].finish_reason}, "
+        f"index: {element.choices[0].index}"
+    )
     print(f"id: {element.id}, created: {element.created}, model: {element.model}, object: {element.object}")
     if element.usage is not None:
-        print(f"usage: capacity_type: {element.usage.capacity_type}, "\
-            f"prompt_tokens: {element.usage.prompt_tokens}, "\
-            f"completion_tokens: {element.usage.completion_tokens}, "\
-            f"usage.total_tokens: {element.usage.total_tokens}")
+        print(
+            f"usage: capacity_type: {element.usage.capacity_type}, "
+            f"prompt_tokens: {element.usage.prompt_tokens}, "
+            f"completion_tokens: {element.usage.completion_tokens}, "
+            f"usage.total_tokens: {element.usage.total_tokens}"
+        )
+
 
 if __name__ == "__main__":
     sample_streaming_chat_completions()

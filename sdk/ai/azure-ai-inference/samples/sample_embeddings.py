@@ -43,7 +43,9 @@ def sample_embeddings():
     print("Embeddings result:")
     for item in result.data:
         length = len(item.embedding)
-        print(f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]")
+        print(
+            f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+        )
     print(f"id: {result.id}")
     print(f"model: {result.model}")
     print(f"object: {result.object}")

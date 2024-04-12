@@ -26,6 +26,81 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
+class ChatRequestMessage(_model_base.Model):
+    """An abstract representation of a chat message as provided in a request.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AssistantMessage, SystemMessage, ToolMessage, UserMessage
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar role: The chat role associated with this message. Required. Known values are: "system",
+     "user", "assistant", and "tool".
+    :vartype role: str or ~azure.ai.inference.models.ChatRole
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    role: str = rest_discriminator(name="role")
+    """The chat role associated with this message. Required. Known values are: \"system\", \"user\",
+     \"assistant\", and \"tool\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
+    """A request chat message representing response or action from the assistant.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar role: The chat role associated with this message, which is always 'assistant' for
+     assistant messages. Required. The role that provides responses to system-instructed,
+     user-prompted input.
+    :vartype role: str or ~azure.ai.inference.models.ASSISTANT
+    :ivar content: The content of the message. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'assistant' for assistant messages.
+     Required. The role that provides responses to system-instructed, user-prompted input."""
+    content: str = rest_field()
+    """The content of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, role=ChatRole.ASSISTANT, **kwargs)
+
+
 class ChatChoice(_model_base.Model):
     """The representation of a single prompt completion as part of an overall chat completions
     request.
@@ -72,7 +147,7 @@ class ChatChoice(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatChoiceDelta(_model_base.Model):
+class ChatChoiceUpdate(_model_base.Model):
     """Represents an update to a single prompt completion when the service is streaming updates
     using Server Sent Events (SSE).
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
@@ -172,77 +247,6 @@ class ChatCompletions(_model_base.Model):
         model: str,
         usage: "_models.CompletionsUsage",
         choices: List["_models.ChatChoice"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsDelta(_model_base.Model):
-    """Represents a response update to a chat completions request, when the service is streaming
-    updates
-    using Server Sent Events (SSE).
-    Completions support a wide variety of tasks and generate text that continues from or
-    "completes"
-    provided prompt data.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: A unique identifier associated with this chat completions response. Required.
-    :vartype id: str
-    :ivar object: The response object type, which is always ``chat.completion``. Required.
-    :vartype object: str
-    :ivar created: The first timestamp associated with generation activity for this completions
-     response,
-     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-    :vartype created: ~datetime.datetime
-    :ivar model: The model used for the chat completion. Required.
-    :vartype model: str
-    :ivar usage: Usage information for tokens processed and generated as part of this completions
-     operation. Required.
-    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
-    :ivar choices: An update to the collection of completion choices associated with this
-     completions response.
-     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
-     Token limits and other settings may limit the number of choices generated. Required.
-    :vartype choices: list[~azure.ai.inference.models.ChatChoiceDelta]
-    """
-
-    id: str = rest_field()
-    """A unique identifier associated with this chat completions response. Required."""
-    object: str = rest_field()
-    """The response object type, which is always ``chat.completion``. Required."""
-    created: datetime.datetime = rest_field(format="unix-timestamp")
-    """The first timestamp associated with generation activity for this completions response,
-     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
-    model: str = rest_field()
-    """The model used for the chat completion. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
-    """Usage information for tokens processed and generated as part of this completions operation.
-     Required."""
-    choices: List["_models.ChatChoiceDelta"] = rest_field()
-    """An update to the collection of completion choices associated with this completions response.
-     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
-     Token limits and other settings may limit the number of choices generated. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        object: str,
-        created: datetime.datetime,
-        model: str,
-        usage: "_models.CompletionsUsage",
-        choices: List["_models.ChatChoiceDelta"],
     ):
         ...
 
@@ -412,58 +416,6 @@ class ChatCompletionsFunctionToolDefinition(ChatCompletionsToolDefinition, discr
         super().__init__(*args, type="function", **kwargs)
 
 
-class ChatCompletionsResponseFormat(_model_base.Model):
-    """An abstract representation of a response format configuration usable by Chat Completions. Can
-    be used to enable JSON
-    mode.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsJsonResponseFormat, ChatCompletionsTextResponseFormat
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated type for the response format. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The discriminated type for the response format. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsJsonResponseFormat(ChatCompletionsResponseFormat, discriminator="json_object"):
-    """A response format for Chat Completions that restricts responses to emitting valid JSON objects.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated object type, which is always 'json_object' for this format.
-     Required. Default value is "json_object".
-    :vartype type: str
-    """
-
-    type: Literal["json_object"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type, which is always 'json_object' for this format. Required. Default
-     value is \"json_object\"."""
-
-
 class ChatCompletionsNamedToolSelection(_model_base.Model):
     """An abstract representation of an explicit, named tool selection to use for a chat completions
     request.
@@ -478,47 +430,63 @@ class ChatCompletionsNamedToolSelection(_model_base.Model):
     """The object type. Required."""
 
 
-class ChatCompletionsTextResponseFormat(ChatCompletionsResponseFormat, discriminator="text"):
-    """The standard Chat Completions response format that can freely generate text and is not
-    guaranteed to produce response
-    content that adheres to a specific schema.
+class ChatCompletionsUpdate(_model_base.Model):
+    """Represents a response update to a chat completions request, when the service is streaming
+    updates
+    using Server Sent Events (SSE).
+    Completions support a wide variety of tasks and generate text that continues from or
+    "completes"
+    provided prompt data.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: The discriminated object type, which is always 'text' for this format. Required.
-     Default value is "text".
-    :vartype type: str
+    :ivar id: A unique identifier associated with this chat completions response. Required.
+    :vartype id: str
+    :ivar object: The response object type, which is always ``chat.completion``. Required.
+    :vartype object: str
+    :ivar created: The first timestamp associated with generation activity for this completions
+     response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
+    :vartype created: ~datetime.datetime
+    :ivar model: The model used for the chat completion. Required.
+    :vartype model: str
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
+    :ivar choices: An update to the collection of completion choices associated with this
+     completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required.
+    :vartype choices: list[~azure.ai.inference.models.ChatChoiceUpdate]
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type, which is always 'text' for this format. Required. Default value
-     is \"text\"."""
-
-
-class ChatRequestMessage(_model_base.Model):
-    """An abstract representation of a chat message as provided in a request.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatRequestAssistantMessage, ChatRequestSystemMessage, ChatRequestToolMessage,
-    ChatRequestUserMessage
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with this message. Required. Known values are: "system",
-     "user", "assistant", and "tool".
-    :vartype role: str or ~azure.ai.inference.models.ChatRole
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    role: str = rest_discriminator(name="role")
-    """The chat role associated with this message. Required. Known values are: \"system\", \"user\",
-     \"assistant\", and \"tool\"."""
+    id: str = rest_field()
+    """A unique identifier associated with this chat completions response. Required."""
+    object: str = rest_field()
+    """The response object type, which is always ``chat.completion``. Required."""
+    created: datetime.datetime = rest_field(format="unix-timestamp")
+    """The first timestamp associated with generation activity for this completions response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
+    model: str = rest_field()
+    """The model used for the chat completion. Required."""
+    usage: "_models.CompletionsUsage" = rest_field()
+    """Usage information for tokens processed and generated as part of this completions operation.
+     Required."""
+    choices: List["_models.ChatChoiceUpdate"] = rest_field()
+    """An update to the collection of completion choices associated with this completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        role: str,
+        id: str,  # pylint: disable=redefined-builtin
+        object: str,
+        created: datetime.datetime,
+        model: str,
+        usage: "_models.CompletionsUsage",
+        choices: List["_models.ChatChoiceUpdate"],
     ):
         ...
 
@@ -531,165 +499,6 @@ class ChatRequestMessage(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant"):
-    """A request chat message representing response or action from the assistant.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with this message, which is always 'assistant' for
-     assistant messages. Required. The role that provides responses to system-instructed,
-     user-prompted input.
-    :vartype role: str or ~azure.ai.inference.models.ASSISTANT
-    :ivar content: The content of the message. Required.
-    :vartype content: str
-    """
-
-    role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
-    """The chat role associated with this message, which is always 'assistant' for assistant messages.
-     Required. The role that provides responses to system-instructed, user-prompted input."""
-    content: str = rest_field()
-    """The content of the message. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, role=ChatRole.ASSISTANT, **kwargs)
-
-
-class ChatRequestSystemMessage(ChatRequestMessage, discriminator="system"):
-    """A request chat message containing system instructions that influence how the model will
-    generate a chat completions
-    response.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with this message, which is always 'system' for system
-     messages. Required. The role that instructs or sets the behavior of the assistant.
-    :vartype role: str or ~azure.ai.inference.models.SYSTEM
-    :ivar content: The contents of the system message. Required.
-    :vartype content: str
-    """
-
-    role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
-    """The chat role associated with this message, which is always 'system' for system messages.
-     Required. The role that instructs or sets the behavior of the assistant."""
-    content: str = rest_field()
-    """The contents of the system message. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
-
-
-class ChatRequestToolMessage(ChatRequestMessage, discriminator="tool"):
-    """A request chat message representing requested output from a configured tool.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with this message, which is always 'tool' for tool
-     messages. Required. The role that represents extension tool activity within a chat completions
-     operation.
-    :vartype role: str or ~azure.ai.inference.models.TOOL
-    :ivar content: The content of the message. Required.
-    :vartype content: str
-    :ivar tool_call_id: The ID of the tool call resolved by the provided content. Required.
-    :vartype tool_call_id: str
-    """
-
-    role: Literal[ChatRole.TOOL] = rest_discriminator(name="role")  # type: ignore
-    """The chat role associated with this message, which is always 'tool' for tool messages. Required.
-     The role that represents extension tool activity within a chat completions operation."""
-    content: str = rest_field()
-    """The content of the message. Required."""
-    tool_call_id: str = rest_field()
-    """The ID of the tool call resolved by the provided content. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-        tool_call_id: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, role=ChatRole.TOOL, **kwargs)
-
-
-class ChatRequestUserMessage(ChatRequestMessage, discriminator="user"):
-    """A request chat message representing user input to the assistant.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with this message, which is always 'user' for user
-     messages. Required. The role that provides input for chat completions.
-    :vartype role: str or ~azure.ai.inference.models.USER
-    :ivar content: The contents of the user message, with available input types varying by selected
-     model. Required.
-    :vartype content: str
-    """
-
-    role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
-    """The chat role associated with this message, which is always 'user' for user messages. Required.
-     The role that provides input for chat completions."""
-    content: str = rest_field()
-    """The contents of the user message, with available input types varying by selected model.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, role=ChatRole.USER, **kwargs)
 
 
 class ChatResponseMessage(_model_base.Model):
@@ -1158,3 +967,124 @@ class ModelInformation(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class SystemMessage(ChatRequestMessage, discriminator="system"):
+    """A request chat message containing system instructions that influence how the model will
+    generate a chat completions
+    response.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar role: The chat role associated with this message, which is always 'system' for system
+     messages. Required. The role that instructs or sets the behavior of the assistant.
+    :vartype role: str or ~azure.ai.inference.models.SYSTEM
+    :ivar content: The contents of the system message. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'system' for system messages.
+     Required. The role that instructs or sets the behavior of the assistant."""
+    content: str = rest_field()
+    """The contents of the system message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
+
+
+class ToolMessage(ChatRequestMessage, discriminator="tool"):
+    """A request chat message representing requested output from a configured tool.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar role: The chat role associated with this message, which is always 'tool' for tool
+     messages. Required. The role that represents extension tool activity within a chat completions
+     operation.
+    :vartype role: str or ~azure.ai.inference.models.TOOL
+    :ivar content: The content of the message. Required.
+    :vartype content: str
+    :ivar tool_call_id: The ID of the tool call resolved by the provided content. Required.
+    :vartype tool_call_id: str
+    """
+
+    role: Literal[ChatRole.TOOL] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'tool' for tool messages. Required.
+     The role that represents extension tool activity within a chat completions operation."""
+    content: str = rest_field()
+    """The content of the message. Required."""
+    tool_call_id: str = rest_field()
+    """The ID of the tool call resolved by the provided content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+        tool_call_id: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, role=ChatRole.TOOL, **kwargs)
+
+
+class UserMessage(ChatRequestMessage, discriminator="user"):
+    """A request chat message representing user input to the assistant.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar role: The chat role associated with this message, which is always 'user' for user
+     messages. Required. The role that provides input for chat completions.
+    :vartype role: str or ~azure.ai.inference.models.USER
+    :ivar content: The contents of the user message, with available input types varying by selected
+     model. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'user' for user messages. Required.
+     The role that provides input for chat completions."""
+    content: str = rest_field()
+    """The contents of the user message, with available input types varying by selected model.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, role=ChatRole.USER, **kwargs)

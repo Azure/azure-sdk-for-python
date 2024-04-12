@@ -18,10 +18,11 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_chat_completions_async():
     import os
     from azure.ai.inference.aio import ModelClient
-    from azure.ai.inference.models import ChatRequestSystemMessage, ChatRequestUserMessage
+    from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
@@ -40,8 +41,8 @@ async def sample_chat_completions_async():
     future = asyncio.ensure_future(
         client.get_chat_completions(
             messages=[
-                ChatRequestSystemMessage(content="You are an AI assistant that helps people find information."),
-                ChatRequestUserMessage(content="How many feet are in a mile?"),
+                SystemMessage(content="You are an AI assistant that helps people find information."),
+                UserMessage(content="How many feet are in a mile?"),
             ]
         )
     )
@@ -69,6 +70,7 @@ async def sample_chat_completions_async():
     print(f"usage.prompt_tokens: {result.usage.prompt_tokens}")
     print(f"usage.completion_tokens: {result.usage.completion_tokens}")
     print(f"usage.total_tokens: {result.usage.total_tokens}")
+
 
 async def main():
     await sample_chat_completions_async()
