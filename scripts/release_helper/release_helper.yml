@@ -55,15 +55,12 @@ jobs:
         mkdir azure-rest-api-specs
         git clone -b $(SPEC_BRANCH) https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
-        mkdir sdk-release-request
-        git clone -b release https://github.com/Azure/sdk-release-request.git $(pwd)/sdk-release-request
-
         # import env variable
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
-        export TYPESPEC_JSON = $(pwd)/sdk-release-request/data/typespec.json
+        export TYPESPEC_JSON = $(pwd)/file-storage/data/typespec.json
         export TEST_ISSUE_NUMBER = $(TEST_ISSUE_NUMBER)
 
         # create virtual env
