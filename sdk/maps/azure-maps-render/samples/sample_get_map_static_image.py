@@ -18,7 +18,7 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_map_static_image():
     # [START get_map_static_image]

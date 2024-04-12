@@ -20,7 +20,7 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_copyright_caption():
     # [START get_copyright_caption]

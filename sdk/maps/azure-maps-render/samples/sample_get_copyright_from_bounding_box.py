@@ -19,7 +19,7 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY") or "your subscription key"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_copyright_from_bounding_box():
     # [START get_copyright_from_bounding_box]
