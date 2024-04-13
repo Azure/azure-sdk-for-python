@@ -316,6 +316,24 @@ class StaticWebsite(GeneratedStaticWebsite):
             self.error_document404_path = None
             self.default_index_document_path = None
 
+    @staticmethod
+    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+        if rules is None:
+            return rules
+
+        generated_cors_list = []
+        for cors_rule in rules:
+            generated_cors = GeneratedCorsRule(
+                allowed_origins=cors_rule.allowed_origins,
+                allowed_methods=cors_rule.allowed_methods,
+                allowed_headers=cors_rule.allowed_headers,
+                exposed_headers=cors_rule.exposed_headers,
+                max_age_in_seconds=cors_rule.max_age_in_seconds
+            )
+            generated_cors_list.append(generated_cors)
+
+        return generated_cors_list
+
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
@@ -376,6 +394,24 @@ class CorsRule(GeneratedCorsRule):
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
         self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+
+    @staticmethod
+    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+        if rules is None:
+            return rules
+
+        generated_cors_list = []
+        for cors_rule in rules:
+            generated_cors = GeneratedCorsRule(
+                allowed_origins=cors_rule.allowed_origins,
+                allowed_methods=cors_rule.allowed_methods,
+                allowed_headers=cors_rule.allowed_headers,
+                exposed_headers=cors_rule.exposed_headers,
+                max_age_in_seconds=cors_rule.max_age_in_seconds
+            )
+            generated_cors_list.append(generated_cors)
+
+        return generated_cors_list
 
     @classmethod
     def _from_generated(cls, generated):

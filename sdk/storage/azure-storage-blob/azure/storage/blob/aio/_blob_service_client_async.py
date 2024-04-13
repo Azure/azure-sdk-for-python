@@ -36,14 +36,13 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._encryption import StorageEncryptionMixin
-from .._models import BlobProperties, ContainerProperties
+from .._models import BlobProperties, ContainerProperties, CorsRule
 from .._serialize import get_api_version
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from .._generated.models import CorsRule as GenCorsRule
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -53,7 +52,6 @@ if TYPE_CHECKING:
     from .._models import (
         PublicAccess,
         BlobAnalyticsLogging,
-        CorsRule,
         FilteredBlob,
         Metrics,
         RetentionPolicy,
@@ -329,7 +327,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         target_version: Optional[str] = None,
         delete_retention_policy: Optional["RetentionPolicy"] = None,
         static_website: Optional["StaticWebsite"] = None,
@@ -394,7 +392,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cast(Optional[List["GenCorsRule"]], cors),
+            cors=CorsRule._to_generated(cors), # pylint: disable=protected-access
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
