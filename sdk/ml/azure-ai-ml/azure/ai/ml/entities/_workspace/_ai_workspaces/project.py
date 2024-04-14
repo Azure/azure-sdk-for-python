@@ -50,8 +50,8 @@ class Project(Workspace):
         resource_group: Optional[str] = None,
         **kwargs,
     ) -> None:
-         # Ensure user can't overwrite/double input type.
-        kwargs.pop('type', None)
+        # Ensure user can't overwrite/double input type.
+        kwargs.pop("type", None)
         super().__init__(
             name=name,
             description=description,

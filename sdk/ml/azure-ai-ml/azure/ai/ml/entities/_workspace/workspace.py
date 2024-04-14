@@ -22,7 +22,7 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
     WorkspaceResourceConstants,
     WorkspaceType,
-    CommonYamlFields
+    CommonYamlFields,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
@@ -30,15 +30,16 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
 
 from azure.ai.ml.entities._util import find_type_in_override
-from .customer_managed_key import CustomerManagedKey
-from .feature_store_settings import FeatureStoreSettings
-from .networking import ManagedNetwork
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
 )
+from .customer_managed_key import CustomerManagedKey
+from .feature_store_settings import FeatureStoreSettings
+from .networking import ManagedNetwork
+
 
 class Workspace(Resource):
     """Azure ML workspace.
@@ -123,7 +124,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        hub_id: Optional[str] = None, # Hidden input, surfaced by Project
+        hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
@@ -225,7 +226,9 @@ class Workspace(Resource):
         return res
 
     @classmethod
-    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple[Type["Workspace"], str]:
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple[Type["Workspace"], str]:
         """Given a workspace data dictionary, determine the appropriate workspace class and type string.
 
         Allows for easier polymorphism of the between the workspace class and its children.
@@ -240,6 +243,7 @@ class Workspace(Resource):
         :rtype: Tuple[Type["Workspace"], str]
         """
         from azure.ai.ml.entities import Hub, Project
+
         workspace_type: Optional[Type["Workspace"]] = None
         type_in_override = find_type_in_override(params_override)
         type_str = type_in_override or data.get(CommonYamlFields.TYPE, WorkspaceType.DEFAULT)
@@ -261,7 +265,6 @@ class Workspace(Resource):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         return workspace_type, type_str
-
 
     @classmethod
     def _load(
@@ -289,12 +292,12 @@ class Workspace(Resource):
         )
         result = workspace_type(**laoded_schema)
         if yaml_path:
-            result._source_path = yaml_path
+            result._source_path = yaml_path  # pylint: disable=protected-access
         return result
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         if not rest_obj:
             return None
         customer_managed_key = (

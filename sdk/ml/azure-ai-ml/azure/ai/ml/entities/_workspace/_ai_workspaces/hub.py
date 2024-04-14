@@ -3,27 +3,22 @@
 # ---------------------------------------------------------
 
 # pylint: disable=too-many-instance-attributes,protected-access
-
-
-from os import PathLike
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, WorkspaceType
 from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
 
 @experimental
 class Hub(Workspace):
     """A Hub is a special type of workspace that acts as a parent and resource container for lightweight child
-    workspaces called projects. Resources like the hub's storage account, key vault, 
+    workspaces called projects. Resources like the hub's storage account, key vault,
     and container registry are shared by all child projects.
 
     As a type of workspace, Hub management is controlled by an MLClient's workspace operations.
@@ -79,6 +74,7 @@ class Hub(Workspace):
             :dedent: 8
             :caption: Creating a Hub object.
     """
+
     # The field 'additional_workspace_storage_accounts' exists in the API but is currently unused.
 
     def __init__(
@@ -100,12 +96,12 @@ class Hub(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
         default_workspace_resource_group: Optional[str] = None,
-        associated_workspaces: Optional[List[str]] = None, # hidden input for rest->client conversions.
+        associated_workspaces: Optional[List[str]] = None,  # hidden input for rest->client conversions.
         **kwargs: Any,
     ):
         self._workspace_id = kwargs.pop("workspace_id", "")
-         # Ensure user can't overwrite/double input type.
-        kwargs.pop('type', None)
+        # Ensure user can't overwrite/double input type.
+        kwargs.pop("type", None)
         super().__init__(
             name=name,
             description=description,
@@ -182,14 +178,13 @@ class Hub(Workspace):
         return restWorkspace
 
     @property
-    def default_workspace_resource_group(self) -> str:
+    def default_workspace_resource_group(self) -> Optional[str]:
         """The default resource group for this hub and its children.
 
         :return: The resource group.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._default_workspace_resource_group
-    
 
     @default_workspace_resource_group.setter
     def default_workspace_resource_group(self, value: str):
@@ -202,12 +197,13 @@ class Hub(Workspace):
             return
         self._default_workspace_resource_group = value
 
+    # No setter, read-only
     @property
-    def associated_workspaces(self) ->  List[str]:
+    def associated_workspaces(self) -> Optional[List[str]]:
         """The workspaces associated with the hub.
 
         :return: The resource group.
-        :rtype: List[str]
+        :rtype:  Optional[List[str]]
         """
         return self._associated_workspaces
-    # No setter, read-only
+

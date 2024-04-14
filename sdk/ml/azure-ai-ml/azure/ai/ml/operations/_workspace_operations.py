@@ -73,7 +73,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(
-        self, *, scope: str = Scope.RESOURCE_GROUP, kind: Optional[Union[str, List[str]]] = None
+        self, *, scope: str = Scope.RESOURCE_GROUP, filtered_types: Optional[Union[str, List[str]]] = None
     ) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
@@ -96,16 +96,16 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
 
         # Kind should be converted to a comma-separating string if multiple values are supplied.
-        formatted_kind = kind
-        if isinstance(kind, list):
-            formatted_kind = ",".join(kind)  # type: ignore[arg-type]
+        formatted_types = filtered_types
+        if isinstance(filtered_types, list):
+            formatted_types = ",".join(filtered_types)  # type: ignore[arg-type]
 
         if scope == Scope.SUBSCRIPTION:
             return cast(
                 Iterable[Workspace],
                 self._operation.list_by_subscription(
                     cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
-                    kind=formatted_kind,
+                    kind=formatted_types,
                 ),
             )
         return cast(
@@ -113,7 +113,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             self._operation.list_by_resource_group(
                 self._resource_group_name,
                 cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
-                kind=formatted_kind,
+                kind=formatted_types,
             ),
         )
 
@@ -262,7 +262,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
-            if error.status_code == 403 and workspace._kind == WorkspaceType.PROJECT:
+            if error.status_code == 403 and workspace._type == WorkspaceType.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
                 hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)

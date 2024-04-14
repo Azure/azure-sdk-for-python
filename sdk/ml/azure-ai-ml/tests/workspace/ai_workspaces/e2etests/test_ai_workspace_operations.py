@@ -70,7 +70,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub_id=created_hub.id,
                 description="project1 description",
                 display_name="project1 display name",
-                location="westus2"
+                location="westus2",
             )
             created_project1 = client.workspaces.begin_create(workspace=local_project1).result()
 
@@ -79,7 +79,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub_id=created_hub.id,
                 description="project2 description",
                 display_name="project2 display name",
-                location="westus2"
+                location="westus2",
             )
             created_project2 = client.workspaces.begin_create(workspace=local_project2).result()
 

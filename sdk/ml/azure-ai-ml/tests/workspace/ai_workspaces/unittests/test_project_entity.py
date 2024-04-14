@@ -3,6 +3,7 @@ import pytest
 from azure.ai.ml import load_workspace
 from azure.ai.ml.entities import Project
 
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestProjectEntity:

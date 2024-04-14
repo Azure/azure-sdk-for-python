@@ -41,7 +41,6 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities import Hub, Project
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -233,6 +232,7 @@ def load_workspace(
             :caption: Loading a Workspace from a YAML config file.
     """
     return cast(Workspace, load_common(Workspace, source, relative_origin, **kwargs))
+
 
 def load_registry(
     source: Union[str, PathLike, IO[AnyStr]],
