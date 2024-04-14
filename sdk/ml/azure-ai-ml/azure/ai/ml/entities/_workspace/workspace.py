@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, Type, Tuple, List
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
@@ -21,17 +21,24 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     WorkspaceResourceConstants,
-    WorkspaceKind,
+    WorkspaceType,
+    CommonYamlFields
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
 
+from azure.ai.ml.entities._util import find_type_in_override
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
-
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 class Workspace(Resource):
     """Azure ML workspace.
@@ -116,11 +123,13 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        hub_id: Optional[str] = None,
+        hub_id: Optional[str] = None, # Hidden input, surfaced by Project
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
-        self._kind = kwargs.pop("kind", "default")
+        # Convert type to kind internally. Type is surfaced for polymorphic classes,
+        # but kind matches backend API naming.
+        self._type = kwargs.pop("type", WorkspaceType.DEFAULT)
         self.print_as_yaml = True
         self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri: Optional[str] = kwargs.pop("mlflow_tracking_uri", None)
@@ -144,10 +153,11 @@ class Workspace(Resource):
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
         self.__hub_id = hub_id
-        # Technically this is redundant with the introduction of projects as their own class in ~April 2024,
-        # but this is still useful for minor backwards compatibility's sake.
+        # Overwrite kind if hub_id is provided. Technically not needed anymore,
+        # but kept for backwards if people try to just use a normal workspace like
+        # a project.
         if hub_id:
-            self._kind = WorkspaceKind.PROJECT.value
+            self._type = WorkspaceType.PROJECT.value
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
@@ -211,8 +221,47 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = self._get_schema_class()(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
+
+    @classmethod
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple[Type["Workspace"], str]:
+        """Given a workspace data dictionary, determine the appropriate workspace class and type string.
+
+        Allows for easier polymorphism of the between the workspace class and its children.
+
+        Adapted from similar code in the Job class.
+
+        :param data: A dictionary of values describing the workspace.
+        :type data: Dict
+        :param params_override: Override values from alternative sources (ex: CLI input).
+        :type params_override: Optional[List[Dict]]
+        :return: A tuple containing the workspace class and type string.
+        :rtype: Tuple[Type["Workspace"], str]
+        """
+        from azure.ai.ml.entities import Hub, Project
+        workspace_type: Optional[Type["Workspace"]] = None
+        type_in_override = find_type_in_override(params_override)
+        type_str = type_in_override or data.get(CommonYamlFields.TYPE, WorkspaceType.DEFAULT)
+        if type_str is not None:
+            type_str = type_str.lower()
+        if type_str == WorkspaceType.HUB:
+            workspace_type = Hub
+        elif type_str == WorkspaceType.PROJECT:
+            workspace_type = Project
+        elif type_str == WorkspaceType.DEFAULT:
+            workspace_type = Workspace
+        else:
+            msg = f"Unsupported workspace type: {type_str}."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.WORKSPACE,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return workspace_type, type_str
+
 
     @classmethod
     def _load(
@@ -228,11 +277,24 @@ class Workspace(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        loaded_schema = load_from_dict(WorkspaceSchema, data, context, **kwargs)
-        return Workspace(**loaded_schema)
+        workspace_type, type_str = cls._resolve_cls_and_type(data, params_override)
+        schema_type = workspace_type._get_schema_class()  # pylint: disable=protected-access
+        laoded_schema = load_from_dict(
+            schema_type,
+            data=data,
+            context=context,
+            additional_message=f"If you are trying to configure a workspace that is not of type {type_str},"
+            f" please specify the correct job type in the 'type' property.",
+            **kwargs,
+        )
+        result = workspace_type(**laoded_schema)
+        if yaml_path:
+            result._source_path = yaml_path
+        return result
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
+        #import pdb; pdb.set_trace()
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -284,7 +346,7 @@ class Workspace(Resource):
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
-            kind=rest_obj.kind.lower() if rest_obj.kind else None,
+            type=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -324,13 +386,14 @@ class Workspace(Resource):
         if self.serverless_compute:
             serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
         return RestWorkspace(
+            name=self.name,
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
             else None,
             location=self.location,
             tags=self.tags,
             description=self.description,
-            kind=self._kind,
+            kind=self._type,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
@@ -361,3 +424,7 @@ class Workspace(Resource):
             additional_workspace_storage_accounts=additional_workspace_storage_accounts,
             default_workspace_resource_group=default_workspace_resource_group,
         )
+
+    @classmethod
+    def _get_schema_class(cls) -> Type[WorkspaceSchema]:
+        return WorkspaceSchema

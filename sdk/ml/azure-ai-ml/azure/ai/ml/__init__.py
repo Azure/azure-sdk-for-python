@@ -35,8 +35,6 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
-    load_hub,
-    load_project,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -70,8 +68,6 @@ __all__ = [
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
-    "load_hub",
-    "load_project",
     "load_model_package",
 ]
 

@@ -12,7 +12,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 from azure.ai.ml.constants._common import ArmConstants, Scope
-from azure.ai.ml.constants._common import WorkspaceKind
+from azure.ai.ml.constants._common import WorkspaceType
 from azure.ai.ml.entities._workspace._ai_workspaces._constants import ENDPOINT_AI_SERVICE_KIND
 from azure.ai.ml.entities._workspace._ai_workspaces.hub import Hub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -75,7 +75,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 self._operation.list_by_subscription(
                     cls=lambda objs: [
                         Hub._from_rest_object(filterObj)
-                        for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.HUB, objs)
+                        for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceType.HUB, objs)
                     ]
                 ),
             )
@@ -85,7 +85,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 self._resource_group_name,
                 cls=lambda objs: [
                     Hub._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.HUB, objs)
+                    for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceType.HUB, objs)
                 ],
             ),
         )
@@ -116,7 +116,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         workspace_hub = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB:
+        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceType.HUB:
             workspace_hub = Hub._from_rest_object(rest_workspace_obj)
 
         return workspace_hub  # type: ignore[return-value]
@@ -208,7 +208,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceType.HUB
         ):
             raise ValidationException(
                 message="{0} is not a AIHub.".format(workspace_hub.name),
@@ -266,7 +266,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceKind.HUB
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WorkspaceType.HUB
         ):
             raise ValidationException(
                 message="{0} is not a AIHub.".format(name),

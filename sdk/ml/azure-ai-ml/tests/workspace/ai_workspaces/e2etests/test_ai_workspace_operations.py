@@ -9,7 +9,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.core.polling import LROPoller
-from azure.ai.ml.constants._common import WorkspaceKind
+from azure.ai.ml.constants._common import WorkspaceType
 
 
 @pytest.mark.e2etest
@@ -25,13 +25,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert hub1.location == hub2.location
         assert hub1.description == hub2.description
         assert hub1.display_name == hub2.display_name
-        # "in" test because returned hub becomes UID, but input can be just the name.
         assert hub1.default_workspace_resource_group in hub2.default_workspace_resource_group
-        # if hub1.additional_workspace_storage_accounts: not set
-        #    assert hub2.additional_workspace_storage_accounts
-        #    assert len(hub1.additional_workspace_storage_accounts) == len(hub2.additional_workspace_storage_accounts)
-        #    for account in hub1.additional_workspace_storage_accounts:
-        #        assert account.name in hub2.additional_workspace_storage_accounts
 
     def compare_project(self, project1: Project, project2: Project):
         assert project1 is not None
@@ -65,17 +59,18 @@ class TestWorkspace(AzureRecordedTestCase):
                 name=f"test_hub_{randstr('hub_name')}",
                 description="hub description",
                 display_name="hub display name",
-                location="eastus",
+                location="westus2",
                 default_workspace_resource_group=client.resource_group_name,
-                additional_workspace_storage_accounts=["test_account_1", "test_account_2"],
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
+            assert created_hub.associated_workspaces is None
 
             local_project1 = Project(
                 name=f"test_proj_1_{randstr('project_1_name')}",
                 hub_id=created_hub.id,
                 description="project1 description",
                 display_name="project1 display name",
+                location="westus2"
             )
             created_project1 = client.workspaces.begin_create(workspace=local_project1).result()
 
@@ -84,9 +79,11 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub_id=created_hub.id,
                 description="project2 description",
                 display_name="project2 display name",
-                # location="westus" cross location not supported
+                location="westus2"
             )
             created_project2 = client.workspaces.begin_create(workspace=local_project2).result()
+
+            project_ids = [created_project1.id, created_project2.id]
 
             # Validate created hub and projects against local originals
             self.compare_hub(local_hub, created_hub)
@@ -95,6 +92,9 @@ class TestWorkspace(AzureRecordedTestCase):
 
             # Get created hub and projects
             gotten_hub = client.workspaces.get(local_hub.name)
+            # Now that we've created projects, the hub should have them listed within itself as
+            # associated workspaces.
+            assert all(id in gotten_hub.associated_workspaces for id in project_ids)
             gotten_project1 = client.workspaces.get(local_project1.name)
             gotten_project2 = client.workspaces.get(local_project2.name)
             # Compare gotten hub and projects against local originals
@@ -103,24 +103,24 @@ class TestWorkspace(AzureRecordedTestCase):
             self.compare_project(local_project2, gotten_project2)
 
             # Get various permutations of listed workspaces.
-            listed_hubs = [hub for hub in client.workspaces.list(kind=WorkspaceKind.HUB)]
-            listed_projects = [project for project in client.workspaces.list(kind=WorkspaceKind.PROJECT)]
+            listed_hubs = [hub for hub in client.workspaces.list(kind=WorkspaceType.HUB)]
+            listed_projects = [project for project in client.workspaces.list(kind=WorkspaceType.PROJECT)]
             listed_projects2 = [
-                project for project in client.workspaces.list(kind=WorkspaceKind.HUB, scope="subscription")
+                project for project in client.workspaces.list(kind=WorkspaceType.PROJECT, scope="subscription")
             ]
             listed_projects_and_hubs = [
-                stuff for stuff in client.workspaces.list(kind=[WorkspaceKind.HUB, WorkspaceKind.PROJECT])
+                stuff for stuff in client.workspaces.list(kind=[WorkspaceType.HUB, WorkspaceType.PROJECT])
             ]
-            listed_workspaces = [workspace for workspace in client.workspaces.list(kind=[WorkspaceKind.DEFAULT])]
+            listed_workspaces = [workspace for workspace in client.workspaces.list(kind=[WorkspaceType.DEFAULT])]
             normal_list = [stuff for stuff in client.workspaces.list()]
 
             # Ensure that each list contains the expected subset.
             self.check_listed_workspaces([local_hub], listed_hubs)
             self.check_listed_workspaces([local_project1, local_project2], listed_projects)
+            self.check_listed_workspaces([local_project1, local_project2], listed_projects2)
             self.check_listed_workspaces([local_hub, local_project1, local_project2], listed_projects_and_hubs)
             self.check_listed_workspaces([], listed_workspaces)
             self.check_listed_workspaces([local_hub, local_project1, local_project2], normal_list)
-
         finally:
             # Delete both projects and the hub.
             if created_project1 is not None:

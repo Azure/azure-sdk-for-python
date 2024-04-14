@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as Rest
 from azure.ai.ml.entities import Workspace
 
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceType
 from azure.ai.ml._schema.workspace import ProjectSchema
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
@@ -50,11 +50,13 @@ class Project(Workspace):
         resource_group: Optional[str] = None,
         **kwargs,
     ) -> None:
+         # Ensure user can't overwrite/double input type.
+        kwargs.pop('type', None)
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            kind=WorkspaceKind.PROJECT.value,
+            type=WorkspaceType.PROJECT.value,
             display_name=display_name,
             location=location,
             resource_group=resource_group,
@@ -62,10 +64,9 @@ class Project(Workspace):
             **kwargs,
         )
 
-    def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
-        res: dict = ProjectSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        return res
+    @classmethod
+    def _get_schema_class(cls) -> Any:
+        return ProjectSchema
 
     @classmethod
     def _load(
@@ -90,6 +91,7 @@ class Project(Workspace):
             return None
         return Project(
             name=rest_obj.name,
+            id=rest_obj.id,
             hub_id=rest_obj.hub_resource_id,
             description=rest_obj.description if hasattr(rest_obj, "description") else None,
             tags=rest_obj.tags if hasattr(rest_obj, "tags") else None,

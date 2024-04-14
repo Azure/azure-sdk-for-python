@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as Rest
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceType
 from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
@@ -23,8 +23,8 @@ from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 @experimental
 class Hub(Workspace):
     """A Hub is a special type of workspace that acts as a parent and resource container for lightweight child
-    projects. Resources like the hub's storage account, key vault, and container registry are shared by all
-    child projects.
+    workspaces called projects. Resources like the hub's storage account, key vault, 
+    and container registry are shared by all child projects.
 
     As a type of workspace, Hub management is controlled by an MLClient's workspace operations.
 
@@ -50,13 +50,14 @@ class Hub(Workspace):
     :param container_registry: The resource ID of an existing container registry
         to use instead of creating a new one.
     :type container_registry: str
-    :param existing_workspaces: List of existing workspaces to convert to use this hub's shared resources.
-    :type existing_workspaces: List[str]
     :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default.
     :type customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
     :param image_build_compute: The name of the compute target to use for building environment
         Docker images with the container registry is behind a VNet.
+    :type image_build_compute: str
+    :param public_network_access: Whether to allow public endpoint connectivity
+        when a workspace is private link enabled.
     :type public_network_access: str
     :param identity: hub's Managed Identity (user assigned, or system assigned)
     :type identity: ~azure.ai.ml.entities.IdentityConfiguration
@@ -65,11 +66,8 @@ class Hub(Workspace):
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
-    :param additional_workspace_storage_accounts: A list of resource IDs of existing storage accounts that will be
-        utilized in addition to the default one.
-    :type additional_workspace_storage_accounts: List[str]
-    :param default_workspace_resource_group: A destination resource group for any Project workspaces that join the
-        hub, it will be the hub's resource group by default.
+    :param default_workspace_resource_group: The resource group that will be used by projects
+        created under this Hub if no resource group is specified.
     :type default_workspace_resource_group: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
@@ -81,6 +79,7 @@ class Hub(Workspace):
             :dedent: 8
             :caption: Creating a Hub object.
     """
+    # The field 'additional_workspace_storage_accounts' exists in the API but is currently unused.
 
     def __init__(
         self,
@@ -95,22 +94,23 @@ class Hub(Workspace):
         storage_account: Optional[str] = None,
         key_vault: Optional[str] = None,
         container_registry: Optional[str] = None,
-        existing_workspaces: Optional[List[str]] = None,
         customer_managed_key: Optional[CustomerManagedKey] = None,
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
-        additional_workspace_storage_accounts: Optional[List[str]] = None,
         default_workspace_resource_group: Optional[str] = None,
+        associated_workspaces: Optional[List[str]] = None, # hidden input for rest->client conversions.
         **kwargs: Any,
     ):
         self._workspace_id = kwargs.pop("workspace_id", "")
+         # Ensure user can't overwrite/double input type.
+        kwargs.pop('type', None)
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            kind=WorkspaceKind.HUB.value,
+            type=WorkspaceType.HUB.value,
             display_name=display_name,
             location=location,
             storage_account=storage_account,
@@ -125,10 +125,12 @@ class Hub(Workspace):
             enable_data_isolation=enable_data_isolation,
             **kwargs,
         )
-        self.existing_workspaces = existing_workspaces
-        self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
-        self.default_workspace_resource_group = default_workspace_resource_group
-        self.associated_workspaces: Optional[List[str]] = None
+        self._default_workspace_resource_group = default_workspace_resource_group
+        self._associated_workspaces = associated_workspaces
+
+    @classmethod
+    def _get_schema_class(cls):
+        return HubSchema
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Hub"]:
@@ -137,14 +139,10 @@ class Hub(Workspace):
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        additional_workspace_storage_accounts = None
         default_workspace_resource_group = None
 
         if hasattr(rest_obj, "workspace_hub_config"):
             if rest_obj.workspace_hub_config and isinstance(rest_obj.workspace_hub_config, RestWorkspaceHubConfig):
-                additional_workspace_storage_accounts = (
-                    rest_obj.workspace_hub_config.additional_workspace_storage_accounts
-                )
                 default_workspace_resource_group = rest_obj.workspace_hub_config.default_workspace_resource_group
 
         if workspace_object is not None:
@@ -163,42 +161,15 @@ class Hub(Workspace):
                 storage_account=rest_obj.storage_account,
                 key_vault=rest_obj.key_vault,
                 container_registry=rest_obj.container_registry,
-                existing_workspaces=rest_obj.existing_workspaces,
                 workspace_id=rest_obj.workspace_id,
                 enable_data_isolation=rest_obj.enable_data_isolation,
-                additional_workspace_storage_accounts=additional_workspace_storage_accounts,
                 default_workspace_resource_group=default_workspace_resource_group,
+                associated_workspaces=rest_obj.associated_workspaces,
                 id=rest_obj.id,
             )
-            hub_object.set_associated_workspaces(rest_obj.associated_workspaces)
             return hub_object
 
         return None
-
-    @classmethod
-    def _load(
-        cls,
-        data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
-        params_override: Optional[list] = None,
-        **kwargs: Any,
-    ) -> "Hub":
-        data = data or {}
-        params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
-        loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
-        return Hub(**loaded_schema)
-
-    def set_associated_workspaces(self, value: List[str]) -> None:
-        """Sets the workspaces associated with the hub, not meant for use by the user.
-
-        :param value: List of workspace ARM ids.
-        :type value: List[str]
-        """
-        self.associated_workspaces = value
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -208,5 +179,35 @@ class Hub(Workspace):
     def _to_rest_object(self) -> RestWorkspace:
         restWorkspace = super()._to_rest_object()
         restWorkspace.workspace_hub_config = self._hub_values_to_rest_object()
-        restWorkspace.existing_workspaces = (self.existing_workspaces,)
         return restWorkspace
+
+    @property
+    def default_workspace_resource_group(self) -> str:
+        """The default resource group for this hub and its children.
+
+        :return: The resource group.
+        :rtype: str
+        """
+        return self._default_workspace_resource_group
+    
+
+    @default_workspace_resource_group.setter
+    def default_workspace_resource_group(self, value: str):
+        """Set the default resource group for child projects of this hub.
+
+        :param value: The new resource group.
+        :type value: str
+        """
+        if not value:
+            return
+        self._default_workspace_resource_group = value
+
+    @property
+    def associated_workspaces(self) ->  List[str]:
+        """The workspaces associated with the hub.
+
+        :return: The resource group.
+        :rtype: List[str]
+        """
+        return self._associated_workspaces
+    # No setter, read-only

@@ -1,4 +1,5 @@
 name: test_project
+type: project
 description: "A test project for unit tests"
 location: "this must match the parent's hub (unless we want to add the ability for projects to derive the hubs parent with an extra API call)"
 resource_group: "my-test-rg-which-can-be-different-from-the-hubs-rg"

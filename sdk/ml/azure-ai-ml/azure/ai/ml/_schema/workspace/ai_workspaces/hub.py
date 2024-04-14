@@ -4,34 +4,13 @@
 
 from marshmallow import fields
 
+from azure.ai.ml._schema import StringTransformedEnum
 from azure.ai.ml._schema.workspace import WorkspaceSchema
 from azure.ai.ml._utils._experimental import experimental
-
+from azure.ai.ml.constants import WorkspaceType
 
 @experimental
 class HubSchema(WorkspaceSchema):
-    """todo determine if still needed
-    name = fields.Str(required=True)
-    location = fields.Str()
-    id = fields.Str(dump_only=True)
-    resource_group = fields.Str()
-    description = fields.Str()
-    display_name = fields.Str()
-    customer_managed_key = NestedField(CustomerManagedKeySchema)
-    storage_account = fields.Str(validate=validate_arm_str)
-    container_registry = fields.Str(validate=validate_arm_str)
-    key_vault = fields.Str(validate=validate_arm_str)
-    tags = fields.Dict(keys=fields.Str(), values=fields.Str())
-    public_network_access = StringTransformedEnum(
-        allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
-        casing_transform=snake_to_pascal,
-    )
-    identity = NestedField(IdentitySchema)
-    primary_user_assigned_identity = fields.Str()
-    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))
-    existing_workspaces = fields.List(fields.Str())
-    workspace_hub_config = ExperimentalField(NestedField(HubConfigSchema))
-    enable_data_isolation = fields.Bool()"""
-
-    additional_workspace_storage_accounts = fields.List(fields.Str(), required=False)
+    # additional_workspace_storage_accounts This field exists in the API, but is unused, and thus not surfaced yet.
+    type = StringTransformedEnum(required=True, allowed_values=WorkspaceType.HUB)
     default_workspace_resource_group = fields.Str(required=False)

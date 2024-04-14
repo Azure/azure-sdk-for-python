@@ -1,15 +1,16 @@
 import pytest
 
-from azure.ai.ml import load_project, load_hub
-
+from azure.ai.ml import load_workspace
+from azure.ai.ml.entities import Project
 
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestProjectEntity:
     def test_project_schema_manipulation(self) -> None:
-        project = load_project(source="./tests/test_configs/workspace/ai_workspaces/test_project.yml")
+        project = load_workspace(source="./tests/test_configs/workspace/ai_workspaces/test_project.yml")
 
         assert project is not None
+        assert type(project) == Project
         assert project.name == "test_project"
         assert project.description == "A test project for unit tests"
         assert (

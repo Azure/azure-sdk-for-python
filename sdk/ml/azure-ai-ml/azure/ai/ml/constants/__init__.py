@@ -8,7 +8,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from azure.ai.ml._restclient.v2023_10_01.models import ListViewType
 
 from ._assets import IPProtectionLevel
-from ._common import AssetTypes, InputOutputModes, ModelType, Scope, TimeZone, WorkspaceKind
+from ._common import AssetTypes, InputOutputModes, ModelType, Scope, TimeZone, WorkspaceType
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import (
@@ -63,5 +63,5 @@ __all__ = [
     "MonitorTargetTasks",
     "IPProtectionLevel",
     "ListViewType",
-    "WorkspaceKind",
+    "WorkspaceType",
 ]

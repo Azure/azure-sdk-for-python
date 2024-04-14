@@ -1,7 +1,6 @@
 name: hub_name
 location: WestCentralUS
-additional_workspace_storage_accounts:
- - /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testRG/providers/Microsoft.Storage/storageAccounts/extra-storage-account
+type: hub
 default_workspace_resource_group: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-default-resource-group
 tags:
   purpose: testing

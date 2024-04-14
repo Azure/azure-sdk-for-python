@@ -20,7 +20,7 @@ from azure.ai.ml._utils.utils import (
     get_resource_group_name_from_resource_group_id,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import AzureMLResourceType, Scope, WorkspaceKind
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope, WorkspaceType
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -262,7 +262,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
-            if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:
+            if error.status_code == 403 and workspace._kind == WorkspaceType.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
                 hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)
