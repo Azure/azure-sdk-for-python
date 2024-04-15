@@ -444,7 +444,7 @@ class TableClient(AsyncTablesBaseClient):
                 :end-before: [END update_entity]
                 :language: python
                 :dedent: 16
-                :caption: Updating an already exiting entity in a Table
+                :caption: Updating an already existing entity in a Table
         """
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
