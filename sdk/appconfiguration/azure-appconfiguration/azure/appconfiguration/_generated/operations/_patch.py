@@ -112,7 +112,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
@@ -148,13 +147,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
         response_headers = response.headers
         deserialized = self._deserialize("KeyValueListResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
-
         return deserialized
 
 

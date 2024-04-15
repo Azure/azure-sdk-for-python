@@ -73,7 +73,7 @@ class Error(_serialization.Model):
 class ErrorDetail(_serialization.Model):
     """The details of an error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -281,35 +281,45 @@ class KeyValue(_serialization.Model):
 
 
 class KeyValueFilter(_serialization.Model):
-    """Enables filtering of key-values.
+    """Enables filtering of key-values. Syntax reference:
+    https://aka.ms/azconfig/docs/restapisnapshots.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Filters key-values by their key field. Required.
     :vartype key: str
     :ivar label: Filters key-values by their label field.
     :vartype label: str
+    :ivar tags: Filters key-values by their tags field.
+    :vartype tags: list[str]
     """
 
     _validation = {
         "key": {"required": True},
+        "tags": {"unique": True},
     }
 
     _attribute_map = {
         "key": {"key": "key", "type": "str"},
         "label": {"key": "label", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key: Filters key-values by their key field. Required.
         :paramtype key: str
         :keyword label: Filters key-values by their label field.
         :paramtype label: str
+        :keyword tags: Filters key-values by their tags field.
+        :paramtype tags: list[str]
         """
         super().__init__(**kwargs)
         self.key = key
         self.label = label
+        self.tags = tags
 
 
 class KeyValueListResult(_serialization.Model):
@@ -405,7 +415,7 @@ class LabelListResult(_serialization.Model):
 class OperationDetails(_serialization.Model):
     """Details of a long running operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The unique id of the operation. Required.
     :vartype id: str
@@ -457,7 +467,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the snapshot.
     :vartype name: str

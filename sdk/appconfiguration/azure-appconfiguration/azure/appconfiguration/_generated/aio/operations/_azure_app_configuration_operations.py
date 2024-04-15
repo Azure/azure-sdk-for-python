@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -55,6 +56,10 @@ from ...operations._azure_app_configuration_operations import (
 )
 from .._vendor import AzureAppConfigurationMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -80,7 +85,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param accept_datetime: Requests the server to respond with the state of the resource at the
          specified time. Default value is None.
         :type accept_datetime: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Key or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.Key]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -91,7 +95,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -187,12 +191,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param accept_datetime: Requests the server to respond with the state of the resource at the
          specified time. Default value is None.
         :type accept_datetime: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -249,15 +252,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         snapshot: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.KeyValue"]:
         """Gets a list of key-values.
 
         Gets a list of key-values.
 
-        :param key: A filter used to match keys. Default value is None.
+        :param key: A filter used to match keys. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :type key: str
-        :param label: A filter used to match labels. Default value is None.
+        :param label: A filter used to match labels. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :type label: str
         :param after: Instructs the server to return elements that appear after the element referred to
          by the specified token. Default value is None.
@@ -277,7 +283,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param tags: A filter used to query by tags. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
+        :type tags: list[str]
         :return: An iterator like instance of either KeyValue or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.KeyValue]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -288,7 +296,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyValueListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -308,6 +316,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     snapshot=snapshot,
                     if_match=if_match,
                     if_none_match=if_none_match,
+                    tags=tags,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
                     headers=_headers,
@@ -380,15 +389,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         snapshot: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
         Requests the headers and status of the given resource.
 
-        :param key: A filter used to match keys. Default value is None.
+        :param key: A filter used to match keys. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :type key: str
-        :param label: A filter used to match labels. Default value is None.
+        :param label: A filter used to match labels. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :type label: str
         :param after: Instructs the server to return elements that appear after the element referred to
          by the specified token. Default value is None.
@@ -408,12 +420,14 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param tags: A filter used to query by tags. Syntax reference:
+         https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
+        :type tags: list[str]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -436,6 +450,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             snapshot=snapshot,
             if_match=if_match,
             if_none_match=if_none_match,
+            tags=tags,
             sync_token=self._config.sync_token,
             api_version=api_version,
             headers=_headers,
@@ -496,12 +511,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -587,7 +601,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -600,7 +613,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        entity: Optional[IO] = None,
+        entity: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -620,14 +633,13 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
          not match the value provided. Default value is None.
         :type if_none_match: str
         :param entity: The key-value to create. Default value is None.
-        :type entity: IO
+        :type entity: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/*+json', 'application/json', 'application/json-patch+json',
          'application/vnd.microsoft.appconfig.kv+json',
          'application/vnd.microsoft.appconfig.kvset+json', 'text/json'. Default value is
          "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -640,7 +652,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         label: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        entity: Optional[Union[_models.KeyValue, IO]] = None,
+        entity: Optional[Union[_models.KeyValue, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.KeyValue:
         """Creates a key-value.
@@ -657,20 +669,14 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :param entity: The key-value to create. Is either a KeyValue type or a IO type. Default value
-         is None.
-        :type entity: ~azure.appconfiguration.models.KeyValue or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/*+json',
-         'application/json', 'application/json-patch+json',
-         'application/vnd.microsoft.appconfig.kv+json',
-         'application/vnd.microsoft.appconfig.kvset+json', 'text/json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param entity: The key-value to create. Is either a KeyValue type or a IO[bytes] type. Default
+         value is None.
+        :type entity: ~azure.appconfiguration.models.KeyValue or IO[bytes]
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -753,12 +759,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_match: Used to perform an operation only if the targeted resource's etag matches the
          value provided. Default value is None.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or None or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -846,12 +851,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -925,7 +929,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param status: Used to filter returned snapshots by their status property. Default value is
          None.
         :type status: list[str or ~azure.appconfiguration.models.SnapshotStatus]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Snapshot or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -936,7 +939,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SnapshotListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1024,12 +1027,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param after: Instructs the server to return elements that appear after the element referred to
          by the specified token. Default value is None.
         :type after: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1097,12 +1099,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.SnapshotFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1157,9 +1158,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         return deserialized  # type: ignore
 
     async def _create_snapshot_initial(
-        self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any
+        self, name: str, entity: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
     ) -> _models.Snapshot:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1238,14 +1239,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.models.Snapshot]
@@ -1254,7 +1247,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
     @overload
     async def begin_create_snapshot(
-        self, name: str, entity: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, entity: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -1263,19 +1256,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
         :param entity: The key-value snapshot to create. Required.
-        :type entity: IO
+        :type entity: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'application/vnd.microsoft.appconfig.snapshot+json'.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.models.Snapshot]
@@ -1284,7 +1269,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
     @distributed_trace_async
     async def begin_create_snapshot(
-        self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any
+        self, name: str, entity: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -1292,20 +1277,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
-        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO type.
+        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO[bytes] type.
          Required.
-        :type entity: ~azure.appconfiguration.models.Snapshot or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'application/vnd.microsoft.appconfig.snapshot+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :type entity: ~azure.appconfiguration.models.Snapshot or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.models.Snapshot]
@@ -1400,7 +1374,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1410,7 +1383,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
     async def update_snapshot(
         self,
         name: str,
-        entity: IO,
+        entity: IO[bytes],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         *,
@@ -1424,7 +1397,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param name: The name of the key-value snapshot to update. Required.
         :type name: str
         :param entity: The parameters used to update the snapshot. Required.
-        :type entity: IO
+        :type entity: IO[bytes]
         :param if_match: Used to perform an operation only if the targeted resource's etag matches the
          value provided. Default value is None.
         :type if_match: str
@@ -1435,7 +1408,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
          Known values are: 'application/json', 'application/merge-patch+json'. Default value is
          "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1445,7 +1417,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
     async def update_snapshot(
         self,
         name: str,
-        entity: Union[_models.SnapshotUpdateParameters, IO],
+        entity: Union[_models.SnapshotUpdateParameters, IO[bytes]],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs: Any
@@ -1457,23 +1429,19 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param name: The name of the key-value snapshot to update. Required.
         :type name: str
         :param entity: The parameters used to update the snapshot. Is either a SnapshotUpdateParameters
-         type or a IO type. Required.
-        :type entity: ~azure.appconfiguration.models.SnapshotUpdateParameters or IO
+         type or a IO[bytes] type. Required.
+        :type entity: ~azure.appconfiguration.models.SnapshotUpdateParameters or IO[bytes]
         :param if_match: Used to perform an operation only if the targeted resource's etag matches the
          value provided. Default value is None.
         :type if_match: str
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1554,12 +1522,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1631,7 +1598,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.LabelFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Label or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.Label]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1642,7 +1608,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.LabelListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1743,12 +1709,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.LabelFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1818,12 +1783,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1899,12 +1863,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1965,15 +1928,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.KeyValue"]:
         """Gets a list of key-value revisions.
 
         Gets a list of key-value revisions.
 
-        :param key: A filter used to match keys. Default value is None.
+        :param key: A filter used to match keys. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type key: str
-        :param label: A filter used to match labels. Default value is None.
+        :param label: A filter used to match labels. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type label: str
         :param after: Instructs the server to return elements that appear after the element referred to
          by the specified token. Default value is None.
@@ -1984,7 +1950,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param tags: A filter used to query by tags. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
+        :type tags: list[str]
         :return: An iterator like instance of either KeyValue or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.KeyValue]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1995,7 +1963,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyValueListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2012,6 +1980,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
+                    tags=tags,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
                     headers=_headers,
@@ -2081,15 +2050,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
+        tags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
         Requests the headers and status of the given resource.
 
-        :param key: A filter used to match keys. Default value is None.
+        :param key: A filter used to match keys. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type key: str
-        :param label: A filter used to match labels. Default value is None.
+        :param label: A filter used to match labels. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :type label: str
         :param after: Instructs the server to return elements that appear after the element referred to
          by the specified token. Default value is None.
@@ -2100,12 +2072,14 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param tags: A filter used to query by tags. Syntax reference:
+         https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
+        :type tags: list[str]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2125,6 +2099,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             after=after,
             accept_datetime=accept_datetime,
             select=select,
+            tags=tags,
             sync_token=self._config.sync_token,
             api_version=api_version,
             headers=_headers,
@@ -2162,12 +2137,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         :param snapshot: Snapshot identifier for the long running operation. Required.
         :type snapshot: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationDetails or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
