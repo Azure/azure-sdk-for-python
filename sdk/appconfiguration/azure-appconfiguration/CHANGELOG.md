@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated the default `api_version` to "2023-11-01".
 
 ## 1.6.0 (2024-04-09)
 
