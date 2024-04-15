@@ -71,7 +71,7 @@ class AksClusterProfile(_serialization.Model):
 class IdentityProfile(_serialization.Model):
     """Identity Profile with details of an MSI.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar msi_resource_id: ResourceId of the MSI. Required.
     :vartype msi_resource_id: str
@@ -114,10 +114,10 @@ class IdentityProfile(_serialization.Model):
         self.msi_object_id = msi_object_id
 
 
-class AksClusterProfileAksClusterAgentPoolIdentityProfile(IdentityProfile):
+class AksClusterProfileAksClusterAgentPoolIdentityProfile(IdentityProfile):  # pylint: disable=name-too-long
     """Identity properties of the AKS cluster agentpool MSI.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar msi_resource_id: ResourceId of the MSI. Required.
     :vartype msi_resource_id: str
@@ -126,37 +126,6 @@ class AksClusterProfileAksClusterAgentPoolIdentityProfile(IdentityProfile):
     :ivar msi_object_id: ObjectId of the MSI. Required.
     :vartype msi_object_id: str
     """
-
-    _validation = {
-        "msi_resource_id": {"required": True},
-        "msi_client_id": {
-            "required": True,
-            "pattern": r"^[{(]?[0-9A-Fa-f]{8}[-]?(?:[0-9A-Fa-f]{4}[-]?){3}[0-9A-Fa-f]{12}[)}]?$",
-        },
-        "msi_object_id": {
-            "required": True,
-            "pattern": r"^[{(]?[0-9A-Fa-f]{8}[-]?(?:[0-9A-Fa-f]{4}[-]?){3}[0-9A-Fa-f]{12}[)}]?$",
-        },
-    }
-
-    _attribute_map = {
-        "msi_resource_id": {"key": "msiResourceId", "type": "str"},
-        "msi_client_id": {"key": "msiClientId", "type": "str"},
-        "msi_object_id": {"key": "msiObjectId", "type": "str"},
-    }
-
-    def __init__(self, *, msi_resource_id: str, msi_client_id: str, msi_object_id: str, **kwargs: Any) -> None:
-        """
-        :keyword msi_resource_id: ResourceId of the MSI. Required.
-        :paramtype msi_resource_id: str
-        :keyword msi_client_id: ClientId of the MSI. Required.
-        :paramtype msi_client_id: str
-        :keyword msi_object_id: ObjectId of the MSI. Required.
-        :paramtype msi_object_id: str
-        """
-        super().__init__(
-            msi_resource_id=msi_resource_id, msi_client_id=msi_client_id, msi_object_id=msi_object_id, **kwargs
-        )
 
 
 class AuthorizationProfile(_serialization.Model):
@@ -192,7 +161,7 @@ class AutoscaleProfile(_serialization.Model):
     """This is the Autoscale profile for the cluster. This will allow customer to create cluster
     enabled with Autoscale.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: This indicates whether auto scale is enabled on HDInsight on AKS cluster.
      Required.
@@ -286,7 +255,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -327,10 +296,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -375,15 +344,15 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Cluster(TrackedResource):
     """The cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -397,19 +366,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Succeeded", "Canceled", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.hdinsightcontainers.models.ProvisioningStatus
-    :ivar cluster_type: The type of cluster.
-    :vartype cluster_type: str
-    :ivar deployment_id: A unique id generated by the RP to identify the resource.
-    :vartype deployment_id: str
-    :ivar compute_profile: The compute profile.
-    :vartype compute_profile: ~azure.mgmt.hdinsightcontainers.models.ComputeProfile
-    :ivar cluster_profile: Cluster profile.
-    :vartype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterProfile
-    :ivar status: Business status of the resource.
-    :vartype status: str
+    :ivar properties: Gets or sets the properties. Define cluster specific properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterResourceProperties
     """
 
     _validation = {
@@ -418,10 +376,6 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "cluster_type": {"pattern": r"^[a-zA-Z][a-zA-Z0-9]{0,31}$"},
-        "deployment_id": {"readonly": True},
-        "status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -431,12 +385,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "cluster_type": {"key": "properties.clusterType", "type": "str"},
-        "deployment_id": {"key": "properties.deploymentId", "type": "str"},
-        "compute_profile": {"key": "properties.computeProfile", "type": "ComputeProfile"},
-        "cluster_profile": {"key": "properties.clusterProfile", "type": "ClusterProfile"},
-        "status": {"key": "properties.status", "type": "str"},
+        "properties": {"key": "properties", "type": "ClusterResourceProperties"},
     }
 
     def __init__(
@@ -444,9 +393,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        cluster_type: Optional[str] = None,
-        compute_profile: Optional["_models.ComputeProfile"] = None,
-        cluster_profile: Optional["_models.ClusterProfile"] = None,
+        properties: Optional["_models.ClusterResourceProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -454,20 +401,411 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword cluster_type: The type of cluster.
-        :paramtype cluster_type: str
-        :keyword compute_profile: The compute profile.
-        :paramtype compute_profile: ~azure.mgmt.hdinsightcontainers.models.ComputeProfile
-        :keyword cluster_profile: Cluster profile.
-        :paramtype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterProfile
+        :keyword properties: Gets or sets the properties. Define cluster specific properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterResourceProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
-        self.cluster_type = cluster_type
-        self.deployment_id = None
-        self.compute_profile = compute_profile
-        self.cluster_profile = cluster_profile
-        self.status = None
+        self.properties = properties
+
+
+class ClusterAccessProfile(_serialization.Model):
+    """Cluster access profile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enable_internal_ingress: Whether to create cluster using private IP instead of public IP.
+     This property must be set at create time. Required.
+    :vartype enable_internal_ingress: bool
+    :ivar private_link_service_id: Private link service resource ID. Only when
+     enableInternalIngress is true, this property will be returned.
+    :vartype private_link_service_id: str
+    """
+
+    _validation = {
+        "enable_internal_ingress": {"required": True},
+        "private_link_service_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enable_internal_ingress": {"key": "enableInternalIngress", "type": "bool"},
+        "private_link_service_id": {"key": "privateLinkServiceId", "type": "str"},
+    }
+
+    def __init__(self, *, enable_internal_ingress: bool, **kwargs: Any) -> None:
+        """
+        :keyword enable_internal_ingress: Whether to create cluster using private IP instead of public
+         IP. This property must be set at create time. Required.
+        :paramtype enable_internal_ingress: bool
+        """
+        super().__init__(**kwargs)
+        self.enable_internal_ingress = enable_internal_ingress
+        self.private_link_service_id = None
+
+
+class ClusterUpgradeProperties(_serialization.Model):
+    """Properties of upgrading cluster.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterAKSPatchVersionUpgradeProperties, ClusterHotfixUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterAKSPatchVersionUpgradeProperties",
+            "HotfixUpgrade": "ClusterHotfixUpgradeProperties",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+
+
+class ClusterAKSPatchVersionUpgradeProperties(ClusterUpgradeProperties):
+    """Properties of upgrading cluster's AKS patch version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    """
+
+
+class ClusterAvailableUpgrade(ProxyResource):
+    """Cluster available upgrade.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Gets or sets the properties. Define cluster upgrade specific properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterAvailableUpgradeProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.ClusterAvailableUpgradeProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Gets or sets the properties. Define cluster upgrade specific properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterAvailableUpgradeProperties(_serialization.Model):
+    """Cluster available upgrade properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterAvailableUpgradeAksPatchUpgradeProperties,
+    ClusterAvailableUpgradeHotfixUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterAvailableUpgradeAksPatchUpgradeProperties",
+            "HotfixUpgrade": "ClusterAvailableUpgradeHotfixUpgradeProperties",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+
+
+class ClusterAvailableUpgradeAksPatchUpgradeProperties(
+    ClusterAvailableUpgradeProperties
+):  # pylint: disable=name-too-long
+    """Cluster available AKS patch version upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    :ivar current_version: Current node pool version.
+    :vartype current_version: str
+    :ivar current_version_status: Current AKS version's status: whether it is deprecated or
+     supported. Known values are: "Deprecated" and "Supported".
+    :vartype current_version_status: str or
+     ~azure.mgmt.hdinsightcontainers.models.CurrentClusterAksVersionStatus
+    :ivar latest_version: Latest available version, which should be equal to AKS control plane
+     version if it's not deprecated.
+    :vartype latest_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "current_version": {"key": "currentVersion", "type": "str"},
+        "current_version_status": {"key": "currentVersionStatus", "type": "str"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        current_version: Optional[str] = None,
+        current_version_status: Optional[Union[str, "_models.CurrentClusterAksVersionStatus"]] = None,
+        latest_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword current_version: Current node pool version.
+        :paramtype current_version: str
+        :keyword current_version_status: Current AKS version's status: whether it is deprecated or
+         supported. Known values are: "Deprecated" and "Supported".
+        :paramtype current_version_status: str or
+         ~azure.mgmt.hdinsightcontainers.models.CurrentClusterAksVersionStatus
+        :keyword latest_version: Latest available version, which should be equal to AKS control plane
+         version if it's not deprecated.
+        :paramtype latest_version: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+        self.current_version = current_version
+        self.current_version_status = current_version_status
+        self.latest_version = latest_version
+
+
+class ClusterAvailableUpgradeHotfixUpgradeProperties(
+    ClusterAvailableUpgradeProperties
+):  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Cluster available hotfix version upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgradeType
+    :ivar description: Hotfix version upgrade description.
+    :vartype description: str
+    :ivar source_oss_version: Source OSS version of current cluster component.
+    :vartype source_oss_version: str
+    :ivar source_cluster_version: Source cluster version of current cluster component.
+    :vartype source_cluster_version: str
+    :ivar source_build_number: Source build number of current cluster component.
+    :vartype source_build_number: str
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    :ivar severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+     "critical".
+    :vartype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+    :ivar extended_properties: Extended properties of current available upgrade version.
+    :vartype extended_properties: str
+    :ivar created_time: Created time of current available upgrade version.
+    :vartype created_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_oss_version": {"key": "sourceOssVersion", "type": "str"},
+        "source_cluster_version": {"key": "sourceClusterVersion", "type": "str"},
+        "source_build_number": {"key": "sourceBuildNumber", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "extended_properties": {"key": "extendedProperties", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        source_oss_version: Optional[str] = None,
+        source_cluster_version: Optional[str] = None,
+        source_build_number: Optional[str] = None,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        severity: Optional[Union[str, "_models.Severity"]] = None,
+        extended_properties: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Hotfix version upgrade description.
+        :paramtype description: str
+        :keyword source_oss_version: Source OSS version of current cluster component.
+        :paramtype source_oss_version: str
+        :keyword source_cluster_version: Source cluster version of current cluster component.
+        :paramtype source_cluster_version: str
+        :keyword source_build_number: Source build number of current cluster component.
+        :paramtype source_build_number: str
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        :keyword severity: Severity of this upgrade. Known values are: "low", "medium", "high", and
+         "critical".
+        :paramtype severity: str or ~azure.mgmt.hdinsightcontainers.models.Severity
+        :keyword extended_properties: Extended properties of current available upgrade version.
+        :paramtype extended_properties: str
+        :keyword created_time: Created time of current available upgrade version.
+        :paramtype created_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "HotfixUpgrade"
+        self.description = description
+        self.source_oss_version = source_oss_version
+        self.source_cluster_version = source_cluster_version
+        self.source_build_number = source_build_number
+        self.target_oss_version = target_oss_version
+        self.target_cluster_version = target_cluster_version
+        self.target_build_number = target_build_number
+        self.component_name = component_name
+        self.severity = severity
+        self.extended_properties = extended_properties
+        self.created_time = created_time
+
+
+class ClusterAvailableUpgradeList(_serialization.Model):
+    """Collection of cluster available upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: Collection of Cluster available upgrade. Required.
+    :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgrade]
+    :ivar next_link: The URL of next result page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClusterAvailableUpgrade]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.ClusterAvailableUpgrade"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Collection of Cluster available upgrade. Required.
+        :paramtype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterAvailableUpgrade]
+        :keyword next_link: The URL of next result page.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ClusterComponentsItem(_serialization.Model):
@@ -499,7 +837,7 @@ class ClusterComponentsItem(_serialization.Model):
 class ClusterConfigFile(_serialization.Model):
     """Cluster configuration files.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar file_name: Configuration file name. Required.
     :vartype file_name: str
@@ -563,14 +901,71 @@ class ClusterConfigFile(_serialization.Model):
         self.values = values
 
 
+class ClusterHotfixUpgradeProperties(ClusterUpgradeProperties):
+    """Properties of upgrading cluster's hotfix.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "HotfixUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeType
+    :ivar target_oss_version: Target OSS version of component to be upgraded.
+    :vartype target_oss_version: str
+    :ivar target_cluster_version: Target cluster version of component to be upgraded.
+    :vartype target_cluster_version: str
+    :ivar target_build_number: Target build number of component to be upgraded.
+    :vartype target_build_number: str
+    :ivar component_name: Name of component to be upgraded.
+    :vartype component_name: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "target_oss_version": {"key": "targetOssVersion", "type": "str"},
+        "target_cluster_version": {"key": "targetClusterVersion", "type": "str"},
+        "target_build_number": {"key": "targetBuildNumber", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_oss_version: Optional[str] = None,
+        target_cluster_version: Optional[str] = None,
+        target_build_number: Optional[str] = None,
+        component_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_oss_version: Target OSS version of component to be upgraded.
+        :paramtype target_oss_version: str
+        :keyword target_cluster_version: Target cluster version of component to be upgraded.
+        :paramtype target_cluster_version: str
+        :keyword target_build_number: Target build number of component to be upgraded.
+        :paramtype target_build_number: str
+        :keyword component_name: Name of component to be upgraded.
+        :paramtype component_name: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "HotfixUpgrade"
+        self.target_oss_version = target_oss_version
+        self.target_cluster_version = target_cluster_version
+        self.target_build_number = target_build_number
+        self.component_name = component_name
+
+
 class ClusterInstanceViewProperties(_serialization.Model):
     """Cluster Instance View Properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: Status of the instance view. Required.
     :vartype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
-    :ivar service_statuses: List of statuses of relevant services that make up the HDInsight on aks
+    :ivar service_statuses: List of statuses of relevant services that make up the HDInsight on AKS
      cluster to surface to the customer. Required.
     :vartype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
     """
@@ -596,7 +991,7 @@ class ClusterInstanceViewProperties(_serialization.Model):
         :keyword status: Status of the instance view. Required.
         :paramtype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
         :keyword service_statuses: List of statuses of relevant services that make up the HDInsight on
-         aks cluster to surface to the customer. Required.
+         AKS cluster to surface to the customer. Required.
         :paramtype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
         """
         super().__init__(**kwargs)
@@ -607,7 +1002,7 @@ class ClusterInstanceViewProperties(_serialization.Model):
 class ClusterInstanceViewStatus(_serialization.Model):
     """Status of the instance view.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ready: The cluster ready status. Required.
     :vartype ready: str
@@ -647,7 +1042,7 @@ class ClusterInstanceViewStatus(_serialization.Model):
 class ClusterInstanceViewPropertiesStatus(ClusterInstanceViewStatus):
     """Status of the instance view.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ready: The cluster ready status. Required.
     :vartype ready: str
@@ -657,116 +1052,52 @@ class ClusterInstanceViewPropertiesStatus(ClusterInstanceViewStatus):
     :vartype message: str
     """
 
-    _validation = {
-        "ready": {"required": True},
-    }
-
-    _attribute_map = {
-        "ready": {"key": "ready", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(
-        self, *, ready: str, reason: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword ready: The cluster ready status. Required.
-        :paramtype ready: str
-        :keyword reason: The status reason.
-        :paramtype reason: str
-        :keyword message: The additional message.
-        :paramtype message: str
-        """
-        super().__init__(ready=ready, reason=reason, message=message, **kwargs)
-
 
 class ClusterInstanceViewResult(_serialization.Model):
     """Cluster Instance View.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the instance view. Required.
     :vartype name: str
-    :ivar status: Status of the instance view. Required.
-    :vartype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
-    :ivar service_statuses: List of statuses of relevant services that make up the HDInsight on aks
-     cluster to surface to the customer. Required.
-    :vartype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
+    :ivar properties: Properties of the instance view. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewResultProperties
     """
 
     _validation = {
         "name": {"required": True},
-        "status": {"required": True},
-        "service_statuses": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "status": {"key": "properties.status", "type": "ClusterInstanceViewPropertiesStatus"},
-        "service_statuses": {"key": "properties.serviceStatuses", "type": "[ServiceStatus]"},
+        "properties": {"key": "properties", "type": "ClusterInstanceViewResultProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        status: "_models.ClusterInstanceViewPropertiesStatus",
-        service_statuses: List["_models.ServiceStatus"],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, name: str, properties: "_models.ClusterInstanceViewResultProperties", **kwargs: Any) -> None:
         """
         :keyword name: Name of the instance view. Required.
         :paramtype name: str
-        :keyword status: Status of the instance view. Required.
-        :paramtype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
-        :keyword service_statuses: List of statuses of relevant services that make up the HDInsight on
-         aks cluster to surface to the customer. Required.
-        :paramtype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
+        :keyword properties: Properties of the instance view. Required.
+        :paramtype properties:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewResultProperties
         """
         super().__init__(**kwargs)
         self.name = name
-        self.status = status
-        self.service_statuses = service_statuses
+        self.properties = properties
 
 
 class ClusterInstanceViewResultProperties(ClusterInstanceViewProperties):
     """Properties of the instance view.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: Status of the instance view. Required.
     :vartype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
-    :ivar service_statuses: List of statuses of relevant services that make up the HDInsight on aks
+    :ivar service_statuses: List of statuses of relevant services that make up the HDInsight on AKS
      cluster to surface to the customer. Required.
     :vartype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
     """
-
-    _validation = {
-        "status": {"required": True},
-        "service_statuses": {"required": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "ClusterInstanceViewPropertiesStatus"},
-        "service_statuses": {"key": "serviceStatuses", "type": "[ServiceStatus]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: "_models.ClusterInstanceViewPropertiesStatus",
-        service_statuses: List["_models.ServiceStatus"],
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword status: Status of the instance view. Required.
-        :paramtype status: ~azure.mgmt.hdinsightcontainers.models.ClusterInstanceViewPropertiesStatus
-        :keyword service_statuses: List of statuses of relevant services that make up the HDInsight on
-         aks cluster to surface to the customer. Required.
-        :paramtype service_statuses: list[~azure.mgmt.hdinsightcontainers.models.ServiceStatus]
-        """
-        super().__init__(status=status, service_statuses=service_statuses, **kwargs)
 
 
 class ClusterInstanceViewsResult(_serialization.Model):
@@ -799,53 +1130,15 @@ class ClusterInstanceViewsResult(_serialization.Model):
         self.next_link = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
-
 class ClusterJob(ProxyResource):
     """Cluster job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -887,7 +1180,7 @@ class ClusterJob(ProxyResource):
 class ClusterJobList(_serialization.Model):
     """Collection of cluster job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of cluster job. Required.
     :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterJob]
@@ -922,7 +1215,7 @@ class ClusterJobProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FlinkJobProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar job_type: Type of cluster job. Required. "FlinkJob"
     :vartype job_type: str or ~azure.mgmt.hdinsightcontainers.models.JobType
@@ -1005,7 +1298,7 @@ class ClusterLogAnalyticsApplicationLogs(_serialization.Model):
 class ClusterLogAnalyticsProfile(_serialization.Model):
     """Cluster log analytics profile to enable or disable OMS agent for cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: True if log analytics is enabled for the cluster, otherwise false. Required.
     :vartype enabled: bool
@@ -1049,79 +1342,67 @@ class ClusterLogAnalyticsProfile(_serialization.Model):
         self.metrics_enabled = metrics_enabled
 
 
-class ClusterPatch(TrackedResource):
+class ClusterPatch(_serialization.Model):
     """The patch for a cluster.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Define cluster patch specific properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPatchProperties
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ClusterPatchProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ClusterPatchProperties"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Define cluster patch specific properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPatchProperties
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+        self.tags = tags
+
+
+class ClusterPatchProperties(_serialization.Model):
+    """Cluster resource patch data.
+
     :ivar cluster_profile: Cluster resource patch properties.
     :vartype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.UpdatableClusterProfile
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "cluster_profile": {"key": "properties.clusterProfile", "type": "UpdatableClusterProfile"},
+        "cluster_profile": {"key": "clusterProfile", "type": "UpdatableClusterProfile"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        cluster_profile: Optional["_models.UpdatableClusterProfile"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, cluster_profile: Optional["_models.UpdatableClusterProfile"] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
         :keyword cluster_profile: Cluster resource patch properties.
         :paramtype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.UpdatableClusterProfile
         """
-        super().__init__(tags=tags, location=location, **kwargs)
+        super().__init__(**kwargs)
         self.cluster_profile = cluster_profile
 
 
-class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ClusterPool(TrackedResource):
     """Cluster pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1135,39 +1416,8 @@ class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Succeeded", "Canceled", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.hdinsightcontainers.models.ProvisioningStatus
-    :ivar deployment_id: A unique id generated by the RP to identify the resource.
-    :vartype deployment_id: str
-    :ivar managed_resource_group_name: A resource group created by RP, to hold the resources
-     created by RP on-behalf of customers. It will also be used to generate
-     aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
-     {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
-    :vartype managed_resource_group_name: str
-    :ivar aks_managed_resource_group_name: A resource group created by AKS, to hold the
-     infrastructure resources created by AKS on-behalf of customers. It is generated by cluster pool
-     name and managed resource group name by pattern: MC\ *{managedResourceGroupName}*\
-     {clusterPoolName}_{region}.
-    :vartype aks_managed_resource_group_name: str
-    :ivar cluster_pool_profile: CLuster pool profile.
-    :vartype cluster_pool_profile:
-     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesClusterPoolProfile
-    :ivar compute_profile: CLuster pool compute profile.
-    :vartype compute_profile:
-     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesComputeProfile
-    :ivar aks_cluster_profile: Properties of underlying AKS cluster.
-    :vartype aks_cluster_profile:
-     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesAksClusterProfile
-    :ivar network_profile: Cluster pool network profile.
-    :vartype network_profile:
-     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesNetworkProfile
-    :ivar log_analytics_profile: Cluster pool log analytics profile to enable OMS agent for AKS
-     cluster.
-    :vartype log_analytics_profile:
-     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesLogAnalyticsProfile
-    :ivar status: Business status of the resource.
-    :vartype status: str
+    :ivar properties: Gets or sets the properties. Define cluster pool specific properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourceProperties
     """
 
     _validation = {
@@ -1176,12 +1426,6 @@ class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "deployment_id": {"readonly": True},
-        "managed_resource_group_name": {"max_length": 40, "min_length": 1},
-        "aks_managed_resource_group_name": {"readonly": True},
-        "aks_cluster_profile": {"readonly": True},
-        "status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1191,25 +1435,7 @@ class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "deployment_id": {"key": "properties.deploymentId", "type": "str"},
-        "managed_resource_group_name": {"key": "properties.managedResourceGroupName", "type": "str"},
-        "aks_managed_resource_group_name": {"key": "properties.aksManagedResourceGroupName", "type": "str"},
-        "cluster_pool_profile": {
-            "key": "properties.clusterPoolProfile",
-            "type": "ClusterPoolResourcePropertiesClusterPoolProfile",
-        },
-        "compute_profile": {"key": "properties.computeProfile", "type": "ClusterPoolResourcePropertiesComputeProfile"},
-        "aks_cluster_profile": {
-            "key": "properties.aksClusterProfile",
-            "type": "ClusterPoolResourcePropertiesAksClusterProfile",
-        },
-        "network_profile": {"key": "properties.networkProfile", "type": "ClusterPoolResourcePropertiesNetworkProfile"},
-        "log_analytics_profile": {
-            "key": "properties.logAnalyticsProfile",
-            "type": "ClusterPoolResourcePropertiesLogAnalyticsProfile",
-        },
-        "status": {"key": "properties.status", "type": "str"},
+        "properties": {"key": "properties", "type": "ClusterPoolResourceProperties"},
     }
 
     def __init__(
@@ -1217,11 +1443,7 @@ class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        managed_resource_group_name: Optional[str] = None,
-        cluster_pool_profile: Optional["_models.ClusterPoolResourcePropertiesClusterPoolProfile"] = None,
-        compute_profile: Optional["_models.ClusterPoolResourcePropertiesComputeProfile"] = None,
-        network_profile: Optional["_models.ClusterPoolResourcePropertiesNetworkProfile"] = None,
-        log_analytics_profile: Optional["_models.ClusterPoolResourcePropertiesLogAnalyticsProfile"] = None,
+        properties: Optional["_models.ClusterPoolResourceProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1229,36 +1451,315 @@ class ClusterPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword managed_resource_group_name: A resource group created by RP, to hold the resources
-         created by RP on-behalf of customers. It will also be used to generate
-         aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
-         {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
-        :paramtype managed_resource_group_name: str
-        :keyword cluster_pool_profile: CLuster pool profile.
-        :paramtype cluster_pool_profile:
-         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesClusterPoolProfile
-        :keyword compute_profile: CLuster pool compute profile.
-        :paramtype compute_profile:
-         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesComputeProfile
-        :keyword network_profile: Cluster pool network profile.
-        :paramtype network_profile:
-         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesNetworkProfile
-        :keyword log_analytics_profile: Cluster pool log analytics profile to enable OMS agent for AKS
-         cluster.
-        :paramtype log_analytics_profile:
-         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesLogAnalyticsProfile
+        :keyword properties: Gets or sets the properties. Define cluster pool specific properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourceProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
-        self.deployment_id = None
-        self.managed_resource_group_name = managed_resource_group_name
-        self.aks_managed_resource_group_name = None
-        self.cluster_pool_profile = cluster_pool_profile
-        self.compute_profile = compute_profile
-        self.aks_cluster_profile = None
-        self.network_profile = network_profile
-        self.log_analytics_profile = log_analytics_profile
-        self.status = None
+        self.properties = properties
+
+
+class ClusterPoolUpgradeProperties(_serialization.Model):
+    """Properties of upgrading cluster pool.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterPoolAKSPatchVersionUpgradeProperties, ClusterPoolNodeOsImageUpdateProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterPoolAKSPatchVersionUpgradeProperties",
+            "NodeOsUpgrade": "ClusterPoolNodeOsImageUpdateProperties",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+
+
+class ClusterPoolAKSPatchVersionUpgradeProperties(ClusterPoolUpgradeProperties):  # pylint: disable=name-too-long
+    """Properties of upgrading cluster pool's AKS patch version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeType
+    :ivar upgrade_cluster_pool: whether upgrade cluster pool or not. If it's true,
+     upgradeAllClusterNodes should be false.
+    :vartype upgrade_cluster_pool: bool
+    :ivar upgrade_all_cluster_nodes: whether upgrade all clusters' nodes. If it's true,
+     upgradeClusterPool should be false.
+    :vartype upgrade_all_cluster_nodes: bool
+    :ivar target_aks_version: Target AKS version. When it's not set, latest version will be used.
+     When upgradeClusterPool is true and upgradeAllClusterNodes is false, target version should be
+     greater or equal to current version. When upgradeClusterPool is false and
+     upgradeAllClusterNodes is true, target version should be equal to AKS version of cluster pool.
+    :vartype target_aks_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "upgrade_cluster_pool": {"key": "upgradeClusterPool", "type": "bool"},
+        "upgrade_all_cluster_nodes": {"key": "upgradeAllClusterNodes", "type": "bool"},
+        "target_aks_version": {"key": "targetAksVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        upgrade_cluster_pool: bool = False,
+        upgrade_all_cluster_nodes: bool = False,
+        target_aks_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword upgrade_cluster_pool: whether upgrade cluster pool or not. If it's true,
+         upgradeAllClusterNodes should be false.
+        :paramtype upgrade_cluster_pool: bool
+        :keyword upgrade_all_cluster_nodes: whether upgrade all clusters' nodes. If it's true,
+         upgradeClusterPool should be false.
+        :paramtype upgrade_all_cluster_nodes: bool
+        :keyword target_aks_version: Target AKS version. When it's not set, latest version will be
+         used. When upgradeClusterPool is true and upgradeAllClusterNodes is false, target version
+         should be greater or equal to current version. When upgradeClusterPool is false and
+         upgradeAllClusterNodes is true, target version should be equal to AKS version of cluster pool.
+        :paramtype target_aks_version: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+        self.upgrade_cluster_pool = upgrade_cluster_pool
+        self.upgrade_all_cluster_nodes = upgrade_all_cluster_nodes
+        self.target_aks_version = target_aks_version
+
+
+class ClusterPoolAvailableUpgrade(ProxyResource):
+    """Cluster pool available upgrade.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Gets or sets the properties. Define cluster pool upgrade specific properties.
+    :vartype properties:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgradeProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterPoolAvailableUpgradeProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.ClusterPoolAvailableUpgradeProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Gets or sets the properties. Define cluster pool upgrade specific
+         properties.
+        :paramtype properties:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgradeProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterPoolAvailableUpgradeProperties(_serialization.Model):
+    """Cluster pool available upgrade properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterPoolAvailableUpgradeAksPatchUpgradeProperties,
+    ClusterPoolAvailableUpgradeNodeOsUpgradeProperties
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "upgrade_type": {
+            "AKSPatchUpgrade": "ClusterPoolAvailableUpgradeAksPatchUpgradeProperties",
+            "NodeOsUpgrade": "ClusterPoolAvailableUpgradeNodeOsUpgradeProperties",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: Optional[str] = None
+
+
+class ClusterPoolAvailableUpgradeAksPatchUpgradeProperties(
+    ClusterPoolAvailableUpgradeProperties
+):  # pylint: disable=name-too-long
+    """Cluster pool available AKS patch version upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgradeType
+    :ivar current_version: Current AKS version.
+    :vartype current_version: str
+    :ivar current_version_status: Current AKS version's status: whether it is deprecated or
+     supported. Known values are: "Deprecated" and "Supported".
+    :vartype current_version_status: str or
+     ~azure.mgmt.hdinsightcontainers.models.CurrentClusterPoolAksVersionStatus
+    :ivar latest_version: Latest AKS patch version.
+    :vartype latest_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "current_version": {"key": "currentVersion", "type": "str"},
+        "current_version_status": {"key": "currentVersionStatus", "type": "str"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        current_version: Optional[str] = None,
+        current_version_status: Optional[Union[str, "_models.CurrentClusterPoolAksVersionStatus"]] = None,
+        latest_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword current_version: Current AKS version.
+        :paramtype current_version: str
+        :keyword current_version_status: Current AKS version's status: whether it is deprecated or
+         supported. Known values are: "Deprecated" and "Supported".
+        :paramtype current_version_status: str or
+         ~azure.mgmt.hdinsightcontainers.models.CurrentClusterPoolAksVersionStatus
+        :keyword latest_version: Latest AKS patch version.
+        :paramtype latest_version: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "AKSPatchUpgrade"
+        self.current_version = current_version
+        self.current_version_status = current_version_status
+        self.latest_version = latest_version
+
+
+class ClusterPoolAvailableUpgradeList(_serialization.Model):
+    """collection of cluster pool available upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: Collection of cluster pool available upgrade. Required.
+    :vartype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgrade]
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClusterPoolAvailableUpgrade]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.ClusterPoolAvailableUpgrade"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Collection of cluster pool available upgrade. Required.
+        :paramtype value: list[~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgrade]
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ClusterPoolAvailableUpgradeNodeOsUpgradeProperties(
+    ClusterPoolAvailableUpgradeProperties
+):  # pylint: disable=name-too-long
+    """Cluster pool available node OS update.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolAvailableUpgradeType
+    :ivar latest_version: The latest node OS version.
+    :vartype latest_version: str
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
+    }
+
+    def __init__(self, *, latest_version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword latest_version: The latest node OS version.
+        :paramtype latest_version: str
+        """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "NodeOsUpgrade"
+        self.latest_version = latest_version
 
 
 class ClusterPoolComputeProfile(_serialization.Model):
@@ -1266,7 +1767,7 @@ class ClusterPoolComputeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_size: The virtual machine SKU. Required.
     :vartype vm_size: str
@@ -1327,7 +1828,7 @@ class ClusterPoolListResult(_serialization.Model):
 class ClusterPoolLogAnalyticsProfile(_serialization.Model):
     """Cluster pool log analytics profile used to enable or disable OMS agent for AKS cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: True if log analytics is enabled for cluster pool, otherwise false. Required.
     :vartype enabled: bool
@@ -1359,10 +1860,22 @@ class ClusterPoolLogAnalyticsProfile(_serialization.Model):
 class ClusterPoolNetworkProfile(_serialization.Model):
     """Cluster pool networking configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar subnet_id: Cluster pool subnet resource id. Required.
     :vartype subnet_id: str
+    :ivar outbound_type: This can only be set at cluster pool creation time and cannot be changed
+     later. Known values are: "loadBalancer" and "userDefinedRouting".
+    :vartype outbound_type: str or ~azure.mgmt.hdinsightcontainers.models.OutboundType
+    :ivar enable_private_api_server: ClusterPool is based on AKS cluster. AKS cluster exposes the
+     API server to public internet by default. If you set this property to true, a private AKS
+     cluster will be created, and it will use private apiserver, which is not exposed to public
+     internet.
+    :vartype enable_private_api_server: bool
+    :ivar api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
+     137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
+     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+    :vartype api_server_authorized_ip_ranges: list[str]
     """
 
     _validation = {
@@ -1371,21 +1884,71 @@ class ClusterPoolNetworkProfile(_serialization.Model):
 
     _attribute_map = {
         "subnet_id": {"key": "subnetId", "type": "str"},
+        "outbound_type": {"key": "outboundType", "type": "str"},
+        "enable_private_api_server": {"key": "enablePrivateApiServer", "type": "bool"},
+        "api_server_authorized_ip_ranges": {"key": "apiServerAuthorizedIpRanges", "type": "[str]"},
     }
 
-    def __init__(self, *, subnet_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        subnet_id: str,
+        outbound_type: Union[str, "_models.OutboundType"] = "loadBalancer",
+        enable_private_api_server: Optional[bool] = None,
+        api_server_authorized_ip_ranges: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subnet_id: Cluster pool subnet resource id. Required.
         :paramtype subnet_id: str
+        :keyword outbound_type: This can only be set at cluster pool creation time and cannot be
+         changed later. Known values are: "loadBalancer" and "userDefinedRouting".
+        :paramtype outbound_type: str or ~azure.mgmt.hdinsightcontainers.models.OutboundType
+        :keyword enable_private_api_server: ClusterPool is based on AKS cluster. AKS cluster exposes
+         the API server to public internet by default. If you set this property to true, a private AKS
+         cluster will be created, and it will use private apiserver, which is not exposed to public
+         internet.
+        :paramtype enable_private_api_server: bool
+        :keyword api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
+         137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
+         enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+        :paramtype api_server_authorized_ip_ranges: list[str]
         """
         super().__init__(**kwargs)
         self.subnet_id = subnet_id
+        self.outbound_type = outbound_type
+        self.enable_private_api_server = enable_private_api_server
+        self.api_server_authorized_ip_ranges = api_server_authorized_ip_ranges
+
+
+class ClusterPoolNodeOsImageUpdateProperties(ClusterPoolUpgradeProperties):
+    """Properties of upgrading cluster pool's AKS patch version.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar upgrade_type: Type of upgrade. Required. Known values are: "AKSPatchUpgrade" and
+     "NodeOsUpgrade".
+    :vartype upgrade_type: str or ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeType
+    """
+
+    _validation = {
+        "upgrade_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "upgrade_type": {"key": "upgradeType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.upgrade_type: str = "NodeOsUpgrade"
 
 
 class ClusterPoolProfile(_serialization.Model):
     """Cluster pool profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cluster_pool_version: Cluster pool version is a 2-part version. Required.
     :vartype cluster_pool_version: str
@@ -1408,7 +1971,121 @@ class ClusterPoolProfile(_serialization.Model):
         self.cluster_pool_version = cluster_pool_version
 
 
-class ClusterPoolResourcePropertiesAksClusterProfile(AksClusterProfile):
+class ClusterPoolResourceProperties(_serialization.Model):
+    """Cluster pool resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.hdinsightcontainers.models.ProvisioningStatus
+    :ivar deployment_id: A unique id generated by the RP to identify the resource.
+    :vartype deployment_id: str
+    :ivar managed_resource_group_name: A resource group created by RP, to hold the resources
+     created by RP on-behalf of customers. It will also be used to generate
+     aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
+     {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
+    :vartype managed_resource_group_name: str
+    :ivar aks_managed_resource_group_name: A resource group created by AKS, to hold the
+     infrastructure resources created by AKS on-behalf of customers. It is generated by cluster pool
+     name and managed resource group name by pattern: MC\ *{managedResourceGroupName}*\
+     {clusterPoolName}_{region}.
+    :vartype aks_managed_resource_group_name: str
+    :ivar cluster_pool_profile: CLuster pool profile.
+    :vartype cluster_pool_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesClusterPoolProfile
+    :ivar compute_profile: CLuster pool compute profile. Required.
+    :vartype compute_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesComputeProfile
+    :ivar aks_cluster_profile: Properties of underlying AKS cluster.
+    :vartype aks_cluster_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesAksClusterProfile
+    :ivar network_profile: Cluster pool network profile.
+    :vartype network_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesNetworkProfile
+    :ivar log_analytics_profile: Cluster pool log analytics profile to enable OMS agent for AKS
+     cluster.
+    :vartype log_analytics_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesLogAnalyticsProfile
+    :ivar status: Business status of the resource.
+    :vartype status: str
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "deployment_id": {"readonly": True},
+        "managed_resource_group_name": {"max_length": 40, "min_length": 1},
+        "aks_managed_resource_group_name": {"readonly": True},
+        "compute_profile": {"required": True},
+        "aks_cluster_profile": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "managed_resource_group_name": {"key": "managedResourceGroupName", "type": "str"},
+        "aks_managed_resource_group_name": {"key": "aksManagedResourceGroupName", "type": "str"},
+        "cluster_pool_profile": {
+            "key": "clusterPoolProfile",
+            "type": "ClusterPoolResourcePropertiesClusterPoolProfile",
+        },
+        "compute_profile": {"key": "computeProfile", "type": "ClusterPoolResourcePropertiesComputeProfile"},
+        "aks_cluster_profile": {"key": "aksClusterProfile", "type": "ClusterPoolResourcePropertiesAksClusterProfile"},
+        "network_profile": {"key": "networkProfile", "type": "ClusterPoolResourcePropertiesNetworkProfile"},
+        "log_analytics_profile": {
+            "key": "logAnalyticsProfile",
+            "type": "ClusterPoolResourcePropertiesLogAnalyticsProfile",
+        },
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        compute_profile: "_models.ClusterPoolResourcePropertiesComputeProfile",
+        managed_resource_group_name: Optional[str] = None,
+        cluster_pool_profile: Optional["_models.ClusterPoolResourcePropertiesClusterPoolProfile"] = None,
+        network_profile: Optional["_models.ClusterPoolResourcePropertiesNetworkProfile"] = None,
+        log_analytics_profile: Optional["_models.ClusterPoolResourcePropertiesLogAnalyticsProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword managed_resource_group_name: A resource group created by RP, to hold the resources
+         created by RP on-behalf of customers. It will also be used to generate
+         aksManagedResourceGroupName by pattern: MC\ *{managedResourceGroupName}*\
+         {clusterPoolName}_{region}. Please make sure it meets resource group name restriction.
+        :paramtype managed_resource_group_name: str
+        :keyword cluster_pool_profile: CLuster pool profile.
+        :paramtype cluster_pool_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesClusterPoolProfile
+        :keyword compute_profile: CLuster pool compute profile. Required.
+        :paramtype compute_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesComputeProfile
+        :keyword network_profile: Cluster pool network profile.
+        :paramtype network_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesNetworkProfile
+        :keyword log_analytics_profile: Cluster pool log analytics profile to enable OMS agent for AKS
+         cluster.
+        :paramtype log_analytics_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterPoolResourcePropertiesLogAnalyticsProfile
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_id = None
+        self.managed_resource_group_name = managed_resource_group_name
+        self.aks_managed_resource_group_name = None
+        self.cluster_pool_profile = cluster_pool_profile
+        self.compute_profile = compute_profile
+        self.aks_cluster_profile = None
+        self.network_profile = network_profile
+        self.log_analytics_profile = log_analytics_profile
+        self.status = None
+
+
+class ClusterPoolResourcePropertiesAksClusterProfile(AksClusterProfile):  # pylint: disable=name-too-long
     """Properties of underlying AKS cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1423,74 +2100,23 @@ class ClusterPoolResourcePropertiesAksClusterProfile(AksClusterProfile):
     :vartype aks_version: str
     """
 
-    _validation = {
-        "aks_version": {"readonly": True},
-    }
 
-    _attribute_map = {
-        "aks_cluster_resource_id": {"key": "aksClusterResourceId", "type": "str"},
-        "aks_cluster_agent_pool_identity_profile": {
-            "key": "aksClusterAgentPoolIdentityProfile",
-            "type": "AksClusterProfileAksClusterAgentPoolIdentityProfile",
-        },
-        "aks_version": {"key": "aksVersion", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        aks_cluster_resource_id: Optional[str] = None,
-        aks_cluster_agent_pool_identity_profile: Optional[
-            "_models.AksClusterProfileAksClusterAgentPoolIdentityProfile"
-        ] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword aks_cluster_resource_id: ARM Resource ID of the AKS cluster.
-        :paramtype aks_cluster_resource_id: str
-        :keyword aks_cluster_agent_pool_identity_profile: Identity properties of the AKS cluster
-         agentpool MSI.
-        :paramtype aks_cluster_agent_pool_identity_profile:
-         ~azure.mgmt.hdinsightcontainers.models.AksClusterProfileAksClusterAgentPoolIdentityProfile
-        """
-        super().__init__(
-            aks_cluster_resource_id=aks_cluster_resource_id,
-            aks_cluster_agent_pool_identity_profile=aks_cluster_agent_pool_identity_profile,
-            **kwargs
-        )
-
-
-class ClusterPoolResourcePropertiesClusterPoolProfile(ClusterPoolProfile):
+class ClusterPoolResourcePropertiesClusterPoolProfile(ClusterPoolProfile):  # pylint: disable=name-too-long
     """CLuster pool profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cluster_pool_version: Cluster pool version is a 2-part version. Required.
     :vartype cluster_pool_version: str
     """
 
-    _validation = {
-        "cluster_pool_version": {"required": True, "pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
-    }
 
-    _attribute_map = {
-        "cluster_pool_version": {"key": "clusterPoolVersion", "type": "str"},
-    }
-
-    def __init__(self, *, cluster_pool_version: str, **kwargs: Any) -> None:
-        """
-        :keyword cluster_pool_version: Cluster pool version is a 2-part version. Required.
-        :paramtype cluster_pool_version: str
-        """
-        super().__init__(cluster_pool_version=cluster_pool_version, **kwargs)
-
-
-class ClusterPoolResourcePropertiesComputeProfile(ClusterPoolComputeProfile):
+class ClusterPoolResourcePropertiesComputeProfile(ClusterPoolComputeProfile):  # pylint: disable=name-too-long
     """CLuster pool compute profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_size: The virtual machine SKU. Required.
     :vartype vm_size: str
@@ -1498,28 +2124,11 @@ class ClusterPoolResourcePropertiesComputeProfile(ClusterPoolComputeProfile):
     :vartype count: int
     """
 
-    _validation = {
-        "vm_size": {"required": True, "pattern": r"^[a-zA-Z0-9_\-]{0,256}$"},
-        "count": {"readonly": True},
-    }
 
-    _attribute_map = {
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "count": {"key": "count", "type": "int"},
-    }
-
-    def __init__(self, *, vm_size: str, **kwargs: Any) -> None:
-        """
-        :keyword vm_size: The virtual machine SKU. Required.
-        :paramtype vm_size: str
-        """
-        super().__init__(vm_size=vm_size, **kwargs)
-
-
-class ClusterPoolResourcePropertiesLogAnalyticsProfile(ClusterPoolLogAnalyticsProfile):
+class ClusterPoolResourcePropertiesLogAnalyticsProfile(ClusterPoolLogAnalyticsProfile):  # pylint: disable=name-too-long
     """Cluster pool log analytics profile to enable OMS agent for AKS cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: True if log analytics is enabled for cluster pool, otherwise false. Required.
     :vartype enabled: bool
@@ -1527,48 +2136,53 @@ class ClusterPoolResourcePropertiesLogAnalyticsProfile(ClusterPoolLogAnalyticsPr
     :vartype workspace_id: str
     """
 
-    _validation = {
-        "enabled": {"required": True},
-    }
 
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "workspace_id": {"key": "workspaceId", "type": "str"},
-    }
-
-    def __init__(self, *, enabled: bool, workspace_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword enabled: True if log analytics is enabled for cluster pool, otherwise false. Required.
-        :paramtype enabled: bool
-        :keyword workspace_id: Log analytics workspace to associate with the OMS agent.
-        :paramtype workspace_id: str
-        """
-        super().__init__(enabled=enabled, workspace_id=workspace_id, **kwargs)
-
-
-class ClusterPoolResourcePropertiesNetworkProfile(ClusterPoolNetworkProfile):
+class ClusterPoolResourcePropertiesNetworkProfile(ClusterPoolNetworkProfile):  # pylint: disable=name-too-long
     """Cluster pool network profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar subnet_id: Cluster pool subnet resource id. Required.
     :vartype subnet_id: str
+    :ivar outbound_type: This can only be set at cluster pool creation time and cannot be changed
+     later. Known values are: "loadBalancer" and "userDefinedRouting".
+    :vartype outbound_type: str or ~azure.mgmt.hdinsightcontainers.models.OutboundType
+    :ivar enable_private_api_server: ClusterPool is based on AKS cluster. AKS cluster exposes the
+     API server to public internet by default. If you set this property to true, a private AKS
+     cluster will be created, and it will use private apiserver, which is not exposed to public
+     internet.
+    :vartype enable_private_api_server: bool
+    :ivar api_server_authorized_ip_ranges: IP ranges are specified in CIDR format, e.g.
+     137.117.106.88/29. This feature is not compatible with private AKS clusters. So you cannot set
+     enablePrivateApiServer to true and apiServerAuthorizedIpRanges at the same time.
+    :vartype api_server_authorized_ip_ranges: list[str]
+    """
+
+
+class ClusterPoolUpgrade(_serialization.Model):
+    """Cluster Pool Upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar properties: Properties of upgrading cluster pool. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeProperties
     """
 
     _validation = {
-        "subnet_id": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        "subnet_id": {"key": "subnetId", "type": "str"},
+        "properties": {"key": "properties", "type": "ClusterPoolUpgradeProperties"},
     }
 
-    def __init__(self, *, subnet_id: str, **kwargs: Any) -> None:
+    def __init__(self, *, properties: "_models.ClusterPoolUpgradeProperties", **kwargs: Any) -> None:
         """
-        :keyword subnet_id: Cluster pool subnet resource id. Required.
-        :paramtype subnet_id: str
+        :keyword properties: Properties of upgrading cluster pool. Required.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolUpgradeProperties
         """
-        super().__init__(subnet_id=subnet_id, **kwargs)
+        super().__init__(**kwargs)
+        self.properties = properties
 
 
 class ClusterPoolVersion(ProxyResource):
@@ -1577,7 +2191,7 @@ class ClusterPoolVersion(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1587,6 +2201,37 @@ class ClusterPoolVersion(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Cluster pool version properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolVersionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterPoolVersionProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ClusterPoolVersionProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Cluster pool version properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterPoolVersionProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterPoolVersionProperties(_serialization.Model):
+    """Cluster pool version properties.
+
     :ivar cluster_pool_version: Cluster pool version is a 2-part version.
     :vartype cluster_pool_version: str
     :ivar aks_version: AKS version.
@@ -1596,21 +2241,13 @@ class ClusterPoolVersion(ProxyResource):
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "cluster_pool_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "cluster_pool_version": {"key": "properties.clusterPoolVersion", "type": "str"},
-        "aks_version": {"key": "properties.aksVersion", "type": "str"},
-        "is_preview": {"key": "properties.isPreview", "type": "bool"},
+        "cluster_pool_version": {"key": "clusterPoolVersion", "type": "str"},
+        "aks_version": {"key": "aksVersion", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
     def __init__(
@@ -1670,7 +2307,7 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cluster_version: Version with 3/4 part. Required.
     :vartype cluster_version: str
@@ -1678,7 +2315,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype oss_version: str
     :ivar components: Component list of this cluster type and version.
     :vartype components: list[~azure.mgmt.hdinsightcontainers.models.ClusterComponentsItem]
-    :ivar identity_profile: Identity Profile with details of an MSI. Required.
+    :ivar identity_profile: This property is required by Trino, Spark and Flink cluster but is
+     optional for Kafka cluster.
     :vartype identity_profile: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
     :ivar authorization_profile: Authorization profile with details of AAD user Ids and group Ids
      authorized for data plane access. Required.
@@ -1690,6 +2328,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
      list[~azure.mgmt.hdinsightcontainers.models.ClusterServiceConfigsProfile]
     :ivar connectivity_profile: Cluster connectivity profile.
     :vartype connectivity_profile: ~azure.mgmt.hdinsightcontainers.models.ConnectivityProfile
+    :ivar cluster_access_profile: Cluster access profile.
+    :vartype cluster_access_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterAccessProfile
     :ivar log_analytics_profile: Cluster log analytics profile to enable or disable OMS agent for
      cluster.
     :vartype log_analytics_profile:
@@ -1701,8 +2341,11 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
     :ivar autoscale_profile: This is the Autoscale profile for the cluster. This will allow
      customer to create cluster enabled with Autoscale.
     :vartype autoscale_profile: ~azure.mgmt.hdinsightcontainers.models.AutoscaleProfile
-    :ivar kafka_profile: Kafka cluster profile.
-    :vartype kafka_profile: dict[str, any]
+    :ivar ranger_plugin_profile: Cluster Ranger plugin profile.
+    :vartype ranger_plugin_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterRangerPluginProfile
+    :ivar kafka_profile: The Kafka cluster profile.
+    :vartype kafka_profile: ~azure.mgmt.hdinsightcontainers.models.KafkaProfile
     :ivar trino_profile: Trino Cluster profile.
     :vartype trino_profile: ~azure.mgmt.hdinsightcontainers.models.TrinoProfile
     :ivar llap_profile: LLAP cluster profile.
@@ -1711,6 +2354,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype flink_profile: ~azure.mgmt.hdinsightcontainers.models.FlinkProfile
     :ivar spark_profile: The spark cluster profile.
     :vartype spark_profile: ~azure.mgmt.hdinsightcontainers.models.SparkProfile
+    :ivar ranger_profile: The ranger cluster profile.
+    :vartype ranger_profile: ~azure.mgmt.hdinsightcontainers.models.RangerProfile
     :ivar stub_profile: Stub cluster profile.
     :vartype stub_profile: dict[str, any]
     :ivar script_action_profiles: The script action profile list.
@@ -1728,7 +2373,6 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
             "pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$",
         },
         "components": {"readonly": True},
-        "identity_profile": {"required": True},
         "authorization_profile": {"required": True},
         "connectivity_profile": {"readonly": True},
     }
@@ -1742,15 +2386,18 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         "secrets_profile": {"key": "secretsProfile", "type": "SecretsProfile"},
         "service_configs_profiles": {"key": "serviceConfigsProfiles", "type": "[ClusterServiceConfigsProfile]"},
         "connectivity_profile": {"key": "connectivityProfile", "type": "ConnectivityProfile"},
+        "cluster_access_profile": {"key": "clusterAccessProfile", "type": "ClusterAccessProfile"},
         "log_analytics_profile": {"key": "logAnalyticsProfile", "type": "ClusterLogAnalyticsProfile"},
         "prometheus_profile": {"key": "prometheusProfile", "type": "ClusterPrometheusProfile"},
         "ssh_profile": {"key": "sshProfile", "type": "SshProfile"},
         "autoscale_profile": {"key": "autoscaleProfile", "type": "AutoscaleProfile"},
-        "kafka_profile": {"key": "kafkaProfile", "type": "{object}"},
+        "ranger_plugin_profile": {"key": "rangerPluginProfile", "type": "ClusterRangerPluginProfile"},
+        "kafka_profile": {"key": "kafkaProfile", "type": "KafkaProfile"},
         "trino_profile": {"key": "trinoProfile", "type": "TrinoProfile"},
         "llap_profile": {"key": "llapProfile", "type": "{object}"},
         "flink_profile": {"key": "flinkProfile", "type": "FlinkProfile"},
         "spark_profile": {"key": "sparkProfile", "type": "SparkProfile"},
+        "ranger_profile": {"key": "rangerProfile", "type": "RangerProfile"},
         "stub_profile": {"key": "stubProfile", "type": "{object}"},
         "script_action_profiles": {"key": "scriptActionProfiles", "type": "[ScriptActionProfile]"},
     }
@@ -1760,19 +2407,22 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         *,
         cluster_version: str,
         oss_version: str,
-        identity_profile: "_models.IdentityProfile",
         authorization_profile: "_models.AuthorizationProfile",
+        identity_profile: Optional["_models.IdentityProfile"] = None,
         secrets_profile: Optional["_models.SecretsProfile"] = None,
         service_configs_profiles: Optional[List["_models.ClusterServiceConfigsProfile"]] = None,
+        cluster_access_profile: Optional["_models.ClusterAccessProfile"] = None,
         log_analytics_profile: Optional["_models.ClusterLogAnalyticsProfile"] = None,
         prometheus_profile: Optional["_models.ClusterPrometheusProfile"] = None,
         ssh_profile: Optional["_models.SshProfile"] = None,
         autoscale_profile: Optional["_models.AutoscaleProfile"] = None,
-        kafka_profile: Optional[Dict[str, Any]] = None,
+        ranger_plugin_profile: Optional["_models.ClusterRangerPluginProfile"] = None,
+        kafka_profile: Optional["_models.KafkaProfile"] = None,
         trino_profile: Optional["_models.TrinoProfile"] = None,
         llap_profile: Optional[Dict[str, Any]] = None,
         flink_profile: Optional["_models.FlinkProfile"] = None,
         spark_profile: Optional["_models.SparkProfile"] = None,
+        ranger_profile: Optional["_models.RangerProfile"] = None,
         stub_profile: Optional[Dict[str, Any]] = None,
         script_action_profiles: Optional[List["_models.ScriptActionProfile"]] = None,
         **kwargs: Any
@@ -1782,7 +2432,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype cluster_version: str
         :keyword oss_version: Version with three part. Required.
         :paramtype oss_version: str
-        :keyword identity_profile: Identity Profile with details of an MSI. Required.
+        :keyword identity_profile: This property is required by Trino, Spark and Flink cluster but is
+         optional for Kafka cluster.
         :paramtype identity_profile: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
         :keyword authorization_profile: Authorization profile with details of AAD user Ids and group
          Ids authorized for data plane access. Required.
@@ -1792,6 +2443,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword service_configs_profiles: The service configs profiles.
         :paramtype service_configs_profiles:
          list[~azure.mgmt.hdinsightcontainers.models.ClusterServiceConfigsProfile]
+        :keyword cluster_access_profile: Cluster access profile.
+        :paramtype cluster_access_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterAccessProfile
         :keyword log_analytics_profile: Cluster log analytics profile to enable or disable OMS agent
          for cluster.
         :paramtype log_analytics_profile:
@@ -1803,8 +2456,11 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword autoscale_profile: This is the Autoscale profile for the cluster. This will allow
          customer to create cluster enabled with Autoscale.
         :paramtype autoscale_profile: ~azure.mgmt.hdinsightcontainers.models.AutoscaleProfile
-        :keyword kafka_profile: Kafka cluster profile.
-        :paramtype kafka_profile: dict[str, any]
+        :keyword ranger_plugin_profile: Cluster Ranger plugin profile.
+        :paramtype ranger_plugin_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterRangerPluginProfile
+        :keyword kafka_profile: The Kafka cluster profile.
+        :paramtype kafka_profile: ~azure.mgmt.hdinsightcontainers.models.KafkaProfile
         :keyword trino_profile: Trino Cluster profile.
         :paramtype trino_profile: ~azure.mgmt.hdinsightcontainers.models.TrinoProfile
         :keyword llap_profile: LLAP cluster profile.
@@ -1813,6 +2469,8 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype flink_profile: ~azure.mgmt.hdinsightcontainers.models.FlinkProfile
         :keyword spark_profile: The spark cluster profile.
         :paramtype spark_profile: ~azure.mgmt.hdinsightcontainers.models.SparkProfile
+        :keyword ranger_profile: The ranger cluster profile.
+        :paramtype ranger_profile: ~azure.mgmt.hdinsightcontainers.models.RangerProfile
         :keyword stub_profile: Stub cluster profile.
         :paramtype stub_profile: dict[str, any]
         :keyword script_action_profiles: The script action profile list.
@@ -1828,15 +2486,18 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
         self.secrets_profile = secrets_profile
         self.service_configs_profiles = service_configs_profiles
         self.connectivity_profile = None
+        self.cluster_access_profile = cluster_access_profile
         self.log_analytics_profile = log_analytics_profile
         self.prometheus_profile = prometheus_profile
         self.ssh_profile = ssh_profile
         self.autoscale_profile = autoscale_profile
+        self.ranger_plugin_profile = ranger_plugin_profile
         self.kafka_profile = kafka_profile
         self.trino_profile = trino_profile
         self.llap_profile = llap_profile
         self.flink_profile = flink_profile
         self.spark_profile = spark_profile
+        self.ranger_profile = ranger_profile
         self.stub_profile = stub_profile
         self.script_action_profiles = script_action_profiles
 
@@ -1844,7 +2505,7 @@ class ClusterProfile(_serialization.Model):  # pylint: disable=too-many-instance
 class ClusterPrometheusProfile(_serialization.Model):
     """Cluster Prometheus profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Enable Prometheus for cluster or not. Required.
     :vartype enabled: bool
@@ -1867,15 +2528,41 @@ class ClusterPrometheusProfile(_serialization.Model):
         self.enabled = enabled
 
 
+class ClusterRangerPluginProfile(_serialization.Model):
+    """Cluster Ranger plugin profile.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: Enable Ranger for cluster or not. Required.
+    :vartype enabled: bool
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: bool = False, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Enable Ranger for cluster or not. Required.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+
+
 class ClusterResizeData(TrackedResource):
     """The parameters for resizing a cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1889,8 +2576,8 @@ class ClusterResizeData(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar target_worker_node_count: Target node count of worker node.
-    :vartype target_worker_node_count: int
+    :ivar properties: Sets the properties. Define cluster resize specific properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterResizeProperties
     """
 
     _validation = {
@@ -1908,7 +2595,7 @@ class ClusterResizeData(TrackedResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "target_worker_node_count": {"key": "properties.targetWorkerNodeCount", "type": "int"},
+        "properties": {"key": "properties", "type": "ClusterResizeProperties"},
     }
 
     def __init__(
@@ -1916,7 +2603,7 @@ class ClusterResizeData(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        target_worker_node_count: Optional[int] = None,
+        properties: Optional["_models.ClusterResizeProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1924,17 +2611,108 @@ class ClusterResizeData(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword target_worker_node_count: Target node count of worker node.
-        :paramtype target_worker_node_count: int
+        :keyword properties: Sets the properties. Define cluster resize specific properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterResizeProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class ClusterResizeProperties(_serialization.Model):
+    """The properties for resizing a cluster.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_worker_node_count: Target node count of worker node. Required.
+    :vartype target_worker_node_count: int
+    """
+
+    _validation = {
+        "target_worker_node_count": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_worker_node_count": {"key": "targetWorkerNodeCount", "type": "int"},
+    }
+
+    def __init__(self, *, target_worker_node_count: int, **kwargs: Any) -> None:
+        """
+        :keyword target_worker_node_count: Target node count of worker node. Required.
+        :paramtype target_worker_node_count: int
+        """
+        super().__init__(**kwargs)
         self.target_worker_node_count = target_worker_node_count
+
+
+class ClusterResourceProperties(_serialization.Model):
+    """Cluster resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.hdinsightcontainers.models.ProvisioningStatus
+    :ivar cluster_type: The type of cluster. Required.
+    :vartype cluster_type: str
+    :ivar deployment_id: A unique id generated by the RP to identify the resource.
+    :vartype deployment_id: str
+    :ivar compute_profile: The compute profile. Required.
+    :vartype compute_profile: ~azure.mgmt.hdinsightcontainers.models.ComputeProfile
+    :ivar cluster_profile: Cluster profile. Required.
+    :vartype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterProfile
+    :ivar status: Business status of the resource.
+    :vartype status: str
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "cluster_type": {"required": True, "pattern": r"^[a-zA-Z][a-zA-Z0-9]{0,31}$"},
+        "deployment_id": {"readonly": True},
+        "compute_profile": {"required": True},
+        "cluster_profile": {"required": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "cluster_type": {"key": "clusterType", "type": "str"},
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "compute_profile": {"key": "computeProfile", "type": "ComputeProfile"},
+        "cluster_profile": {"key": "clusterProfile", "type": "ClusterProfile"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cluster_type: str,
+        compute_profile: "_models.ComputeProfile",
+        cluster_profile: "_models.ClusterProfile",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cluster_type: The type of cluster. Required.
+        :paramtype cluster_type: str
+        :keyword compute_profile: The compute profile. Required.
+        :paramtype compute_profile: ~azure.mgmt.hdinsightcontainers.models.ComputeProfile
+        :keyword cluster_profile: Cluster profile. Required.
+        :paramtype cluster_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterProfile
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.cluster_type = cluster_type
+        self.deployment_id = None
+        self.compute_profile = compute_profile
+        self.cluster_profile = cluster_profile
+        self.status = None
 
 
 class ClusterServiceConfig(_serialization.Model):
     """Cluster configs per component.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar component: Name of the component the config files should apply to. Required.
     :vartype component: str
@@ -1967,7 +2745,7 @@ class ClusterServiceConfig(_serialization.Model):
 class ClusterServiceConfigsProfile(_serialization.Model):
     """Cluster service configs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_name: Name of the service the configurations should apply to. Required.
     :vartype service_name: str
@@ -1997,13 +2775,39 @@ class ClusterServiceConfigsProfile(_serialization.Model):
         self.configs = configs
 
 
+class ClusterUpgrade(_serialization.Model):
+    """Cluster Upgrade.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar properties: Properties of upgrading cluster. Required.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeProperties
+    """
+
+    _validation = {
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ClusterUpgradeProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ClusterUpgradeProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of upgrading cluster. Required.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgradeProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
 class ClusterVersion(ProxyResource):
     """Available cluster version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2013,6 +2817,39 @@ class ClusterVersion(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.hdinsightcontainers.models.SystemData
+    :ivar properties: Cluster version properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterVersionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ClusterVersionProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ClusterVersionProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Cluster version properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ClusterVersionProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ClusterVersionProperties(_serialization.Model):
+    """Cluster version properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar cluster_type: The type of cluster.
     :vartype cluster_type: str
     :ivar cluster_version: Version with three part.
@@ -2029,10 +2866,6 @@ class ClusterVersion(ProxyResource):
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "cluster_type": {"pattern": r"^[a-zA-Z][a-zA-Z0-9]{0,31}$"},
         "cluster_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
         "oss_version": {"pattern": r"^(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})\.(0|[1-9][0-9]{0,18})$"},
@@ -2040,16 +2873,12 @@ class ClusterVersion(ProxyResource):
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "cluster_type": {"key": "properties.clusterType", "type": "str"},
-        "cluster_version": {"key": "properties.clusterVersion", "type": "str"},
-        "oss_version": {"key": "properties.ossVersion", "type": "str"},
-        "cluster_pool_version": {"key": "properties.clusterPoolVersion", "type": "str"},
-        "is_preview": {"key": "properties.isPreview", "type": "bool"},
-        "components": {"key": "properties.components", "type": "[ClusterComponentsItem]"},
+        "cluster_type": {"key": "clusterType", "type": "str"},
+        "cluster_version": {"key": "clusterVersion", "type": "str"},
+        "oss_version": {"key": "ossVersion", "type": "str"},
+        "cluster_pool_version": {"key": "clusterPoolVersion", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
+        "components": {"key": "components", "type": "[ClusterComponentsItem]"},
     }
 
     def __init__(
@@ -2117,7 +2946,7 @@ class ClusterVersionsListResult(_serialization.Model):
 class ComparisonRule(_serialization.Model):
     """The comparison rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operator: The comparison operator. Required. Known values are: "greaterThan",
      "greaterThanOrEqual", "lessThan", and "lessThanOrEqual".
@@ -2152,7 +2981,7 @@ class ComparisonRule(_serialization.Model):
 class ComputeProfile(_serialization.Model):
     """The compute profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar nodes: The nodes definitions. Required.
     :vartype nodes: list[~azure.mgmt.hdinsightcontainers.models.NodeProfile]
@@ -2178,7 +3007,7 @@ class ComputeProfile(_serialization.Model):
 class ComputeResourceDefinition(_serialization.Model):
     """The cpu and memory requirement definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cpu: The required CPU. Required.
     :vartype cpu: float
@@ -2211,7 +3040,7 @@ class ComputeResourceDefinition(_serialization.Model):
 class ConnectivityProfile(_serialization.Model):
     """Cluster connectivity profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar web: Web connectivity endpoint details. Required.
     :vartype web: ~azure.mgmt.hdinsightcontainers.models.ConnectivityProfileWeb
@@ -2249,10 +3078,13 @@ class ConnectivityProfile(_serialization.Model):
 class WebConnectivityEndpoint(_serialization.Model):
     """Web connectivity endpoint details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar fqdn: Web connectivity endpoint. Required.
     :vartype fqdn: str
+    :ivar private_fqdn: Private web connectivity endpoint. This property will only be returned when
+     enableInternalIngress is true.
+    :vartype private_fqdn: str
     """
 
     _validation = {
@@ -2261,40 +3093,74 @@ class WebConnectivityEndpoint(_serialization.Model):
 
     _attribute_map = {
         "fqdn": {"key": "fqdn", "type": "str"},
+        "private_fqdn": {"key": "privateFqdn", "type": "str"},
     }
 
-    def __init__(self, *, fqdn: str, **kwargs: Any) -> None:
+    def __init__(self, *, fqdn: str, private_fqdn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword fqdn: Web connectivity endpoint. Required.
         :paramtype fqdn: str
+        :keyword private_fqdn: Private web connectivity endpoint. This property will only be returned
+         when enableInternalIngress is true.
+        :paramtype private_fqdn: str
         """
         super().__init__(**kwargs)
         self.fqdn = fqdn
+        self.private_fqdn = private_fqdn
 
 
 class ConnectivityProfileWeb(WebConnectivityEndpoint):
     """Web connectivity endpoint details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar fqdn: Web connectivity endpoint. Required.
     :vartype fqdn: str
+    :ivar private_fqdn: Private web connectivity endpoint. This property will only be returned when
+     enableInternalIngress is true.
+    :vartype private_fqdn: str
+    """
+
+
+class DiskStorageProfile(_serialization.Model):
+    """Kafka disk storage profile.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar data_disk_size: Managed Disk size in GB. The maximum supported disk size for Standard and
+     Premium HDD/SSD is 32TB, except for Premium SSD v2, which supports up to 64TB. Required.
+    :vartype data_disk_size: int
+    :ivar data_disk_type: Managed Disk Type. Required. Known values are: "Standard_HDD_LRS",
+     "Standard_SSD_LRS", "Standard_SSD_ZRS", "Premium_SSD_LRS", "Premium_SSD_ZRS", and
+     "Premium_SSD_v2_LRS".
+    :vartype data_disk_type: str or ~azure.mgmt.hdinsightcontainers.models.DataDiskType
     """
 
     _validation = {
-        "fqdn": {"required": True},
+        "data_disk_size": {"required": True},
+        "data_disk_type": {"required": True},
     }
 
     _attribute_map = {
-        "fqdn": {"key": "fqdn", "type": "str"},
+        "data_disk_size": {"key": "dataDiskSize", "type": "int"},
+        "data_disk_type": {"key": "dataDiskType", "type": "str"},
     }
 
-    def __init__(self, *, fqdn: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, data_disk_size: int, data_disk_type: Union[str, "_models.DataDiskType"], **kwargs: Any
+    ) -> None:
         """
-        :keyword fqdn: Web connectivity endpoint. Required.
-        :paramtype fqdn: str
+        :keyword data_disk_size: Managed Disk size in GB. The maximum supported disk size for Standard
+         and Premium HDD/SSD is 32TB, except for Premium SSD v2, which supports up to 64TB. Required.
+        :paramtype data_disk_size: int
+        :keyword data_disk_type: Managed Disk Type. Required. Known values are: "Standard_HDD_LRS",
+         "Standard_SSD_LRS", "Standard_SSD_ZRS", "Premium_SSD_LRS", "Premium_SSD_ZRS", and
+         "Premium_SSD_v2_LRS".
+        :paramtype data_disk_type: str or ~azure.mgmt.hdinsightcontainers.models.DataDiskType
         """
-        super().__init__(fqdn=fqdn, **kwargs)
+        super().__init__(**kwargs)
+        self.data_disk_size = data_disk_size
+        self.data_disk_type = data_disk_type
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -2412,24 +3278,32 @@ class FlinkCatalogOptions(_serialization.Model):
 class FlinkHiveCatalogOption(_serialization.Model):
     """Hive Catalog Option for Flink cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
+    :ivar metastore_db_connection_authentication_mode: The authentication mode to connect to your
+     Hive metastore database. More details:
+     https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+     Known values are: "SqlAuth" and "IdentityAuth".
+    :vartype metastore_db_connection_authentication_mode: str or
+     ~azure.mgmt.hdinsightcontainers.models.MetastoreDbConnectionAuthenticationMode
     :ivar metastore_db_connection_password_secret: Secret reference name from
-     secretsProfile.secrets containing password for database connection. Required.
+     secretsProfile.secrets containing password for database connection.
     :vartype metastore_db_connection_password_secret: str
     :ivar metastore_db_connection_url: Connection string for hive metastore database. Required.
     :vartype metastore_db_connection_url: str
-    :ivar metastore_db_connection_user_name: User name for database connection. Required.
+    :ivar metastore_db_connection_user_name: User name for database connection.
     :vartype metastore_db_connection_user_name: str
     """
 
     _validation = {
-        "metastore_db_connection_password_secret": {"required": True},
         "metastore_db_connection_url": {"required": True},
-        "metastore_db_connection_user_name": {"required": True},
     }
 
     _attribute_map = {
+        "metastore_db_connection_authentication_mode": {
+            "key": "metastoreDbConnectionAuthenticationMode",
+            "type": "str",
+        },
         "metastore_db_connection_password_secret": {"key": "metastoreDbConnectionPasswordSecret", "type": "str"},
         "metastore_db_connection_url": {"key": "metastoreDbConnectionURL", "type": "str"},
         "metastore_db_connection_user_name": {"key": "metastoreDbConnectionUserName", "type": "str"},
@@ -2438,24 +3312,118 @@ class FlinkHiveCatalogOption(_serialization.Model):
     def __init__(
         self,
         *,
-        metastore_db_connection_password_secret: str,
         metastore_db_connection_url: str,
-        metastore_db_connection_user_name: str,
+        metastore_db_connection_authentication_mode: Optional[
+            Union[str, "_models.MetastoreDbConnectionAuthenticationMode"]
+        ] = None,
+        metastore_db_connection_password_secret: Optional[str] = None,
+        metastore_db_connection_user_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword metastore_db_connection_authentication_mode: The authentication mode to connect to
+         your Hive metastore database. More details:
+         https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+         Known values are: "SqlAuth" and "IdentityAuth".
+        :paramtype metastore_db_connection_authentication_mode: str or
+         ~azure.mgmt.hdinsightcontainers.models.MetastoreDbConnectionAuthenticationMode
         :keyword metastore_db_connection_password_secret: Secret reference name from
-         secretsProfile.secrets containing password for database connection. Required.
+         secretsProfile.secrets containing password for database connection.
         :paramtype metastore_db_connection_password_secret: str
         :keyword metastore_db_connection_url: Connection string for hive metastore database. Required.
         :paramtype metastore_db_connection_url: str
-        :keyword metastore_db_connection_user_name: User name for database connection. Required.
+        :keyword metastore_db_connection_user_name: User name for database connection.
         :paramtype metastore_db_connection_user_name: str
         """
         super().__init__(**kwargs)
+        self.metastore_db_connection_authentication_mode = metastore_db_connection_authentication_mode
         self.metastore_db_connection_password_secret = metastore_db_connection_password_secret
         self.metastore_db_connection_url = metastore_db_connection_url
         self.metastore_db_connection_user_name = metastore_db_connection_user_name
+
+
+class FlinkJobProfile(_serialization.Model):
+    """Job specifications for flink clusters in application deployment mode. The specification is
+    immutable even if job properties are changed by calling the RunJob API, please use the ListJob
+    API to get the latest job information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar job_jar_directory: A string property that specifies the directory where the job JAR is
+     located. Required.
+    :vartype job_jar_directory: str
+    :ivar jar_name: A string property that represents the name of the job JAR. Required.
+    :vartype jar_name: str
+    :ivar entry_class: A string property that specifies the entry class for the Flink job. If not
+     specified, the entry point is auto-detected from the flink job jar package.
+    :vartype entry_class: str
+    :ivar args: A string property representing additional JVM arguments for the Flink job. It
+     should be space separated value.
+    :vartype args: str
+    :ivar save_point_name: A string property that represents the name of the savepoint for the
+     Flink job.
+    :vartype save_point_name: str
+    :ivar upgrade_mode: A string property that indicates the upgrade mode to be performed on the
+     Flink job. It can have one of the following enum values => STATELESS_UPDATE, UPDATE,
+     LAST_STATE_UPDATE. Required. Known values are: "STATELESS_UPDATE", "UPDATE", and
+     "LAST_STATE_UPDATE".
+    :vartype upgrade_mode: str or ~azure.mgmt.hdinsightcontainers.models.UpgradeMode
+    """
+
+    _validation = {
+        "job_jar_directory": {"required": True},
+        "jar_name": {"required": True},
+        "upgrade_mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "job_jar_directory": {"key": "jobJarDirectory", "type": "str"},
+        "jar_name": {"key": "jarName", "type": "str"},
+        "entry_class": {"key": "entryClass", "type": "str"},
+        "args": {"key": "args", "type": "str"},
+        "save_point_name": {"key": "savePointName", "type": "str"},
+        "upgrade_mode": {"key": "upgradeMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        job_jar_directory: str,
+        jar_name: str,
+        upgrade_mode: Union[str, "_models.UpgradeMode"],
+        entry_class: Optional[str] = None,
+        args: Optional[str] = None,
+        save_point_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword job_jar_directory: A string property that specifies the directory where the job JAR is
+         located. Required.
+        :paramtype job_jar_directory: str
+        :keyword jar_name: A string property that represents the name of the job JAR. Required.
+        :paramtype jar_name: str
+        :keyword entry_class: A string property that specifies the entry class for the Flink job. If
+         not specified, the entry point is auto-detected from the flink job jar package.
+        :paramtype entry_class: str
+        :keyword args: A string property representing additional JVM arguments for the Flink job. It
+         should be space separated value.
+        :paramtype args: str
+        :keyword save_point_name: A string property that represents the name of the savepoint for the
+         Flink job.
+        :paramtype save_point_name: str
+        :keyword upgrade_mode: A string property that indicates the upgrade mode to be performed on the
+         Flink job. It can have one of the following enum values => STATELESS_UPDATE, UPDATE,
+         LAST_STATE_UPDATE. Required. Known values are: "STATELESS_UPDATE", "UPDATE", and
+         "LAST_STATE_UPDATE".
+        :paramtype upgrade_mode: str or ~azure.mgmt.hdinsightcontainers.models.UpgradeMode
+        """
+        super().__init__(**kwargs)
+        self.job_jar_directory = job_jar_directory
+        self.jar_name = jar_name
+        self.entry_class = entry_class
+        self.args = args
+        self.save_point_name = save_point_name
+        self.upgrade_mode = upgrade_mode
 
 
 class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-instance-attributes
@@ -2463,11 +3431,13 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar job_type: Type of cluster job. Required. "FlinkJob"
     :vartype job_type: str or ~azure.mgmt.hdinsightcontainers.models.JobType
-    :ivar job_name: Name of job. Required.
+    :ivar run_id: Run id of job.
+    :vartype run_id: str
+    :ivar job_name: Name of job.
     :vartype job_name: str
     :ivar job_jar_directory: A string property that specifies the directory where the job JAR is
      located.
@@ -2485,7 +3455,8 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
     :ivar action: A string property that indicates the action to be performed on the Flink job. It
      can have one of the following enum values => NEW, UPDATE, STATELESS_UPDATE, STOP, START,
      CANCEL, SAVEPOINT, LIST_SAVEPOINT, or DELETE. Known values are: "NEW", "UPDATE",
-     "STATELESS_UPDATE", "STOP", "START", "CANCEL", "SAVEPOINT", "LIST_SAVEPOINT", and "DELETE".
+     "STATELESS_UPDATE", "STOP", "START", "CANCEL", "SAVEPOINT", "LIST_SAVEPOINT", "DELETE",
+     "LAST_STATE_UPDATE", and "RE_LAUNCH".
     :vartype action: str or ~azure.mgmt.hdinsightcontainers.models.Action
     :ivar flink_configuration: Additional properties used to configure Flink jobs. It allows users
      to set properties such as parallelism and jobSavePointDirectory. It accepts additional
@@ -2505,7 +3476,6 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
 
     _validation = {
         "job_type": {"required": True},
-        "job_name": {"required": True},
         "job_id": {"readonly": True},
         "status": {"readonly": True},
         "job_output": {"readonly": True},
@@ -2515,6 +3485,7 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
 
     _attribute_map = {
         "job_type": {"key": "jobType", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
         "job_name": {"key": "jobName", "type": "str"},
         "job_jar_directory": {"key": "jobJarDirectory", "type": "str"},
         "jar_name": {"key": "jarName", "type": "str"},
@@ -2533,7 +3504,8 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
     def __init__(
         self,
         *,
-        job_name: str,
+        run_id: Optional[str] = None,
+        job_name: Optional[str] = None,
         job_jar_directory: Optional[str] = None,
         jar_name: Optional[str] = None,
         entry_class: Optional[str] = None,
@@ -2544,7 +3516,9 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
         **kwargs: Any
     ) -> None:
         """
-        :keyword job_name: Name of job. Required.
+        :keyword run_id: Run id of job.
+        :paramtype run_id: str
+        :keyword job_name: Name of job.
         :paramtype job_name: str
         :keyword job_jar_directory: A string property that specifies the directory where the job JAR is
          located.
@@ -2562,7 +3536,8 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
         :keyword action: A string property that indicates the action to be performed on the Flink job.
          It can have one of the following enum values => NEW, UPDATE, STATELESS_UPDATE, STOP, START,
          CANCEL, SAVEPOINT, LIST_SAVEPOINT, or DELETE. Known values are: "NEW", "UPDATE",
-         "STATELESS_UPDATE", "STOP", "START", "CANCEL", "SAVEPOINT", "LIST_SAVEPOINT", and "DELETE".
+         "STATELESS_UPDATE", "STOP", "START", "CANCEL", "SAVEPOINT", "LIST_SAVEPOINT", "DELETE",
+         "LAST_STATE_UPDATE", and "RE_LAUNCH".
         :paramtype action: str or ~azure.mgmt.hdinsightcontainers.models.Action
         :keyword flink_configuration: Additional properties used to configure Flink jobs. It allows
          users to set properties such as parallelism and jobSavePointDirectory. It accepts additional
@@ -2571,6 +3546,7 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
         """
         super().__init__(**kwargs)
         self.job_type: str = "FlinkJob"
+        self.run_id = run_id
         self.job_name = job_name
         self.job_jar_directory = job_jar_directory
         self.jar_name = jar_name
@@ -2589,7 +3565,7 @@ class FlinkJobProperties(ClusterJobProperties):  # pylint: disable=too-many-inst
 class FlinkProfile(_serialization.Model):
     """The Flink cluster profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage: The storage profile. Required.
     :vartype storage: ~azure.mgmt.hdinsightcontainers.models.FlinkStorageProfile
@@ -2603,6 +3579,14 @@ class FlinkProfile(_serialization.Model):
     :vartype task_manager: ~azure.mgmt.hdinsightcontainers.models.ComputeResourceDefinition
     :ivar catalog_options: Flink cluster catalog options.
     :vartype catalog_options: ~azure.mgmt.hdinsightcontainers.models.FlinkCatalogOptions
+    :ivar deployment_mode: A string property that indicates the deployment mode of Flink cluster.
+     It can have one of the following enum values => Application, Session. Default value is Session.
+     Known values are: "Application" and "Session".
+    :vartype deployment_mode: str or ~azure.mgmt.hdinsightcontainers.models.DeploymentMode
+    :ivar job_spec: Job specifications for flink clusters in application deployment mode. The
+     specification is immutable even if job properties are changed by calling the RunJob API, please
+     use the ListJob API to get the latest job information.
+    :vartype job_spec: ~azure.mgmt.hdinsightcontainers.models.FlinkJobProfile
     """
 
     _validation = {
@@ -2618,6 +3602,8 @@ class FlinkProfile(_serialization.Model):
         "history_server": {"key": "historyServer", "type": "ComputeResourceDefinition"},
         "task_manager": {"key": "taskManager", "type": "ComputeResourceDefinition"},
         "catalog_options": {"key": "catalogOptions", "type": "FlinkCatalogOptions"},
+        "deployment_mode": {"key": "deploymentMode", "type": "str"},
+        "job_spec": {"key": "jobSpec", "type": "FlinkJobProfile"},
     }
 
     def __init__(
@@ -2629,6 +3615,8 @@ class FlinkProfile(_serialization.Model):
         num_replicas: Optional[int] = None,
         history_server: Optional["_models.ComputeResourceDefinition"] = None,
         catalog_options: Optional["_models.FlinkCatalogOptions"] = None,
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+        job_spec: Optional["_models.FlinkJobProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2644,6 +3632,14 @@ class FlinkProfile(_serialization.Model):
         :paramtype task_manager: ~azure.mgmt.hdinsightcontainers.models.ComputeResourceDefinition
         :keyword catalog_options: Flink cluster catalog options.
         :paramtype catalog_options: ~azure.mgmt.hdinsightcontainers.models.FlinkCatalogOptions
+        :keyword deployment_mode: A string property that indicates the deployment mode of Flink
+         cluster. It can have one of the following enum values => Application, Session. Default value is
+         Session. Known values are: "Application" and "Session".
+        :paramtype deployment_mode: str or ~azure.mgmt.hdinsightcontainers.models.DeploymentMode
+        :keyword job_spec: Job specifications for flink clusters in application deployment mode. The
+         specification is immutable even if job properties are changed by calling the RunJob API, please
+         use the ListJob API to get the latest job information.
+        :paramtype job_spec: ~azure.mgmt.hdinsightcontainers.models.FlinkJobProfile
         """
         super().__init__(**kwargs)
         self.storage = storage
@@ -2652,12 +3648,14 @@ class FlinkProfile(_serialization.Model):
         self.history_server = history_server
         self.task_manager = task_manager
         self.catalog_options = catalog_options
+        self.deployment_mode = deployment_mode
+        self.job_spec = job_spec
 
 
 class FlinkStorageProfile(_serialization.Model):
     """The storage profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_uri: Storage account uri which is used for savepoint and checkpoint state.
      Required.
@@ -2667,7 +3665,7 @@ class FlinkStorageProfile(_serialization.Model):
     """
 
     _validation = {
-        "storage_uri": {"required": True, "pattern": r"^(\w{4,5})://(.*)@(.*).\b(blob|dfs)\b\.core\.windows\.net$"},
+        "storage_uri": {"required": True, "pattern": r"^(\w{4,5})://(.*)@(.*).\b(blob|dfs)\b.*$"},
     }
 
     _attribute_map = {
@@ -2691,16 +3689,22 @@ class FlinkStorageProfile(_serialization.Model):
 class HiveCatalogOption(_serialization.Model):
     """Hive Catalog Option.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar catalog_name: Name of trino catalog which should use specified hive metastore. Required.
     :vartype catalog_name: str
+    :ivar metastore_db_connection_authentication_mode: The authentication mode to connect to your
+     Hive metastore database. More details:
+     https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+     Known values are: "SqlAuth" and "IdentityAuth".
+    :vartype metastore_db_connection_authentication_mode: str or
+     ~azure.mgmt.hdinsightcontainers.models.MetastoreDbConnectionAuthenticationMode
     :ivar metastore_db_connection_password_secret: Secret reference name from
-     secretsProfile.secrets containing password for database connection. Required.
+     secretsProfile.secrets containing password for database connection.
     :vartype metastore_db_connection_password_secret: str
     :ivar metastore_db_connection_url: Connection string for hive metastore database. Required.
     :vartype metastore_db_connection_url: str
-    :ivar metastore_db_connection_user_name: User name for database connection. Required.
+    :ivar metastore_db_connection_user_name: User name for database connection.
     :vartype metastore_db_connection_user_name: str
     :ivar metastore_warehouse_dir: Metastore root directory URI, format:
      abfs[s]://<container>@:code:`<account_name>`.dfs.core.windows.net/:code:`<path>`. More details:
@@ -2711,14 +3715,16 @@ class HiveCatalogOption(_serialization.Model):
 
     _validation = {
         "catalog_name": {"required": True, "min_length": 1},
-        "metastore_db_connection_password_secret": {"required": True},
         "metastore_db_connection_url": {"required": True},
-        "metastore_db_connection_user_name": {"required": True},
         "metastore_warehouse_dir": {"required": True},
     }
 
     _attribute_map = {
         "catalog_name": {"key": "catalogName", "type": "str"},
+        "metastore_db_connection_authentication_mode": {
+            "key": "metastoreDbConnectionAuthenticationMode",
+            "type": "str",
+        },
         "metastore_db_connection_password_secret": {"key": "metastoreDbConnectionPasswordSecret", "type": "str"},
         "metastore_db_connection_url": {"key": "metastoreDbConnectionURL", "type": "str"},
         "metastore_db_connection_user_name": {"key": "metastoreDbConnectionUserName", "type": "str"},
@@ -2729,22 +3735,31 @@ class HiveCatalogOption(_serialization.Model):
         self,
         *,
         catalog_name: str,
-        metastore_db_connection_password_secret: str,
         metastore_db_connection_url: str,
-        metastore_db_connection_user_name: str,
         metastore_warehouse_dir: str,
+        metastore_db_connection_authentication_mode: Optional[
+            Union[str, "_models.MetastoreDbConnectionAuthenticationMode"]
+        ] = None,
+        metastore_db_connection_password_secret: Optional[str] = None,
+        metastore_db_connection_user_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword catalog_name: Name of trino catalog which should use specified hive metastore.
          Required.
         :paramtype catalog_name: str
+        :keyword metastore_db_connection_authentication_mode: The authentication mode to connect to
+         your Hive metastore database. More details:
+         https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+         Known values are: "SqlAuth" and "IdentityAuth".
+        :paramtype metastore_db_connection_authentication_mode: str or
+         ~azure.mgmt.hdinsightcontainers.models.MetastoreDbConnectionAuthenticationMode
         :keyword metastore_db_connection_password_secret: Secret reference name from
-         secretsProfile.secrets containing password for database connection. Required.
+         secretsProfile.secrets containing password for database connection.
         :paramtype metastore_db_connection_password_secret: str
         :keyword metastore_db_connection_url: Connection string for hive metastore database. Required.
         :paramtype metastore_db_connection_url: str
-        :keyword metastore_db_connection_user_name: User name for database connection. Required.
+        :keyword metastore_db_connection_user_name: User name for database connection.
         :paramtype metastore_db_connection_user_name: str
         :keyword metastore_warehouse_dir: Metastore root directory URI, format:
          abfs[s]://<container>@:code:`<account_name>`.dfs.core.windows.net/:code:`<path>`. More details:
@@ -2754,16 +3769,118 @@ class HiveCatalogOption(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.catalog_name = catalog_name
+        self.metastore_db_connection_authentication_mode = metastore_db_connection_authentication_mode
         self.metastore_db_connection_password_secret = metastore_db_connection_password_secret
         self.metastore_db_connection_url = metastore_db_connection_url
         self.metastore_db_connection_user_name = metastore_db_connection_user_name
         self.metastore_warehouse_dir = metastore_warehouse_dir
 
 
+class KafkaConnectivityEndpoints(_serialization.Model):
+    """Kafka bootstrap server and broker related connectivity endpoints.
+
+    :ivar bootstrap_server_endpoint: bootstrap server connectivity endpoint.
+    :vartype bootstrap_server_endpoint: str
+    :ivar broker_endpoints: Kafka broker endpoint list.
+    :vartype broker_endpoints: list[str]
+    """
+
+    _attribute_map = {
+        "bootstrap_server_endpoint": {"key": "bootstrapServerEndpoint", "type": "str"},
+        "broker_endpoints": {"key": "brokerEndpoints", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        bootstrap_server_endpoint: Optional[str] = None,
+        broker_endpoints: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bootstrap_server_endpoint: bootstrap server connectivity endpoint.
+        :paramtype bootstrap_server_endpoint: str
+        :keyword broker_endpoints: Kafka broker endpoint list.
+        :paramtype broker_endpoints: list[str]
+        """
+        super().__init__(**kwargs)
+        self.bootstrap_server_endpoint = bootstrap_server_endpoint
+        self.broker_endpoints = broker_endpoints
+
+
+class KafkaProfile(_serialization.Model):
+    """The Kafka cluster profile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enable_k_raft: Expose Kafka cluster in KRaft mode.
+    :vartype enable_k_raft: bool
+    :ivar enable_public_endpoints: Expose worker nodes as public endpoints.
+    :vartype enable_public_endpoints: bool
+    :ivar remote_storage_uri: Fully qualified path of Azure Storage container used for Tiered
+     Storage.
+    :vartype remote_storage_uri: str
+    :ivar disk_storage: Kafka disk storage profile. Required.
+    :vartype disk_storage: ~azure.mgmt.hdinsightcontainers.models.DiskStorageProfile
+    :ivar cluster_identity: Identity of the internal service components inside the Kafka cluster.
+    :vartype cluster_identity: ~azure.mgmt.hdinsightcontainers.models.IdentityProfile
+    :ivar connectivity_endpoints: Kafka bootstrap server and brokers related connectivity
+     endpoints.
+    :vartype connectivity_endpoints:
+     ~azure.mgmt.hdinsightcontainers.models.KafkaConnectivityEndpoints
+    """
+
+    _validation = {
+        "remote_storage_uri": {"pattern": r"^(https?|abfss?):\/\/[^/]+(?:\/|$)"},
+        "disk_storage": {"required": True},
+        "cluster_identity": {"readonly": True},
+        "connectivity_endpoints": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enable_k_raft": {"key": "enableKRaft", "type": "bool"},
+        "enable_public_endpoints": {"key": "enablePublicEndpoints", "type": "bool"},
+        "remote_storage_uri": {"key": "remoteStorageUri", "type": "str"},
+        "disk_storage": {"key": "diskStorage", "type": "DiskStorageProfile"},
+        "cluster_identity": {"key": "clusterIdentity", "type": "IdentityProfile"},
+        "connectivity_endpoints": {"key": "connectivityEndpoints", "type": "KafkaConnectivityEndpoints"},
+    }
+
+    def __init__(
+        self,
+        *,
+        disk_storage: "_models.DiskStorageProfile",
+        enable_k_raft: bool = True,
+        enable_public_endpoints: bool = False,
+        remote_storage_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enable_k_raft: Expose Kafka cluster in KRaft mode.
+        :paramtype enable_k_raft: bool
+        :keyword enable_public_endpoints: Expose worker nodes as public endpoints.
+        :paramtype enable_public_endpoints: bool
+        :keyword remote_storage_uri: Fully qualified path of Azure Storage container used for Tiered
+         Storage.
+        :paramtype remote_storage_uri: str
+        :keyword disk_storage: Kafka disk storage profile. Required.
+        :paramtype disk_storage: ~azure.mgmt.hdinsightcontainers.models.DiskStorageProfile
+        """
+        super().__init__(**kwargs)
+        self.enable_k_raft = enable_k_raft
+        self.enable_public_endpoints = enable_public_endpoints
+        self.remote_storage_uri = remote_storage_uri
+        self.disk_storage = disk_storage
+        self.cluster_identity = None
+        self.connectivity_endpoints = None
+
+
 class LoadBasedConfig(_serialization.Model):
     """Profile of load based Autoscale.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_nodes: User needs to set the minimum number of nodes for load based scaling, the load
      based scaling will use this to scale up and scale down between minimum and maximum number of
@@ -2905,7 +4022,7 @@ class NameAvailabilityResult(_serialization.Model):
 class NodeProfile(_serialization.Model):
     """The node profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The node type. Required.
     :vartype type: str
@@ -3063,10 +4180,235 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class RangerAdminSpec(_serialization.Model):
+    """Specification for the Ranger Admin service.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar admins: List of usernames that should be marked as ranger admins. These usernames should
+     match the user principal name (UPN) of the respective AAD users. Required.
+    :vartype admins: list[str]
+    :ivar database: Required.
+    :vartype database: ~azure.mgmt.hdinsightcontainers.models.RangerAdminSpecDatabase
+    """
+
+    _validation = {
+        "admins": {"required": True},
+        "database": {"required": True},
+    }
+
+    _attribute_map = {
+        "admins": {"key": "admins", "type": "[str]"},
+        "database": {"key": "database", "type": "RangerAdminSpecDatabase"},
+    }
+
+    def __init__(self, *, admins: List[str], database: "_models.RangerAdminSpecDatabase", **kwargs: Any) -> None:
+        """
+        :keyword admins: List of usernames that should be marked as ranger admins. These usernames
+         should match the user principal name (UPN) of the respective AAD users. Required.
+        :paramtype admins: list[str]
+        :keyword database: Required.
+        :paramtype database: ~azure.mgmt.hdinsightcontainers.models.RangerAdminSpecDatabase
+        """
+        super().__init__(**kwargs)
+        self.admins = admins
+        self.database = database
+
+
+class RangerAdminSpecDatabase(_serialization.Model):
+    """RangerAdminSpecDatabase.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar host: The database URL. Required.
+    :vartype host: str
+    :ivar name: The database name. Required.
+    :vartype name: str
+    :ivar password_secret_ref: Reference for the database password.
+    :vartype password_secret_ref: str
+    :ivar username: The name of the database user.
+    :vartype username: str
+    """
+
+    _validation = {
+        "host": {"required": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "host": {"key": "host", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "password_secret_ref": {"key": "passwordSecretRef", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        host: str,
+        name: str,
+        password_secret_ref: Optional[str] = None,
+        username: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword host: The database URL. Required.
+        :paramtype host: str
+        :keyword name: The database name. Required.
+        :paramtype name: str
+        :keyword password_secret_ref: Reference for the database password.
+        :paramtype password_secret_ref: str
+        :keyword username: The name of the database user.
+        :paramtype username: str
+        """
+        super().__init__(**kwargs)
+        self.host = host
+        self.name = name
+        self.password_secret_ref = password_secret_ref
+        self.username = username
+
+
+class RangerAuditSpec(_serialization.Model):
+    """Properties required to describe audit log storage.
+
+    :ivar storage_account: Azure storage location of the blobs. MSI should have read/write access
+     to this Storage account.
+    :vartype storage_account: str
+    """
+
+    _validation = {
+        "storage_account": {"min_length": 1, "pattern": r"^(https)|(abfss)://.*$"},
+    }
+
+    _attribute_map = {
+        "storage_account": {"key": "storageAccount", "type": "str"},
+    }
+
+    def __init__(self, *, storage_account: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword storage_account: Azure storage location of the blobs. MSI should have read/write
+         access to this Storage account.
+        :paramtype storage_account: str
+        """
+        super().__init__(**kwargs)
+        self.storage_account = storage_account
+
+
+class RangerProfile(_serialization.Model):
+    """The ranger cluster profile.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar ranger_admin: Specification for the Ranger Admin service. Required.
+    :vartype ranger_admin: ~azure.mgmt.hdinsightcontainers.models.RangerAdminSpec
+    :ivar ranger_audit: Properties required to describe audit log storage.
+    :vartype ranger_audit: ~azure.mgmt.hdinsightcontainers.models.RangerAuditSpec
+    :ivar ranger_usersync: Specification for the Ranger Usersync service. Required.
+    :vartype ranger_usersync: ~azure.mgmt.hdinsightcontainers.models.RangerUsersyncSpec
+    """
+
+    _validation = {
+        "ranger_admin": {"required": True},
+        "ranger_usersync": {"required": True},
+    }
+
+    _attribute_map = {
+        "ranger_admin": {"key": "rangerAdmin", "type": "RangerAdminSpec"},
+        "ranger_audit": {"key": "rangerAudit", "type": "RangerAuditSpec"},
+        "ranger_usersync": {"key": "rangerUsersync", "type": "RangerUsersyncSpec"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ranger_admin: "_models.RangerAdminSpec",
+        ranger_usersync: "_models.RangerUsersyncSpec",
+        ranger_audit: Optional["_models.RangerAuditSpec"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ranger_admin: Specification for the Ranger Admin service. Required.
+        :paramtype ranger_admin: ~azure.mgmt.hdinsightcontainers.models.RangerAdminSpec
+        :keyword ranger_audit: Properties required to describe audit log storage.
+        :paramtype ranger_audit: ~azure.mgmt.hdinsightcontainers.models.RangerAuditSpec
+        :keyword ranger_usersync: Specification for the Ranger Usersync service. Required.
+        :paramtype ranger_usersync: ~azure.mgmt.hdinsightcontainers.models.RangerUsersyncSpec
+        """
+        super().__init__(**kwargs)
+        self.ranger_admin = ranger_admin
+        self.ranger_audit = ranger_audit
+        self.ranger_usersync = ranger_usersync
+
+
+class RangerUsersyncSpec(_serialization.Model):
+    """Specification for the Ranger Usersync service.
+
+    :ivar enabled: Denotes whether usersync service should be enabled.
+    :vartype enabled: bool
+    :ivar groups: List of groups that should be synced. These group names should match the object
+     id of the respective AAD groups.
+    :vartype groups: list[str]
+    :ivar mode: User & groups can be synced automatically or via a static list that's refreshed.
+     Known values are: "static" and "automatic".
+    :vartype mode: str or ~azure.mgmt.hdinsightcontainers.models.RangerUsersyncMode
+    :ivar user_mapping_location: Azure storage location of a mapping file that lists user & group
+     associations.
+    :vartype user_mapping_location: str
+    :ivar users: List of user names that should be synced. These usernames should match the User
+     principal name of the respective AAD users.
+    :vartype users: list[str]
+    """
+
+    _validation = {
+        "user_mapping_location": {"min_length": 1, "pattern": r"^(https)|(abfss)://.*$"},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "groups": {"key": "groups", "type": "[str]"},
+        "mode": {"key": "mode", "type": "str"},
+        "user_mapping_location": {"key": "userMappingLocation", "type": "str"},
+        "users": {"key": "users", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enabled: bool = True,
+        groups: Optional[List[str]] = None,
+        mode: Union[str, "_models.RangerUsersyncMode"] = "automatic",
+        user_mapping_location: Optional[str] = None,
+        users: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enabled: Denotes whether usersync service should be enabled.
+        :paramtype enabled: bool
+        :keyword groups: List of groups that should be synced. These group names should match the
+         object id of the respective AAD groups.
+        :paramtype groups: list[str]
+        :keyword mode: User & groups can be synced automatically or via a static list that's refreshed.
+         Known values are: "static" and "automatic".
+        :paramtype mode: str or ~azure.mgmt.hdinsightcontainers.models.RangerUsersyncMode
+        :keyword user_mapping_location: Azure storage location of a mapping file that lists user &
+         group associations.
+        :paramtype user_mapping_location: str
+        :keyword users: List of user names that should be synced. These usernames should match the User
+         principal name of the respective AAD users.
+        :paramtype users: list[str]
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+        self.groups = groups
+        self.mode = mode
+        self.user_mapping_location = user_mapping_location
+        self.users = users
+
+
 class ScalingRule(_serialization.Model):
     """The scaling rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_type: The action type. Required. Known values are: "scaleup" and "scaledown".
     :vartype action_type: str or ~azure.mgmt.hdinsightcontainers.models.ScaleActionType
@@ -3123,7 +4465,7 @@ class ScalingRule(_serialization.Model):
 class Schedule(_serialization.Model):
     """Schedule definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start_time: User has to set the start time of current schedule configuration, format like
      10:30 (HH:MM). Required.
@@ -3186,7 +4528,7 @@ class Schedule(_serialization.Model):
 class ScheduleBasedConfig(_serialization.Model):
     """Profile of schedule based Autoscale.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar time_zone: User has to specify the timezone on which the schedule has to be set for
      schedule based autoscale configuration. Required.
@@ -3238,7 +4580,7 @@ class ScheduleBasedConfig(_serialization.Model):
 class ScriptActionProfile(_serialization.Model):
     """The script action profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the script action. Supported type is bash scripts. Required.
     :vartype type: str
@@ -3260,7 +4602,7 @@ class ScriptActionProfile(_serialization.Model):
     _validation = {
         "type": {"required": True},
         "name": {"required": True},
-        "url": {"required": True, "pattern": r"^(https)|(http)|(abfss)|(abfs)|(wasbs)|(wasb)://.*$"},
+        "url": {"required": True, "pattern": r"^(https)|(http)://.*$"},
         "services": {"required": True},
     }
 
@@ -3316,7 +4658,7 @@ class ScriptActionProfile(_serialization.Model):
 class SecretReference(_serialization.Model):
     """Secret reference and corresponding properties of a key vault secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar reference_name: Reference name of the secret to be used in service configs. Required.
     :vartype reference_name: str
@@ -3372,7 +4714,7 @@ class SecretReference(_serialization.Model):
 class SecretsProfile(_serialization.Model):
     """The cluster secret profile.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_vault_resource_id: Name of the user Key Vault where all the cluster specific user
      secrets are stored. Required.
@@ -3438,7 +4780,7 @@ class ServiceConfigListResult(_serialization.Model):
 class ServiceConfigListResultProperties(_serialization.Model):
     """Service config response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_name: Service Config Name. Required.
     :vartype service_name: str
@@ -3522,7 +4864,7 @@ class ServiceConfigListResultProperties(_serialization.Model):
 class ServiceConfigListResultValueEntity(_serialization.Model):
     """Default config details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Config value. Required.
     :vartype value: str
@@ -3554,83 +4896,27 @@ class ServiceConfigListResultValueEntity(_serialization.Model):
 class ServiceConfigResult(_serialization.Model):
     """Cluster instance service config.
 
-    :ivar service_name: Service Config Name.
-    :vartype service_name: str
-    :ivar file_name: File Name.
-    :vartype file_name: str
-    :ivar content: Content in the service config file.
-    :vartype content: str
-    :ivar component_name: Component Name.
-    :vartype component_name: str
-    :ivar type: Config type.
-    :vartype type: str
-    :ivar path: Config file path.
-    :vartype path: str
-    :ivar custom_keys: The custom keys.
-    :vartype custom_keys: dict[str, str]
-    :ivar default_keys: The default keys.
-    :vartype default_keys: dict[str,
-     ~azure.mgmt.hdinsightcontainers.models.ServiceConfigListResultValueEntity]
+    :ivar properties: Cluster instance service config properties.
+    :vartype properties: ~azure.mgmt.hdinsightcontainers.models.ServiceConfigResultProperties
     """
 
     _attribute_map = {
-        "service_name": {"key": "properties.serviceName", "type": "str"},
-        "file_name": {"key": "properties.fileName", "type": "str"},
-        "content": {"key": "properties.content", "type": "str"},
-        "component_name": {"key": "properties.componentName", "type": "str"},
-        "type": {"key": "properties.type", "type": "str"},
-        "path": {"key": "properties.path", "type": "str"},
-        "custom_keys": {"key": "properties.customKeys", "type": "{str}"},
-        "default_keys": {"key": "properties.defaultKeys", "type": "{ServiceConfigListResultValueEntity}"},
+        "properties": {"key": "properties", "type": "ServiceConfigResultProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        service_name: Optional[str] = None,
-        file_name: Optional[str] = None,
-        content: Optional[str] = None,
-        component_name: Optional[str] = None,
-        type: Optional[str] = None,
-        path: Optional[str] = None,
-        custom_keys: Optional[Dict[str, str]] = None,
-        default_keys: Optional[Dict[str, "_models.ServiceConfigListResultValueEntity"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: Optional["_models.ServiceConfigResultProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword service_name: Service Config Name.
-        :paramtype service_name: str
-        :keyword file_name: File Name.
-        :paramtype file_name: str
-        :keyword content: Content in the service config file.
-        :paramtype content: str
-        :keyword component_name: Component Name.
-        :paramtype component_name: str
-        :keyword type: Config type.
-        :paramtype type: str
-        :keyword path: Config file path.
-        :paramtype path: str
-        :keyword custom_keys: The custom keys.
-        :paramtype custom_keys: dict[str, str]
-        :keyword default_keys: The default keys.
-        :paramtype default_keys: dict[str,
-         ~azure.mgmt.hdinsightcontainers.models.ServiceConfigListResultValueEntity]
+        :keyword properties: Cluster instance service config properties.
+        :paramtype properties: ~azure.mgmt.hdinsightcontainers.models.ServiceConfigResultProperties
         """
         super().__init__(**kwargs)
-        self.service_name = service_name
-        self.file_name = file_name
-        self.content = content
-        self.component_name = component_name
-        self.type = type
-        self.path = path
-        self.custom_keys = custom_keys
-        self.default_keys = default_keys
+        self.properties = properties
 
 
 class ServiceConfigResultProperties(ServiceConfigListResultProperties):
     """Cluster instance service config properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_name: Service Config Name. Required.
     :vartype service_name: str
@@ -3651,72 +4937,11 @@ class ServiceConfigResultProperties(ServiceConfigListResultProperties):
      ~azure.mgmt.hdinsightcontainers.models.ServiceConfigListResultValueEntity]
     """
 
-    _validation = {
-        "service_name": {"required": True},
-        "file_name": {"required": True},
-        "component_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "service_name": {"key": "serviceName", "type": "str"},
-        "file_name": {"key": "fileName", "type": "str"},
-        "content": {"key": "content", "type": "str"},
-        "component_name": {"key": "componentName", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "path": {"key": "path", "type": "str"},
-        "custom_keys": {"key": "customKeys", "type": "{str}"},
-        "default_keys": {"key": "defaultKeys", "type": "{ServiceConfigListResultValueEntity}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        file_name: str,
-        component_name: str,
-        content: Optional[str] = None,
-        type: Optional[str] = None,
-        path: Optional[str] = None,
-        custom_keys: Optional[Dict[str, str]] = None,
-        default_keys: Optional[Dict[str, "_models.ServiceConfigListResultValueEntity"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword service_name: Service Config Name. Required.
-        :paramtype service_name: str
-        :keyword file_name: File Name. Required.
-        :paramtype file_name: str
-        :keyword content: Content in the service config file.
-        :paramtype content: str
-        :keyword component_name: Component Name. Required.
-        :paramtype component_name: str
-        :keyword type: Config type.
-        :paramtype type: str
-        :keyword path: Config file path.
-        :paramtype path: str
-        :keyword custom_keys: The custom keys.
-        :paramtype custom_keys: dict[str, str]
-        :keyword default_keys: The default keys.
-        :paramtype default_keys: dict[str,
-         ~azure.mgmt.hdinsightcontainers.models.ServiceConfigListResultValueEntity]
-        """
-        super().__init__(
-            service_name=service_name,
-            file_name=file_name,
-            content=content,
-            component_name=component_name,
-            type=type,
-            path=path,
-            custom_keys=custom_keys,
-            default_keys=default_keys,
-            **kwargs
-        )
-
 
 class ServiceStatus(_serialization.Model):
-    """Describes the status of a service of a HDInsight on aks cluster.
+    """Describes the status of a service of a HDInsight on AKS cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Kind of the service. E.g. "Zookeeper". Required.
     :vartype kind: str
@@ -3757,18 +4982,23 @@ class ServiceStatus(_serialization.Model):
 class SparkMetastoreSpec(_serialization.Model):
     """The metastore specification for Spark cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar db_server_host: The database server host. Required.
     :vartype db_server_host: str
     :ivar db_name: The database name. Required.
     :vartype db_name: str
-    :ivar db_user_name: The database user name. Required.
+    :ivar db_connection_authentication_mode: The authentication mode to connect to your Hive
+     metastore database. More details:
+     https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+     Known values are: "SqlAuth" and "IdentityAuth".
+    :vartype db_connection_authentication_mode: str or
+     ~azure.mgmt.hdinsightcontainers.models.DbConnectionAuthenticationMode
+    :ivar db_user_name: The database user name.
     :vartype db_user_name: str
     :ivar db_password_secret_name: The secret name which contains the database user password.
-     Required.
     :vartype db_password_secret_name: str
-    :ivar key_vault_id: The key vault resource id. Required.
+    :ivar key_vault_id: The key vault resource id.
     :vartype key_vault_id: str
     :ivar thrift_url: The thrift url.
     :vartype thrift_url: str
@@ -3777,14 +5007,12 @@ class SparkMetastoreSpec(_serialization.Model):
     _validation = {
         "db_server_host": {"required": True},
         "db_name": {"required": True},
-        "db_user_name": {"required": True},
-        "db_password_secret_name": {"required": True},
-        "key_vault_id": {"required": True},
     }
 
     _attribute_map = {
         "db_server_host": {"key": "dbServerHost", "type": "str"},
         "db_name": {"key": "dbName", "type": "str"},
+        "db_connection_authentication_mode": {"key": "dbConnectionAuthenticationMode", "type": "str"},
         "db_user_name": {"key": "dbUserName", "type": "str"},
         "db_password_secret_name": {"key": "dbPasswordSecretName", "type": "str"},
         "key_vault_id": {"key": "keyVaultId", "type": "str"},
@@ -3796,9 +5024,10 @@ class SparkMetastoreSpec(_serialization.Model):
         *,
         db_server_host: str,
         db_name: str,
-        db_user_name: str,
-        db_password_secret_name: str,
-        key_vault_id: str,
+        db_connection_authentication_mode: Union[str, "_models.DbConnectionAuthenticationMode"] = "IdentityAuth",
+        db_user_name: Optional[str] = None,
+        db_password_secret_name: Optional[str] = None,
+        key_vault_id: Optional[str] = None,
         thrift_url: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3807,12 +5036,17 @@ class SparkMetastoreSpec(_serialization.Model):
         :paramtype db_server_host: str
         :keyword db_name: The database name. Required.
         :paramtype db_name: str
-        :keyword db_user_name: The database user name. Required.
+        :keyword db_connection_authentication_mode: The authentication mode to connect to your Hive
+         metastore database. More details:
+         https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.  # pylint: disable=line-too-long
+         Known values are: "SqlAuth" and "IdentityAuth".
+        :paramtype db_connection_authentication_mode: str or
+         ~azure.mgmt.hdinsightcontainers.models.DbConnectionAuthenticationMode
+        :keyword db_user_name: The database user name.
         :paramtype db_user_name: str
         :keyword db_password_secret_name: The secret name which contains the database user password.
-         Required.
         :paramtype db_password_secret_name: str
-        :keyword key_vault_id: The key vault resource id. Required.
+        :keyword key_vault_id: The key vault resource id.
         :paramtype key_vault_id: str
         :keyword thrift_url: The thrift url.
         :paramtype thrift_url: str
@@ -3820,6 +5054,7 @@ class SparkMetastoreSpec(_serialization.Model):
         super().__init__(**kwargs)
         self.db_server_host = db_server_host
         self.db_name = db_name
+        self.db_connection_authentication_mode = db_connection_authentication_mode
         self.db_user_name = db_user_name
         self.db_password_secret_name = db_password_secret_name
         self.key_vault_id = key_vault_id
@@ -3868,7 +5103,7 @@ class SparkProfile(_serialization.Model):
 class SparkUserPlugin(_serialization.Model):
     """Spark user plugin.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar path: Fully qualified path to the folder containing the plugins. Required.
     :vartype path: str
@@ -3914,10 +5149,13 @@ class SparkUserPlugins(_serialization.Model):
 class SshConnectivityEndpoint(_serialization.Model):
     """SSH connectivity endpoint details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint: SSH connectivity endpoint. Required.
     :vartype endpoint: str
+    :ivar private_ssh_endpoint: Private SSH connectivity endpoint. This property will only be
+     returned when enableInternalIngress is true.
+    :vartype private_ssh_endpoint: str
     """
 
     _validation = {
@@ -3926,15 +5164,20 @@ class SshConnectivityEndpoint(_serialization.Model):
 
     _attribute_map = {
         "endpoint": {"key": "endpoint", "type": "str"},
+        "private_ssh_endpoint": {"key": "privateSshEndpoint", "type": "str"},
     }
 
-    def __init__(self, *, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, *, endpoint: str, private_ssh_endpoint: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword endpoint: SSH connectivity endpoint. Required.
         :paramtype endpoint: str
+        :keyword private_ssh_endpoint: Private SSH connectivity endpoint. This property will only be
+         returned when enableInternalIngress is true.
+        :paramtype private_ssh_endpoint: str
         """
         super().__init__(**kwargs)
         self.endpoint = endpoint
+        self.private_ssh_endpoint = private_ssh_endpoint
 
 
 class SshProfile(_serialization.Model):
@@ -3942,7 +5185,7 @@ class SshProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of ssh pods per cluster. Required.
     :vartype count: int
@@ -4059,9 +5302,40 @@ class TagsObject(_serialization.Model):
 class TrinoCoordinator(_serialization.Model):
     """Trino Coordinator.
 
+    :ivar debug: Trino debug configuration.
+    :vartype debug: ~azure.mgmt.hdinsightcontainers.models.TrinoDebugConfig
     :ivar high_availability_enabled: The flag that if enable coordinator HA, uses multiple
      coordinator replicas with auto failover, one per each head node. Default: true.
     :vartype high_availability_enabled: bool
+    """
+
+    _attribute_map = {
+        "debug": {"key": "debug", "type": "TrinoDebugConfig"},
+        "high_availability_enabled": {"key": "highAvailabilityEnabled", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        debug: Optional["_models.TrinoDebugConfig"] = None,
+        high_availability_enabled: bool = True,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword debug: Trino debug configuration.
+        :paramtype debug: ~azure.mgmt.hdinsightcontainers.models.TrinoDebugConfig
+        :keyword high_availability_enabled: The flag that if enable coordinator HA, uses multiple
+         coordinator replicas with auto failover, one per each head node. Default: true.
+        :paramtype high_availability_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.debug = debug
+        self.high_availability_enabled = high_availability_enabled
+
+
+class TrinoDebugConfig(_serialization.Model):
+    """Trino debug configuration.
+
     :ivar enable: The flag that if enable debug or not.
     :vartype enable: bool
     :ivar port: The debug port.
@@ -4071,25 +5345,13 @@ class TrinoCoordinator(_serialization.Model):
     """
 
     _attribute_map = {
-        "high_availability_enabled": {"key": "highAvailabilityEnabled", "type": "bool"},
-        "enable": {"key": "debug.enable", "type": "bool"},
-        "port": {"key": "debug.port", "type": "int"},
-        "suspend": {"key": "debug.suspend", "type": "bool"},
+        "enable": {"key": "enable", "type": "bool"},
+        "port": {"key": "port", "type": "int"},
+        "suspend": {"key": "suspend", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        high_availability_enabled: bool = True,
-        enable: bool = False,
-        port: int = 8008,
-        suspend: bool = False,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, enable: bool = False, port: int = 8008, suspend: bool = False, **kwargs: Any) -> None:
         """
-        :keyword high_availability_enabled: The flag that if enable coordinator HA, uses multiple
-         coordinator replicas with auto failover, one per each head node. Default: true.
-        :paramtype high_availability_enabled: bool
         :keyword enable: The flag that if enable debug or not.
         :paramtype enable: bool
         :keyword port: The debug port.
@@ -4098,7 +5360,6 @@ class TrinoCoordinator(_serialization.Model):
         :paramtype suspend: bool
         """
         super().__init__(**kwargs)
-        self.high_availability_enabled = high_availability_enabled
         self.enable = enable
         self.port = port
         self.suspend = suspend
@@ -4298,33 +5559,21 @@ class TrinoUserTelemetry(_serialization.Model):
 class TrinoWorker(_serialization.Model):
     """Trino worker.
 
-    :ivar enable: The flag that if enable debug or not.
-    :vartype enable: bool
-    :ivar port: The debug port.
-    :vartype port: int
-    :ivar suspend: The flag that if suspend debug or not.
-    :vartype suspend: bool
+    :ivar debug: Trino debug configuration.
+    :vartype debug: ~azure.mgmt.hdinsightcontainers.models.TrinoDebugConfig
     """
 
     _attribute_map = {
-        "enable": {"key": "debug.enable", "type": "bool"},
-        "port": {"key": "debug.port", "type": "int"},
-        "suspend": {"key": "debug.suspend", "type": "bool"},
+        "debug": {"key": "debug", "type": "TrinoDebugConfig"},
     }
 
-    def __init__(self, *, enable: bool = False, port: int = 8008, suspend: bool = False, **kwargs: Any) -> None:
+    def __init__(self, *, debug: Optional["_models.TrinoDebugConfig"] = None, **kwargs: Any) -> None:
         """
-        :keyword enable: The flag that if enable debug or not.
-        :paramtype enable: bool
-        :keyword port: The debug port.
-        :paramtype port: int
-        :keyword suspend: The flag that if suspend debug or not.
-        :paramtype suspend: bool
+        :keyword debug: Trino debug configuration.
+        :paramtype debug: ~azure.mgmt.hdinsightcontainers.models.TrinoDebugConfig
         """
         super().__init__(**kwargs)
-        self.enable = enable
-        self.port = port
-        self.suspend = suspend
+        self.debug = debug
 
 
 class UpdatableClusterProfile(_serialization.Model):
@@ -4347,6 +5596,11 @@ class UpdatableClusterProfile(_serialization.Model):
      ~azure.mgmt.hdinsightcontainers.models.ClusterLogAnalyticsProfile
     :ivar prometheus_profile: Cluster Prometheus profile.
     :vartype prometheus_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterPrometheusProfile
+    :ivar ranger_plugin_profile: Cluster Ranger plugin profile.
+    :vartype ranger_plugin_profile:
+     ~azure.mgmt.hdinsightcontainers.models.ClusterRangerPluginProfile
+    :ivar ranger_profile: The ranger cluster profile.
+    :vartype ranger_profile: ~azure.mgmt.hdinsightcontainers.models.RangerProfile
     :ivar script_action_profiles: The script action profile list.
     :vartype script_action_profiles:
      list[~azure.mgmt.hdinsightcontainers.models.ScriptActionProfile]
@@ -4359,6 +5613,8 @@ class UpdatableClusterProfile(_serialization.Model):
         "authorization_profile": {"key": "authorizationProfile", "type": "AuthorizationProfile"},
         "log_analytics_profile": {"key": "logAnalyticsProfile", "type": "ClusterLogAnalyticsProfile"},
         "prometheus_profile": {"key": "prometheusProfile", "type": "ClusterPrometheusProfile"},
+        "ranger_plugin_profile": {"key": "rangerPluginProfile", "type": "ClusterRangerPluginProfile"},
+        "ranger_profile": {"key": "rangerProfile", "type": "RangerProfile"},
         "script_action_profiles": {"key": "scriptActionProfiles", "type": "[ScriptActionProfile]"},
     }
 
@@ -4371,6 +5627,8 @@ class UpdatableClusterProfile(_serialization.Model):
         authorization_profile: Optional["_models.AuthorizationProfile"] = None,
         log_analytics_profile: Optional["_models.ClusterLogAnalyticsProfile"] = None,
         prometheus_profile: Optional["_models.ClusterPrometheusProfile"] = None,
+        ranger_plugin_profile: Optional["_models.ClusterRangerPluginProfile"] = None,
+        ranger_profile: Optional["_models.RangerProfile"] = None,
         script_action_profiles: Optional[List["_models.ScriptActionProfile"]] = None,
         **kwargs: Any
     ) -> None:
@@ -4392,6 +5650,11 @@ class UpdatableClusterProfile(_serialization.Model):
          ~azure.mgmt.hdinsightcontainers.models.ClusterLogAnalyticsProfile
         :keyword prometheus_profile: Cluster Prometheus profile.
         :paramtype prometheus_profile: ~azure.mgmt.hdinsightcontainers.models.ClusterPrometheusProfile
+        :keyword ranger_plugin_profile: Cluster Ranger plugin profile.
+        :paramtype ranger_plugin_profile:
+         ~azure.mgmt.hdinsightcontainers.models.ClusterRangerPluginProfile
+        :keyword ranger_profile: The ranger cluster profile.
+        :paramtype ranger_profile: ~azure.mgmt.hdinsightcontainers.models.RangerProfile
         :keyword script_action_profiles: The script action profile list.
         :paramtype script_action_profiles:
          list[~azure.mgmt.hdinsightcontainers.models.ScriptActionProfile]
@@ -4403,4 +5666,6 @@ class UpdatableClusterProfile(_serialization.Model):
         self.authorization_profile = authorization_profile
         self.log_analytics_profile = log_analytics_profile
         self.prometheus_profile = prometheus_profile
+        self.ranger_plugin_profile = ranger_plugin_profile
+        self.ranger_profile = ranger_profile
         self.script_action_profiles = script_action_profiles
