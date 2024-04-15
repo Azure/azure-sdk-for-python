@@ -221,7 +221,6 @@ async def test_urlencoded_content(send_request):
     )
 
 
-@pytest.mark.skip(reason="Failing using aiohttp 3.9.4")
 @pytest.mark.asyncio
 async def test_multipart_files_content(send_request):
     request = HttpRequest(
@@ -232,7 +231,6 @@ async def test_multipart_files_content(send_request):
     await send_request(request)
 
 
-@pytest.mark.skip(reason="Failing using aiohttp 3.9.4")
 @pytest.mark.asyncio
 async def test_multipart_data_and_files_content(send_request):
     request = HttpRequest(

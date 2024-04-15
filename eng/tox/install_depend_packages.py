@@ -62,7 +62,9 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
 }
 
-MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
+MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
+    "aiohttp": "3.9.3"
+}
 
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
