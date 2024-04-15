@@ -1,6 +1,6 @@
 # Release History
 
-## 12.20.0b1 (Unreleased)
+## 12.20.0b1 (2024-04-15)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
@@ -14,14 +14,14 @@ tokens to be used with multiple services. By default, the SAS token service scop
 Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
-- Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
+- Fixed a typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
 - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
 - Fixed a couple of issues with `upload_blob` when using Iterators/Generators as the data input.
 
 ### Other Changes
 - Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
 `list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
-The `name_starts_with` parameter is the correct prameter to pass for filtering.
+The `name_starts_with` parameter is the correct parameter to pass for filtering.
 
 ## 12.19.1 (2024-03-05)
 
