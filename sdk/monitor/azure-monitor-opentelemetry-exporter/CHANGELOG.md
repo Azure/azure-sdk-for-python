@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b24 (Unreleased)
+## 1.0.0b25 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b24 (2024-04-05)
 
 ### Features Added
 
@@ -25,6 +35,8 @@
 
 - Updated FastAPI sample
     ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Set up branching logic for attach function
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
 
 ## 1.0.0b23 (2024-02-28)
 
