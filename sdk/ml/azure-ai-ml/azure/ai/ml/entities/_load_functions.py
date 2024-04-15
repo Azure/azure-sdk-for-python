@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
+from pydash import objects
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
@@ -43,6 +44,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
 
 module_logger = logging.getLogger(__name__)
 
@@ -161,6 +163,24 @@ def _load_common_raising_marshmallow_error(
     return res
 
 
+def add_param_overrides(data, param_overrides) -> None:
+    if param_overrides is not None:
+        for override in param_overrides:
+            for param, val in override.items():
+                # Check that none of the intermediary levels are string references (azureml/file)
+                param_tokens = param.split(".")
+                test_layer = data
+                for layer in param_tokens:
+                    if test_layer is None:
+                        continue
+                    if isinstance(test_layer, str):
+                        raise Exception(
+                            f"Cannot use '--set' on properties defined by reference strings: --set {param}"
+                        )
+                    test_layer = test_layer.get(layer, None)
+                objects.set_(data, param, val)
+
+
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -194,6 +214,19 @@ def load_job(
             :caption: Loading a Job from a YAML config file.
     """
     return cast(Job, load_common(Job, source, relative_origin, **kwargs))
+
+
+def load_serverless_endpoint(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs: Any,
+):
+    loaded_dict =  _try_load_yaml_dict(source)
+    add_param_overrides(loaded_dict, param_overrides=kwargs.get("param_overrides", None))
+    serverless_endpoint = ServerlessEndpoint(loaded_dict)
+    serverless_endpoint._validate()
+    return serverless_endpoint 
 
 
 def load_workspace(

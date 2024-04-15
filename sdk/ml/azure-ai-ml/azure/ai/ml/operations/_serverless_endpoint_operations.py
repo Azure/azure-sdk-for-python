@@ -20,7 +20,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     MarketplaceSubscription,
     MarketplaceSubscriptionProperties,
 )
-from azure.ai.ml.entities._endpoint.serverless_endpoint import ServerlessEndpoint
+from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
 from azure.core.exceptions import HttpResponseError
 
 
@@ -59,7 +59,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             if "The requested model requires an active Azure Marketplace subscription for publisher" in e.message:
                 marketplace_subscription = MarketplaceSubscription(
                     properties=MarketplaceSubscriptionProperties(
-                        model_id=endpoint.properties.model_settings.model_id,
+                        model_id=endpoint.model_id,
                     )
                 )
                 self._marketplace_subscriptions.begin_create_or_update(
