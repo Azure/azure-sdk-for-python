@@ -308,7 +308,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :rtype: None
         """
         # pylint: disable=protected-access
-        if handler._link.current_link_credit <= 0:
+        if drain:
+            link_credit_needed = handler._link.current_link_credit
+        elif handler._link.current_link_credit <= 0:
             link_credit_needed = link_credit
         else:
             link_credit_needed = link_credit - handler._link.current_link_credit

@@ -1075,11 +1075,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         )
 
         # Wait for the message to be settled
-        running = True
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            # TODO: Confirm if this is the correct way to handle the do_work call
-            # calling do_work directly triggers Flow() calls which is not what we want
-            running = await self.do_work_async()
+        # running = True
+        # while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+        #     # TODO: Confirm if this is the correct way to handle the do_work call
+        #     # calling do_work directly triggers Flow() calls which is not what we want
+        #     running = 
+        await self._connection.listen(wait=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
