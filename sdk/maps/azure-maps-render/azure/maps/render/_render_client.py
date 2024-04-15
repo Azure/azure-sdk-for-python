@@ -10,12 +10,12 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.polling import LROPoller
 from ._base_client import MapsRenderClientBase
+from ._generated.models import Copyright
 
 from .models import (
     LatLon,
     BoundingBox,
     TilesetID,
-    Copyright,
     MapTileset,
     CopyrightCaption,
     RasterTileFormat,
@@ -441,12 +441,12 @@ class MapsRenderClient(MapsRenderClientBase):
 
         _include_text=kwargs.pop("include_text", True)
 
-        return Copyright(**self._render_client.get_copyright_from_bounding_box(
+        return self._render_client.get_copyright_from_bounding_box(
             south_west=[bounding_box.south,bounding_box.west],
             north_east=[bounding_box.north,bounding_box.east],
             include_text= "yes" if _include_text else "no",
             **kwargs
-        ).__dict__)
+        )
 
     @distributed_trace
     def get_copyright_for_tile(
@@ -492,13 +492,13 @@ class MapsRenderClient(MapsRenderClientBase):
 
         _include_text=kwargs.pop("include_text", True)
 
-        return Copyright(**self._render_client.get_copyright_for_tile(
+        return self._render_client.get_copyright_for_tile(
             z=z,
             x=x,
             y=y,
             include_text= "yes" if _include_text else "no",
             **kwargs
-        ).__dict__)
+        )
 
     @distributed_trace
     def get_copyright_for_world(
@@ -531,7 +531,7 @@ class MapsRenderClient(MapsRenderClientBase):
 
         _include_text=kwargs.pop("include_text", True)
 
-        return Copyright(**self._render_client.get_copyright_for_world(
+        return self._render_client.get_copyright_for_world(
             include_text= "yes" if _include_text else "no",
             **kwargs
-        ).__dict__)
+        )

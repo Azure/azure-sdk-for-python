@@ -12,12 +12,12 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._base_client_async import AsyncMapsRenderClientBase
+from .._generated.models import Copyright
 
 from ..models import (
     LatLon,
     BoundingBox,
     TilesetID,
-    Copyright,
     MapTileset,
     MapAttribution,
     CopyrightCaption,
@@ -450,7 +450,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             **kwargs
         )
 
-        return Copyright(**result.__dict__)
+        return result
 
     @distributed_trace_async
     async def get_copyright_for_tile(
@@ -504,7 +504,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             **kwargs
         )
 
-        return Copyright(**result.__dict__)
+        return result
 
     @distributed_trace_async
     async def get_copyright_for_world(
@@ -541,4 +541,4 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             **kwargs
         )
 
-        return Copyright(**result.__dict__)
+        return result
