@@ -299,15 +299,21 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", link_credit: int
+        handler: "ReceiveClientAsync", link_credit: int, *, drain: bool = False
     ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        await handler._link.flow(link_credit=link_credit)   # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        if handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit
+        if link_credit_needed > 0:
+            await handler._link.flow(link_credit=link_credit_needed, drain=drain)
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
@@ -318,7 +324,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
+        from ..._pyamqp.error import ErrorCondition
         try:
+            # If receiver Link is not the same as the one that received the message, we need to settle the message over mgmt
+
+            if handler._link._is_closed:  # pylint: disable=protected-access
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
+                                    description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -349,11 +361,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     message._delivery_tag,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=True
+                    undeliverable_here=True,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-
+        except AMQPLinkError as le:
+            raise ServiceBusConnectionError(message="Link lost during settle operation.") from le
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

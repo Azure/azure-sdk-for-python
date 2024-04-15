@@ -26,6 +26,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
+    AMQPLinkError
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -759,15 +760,21 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def reset_link_credit(
-        handler: "ReceiveClient", link_credit: int
+        handler: "ReceiveClient", link_credit: int, *, drain: bool = False
     ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        if handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit
+        if link_credit_needed > 0:
+            handler._link.flow(link_credit=link_credit_needed, drain=drain)
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -779,6 +786,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         try:
+            if handler._link._is_closed:  # pylint: disable=protected-access
+                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
+                    description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -814,6 +824,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
+
+        except AMQPLinkError as le:
+            raise RuntimeError("Link is closed and cannot settle message.") from le
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

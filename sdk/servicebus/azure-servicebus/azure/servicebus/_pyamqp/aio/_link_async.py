@@ -102,6 +102,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
         self.total_link_credit = self.link_credit
+        self._sent_drain = False
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -212,6 +213,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
+        self._sent_drain = kwargs.get("drain", False)
         await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
 
     async def _incoming_flow(self, frame):
