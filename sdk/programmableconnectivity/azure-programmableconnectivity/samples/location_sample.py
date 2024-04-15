@@ -22,5 +22,6 @@ try:
         longitude=12.12, latitude=45.11, accuracy=10, device=location_device, network_identifier=network_identifier
     )
     location_response = client.device_location.verify(body=content, apc_gateway_id=APC_GATEWAY_ID)
+    print(location_response.verification_result)
 except HttpResponseError as e:
     print("service responds error: {}".format(e.response.json()))

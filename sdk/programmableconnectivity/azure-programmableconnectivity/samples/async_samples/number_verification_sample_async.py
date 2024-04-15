@@ -14,9 +14,10 @@ from azure.programmableconnectivity.models import (
 import asyncio
 
 # This flow involves 2 calls, with the user of the SDK needing to follow the redirect URI given in the `location` header value from the first call.
+def create_client():
+    return ProgrammableConnectivityClient(endpoint="<endpoint>", credential=DefaultAzureCredential())
 
 async def main():
-    client = ProgrammableConnectivityClient(endpoint="<endpoint>", credential=DefaultAzureCredential())
     APC_GATEWAY_ID = "/subscriptions/<subscription_id>/resourceGroups/.../.../..."
 
     location = None
@@ -30,13 +31,15 @@ async def main():
     content = NumberVerificationWithoutCodeContent(
         phone_number="<number>", redirect_uri="<redirect_uri>", network_identifier=network_identifier
     )
-    client.number_verification.verify_without_code(body=content, apc_gateway_id=APC_GATEWAY_ID, raw_response_hook=callback)
+    async with create_client() as client:
+        await client.number_verification.verify_without_code(body=content, apc_gateway_id=APC_GATEWAY_ID, raw_response_hook=callback)
 
     # The `location` variable must be followed by you, and is not used in the SDK.
     print(f"You have to follow the link: {location}")
 
     content = NumberVerificationWithCodeContent(apc_code="<code from step 1>")
-    verified_response = client.number_verification.verify_with_code(body=content, apc_gateway_id=APC_GATEWAY_ID)
+    async with create_client() as client:
+        verified_response = await client.number_verification.verify_with_code(body=content, apc_gateway_id=APC_GATEWAY_ID)
 
     print(f"verified_response: {verified_response}")
 

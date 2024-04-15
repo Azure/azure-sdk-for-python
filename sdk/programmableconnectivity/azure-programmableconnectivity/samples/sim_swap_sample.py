@@ -22,6 +22,7 @@ try:
         phone_number="+14587443214", max_age_hours=240, network_identifier=network_identifier
     )
     sim_swap_response = client.sim_swap.verify(body=content, apc_gateway_id=APC_GATEWAY_ID)
+    print(sim_swap_response.verification_result)
 except HttpResponseError as e:
     print("service responds error: {}".format(e.response.json()))
 
@@ -30,5 +31,6 @@ try:
     network_identifier = NetworkIdentifier(identifier_type="NetworkCode", identifier="Orange_Spain")
     content = SimSwapRetrievalContent(phone_number="+14587443214", network_identifier=network_identifier)
     sim_swap_retrieve_response = client.sim_swap.retrieve(body=content, apc_gateway_id=APC_GATEWAY_ID)
+    print(sim_swap_retrieve_response.date)
 except HttpResponseError as e:
     print("service responds error: {}".format(e.response.json()))

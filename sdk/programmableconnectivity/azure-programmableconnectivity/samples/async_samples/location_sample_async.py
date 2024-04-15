@@ -13,6 +13,9 @@ from azure.programmableconnectivity.models import (
 )
 import asyncio
 
+def create_client():
+    return ProgrammableConnectivityClient(endpoint="<endpoint>", credential=DefaultAzureCredential())
+
 async def main():
     client = ProgrammableConnectivityClient(endpoint="<endpoint>", credential=DefaultAzureCredential())
     APC_GATEWAY_ID = "/subscriptions/<subscription_id>/resourceGroups/.../.../..."
@@ -23,8 +26,9 @@ async def main():
         content = DeviceLocationVerificationContent(
             longitude=12.12, latitude=45.11, accuracy=10, device=location_device, network_identifier=network_identifier
         )
-        async with client:
-            location_response = client.device_location.verify(body=content, apc_gateway_id=APC_GATEWAY_ID)
+        async with create_client() as client:
+            location_response = await client.device_location.verify(body=content, apc_gateway_id=APC_GATEWAY_ID)
+            print(location_response.verification_result)
     except HttpResponseError as e:
         print("service responds error: {}".format(e.response.json()))
 
