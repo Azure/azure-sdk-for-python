@@ -3,15 +3,12 @@
 # ---------------------------------------------------------
 
 
-from typing import Dict, Optional, Union, Any
-from os import PathLike
-from pathlib import Path
+from typing import Dict, Optional, Any
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml.entities import Workspace
 
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceType
+from azure.ai.ml.constants._common import WorkspaceType
 from azure.ai.ml._schema.workspace import ProjectSchema
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
@@ -56,7 +53,7 @@ class Project(Workspace):
             name=name,
             description=description,
             tags=tags,
-            type=WorkspaceType.PROJECT.value,
+            type=WorkspaceType.PROJECT,
             display_name=display_name,
             location=location,
             resource_group=resource_group,
@@ -67,23 +64,6 @@ class Project(Workspace):
     @classmethod
     def _get_schema_class(cls) -> Any:
         return ProjectSchema
-
-    @classmethod
-    def _load(
-        cls,
-        data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
-        params_override: Optional[list] = None,
-        **kwargs: Any,
-    ) -> "Project":
-        data = data or {}
-        params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
-        loaded_schema = load_from_dict(ProjectSchema, data, context, **kwargs)
-        return Project(**loaded_schema)
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:

@@ -1,7 +1,7 @@
 name: hub_name
 location: WestCentralUS
 type: hub
-default_workspace_resource_group: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-default-resource-group
+default_project_resource_group: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-default-resource-group
 tags:
   purpose: testing
   team: ws-management

@@ -158,7 +158,7 @@ class Workspace(Resource):
         # but kept for backwards if people try to just use a normal workspace like
         # a project.
         if hub_id:
-            self._type = WorkspaceType.PROJECT.value
+            self._type = WorkspaceType.PROJECT
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
@@ -418,14 +418,14 @@ class Workspace(Resource):
 
     def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
         additional_workspace_storage_accounts = None
-        default_workspace_resource_group = None
+        default_project_resource_group = None
         if hasattr(self, "additional_workspace_storage_accounts"):
             additional_workspace_storage_accounts = None
-        if hasattr(self, "default_workspace_resource_group"):
-            default_workspace_resource_group = None
+        if hasattr(self, "default_project_resource_group"):
+            default_project_resource_group = None
         return RestWorkspaceHubConfig(
             additional_workspace_storage_accounts=additional_workspace_storage_accounts,
-            default_workspace_resource_group=default_workspace_resource_group,
+            default_workspace_resource_group=default_project_resource_group,
         )
 
     @classmethod

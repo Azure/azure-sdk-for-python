@@ -14,7 +14,7 @@ class TestProjectEntity:
         assert hub.name == "hub_name"
         assert hub.location == "WestCentralUS"
         assert (
-            hub.default_workspace_resource_group
+            hub.default_project_resource_group
             == "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-default-resource-group"
         )
         assert hub.tags == {"purpose": "testing", "team": "ws-management"}
@@ -67,7 +67,7 @@ class TestProjectEntity:
             public_network_access="Enabled",
             primary_user_assigned_identity="id1",
             enable_data_isolation=True,
-            default_workspace_resource_group="my-default-resource-group",
+            default_project_resource_group="my-default-resource-group",
         )
 
         # Convert hub back and forth from rest equivalent and ensure consistency.
@@ -87,4 +87,4 @@ class TestProjectEntity:
         assert new_hub.public_network_access == original_hub.public_network_access
         assert new_hub.primary_user_assigned_identity == original_hub.primary_user_assigned_identity
         assert new_hub.enable_data_isolation == original_hub.enable_data_isolation
-        assert new_hub.default_workspace_resource_group == original_hub.default_workspace_resource_group
+        assert new_hub.default_project_resource_group == original_hub.default_project_resource_group

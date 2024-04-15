@@ -25,7 +25,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert hub1.location == hub2.location
         assert hub1.description == hub2.description
         assert hub1.display_name == hub2.display_name
-        assert hub1.default_workspace_resource_group in hub2.default_workspace_resource_group
+        assert hub1.default_project_resource_group in hub2.default_project_resource_group
 
     def compare_project(self, project1: Project, project2: Project):
         assert project1 is not None
@@ -60,7 +60,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 description="hub description",
                 display_name="hub display name",
                 location="westus2",
-                default_workspace_resource_group=client.resource_group_name,
+                default_project_resource_group=client.resource_group_name,
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
             assert created_hub.associated_workspaces is None
@@ -103,15 +103,18 @@ class TestWorkspace(AzureRecordedTestCase):
             self.compare_project(local_project2, gotten_project2)
 
             # Get various permutations of listed workspaces.
-            listed_hubs = [hub for hub in client.workspaces.list(kind=WorkspaceType.HUB)]
-            listed_projects = [project for project in client.workspaces.list(kind=WorkspaceType.PROJECT)]
+            listed_hubs = [hub for hub in client.workspaces.list(filtered_types=WorkspaceType.HUB)]
+            listed_projects = [project for project in client.workspaces.list(filtered_types=WorkspaceType.PROJECT)]
             listed_projects2 = [
-                project for project in client.workspaces.list(kind=WorkspaceType.PROJECT, scope="subscription")
+                project
+                for project in client.workspaces.list(filtered_types=WorkspaceType.PROJECT, scope="subscription")
             ]
             listed_projects_and_hubs = [
-                stuff for stuff in client.workspaces.list(kind=[WorkspaceType.HUB, WorkspaceType.PROJECT])
+                stuff for stuff in client.workspaces.list(filtered_types=[WorkspaceType.HUB, WorkspaceType.PROJECT])
             ]
-            listed_workspaces = [workspace for workspace in client.workspaces.list(kind=[WorkspaceType.DEFAULT])]
+            listed_workspaces = [
+                workspace for workspace in client.workspaces.list(filtered_types=[WorkspaceType.DEFAULT])
+            ]
             normal_list = [stuff for stuff in client.workspaces.list()]
 
             # Ensure that each list contains the expected subset.

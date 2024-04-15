@@ -266,12 +266,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
                 hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)
-                hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
+                hub_default_project_resource_group = get_resource_group_name_from_resource_group_id(
                     rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
                 )
                 # we only want to try joining the workspaceHub when the default workspace resource group
                 # is same with the user provided resource group.
-                if hub_default_workspace_resource_group == resource_group:
+                if hub_default_project_resource_group == resource_group:
                     log_msg = (
                         "User lacked permission to create project workspace,"
                         + "trying to join the workspaceHub default resource group."
