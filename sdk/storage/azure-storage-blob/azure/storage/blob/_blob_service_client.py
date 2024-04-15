@@ -24,7 +24,7 @@ from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage
 from ._generated.models import KeyInfo, StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
-from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged
+from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
 from ._serialize import get_api_version
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.models import LocationMode
@@ -41,7 +41,6 @@ if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
     from ._models import (
         BlobAnalyticsLogging,
-        CorsRule,
         FilteredBlob,
         Metrics,
         PublicAccess,
@@ -322,7 +321,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         target_version: Optional[str] = None,
         delete_retention_policy: Optional["RetentionPolicy"] = None,
         static_website: Optional["StaticWebsite"] = None,
@@ -387,7 +386,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=CorsRule._to_generated(cors), # pylint: disable=protected-access
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website

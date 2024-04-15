@@ -318,7 +318,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
                         sign_string(account_key if user_delegation_key is None else user_delegation_key.value,
                                     string_to_sign))
 
-    def get_token(self):
+    def get_token(self) -> str:
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]

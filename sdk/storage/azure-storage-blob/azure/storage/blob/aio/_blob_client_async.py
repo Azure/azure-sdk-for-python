@@ -78,6 +78,7 @@ from ._upload_helpers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.policies import AsyncHTTPPolicy
     from azure.storage.blob.aio import ContainerClient
     from .._models import (
         ContentSettings,
@@ -1799,7 +1800,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def stage_block(
         self, block_id: str,
-        data: Union[Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1809,6 +1810,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -3161,7 +3163,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+                policies=cast(Iterable["AsyncHTTPPolicy"],
+                              self._pipeline._impl_policies) # pylint: disable = protected-access
             )
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access

@@ -201,7 +201,7 @@ class AsyncStorageAccountHostsMixin(object):
                     )
                     raise error
                 return AsyncList(parts_list)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 

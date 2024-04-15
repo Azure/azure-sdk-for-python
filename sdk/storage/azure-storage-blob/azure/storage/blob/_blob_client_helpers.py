@@ -860,7 +860,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
 
 def _stage_block_options(
     block_id: str,
-    data: Union[Iterable[AnyStr], IO[AnyStr]],
+    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
     length: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -871,7 +871,7 @@ def _stage_block_options(
         The string should be less than or equal to 64 bytes in size.
         For a given blob, the block_id must be the same size for each block.
     :param data: The blob data.
-    :paramtype data: Union[Iterable[AnyStr], IO[AnyStr]]
+    :type data: data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
     :param int length: Size of the block.
     :returns: A dictionary containing the options for a stage block operation.
     :rtype: Dict[str, Any]
