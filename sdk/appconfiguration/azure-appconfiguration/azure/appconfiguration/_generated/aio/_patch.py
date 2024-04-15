@@ -24,7 +24,7 @@ class AzureAppConfiguration(AzureAppConfigurationGenerated):
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -54,7 +54,7 @@ class AzureAppConfigurationConfiguration(AzureAppConfigurationConfigurationGener
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

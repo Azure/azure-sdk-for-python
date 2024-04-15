@@ -49,7 +49,7 @@ class AzureAppConfigurationClient:
         :param str base_url: Base url of the service.
         :param credential: An object which can provide secrets for the app configuration service
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-        :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
+        :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
             value may result in unsupported behavior.
         :paramtype api_version: str
 
