@@ -18,6 +18,7 @@ from ._shared.uploads import (
     PageBlobChunkUploader,
     AppendBlobChunkUploader
 )
+from ._shared.validation import calculate_crc64, calculate_md5, ChecksumAlgorithm
 from ._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
@@ -99,13 +100,19 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
+            content_md5 = None
+            if validate_content == ChecksumAlgorithm.MD5:
+                content_md5 = calculate_md5(data)
+            content_crc64 = None
+            if validate_content == ChecksumAlgorithm.CRC64:
+                content_crc64 = calculate_crc64(data, 0)
+
             response = client.upload(
                 body=data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
                 cls=return_response_headers,
-                validate_content=validate_content,
                 data_stream_total=adjusted_count,
                 upload_stream_current=0,
                 tier=tier.value if tier else None,
@@ -113,6 +120,9 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
+                validate_content=validate_content if validate_content is True else None,
+                transactional_content_md5=content_md5,
+                transactional_content_crc64=content_crc64,
                 **kwargs)
 
             if progress_hook:
@@ -179,7 +189,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             block_lookup,
             blob_http_headers=blob_headers,
             cls=return_response_headers,
-            validate_content=validate_content,
+            validate_content=validate_content if validate_content is True else None,
             headers=headers,
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
