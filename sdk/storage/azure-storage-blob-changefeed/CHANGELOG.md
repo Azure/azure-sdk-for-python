@@ -1,4 +1,4 @@
-## Release History
+# Release History
 
 ## 12.0.0b5 (2024-04-15)
 
