@@ -48,6 +48,10 @@ if __name__ == "__main__":
     pkg_details = ParsedSetup.from_path(pkg_dir)
     rcFileLocation = os.path.join(root_dir, "eng/pylintrc") if args.next else os.path.join(root_dir, "pylintrc")
 
+    # if the library has its own pylintrc, use that instead
+    if os.path.exists(os.path.join(pkg_dir, "pylintrc")) and not args.next:
+        rcFileLocation = os.path.join(pkg_dir, "pylintrc")
+
     top_level_module = pkg_details.namespace.split('.')[0]
 
     if in_ci():
