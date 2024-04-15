@@ -11,13 +11,17 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_followup_communication_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_followup_communication_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client and display 
+-the date and time of the follow-up communication,
+-the recipient of the follow-up communication, and
+-whether the follow-up communication was acknowledged
+extracted by the Radiology Insights service.        
 
 
 USAGE:
@@ -106,17 +110,21 @@ class HealthInsightsSyncSamples:
                 resource=job_data,
             )
             radiology_insights_result = poller.result()
-            self.display_critical_results(radiology_insights_result)
+            self.display_followup_communication(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
+    def display_followup_communication(self,radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:
+                    print(f"Follow-up Communication Inference found")
+                    for datetime in ri_inference.date_time:
+                        print(f"Follow-up Communication: Date Time: {datetime}")
+                    for recepient in ri_inference.recipient:
+                        print(f"Follow-up Communication: Recipient: {recepient}")
+                    print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
 
 
 def main():

@@ -11,13 +11,19 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_age_mismatch_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_age_mismatch_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client and display 
+-the Age Mismatch patient ID,
+-the Age Mismatch url extension,
+-the Age Mismatch offset extension,
+-the Age Mismatch length extension, and
+-the Age Mismatch evidence
+extracted by the Radiology Insights service.     
 
 
 USAGE:
@@ -106,18 +112,37 @@ class HealthInsightsSyncSamples:
                 resource=job_data,
             )
             radiology_insights_result = poller.result()
-            self.display_critical_results(radiology_insights_result)
+            self.display_age_mismatch(radiology_insights_result,doc_content1)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
+    def display_age_mismatch(self,radiology_insights_result,doc_content1):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
-
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.AGE_MISMATCH:
+                    print(f"Age Mismatch Inference found")
+                    print(f"Age Mismatch: Patient ID: {patient_result.patient_id}")
+                    Tokens = ""
+                    for extension in ri_inference.extension:
+                        for attribute in dir(extension):
+                            if attribute == "extension":
+                                offset = -1
+                                length = -1
+                                for sub_extension in extension.extension:
+                                    for sub_attribute in dir(sub_extension):
+                                        if sub_attribute == "url":
+                                            if sub_extension.url.startswith("http"):
+                                                continue
+                                            elif sub_extension.url == "offset":
+                                                offset = sub_extension.value_integer
+                                            elif sub_extension.url == "length":
+                                                length = sub_extension.value_integer
+                                        if offset > 0 and length > 0:
+                                            evidence = doc_content1[offset:offset+length]
+                                            if not evidence in Tokens:
+                                                Tokens = Tokens + " " + evidence
+                    print(f"Age Mismatch: Evidence: {Tokens}")
 
 def main():
     sample = HealthInsightsSyncSamples()
