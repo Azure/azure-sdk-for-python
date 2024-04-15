@@ -7,8 +7,7 @@ import logging
 import sys
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
-import asyncio
-import time
+import re
 
 from os import path
 from typing import List, Optional, Union
@@ -31,160 +30,62 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
-ServicePreparer = functools.partial(
+ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "chat_completions",
     chat_completions_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
     chat_completions_key="00000000000000000000000000000000",
 )
 
+ServicePreparerEmbeddings = functools.partial(
+    EnvironmentVariableLoader,
+    "embeddings",
+    embeddings_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    embeddings_key="00000000000000000000000000000000",
+)
 
 # The test class name needs to start with "Test" to get collected by pytest
 class ModelClientTestBase(AzureRecordedTestCase):
 
-    client: sdk.ChatCompletionsClient
-    async_client: async_sdk.ChatCompletionsClient
-    connection_url: str
+    # Set to True to print out all results to the console
+    PRINT_RESULT = True
 
-    # Set to True to print out all analysis results
-    PRINT_CHAT_COMPLETION_RESULTS = True
+    # Regular expression describing the pattern of a result ID (e.g. "183b56eb-8512-484d-be50-5d8df82301a2")
+    REGEX_RESULT_ID = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 
-    def _create_client_for_standard_test(self, sync: bool, get_connection_url: bool = False, **kwargs):
+    def _create_chat_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs):
         endpoint = kwargs.pop("chat_completions_endpoint")
-        key = kwargs.pop("chat_completions_key")
-        self._create_client(endpoint, key, sync, get_connection_url)
-
-    def _create_client_for_authentication_failure(self, sync: bool, **kwargs):
-        endpoint = kwargs.pop("chat_completions_endpoint")
-        key = "00000000000000000000000000000000"
-        self._create_client(endpoint, key, sync, False)
-
-    def _create_client(self, endpoint: str, key: str, sync: bool, get_connection_url: bool):
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("chat_completions_key")
         credential = AzureKeyCredential(key)
         if sync:
-            self.client = sdk.ChatCompletionsClient(
-                endpoint=endpoint,
-                credential=credential,
-                logging_enable=LOGGING_ENABLED,
-                raw_request_hook=self._raw_request_check if get_connection_url else None,
-            )
-            assert self.client is not None
+            return sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
         else:
-            self.async_client = async_sdk.ChatCompletionsClient(
-                endpoint=endpoint,
-                credential=credential,
-                logging_enable=LOGGING_ENABLED,
-                raw_request_hook=self._raw_request_check if get_connection_url else None,
-            )
-            assert self.async_client is not None
+            return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
-    def _raw_request_check(self, request: PipelineRequest):
-        self.connection_url = request.http_request.url
-        print(f"Connection URL: {request.http_request.url}")
+    def _create_embeddings_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient | async_sdk.EmbeddingsClient:
+        endpoint = kwargs.pop("embeddings_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("embeddings_key")
+        credential = AzureKeyCredential(key)
+        if sync:
+            return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+        else:
+            return async_sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
-    def _do_chat_completions(
-        self,
-        query_params: Optional[dict] = None,
-        **kwargs,
-    ):
-
-        result = self.client.create(messages=kwargs.get("messages"), params=query_params)
-
-        # Optional: console printout of all results
-        if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
-            ModelClientTestBase._print_chat_completions_results(result)
-
-        # Validate all results
-        ModelClientTestBase._validate_chat_completions_results(result)
-
-        # Validate that additional query parameters exists in the connection URL, if specify
-        if query_params is not None:
-            ModelClientTestBase._validate_query_parameters(query_params, self.connection_url)
-
-    async def _do_async_chat_completions(
-        self,
-        query_params: Optional[dict] = None,
-        **kwargs,
-    ):
-        start_time = time.time()
-
-        # Start the operation and get a Future object
-        future = asyncio.ensure_future(self.async_client.create(messages=kwargs.get("messages")))
-
-        # Loop until the operation is done
-        while not future.done():
-            await asyncio.sleep(0.1)  # sleep for 100 ms
-            print(f"Elapsed time: {int(1000*(time.time()- start_time))}ms")
-
-        # Get the result (this will not block since the operation is done)
-        result = future.result()
-
-        # Optional: console printout of all results
-        if ModelClientTestBase.PRINT_CHAT_COMPLETION_RESULTS:
-            ModelClientTestBase._print_chat_completions_results(result)
-
-        # Validate all results
-        ModelClientTestBase._validate_chat_completions_results(result)
-
-        # Validate that additional query parameters exists in the connection URL, if specify
-        if query_params is not None:
-            ModelClientTestBase._validate_query_parameters(query_params, self.connection_url)
-
-    def _do_chat_completion_with_error(
-        self,
-        expected_status_code: int,
-        expected_message_contains: str,
-        **kwargs,
-    ):
-
-        try:
-            result = self.client.create(messages=kwargs.get("messages"))
-
-        except AzureError as e:
-            print(e)
-            assert hasattr(e, "status_code")
-            assert e.status_code == expected_status_code
-            assert expected_message_contains in e.message
-            return
-        assert False  # We should not get here
-
-    async def _do_async_chat_completion_with_error(
-        self,
-        expected_status_code: int,
-        expected_message_contains: str,
-        **kwargs,
-    ):
-
-        try:
-            result = await self.async_client.create(messages=kwargs.get("messages"))
-
-        except AzureError as e:
-            print(e)
-            assert hasattr(e, "status_code")
-            assert e.status_code == expected_status_code
-            assert expected_message_contains in e.message
-            return
-        assert False  # We should not get here
+    def _create_embeddings_client_with_chat_completions_credentials(self, **kwargs) -> sdk.EmbeddingsClient:
+        endpoint = kwargs.pop("chat_completions_endpoint")
+        key = kwargs.pop("chat_completions_key")
+        credential = AzureKeyCredential(key)
+        return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     @staticmethod
-    def _validate_query_parameters(query_params: dict, connection_url: str):
-        assert len(query_params) > 0
-        query_string = ""
-        for key, value in query_params.items():
-            query_string += "&" + key + "=" + value
-        query_string = "?" + query_string[1:]
-        assert query_string in connection_url
-
-    @staticmethod
-    def _validate_chat_completions_results(result: sdk.models.ChatCompletions):
-
-        assert "5,280" in result.choices[0].message.content or "5280" in result.choices[0].message.content
+    def _validate_chat_completions_result(result: sdk.models.ChatCompletions, contains: List[str]):
+        assert any(item in result.choices[0].message.content for item in contains)
         assert result.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
         assert result.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert result.choices[0].index == 0
 
         assert result.id is not None
-        assert result.id != ""
+        assert len(result.id) == 36
         assert result.created is not None
         assert result.created != ""
         assert result.model is not None
@@ -194,21 +95,58 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert result.usage.completion_tokens > 0
         assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
 
+
     @staticmethod
-    def _print_chat_completions_results(result: sdk.models.ChatCompletions):
+    def _print_chat_completions_result(result: sdk.models.ChatCompletions):
+        if ModelClientTestBase.PRINT_RESULT:
+            print(" Chat Completions result:")
+            for choice in result.choices:
+                print(f"\tchoices[0].message.content: {choice.message.content}")
+                print("\tchoices[0].message.role: {}".format(choice.message.role))
+                print("\tchoices[0].finish_reason: {}".format(choice.finish_reason))
+                print("\tchoices[0].index: {}".format(choice.index))
+            print("\tid: {}".format(result.id))
+            print("\tcreated: {}".format(result.created))
+            print("\tmodel: {}".format(result.model))
+            print("\tobject: {}".format(result.object))
+            print("\tusage.prompt_tokens: {}".format(result.usage.prompt_tokens))
+            print("\tusage.completion_tokens: {}".format(result.usage.completion_tokens))
+            print("\tusage.total_tokens: {}".format(result.usage.total_tokens))
 
-        print(" Chat Completions:")
 
-        for choice in result.choices:
-            print(f"\tchoices[0].message.content: {choice.message.content}")
-            print("\tchoices[0].message.role: {}".format(choice.message.role))
-            print("\tchoices[0].finish_reason: {}".format(choice.finish_reason))
-            print("\tchoices[0].index: {}".format(choice.index))
+    @staticmethod
+    def _validate_embeddings_result(result: sdk.models.EmbeddingsResult):
+        assert result is not None
+        assert result.data is not None
+        assert len(result.data) == 3
+        for i in [0, 1, 2]:
+            assert result.data[i] is not None
+            assert result.data[i].object == "embedding"
+            assert result.data[i].index == i
+            assert len(result.data[i].embedding) == 1024
+            assert result.data[i].embedding[0] != 0.0
+            assert result.data[i].embedding[1023] != 0.0
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(result.id))
+        #assert len(result.model) > 0  # At the time of writing this test, this JSON field existed but was empty
+        assert result.object == "list"
+        # At the time of writing this test, input_tokens did not exist (I see completion tokens instead)
+        #assert result.usage.input_tokens > 0
+        #assert result.usage.prompt_tokens > 0
+        #assert result.total_tokens == result.usage.input_tokens + result.usage.prompt_tokens
 
-        print("\tid: {}".format(result.id))
-        print("\tcreated: {}".format(result.created))
-        print("\tmodel: {}".format(result.model))
-        print("\tobject: {}".format(result.object))
-        print("\tusage.prompt_tokens: {}".format(result.usage.prompt_tokens))
-        print("\tusage.completion_tokens: {}".format(result.usage.completion_tokens))
-        print("\tusage.total_tokens: {}".format(result.usage.total_tokens))
+
+    @staticmethod
+    def _print_embeddings_result(result: sdk.models.EmbeddingsResult):
+        if ModelClientTestBase.PRINT_RESULT:
+            print("Embeddings result:")
+            for item in result.data:
+                length = len(item.embedding)
+                print(
+                    f"\tdata[{item.index}]: length={length}, object={item.object}, [{item.embedding[0]}, {item.embedding[1]}, ..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                )
+            print(f"\tid: {result.id}")
+            print(f"\tmodel: {result.model}")
+            print(f"\tobject: {result.object}")
+            #print(f"\tusage.input_tokens: {result.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
+            print(f"\tusage.prompt_tokens: {result.usage.prompt_tokens}")
+            print(f"\tusage.total_tokens: {result.usage.total_tokens}")

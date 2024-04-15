@@ -5,8 +5,9 @@
 import inspect
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelClientTestBase, ServicePreparer
+from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.exceptions import AzureError
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestImageAnalysisAsyncClient(ModelClientTestBase):
@@ -17,70 +18,53 @@ class TestImageAnalysisAsyncClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
-    # Test all visual features from a local image, using default settings
-    @ServicePreparer()
+    # Test two async chat completions with chat history
+    @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
-    async def test_async_chat_completion(self, **kwargs):
+    async def test_async_chat_completions_error_free(self, **kwargs):
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
+            sdk.models.UserMessage(content="How many feet are in a mile?")
+        ]
 
-        self._create_client_for_standard_test(sync=False, **kwargs)
+        client = self._create_chat_client(sync=False, **kwargs)
+        result = await client.create(messages=messages)
+        self._print_chat_completions_result(result)
+        self._validate_chat_completions_result(result, ["5280", "5,280"])
 
-        messages = [sdk.models.UserMessage(content="How many feet are in a mile?")]
+        messages.append(sdk.models.AssistantMessage(content=result.choices[0].message.content))
+        messages.append(sdk.models.UserMessage(content="and how many yards?"))
+        result = await client.create(messages=messages)
+        self._print_chat_completions_result(result)
+        self._validate_chat_completions_result(result, ["1760", "1,760"])
+        await client.close()
 
-        await self._do_async_chat_completions(messages=messages, **kwargs)
-
-        await self.async_client.close()
-
-    # Test some visual features, one after the other, from image URL, with relevant settings specified
-
-
-"""     @ServicePreparer()
+    # Test one embeddings async call
+    @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
-    async def test_analyze_async_single_feature_from_url(self, **kwargs):
+    async def test_async_embeddings_error_free(self, **kwargs):
+        client = self._create_embeddings_client(sync=False, **kwargs)
+        result = await client.create(input=["first phrase", "second phrase", "third phrase"])
+        self._print_embeddings_result(result)
+        self._validate_embeddings_result(result)
+        await client.close()
 
-        self._create_client_for_standard_analysis(sync=False, **kwargs)
+    # **********************************************************************************
+    #
+    #                            ERROR TESTS
+    #
+    # **********************************************************************************
 
-        await self._do_async_analysis(
-            image_source=self.IMAGE_URL,
-            visual_features=[sdk.models.VisualFeatures.DENSE_CAPTIONS],
-            gender_neutral_caption=True,
-            **kwargs
-        )
-
-        await self._do_async_analysis(
-            image_source=self.IMAGE_URL,
-            visual_features=[sdk.models.VisualFeatures.SMART_CROPS],
-            smart_crops_aspect_ratios=[0.9, 1.33],
-            **kwargs
-        )
-
-        await self._do_async_analysis(
-            image_source=self.IMAGE_URL, visual_features=[sdk.models.VisualFeatures.TAGS], language="en", **kwargs
-        )
-
-        await self._do_async_analysis(
-            image_source=self.IMAGE_URL, visual_features=[sdk.models.VisualFeatures.PEOPLE], **kwargs
-        )
-
-        await self.async_client.close() """
-
-# **********************************************************************************
-#
-#                            ERROR TESTS
-#
-# **********************************************************************************
-
-"""    @ServicePreparer()
+    # Test one chat completion async call with bad key (authentication failure)
+    @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
-    async def test_analyze_async_authentication_failure(self, **kwargs):
-
-        self._create_client_for_authentication_failure(sync=False, **kwargs)
-
-        await self._do_async_analysis_with_error(
-            image_source=self.IMAGE_URL,
-            visual_features=[sdk.models.VisualFeatures.TAGS],
-            expected_status_code=401,
-            expected_message_contains="Access denied",
-            **kwargs
-        )
-
-        await self.async_client.close() """
+    async def test_embeddings_with_auth_failure(self, **kwargs):
+        client = self._create_embeddings_client(sync=False, bad_key=True, **kwargs)
+        try:
+            result = await client.create(input=["first phrase", "second phrase", "third phrase"])
+        except AzureError as e:
+            print(e)
+            assert hasattr(e, "status_code")
+            assert e.status_code == 401
+            assert "unauthorized" in e.message.lower()
+        await client.close()

@@ -5,8 +5,9 @@
 import inspect
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelClientTestBase, ServicePreparer
+from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils import recorded_by_proxy
+from azure.core.exceptions import AzureError
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -19,59 +20,55 @@ class TestModelClient(ModelClientTestBase):
     # **********************************************************************************
 
     # Test one chat completion
-    @ServicePreparer()
+    @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_chat_completion(self, **kwargs):
+    def test_chat_completions_error_free(self, **kwargs):
+        client = self._create_chat_client(**kwargs)
+        result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+        self._print_chat_completions_result(result)
+        self._validate_chat_completions_result(result, ["5280", "5,280"])
+        client.close()
 
-        self._create_client_for_standard_test(sync=True, **kwargs)
-
-        messages = [sdk.models.UserMessage(content="How many feet are in a mile?")]
-
-        self._do_chat_completions(messages=messages, **kwargs)
-
-        self.client.close()
-
-    # Test some visual features, one after the other, from file, using default settings
-
-
-"""     @ServicePreparer()
+    # Test one embeddings call
+    @ServicePreparerEmbeddings()
     @recorded_by_proxy
-    def test_analyze_sync_single_feature_from_file(self, **kwargs):
+    def test_embeddings_error_free(self, **kwargs):
+        client = self._create_embeddings_client(**kwargs)
+        result = client.create(input=["first phrase", "second phrase", "third phrase"])
+        self._print_embeddings_result(result)
+        self._validate_embeddings_result(result)
+        client.close()
 
-        self._create_client_for_standard_analysis(sync=True, get_connection_url=True, **kwargs)
+    # **********************************************************************************
+    #
+    #                            ERROR TESTS
+    #
+    # **********************************************************************************
 
-        self._do_analysis(
-            image_source=self.IMAGE_FILE,
-            visual_features=[sdk.models.VisualFeatures.CAPTION],
-            query_params={"key1": "value1", "key2": "value2"},
-            **kwargs
-        )
-
-        self._do_analysis(image_source=self.IMAGE_FILE, visual_features=[sdk.models.VisualFeatures.READ], **kwargs)
-
-        self._do_analysis(image_source=self.IMAGE_FILE, visual_features=[sdk.models.VisualFeatures.TAGS], **kwargs)
-
-        self.client.close() """
-
-# **********************************************************************************
-#
-#                            ERROR TESTS
-#
-# **********************************************************************************
-
-"""     @ServicePreparer()
+    @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_analyze_sync_image_url_does_not_exist(self, **kwargs):
+    def test_chat_completion_with_auth_failure(self, **kwargs):
+        client = self._create_chat_client(bad_key=True, **kwargs)
+        try:
+            result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+        except AzureError as e:
+            print(e)
+            assert hasattr(e, "status_code")
+            assert e.status_code == 401
+            assert "unauthorized" in e.message.lower()
+        client.close()
 
-        self._create_client_for_standard_analysis(sync=True, **kwargs)
 
-        self._do_analysis_with_error(
-            image_source="https://www.this.is.a.bad.url.com/for/sure.jpg",
-            visual_features=[sdk.models.VisualFeatures.CAPTION],
-            expected_status_code=400,
-            expected_message_contains="image url is not accessible",
-            **kwargs
-        )
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_embeddings_on_chat_completion_endpoint(self, **kwargs):
+        client = self._create_embeddings_client_with_chat_completions_credentials(**kwargs)
+        try:
+            result = client.create(input=["first phrase", "second phrase", "third phrase"])
+        except AzureError as e:
+            print(e)
+            assert hasattr(e, "status_code")
+            assert e.status_code == 404
+            assert "not found" in e.message.lower()
+        client.close()
 
-        self.client.close()
- """
