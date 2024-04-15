@@ -366,7 +366,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await message._receiver._handler._link._remove_pending_deliveries()  # pylint: disable=protected-access
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
         except AMQPConnectionError as e:
-            raise RuntimeError("Connection lost during settle operation.") from e
+            raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )

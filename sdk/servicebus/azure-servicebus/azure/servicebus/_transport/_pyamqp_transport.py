@@ -823,9 +823,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except AMQPLinkError as le:
             # Remove all Dispositions sent because we have lost the link sent on
             message._receiver._handler._link._remove_pending_deliveries()  # pylint: disable=protected-access
-            raise ServiceBusConnectionError("Link error occurred during settle operation.") from le
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
         except AMQPConnectionError as e:
-            raise ServiceBusConnectionError("Connection lost during settle operation.") from e
+            raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
 
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
