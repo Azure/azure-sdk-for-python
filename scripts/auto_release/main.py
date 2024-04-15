@@ -241,7 +241,7 @@ class CodegenTestPR:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        print_check(f"pip install {self.get_whl_package} --force-reinstall")
+        print_check(f"pip install {self.get_whl_package}")
         module = importlib.import_module(self.whole_package_name.replace("-", "."))
         title = ""
         for item in getattr(module, "__all__"):
