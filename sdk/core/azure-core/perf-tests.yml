@@ -21,9 +21,9 @@ Tests:
   Class: DownloadBinaryDataTest
   Arguments:
   - --size 1024 --parallel 64 --duration 60
-  - --size 1024 --parallel 64 --duration 60 --transport requests
+  - --size 10240 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --use-entra-id
-  - --size 10240 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 64 --duration 60 --policies all
 
 - Test: update-entity
   Class: UpdateEntityJSONTest

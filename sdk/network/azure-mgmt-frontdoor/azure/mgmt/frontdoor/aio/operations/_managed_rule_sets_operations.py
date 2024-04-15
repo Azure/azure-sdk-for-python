@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,7 +55,6 @@ class ManagedRuleSetsOperations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.ManagedRuleSetDefinition"]:
         """Lists all available managed rule sets.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedRuleSetDefinition or the result of
          cls(response)
         :rtype:
@@ -65,7 +64,7 @@ class ManagedRuleSetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         cls: ClsType[_models.ManagedRuleSetDefinitionList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -79,22 +78,21 @@ class ManagedRuleSetsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedRuleSetDefinitionList", pipeline_response)
@@ -104,11 +102,11 @@ class ManagedRuleSetsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -120,7 +118,3 @@ class ManagedRuleSetsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallManagedRuleSets"
-    }

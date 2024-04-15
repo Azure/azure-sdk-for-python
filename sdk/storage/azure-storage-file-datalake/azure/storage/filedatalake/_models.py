@@ -770,7 +770,7 @@ class LocationMode(object):
 class DelimitedJsonDialect(BlobDelimitedJSON):
     """Defines the input or output JSON serialization for a datalake query.
 
-    :keyword str delimiter: The line separator character, default value is '\n'
+    :keyword str delimiter: The line separator character, default value is '\\\\n'.
     """
 
 
@@ -782,7 +782,7 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     :keyword str quotechar:
         Field quote, defaults to '"'.
     :keyword str lineterminator:
-        Record separator, defaults to '\n'.
+        Record separator, defaults to '\\\\n'.
     :keyword str escapechar:
         Escape char, defaults to empty.
     :keyword bool has_header:
