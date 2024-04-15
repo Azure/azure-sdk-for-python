@@ -370,7 +370,12 @@ def set_common_sanitizers() -> None:
         {"json_path": "$..appkey", "value": SANITIZED},
         {"json_path": "$..acrToken", "value": SANITIZED},
         {"json_path": "$..accountKey", "value": SANITIZED},
+        {"json_path": "$..accountName", "value": SANITIZED},
         {"json_path": "$..decryptionKey", "value": SANITIZED},
+        {"json_path": "$..applicationId", "value": SANITIZED},
+        {"json_path": "$..apiKey", "value": SANITIZED},
+        {"json_path": "$..userName", "value": SANITIZED},
+        {"json_path": "$.properties.DOCKER_REGISTRY_SERVER_PASSWORD", "value": SANITIZED},
         {"json_path": "$.value[*].key", "value": SANITIZED},
         {"json_path": "$.key", "value": SANITIZED},
         {"json_path": "$..clientId", "value": FAKE_ID},
@@ -388,6 +393,13 @@ def set_common_sanitizers() -> None:
         {"regex": "access_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
         {"regex": "token=(?<token>[^\\u0026]+)($|\\u0026)", "group_for_replace": "token", "value": SANITIZED},
         {"regex": "-----BEGIN PRIVATE KEY-----\\n(.+\\n)*-----END PRIVATE KEY-----\\n", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedTid>)(.*)(?:</SignedTid>)", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<SignedOid>)(.*)(?:</SignedOid>)", "value": SANITIZED},
+        {"regex": "(?<=<UserDelegationKey>).*?(?:<Value>)(.*)(?:</Value>)", "value": SANITIZED},
+        {"regex": "(?:Password=)(.*?)(?:;)", "value": SANITIZED},
+        {"regex": "(?:User ID=)(.*?)(?:;)", "value": SANITIZED},
+        {"regex": "(?:<PrimaryKey>)(.*)(?:</PrimaryKey>)", "value": SANITIZED},
+        {"regex": "(?:<SecondaryKey>)(.*)(?:</SecondaryKey>)", "value": SANITIZED},
     ]
 
     # General regex sanitizers for sensitive patterns throughout interactions
