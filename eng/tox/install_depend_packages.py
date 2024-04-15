@@ -47,7 +47,9 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "msal": "1.23.0",
 }
 
-MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {
+    "aiohttp": "3.9.3"
+}
 
 # SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by
 # binding an override to the specific package being processed. As an example, when
