@@ -4,6 +4,7 @@
 import asyncio
 import datetime
 import os
+import uuid
 
 
 from azure.core.credentials import AzureKeyCredential
@@ -31,6 +32,8 @@ class HealthInsightsSamples:
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
+        job_id = str(uuid.uuid4())
+
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # [END create_radiology_insights_client]
         doc_content1 = """CLINICAL HISTORY:   
@@ -57,7 +60,7 @@ class HealthInsightsSamples:
         # Create encounter
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
-        encounter = models.Encounter(
+        encounter = models.PatientEncounter(
             id="encounter2",
             class_property=models.EncounterClass.IN_PATIENT,
             period=models.TimePeriod(start=start, end=end),
@@ -74,7 +77,7 @@ class HealthInsightsSamples:
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
             id="doc2",
             content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
-            created_date_time=create_date_time,
+            created_at=create_date_time,
             specialty_type=models.SpecialtyType.RADIOLOGY,
             administrative_metadata=models.DocumentAdministrativeMetadata(
                 ordered_procedures=[ordered_procedure], encounter_id="encounter2"
@@ -86,7 +89,7 @@ class HealthInsightsSamples:
         # Construct patient
         patient1 = models.PatientRecord(
             id="patient_id2",
-            info=patient_info,
+            details=patient_info,
             encounters=[encounter],
             patient_documents=[patient_document1],
         )
@@ -96,13 +99,16 @@ class HealthInsightsSamples:
 
         # Construct the request with the patient and configuration
         radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+        job_data = models.RadiologyInsightsJob(radiology_insights_data)
 
         try:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
-                radiology_insights_data,
+                id=job_id,
+                resource=job_data,
             )
             radiology_insights_result = await poller.result()
             self.display_critical_results(radiology_insights_result)
+            await radiology_insights_client.close()
         except Exception as ex:
             print(str(ex))
             return

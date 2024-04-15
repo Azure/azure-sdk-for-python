@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, line-too-long, too-many-locals
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -42,22 +42,22 @@ class RadiologyInsightsInference(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Required. Known values are: "ageMismatch", "lateralityDiscrepancy", "sexMismatch",
      "completeOrderDiscrepancy", "limitedOrderDiscrepancy", "finding", "criticalResult",
      "followupRecommendation", "followupCommunication", and "radiologyProcedure".
     :vartype kind: str or
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
     kind: str = rest_discriminator(name="kind")
     """Required. Known values are: \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\",
      \"completeOrderDiscrepancy\", \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\",
      \"followupRecommendation\", \"followupCommunication\", and \"radiologyProcedure\"."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
 
     @overload
     def __init__(
@@ -409,6 +409,8 @@ class DomainResource(Resource):
     :vartype implicit_rules: str
     :ivar language: Language of the resource content.
     :vartype language: str
+    :ivar resource_type: Required. Default value is None.
+    :vartype resource_type: str
     :ivar text: Text summary of the resource, for human interpretation.
     :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
     :ivar contained: Contained, inline Resources.
@@ -417,11 +419,11 @@ class DomainResource(Resource):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar modifier_extension: Extensions that cannot be ignored.
     :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar resource_type: Required. Default value is None.
-    :vartype resource_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
+    resource_type: str = rest_discriminator(name="resourceType")
+    """Required. Default value is None."""
     text: Optional["_models.Narrative"] = rest_field()
     """Text summary of the resource, for human interpretation."""
     contained: Optional[List["_models.Resource"]] = rest_field()
@@ -430,8 +432,6 @@ class DomainResource(Resource):
     """Additional Content defined by implementations."""
     modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
     """Extensions that cannot be ignored."""
-    resource_type: str = rest_discriminator(name="resourceType")
-    """Required. Default value is None."""
 
     @overload
     def __init__(
@@ -942,53 +942,6 @@ class DocumentContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Encounter(_model_base.Model):
-    """visit/encounter information.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The id of the visit. Required.
-    :vartype id: str
-    :ivar period: Time period of the visit.
-     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end
-     to indicate the discharge time.
-    :vartype period: ~azure.healthinsights.radiologyinsights.models.TimePeriod
-    :ivar class_property: The class of the encounter. Known values are: "inpatient", "ambulatory",
-     "observation", "emergency", "virtual", and "healthHome".
-    :vartype class_property: str or ~azure.healthinsights.radiologyinsights.models.EncounterClass
-    """
-
-    id: str = rest_field()
-    """The id of the visit. Required."""
-    period: Optional["_models.TimePeriod"] = rest_field()
-    """Time period of the visit.
-     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
-     indicate the discharge time."""
-    class_property: Optional[Union[str, "_models.EncounterClass"]] = rest_field(name="class")
-    """The class of the encounter. Known values are: \"inpatient\", \"ambulatory\", \"observation\",
-     \"emergency\", \"virtual\", and \"healthHome\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        period: Optional["_models.TimePeriod"] = None,
-        class_property: Optional[Union[str, "_models.EncounterClass"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class Error(_model_base.Model):
     """The error object.
 
@@ -1217,8 +1170,8 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Followup Communication inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_COMMUNICATION
-    :ivar date_time: Communication date and time.
-    :vartype date_time: list[~datetime.datetime]
+    :ivar communicated_at: Communication date and time.
+    :vartype communicated_at: list[~datetime.datetime]
     :ivar recipient: Recipient of the communication.
     :vartype recipient: list[str or
      ~azure.healthinsights.radiologyinsights.models.MedicalProfessionalType]
@@ -1228,7 +1181,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore
     """Inference type. Required. Followup Communication inference type"""
-    date_time: Optional[List[datetime.datetime]] = rest_field(name="dateTime", format="rfc3339")
+    communicated_at: Optional[List[datetime.datetime]] = rest_field(name="communicatedAt", format="rfc3339")
     """Communication date and time."""
     recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = rest_field()
     """Recipient of the communication."""
@@ -1241,7 +1194,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         *,
         was_acknowledged: bool,
         extension: Optional[List["_models.Extension"]] = None,
-        date_time: Optional[List[datetime.datetime]] = None,
+        communicated_at: Optional[List[datetime.datetime]] = None,
         recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = None,
     ):
         ...
@@ -1267,9 +1220,9 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Inference type. Required. Recommendation inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_RECOMMENDATION
-    :ivar effective_date_time: Date and time are displayed when the procedure is recommended to be
-     done at a specific point in time.
-    :vartype effective_date_time: str
+    :ivar effective_at: Date and time are displayed when the procedure is recommended to be done at
+     a specific point in time.
+    :vartype effective_at: str
     :ivar effective_period: The period is shown if a specific period is mentioned, with a start and
      end date-time.
     :vartype effective_period: ~azure.healthinsights.radiologyinsights.models.Period
@@ -1297,7 +1250,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore
     """Inference type. Required. Recommendation inference type"""
-    effective_date_time: Optional[str] = rest_field(name="effectiveDateTime")
+    effective_at: Optional[str] = rest_field(name="effectiveAt")
     """Date and time are displayed when the procedure is recommended to be done at a specific point in
      time."""
     effective_period: Optional["_models.Period"] = rest_field(name="effectivePeriod")
@@ -1331,7 +1284,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         is_hedging: bool,
         recommended_procedure: "_models.ProcedureRecommendation",
         extension: Optional[List["_models.Extension"]] = None,
-        effective_date_time: Optional[str] = None,
+        effective_at: Optional[str] = None,
         effective_period: Optional["_models.Period"] = None,
         findings: Optional[List["_models.RecommendationFinding"]] = None,
     ):
@@ -1407,17 +1360,22 @@ class ProcedureRecommendation(_model_base.Model):
 
     :ivar kind: Required. Default value is None.
     :vartype kind: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Required. Default value is None."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
 
     @overload
     def __init__(
         self,
         *,
         kind: str,
+        extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
 
@@ -1437,6 +1395,8 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
 
     All required parameters must be populated in order to send to server.
 
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : generic. Required. Default value is
      "genericProcedureRecommendation".
     :vartype kind: str
@@ -1460,6 +1420,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         self,
         *,
         code: "_models.CodeableConcept",
+        extension: Optional[List["_models.Extension"]] = None,
         description: Optional[str] = None,
     ):
         ...
@@ -1475,59 +1436,61 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         super().__init__(*args, kind="genericProcedureRecommendation", **kwargs)
 
 
-class HealthInsightsOperationStatus(_model_base.Model):
-    """Provides status details for long running operations.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class HealthInsightsErrorResponse(_model_base.Model):
+    """A response containing error details.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The unique ID of the operation. Required.
-    :vartype id: str
-    :ivar status: The status of the operation. Required. Known values are: "notStarted", "running",
-     "succeeded", "failed", and "canceled".
-    :vartype status: str or ~azure.healthinsights.radiologyinsights.models.JobStatus
-    :ivar created_date_time: The date and time when the processing job was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The date and time when the processing job is set to expire.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar last_update_date_time: The date and time when the processing job was last updated.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar error: Error object that describes the error when status is "Failed".
+    :ivar error: The error object. Required.
     :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
-    :ivar result: The result of the operation.
-    :vartype result:
-     ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult
+    :ivar request_id: An opaque, globally-unique, server-generated string identifier for the
+     request. Required.
+    :vartype request_id:
+     ~azure.healthinsights.radiologyinsights.models.HealthInsightsErrorResponseRequestId
     """
 
-    id: str = rest_field(visibility=["read"])
-    """The unique ID of the operation. Required."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
-    """The status of the operation. Required. Known values are: \"notStarted\", \"running\",
-     \"succeeded\", \"failed\", and \"canceled\"."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job was created."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job is set to expire."""
-    last_update_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastUpdateDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job was last updated."""
-    error: Optional["_models.Error"] = rest_field()
-    """Error object that describes the error when status is \"Failed\"."""
-    result: Optional["_models.RadiologyInsightsInferenceResult"] = rest_field()
-    """The result of the operation."""
+    error: "_models.Error" = rest_field()
+    """The error object. Required."""
+    request_id: "_models.HealthInsightsErrorResponseRequestId" = rest_field(name="requestId")
+    """An opaque, globally-unique, server-generated string identifier for the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: Optional["_models.Error"] = None,
-        result: Optional["_models.RadiologyInsightsInferenceResult"] = None,
+        error: "_models.Error",
+        request_id: "_models.HealthInsightsErrorResponseRequestId",
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class HealthInsightsErrorResponseRequestId(_model_base.Model):
+    """HealthInsightsErrorResponseRequestId.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar response: Required.
+    :vartype response: ~azure.healthinsights.radiologyinsights.models.RequestIdResponseHeader
+    """
+
+    response: "_models.RequestIdResponseHeader" = rest_field()
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response: "_models.RequestIdResponseHeader",
     ):
         ...
 
@@ -1653,6 +1616,8 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
 
     All required parameters must be populated in order to send to server.
 
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : imaging. Required. Default value is
      "imagingProcedureRecommendation".
     :vartype kind: str
@@ -1675,6 +1640,7 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         self,
         *,
         imaging_procedures: List["_models.ImagingProcedure"],
+        extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
     ):
         ...
@@ -2338,28 +2304,28 @@ class ObservationReferenceRange(_model_base.Model):
 class OrderedProcedure(_model_base.Model):
     """Procedure information.
 
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar code: Procedure code.
     :vartype code: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
     :ivar description: Procedure description.
     :vartype description: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
     code: Optional["_models.CodeableConcept"] = rest_field()
     """Procedure code."""
     description: Optional[str] = rest_field()
     """Procedure description."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
 
     @overload
     def __init__(
         self,
         *,
-        extension: Optional[List["_models.Extension"]] = None,
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
+        extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
 
@@ -2434,8 +2400,8 @@ class PatientDocument(_model_base.Model):
     :vartype id: str
     :ivar language: A 2 letter ISO 639-1 representation of the language of the document.
     :vartype language: str
-    :ivar created_date_time: The date and time when the document was created.
-    :vartype created_date_time: ~datetime.datetime
+    :ivar created_at: The date and time when the document was created.
+    :vartype created_at: ~datetime.datetime
     :ivar authors: Document author(s).
     :vartype authors: list[~azure.healthinsights.radiologyinsights.models.DocumentAuthor]
     :ivar specialty_type: specialty type the document. Known values are: "pathology" and
@@ -2461,7 +2427,7 @@ class PatientDocument(_model_base.Model):
      patient. Required."""
     language: Optional[str] = rest_field()
     """A 2 letter ISO 639-1 representation of the language of the document."""
-    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
     """The date and time when the document was created."""
     authors: Optional[List["_models.DocumentAuthor"]] = rest_field()
     """Document author(s)."""
@@ -2483,10 +2449,57 @@ class PatientDocument(_model_base.Model):
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
         language: Optional[str] = None,
-        created_date_time: Optional[datetime.datetime] = None,
+        created_at: Optional[datetime.datetime] = None,
         authors: Optional[List["_models.DocumentAuthor"]] = None,
         specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = None,
         administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PatientEncounter(_model_base.Model):
+    """visit/encounter information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The id of the visit. Required.
+    :vartype id: str
+    :ivar period: Time period of the visit.
+     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end
+     to indicate the discharge time.
+    :vartype period: ~azure.healthinsights.radiologyinsights.models.TimePeriod
+    :ivar class_property: The class of the encounter. Known values are: "inpatient", "ambulatory",
+     "observation", "emergency", "virtual", and "healthHome".
+    :vartype class_property: str or ~azure.healthinsights.radiologyinsights.models.EncounterClass
+    """
+
+    id: str = rest_field()
+    """The id of the visit. Required."""
+    period: Optional["_models.TimePeriod"] = rest_field()
+    """Time period of the visit.
+     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
+     indicate the discharge time."""
+    class_property: Optional[Union[str, "_models.EncounterClass"]] = rest_field(name="class")
+    """The class of the encounter. Known values are: \"inpatient\", \"ambulatory\", \"observation\",
+     \"emergency\", \"virtual\", and \"healthHome\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        period: Optional["_models.TimePeriod"] = None,
+        class_property: Optional[Union[str, "_models.EncounterClass"]] = None,
     ):
         ...
 
@@ -2509,11 +2522,11 @@ class PatientRecord(_model_base.Model):
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
      request. Required.
     :vartype id: str
-    :ivar info: Patient structured information, including demographics and known structured
+    :ivar details: Patient structured information, including demographics and known structured
      clinical information.
-    :vartype info: ~azure.healthinsights.radiologyinsights.models.PatientDetails
+    :vartype details: ~azure.healthinsights.radiologyinsights.models.PatientDetails
     :ivar encounters: Patient encounters/visits.
-    :vartype encounters: list[~azure.healthinsights.radiologyinsights.models.Encounter]
+    :vartype encounters: list[~azure.healthinsights.radiologyinsights.models.PatientEncounter]
     :ivar patient_documents: Patient unstructured clinical data, given as documents.
     :vartype patient_documents:
      list[~azure.healthinsights.radiologyinsights.models.PatientDocument]
@@ -2522,10 +2535,10 @@ class PatientRecord(_model_base.Model):
     id: str = rest_field()
     """A given identifier for the patient. Has to be unique across all patients in a single request.
      Required."""
-    info: Optional["_models.PatientDetails"] = rest_field()
+    details: Optional["_models.PatientDetails"] = rest_field()
     """Patient structured information, including demographics and known structured clinical
      information."""
-    encounters: Optional[List["_models.Encounter"]] = rest_field()
+    encounters: Optional[List["_models.PatientEncounter"]] = rest_field()
     """Patient encounters/visits."""
     patient_documents: Optional[List["_models.PatientDocument"]] = rest_field(name="patientDocuments")
     """Patient unstructured clinical data, given as documents."""
@@ -2535,8 +2548,8 @@ class PatientRecord(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        info: Optional["_models.PatientDetails"] = None,
-        encounters: Optional[List["_models.Encounter"]] = None,
+        details: Optional["_models.PatientDetails"] = None,
+        encounters: Optional[List["_models.PatientEncounter"]] = None,
         patient_documents: Optional[List["_models.PatientDocument"]] = None,
     ):
         ...
@@ -2792,6 +2805,70 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class RadiologyInsightsJob(_model_base.Model):
+    """Response for the Radiology Insights request.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar job_data: The request data for the operation.
+    :vartype job_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
+    :ivar result: The result of the operation.
+    :vartype result:
+     ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult
+    :ivar id: The unique ID of the job. Required.
+    :vartype id: str
+    :ivar status: The status of the job. Required. Known values are: "notStarted", "running",
+     "succeeded", "failed", and "canceled".
+    :vartype status: str or ~azure.healthinsights.radiologyinsights.models.JobStatus
+    :ivar created_at: The date and time when the processing job was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar expires_at: The date and time when the processing job is set to expire.
+    :vartype expires_at: ~datetime.datetime
+    :ivar updated_at: The date and time when the processing job was last updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar error: Error object that describes the error when status is "Failed".
+    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    """
+
+    job_data: Optional["_models.RadiologyInsightsData"] = rest_field(name="jobData", visibility=["read", "create"])
+    """The request data for the operation."""
+    result: Optional["_models.RadiologyInsightsInferenceResult"] = rest_field(visibility=["read"])
+    """The result of the operation."""
+    id: str = rest_field(visibility=["read"])
+    """The unique ID of the job. Required."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """The status of the job. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", and \"canceled\"."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The date and time when the processing job was created."""
+    expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", visibility=["read"], format="rfc3339")
+    """The date and time when the processing job is set to expire."""
+    updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
+    """The date and time when the processing job was last updated."""
+    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    """Error object that describes the error when status is \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_data: Optional["_models.RadiologyInsightsData"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class RadiologyInsightsModelConfiguration(_model_base.Model):
     """Configuration affecting the Radiology Insights model's inference.
 
@@ -2875,73 +2952,6 @@ class RadiologyInsightsPatientResult(_model_base.Model):
         *,
         patient_id: str,
         inferences: List["_models.RadiologyInsightsInference"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class RadiologyInsightsResult(_model_base.Model):
-    """Response for the Radiology Insights request.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The unique ID of the operation. Required.
-    :vartype id: str
-    :ivar status: The status of the operation. Required. Known values are: "notStarted", "running",
-     "succeeded", "failed", and "canceled".
-    :vartype status: str or ~azure.healthinsights.radiologyinsights.models.JobStatus
-    :ivar created_date_time: The date and time when the processing job was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The date and time when the processing job is set to expire.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar last_update_date_time: The date and time when the processing job was last updated.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar error: Error object that describes the error when status is "Failed".
-    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
-    :ivar result: The result of the operation.
-    :vartype result:
-     ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult
-    """
-
-    id: str = rest_field(visibility=["read"])
-    """The unique ID of the operation. Required."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
-    """The status of the operation. Required. Known values are: \"notStarted\", \"running\",
-     \"succeeded\", \"failed\", and \"canceled\"."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job was created."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job is set to expire."""
-    last_update_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastUpdateDateTime", visibility=["read"], format="rfc3339"
-    )
-    """The date and time when the processing job was last updated."""
-    error: Optional["_models.Error"] = rest_field()
-    """Error object that describes the error when status is \"Failed\"."""
-    result: Optional["_models.RadiologyInsightsInferenceResult"] = rest_field()
-    """The result of the operation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.Error"] = None,
-        result: Optional["_models.RadiologyInsightsInferenceResult"] = None,
     ):
         ...
 
@@ -3082,8 +3092,6 @@ class RecommendationFinding(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     :ivar critical_finding: Critical result linked to a recommendation.
@@ -3092,10 +3100,10 @@ class RecommendationFinding(_model_base.Model):
      "present", "differential", "ruleOut", and "conditional".
     :vartype recommendation_finding_status: str or
      ~azure.healthinsights.radiologyinsights.models.RecommendationFindingStatusType
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
     finding: Optional["_models.Observation"] = rest_field()
     """Finding linked to a recommendation."""
     critical_finding: Optional["_models.CriticalResult"] = rest_field(name="criticalFinding")
@@ -3105,15 +3113,17 @@ class RecommendationFinding(_model_base.Model):
     )
     """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
 
     @overload
     def __init__(
         self,
         *,
         recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"],
-        extension: Optional[List["_models.Extension"]] = None,
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
+        extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
 
@@ -3171,6 +3181,10 @@ class Reference(Element):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class RequestIdResponseHeader(_model_base.Model):
+    """Provides the 'x-ms-request-id' header to enable request correlation in responses."""
 
 
 class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: disable=too-many-instance-attributes
