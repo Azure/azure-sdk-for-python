@@ -859,6 +859,14 @@ try:
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
+        # uamqp doesn't have the ability to wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            if not handler._session and message._lock_expired:
+                raise MessageLockLostError(
+                    message="The lock on the message lock has expired.",
+                    error=message.auto_renew_error,
+                )
             UamqpTransport.settle_message_via_receiver_link_impl(
                 handler,
                 message,

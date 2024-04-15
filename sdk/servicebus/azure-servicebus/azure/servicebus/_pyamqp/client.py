@@ -939,6 +939,20 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 break
         return batch
 
+    @staticmethod
+    def _process_receive_error(message_delivery, condition, description=None, info=None):
+        # TODO: Do we want to raise MessageSendFailed/MessageException here?
+        try:
+            amqp_condition = ErrorCondition(condition)
+        except ValueError:
+            error = MessageException(condition, description=description, info=info)
+        else:
+            error = MessageSendFailed(
+                amqp_condition, description=description, info=info
+            )
+        message_delivery.state = MessageDeliveryState.Error
+        message_delivery.error = error
+
     def close(self):
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
@@ -1026,6 +1040,42 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             if self._shutdown:
                 self.close()
 
+    def _on_disposition_received(self, message_delivery, reason, state):
+        for state_key in state:
+            state_error = state[state_key]
+        message_delivery.reason = reason
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            if state and (len(state_error) == 0 or state_error[0] is None):
+                message_delivery.state = MessageDeliveryState.Ok
+            else:
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2]
+                    )
+                except TypeError:
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=ErrorCondition.UnknownError
+                    )
+        elif reason == LinkDeliverySettleReason.SETTLED:
+            message_delivery.state = MessageDeliveryState.Ok
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
+        else:
+            # NotDelivered and other unknown errors
+            self._process_receive_error(
+                message_delivery,
+                condition=ErrorCondition.UnknownError
+            )
+
+
+
+
     @overload
     def settle_messages(
         self,
@@ -1091,6 +1141,10 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
+        # TODO: timeout is not used here, should it be?
+        timeout = kwargs.pop("timeout", 0)
+        expire_time = (time.time() + timeout) if timeout else None
+
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -1108,12 +1162,45 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         except TypeError:
             first = delivery_id
             last = None
+
+
+        message_delivery = _MessageDelivery(
+            None,
+            MessageDeliveryState.WaitingToBeSent,
+            expire_time
+        )
+        on_disposition_received = partial(self._on_disposition_received, message_delivery)
+
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=False,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            on_disposition=on_disposition_received,
         )
+
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            running = self.do_work()
+
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Settlement failed - connection not running."
+            )
+
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout
+        ):
+            try:
+                raise message_delivery.error  # pylint: disable=raising-bad-type
+            except TypeError:
+                # This is a default handler
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

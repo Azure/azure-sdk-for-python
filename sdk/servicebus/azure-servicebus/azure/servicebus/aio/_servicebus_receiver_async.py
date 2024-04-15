@@ -22,7 +22,6 @@ from typing import (
     cast
 )
 
-from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -61,6 +60,7 @@ from .._common.tracing import (
     SPAN_NAME_PEEK,
 )
 from ._async_utils import create_authentication
+from ..exceptions import ServiceBusConnectionError
 
 if TYPE_CHECKING:
     try:
@@ -88,8 +88,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     The two primary channels for message receipt are `receive()` to make a single request for messages,
     and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
-    Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.aio.ServiceBusClient to create a
-    ServiceBusReceiver instance.
+    **Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.aio.ServiceBusClient to create a
+    ServiceBusReceiver instance.**
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -141,7 +141,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
      `max_message_count` (if provided) within its request to the service.
-     WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+     **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
      Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -319,7 +319,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
          `max_message_count` (if provided) within its request to the service.
-         WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -433,20 +433,23 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
             # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
-                link_credit_needed = max_message_count - len(batch)
-                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
+                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count)
 
             first_message_received = expired = False
             receiving = True
-            while receiving and not expired and len(batch) < max_message_count:
+            drain_receive = False
+            while receiving and (drain_receive or not self._handler._link._sent_drain) and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
                         abs_timeout
                         and self._amqp_transport.get_current_time(amqp_receive_client)
                         > abs_timeout
                     ):
-                        expired = True
-                        break
+                        # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
+                        if not drain_receive:
+                            await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
+                        drain_receive = True
+                        
                     before = received_messages_queue.qsize()
                     receiving = await amqp_receive_client.do_work_async()
                     received = received_messages_queue.qsize() - before
@@ -485,16 +488,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        # The following condition check is a hot fix for settling a message received for non-session queue after
-        # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-        if not self._session and message._lock_expired:
-            raise MessageLockLostError(
-                message="The lock on the message lock has expired.",
-                error=message.auto_renew_error,
-            )
         link = get_span_link_from_message(message)
         trace_links = [link] if link else []
         with settle_trace_context_manager(self, settle_operation, links=trace_links):
@@ -527,7 +520,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
