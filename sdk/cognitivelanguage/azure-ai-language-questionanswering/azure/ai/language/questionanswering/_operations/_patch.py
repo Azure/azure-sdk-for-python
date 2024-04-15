@@ -216,7 +216,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
     # pylint ignore b/c with overloads we need to doc ALL the params in the impl for them to show up in docs
     # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
     @distributed_trace
-    def get_answers(self, *args: AnswersOptions, **kwargs: Any) -> AnswersResult:
+    def get_answers(self, *args: AnswersOptions, **kwargs: Any) -> AnswersResult:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Answers the specified question using your knowledge base.
 
         :param options: Positional only. POST body of the request. Provide either `options`, OR
@@ -302,7 +302,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         """
 
     @distributed_trace
-    def get_answers_from_text(self, *args: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
+    def get_answers_from_text(self, *args: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Answers the specified question using the provided text in the body.
 
         :param options: Positional only. POST body of the request. Provide either `options`, OR
