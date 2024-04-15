@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import pytest
 from testcase import WebpubsubPowerShellPreparer
 from testcase_async import WebpubsubAsyncTest
 from devtools_testutils.aio import recorded_by_proxy_async
