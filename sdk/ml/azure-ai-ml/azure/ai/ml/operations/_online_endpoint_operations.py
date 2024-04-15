@@ -27,6 +27,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import (
     AAD_TOKEN,
     AAD_TOKEN_RESOURCE_ENDPOINT,
+    EMPTY_CREDENTIALS_ERROR,
     KEY,
     AzureMLResourceType,
     LROConfigurations,
@@ -103,7 +104,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
-    def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
+    def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken, EndpointAadToken]:
         """Get the auth credentials.
 
         :param name: The endpoint name
@@ -392,7 +393,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             )
 
         if auth_mode is not None and auth_mode.lower() == AAD_TOKEN:
-            return EndpointAadToken(self._credentials.get_token(*_resource_to_scopes(AAD_TOKEN_RESOURCE_ENDPOINT)))
+            if self._credentials:
+                return EndpointAadToken(self._credentials.get_token(*_resource_to_scopes(AAD_TOKEN_RESOURCE_ENDPOINT)))
+            raise Exception(EMPTY_CREDENTIALS_ERROR)
 
         return self._online_operation.get_token(
             resource_group_name=self._resource_group_name,

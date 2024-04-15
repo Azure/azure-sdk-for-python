@@ -638,7 +638,7 @@ class EndpointAadToken:
     """
 
     def __init__(self, obj: AccessToken):
-        """Constuctor for Endpoint aad token.
+        """Constructor for Endpoint aad token.
 
         :param obj: Access token object
         :type obj: AccessToken

@@ -17,7 +17,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import AAD_TOKEN_RESOURCE_ENDPOINT, AzureMLResourceType, HttpResponseStatusCode
+from azure.ai.ml.constants._common import (
+    AAD_TOKEN_RESOURCE_ENDPOINT,
+    EMPTY_CREDENTIALS_ERROR,
+    AzureMLResourceType,
+    HttpResponseStatusCode,
+)
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.operations import (
     DatastoreOperations,
@@ -303,6 +308,21 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._credentials.get_token.assert_called_once_with(
             *_resource_to_scopes(AAD_TOKEN_RESOURCE_ENDPOINT)
         )
+
+    def test_online_aad_get_token_with_empty_credentials(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mock_aml_services_2022_02_01_preview: Mock,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
+            name=random_name,
+            location="eastus",
+            properties=RestOnlineEndpoint(auth_mode="aadtoken"),
+        )
+        with pytest.raises(Exception) as ex:
+            mock_online_endpoint_operations.get_keys(name=random_name)
+        assert EMPTY_CREDENTIALS_ERROR in str(ex)
 
     def test_online_delete(
         self,

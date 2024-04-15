@@ -58,6 +58,9 @@ AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
 AAD_TOKEN = "aadtoken"
 AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
+EMPTY_CREDENTIALS_ERROR = (
+    "Credentials unavailable. Initialize credentials using 'MLClient' for SDK or 'az login' for CLI."
+)
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
