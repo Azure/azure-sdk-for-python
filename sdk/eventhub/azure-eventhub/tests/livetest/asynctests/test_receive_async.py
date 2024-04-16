@@ -13,7 +13,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     uamqp = None
 
-from azure.eventhub import EventData, TransportType
+from azure.eventhub import EventData, TransportType, ReplicationSegment
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub._pyamqp._message_backcompat import LegacyMessage
@@ -31,6 +31,7 @@ async def test_receive_end_of_stream_async(connstr_senders, uamqp_transport):
             event_str = str(event)
             assert ", offset: " in event_str
             assert ", sequence_number: " in event_str
+            assert ", replication_segment: " in event_str
             assert ", enqueued_time: " in event_str
             assert ", partition_key: 0" in event_str
         if uamqp_transport:
@@ -74,6 +75,7 @@ async def test_receive_end_of_stream_async(connstr_senders, uamqp_transport):
 async def test_receive_with_event_position_async(connstr_senders, position, inclusive, expected_result, uamqp_transport):
     async def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
+        assert partition_context.last_enqueued_event_properties.get('replication_segment') == event.replication_segment
         assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
         assert partition_context.last_enqueued_event_properties.get('enqueued_time') == event.enqueued_time
         assert partition_context.last_enqueued_event_properties.get('retrieval_time') is not None
@@ -81,7 +83,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
         if position == "offset":
             on_event.event_position = event.offset
         elif position == "sequence":
-            on_event.event_position = event.sequence_number
+            on_event.event_position = ReplicationSegment(sequence_number=event.sequence_number, replication_segment=event.replication_segment)
         else:
             on_event.event_position = event.enqueued_time
         on_event.event = event

@@ -13,7 +13,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     uamqp = None
 
-from azure.eventhub import EventData, TransportType, EventHubConsumerClient
+from azure.eventhub import EventData, TransportType, EventHubConsumerClient, ReplicationSegment
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub._pyamqp._message_backcompat import LegacyMessage
 
@@ -64,6 +64,7 @@ def test_receive_end_of_stream(connstr_senders, uamqp_transport):
 def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, position, inclusive, expected_result):
     def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
+        assert partition_context.last_enqueued_event_properties.get('replication_segment') == event.replication_segment
         assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
         assert partition_context.last_enqueued_event_properties.get('enqueued_time') == event.enqueued_time
         assert partition_context.last_enqueued_event_properties.get('retrieval_time') is not None
@@ -72,6 +73,7 @@ def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, posi
             on_event.event_position = event.offset
         elif position == "sequence":
             on_event.event_position = event.sequence_number
+            on_event.event_position = event.replication_segment
         else:
             on_event.event_position = event.enqueued_time
         on_event.event = event

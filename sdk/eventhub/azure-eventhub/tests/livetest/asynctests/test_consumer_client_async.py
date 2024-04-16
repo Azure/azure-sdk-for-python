@@ -3,7 +3,7 @@ import asyncio
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
-from azure.eventhub import EventData
+from azure.eventhub import EventData, ReplicationSegment
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
@@ -30,14 +30,23 @@ async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport
     async def on_event(partition_context, event):
         await partition_context.update_checkpoint(event)
         sequence_num = event.sequence_number
+        replication_seg = event.replication_segment
         if partition_context.partition_id == "0":
             if sequence_num in sequence_numbers_0:
                 assert False
-            sequence_numbers_0.append(sequence_num)
+            sequence_numbers_0.append(
+                ReplicationSegment(
+                    sequence_number=sequence_num, replication_segment=replication_seg
+                )
+            )
         else:
             if sequence_num in sequence_numbers_1:
                 assert False
-            sequence_numbers_1.append(sequence_num)
+            sequence_numbers_1.append(
+                ReplicationSegment(
+                    sequence_number=sequence_num, replication_segment=replication_seg
+                )
+            )
 
     async with client:
         task = asyncio.ensure_future(
@@ -87,6 +96,7 @@ async def test_receive_no_partition_async(connstr_senders, uamqp_transport):
         on_event.consumer_group = partition_context.consumer_group
         on_event.offset = event.offset
         on_event.sequence_number = event.sequence_number
+        on_event.replication_segment = event.replication_segment
 
     on_event.received = 0
 
@@ -95,6 +105,7 @@ async def test_receive_no_partition_async(connstr_senders, uamqp_transport):
     on_event.consumer_group = None
     on_event.offset = None
     on_event.sequence_number = None
+    on_event.replication_segment = None
 
     async with client:
         task = asyncio.ensure_future(
@@ -107,7 +118,7 @@ async def test_receive_no_partition_async(connstr_senders, uamqp_transport):
         )
         assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event.offset]) > 0
         assert len(
-            [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number]) > 0
+            [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number and checkpoint["replication_segment"] == on_event.replication_segment]) > 0
 
     await task
 
@@ -179,6 +190,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders, uamqp_trans
         on_event_batch.consumer_group = partition_context.consumer_group
         on_event_batch.offset = event_batch[-1].offset
         on_event_batch.sequence_number = event_batch[-1].sequence_number
+        on_event_batch.replication_segment = event_batch[-1].replication_segment
 
     on_event_batch.received = 0
     on_event_batch.namespace = None
@@ -186,6 +198,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders, uamqp_trans
     on_event_batch.consumer_group = None
     on_event_batch.offset = None
     on_event_batch.sequence_number = None
+    on_event_batch.replication_segment = None
 
     async with client:
         task = asyncio.ensure_future(
@@ -198,7 +211,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders, uamqp_trans
         )
         assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event_batch.offset]) > 0
         assert len(
-            [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event_batch.sequence_number]) > 0
+            [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event_batch.sequence_number and checkpoint["replication_segment"] == on_event_batch.replication_segment]) > 0
 
     await task
 

@@ -219,8 +219,8 @@ async def test_partition_processor():
             if event:
                 nonlocal checkpoint, event_map
                 event_map[partition_context.partition_id] = event_map.get(partition_context.partition_id, 0) + 1
-                offset, sn = event.offset, event.sequence_number
-                checkpoint = (offset, sn)
+                offset, sn, rs = event.offset, event.sequence_number, event.replication_segment
+                checkpoint = (offset, sn, rs)
                 await partition_context.update_checkpoint(event)
 
     async def partition_close_handler(partition_context, reason):

@@ -40,9 +40,10 @@ def test_constructor(test_input, expected_result):
         assert event_data.enqueued_time is None
         assert event_data.offset is None
         assert event_data.sequence_number is None
+        assert event_data.replication_segment is None
         assert len(event_data.system_properties) == 0
         assert str(event_data) == "{{ body: '{}', properties: {{}} }}".format(expected_result)
-        assert repr(event_data) == "EventData(body='{}', properties={{}}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)".format(expected_result)
+        assert repr(event_data) == "EventData(body='{}', properties={{}}, offset=None, sequence_number=None, replication_segment=None, partition_key=None, enqueued_time=None)".format(expected_result)
         with pytest.raises(TypeError):
             event_data.body_as_json()
 
@@ -50,7 +51,7 @@ def test_constructor(test_input, expected_result):
 def test_body_json():
     event_data = EventData('{"a":"b"}')
     assert str(event_data) == "{ body: '{\"a\":\"b\"}', properties: {} }"
-    assert repr(event_data) == "EventData(body='{\"a\":\"b\"}', properties={}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
+    assert repr(event_data) == "EventData(body='{\"a\":\"b\"}', properties={}, offset=None, sequence_number=None, replication_segment=None, partition_key=None, enqueued_time=None)"
     jo = event_data.body_as_json()
     assert jo["a"] == "b"
 
@@ -66,7 +67,7 @@ def test_app_properties():
     event_data = EventData("")
     event_data.properties = app_props
     assert str(event_data) == "{ body: '', properties: {'a': 'b'} }"
-    assert repr(event_data) == "EventData(body='', properties={'a': 'b'}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
+    assert repr(event_data) == "EventData(body='', properties={'a': 'b'}, offset=None, sequence_number=None, replication_segment=None, partition_key=None, enqueued_time=None)"
     assert event_data.properties["a"] == "b"
 
 

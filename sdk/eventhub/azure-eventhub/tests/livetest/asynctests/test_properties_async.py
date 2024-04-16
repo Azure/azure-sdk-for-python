@@ -84,6 +84,8 @@ async def test_get_partition_properties(live_eventhub, uamqp_transport):
             and properties['id'] == '0' \
             and 'beginning_sequence_number' in properties \
             and 'last_enqueued_sequence_number' in properties \
+            and 'beginning_replication_segment' in properties \
+            and 'last_enqueued_replication_segment' in properties \
             and 'last_enqueued_offset' in properties \
             and 'last_enqueued_time_utc' in properties \
             and 'is_empty' in properties
