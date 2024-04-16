@@ -24,14 +24,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
+
+from azure.developer.devcenter import DevCenterClient
+from azure.developer.devcenter.models import PowerState
+from azure.identity import DefaultAzureCredential
+
 """
 FILE: create_devbox_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to create, connect and delete a dev box using python DevCenterClient. For this sample,
-    you must have previously configured DevCenter, Project, Network Connection, Dev Box Definition, and Pool.More details 
-    on how to configure those requirements at https://learn.microsoft.com/azure/dev-box/quickstart-configure-dev-box-service
-
+    This sample demonstrates how to restart, stop and start a dev box using python DevCenterClient. 
+    For this sample, you must have a running dev box. More details on how to create a dev box 
+    at create_devbox_sample.py sample in this folder
 
 USAGE:
     python create_devbox_sample.py
@@ -39,14 +44,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
-
-
-
-import os
-
-from azure.developer.devcenter import DevCenterClient
-from azure.identity import DefaultAzureCredential
-
 
 def get_project_name(LOG, client):
     projects = list(client.projects.list_by_dev_center)
@@ -65,51 +62,38 @@ def main():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # [START create_dt_client_with_key]
-    # List available Projects 
-    projects = client.list_projects()
-    if projects:
-        print("\nList of projects: ")
-        for project in projects:
-            print(f"{project.name}")
+    # List Dev Boxes 
+    dev_boxes = client.list_all_dev_boxes_by_user("me")
+    if dev_boxes:
+        print("List of dev boxes: ")
+        for dev_box in dev_boxes:
+            print(f"{dev_box.name}")
         
-        # Select first project in the list
-        target_project_name = list(projects)[0].name
+        # Select first dev box in the list
+        target_dev_box = list(dev_boxes)[0]
     else:
-        raise ValueError("Missing Project - please create one before running the example")
-    # [END create_dt_client_with_key]
-
-    # List available Pools
-    pools = client.list_pools(target_pool_name)
-    if pools:
-        print("\nList of pools: ")
-        for pool in pools:
-            print(f"{pool.name}")
-        
-        # Select first pool in the list
-        target_pool_name = list(pools)[0].name
-    else:
-        raise ValueError("Missing Pool - please create one before running the example")
+        raise ValueError("Missing Dev Box - please create one before running the example.")
     
-    # Stand up a new Dev Box
-    print(f"\nStarting to create devbox in project {target_project_name} and pool {target_pool_name}")
+    # Get the target dev box properties
+    project_name = target_dev_box.project_name
+    user = target_dev_box.user
+    dev_box_name = target_dev_box.name
 
-    create_response = client.begin_create_dev_box(
-        target_project_name, "me", "Test_DevBox", {"poolName": target_pool_name}
-    )
-    devbox = create_response.result()
-    print(f"Provisioned dev box with status {devbox.provisioning_state}.")
+    # Stop dev box if it's running
+    if target_dev_box.power_state == PowerState.Running :
+        stop_response = client.begin_stop_dev_box(project_name, user, dev_box_name)
+        stop_result = stop_response.result()
+        print(f"Stopping dev box completed with status {stop_result.status}")
 
-    # Connect to the provisioned Dev Box
-    remote_connection = client.get_remote_connection(target_project_name, "me", devbox.name)
-    print(f"Connect to the dev box using web URL {remote_connection.web_url}")
+    # At this point we should have a stopped dev box . Let's start it
+    start_response = client.begin_start_dev_box(project_name, user, dev_box_name)
+    start_result = start_response.result()
+    print(f"Starting dev box completed with status {start_result.status}")
 
-    # Tear down the Dev Box when finished
-    print(f"Starting to delete dev box.") 
-
-    delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
-    delete_result = delete_response.result()
-    print(f"Completed deletion for the dev box with status {delete_result.status}")
+    # Restart the dev box
+    restart_response = client.begin_restart_dev_box(project_name, user, dev_box_name)
+    restart_result = restart_response.result()
+    print(f"Done restarting the dev box with status {start_result.status}")
 
 if __name__ == "__main__":
     main()
