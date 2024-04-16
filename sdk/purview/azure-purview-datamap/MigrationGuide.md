@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to Azure Purview DataMap client library [`azure-purview-datamap`](https://pypi.org/project/azure-purview-datamap/) from [`azure-purview-catalog`](https://pypi.org/project/azure-purview-catalog/). It will focus on side-by-side comparisons for similar operations between the two packages.
 
-For those new to the Purview Data Map library, please refer to the [`azure-purview-datamap` readme](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/purview/azure-purview-datamap/README.md) and [`azure-purview-datamap` samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-datamap/samples) for the `azure-purview-datamap` library rather than this guide.
+For those new to the Purview Data Map library, please refer to the README file and samples in [`azure-purview-datamap`](https://aka.ms/azure-sdk-for-python/purview-datamap) for the `azure-purview-datamap` library rather than this guide.
 
 ## Table of contents
 
