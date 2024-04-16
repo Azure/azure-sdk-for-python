@@ -6,7 +6,7 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 The live tests were written against the AI models mentioned below. You will need to deploy them in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
 
-- TBD (fro chat completion tests)
+- llama-2-13b (fro chat completion tests)
 - TBD (for embedding tests)
 - TBD (for image generation tests)
 

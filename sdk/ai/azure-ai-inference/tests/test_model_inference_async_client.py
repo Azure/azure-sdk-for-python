@@ -18,7 +18,6 @@ class TestImageAnalysisAsyncClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
-    # Test two async chat completions with chat history
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_error_free(self, **kwargs):
@@ -39,7 +38,6 @@ class TestImageAnalysisAsyncClient(ModelClientTestBase):
         self._validate_chat_completions_result(result, ["1760", "1,760"])
         await client.close()
 
-    # Test one embeddings async call
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_async_embeddings_error_free(self, **kwargs):
@@ -55,16 +53,18 @@ class TestImageAnalysisAsyncClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
-    # Test one chat completion async call with bad key (authentication failure)
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_embeddings_with_auth_failure(self, **kwargs):
         client = self._create_embeddings_client(sync=False, bad_key=True, **kwargs)
+        exception_caught = False
         try:
             result = await client.create(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
+            exception_caught = True
             print(e)
             assert hasattr(e, "status_code")
             assert e.status_code == 401
             assert "unauthorized" in e.message.lower()
         await client.close()
+        assert exception_caught

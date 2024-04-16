@@ -19,7 +19,6 @@ class TestModelClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
-    # Test one chat completion
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_error_free(self, **kwargs):
@@ -29,7 +28,6 @@ class TestModelClient(ModelClientTestBase):
         self._validate_chat_completions_result(result, ["5280", "5,280"])
         client.close()
 
-    # Test one embeddings call
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
     def test_embeddings_error_free(self, **kwargs):
@@ -49,26 +47,31 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_chat_completion_with_auth_failure(self, **kwargs):
         client = self._create_chat_client(bad_key=True, **kwargs)
+        exception_caught = False
         try:
             result = client.create(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         except AzureError as e:
+            exception_caught = True
             print(e)
             assert hasattr(e, "status_code")
             assert e.status_code == 401
             assert "unauthorized" in e.message.lower()
         client.close()
+        assert exception_caught
 
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_embeddings_on_chat_completion_endpoint(self, **kwargs):
         client = self._create_embeddings_client_with_chat_completions_credentials(**kwargs)
+        exception_caught = False
         try:
             result = client.create(input=["first phrase", "second phrase", "third phrase"])
         except AzureError as e:
+            exception_caught = True
             print(e)
             assert hasattr(e, "status_code")
             assert e.status_code == 404
             assert "not found" in e.message.lower()
         client.close()
-
+        assert exception_caught
