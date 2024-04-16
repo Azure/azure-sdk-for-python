@@ -635,7 +635,7 @@ class TableClient(TablesBaseClient):
                 :end-before: [END upsert_entity]
                 :language: python
                 :dedent: 16
-                :caption: Updating/Merging or Inserting an entity into a table
+                :caption: Replacing/Merging or Inserting an entity into a table
         """
         entity_json = _add_entity_properties(entity)
         partition_key = entity_json["PartitionKey"]
