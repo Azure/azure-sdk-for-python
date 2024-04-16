@@ -45,6 +45,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "six": "1.12.0",
     "cryptography": "3.3.2",
     "msal": "1.23.0",
+    "azure-storage-file-datalake": "12.2.0",
 }
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {
