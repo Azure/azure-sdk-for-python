@@ -3963,29 +3963,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _append_block_options( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+    def _append_block_options(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if isinstance(data, str):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if length == 0:
-            return {}
-        if isinstance(data, bytes):
-            data = data[:length]
+        encoding = kwargs.pop('encoding', 'utf-8')
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
+
+        structured_type, structured_length = None, None
+        if validate_content == 'crc64':
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)
-        validate_content = kwargs.pop('validate_content', False)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -4004,26 +4000,26 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                                encryption_algorithm=cpk.algorithm)
         options = {
             'body': data,
-            'content_length': length,
+            'content_length': content_length,
             'timeout': kwargs.pop('timeout', None),
-            'transactional_content_md5': None,
             'lease_access_conditions': access_conditions,
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
+            'validate_content': validate_content if validate_content is True else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'structured_body_type': structured_type,
+            'structured_content_length': structured_length,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
 
     @distributed_trace
-    def append_block( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_block(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
@@ -4031,13 +4027,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type data: bytes or str or Iterable
         :param int length:
             Size of the block in bytes.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob

@@ -291,3 +291,46 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         result = blob.download_blob()
         assert result.readall() == content * 2
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_append_block(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data1 = b'abc' * 512
+        data2 = '你好世界' * 10
+
+        # Act
+        blob.create_append_blob()
+        blob.append_block(data1, validate_content=a)
+        blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+
+        # Assert
+        content = blob.download_blob()
+        assert content.readall() == data1 + data2.encode('utf-8-sig')
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.live_test_only
+    def test_append_block_large(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data1 = b'abcde' * 1024 * 1024  # 5 MiB
+        data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+
+        # Act
+        blob.create_append_blob()
+        blob.append_block(data1, validate_content=a)
+        blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+
+        # Assert
+        content = blob.download_blob()
+        assert content.readall() == data1 + data2

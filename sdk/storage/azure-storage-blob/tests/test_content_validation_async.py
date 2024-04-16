@@ -291,3 +291,48 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         result = await blob.download_blob()
         assert await result.readall() == content * 2
         await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_append_block(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data1 = b'abc' * 512
+        data2 = '你好世界' * 10
+
+        # Act
+        await blob.create_append_blob()
+        await blob.append_block(data1, validate_content=a)
+        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+
+        # Assert
+        content = await blob.download_blob()
+        assert await content.readall() == data1 + data2.encode('utf-8-sig')
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.live_test_only
+    async def test_append_block_large(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data1 = b'abcde' * 1024 * 1024  # 5 MiB
+        data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+
+        # Act
+        await blob.create_append_blob()
+        await blob.append_block(data1, validate_content=a)
+        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+
+        # Assert
+        content = await blob.download_blob()
+        assert content.readall() == data1 + data2
+        await self._teardown()
