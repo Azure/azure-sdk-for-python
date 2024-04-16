@@ -283,6 +283,7 @@ class Coding(Element):
 
 
 class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"):
+     # pylint: disable=line-too-long
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
@@ -575,7 +576,7 @@ class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=t
     """Additional information about the Condition."""
 
     @overload
-    def __init__(
+    def __init__(# pylint: disable=too-many-locals
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -1161,6 +1162,7 @@ class FindingOptions(_model_base.Model):
 
 
 class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="followupCommunication"):
+     # pylint: disable=line-too-long
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
@@ -1211,6 +1213,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
 
 
 class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
+    # pylint: disable=line-too-long
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
@@ -1693,6 +1696,7 @@ class InnerError(_model_base.Model):
 
 
 class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
+     # pylint: disable=line-too-long
     """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
@@ -1744,6 +1748,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
 
 
 class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"):
+     # pylint: disable=line-too-long
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
@@ -2076,7 +2081,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
     """Component results."""
 
     @overload
-    def __init__(
+    def __init__(# pylint: disable=too-many-locals
         self,
         *,
         status: Union[str, "_models.ObservationStatusCodeType"],
@@ -3328,7 +3333,7 @@ class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: d
     """A goal for the study."""
 
     @overload
-    def __init__(
+    def __init__(# pylint: disable=too-many-locals
         self,
         *,
         status: Union[str, "_models.ResearchStudyStatusCodeType"],
