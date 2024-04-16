@@ -10,7 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestImageAnalysisAsyncClient(ModelClientTestBase):
+class TestModelAsyncClient(ModelClientTestBase):
 
     # **********************************************************************************
     #

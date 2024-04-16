@@ -62,7 +62,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         else:
             return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
-    def _create_embeddings_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient | async_sdk.EmbeddingsClient:
+    def _create_embeddings_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs) -> Union[sdk.EmbeddingsClient, async_sdk.EmbeddingsClient]:
         endpoint = kwargs.pop("embeddings_endpoint")
         key = "00000000000000000000000000000000" if bad_key else kwargs.pop("embeddings_key")
         credential = AzureKeyCredential(key)
