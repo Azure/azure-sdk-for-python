@@ -158,7 +158,6 @@ Currently, the features below are **not supported**. For alternatives options, c
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
-* Change Feed: Read specific time
 * Cross-partition ORDER BY for mixed types
 * Enabling diagnostics for async query-type methods
 

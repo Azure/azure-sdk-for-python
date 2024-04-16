@@ -123,16 +123,25 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
+    def update(
+        self,
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs,
+    ) -> None:
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
         :raises ValueError:
 
@@ -150,8 +159,6 @@ class TableBatchOperations(object):
         partition_key = _prepare_key(entity["PartitionKey"])
         row_key = _prepare_key(entity["RowKey"])
 
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             if hasattr(entity, "metadata"):
                 etag = entity.metadata.get("etag")
@@ -188,14 +195,22 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def delete(self, entity: EntityType, **kwargs) -> None:
+    def delete(
+        self,
+        entity: EntityType,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs,
+    ) -> None:
         """Adds a delete operation to the current branch.
 
-        param entity: The properties for the table entity.
+        :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
-        :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :keyword etag: Etag of the entity.
+        :paramtype etag: str or None
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions or None
         :return: None
         :raises: ValueError
 
@@ -209,19 +224,16 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
-            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
-        )
         request = build_table_delete_entity_request(
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
-            etag=etag,
-            match_condition=match_condition,
+            etag=etag,  # type: ignore[arg-type] # Set None to skip checking etag.
+            match_condition=_get_match_condition(
+                etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+            ),
             version=self._config.version,
             **kwargs,
         )
@@ -229,7 +241,7 @@ class TableBatchOperations(object):
         self.requests.append(request)
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
-        """Adds an upsert (update/merge) operation to the batch.
+        """Adds an upsert (merge or replace) operation to the batch.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
