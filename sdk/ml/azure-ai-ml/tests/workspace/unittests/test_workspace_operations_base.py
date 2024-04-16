@@ -113,7 +113,7 @@ class TestWorkspaceOperation:
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
-        mock_workspace_operation_base.begin_create(workspace=Workspace(name="name", kind="FeatureStore"))
+        mock_workspace_operation_base.begin_create(workspace=Workspace(name="name", type="FeatureStore"))
 
     def test_begin_create_with_resource_group(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture

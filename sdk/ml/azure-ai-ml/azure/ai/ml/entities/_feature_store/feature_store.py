@@ -134,7 +134,7 @@ class FeatureStore(Workspace):
             name=name,
             description=description,
             tags=tags,
-            kind=FEATURE_STORE_KIND,
+            type=FEATURE_STORE_KIND,
             display_name=display_name,
             location=location,
             resource_group=resource_group,

@@ -128,9 +128,20 @@ class Workspace(Resource):
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
-        # Convert type to kind internally. Type is surfaced for polymorphic classes,
-        # but kind matches backend API naming.
-        self._type = kwargs.pop("type", WorkspaceType.DEFAULT)
+
+        # Workspaces have subclasses that are differentiated by the type field in the REST API, where
+        # it is called 'kind' instead. We use type for SDK consistency's sake, but quietly support kind
+        # to maintain backwards compatibility with internal systems that I suspect still use kind somewhere.
+        # type takes precedence over type if they're both set, and this defaults to a normal workspace's type
+        # if nothing is set.
+        self._type = kwargs.pop("type", None)
+        kind = kwargs.pop("kind", None)
+        if self._type is None:
+            if kind is not None:
+                self._type = kind
+            else:
+                self._type = WorkspaceType.DEFAULT
+        
         self.print_as_yaml = True
         self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri: Optional[str] = kwargs.pop("mlflow_tracking_uri", None)
@@ -282,7 +293,7 @@ class Workspace(Resource):
         }
         workspace_type, type_str = cls._resolve_cls_and_type(data, params_override)
         schema_type = workspace_type._get_schema_class()  # pylint: disable=protected-access
-        laoded_schema = load_from_dict(
+        loaded_schema = load_from_dict(
             schema_type,
             data=data,
             context=context,
@@ -290,7 +301,7 @@ class Workspace(Resource):
             f" please specify the correct job type in the 'type' property.",
             **kwargs,
         )
-        result = workspace_type(**laoded_schema)
+        result = workspace_type(**loaded_schema)
         if yaml_path:
             result._source_path = yaml_path  # pylint: disable=protected-access
         return result

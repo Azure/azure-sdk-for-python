@@ -57,7 +57,7 @@ def get_test_rest_workspace_with_all_details() -> RestWorkspace:
         status=RestManagedNetworkProvisionStatus(status="Active", spark_ready=False),
     )
     rest_hub_config = RestWorkspaceHubConfig(
-        additional_workspace_storage_accounts=["sa1", "sa2"], default_workspace_resource_group="somerg"
+        default_workspace_resource_group="somerg"
     )
     rest_feature_store_settings = RestFeatureStoreSettings(
         offline_store_connection_name="somevalue1", online_store_connection_name="somevalue2"
@@ -163,9 +163,7 @@ class TestWorkspaceEntity:
         assert sdk_hub.identity.type == "system_assigned"
 
         # specific to hub
-        assert "sa1" in sdk_hub.additional_workspace_storage_accounts
-        assert "sa2" in sdk_hub.additional_workspace_storage_accounts
-        assert sdk_hub.default_workspace_resource_group == "somerg"
+        assert sdk_hub.default_project_resource_group == "somerg"
 
     def test_feature_store_entity_from_rest_to_ensure_restclient_versions_match(self):
         rest_ws = get_test_rest_workspace_with_all_details()

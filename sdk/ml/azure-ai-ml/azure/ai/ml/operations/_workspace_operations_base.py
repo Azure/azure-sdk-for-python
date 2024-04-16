@@ -79,9 +79,9 @@ class WorkspaceOperationsBase(ABC):
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
-        if obj is not None and obj.kind.lower() == WorkspaceType.HUB:
+        if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceType.HUB:
             return Hub._from_rest_object(obj)
-        if obj is not None and obj.kind.lower() == WorkspaceType.PROJECT:
+        if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceType.PROJECT:
             return Project._from_rest_object(obj)
         return Workspace._from_rest_object(obj)
 
