@@ -334,3 +334,26 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         content = blob.download_blob()
         assert content.readall() == data1 + data2
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_upload_page(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data1 = b'abc' * 512
+        data2 = "你好世界abcd" * 32
+        data2_encoded_len = 512
+
+        # Act
+        blob.create_page_blob(5 * 1024)
+        blob.upload_page(data1, offset=0, length=len(data1), validate_content=a)
+        blob.upload_page(data2, offset=len(data1), length=data2_encoded_len, encoding='utf-8', validate_content=a)
+
+        # Assert
+        content = blob.download_blob(offset=0, length=len(data1) + data2_encoded_len)
+        assert content.readall() == data1 + data2.encode('utf-8')
