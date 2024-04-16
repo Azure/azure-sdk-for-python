@@ -184,7 +184,7 @@ class TableClient(TablesBaseClient):
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table.
-        :type signed_identifiers: Mapping[str, ~azure.data.tables.TableAccessPolicy] or Mapping[str, None]
+        :type signed_identifiers: Mapping[str, Optional[~azure.data.tables.TableAccessPolicy]]
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
