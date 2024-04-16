@@ -9,7 +9,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as Rest
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, WorkspaceType
+from azure.ai.ml.constants._common import WorkspaceType
 from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
@@ -21,20 +21,20 @@ class Hub(Workspace):
     workspaces called projects. Resources like the hub's storage account, key vault,
     and container registry are shared by all child projects.
 
-    As a type of workspace, Hub management is controlled by an MLClient's workspace operations.
+    As a type of workspace, hub management is controlled by an MLClient's workspace operations.
 
-    :param name: Name of the Hub.
+    :param name: Name of the hub.
     :type name: str
-    :param description: Description of the Hub.
+    :param description: Description of the hub.
     :type description: str
-    :param tags: Tags of the Hub.
+    :param tags: Tags of the hub.
     :type tags: dict
-    :param display_name: Display name for the Hub. This is non-unique within the resource group.
+    :param display_name: Display name for the hub. This is non-unique within the resource group.
     :type display_name: str
-    :param location: The location to create the Hub in.
+    :param location: The location to create the hub in.
         If not specified, the same location as the resource group will be used.
     :type location: str
-    :param resource_group: Name of resource group to create the Hub in.
+    :param resource_group: Name of resource group to create the hub in.
     :type resource_group: str
     :param managed_network: Hub's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
@@ -48,21 +48,21 @@ class Hub(Workspace):
     :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default.
     :type customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
-    :param image_build_compute: The name of the compute target to use for building environment
+    :param image_build_compute: The name of the compute target to use for building environment.
         Docker images with the container registry is behind a VNet.
     :type image_build_compute: str
-    :param public_network_access: Whether to allow public endpoint connectivity
+    :param public_network_access: Whether to allow public endpoint connectivity.
         when a workspace is private link enabled.
     :type public_network_access: str
-    :param identity: hub's Managed Identity (user assigned, or system assigned)
+    :param identity: The hub's Managed Identity (user assigned, or system assigned).
     :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param primary_user_assigned_identity: The hub's primary user assigned identity
+    :param primary_user_assigned_identity: The hub's primary user assigned identity.
     :type primary_user_assigned_identity: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
     :param default_project_resource_group: The resource group that will be used by projects
-        created under this Hub if no resource group is specified.
+        created under this hub if no resource group is specified.
     :type default_project_resource_group: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
@@ -142,7 +142,7 @@ class Hub(Workspace):
                 default_project_resource_group = rest_obj.workspace_hub_config.default_workspace_resource_group
 
         if workspace_object is not None:
-            hub_object = Hub(
+            return Hub(
                 name=workspace_object.name if workspace_object.name is not None else "",
                 description=workspace_object.description,
                 tags=workspace_object.tags,
@@ -163,14 +163,20 @@ class Hub(Workspace):
                 associated_workspaces=rest_obj.associated_workspaces,
                 id=rest_obj.id,
             )
-            return hub_object
-
         return None
 
-    def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
-        res: dict = HubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        return res
+    # Helper function to deal with sub-rest object conversion.
+    def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
+        additional_workspace_storage_accounts = None
+        default_project_resource_group = None
+        if hasattr(self, "additional_workspace_storage_accounts"):
+            additional_workspace_storage_accounts = None
+        if hasattr(self, "default_project_resource_group"):
+            default_project_resource_group = None
+        return RestWorkspaceHubConfig(
+            additional_workspace_storage_accounts=additional_workspace_storage_accounts,
+            default_workspace_resource_group=default_project_resource_group,
+        )
 
     def _to_rest_object(self) -> RestWorkspace:
         restWorkspace = super()._to_rest_object()

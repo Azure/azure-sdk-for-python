@@ -201,7 +201,8 @@ def load_workspace(
     relative_origin: Optional[str] = None,
     **kwargs: Any,
 ) -> Workspace:
-    """Load a workspace object from a yaml file.
+    """Load a workspace object from a yaml file. This includes workspace sub-classes
+    like hubs and projects.
 
     :param source: The local yaml source of a workspace. Must be either a
         path to a local file, or an already-open file.

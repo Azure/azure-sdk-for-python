@@ -920,3 +920,4 @@ class WorkspaceType:
     DEFAULT = "default"
     HUB = "hub"
     PROJECT = "project"
+    FEATURE_STORE = "featurestore"

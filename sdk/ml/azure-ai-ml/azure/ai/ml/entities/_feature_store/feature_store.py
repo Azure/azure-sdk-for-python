@@ -19,8 +19,8 @@ from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManaged
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace.workspace import Workspace
-
-from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
+from azure.ai.ml.constants._common import WorkspaceType
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION
 from .materialization_store import MaterializationStore
 
 
@@ -134,7 +134,7 @@ class FeatureStore(Workspace):
             name=name,
             description=description,
             tags=tags,
-            type=FEATURE_STORE_KIND,
+            type=WorkspaceType.FEATURE_STORE,
             display_name=display_name,
             location=location,
             resource_group=resource_group,

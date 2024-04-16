@@ -56,9 +56,7 @@ def get_test_rest_workspace_with_all_details() -> RestWorkspace:
         },
         status=RestManagedNetworkProvisionStatus(status="Active", spark_ready=False),
     )
-    rest_hub_config = RestWorkspaceHubConfig(
-        default_workspace_resource_group="somerg"
-    )
+    rest_hub_config = RestWorkspaceHubConfig(default_workspace_resource_group="somerg")
     rest_feature_store_settings = RestFeatureStoreSettings(
         offline_store_connection_name="somevalue1", online_store_connection_name="somevalue2"
     )

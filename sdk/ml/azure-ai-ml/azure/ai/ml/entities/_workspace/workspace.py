@@ -7,7 +7,6 @@
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union, Type, Tuple, List
-from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
@@ -129,10 +128,12 @@ class Workspace(Resource):
         **kwargs: Any,
     ):
 
-        # Workspaces have subclasses that are differentiated by the type field in the REST API, where
-        # it is called 'kind' instead. We use type for SDK consistency's sake, but quietly support kind
-        # to maintain backwards compatibility with internal systems that I suspect still use kind somewhere.
-        # type takes precedence over type if they're both set, and this defaults to a normal workspace's type
+        # Workspaces have subclasses that are differentiated by the 'kind' field in the REST API.
+        # Now that this value is occasionally surfaced (for sub-class YAML specifications)
+        # We've switched to using 'type' in the SDK for consistency's sake with other polymorphic classes.
+        # That said, the code below but quietly supports 'kind' as an input
+        # to maintain backwards compatibility with internal systems that I suspect still use 'kind' somewhere.
+        # 'type' takes precedence over 'kind' if they're both set, and this defaults to a normal workspace's type
         # if nothing is set.
         self._type = kwargs.pop("type", None)
         kind = kwargs.pop("kind", None)
@@ -141,7 +142,7 @@ class Workspace(Resource):
                 self._type = kind
             else:
                 self._type = WorkspaceType.DEFAULT
-        
+
         self.print_as_yaml = True
         self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri: Optional[str] = kwargs.pop("mlflow_tracking_uri", None)
@@ -181,6 +182,7 @@ class Workspace(Resource):
         """
         return self._discovery_url
 
+    # Exists to appease tox's mypy rules.
     @property
     def _hub_id(self) -> Optional[str]:
         """The UID of the hub parent of the project. This is an internal property
@@ -192,6 +194,7 @@ class Workspace(Resource):
         """
         return self.__hub_id
 
+    # Exists to appease tox's mypy rules.
     @_hub_id.setter
     def _hub_id(self, value: str):
         """Set the hub of the project. This is an internal property
@@ -237,13 +240,11 @@ class Workspace(Resource):
         return res
 
     @classmethod
-    def _resolve_cls_and_type(
+    def _resolve_sub_cls_and_type(
         cls, data: Dict, params_override: Optional[List[Dict]] = None
     ) -> Tuple[Type["Workspace"], str]:
         """Given a workspace data dictionary, determine the appropriate workspace class and type string.
-
-        Allows for easier polymorphism of the between the workspace class and its children.
-
+        Allows for easier polymorphism between the workspace class and its children.
         Adapted from similar code in the Job class.
 
         :param data: A dictionary of values describing the workspace.
@@ -285,13 +286,15 @@ class Workspace(Resource):
         params_override: Optional[list] = None,
         **kwargs: Any,
     ) -> "Workspace":
+        # This _load function is polymorphic and can return child classes.
+        # It was adapted from the Job class's similar function.
         data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        workspace_type, type_str = cls._resolve_cls_and_type(data, params_override)
+        workspace_type, type_str = cls._resolve_sub_cls_and_type(data, params_override)
         schema_type = workspace_type._get_schema_class()  # pylint: disable=protected-access
         loaded_schema = load_from_dict(
             schema_type,
@@ -427,18 +430,8 @@ class Workspace(Resource):
             serverless_compute_settings=serverless_compute_settings,
         )
 
-    def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
-        additional_workspace_storage_accounts = None
-        default_project_resource_group = None
-        if hasattr(self, "additional_workspace_storage_accounts"):
-            additional_workspace_storage_accounts = None
-        if hasattr(self, "default_project_resource_group"):
-            default_project_resource_group = None
-        return RestWorkspaceHubConfig(
-            additional_workspace_storage_accounts=additional_workspace_storage_accounts,
-            default_workspace_resource_group=default_project_resource_group,
-        )
-
+    # Helper for sub-class polymorphism. Needs to be overwritten by child classes
+    # If they don't want to redefine things like _to_dict.
     @classmethod
     def _get_schema_class(cls) -> Type[WorkspaceSchema]:
         return WorkspaceSchema

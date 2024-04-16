@@ -13,9 +13,9 @@ from azure.ai.ml._schema.workspace import ProjectSchema
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
 class Project(Workspace):
-    """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI resource.
+    """A Project is a lightweight object for orchestrating AI applications, and is parented by a hub.
     Unlike a standard workspace, a project does not have a variety of sub-resources directly associated with it.
-    Instead, it's parent hub has these resources, which are used by the project and any siblings.
+    Instead, its parent hub managed these resources, which are then used by the project and its siblings.
 
     As a type of workspace, project management is controlled by an MLClient's workspace operations.
 
@@ -29,7 +29,7 @@ class Project(Workspace):
     :type tags: Optional[Dict[str, str]]
     :param display_name: The display name of the project.
     :type display_name: Optional[str]
-    :param location: The location of the project.
+    :param location: The location of the project. Must match that of the parent hub.
     :type location: Optional[str]
     :param resource_group: The project's resource group name.
     :type resource_group: Optional[str]
@@ -91,7 +91,7 @@ class Project(Workspace):
 
     @hub_id.setter
     def hub_id(self, value: str):
-        """Set the hub of the project.
+        """Set the parent hub id of the project.
 
         :param value: The hub id to assign to the project.
             Note: cannot be reassigned after creation.
