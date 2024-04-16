@@ -40,7 +40,7 @@ async def sample_chat_completions_streaming_async():
 
     # Do a single streaming chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
-        client.get_streaming_chat_completions(
+        client.create_streaming(
             messages=[
                 SystemMessage(content="You are an AI assistant that helps people find information."),
                 UserMessage(content="Give me 5 good reasons why I should exercise every day."),
@@ -57,12 +57,8 @@ async def sample_chat_completions_streaming_async():
     result = future.result()
 
     # Iterate on the result to get chat completion updates, as they arrive from the service
-    accumulated_content = ""
     async for update in result:
-        accumulated_content += update.choices[0].delta.content if update.choices[0].delta.content is not None else ""
-        print_chat_completions_delta(update)
-
-    print(f"Accumulated content: {accumulated_content}")
+        print(update.choices[0].delta.content, end="")
 
     # Remember to always close the asynchronous client when you are done with it
     await client.close()

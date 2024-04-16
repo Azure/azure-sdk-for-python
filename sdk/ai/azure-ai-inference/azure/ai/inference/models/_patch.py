@@ -13,8 +13,8 @@ import json
 import types
 
 from typing import List, Union
-from .. import models as _models
 from azure.core.rest import HttpResponse
+from .. import models as _models
 
 
 class StreamingChatCompletions:
@@ -105,30 +105,30 @@ class StreamingChatCompletions:
 
         # Convert `bytes` to string and split the string by newline, while keeping the new line char.
         # the last may be a partial "line" that does not contain a newline char at the end.
-        line_list = re.split(r"(?<=\n)", element.decode("utf-8"))
-        for index, element in enumerate(line_list):
+        line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8"))
+        for index, line in enumerate(line_list):
 
             if self.ENABLE_CLASS_LOGS:
-                print(f"[original] {repr(element)}")
+                print(f"[original] {repr(line)}")
 
             if index == 0:
-                element = self._incomplete_json + element
+                line = self._incomplete_json + line
                 self._incomplete_json = ""
 
-            if index == len(line_list) - 1 and not element.endswith("\n"):
-                self._incomplete_json = element
+            if index == len(line_list) - 1 and not line.endswith("\n"):
+                self._incomplete_json = line
                 return
 
             if self.ENABLE_CLASS_LOGS:
-                print(f"[modified] {repr(element)}")
+                print(f"[modified] {repr(line)}")
 
-            if element == "\n":  # Empty line, indicating flush output to client
+            if line == "\n":  # Empty line, indicating flush output to client
                 continue
 
-            if not element.startswith(self.SSE_DATA_EVENT_PREFIX):
-                raise ValueError(f"SSE event not supported (line `{element}`)")
+            if not line.startswith(self.SSE_DATA_EVENT_PREFIX):
+                raise ValueError(f"SSE event not supported (line `{line}`)")
 
-            if element.startswith(self.SSE_DATA_EVENT_DONE):
+            if line.startswith(self.SSE_DATA_EVENT_DONE):
                 self._done = True
                 return
 
@@ -137,7 +137,7 @@ class StreamingChatCompletions:
             # and add it to the queue.
             self._queue.put(
                 _models.ChatCompletionsUpdate._deserialize(
-                    json.loads(element[len(self.SSE_DATA_EVENT_PREFIX) : -1]), []
+                    json.loads(line[len(self.SSE_DATA_EVENT_PREFIX) : -1]), []
                 )
             )
 

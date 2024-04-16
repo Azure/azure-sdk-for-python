@@ -21,6 +21,7 @@ USAGE:
 
 def sample_image_generation():
     import os
+    import base64
 
     try:
         endpoint = os.environ["IMAGE_GENERATION_ENDPOINT"]
@@ -38,8 +39,9 @@ def sample_image_generation():
 
     result = client.create(prompt="A painting of a beautiful sunset over a mountain lake.", size="1024x768")
 
-    with open(f"image.png", "wb") as image:
-        image.write(result.data[0].b64_json.decode("base64"))
+    if result.data[0].b64_json is not None:
+        with open(f"image.png", "wb") as image:
+            image.write(base64.b64decode(result.data[0].b64_json))
     # [END image_generation]
 
 

@@ -21,6 +21,7 @@ import asyncio
 
 async def sample_image_generation_async():
     import os
+    import base64
     from azure.ai.inference.aio import ImageGenerationClient
     from azure.core.credentials import AzureKeyCredential
 
@@ -53,8 +54,9 @@ async def sample_image_generation_async():
     # Save generated image to file and print other results the the console
     print("Image generation result:")
     for index, item in enumerate(result.data):
-        with open(f"image_{index}.png", "wb") as image:
-            image.write(item.b64_json.decode("base64"))
+        if item.b64_json is not None:
+            with open(f"image_{index}.png", "wb") as image:
+                image.write(base64.b64decode(item.b64_json))
     print(f"id: {result.id}")
     print(f"model: {result.model}")
     print(f"created: {result.created}")

@@ -6,22 +6,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys
 import json
+import sys
 
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, Union, IO, List, Optional, TypeVar, overload
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
-from . import models as _models
-from ._model_base import SdkJSONEncoder, _deserialize
-from ._serialization import Serializer
-from ._vendor import ChatCompletionsClientMixinABC
-from ._operations._operations import build_chat_completions_create_request
-from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
-
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -30,6 +23,11 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from . import models as _models
+from ._model_base import SdkJSONEncoder
+from ._serialization import Serializer
+from ._operations._operations import build_chat_completions_create_request
+from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -45,6 +43,62 @@ _SERIALIZER.client_side_validation = False
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
+
+    @overload
+    def create_streaming(
+        self,
+        body: JSON,
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StreamingChatCompletions:
+        # pylint: disable=line-too-long
+        """
+        TBD
+        """
+
+    @overload
+    def create_streaming(
+        self,
+        *,
+        messages: List[_models.ChatRequestMessage],
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        extras: Optional[Dict[str, str]] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        stop: Optional[List[str]] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.StreamingChatCompletions:
+        # pylint: disable=line-too-long
+        """
+        TBD
+        """
+
+    @overload
+    def create_streaming(
+        self,
+        body: IO[bytes],
+        *,
+        model_deployment: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StreamingChatCompletions:
+        # pylint: disable=line-too-long
+        """
+        TBD
+        """
+
     @distributed_trace
     def create_streaming(
         self,
@@ -58,7 +112,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -67,7 +121,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         seed: Optional[int] = None,
         **kwargs: Any
     ) -> _models.StreamingChatCompletions:
-
+        # pylint: disable=line-too-long
+        """
+        TBD
+        """
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
