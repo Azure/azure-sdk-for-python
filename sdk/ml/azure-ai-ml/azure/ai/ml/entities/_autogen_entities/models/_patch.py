@@ -24,6 +24,23 @@ __all__: List[str] = ["ServerlessEndpoint"]  # Add all objects you want publicly
 
 _NULL = object()
 
+func_to_attr_type = {
+    "_deserialize_dict": dict,
+    "_deserialize_sequence": list,
+}
+
+def _get_rest_field_type(rest_field):
+    if hasattr(rest_field, "_type"):
+        if rest_field._type.func.__name__ == "_deserialize_default":
+            return rest_field._type.args[0]
+        if func_to_attr_type.get(rest_field._type.func.__name__):
+            return func_to_attr_type[rest_field._type.func.__name__]
+        return _get_rest_field_type(rest_field._type.args[0])
+    if hasattr(rest_field, "func" ) and func_to_attr_type.get(rest_field.func.__name__):
+        return func_to_attr_type[rest_field.func.__name__]
+    if hasattr(rest_field, "args"):
+        return _get_rest_field_type(rest_field.args[0])
+    return rest_field
 
 class ValidationMixin():
     def _validate(self) -> None:
@@ -33,12 +50,14 @@ class ValidationMixin():
                 attr_value = self.__getitem__(attr)
                 attr_type = type(attr_value)
             except KeyError:
-                if rest_field._is_required:
+                if rest_field._type.func.__name__ != "_deserialize_with_optional":
+                    # i'm required
                     raise ValueError(f"attr {attr} is a required property for {self.__class__.__name__}")
             else:
                 if getattr(attr_value, "_is_model", False):
-                    attr_value._validate()
-                elif attr_type != rest_field._class_type:
+                    return attr_value._validate()
+                rest_field_type = _get_rest_field_type(rest_field)
+                if attr_type != rest_field_type:
                     raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field._class_type}")
                 
 

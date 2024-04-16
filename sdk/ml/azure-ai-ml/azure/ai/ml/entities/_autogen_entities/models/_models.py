@@ -101,7 +101,7 @@ class ServerlessEndpoint(_model_base.Model):
 
     name: str = rest_field(is_required=True)
     """The deployment name. Required."""
-    auth_mode: str = rest_field()
+    auth_mode: Optional[str] = rest_field()
     """Authentication mode of the endpoint."""
     model_id: str = rest_field(is_required=True)
     """The id of the model to deploy. Required."""
@@ -115,8 +115,6 @@ class ServerlessEndpoint(_model_base.Model):
     """Properties of the endpoint."""
     description: Optional[str] = rest_field()
     """Descripton of the endpoint."""
-    scoring_uri: str = rest_field(visibility=["read"])
-    """Scoring uri of the endpoint. Required."""
     system_data: "_models.SystemData" = rest_field(visibility=["read"])
     """System data of the endpoint. Required."""
     id: str = rest_field(visibility=["read"])
