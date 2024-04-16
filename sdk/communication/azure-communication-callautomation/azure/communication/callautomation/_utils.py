@@ -37,8 +37,6 @@ def build_external_storage(
 ) -> Optional[ExternalStorage]:
     request: Optional[ExternalStorage] = None
     if recording_storage:
-        if recording_storage.kind == RecordingStorageKind.AZURE_COMMUNICATION_SERVICES:
-            request = ExternalStorage(recording_storage_kind=recording_storage.kind)
         if recording_storage.kind == RecordingStorageKind.AZURE_BLOB_STORAGE:
             if not recording_storage.container_url:
                 raise ValueError(
