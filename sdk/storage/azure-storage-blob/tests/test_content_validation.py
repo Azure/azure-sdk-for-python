@@ -267,7 +267,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob = self.container.get_blob_client(self._get_blob_reference())
 
-        content = b'abc' * 1030  # 3 KiB + 18
+        content = b'abcde' * 1030  # 5 KiB + 30
         byte_io = BytesIO(content)
 
         def generator():
