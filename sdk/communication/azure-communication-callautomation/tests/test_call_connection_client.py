@@ -9,6 +9,7 @@ import unittest
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
     CommunicationUserIdentifier,
+    MicrosoftTeamsAppIdentifier,
     CallConnectionClient,
     TransferCallResult
 )
@@ -26,9 +27,14 @@ class TestCallConnectionClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     communication_user_id = "8:acs:123"
     transferee_user_id = "8:acs:456"
+    teams_app_id = "28:orgid:123"
     operation_context = "operationContext"
     call_participant = {
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
+        "isMuted": False
+    }
+    call_participant_as_teams_app = {
+        "identifier": {"rawId": teams_app_id, "microsoftTeamsApp": {"app_id": teams_app_id}},
         "isMuted": False
     }
     invitation_id = "invitationId"
@@ -246,3 +252,38 @@ class TestCallConnectionClient(unittest.TestCase):
         response = call_connection.cancel_add_participant_operation(self.invitation_id)
         self.assertEqual(self.invitation_id, response.invitation_id)
         self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_get_participants_for_teams_app(self):
+        def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(status_code=200, json_payload=self.call_participant_as_teams_app)
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        response = call_connection.get_participant(MicrosoftTeamsAppIdentifier(self.call_connection_id))
+        print(f"response.identifier: {response.identifier}")
+        self.assertEqual(self.teams_app_id, response.identifier.raw_id)
+        self.assertEqual("microsoft_teams_app", response.identifier.kind)
+
+    def test_list_participants_microsoft_teams_app(self):
+        def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(status_code=200, json_payload={
+                "values": [self.call_participant_as_teams_app],
+                "nextLink": ""})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+
+        response = call_connection.list_participants()
+        assert isinstance(response, ItemPaged)
