@@ -12,7 +12,7 @@ import re
 import json
 import types
 
-from typing import List, Union, AsyncIterator, Iterator
+from typing import List, Union, AsyncIterator, Iterator, cast
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from .. import models as _models
 
@@ -75,7 +75,8 @@ class StreamingChatCompletions:
         if self.ENABLE_CLASS_LOGS:
             start_time = time.time()
         try:
-            element = await self._bytes_iterator.__anext__()
+           # Use 'cast' to make 'pyright' error go away
+           element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
         except StopAsyncIteration:
             await self.aclose()
             return
@@ -86,7 +87,8 @@ class StreamingChatCompletions:
         if self.ENABLE_CLASS_LOGS:
             start_time = time.time()
         try:
-            element = next(self._bytes_iterator)
+            # Use 'cast' to make 'pyright' error go away
+            element = cast(Iterator[bytes], self._bytes_iterator).__next__()
         except StopIteration:
             self.close()
             return
