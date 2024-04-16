@@ -83,8 +83,8 @@ class ServiceBusReceiver(
     The two primary channels for message receipt are `receive()` to make a single request for messages,
     and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
-    **Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.ServiceBusClient to create a
-    ServiceBusReceiver instance.**
+    Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.ServiceBusClient to create a
+    ServiceBusReceiver instance.
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -136,7 +136,7 @@ class ServiceBusReceiver(
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
      `max_message_count` (if provided) within its request to the service.
-     **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+     WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
      Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
@@ -321,7 +321,7 @@ class ServiceBusReceiver(
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
          `max_message_count` (if provided) within its request to the service.
-         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
