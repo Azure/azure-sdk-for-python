@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0b4 (2024-05-01)
+
+### Features Added
+- Added support for API version `2024-05-01-preview`, This gives us functionality for 10DLC capabilities .
+- Added support for 10DLC changes.
+
 ## 1.2.0b3 (2024-03-02)
 
 ### Features Added

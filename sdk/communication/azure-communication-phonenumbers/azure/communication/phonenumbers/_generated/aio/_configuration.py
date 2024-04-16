@@ -22,13 +22,13 @@ class PhoneNumbersClientConfiguration:  # pylint: disable=too-many-instance-attr
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-01-31-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-05-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-01-31-preview")
+        api_version: str = kwargs.pop("api_version", "2024-05-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

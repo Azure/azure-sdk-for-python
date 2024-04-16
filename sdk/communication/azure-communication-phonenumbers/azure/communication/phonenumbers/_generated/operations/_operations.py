@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -29,6 +30,10 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._serialization import Serializer
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -51,7 +56,7 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +95,7 @@ def build_phone_numbers_list_available_countries_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +128,7 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +169,7 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,7 +206,7 @@ def build_phone_numbers_search_available_phone_numbers_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,7 +235,7 @@ def build_phone_numbers_browse_available_numbers_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +263,7 @@ def build_phone_numbers_get_search_result_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -283,7 +288,7 @@ def build_phone_numbers_purchase_phone_numbers_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,7 +311,7 @@ def build_phone_numbers_get_reservations_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -332,7 +337,7 @@ def build_phone_numbers_create_or_update_reservation_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -360,7 +365,7 @@ def build_phone_numbers_get_reservation_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +391,7 @@ def build_phone_numbers_delete_reservation_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -413,7 +418,7 @@ def build_phone_numbers_start_reservation_purchase_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -441,7 +446,7 @@ def build_phone_numbers_get_operation_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +472,7 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +499,7 @@ def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -522,7 +527,7 @@ def build_phone_numbers_get_by_number_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -548,7 +553,7 @@ def build_phone_numbers_release_phone_number_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -574,7 +579,7 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -600,7 +605,7 @@ def build_phone_numbers_operator_information_search_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -688,7 +693,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models._models.PhoneNumberAreaCodes] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -797,7 +802,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models._models.PhoneNumberCountries] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -915,7 +920,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1038,7 +1043,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models._models.OfferingsResponse] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1121,7 +1126,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def _search_available_phone_numbers_initial(
         self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO[bytes]], **kwargs: Any
     ) -> _models.PhoneNumberSearchResult:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1391,7 +1396,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1460,7 +1465,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1508,7 +1513,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def _purchase_phone_numbers_initial(  # pylint: disable=inconsistent-return-statements
         self, body: Union[_models.PhoneNumberPurchaseRequest, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1681,7 +1686,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1824,7 +1829,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1897,7 +1902,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1958,7 +1963,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2005,7 +2010,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
         **kwargs: Any,
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2197,7 +2202,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2259,7 +2264,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2306,7 +2311,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO[bytes]]] = None,
         **kwargs: Any,
     ) -> _models.PurchasedPhoneNumber:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2526,7 +2531,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2574,7 +2579,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def _release_phone_number_initial(  # pylint: disable=inconsistent-return-statements
         self, phone_number: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2697,7 +2702,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2824,7 +2829,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
