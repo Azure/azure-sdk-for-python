@@ -70,7 +70,7 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 def _is_local_endpoint(endpoint: str) -> bool:
-  return re.match("127\.[\d.]+|[0:]+1|localhost", endpoint.lower())
+    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower())
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
@@ -129,18 +129,20 @@ def _parse_conn_str(
     # check that endpoint is valid
     if not endpoint:
         raise ValueError("Connection string is either blank or malformed.")
+
+    parsed = urlparse(endpoint)
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    host = cast(str, parsed.netloc.strip())
+
     emulator = bool(use_emulator=="true")
     if emulator:
-        if not _is_local_endpoint(endpoint):
-            raise ValueError("Invalid Endpoint on the Connection String. "
-                             "For Development Connection Strings, the Endpoint should be "
-                             "a localhost.")
-        host = endpoint   
-    else:
-        parsed = urlparse(endpoint)
-        if not parsed.netloc:
-            raise ValueError("Invalid Endpoint on the Connection String.")
-        host = cast(str, parsed.netloc.strip())
+        if not _is_local_endpoint(host):
+            raise ValueError(
+                "Invalid endpoint on the connection string. "
+                "For development connection strings, should be in the format: "
+                "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;UseDevelopmentEmulator=true;"
+            )
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
