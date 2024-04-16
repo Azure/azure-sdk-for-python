@@ -45,7 +45,10 @@ def sample_chat_completions_streaming():
     )
 
     for update in result:
-        print(update.choices[0].delta.content, end="")
+        if update.choices[0].delta.content:
+            print(update.choices[0].delta.content, end="")
+
+    result.close()
     # [END chat_completions_streaming]
 
 

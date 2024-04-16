@@ -12,8 +12,8 @@ import re
 import json
 import types
 
-from typing import List, Union
-from azure.core.rest import HttpResponse
+from typing import List, Union, AsyncIterator, Iterator
+from azure.core.rest import HttpResponse, AsyncHttpResponse
 from .. import models as _models
 
 
@@ -33,12 +33,12 @@ class StreamingChatCompletions:
     # The line indicating the end of the SSE stream
     SSE_DATA_EVENT_DONE = "data: [DONE]"
 
-    def __init__(self, bytes_iterator: Union[types.AsyncGeneratorType, types.GeneratorType]):
-        self._bytes_iterator = bytes_iterator
-        self._is_async_iterator = isinstance(self._bytes_iterator, types.AsyncGeneratorType)
+    def __init__(self, response: Union[HttpResponse, AsyncHttpResponse]):
+        self.response = response
+        self._bytes_iterator: Union[AsyncIterator[bytes], Iterator[bytes]] = response.iter_bytes()
+        self._is_async_iterator = isinstance(self.response, AsyncHttpResponse)
         self._queue = queue.Queue()
         self._incomplete_json = ""
-        self._done = False
 
     def __aiter__(self):
         if not self._is_async_iterator:
@@ -78,7 +78,6 @@ class StreamingChatCompletions:
             element = await self._bytes_iterator.__anext__()
         except StopAsyncIteration:
             await self.aclose()
-            self._done = True
             return
         self._deserialize_and_add_to_queue(element, start_time)
 
@@ -90,7 +89,6 @@ class StreamingChatCompletions:
             element = next(self._bytes_iterator)
         except StopIteration:
             self.close()
-            self._done = True
             return
         self._deserialize_and_add_to_queue(element, start_time)
 
@@ -129,7 +127,6 @@ class StreamingChatCompletions:
                 raise ValueError(f"SSE event not supported (line `{line}`)")
 
             if line.startswith(self.SSE_DATA_EVENT_DONE):
-                self._done = True
                 return
 
             # If you reached here, the line should contain `data: {...}\n`
@@ -151,10 +148,14 @@ class StreamingChatCompletions:
         self.close()
 
     def close(self) -> None:
-        self._bytes_iterator.close()
+        if self.response:
+            self.response.close()
+            self.response = None
 
     async def aclose(self) -> None:
-        await self._bytes_iterator.aclose()
+        if self.response:
+            await self.response.close()
+            self.response = None
 
 
 __all__: List[str] = [

@@ -190,7 +190,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return _models.StreamingChatCompletions(response.iter_bytes())
+        return _models.StreamingChatCompletions(response)
 
 
 __all__: List[str] = [

@@ -42,7 +42,7 @@ async def sample_chat_completions_streaming_async():
     future = asyncio.ensure_future(
         client.create_streaming(
             messages=[
-                SystemMessage(content="You are an AI assistant that helps people find information."),
+                SystemMessage(content="You are a helpful assistant."),
                 UserMessage(content="Give me 5 good reasons why I should exercise every day."),
             ]
         )
@@ -58,28 +58,11 @@ async def sample_chat_completions_streaming_async():
 
     # Iterate on the result to get chat completion updates, as they arrive from the service
     async for update in result:
-        print(update.choices[0].delta.content, end="")
+        if update.choices[0].delta.content:
+            print(update.choices[0].delta.content, end="")
 
     # Remember to always close the asynchronous client when you are done with it
     await client.close()
-
-
-def print_chat_completions_delta(update: ChatCompletionsUpdate):
-    print(
-        f"content: {repr(update.choices[0].delta.content)}, "
-        f"role: {update.choices[0].delta.role}, "
-        f"finish_reason: {update.choices[0].finish_reason}, "
-        f"index: {update.choices[0].index}"
-    )
-    print(f"id: {update.id}, created: {update.created}, model: {update.model}, object: {update.object}")
-    if update.usage is not None:
-        print(
-            f"usage: capacity_type: {update.usage.capacity_type}, "
-            f"prompt_tokens: {update.usage.prompt_tokens}, "
-            f"completion_tokens: {update.usage.completion_tokens}, "
-            f"usage.total_tokens: {update.usage.total_tokens}"
-        )
-
 
 async def main():
     await sample_chat_completions_streaming_async()
