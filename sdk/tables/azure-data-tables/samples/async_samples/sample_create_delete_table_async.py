@@ -85,13 +85,13 @@ class CreateDeleteTable(object):
     async def delete_from_table_client(self):
         from azure.data.tables.aio import TableClient
 
-        # [START delete_from_table_client]
+        # [START delete_table_from_table_client]
         async with TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name
         ) as table_client:
             await table_client.delete_table()
             print(f"Deleted table {table_client.table_name}!")
-        # [END delete_from_table_client]
+        # [END delete_table_from_table_client]
 
 
 async def main():
