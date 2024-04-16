@@ -449,6 +449,7 @@ class ServiceBusReceiver(
             first_message_received = expired = False
             receiving = True
             drain_receive = False
+            # If we have sent a drain, but have not yet received the drain response, we should continue to receive
             while receiving and drain_receive or not self._handler._link._sent_drain and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
