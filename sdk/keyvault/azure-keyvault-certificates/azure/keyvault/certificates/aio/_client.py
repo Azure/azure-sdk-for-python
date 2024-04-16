@@ -1046,3 +1046,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             cls=lambda objs: [IssuerProperties._from_issuer_item(x) for x in objs],
             **kwargs
         )
+
+    async def __aenter__(self) -> "CertificateClient":
+        await self._client.__aenter__()
+        return self

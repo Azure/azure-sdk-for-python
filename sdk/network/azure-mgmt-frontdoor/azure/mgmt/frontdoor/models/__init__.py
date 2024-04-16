@@ -39,6 +39,7 @@ from ._models_py3 import FrontendEndpointProperties
 from ._models_py3 import FrontendEndpointUpdateParameters
 from ._models_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
 from ._models_py3 import FrontendEndpointsListResult
+from ._models_py3 import GroupByVariable
 from ._models_py3 import HeaderAction
 from ._models_py3 import HealthProbeSettingsListResult
 from ._models_py3 import HealthProbeSettingsModel
@@ -94,6 +95,7 @@ from ._models_py3 import ValidateCustomDomainInput
 from ._models_py3 import ValidateCustomDomainOutput
 from ._models_py3 import WebApplicationFirewallPolicy
 from ._models_py3 import WebApplicationFirewallPolicyList
+from ._models_py3 import WebApplicationFirewallScrubbingRules
 
 from ._front_door_management_client_enums import ActionType
 from ._front_door_management_client_enums import AggregationInterval
@@ -139,6 +141,9 @@ from ._front_door_management_client_enums import RoutingRuleEnabledState
 from ._front_door_management_client_enums import RuleType
 from ._front_door_management_client_enums import RulesEngineMatchVariable
 from ._front_door_management_client_enums import RulesEngineOperator
+from ._front_door_management_client_enums import ScrubbingRuleEntryMatchOperator
+from ._front_door_management_client_enums import ScrubbingRuleEntryMatchVariable
+from ._front_door_management_client_enums import ScrubbingRuleEntryState
 from ._front_door_management_client_enums import SessionAffinityEnabledState
 from ._front_door_management_client_enums import SkuName
 from ._front_door_management_client_enums import State
@@ -146,6 +151,8 @@ from ._front_door_management_client_enums import TimeseriesAggregationInterval
 from ._front_door_management_client_enums import TimeseriesType
 from ._front_door_management_client_enums import Transform
 from ._front_door_management_client_enums import TransformType
+from ._front_door_management_client_enums import VariableName
+from ._front_door_management_client_enums import WebApplicationFirewallScrubbingState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -184,6 +191,7 @@ __all__ = [
     "FrontendEndpointUpdateParameters",
     "FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink",
     "FrontendEndpointsListResult",
+    "GroupByVariable",
     "HeaderAction",
     "HealthProbeSettingsListResult",
     "HealthProbeSettingsModel",
@@ -239,6 +247,7 @@ __all__ = [
     "ValidateCustomDomainOutput",
     "WebApplicationFirewallPolicy",
     "WebApplicationFirewallPolicyList",
+    "WebApplicationFirewallScrubbingRules",
     "ActionType",
     "AggregationInterval",
     "Availability",
@@ -283,6 +292,9 @@ __all__ = [
     "RuleType",
     "RulesEngineMatchVariable",
     "RulesEngineOperator",
+    "ScrubbingRuleEntryMatchOperator",
+    "ScrubbingRuleEntryMatchVariable",
+    "ScrubbingRuleEntryState",
     "SessionAffinityEnabledState",
     "SkuName",
     "State",
@@ -290,6 +302,8 @@ __all__ = [
     "TimeseriesType",
     "Transform",
     "TransformType",
+    "VariableName",
+    "WebApplicationFirewallScrubbingState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

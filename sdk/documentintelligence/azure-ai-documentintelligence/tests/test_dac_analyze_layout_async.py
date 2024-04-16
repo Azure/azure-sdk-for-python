@@ -232,7 +232,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(
             documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
         )
-        assert client._config.polling_interval == 5
+        assert client._config.polling_interval == 1
 
         client = DocumentIntelligenceClient(
             documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7

@@ -178,6 +178,7 @@ class SchemaEncoder(Protocol):
          constructed message object.
         :rtype: MessageType or MessageContent
         """
+        ...
 
     async def decode(
         self,  # pylint: disable=unused-argument
@@ -190,6 +191,7 @@ class SchemaEncoder(Protocol):
         Returns the decoded data with the schema format specified by the `content-type` property.
          If `validate` callable was passed to constructor, will validate content against schema retrieved
          from the registry after decoding.
+
         :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.
         :type message: MessageType or MessageContent
@@ -197,4 +199,6 @@ class SchemaEncoder(Protocol):
         :paramtype request_options: dict[str, any] or None
         :returns: The decoded content.
         :rtype: dict[str, any]
+
         """
+        ...

@@ -6,18 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._firmware_operations import FirmwareOperations
-from ._workspaces_operations import WorkspacesOperations
+from ._binary_hardening_operations import BinaryHardeningOperations
+from ._crypto_certificates_operations import CryptoCertificatesOperations
+from ._crypto_keys_operations import CryptoKeysOperations
+from ._cves_operations import CvesOperations
+from ._firmwares_operations import FirmwaresOperations
 from ._operations import Operations
+from ._password_hashes_operations import PasswordHashesOperations
+from ._sbom_components_operations import SbomComponentsOperations
+from ._summaries_operations import SummariesOperations
+from ._workspaces_operations import WorkspacesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "FirmwareOperations",
-    "WorkspacesOperations",
+    "BinaryHardeningOperations",
+    "CryptoCertificatesOperations",
+    "CryptoKeysOperations",
+    "CvesOperations",
+    "FirmwaresOperations",
     "Operations",
+    "PasswordHashesOperations",
+    "SbomComponentsOperations",
+    "SummariesOperations",
+    "WorkspacesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

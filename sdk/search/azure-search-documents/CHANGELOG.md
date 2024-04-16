@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b3 (Unreleased)
+## 11.6.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.6.0b3 (2024-04-09)
+
+### Features Added
+
+- Added `IndexerExecutionEnvironment`, `IndexingMode`, `LineEnding`, `NativeBlobSoftDeleteDeletionDetectionPolicy`, `ScalarQuantizationCompressionConfiguration`, `ScalarQuantizationParameters`, `SearchServiceCounters`, `SearchServiceLimits`, `SearchServiceStatistics`, `VectorSearchCompressionConfiguration` & `VectorSearchCompressionTargetDataType`.
+- Added `stored` in `SearchField`.
 
 ## 11.6.0b2 (2024-03-05)
 

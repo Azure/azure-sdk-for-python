@@ -7,7 +7,7 @@
 import re
 from typing import Any, Optional, TypeVar, Union
 
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -64,18 +64,18 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_05_2022: ServiceClient052022,
+        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._batch_deployment = service_client_05_2022.batch_deployments
+        self._batch_deployment = service_client_01_2024_preview.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         service_client_02_2023_preview = kwargs.pop("service_client_02_2023_preview")
         self._component_batch_deployment_operations = service_client_02_2023_preview.batch_deployments
-        self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
+        self._batch_endpoint_operations = service_client_01_2024_preview.batch_endpoints
         self._component_operations = service_client_02_2023_preview.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
@@ -191,7 +191,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Get example.
         """
-
         deployment = BatchDeployment._from_rest_object(
             self._batch_deployment.get(
                 endpoint_name=endpoint_name,

@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+  - Added support for AAD authentication.
 
 ### Breaking Changes
 

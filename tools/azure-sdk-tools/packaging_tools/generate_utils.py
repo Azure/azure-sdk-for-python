@@ -97,12 +97,19 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if not package_folder.exists():
         _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
         return
+    for_swagger_gen = "meta" in config
+    metadata_folder = package_folder / "_meta.json"
+    if metadata_folder.exists() and for_swagger_gen:
+        with open(metadata_folder, "r") as file_in:
+            metadata = json.load(file_in)
+    else:
+        metadata = {}
 
-    metadata = {
+    metadata.update({
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-    }
-    if "meta" in config:
+    })
+    if for_swagger_gen:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
         local_conf = config.get("projects", {}).get(readme_file, {})

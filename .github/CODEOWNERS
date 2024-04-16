@@ -33,7 +33,7 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
@@ -41,6 +41,9 @@
 ####
 # Service team
 ####
+
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceLabel: %AI
 
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
@@ -135,7 +138,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
-# PRLabel: %Load Testing
+# PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
@@ -319,6 +322,8 @@
 
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
+# ServiceOwners: @trrwilson
+
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
@@ -334,8 +339,10 @@
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
-# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
+# AzureSdkOwners: @xiangyan99
+# ServiceOwners:  @mattgotteiner
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -468,7 +475,7 @@
 #/<NotInRepo>/          @antcp @AzureAppServiceCLI
 
 # ServiceLabel: %App Configuration %Service Attention
-#/<NotInRepo>/          @shenmuxiaosen @avanigupta
+#/<NotInRepo>/          @albertofori @avanigupta @mrm9084
 
 # ServiceLabel: %ARO %Service Attention
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
@@ -687,7 +694,7 @@
 #/<NotInRepo>/          @NarayanThiru
 
 # ServiceLabel: %Azure Data Explorer %Service Attention
-#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft @sagivf @Aviv-Yaniv
+#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Lab Services %Service Attention
 #/<NotInRepo>/          @Tanmayeekamath
@@ -830,9 +837,6 @@
 # ServiceLabel: %Scheduler %Service Attention
 #/<NotInRepo>/          @derek1ee
 
-# ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
-
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
 
@@ -910,9 +914,6 @@
 
 # ServiceLabel: %Network - Bastion %Service Attention
 #/<NotInRepo>/          @bastionsuppgithub
-
-# ServiceLabel: %Azure.Spring - Cosmos
-#/<NotInRepo>/          @kushagraThapar
 
 # ServiceLabel: %Network - Private Link %Service Attention
 #/<NotInRepo>/          @privlinksuppgithub

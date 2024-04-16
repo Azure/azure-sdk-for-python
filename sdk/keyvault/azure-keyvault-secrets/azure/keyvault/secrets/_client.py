@@ -464,3 +464,7 @@ class SecretClient(KeyVaultClientBase):
             interval=polling_interval,
         )
         return KeyVaultOperationPoller(polling_method)
+
+    def __enter__(self) -> "SecretClient":
+        self._client.__enter__()
+        return self
