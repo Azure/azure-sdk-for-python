@@ -646,7 +646,7 @@ class TableClient(AsyncTablesBaseClient):
                 :end-before: [END upsert_entity]
                 :language: python
                 :dedent: 16
-                :caption: Updating/Merging or Inserting an entity into a table
+                :caption: Replacing/Merging or Inserting an entity into a table
         """
 
         partition_key = entity["PartitionKey"]
