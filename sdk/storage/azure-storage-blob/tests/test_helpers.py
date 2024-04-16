@@ -7,6 +7,20 @@ from io import IOBase, UnsupportedOperation
 from typing import Optional
 
 
+class GenericTestProxyParametrize1:
+    def __call__(self, fn):
+        def _wrapper(test_class, a, **kwargs):
+            fn(test_class, a, **kwargs)
+        return _wrapper
+
+
+class GenericTestProxyParametrize2:
+    def __call__(self, fn):
+        def _wrapper(test_class, a, b, **kwargs):
+            fn(test_class, a, b, **kwargs)
+        return _wrapper
+
+
 class ProgressTracker:
     def __init__(self, total: int, step: int):
         self.total = total

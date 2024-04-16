@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from __future__ import annotations
 
 import hashlib
 from enum import Enum
@@ -11,6 +12,7 @@ from typing import Optional, Union
 from azure.core import CaseInsensitiveEnumMeta
 
 CRC64_LENGTH = 8
+SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
 
 
 class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
