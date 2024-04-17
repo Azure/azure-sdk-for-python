@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Union
+from typing import List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, NlpParameterSubspace
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -73,10 +73,13 @@ class NlpSearchSpace(RestTranslatableMixin):
             learning_rate_scheduler = camel_to_snake(learning_rate_scheduler.value)
         elif isinstance(learning_rate_scheduler, Choice):
             if learning_rate_scheduler.values is not None:
-                learning_rate_scheduler.values = [
-                    camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
-                    for item in learning_rate_scheduler.values
-                ]
+                learning_rate_scheduler.values = cast(
+                    List[Union[float, str, dict]],
+                    [
+                        camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
+                        for item in learning_rate_scheduler.values
+                    ],
+                )
 
         if isinstance(model_name, NlpModels):
             model_name = model_name.value

@@ -215,7 +215,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     def _to_rest_object(self) -> JobBase:
         self._override_missing_properties_from_trial()
         if self.trial is not None:
-            self.trial.command = map_single_brackets_and_warn(self.trial.command)
+            self.trial.command = map_single_brackets_and_warn(str(self.trial.command))
 
         if self.search_space is not None:
             search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}

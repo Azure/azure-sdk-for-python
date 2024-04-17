@@ -78,7 +78,7 @@ class ComponentIgnoreFile(IgnoreFile):
         self._base_path = directory_path
         return self
 
-    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, Path, os.PathLike]) -> bool:
         """Check if a file should be excluded based on the ignore file rules.
 
         :param file_path: The file path.

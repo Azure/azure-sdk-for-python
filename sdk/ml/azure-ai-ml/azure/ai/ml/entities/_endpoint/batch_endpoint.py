@@ -95,7 +95,7 @@ class BatchEndpoint(Endpoint):
             name=obj.name,
             tags=obj.tags,
             properties=obj.properties.properties,
-            auth_mode=camel_to_snake(obj.properties.auth_mode),
+            auth_mode=str(camel_to_snake(obj.properties.auth_mode)),
             description=obj.properties.description,
             location=obj.location,
             defaults=obj.properties.defaults,

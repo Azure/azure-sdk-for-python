@@ -22,7 +22,7 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         delay_evaluation: int,
         evaluation_interval: int,
     ):
-        self.type = None
+        self.type: Optional[str] = None
         self.delay_evaluation = delay_evaluation
         self.evaluation_interval = evaluation_interval
 

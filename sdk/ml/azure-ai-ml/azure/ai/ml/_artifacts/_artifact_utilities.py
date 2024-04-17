@@ -9,7 +9,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union, cast
 
 from typing_extensions import Literal
 
@@ -64,7 +64,7 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
         module_logger.debug("datastore_name %s is not a full arm id. Proceed with a shortened name.\n", datastore_name)
     datastore_name = remove_aml_prefix(datastore_name)
     if is_ARM_id_for_resource(datastore_name):
-        datastore_name = get_resource_name_from_arm_id(datastore_name)
+        datastore_name = get_resource_name_from_arm_id(str(datastore_name))
     return str(datastore_name)
 
 
@@ -158,7 +158,7 @@ def list_logs_in_datastore(
     ]:
         raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
 
-    storage_client = get_storage_client(
+    storage_client: Any = get_storage_client(
         credential=ds_info["credential"],
         container_name=ds_info["container_name"],
         storage_account=ds_info["storage_account"],
@@ -241,14 +241,14 @@ def upload_artifact(
     else:
         datastore_name = _get_datastore_name(datastore_name=datastore_name)
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
-        storage_client = get_storage_client(**datastore_info)
+        storage_client = get_storage_client(**datastore_info)  # type: ignore[misc]
 
     artifact_info = storage_client.upload(
         local_path,
         asset_hash=asset_hash,
         show_progress=show_progress,
-        name=asset_name,
-        version=asset_version,
+        name=str(asset_name),
+        version=str(asset_version),
         ignore_file=ignore_file,
     )
 
@@ -258,10 +258,12 @@ def upload_artifact(
         relative_path=artifact_info["remote path"],
         datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
         container_name=(
-            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
+            storage_client.container
+            if isinstance(storage_client, BlobStorageClient)
+            else storage_client.file_system  # type: ignore[union-attr]
         ),
         storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
-        indicator_file=artifact_info["indicator file"],
+        indicator_file=artifact_info["indicator file"],  # type: ignore[index]
         is_file=Path(local_path).is_file(),
     )
     return artifact
@@ -293,8 +295,8 @@ def download_artifact(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     if datastore_info is None:
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
-    storage_client = get_storage_client(**datastore_info)
-    storage_client.download(starts_with=starts_with, destination=destination)
+    storage_client = get_storage_client(**datastore_info)  # type: ignore[arg-type]
+    storage_client.download(starts_with=str(starts_with), destination=destination)
     return destination
 
 
@@ -320,7 +322,7 @@ def download_artifact_from_storage_url(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(
-        blob_url=str(blob_url), container_name=datastore_info.get("container_name")
+        blob_url=str(blob_url), container_name=datastore_info.get("container_name")  # type: ignore[arg-type]
     )
     return download_artifact(
         starts_with=starts_with,
@@ -362,7 +364,7 @@ def aml_datastore_path_exists(
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
-    return get_storage_client(**datastore_info).exists(parsed_uri.path)
+    return get_storage_client(**datastore_info).exists(parsed_uri.path)  # type: ignore[arg-type]
 
 
 def _upload_to_datastore(
@@ -586,4 +588,4 @@ def _get_snapshot_path_info(artifact) -> Optional[Tuple[Path, IgnoreFile, str]]:
     # TODO: Core SDK team to provide more information on this
     asset_hash = get_content_hash(path, ignore_file)
 
-    return path, ignore_file, asset_hash
+    return cast(Optional[Tuple[Path, IgnoreFile, str]], (path, ignore_file, asset_hash))

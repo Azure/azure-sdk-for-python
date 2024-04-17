@@ -589,7 +589,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
-        settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
+        settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()  # type: ignore
         # Create component or use component id
         if getattr(properties, "component_id", None):
             component = properties.component_id

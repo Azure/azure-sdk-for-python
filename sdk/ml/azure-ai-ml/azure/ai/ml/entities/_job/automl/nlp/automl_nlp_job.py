@@ -178,7 +178,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
 
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]) -> None:
-        self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        self._log_verbosity = None if value is None else LogVerbosity[str(camel_to_snake(value)).upper()]
 
     @property
     def limits(self) -> NlpLimitSettings:
@@ -374,7 +374,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.learning_rate_scheduler = (
-            NlpLearningRateScheduler[camel_to_snake(learning_rate_scheduler).upper()]
+            NlpLearningRateScheduler[str(camel_to_snake(learning_rate_scheduler)).upper()]
             if learning_rate_scheduler is not None
             else self._training_parameters.learning_rate_scheduler
         )

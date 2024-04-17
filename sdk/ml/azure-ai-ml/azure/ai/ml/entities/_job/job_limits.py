@@ -4,7 +4,7 @@
 
 import logging
 from abc import ABC
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJobLimits as RestSweepJobLimits
@@ -55,9 +55,9 @@ class CommandJobLimits(JobLimits):
         self.timeout = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
-        if is_data_binding_expression(self.timeout):
+        if is_data_binding_expression(str(self.timeout)):
             return RestCommandJobLimits(timeout=self.timeout)
-        return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
+        return RestCommandJobLimits(timeout=to_iso_duration_format(cast(Optional[Union[int, float]], self.timeout)))
 
     @classmethod
     def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> Optional["CommandJobLimits"]:
@@ -150,8 +150,8 @@ class SweepJobLimits(JobLimits):
         return RestSweepJobLimits(
             max_concurrent_trials=self.max_concurrent_trials,
             max_total_trials=self.max_total_trials,
-            timeout=to_iso_duration_format(self.timeout),
-            trial_timeout=to_iso_duration_format(self.trial_timeout),
+            timeout=to_iso_duration_format(cast(Optional[Union[int, float]], self.timeout)),
+            trial_timeout=to_iso_duration_format(cast(Optional[Union[int, float]], self.trial_timeout)),
         )
 
     @classmethod

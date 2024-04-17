@@ -546,7 +546,7 @@ class PipelineExpression(PipelineExpressionMixin):
         lookup_value = _OPERATION_RESULT_TYPE_LOOKUP.get(operation)
         if isinstance(lookup_value, str):
             return lookup_value  # valid operation, return result type
-        _user_exception: UserErrorException = lookup_value
+        _user_exception: UserErrorException = lookup_value  # type: ignore[assignment]
         raise _user_exception  # invalid operation, raise UserErrorException
 
     def _get_operand_type(self, operand: str) -> str:

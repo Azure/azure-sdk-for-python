@@ -112,7 +112,7 @@ class ClassificationJob(AutoMLTabular):
         self._primary_metric = (
             ClassificationJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else ClassificationPrimaryMetrics[camel_to_snake(value).upper()]
+            else ClassificationPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     @property  # type: ignore

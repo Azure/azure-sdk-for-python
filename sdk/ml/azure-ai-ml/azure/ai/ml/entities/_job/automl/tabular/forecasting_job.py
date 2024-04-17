@@ -87,7 +87,7 @@ class ForecastingJob(AutoMLTabular):
         self._primary_metric = (
             ForecastingJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else ForecastingPrimaryMetrics[camel_to_snake(value).upper()]
+            else ForecastingPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     @property  # type: ignore

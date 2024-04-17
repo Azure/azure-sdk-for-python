@@ -280,7 +280,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 try:
                     items = json.loads(items)
                 except json.JSONDecodeError as e:
-                    if not is_data_binding_expression(items, ["parent"]):
+                    if not is_data_binding_expression(str(items), ["parent"]):
                         validation_result.append_error(
                             yaml_path="items",
                             message=f"Items is neither a valid JSON string due to {e} or a binding string.",

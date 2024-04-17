@@ -127,7 +127,7 @@ class CodeOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "codes", str(name), str(version)),
                 )
             else:
                 snapshot_path_info = _get_snapshot_path_info(code)
@@ -150,8 +150,8 @@ class CodeOperations(_ScopeDependentOperations):
                     sas_info = get_storage_info_for_non_registry_asset(
                         service_client=self._service_client,
                         workspace_name=self._workspace_name,
-                        name=name,
-                        version=version,
+                        name=str(name),
+                        version=str(version),
                         resource_group=self._resource_group_name,
                     )
                     sas_uri = sas_info["sas_uri"]
@@ -284,7 +284,7 @@ class CodeOperations(_ScopeDependentOperations):
                 credential=self._service_client._config.credential,
                 container_name=m.group("container_name"),
             )
-        storage_client = get_storage_client(**datastore_info)
+        storage_client = get_storage_client(**datastore_info)  # type: ignore[misc]
         storage_client.download(
             starts_with=m.group("blob_name"),
             destination=output_dir.as_posix(),

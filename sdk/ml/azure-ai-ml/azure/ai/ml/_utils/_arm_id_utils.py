@@ -81,7 +81,7 @@ def get_datastore_arm_id(
             operation_scope.workspace_name,
             datastore_name,
         )
-        if datastore_name
+        if datastore_name and operation_scope
         else None
     )
 
@@ -293,7 +293,7 @@ def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
     return match.group(5)
 
 
-def parse_AzureML_id(name: str) -> Tuple[str, str, str]:
+def parse_AzureML_id(name: str) -> Tuple[str, Optional[str], Optional[str]]:
     if name.startswith(ARM_ID_PREFIX):
         name = name[len(ARM_ID_PREFIX) :]
 

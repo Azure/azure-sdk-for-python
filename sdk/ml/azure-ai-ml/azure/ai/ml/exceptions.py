@@ -113,8 +113,8 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         self._error_category = error_category
@@ -181,17 +181,15 @@ class DeploymentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(DeploymentException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -214,11 +212,11 @@ class ComponentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        super(ComponentException, self).__init__(
+        super(ComponentException, self).__init__(  # type: ignore[misc]
             message=message,
             target=target,
             error_category=error_category,
@@ -247,17 +245,15 @@ class JobException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(JobException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -280,17 +276,15 @@ class ModelException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ModelException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -313,17 +307,15 @@ class AssetException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -346,17 +338,15 @@ class ScheduleException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ScheduleException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -367,8 +357,8 @@ class ValidationException(MlException):
         no_personal_data_message: str,
         *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
         """Class for all exceptions raised as part of client-side schema validation.
@@ -389,11 +379,9 @@ class ValidationException(MlException):
         """
         super(ValidationException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
         self.raw_error = message  # used for CLI error formatting
@@ -437,17 +425,15 @@ class AssetPathException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -458,8 +444,8 @@ class EmptyDirectoryError(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
     ):
         self.message = message
         super(EmptyDirectoryError, self).__init__(
@@ -478,7 +464,7 @@ class UserErrorException(MlException):
         message,
         no_personal_data_message=None,
         error_category=ErrorCategory.USER_ERROR,
-        target: ErrorTarget = ErrorTarget.PIPELINE,
+        target: Union[str, ErrorTarget] = ErrorTarget.PIPELINE,
     ):
         super().__init__(
             message=message,
@@ -707,7 +693,7 @@ class CloudArtifactsNotSupportedError(MlException):
             resource_name,
         )
         super().__init__(
-            message=err,
+            message=str(err),
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Local endpoints only support local artifacts.",
             error_category=error_category,
@@ -740,7 +726,7 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             required_artifact_type,
         )
         super().__init__(
-            message=err,
+            message=str(err),
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Resource group did not contain required local artifact.",
             error_category=error_category,

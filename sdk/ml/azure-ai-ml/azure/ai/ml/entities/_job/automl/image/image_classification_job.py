@@ -78,7 +78,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         self._primary_metric = (
             ImageClassificationJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else ClassificationPrimaryMetrics[camel_to_snake(value).upper()]
+            else ClassificationPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     def _to_rest_object(self) -> JobBase:
