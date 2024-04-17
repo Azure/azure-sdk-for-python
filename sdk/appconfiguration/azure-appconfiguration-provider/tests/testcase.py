@@ -191,6 +191,7 @@ def get_feature_flag(client, feature_id):
             return feature_flag
     return None
 
+
 def has_feature_flag(client, feature_id, enabled=False):
     feature_flag = get_feature_flag(client, feature_id)
     if feature_flag:

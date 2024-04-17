@@ -532,7 +532,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if "telemetry" in feature_flag_value:
                     if "metadata" not in feature_flag_value["telemetry"]:
                         feature_flag_value["telemetry"]["metadata"] = {}
-                    feature_flag_value["telemetry"]["metadata"] ["etag"] = feature_flag.etag
+                    feature_flag_value["telemetry"]["metadata"]["etag"] = feature_flag.etag
                 loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:

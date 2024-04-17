@@ -78,7 +78,7 @@ def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -135,7 +135,7 @@ def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -307,7 +307,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     if endpoint is not None and credential is not None:
@@ -317,7 +317,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     raise ValueError("Please pass either endpoint and credential, or a connection string.")
@@ -625,7 +625,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
-    
+
     @staticmethod
     def _calculate_feature_id(key, label):
         basic_value = f"{key}\n"
@@ -633,9 +633,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             basic_value = basic_value + f"\n{label}"
         feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
         encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
-        encoded_flag = encoded_flag.replace(b'+', b'-').replace(b'/', b'_')
-        return encoded_flag[:encoded_flag.find(b'=')]
-
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
 
     def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
@@ -652,12 +651,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if "telemetry" in feature_flag_value:
                     if "metadata" not in feature_flag_value["telemetry"]:
                         feature_flag_value["telemetry"]["metadata"] = {}
-                    feature_flag_value["telemetry"]["metadata"] ["etag"] = feature_flag.etag
-                    feature_flag_reference =  f"{endpoint}/kv/{feature_flag.key}"
+                    feature_flag_value["telemetry"]["metadata"]["etag"] = feature_flag.etag
+                    feature_flag_reference = f"{endpoint}/kv/{feature_flag.key}"
                     if feature_flag.label:
                         feature_flag_reference += f"?label={feature_flag.label}"
                     feature_flag_value["telemetry"]["metadata"]["feature_flag_reference"] = feature_flag_reference
-                    feature_flag_value["telemetry"]["metadata"]["feature_flag_id"] = self._calculate_feature_id(feature_flag.key, feature_flag.label)
+                    feature_flag_value["telemetry"]["metadata"]["feature_flag_id"] = self._calculate_feature_id(
+                        feature_flag.key, feature_flag.label
+                    )
                 loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
