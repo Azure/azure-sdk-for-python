@@ -52,7 +52,7 @@ class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-versi
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint = "{endpoint}/genericasset/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
         self._config = MachineLearningServicesClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
