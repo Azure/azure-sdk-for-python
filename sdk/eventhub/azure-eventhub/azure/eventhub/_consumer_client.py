@@ -217,7 +217,7 @@ class EventHubConsumerClient(
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            use_tls=self._use_tls,
         )
         return handler
 

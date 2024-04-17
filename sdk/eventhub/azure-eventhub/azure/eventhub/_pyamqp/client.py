@@ -314,7 +314,6 @@ class AMQPClient(
             self._connection = connection
             self._external_connection = True
         elif not self._connection:
-            print(self._use_tls)
             self._connection = Connection(
                 "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
