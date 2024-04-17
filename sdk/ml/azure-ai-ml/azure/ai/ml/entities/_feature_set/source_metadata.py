@@ -47,8 +47,9 @@ class SourceMetadata(object):
                         target=ErrorTarget.FEATURE_SET,
                         error_category=ErrorCategory.USER_ERROR,
                     )
-                if timestamp_column:
-                    msg = f"Cannot provide timestamp_column for {type} feature source."
+                if timestamp_column or source_delay or source_process_code:
+                    msg = "Cannot provide timestamp_column/source_delay/source_process_code" \
+                        f"for {type} feature source."
                     raise ValidationException(
                         message=msg,
                         no_personal_data_message=msg,
@@ -56,6 +57,7 @@ class SourceMetadata(object):
                         target=ErrorTarget.FEATURE_SET,
                         error_category=ErrorCategory.USER_ERROR,
                     )
+
             if not (path and not dict and not source_process_code):
                 msg = f"Cannot provide source_process_code or kwargs for {type} feature source."
                 raise ValidationException(
