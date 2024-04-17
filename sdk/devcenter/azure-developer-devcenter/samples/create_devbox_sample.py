@@ -40,20 +40,30 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+def create_dev_center_client():
+    # [START create_dev_center_client]
+    import os
 
+    from azure.developer.devcenter import DevCenterClient
+    from azure.identity import DefaultAzureCredential
 
-import os
+    # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
+    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    try:
+        endpoint = os.environ["DEVCENTER_ENDPOINT"]
+    except KeyError:
+        raise ValueError("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
 
-from azure.developer.devcenter import DevCenterClient
-from azure.identity import DefaultAzureCredential
+    # Build a client through AAD
+    client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
+    # [END create_dev_center_client]
 
+def dev_box_create_connect_delete():
+    # [START dev_box_create_connect_delete]
+    import os
 
-def get_project_name(LOG, client):
-    projects = list(client.projects.list_by_dev_center)
-    return projects[0].name
-
-
-def main():
+    from azure.developer.devcenter import DevCenterClient
+    from azure.identity import DefaultAzureCredential
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
@@ -65,7 +75,6 @@ def main():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # [START create_dt_client_with_key]
     # List available Projects 
     projects = client.list_projects()
     if projects:
@@ -77,7 +86,6 @@ def main():
         target_project_name = list(projects)[0].name
     else:
         raise ValueError("Missing Project - please create one before running the example")
-    # [END create_dt_client_with_key]
 
     # List available Pools
     pools = client.list_pools(target_pool_name)
@@ -110,6 +118,8 @@ def main():
     delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
     delete_result = delete_response.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
+    # [END dev_box_create_connect_delete]
 
 if __name__ == "__main__":
-    main()
+    create_dev_center_client()
+    dev_box_create_connect_delete()

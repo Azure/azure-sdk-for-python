@@ -46,8 +46,8 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
-def main():
-
+def environment_create_and_delete():
+    # [START environment_create_and_delete]
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
@@ -128,6 +128,7 @@ def main():
     delete_response = client.begin_delete_environment(target_project_name, "me", environment_name)
     delete_result = delete_response.result()
     print(f"Completed deletion for the environment with status {delete_result.status}")
+    # [END environment_create_and_delete]
 
 if __name__ == "__main__":
-    main()
+    environment_create_and_delete()
