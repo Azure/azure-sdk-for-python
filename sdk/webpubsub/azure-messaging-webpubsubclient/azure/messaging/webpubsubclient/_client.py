@@ -521,7 +521,7 @@ class WebPubSubClient(
          pubsub. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
