@@ -17,6 +17,7 @@ from azure.ai.ml._schema.monitoring.signals import (
     CustomMonitoringSignalSchema,
     GenerationSafetyQualitySchema,
     ModelPerformanceSignalSchema,
+    GenerationTokenStatisticsSchema
 )
 from azure.ai.ml._schema.monitoring.alert_notification import AlertNotificationSchema
 from azure.ai.ml._schema.core.fields import NestedField, UnionField, StringTransformedEnum
@@ -37,6 +38,7 @@ class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
                 NestedField(CustomMonitoringSignalSchema),
                 NestedField(GenerationSafetyQualitySchema),
                 NestedField(ModelPerformanceSignalSchema),
+                NestedField(GenerationTokenStatisticsSchema)
             ]
         ),
     )
