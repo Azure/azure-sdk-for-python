@@ -101,7 +101,7 @@ class HealthInsightsSyncSamples:
 
         # Construct the request with the patient and configuration
         radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        job_data = models.RadiologyInsightsJob(radiology_insights_data)
+        job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
 
         # Health Insights Radiology Insights
         try:
@@ -109,7 +109,8 @@ class HealthInsightsSyncSamples:
                 id=job_id,
                 resource=job_data,
             )
-            radiology_insights_result = poller.result()
+            job_response = poller.result()
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
             self.display_followup_communication(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
@@ -120,10 +121,16 @@ class HealthInsightsSyncSamples:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION:
                     print(f"Follow-up Communication Inference found")
-                    for datetime in ri_inference.date_time:
-                        print(f"Follow-up Communication: Date Time: {datetime}")
-                    for recepient in ri_inference.recipient:
-                        print(f"Follow-up Communication: Recipient: {recepient}")
+                    if ri_inference.communicated_at is not None:
+                        for communicatedat in ri_inference.communicated_at:
+                            print(f"Follow-up Communication: Date Time: {communicatedat}")
+                    else:
+                        print(f"Follow-up Communication: Date Time: Unknown")
+                    if ri_inference.recipient is not None:
+                        for recepient in ri_inference.recipient:
+                            print(f"Follow-up Communication: Recipient: {recepient}")
+                    else:
+                        print(f"Follow-up Communication: Recipient: Unknown")
                     print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
 
 

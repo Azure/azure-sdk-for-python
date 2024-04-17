@@ -81,7 +81,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        jobdata = models.RadiologyJob(data)
+        jobdata = models.RadiologyInsightsJob(job_data=data)
         return jobdata
 
     @HealthInsightsEnvPreparer()
@@ -100,7 +100,8 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
                 "Repeatability-Request-ID": "5ac5fbb2-0185-4c17-82dd-e0fcf36a2184",
             },
         )
-        radiology_insights_result = poller.result()
+        response = poller.result()
+        radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
 
         for patient_result in radiology_insights_result.patient_results:
             assert patient_result.inferences is not None

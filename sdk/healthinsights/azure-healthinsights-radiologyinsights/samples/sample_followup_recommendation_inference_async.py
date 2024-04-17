@@ -119,14 +119,15 @@ class HealthInsightsSamples:
 
         # Construct the request with the patient and configuration
         radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        job_data = models.RadiologyInsightsJob(radiology_insights_data)
+        job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
 
         try:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
                 resource=job_data,
             )
-            radiology_insights_result = await poller.result()
+            job_response = await poller.result()
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
             self.display_followup_recommendation(radiology_insights_result)
             await radiology_insights_client.close()
         except Exception as ex:
