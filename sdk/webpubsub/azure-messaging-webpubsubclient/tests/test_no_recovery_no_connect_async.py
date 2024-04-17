@@ -20,7 +20,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
     # disable recovery and auto reconnect
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_disable_recovery_and_autoconnect(self, webpubsubclient_connection_string):
+    async def test_disable_recovery_and_autoconnect_async(self, webpubsubclient_connection_string):
         client = await self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,
@@ -41,7 +41,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
     # disable recovery and auto reconnect, then send message concurrently
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_disable_recovery_and_autoconnect_send_concurrently(
+    async def test_disable_recovery_and_autoconnect_send_concurrently_async(
         self, webpubsubclient_connection_string
     ):
         client = await self.create_client(
@@ -52,7 +52,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
         )
 
         async with client:
-            group_name = "test"
+            group_name = "test_disable_recovery_and_autoconnect_send_concurrently_async"
             await client.join_group(group_name)
             count = 10
             tasks = [client.send_to_group(group_name, "hello", "text") for _ in range(10)]

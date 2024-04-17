@@ -25,9 +25,9 @@ from azure.messaging.webpubsubclient.models import (
 class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_call_back_deadlock(self, webpubsubclient_connection_string):
+    async def test_call_back_deadlock_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
-        group_name = "test_call_back_deadlock"
+        group_name = "test_call_back_deadlock_async"
 
         async def on_group_message(msg: OnGroupDataMessageArgs):
             await client.send_to_group(group_name, msg.data, "text", no_echo=True)
@@ -43,10 +43,10 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_context_manager(self, webpubsubclient_connection_string):
+    async def test_context_manager_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
         async with client:
-            group_name = "test_context_manager"
+            group_name = "test_context_manager_async"
             await client.join_group(group_name)
             await client.send_to_group(group_name, "test_context_manager", "text")
             await asyncio.sleep(2.0)
@@ -55,7 +55,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     # test on_stop
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_on_stop(self, webpubsubclient_connection_string):
+    async def test_on_stop_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
 
         async def on_stop():
@@ -78,7 +78,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_duplicated_start(self, webpubsubclient_connection_string):
+    async def test_duplicated_start_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
         with pytest.raises(OpenClientError):
             async with client:
@@ -87,7 +87,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_duplicated_stop(self, webpubsubclient_connection_string):
+    async def test_duplicated_stop_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
         async with client:
             await client.close()
@@ -95,7 +95,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_send_event(self, webpubsubclient_connection_string):
+    async def test_send_event_async(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=0)
         async with client:
             # please register event handler in azure portal before run this test
@@ -106,7 +106,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_rejoin_group(self, webpubsubclient_connection_string):
+    async def test_rejoin_group_async(self, webpubsubclient_connection_string):
         async def _test(enable_auto_rejoin, test_group_name, assert_func):
             client = await self.create_client(
                 connection_string=webpubsubclient_connection_string,
@@ -125,18 +125,18 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
         await _test(
             enable_auto_rejoin=True,
-            test_group_name="test_rejoin_group",
+            test_group_name="test_rejoin_group_async",
             assert_func=lambda x: x in TEST_RESULT_ASYNC,
         )
         await _test(
             enable_auto_rejoin=False,
-            test_group_name="test_disable_rejoin_group",
+            test_group_name="test_disable_rejoin_group_async",
             assert_func=lambda x: x not in TEST_RESULT_ASYNC,
         )
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_open_client_error(self):
+    async def test_open_client_error_async(self):
         client = await self.create_client(
             connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
         )
