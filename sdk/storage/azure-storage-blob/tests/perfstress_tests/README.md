@@ -6,10 +6,19 @@ Note that tests for T1 and T2 SDKs cannot be run from the same environment, and 
 
 ### Setup for test resources
 
-These tests will run against a pre-configured Storage account. The following environment variable will need to be set for the tests to access the live resources:
+These tests will run against a pre-configured Storage account. The following environment variable will need to be set for the tests to access the live resources using the connection string for authentication:
 ```
 AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 ```
+
+The following environment variables will need to be set for the tests to access the live resources using Microsoft Entra ID for authentication:
+```
+AZURE-STORAGE-BLOB_TENANT_ID=<Microsoft Entra ID tenant ID>
+AZURE-STORAGE-BLOB_CLIENT_ID=<Microsoft Entra ID client ID>
+AZURE-STORAGE-BLOB_CLIENT_SECRET=<Microsoft Entra ID client secret>
+AZURE_STORAGE_ACCOUNT_NAME=<live storage account name>
+```
+
 
 ### Setup for T2 perf test runs
 
@@ -46,6 +55,7 @@ These options are available for all perf tests:
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 - `-x --test-proxies` Whether to run the tests against the test proxy server. Specfiy the URL(s) for the proxy endpoint(s) (e.g. "https://localhost:5001"). WARNING: When using with Legacy tests - only HTTPS is supported.
 - `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
+- `--use-entra-id` - Flag to pass in to use Microsoft Entra ID as the authentication. By default, set to False.
 
 ### Common Blob command line options
 The options are available for all Blob perf tests:

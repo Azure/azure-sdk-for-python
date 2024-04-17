@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -85,7 +85,6 @@ class CertificatesOperations:
         :type skip: int
         :param maxpagesize: The maximum number of result items per page. Default value is None.
         :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Certificate or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Certificate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -107,7 +106,7 @@ class CertificatesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_catalog_request(
+                _request = build_list_by_catalog_request(
                     resource_group_name=resource_group_name,
                     catalog_name=catalog_name,
                     subscription_id=self._config.subscription_id,
@@ -116,12 +115,11 @@ class CertificatesOperations:
                     skip=skip,
                     maxpagesize=maxpagesize,
                     api_version=api_version,
-                    template_url=self.list_by_catalog.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -133,13 +131,13 @@ class CertificatesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("CertificateListResult", pipeline_response)
@@ -149,11 +147,11 @@ class CertificatesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -165,10 +163,6 @@ class CertificatesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_catalog.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/certificates"
-    }
 
     @distributed_trace_async
     async def get(
@@ -184,7 +178,6 @@ class CertificatesOperations:
         :param serial_number: Serial number of the certificate. Use '.default' to get current active
          certificate. Required.
         :type serial_number: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -203,22 +196,21 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Certificate] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             serial_number=serial_number,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -231,13 +223,9 @@ class CertificatesOperations:
         deserialized = self._deserialize("Certificate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/certificates/{serialNumber}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def retrieve_cert_chain(
@@ -253,7 +241,6 @@ class CertificatesOperations:
         :param serial_number: Serial number of the certificate. Use '.default' to get current active
          certificate. Required.
         :type serial_number: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateChainResponse or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.CertificateChainResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -272,22 +259,21 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.CertificateChainResponse] = kwargs.pop("cls", None)
 
-        request = build_retrieve_cert_chain_request(
+        _request = build_retrieve_cert_chain_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             serial_number=serial_number,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.retrieve_cert_chain.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -300,13 +286,9 @@ class CertificatesOperations:
         deserialized = self._deserialize("CertificateChainResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    retrieve_cert_chain.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/certificates/{serialNumber}/retrieveCertChain"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def retrieve_proof_of_possession_nonce(
@@ -335,7 +317,6 @@ class CertificatesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProofOfPossessionNonceResponse or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.ProofOfPossessionNonceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -347,7 +328,7 @@ class CertificatesOperations:
         resource_group_name: str,
         catalog_name: str,
         serial_number: str,
-        proof_of_possession_nonce_request: IO,
+        proof_of_possession_nonce_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -363,11 +344,10 @@ class CertificatesOperations:
          certificate. Required.
         :type serial_number: str
         :param proof_of_possession_nonce_request: Proof of possession nonce request body. Required.
-        :type proof_of_possession_nonce_request: IO
+        :type proof_of_possession_nonce_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProofOfPossessionNonceResponse or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.ProofOfPossessionNonceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -379,7 +359,7 @@ class CertificatesOperations:
         resource_group_name: str,
         catalog_name: str,
         serial_number: str,
-        proof_of_possession_nonce_request: Union[_models.ProofOfPossessionNonceRequest, IO],
+        proof_of_possession_nonce_request: Union[_models.ProofOfPossessionNonceRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProofOfPossessionNonceResponse:
         """Gets the proof of possession nonce.
@@ -393,13 +373,9 @@ class CertificatesOperations:
          certificate. Required.
         :type serial_number: str
         :param proof_of_possession_nonce_request: Proof of possession nonce request body. Is either a
-         ProofOfPossessionNonceRequest type or a IO type. Required.
+         ProofOfPossessionNonceRequest type or a IO[bytes] type. Required.
         :type proof_of_possession_nonce_request:
-         ~azure.mgmt.sphere.models.ProofOfPossessionNonceRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.sphere.models.ProofOfPossessionNonceRequest or IO[bytes]
         :return: ProofOfPossessionNonceResponse or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.ProofOfPossessionNonceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -427,7 +403,7 @@ class CertificatesOperations:
         else:
             _json = self._serialize.body(proof_of_possession_nonce_request, "ProofOfPossessionNonceRequest")
 
-        request = build_retrieve_proof_of_possession_nonce_request(
+        _request = build_retrieve_proof_of_possession_nonce_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             serial_number=serial_number,
@@ -436,16 +412,15 @@ class CertificatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.retrieve_proof_of_possession_nonce.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -458,10 +433,6 @@ class CertificatesOperations:
         deserialized = self._deserialize("ProofOfPossessionNonceResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    retrieve_proof_of_possession_nonce.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/certificates/{serialNumber}/retrieveProofOfPossessionNonce"
-    }
+        return deserialized  # type: ignore

@@ -164,12 +164,16 @@ class FileSystemClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :return a FileSystemClient
-        :rtype ~azure.storage.filedatalake.FileSystemClient
+        :returns: A FileSystemClient.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
 
@@ -275,7 +279,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -457,7 +461,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: filesystem-updated property dict (Etag and last modified).
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -510,7 +514,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: File System-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or ~datetime.datetime]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         return self._container_client.set_container_access_policy(signed_identifiers,
                                                                   public_access=public_access, **kwargs)
@@ -557,16 +561,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param int max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
-        :keyword upn:
+        :keyword bool upn:
             Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "true", the user identity values returned
+            enabled for the account. If "True", the user identity values returned
             in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
             transformed from Azure Active Directory Object IDs to User Principal
-            Names.  If "false", the values will be returned as Azure Active
+            Names. If "False", the values will be returned as Azure Active
             Directory Object IDs. The default value is false. Note that group and
             application Object IDs are not translated because they do not have
             unique friendly names.
-        :type upn: bool
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

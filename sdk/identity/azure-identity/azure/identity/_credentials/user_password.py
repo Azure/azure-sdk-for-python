@@ -19,7 +19,7 @@ class UsernamePasswordCredential(InteractiveCredential):
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
     See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`__ for more information about
+    <https://learn.microsoft.com/entra/fundamentals/sign-up-organization>`__ for more information about
     account types.
 
     :param str client_id: The application's client ID
