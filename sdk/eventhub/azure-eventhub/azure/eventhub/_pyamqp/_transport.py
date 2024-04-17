@@ -143,6 +143,7 @@ def to_host_port(host, port=AMQP_PORT):
     :return: Tuple of (host, port).
     :rtype: tuple
     """
+    
     m = IPV6_LITERAL.match(host)
     if m:
         host = m.group(1)
@@ -503,13 +504,15 @@ class SSLTransport(_AbstractTransport):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self.sslopts['server_hostname'] = host
         self._read_buffer = BytesIO()
+        self._use_tls = kwargs.get("use_tls", True)
         super(SSLTransport, self).__init__(
             host, port=port, socket_timeout=socket_timeout, **kwargs
         )
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
-        self.sock = self._wrap_socket(self.sock, **self.sslopts)
+        if self._use_tls:
+            self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
     def _wrap_socket(self, sock, context=None, **sslopts):
@@ -599,7 +602,8 @@ class SSLTransport(_AbstractTransport):
         """Unwrap a SSL socket, so we can call shutdown()."""
         if self.sock is not None:
             try:
-                self.sock = self.sock.unwrap()
+                if self._use_tls:
+                    self.sock = self.sock.unwrap()
             except OSError:
                 pass
 

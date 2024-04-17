@@ -157,6 +157,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
+                port=self._port,
                 custom_endpoint=custom_endpoint,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
