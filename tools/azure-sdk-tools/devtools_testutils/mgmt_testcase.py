@@ -68,7 +68,7 @@ class AzureMgmtPreparer(AbstractPreparer):
     def moniker(self):
         """Override moniker generation for backwards compatibility.
 
-        azure-devtools preparers, by default, generate "monikers" which replace
+        AbstractPreparer preparers, by default, generate "monikers" which replace
         resource names in request URIs by tacking on a resource count to
         name_prefix. By contrast, SDK tests used the fully qualified (module + method)
         test name and the hashing process in get_resource_name.

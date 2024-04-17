@@ -21,7 +21,7 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-
+from datetime import datetime, timezone
 import warnings
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
 from typing_extensions import Literal
@@ -307,6 +307,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         partition_key_range_id: Optional[str] = None,
         is_start_from_beginning: bool = False,
+        start_time: Optional[datetime] = None,
         continuation: Optional[str] = None,
         max_item_count: Optional[int] = None,
         *,
@@ -320,6 +321,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This is used to process the change feed in parallel across multiple consumers.
         :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
+        :param datetime start_time: Specifies a point of time to start change feed. Start time in
+            '%a, %d %b %Y %H:%M:%S GMT' format. Converts datetime to UTC regardless of timezone.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param str continuation: e_tag value to be used as continuation for reading change feed.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -342,6 +345,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if is_start_from_beginning is not None:
             feed_options["isStartFromBeginning"] = is_start_from_beginning
+        if start_time is not None and is_start_from_beginning is False and isinstance(start_time, datetime):
+            feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if continuation is not None:

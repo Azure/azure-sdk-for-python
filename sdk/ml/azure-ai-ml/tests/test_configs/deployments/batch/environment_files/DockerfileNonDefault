@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 
 ARG CONDA_VERSION=4.7.12
 ARG PYTHON_VERSION=3.7
