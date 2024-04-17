@@ -28,6 +28,19 @@ class TestModelClient(ModelClientTestBase):
         self._validate_chat_completions_result(result, ["5280", "5,280"])
         client.close()
 
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_streaming_error_free(self, **kwargs):
+        client = self._create_chat_client(**kwargs)
+        result = client.create_streaming(
+            messages=[
+                sdk.models.SystemMessage(content="You are a helpful assistant."),
+                sdk.models.UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+            ]
+        )
+        self._validate_chat_completions_streaming_result(result)
+        client.close()
+
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
     def test_embeddings_error_free(self, **kwargs):

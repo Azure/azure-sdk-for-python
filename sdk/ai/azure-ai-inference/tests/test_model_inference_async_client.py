@@ -26,7 +26,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             sdk.models.UserMessage(content="How many feet are in a mile?")
         ]
 
-        client = self._create_chat_client(sync=False, **kwargs)
+        client = self._create_async_chat_client(**kwargs)
         result = await client.create(messages=messages)
         self._print_chat_completions_result(result)
         self._validate_chat_completions_result(result, ["5280", "5,280"])
@@ -38,10 +38,23 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._validate_chat_completions_result(result, ["1760", "1,760"])
         await client.close()
 
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
+    async def test_async_chat_completions_streaming_error_free(self, **kwargs):
+        client = self._create_async_chat_client(Sync=False, **kwargs)
+        result = await client.create_streaming(
+            messages=[
+                sdk.models.SystemMessage(content="You are a helpful assistant."),
+                sdk.models.UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+            ]
+        )
+        await self._validate_async_chat_completions_streaming_result(result)
+        await client.close()
+
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_async_embeddings_error_free(self, **kwargs):
-        client = self._create_embeddings_client(sync=False, **kwargs)
+        client = self._create_async_embeddings_client(**kwargs)
         result = await client.create(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(result)
         self._validate_embeddings_result(result)
@@ -56,7 +69,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
     async def test_embeddings_with_auth_failure(self, **kwargs):
-        client = self._create_embeddings_client(sync=False, bad_key=True, **kwargs)
+        client = self._create_async_embeddings_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
             result = await client.create(input=["first phrase", "second phrase", "third phrase"])

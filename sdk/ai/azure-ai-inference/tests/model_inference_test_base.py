@@ -53,23 +53,35 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # Regular expression describing the pattern of a result ID (e.g. "183b56eb-8512-484d-be50-5d8df82301a2")
     REGEX_RESULT_ID = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 
-    def _create_chat_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs):
+    # Methods to load credentials from environment variables
+    def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("chat_completions_endpoint")
         key = "00000000000000000000000000000000" if bad_key else kwargs.pop("chat_completions_key")
         credential = AzureKeyCredential(key)
-        if sync:
-            return sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
-        else:
-            return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+        return endpoint, credential
 
-    def _create_embeddings_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs) -> Union[sdk.EmbeddingsClient, async_sdk.EmbeddingsClient]:
+    def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("embeddings_endpoint")
         key = "00000000000000000000000000000000" if bad_key else kwargs.pop("embeddings_key")
         credential = AzureKeyCredential(key)
-        if sync:
-            return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
-        else:
-            return async_sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+        return endpoint, credential
+
+    # Methos to create the different sync and async clients
+    def _create_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
+        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
+        return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
+        return sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _create_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
+        endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return async_sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _create_embeddings_client(self, *, sync: bool = True, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient:
+        endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     def _create_embeddings_client_with_chat_completions_credentials(self, **kwargs) -> sdk.EmbeddingsClient:
         endpoint = kwargs.pop("chat_completions_endpoint")
@@ -95,6 +107,61 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert result.usage.completion_tokens > 0
         assert result.usage.total_tokens == result.usage.prompt_tokens + result.usage.completion_tokens
 
+    @staticmethod
+    def _validate_chat_completions_update(update: sdk.models.ChatCompletionsUpdate, first: bool) -> str:
+        if first:
+            # Why is 'content','created' and 'object' missing in the first update?
+            assert update.choices[0].delta.role == sdk.models.ChatRole.ASSISTANT
+        else:
+            assert update.choices[0].delta.role == None
+            assert update.choices[0].delta.content != None
+            assert update.created is not None
+            assert update.created != ""
+            assert update.object == "chat.completion.chunk"
+        assert update.choices[0].delta.tool_calls == None
+        assert update.choices[0].index == 0
+        assert update.id is not None
+        assert len(update.id) == 36
+        assert update.model is not None 
+        assert update.model != ""
+        if update.choices[0].delta.content != None:
+            return update.choices[0].delta.content
+        else:
+            return ""
+
+    @staticmethod
+    def _validate_chat_completions_streaming_result(result: sdk.models.StreamingChatCompletions):
+        count = 0
+        content =""
+        for update in result:
+            content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
+            count += 1
+        assert count > 2
+        assert len(content) > 100 # Some arbitrary number
+        # The last update should have a finish reason and usage
+        assert update.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
+        assert update.usage.prompt_tokens > 0
+        assert update.usage.completion_tokens > 0
+        assert update.usage.total_tokens == update.usage.prompt_tokens + update.usage.completion_tokens
+        if ModelClientTestBase.PRINT_RESULT:
+            print(content)
+
+    @staticmethod
+    async def _validate_async_chat_completions_streaming_result(result: sdk.models.StreamingChatCompletions):
+        count = 0
+        content = ""
+        async for update in result:
+            content += ModelClientTestBase._validate_chat_completions_update(update, count == 0)
+            count += 1
+        assert count > 2
+        assert len(content) > 100 # Some arbitrary number
+        # The last update should have a finish reason and usage
+        assert update.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
+        assert update.usage.prompt_tokens > 0
+        assert update.usage.completion_tokens > 0
+        assert update.usage.total_tokens == update.usage.prompt_tokens + update.usage.completion_tokens
+        if ModelClientTestBase.PRINT_RESULT:
+            print(content)
 
     @staticmethod
     def _print_chat_completions_result(result: sdk.models.ChatCompletions):
