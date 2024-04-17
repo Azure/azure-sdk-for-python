@@ -35,7 +35,6 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
             send_timeout: int = 60,
             custom_endpoint_address: Optional[str] = None,
             connection_verify: Optional[str] = None,
-            use_tls: bool = True,
             **kwargs: Any
         ):
         self.user_agent = user_agent
@@ -60,7 +59,6 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.connection_verify = connection_verify
         self.custom_endpoint_hostname = None
         self.hostname = hostname
-        self.use_tls = use_tls
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket

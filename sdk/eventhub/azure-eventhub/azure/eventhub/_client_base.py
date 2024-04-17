@@ -350,10 +350,6 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
         # Check if emulator is in use, unset tls if it is, and set the endpoint 
         # as a custom endpoint address unless otherwise specified.
-        if emulator or "localhost" in host:
-            # kwargs["custom_endpoint_address"] = host
-            kwargs["use_tls"] = False
-        
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         # Check if emulator is in use, unset tls if it is

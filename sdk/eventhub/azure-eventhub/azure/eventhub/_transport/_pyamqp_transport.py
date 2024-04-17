@@ -334,6 +334,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
             "msg_timeout"
         )
+
         return SendClient(
             config.hostname,
             target,
