@@ -20,6 +20,7 @@ from .azure_testcase import (
     get_resource_name,
     get_qualified_method_name,
 )
+from .fake_credentials import SANITIZED
 from .fake_credentials_async import AsyncFakeCredential
 from .helpers import is_live, trim_kwargs_from_test_function
 from .sanitizers import add_general_string_sanitizer
@@ -257,12 +258,12 @@ class AzureRecordedTestCase(object):
         :keyword fake_parameters: A dictionary with token parameter names as keys, and the values to sanitize these keys
             with as values. For example: {"sktid": "00000000-0000-0000-0000-000000000000", "sig": "sanitized"}
         :paramtype fake_parameters: Dict[str, str]
-        :keyword str fake_value: The value used to sanitize `sig`. Defaults to "fake_token_value".
+        :keyword str fake_value: The value used to sanitize `sig`. Defaults to "Sanitized".
         """
         sas_func = args[0]
         sas_func_pos_args = args[1:]
 
-        fake_value = kwargs.pop("fake_value", "fake_token_value")
+        fake_value = kwargs.pop("fake_value", SANITIZED)
         fake_parameters = kwargs.pop("fake_parameters", {})
         token = sas_func(*sas_func_pos_args, **kwargs)
 
