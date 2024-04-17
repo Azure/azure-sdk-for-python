@@ -787,6 +787,186 @@ class OSDisk(_model_base.Model):
     """The size of the OS Disk in gigabytes."""
 
 
+class PagedDevBox(_model_base.Model):
+    """The Dev Box list result.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The DevBox items on this page. Required.
+    :vartype value: list[~azure.developer.devcenter.models.DevBox]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: List["_models.DevBox"] = rest_field()
+    """The DevBox items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.DevBox"],
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PagedDevBoxActionDelayResult(_model_base.Model):
+    """The actions list result.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The DevBoxActionDelayResult items on this page. Required.
+    :vartype value: list[~azure.developer.devcenter.models.DevBoxActionDelayResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: List["_models.DevBoxActionDelayResult"] = rest_field()
+    """The DevBoxActionDelayResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.DevBoxActionDelayResult"],
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PagedEnvironment(_model_base.Model):
+    """Results of the environment list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Environment items on this page. Required.
+    :vartype value: list[~azure.developer.devcenter.models.Environment]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: List["_models.Environment"] = rest_field()
+    """The Environment items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.Environment"],
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PagedEnvironmentDefinition(_model_base.Model):
+    """Results of the environment definition list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The EnvironmentDefinition items on this page. Required.
+    :vartype value: list[~azure.developer.devcenter.models.EnvironmentDefinition]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: List["_models.EnvironmentDefinition"] = rest_field()
+    """The EnvironmentDefinition items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.EnvironmentDefinition"],
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PagedEnvironmentType(_model_base.Model):
+    """Result of the environment type list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The EnvironmentType items on this page. Required.
+    :vartype value: list[~azure.developer.devcenter.models.EnvironmentType]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: List["_models.EnvironmentType"] = rest_field()
+    """The EnvironmentType items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.EnvironmentType"],
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class Pool(_model_base.Model):
     """A pool of Dev Boxes.
 

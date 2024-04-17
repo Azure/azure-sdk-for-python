@@ -27,7 +27,7 @@ class DevCenterClient(DevCenterClientOperationsMixin):  # pylint: disable=client
 
     :param endpoint: The DevCenter-specific URI to operate on. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-04-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -82,7 +82,7 @@ class DevCenterClient(DevCenterClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
