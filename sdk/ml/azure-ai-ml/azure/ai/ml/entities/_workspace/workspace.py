@@ -20,7 +20,7 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     WorkspaceResourceConstants,
-    WorkspaceType,
+    WorkspaceKind,
     CommonYamlFields,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -28,7 +28,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
 
-from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.entities._util import find_field_in_override
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -135,13 +135,9 @@ class Workspace(Resource):
         # to maintain backwards compatibility with internal systems that I suspect still use 'kind' somewhere.
         # 'type' takes precedence over 'kind' if they're both set, and this defaults to a normal workspace's type
         # if nothing is set.
-        self._type = kwargs.pop("type", None)
-        kind = kwargs.pop("kind", None)
-        if self._type is None:
-            if kind is not None:
-                self._type = kind
-            else:
-                self._type = WorkspaceType.DEFAULT
+        self._kind = kwargs.pop("kind", None)
+        if self._kind is None:
+            self._kind = WorkspaceKind.DEFAULT
 
         self.print_as_yaml = True
         self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
@@ -170,7 +166,7 @@ class Workspace(Resource):
         # but kept for backwards if people try to just use a normal workspace like
         # a project.
         if hub_id:
-            self._type = WorkspaceType.PROJECT
+            self._kind = WorkspaceKind.PROJECT
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
@@ -240,7 +236,7 @@ class Workspace(Resource):
         return res
 
     @classmethod
-    def _resolve_sub_cls_and_type(
+    def _resolve_sub_cls_and_kind(
         cls, data: Dict, params_override: Optional[List[Dict]] = None
     ) -> Tuple[Type["Workspace"], str]:
         """Given a workspace data dictionary, determine the appropriate workspace class and type string.
@@ -256,17 +252,17 @@ class Workspace(Resource):
         """
         from azure.ai.ml.entities import Hub, Project
 
-        workspace_type: Optional[Type["Workspace"]] = None
-        type_in_override = find_type_in_override(params_override)
-        type_str = type_in_override or data.get(CommonYamlFields.TYPE, WorkspaceType.DEFAULT)
+        workspace_class: Optional[Type["Workspace"]] = None
+        type_in_override = find_field_in_override(CommonYamlFields.KIND, params_override)
+        type_str = type_in_override or data.get(CommonYamlFields.KIND, WorkspaceKind.DEFAULT)
         if type_str is not None:
             type_str = type_str.lower()
-        if type_str == WorkspaceType.HUB:
-            workspace_type = Hub
-        elif type_str == WorkspaceType.PROJECT:
-            workspace_type = Project
-        elif type_str == WorkspaceType.DEFAULT:
-            workspace_type = Workspace
+        if type_str == WorkspaceKind.HUB:
+            workspace_class = Hub
+        elif type_str == WorkspaceKind.PROJECT:
+            workspace_class = Project
+        elif type_str == WorkspaceKind.DEFAULT:
+            workspace_class = Workspace
         else:
             msg = f"Unsupported workspace type: {type_str}."
             raise ValidationException(
@@ -276,7 +272,7 @@ class Workspace(Resource):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        return workspace_type, type_str
+        return workspace_class, type_str
 
     @classmethod
     def _load(
@@ -294,8 +290,8 @@ class Workspace(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        workspace_type, type_str = cls._resolve_sub_cls_and_type(data, params_override)
-        schema_type = workspace_type._get_schema_class()  # pylint: disable=protected-access
+        workspace_class, type_str = cls._resolve_sub_cls_and_kind(data, params_override)
+        schema_type = workspace_class._get_schema_class()  # pylint: disable=protected-access
         loaded_schema = load_from_dict(
             schema_type,
             data=data,
@@ -304,7 +300,7 @@ class Workspace(Resource):
             f" please specify the correct job type in the 'type' property.",
             **kwargs,
         )
-        result = workspace_type(**loaded_schema)
+        result = workspace_class(**loaded_schema)
         if yaml_path:
             result._source_path = yaml_path  # pylint: disable=protected-access
         return result
@@ -363,7 +359,7 @@ class Workspace(Resource):
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
-            type=rest_obj.kind.lower() if rest_obj.kind else None,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -410,7 +406,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
-            kind=self._type,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,

@@ -132,6 +132,23 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
+def find_field_in_override(field: str, params_override: Optional[list] = None) -> Optional[str]:
+    """Find specific field in params override.
+
+    :param field: The name of the field to find
+    :type field: str
+    :param params_override: The params override
+    :type params_override: Optional[list]
+    :return: The type
+    :rtype: Optional[str]
+    """
+    params_override = params_override or []
+    for override in params_override:
+        if field in override:
+            res: Optional[str] = override[field]
+            return res
+    return None
+
 def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     """Find type in params override.
 
@@ -140,12 +157,7 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
     :return: The type
     :rtype: Optional[str]
     """
-    params_override = params_override or []
-    for override in params_override:
-        if CommonYamlFields.TYPE in override:
-            res: Optional[str] = override[CommonYamlFields.TYPE]
-            return res
-    return None
+    return find_field_in_override(CommonYamlFields.TYPE, params_override)
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:

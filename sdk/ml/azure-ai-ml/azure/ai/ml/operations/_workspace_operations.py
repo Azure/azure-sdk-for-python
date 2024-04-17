@@ -20,7 +20,7 @@ from azure.ai.ml._utils.utils import (
     get_resource_group_name_from_resource_group_id,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import AzureMLResourceType, Scope, WorkspaceType
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope, WorkspaceKind
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -73,15 +73,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(
-        self, *, scope: str = Scope.RESOURCE_GROUP, filtered_types: Optional[Union[str, List[str]]] = None
+        self, *, scope: str = Scope.RESOURCE_GROUP, filtered_kinds: Optional[Union[str, List[str]]] = None
     ) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
-        :keyword kind: The kind of workspace to list. If not provided, all workspaces will be listed.
-            Accepts either a single value, or a list of values.
-            Valid kind options include: "workspace", "project", and "hub".
+        :keyword kind: The kind of workspace to list. If not provided, all workspaces varieties will be listed.
+            Accepts either a single kind, or a list of them.
+            Valid kind options include: "default", "project", and "hub".
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Workspace]
 
@@ -96,16 +96,16 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
 
         # Kind should be converted to a comma-separating string if multiple values are supplied.
-        formatted_types = filtered_types
-        if isinstance(filtered_types, list):
-            formatted_types = ",".join(filtered_types)  # type: ignore[arg-type]
+        formatted_kinds = filtered_kinds
+        if isinstance(filtered_kinds, list):
+            formatted_kinds = ",".join(filtered_kinds)  # type: ignore[arg-type]
 
         if scope == Scope.SUBSCRIPTION:
             return cast(
                 Iterable[Workspace],
                 self._operation.list_by_subscription(
                     cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
-                    kind=formatted_types,
+                    kind=formatted_kinds,
                 ),
             )
         return cast(
@@ -113,7 +113,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             self._operation.list_by_resource_group(
                 self._resource_group_name,
                 cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
-                kind=formatted_types,
+                kind=formatted_kinds,
             ),
         )
 
@@ -262,7 +262,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
-            if error.status_code == 403 and workspace._type == WorkspaceType.PROJECT:
+            if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
                 hub_name, _ = get_resource_and_group_name_from_resource_id(workspace._hub_id)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)

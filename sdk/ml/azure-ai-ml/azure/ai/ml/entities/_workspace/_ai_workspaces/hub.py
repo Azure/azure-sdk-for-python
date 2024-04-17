@@ -9,7 +9,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as Rest
 from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import WorkspaceType
+from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
@@ -96,17 +96,17 @@ class Hub(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
         default_project_resource_group: Optional[str] = None,
-        associated_workspaces: Optional[List[str]] = None,  # hidden input for rest->client conversions.
+        associated_workspaces: Optional[List[str]] = [],  # hidden input for rest->client conversions.
         **kwargs: Any,
     ):
-        self._workspace_id = kwargs.pop("workspace_id", "")
-        # Ensure user can't overwrite/double input type.
-        kwargs.pop("type", None)
+        self._workspace_id = kwargs.pop("workspace_id", "") 
+        # Ensure user can't overwrite/double input kind.
+        kwargs.pop("kind", None)
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            type=WorkspaceType.HUB,
+            kind=WorkspaceKind.HUB,
             display_name=display_name,
             location=location,
             storage_account=storage_account,
@@ -160,7 +160,7 @@ class Hub(Workspace):
                 workspace_id=rest_obj.workspace_id,
                 enable_data_isolation=rest_obj.enable_data_isolation,
                 default_project_resource_group=default_project_resource_group,
-                associated_workspaces=rest_obj.associated_workspaces,
+                associated_workspaces=rest_obj.associated_workspaces if rest_obj.associated_workspaces else [],
                 id=rest_obj.id,
             )
         return None

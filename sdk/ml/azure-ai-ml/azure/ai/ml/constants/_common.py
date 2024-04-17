@@ -392,6 +392,7 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+    KIND = "kind"
 
 
 class SchemaUrl:
@@ -914,7 +915,7 @@ class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
 
 
-class WorkspaceType:
+class WorkspaceKind:
     """Enum of workspace categories."""
 
     DEFAULT = "default"

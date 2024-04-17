@@ -1,6 +1,6 @@
 name: hub_name
 location: WestCentralUS
-type: hub
+kind: hub
 default_project_resource_group: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-default-resource-group
 tags:
   purpose: testing

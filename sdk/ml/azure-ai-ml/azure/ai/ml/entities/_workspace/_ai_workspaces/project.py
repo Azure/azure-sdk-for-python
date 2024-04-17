@@ -8,7 +8,7 @@ from typing import Dict, Optional, Any
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml.entities import Workspace
 
-from azure.ai.ml.constants._common import WorkspaceType
+from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml._schema.workspace import ProjectSchema
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
@@ -47,13 +47,13 @@ class Project(Workspace):
         resource_group: Optional[str] = None,
         **kwargs,
     ) -> None:
-        # Ensure user can't overwrite/double input type.
-        kwargs.pop("type", None)
+        # Ensure user can't overwrite/double input kind.
+        kwargs.pop("kind", None)
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            type=WorkspaceType.PROJECT,
+            kind=WorkspaceKind.PROJECT,
             display_name=display_name,
             location=location,
             resource_group=resource_group,

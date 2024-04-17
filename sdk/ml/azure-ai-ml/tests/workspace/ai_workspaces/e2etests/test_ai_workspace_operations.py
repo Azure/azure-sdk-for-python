@@ -9,7 +9,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.core.polling import LROPoller
-from azure.ai.ml.constants._common import WorkspaceType
+from azure.ai.ml.constants._common import WorkspaceKind
 
 
 @pytest.mark.e2etest
@@ -63,7 +63,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 default_project_resource_group=client.resource_group_name,
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
-            assert created_hub.associated_workspaces is None
+            assert created_hub.associated_workspaces == []
 
             local_project1 = Project(
                 name=f"test_proj_1_{randstr('project_1_name')}",
@@ -103,17 +103,17 @@ class TestWorkspace(AzureRecordedTestCase):
             self.compare_project(local_project2, gotten_project2)
 
             # Get various permutations of listed workspaces.
-            listed_hubs = [hub for hub in client.workspaces.list(filtered_types=WorkspaceType.HUB)]
-            listed_projects = [project for project in client.workspaces.list(filtered_types=WorkspaceType.PROJECT)]
+            listed_hubs = [hub for hub in client.workspaces.list(filtered_kinds=WorkspaceKind.HUB)]
+            listed_projects = [project for project in client.workspaces.list(filtered_kinds=WorkspaceKind.PROJECT)]
             listed_projects2 = [
                 project
-                for project in client.workspaces.list(filtered_types=WorkspaceType.PROJECT, scope="subscription")
+                for project in client.workspaces.list(filtered_kinds=WorkspaceKind.PROJECT, scope="subscription")
             ]
             listed_projects_and_hubs = [
-                stuff for stuff in client.workspaces.list(filtered_types=[WorkspaceType.HUB, WorkspaceType.PROJECT])
+                stuff for stuff in client.workspaces.list(filtered_kinds=[WorkspaceKind.HUB, WorkspaceKind.PROJECT])
             ]
             listed_workspaces = [
-                workspace for workspace in client.workspaces.list(filtered_types=[WorkspaceType.DEFAULT])
+                workspace for workspace in client.workspaces.list(filtered_kinds=[WorkspaceKind.DEFAULT])
             ]
             normal_list = [stuff for stuff in client.workspaces.list()]
 
