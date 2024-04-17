@@ -67,7 +67,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
-    GenerationTokenStatisticsMetricThreshold,
+    GenerationTokenStatisticsMonitorMetricThreshold,
     MetricThreshold,
     ModelPerformanceMetricThreshold,
     PredictionDriftMetricThreshold,
@@ -387,6 +387,7 @@ class MonitoringSignal(RestTranslatableMixin):
             "FeatureAttributionDriftSignal",
             "CustomMonitoringSignal",
             "GenerationSafetyQualitySignal",
+            "GenerationTokenStatisticsSignal"
         ]
     ]:
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
@@ -406,7 +407,7 @@ class MonitoringSignal(RestTranslatableMixin):
         if obj.signal_type == MonitoringSignalType.MODEL_PERFORMANCE:
             return ModelPerformanceSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.GENERATION_TOKEN_STATISTICS:
-            return ModelPerformanceSignal._from_rest_object(obj)
+            return GenerationTokenStatisticsSignal._from_rest_object(obj)
 
         return None
 
@@ -1194,8 +1195,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: Optional[List[LlmData]] = None,
-        workspace_connection_id: Optional[str] = None,
+        production_data: Optional[LlmData] = None,
         metric_thresholds: GenerationTokenStatisticsMonitorMetricThreshold,
         alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
@@ -1203,7 +1203,6 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     ):
         self.type = MonitorSignalType.GENERATION_TOKEN_STATISTICS
         self.production_data = production_data
-        self.workspace_connection_id = workspace_connection_id
         self.metric_thresholds = metric_thresholds
         self.alert_enabled = alert_enabled
         self.properties = properties
@@ -1212,10 +1211,9 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestGenerationTokenStatisticsSignal:
         data_window_size = kwargs.get("default_data_window_size")
         return RestGenerationTokenStatisticsSignal(
-            production_data=[data._to_rest_object(default=data_window_size) for data in self.production_data]
+            production_data=self.production_data._to_rest_object(default=data_window_size)
             if self.production_data is not None
             else None,
-            workspace_connection_id=self.workspace_connection_id,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
@@ -1225,8 +1223,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestGenerationTokenStatisticsSignal) -> "GenerationTokenStatisticsSignal":
         return cls(
-            production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
-            workspace_connection_id=obj.workspace_connection_id,
+            production_data=LlmData._from_rest_object(obj.production_data),
             metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)

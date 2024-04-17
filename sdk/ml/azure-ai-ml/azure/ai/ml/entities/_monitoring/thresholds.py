@@ -916,7 +916,7 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):
     def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
         metric_thresholds = []
         if self.totaltoken:
-            if "total_token_count" in self.totaltokencount:
+            if "total_token_count" in self.totaltoken:
                 acceptable_threshold = MonitoringThreshold(
                     value=self.totaltoken["total_token_count"]
                 )
