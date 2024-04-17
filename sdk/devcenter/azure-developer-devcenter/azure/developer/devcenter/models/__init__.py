@@ -21,6 +21,11 @@ from ._models import ImageReference
 from ._models import InnerError
 from ._models import OSDisk
 from ._models import OperationDetails
+from ._models import PagedDevBox
+from ._models import PagedDevBoxActionDelayResult
+from ._models import PagedEnvironment
+from ._models import PagedEnvironmentDefinition
+from ._models import PagedEnvironmentType
 from ._models import Pool
 from ._models import Project
 from ._models import RemoteConnection
@@ -64,6 +69,11 @@ __all__ = [
     "InnerError",
     "OSDisk",
     "OperationDetails",
+    "PagedDevBox",
+    "PagedDevBoxActionDelayResult",
+    "PagedEnvironment",
+    "PagedEnvironmentDefinition",
+    "PagedEnvironmentType",
     "Pool",
     "Project",
     "RemoteConnection",
