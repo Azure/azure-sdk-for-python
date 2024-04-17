@@ -1,5 +1,66 @@
 # Release History
 
+## 1.0.0 (Unreleased)
+
+This release targets Azure Dev Center 2023-04-01 General Available API, which is the same version as the previous 1.0.0-beta.3 release. The main improvement was the addition of models as Convenience API was enabled for the SDK. 
+
+### Features Added
+
+- Added classes for each Dev Center concept.
+    - `models`:
+        - Catalog
+        - DevBox
+        - DevBoxAction
+        - DevBoxActionDelayResult
+        - DevBoxNextAction
+        - Environment
+        - EnvironmentDefinition
+        - EnvironmentDefinitionParameter
+        - EnvironmentType
+        - Error
+        - HardwareProfile
+        - ImageReference
+        - InnerError
+        - OperationDetails
+        - OSDisk
+        - Pool
+        - Project
+        - RemoteConnection
+        - Schedule
+        - StopOnDisconnectConfiguration
+        - StorageProfile
+        
+    - `enums`:
+        - DevBoxActionDelayStatus
+        - DevBoxActionType
+        - DevBoxProvisioningState
+        - EnvironmentProvisioningState
+        - EnvironmentTypeStatus
+        - HibernateSupport
+        - LocalAdministratorStatus
+        - OperationStatus
+        - OSType
+        - ParameterType
+        - PoolHealthStatus
+        - PowerState
+        - ScheduledFrequency
+        - ScheduledType
+        - SkuName
+        - StopOnDisconnectEnableStatus
+
+
+- Updated each previous client method to return the correspondent model. E.g. The response type for `get_dev_box` was updated from `JSON` to `DevBox` model.   
+
+### Breaking Changes
+
+- Removed `filter` and `top` as optional request parameters.
+
+### Other Changes
+
+ - Split integration tests
+ - Added more samples 
+ - Add code snippets to README
+
 ## 1.0.0b3 (2023-11-02)
 
 This release updates the Azure DevCenter library to use the 2023-04-01 GA API.
@@ -42,3 +103,5 @@ This release updates the Azure DevCenter library to use the 2022-11-11-preview A
 ## 1.0.0b1 (2022-11-11)
 
 - Initial version for the DevCenter service
+
+
