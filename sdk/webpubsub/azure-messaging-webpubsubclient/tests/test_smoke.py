@@ -27,7 +27,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_call_back_deadlock(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
-        group_name = "test"
+        group_name = "test_call_back_deadlock"
 
         def on_group_message(msg: OnGroupDataMessageArgs):
             client.send_to_group(group_name, msg.data, "text", no_echo=True)
@@ -46,7 +46,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_context_manager(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         with client:
-            group_name = "test"
+            group_name = "test_context_manager"
             client.join_group(group_name)
             client.send_to_group(group_name, "test_context_manager", "text")
             time.sleep(2.0)

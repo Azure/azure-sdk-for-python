@@ -27,7 +27,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     @recorded_by_proxy_async
     async def test_call_back_deadlock(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
-        group_name = "test"
+        group_name = "test_call_back_deadlock"
 
         async def on_group_message(msg: OnGroupDataMessageArgs):
             await client.send_to_group(group_name, msg.data, "text", no_echo=True)
@@ -46,7 +46,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     async def test_context_manager(self, webpubsubclient_connection_string):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
         async with client:
-            group_name = "test"
+            group_name = "test_context_manager"
             await client.join_group(group_name)
             await client.send_to_group(group_name, "test_context_manager", "text")
             await asyncio.sleep(2.0)
