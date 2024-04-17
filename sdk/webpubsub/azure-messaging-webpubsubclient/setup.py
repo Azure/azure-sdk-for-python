@@ -66,7 +66,11 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.26.3",
         "websocket-client>=1.6.0",
-        "aiohttp>=3.9.3",
     ],
+    extras_require={
+        "aio": [
+            "aiohttp>=3.9.3",
+        ]
+    },
     python_requires=">=3.8",
 )

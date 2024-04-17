@@ -139,7 +139,7 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
     """WebPubSubClientBase
 
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
-    :keyword azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword ~azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
      reconnect. Default is 3.
     :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
@@ -148,7 +148,7 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
      "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
-    :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword ~azure.messaging.webpubsubclient.RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
@@ -255,15 +255,15 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
     ) -> List[str]:
         # pylint: disable=line-too-long
         return [
-            "Fail to open client.",
+            "Failed to open client.",
             (
                 f"It costed {int(cost_time)} seconds to open client but still failed."
                 if cost_time > self._start_timeout
                 else ""
             ),
-            f"During the process, error happened: {error}." if error else "",
+            f"During the process, an error occurred: {error}." if error else "",
             (
-                f"Server ever sent close event, close code: {close_event.close_status_code}, reason: {close_event.close_reason}."
+                f"Server sent close event, close code: {close_event.close_status_code}, reason: {close_event.close_reason}."
                 if close_event
                 else ""
             ),
@@ -278,7 +278,7 @@ class WebPubSubClient(
     :param credential: The url to connect or credential to use when connecting. Required.
     :type credential: str or WebPubSubClientCredential
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
-    :keyword azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword ~azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
      reconnect. Default is 3.
     :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
@@ -287,7 +287,7 @@ class WebPubSubClient(
      "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
-    :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword ~azure.messaging.webpubsubclient.RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
@@ -498,7 +498,7 @@ class WebPubSubClient(
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF.
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -521,7 +521,7 @@ class WebPubSubClient(
          pubsub. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -602,7 +602,7 @@ class WebPubSubClient(
         :param content: The data content. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -623,7 +623,7 @@ class WebPubSubClient(
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF.
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -733,7 +733,7 @@ class WebPubSubClient(
                 success = True
                 break
             except ReconnectError:
-                _LOGGER.debug("fail to reconnect, and will retry in another thread")
+                _LOGGER.debug("Failed to reconnect, and will retry in another thread.")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed %s", e)
@@ -963,7 +963,7 @@ class WebPubSubClient(
                     ws_instance.cv.notify()
 
         def on_error(ws_instance: WebSocketAppSync, error: Exception):
-            _LOGGER.warning("error happened when trying to connect: %s", error)
+            _LOGGER.warning("An error occurred when trying to connect: %s", error)
             ws_instance.error_happened = error
 
         if self._is_stopping:
@@ -994,9 +994,9 @@ class WebPubSubClient(
         if not self._is_connected():
             if self._thread.is_alive():
                 if reconnect_tried_times is not None:
-                    raise ReconnectError("Fail to reconnect after waiting for a while")
+                    raise ReconnectError("Failed to reconnect after waiting")
                 if recover_start_time is not None:
-                    raise RecoverError("Fail to recover after waiting for a while")
+                    raise RecoverError("Failed to recover after waiting")
             raise OpenClientError(" ".join(self._error_info(cost_time, self._ws.error_happened, self._ws.close_event)))
 
         # set thread to check sequence id if needed

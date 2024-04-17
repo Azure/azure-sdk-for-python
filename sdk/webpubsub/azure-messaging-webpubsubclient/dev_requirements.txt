@@ -3,3 +3,4 @@
 ../../identity/azure-identity
 azure-messaging-webpubsubservice==1.1.0b1
 psutil
+aiohttp>=3.9.3
