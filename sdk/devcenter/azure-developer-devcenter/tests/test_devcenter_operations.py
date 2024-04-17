@@ -12,10 +12,9 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, record
 from azure.identity import InteractiveBrowserCredential
 from azure.identity import DefaultAzureCredential
 from azure.developer.devcenter import DevCenterClient
-from azure.developer.devcenter import models
 from azure.core.exceptions import HttpResponseError
 from testcase import DevcenterPowerShellPreparer
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
 class TestDevcenter(AzureRecordedTestCase):
 
