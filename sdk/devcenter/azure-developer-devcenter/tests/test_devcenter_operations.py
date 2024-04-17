@@ -16,8 +16,8 @@ from azure.core.exceptions import HttpResponseError
 from testcase import DevcenterPowerShellPreparer
 from datetime import timedelta
 
-class TestDevcenter(AzureRecordedTestCase):
 
+class TestDevcenter(AzureRecordedTestCase):
     def create_client(self, endpoint):
         credential = self.get_credential(DevCenterClient)
         return DevCenterClient(endpoint, credential=credential)
@@ -62,7 +62,7 @@ class TestDevcenter(AzureRecordedTestCase):
         pool_response = client.get_pool(project_name, pool_name)
         assert pool_response is not None
         assert pool_response.name == pool_name
-        
+
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
     def test_get_pools(self, **kwargs):
@@ -76,7 +76,7 @@ class TestDevcenter(AzureRecordedTestCase):
         pools_response = list(client.list_pools(project_name))
         assert pools_response is not None
         assert len(pools_response) == 1
-        assert pools_response[0].name== pool_name
+        assert pools_response[0].name == pool_name
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -92,7 +92,7 @@ class TestDevcenter(AzureRecordedTestCase):
         schedule_response = client.get_schedule(project_name, pool_name, "default")
         assert schedule_response is not None
         assert schedule_response.name == "default"
-    
+
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
     def test_get_schedules(self, **kwargs):
@@ -123,12 +123,13 @@ class TestDevcenter(AzureRecordedTestCase):
         client = self.create_client(endpoint)
 
         # Create DevBox
-        create_devbox_response = client.begin_create_dev_box(
-            project_name, user, devbox_name, {"poolName": pool_name}
-        )
+        create_devbox_response = client.begin_create_dev_box(project_name, user, devbox_name, {"poolName": pool_name})
         devbox_result = create_devbox_response.result()
         assert devbox_result is not None
-        assert devbox_result.provisioning_state in [ models.DevBoxProvisioningState.SUCCEEDED, models.DevBoxProvisioningState.PROVISIONED_WITH_WARNING ]
+        assert devbox_result.provisioning_state in [
+            models.DevBoxProvisioningState.SUCCEEDED,
+            models.DevBoxProvisioningState.PROVISIONED_WITH_WARNING,
+        ]
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -151,9 +152,9 @@ class TestDevcenter(AzureRecordedTestCase):
         assert actions_response[0].name == action_response.name
 
         next_time_date = next_time_date + timedelta(hours=1)
-        delay_all_response = list(client.delay_all_dev_box_actions(
-            project_name, default_user, devbox_name, delay_until=next_time_date
-        ))
+        delay_all_response = list(
+            client.delay_all_dev_box_actions(project_name, default_user, devbox_name, delay_until=next_time_date)
+        )
         assert delay_all_response[0].action.next.scheduled_time == next_time_date
 
         # Failing with a 400 saying the date range isn't valid, even though the delay_all works just fine.
@@ -255,7 +256,7 @@ class TestDevcenter(AzureRecordedTestCase):
 
         restart_response = client.begin_restart_dev_box(project_name, default_user, devbox_name)
         restart_result = restart_response.result()
-        assert restart_result.status == 'Succeeded'
+        assert restart_result.status == "Succeeded"
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -270,15 +271,15 @@ class TestDevcenter(AzureRecordedTestCase):
 
         stop_response = client.begin_stop_dev_box(project_name, default_user, devbox_name)
         stop_result = stop_response.result()
-        assert stop_result.status == 'Succeeded'
+        assert stop_result.status == "Succeeded"
 
         start_response = client.begin_start_dev_box(project_name, default_user, devbox_name)
         start_result = start_response.result()
-        assert start_result.status == 'Succeeded'
+        assert start_result.status == "Succeeded"
 
         delete_response = client.begin_delete_dev_box(project_name, default_user, devbox_name)
         delete_result = delete_response.result()
-        assert delete_result.status == 'Succeeded'
+        assert delete_result.status == "Succeeded"
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -401,7 +402,7 @@ class TestDevcenter(AzureRecordedTestCase):
             project_name, default_user, env_name, environment
         )
         create_env_result = create_env_response.result()
-        assert create_env_result.provisioning_state ==  models.DevBoxProvisioningState.SUCCEEDED
+        assert create_env_result.provisioning_state == models.DevBoxProvisioningState.SUCCEEDED
 
         env_response = client.get_environment(project_name, default_user, env_name)
         assert env_response.name == env_name
@@ -415,7 +416,7 @@ class TestDevcenter(AzureRecordedTestCase):
         all_envs_response = filter(lambda x: x.name == env_name, all_envs_response)
         all_envs_response = list(all_envs_response)
         assert len(all_envs_response) == 1 and all_envs_response[0].name == env_response.name
-    
+
         delete_response = client.begin_delete_environment(project_name, default_user, env_name)
         delete_result = delete_response.result()
         assert delete_result.status == "Succeeded"

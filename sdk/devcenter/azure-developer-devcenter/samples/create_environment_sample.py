@@ -40,6 +40,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def environment_create_and_delete():
     # [START environment_create_and_delete]
     import os
@@ -57,19 +58,19 @@ def environment_create_and_delete():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # List available Projects 
+    # List available Projects
     projects = client.list_projects()
     if projects:
         print("\nList of projects: ")
         for project in projects:
             print(f"{project.name}")
-        
+
         # Select first project in the list
         target_project_name = list(projects)[0].name
     else:
         raise ValueError("Missing Project - please create one before running the example")
-        
-    # List available Catalogs 
+
+    # List available Catalogs
     catalogs = client.list_catalogs(target_project_name)
     if catalogs:
         print("\nList of catalogs: ")
@@ -81,7 +82,7 @@ def environment_create_and_delete():
     else:
         raise ValueError("Missing Catalog - please create one before running the example")
 
-    # List available Environment Definitions 
+    # List available Environment Definitions
     environment_definitions = client.list_environment_definitions_by_catalog(target_project_name, target_catalog_name)
     if environment_definitions:
         print("\nList of environment definitions: ")
@@ -92,8 +93,8 @@ def environment_create_and_delete():
         target_environment_definition_name = list(environment_definitions)[0].name
     else:
         raise ValueError("Missing Environment Definition - please create one before running the example")
-    
-    # List available Environment Types 
+
+    # List available Environment Types
     environment_types = client.list_environment_types(target_project_name)
     if environment_types:
         print("\nList of environment types: ")
@@ -105,7 +106,9 @@ def environment_create_and_delete():
     else:
         raise ValueError("Missing Environment Type - please create one before running the example")
 
-    print(f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name}, environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}.")
+    print(
+        f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name}, environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}."
+    )
 
     # Stand up a new environment
     environment_name = "MyDevEnv"
@@ -115,16 +118,19 @@ def environment_create_and_delete():
         "environmentDefinitionName": target_environment_definition_name,
     }
 
-    create_response = client.begin_create_or_update_environment(target_project_name, "me", environment_name, environment)
+    create_response = client.begin_create_or_update_environment(
+        target_project_name, "me", environment_name, environment
+    )
     environment_result = create_response.result()
     print(f"Provisioned environment with status {environment_result.provisioning_state}.")
 
     # Tear down the environment when finished
-    print(f"Starting to delete environment.") 
+    print(f"Starting to delete environment.")
     delete_response = client.begin_delete_environment(target_project_name, "me", environment_name)
     delete_result = delete_response.result()
     print(f"Completed deletion for the environment with status {delete_result.status}")
     # [END environment_create_and_delete]
+
 
 if __name__ == "__main__":
     environment_create_and_delete()

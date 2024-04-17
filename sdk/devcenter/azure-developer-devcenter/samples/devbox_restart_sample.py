@@ -45,6 +45,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def main():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
@@ -57,25 +58,25 @@ def main():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # List Dev Boxes 
+    # List Dev Boxes
     dev_boxes = client.list_all_dev_boxes_by_user("me")
     if dev_boxes:
         print("List of dev boxes: ")
         for dev_box in dev_boxes:
             print(f"{dev_box.name}")
-        
+
         # Select first dev box in the list
         target_dev_box = list(dev_boxes)[0]
     else:
         raise ValueError("Missing Dev Box - please create one before running the example.")
-    
+
     # Get the target dev box properties
     project_name = target_dev_box.project_name
     user = target_dev_box.user
     dev_box_name = target_dev_box.name
 
     # Stop dev box if it's running
-    if target_dev_box.power_state == PowerState.Running :
+    if target_dev_box.power_state == PowerState.Running:
         stop_response = client.begin_stop_dev_box(project_name, user, dev_box_name)
         stop_result = stop_response.result()
         print(f"Stopping dev box completed with status {stop_result.status}")
@@ -89,6 +90,7 @@ def main():
     restart_response = client.begin_restart_dev_box(project_name, user, dev_box_name)
     restart_result = restart_response.result()
     print(f"Done restarting the dev box with status {start_result.status}")
+
 
 if __name__ == "__main__":
     main()
