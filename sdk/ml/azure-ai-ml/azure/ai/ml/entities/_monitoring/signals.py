@@ -26,6 +26,9 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureSubset as 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     GenerationSafetyQualityMonitoringSignal as RestGenerationSafetyQualityMonitoringSignal,
 )
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    GenerationTokenStatisticsSignal as RestGenerationTokenStatisticsSignal,
+)
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ModelPerformanceSignal as RestModelPerformanceSignal
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringDataSegment as RestMonitoringDataSegment
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
@@ -64,6 +67,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
+    GenerationTokenStatisticsMetricThreshold,
     MetricThreshold,
     ModelPerformanceMetricThreshold,
     PredictionDriftMetricThreshold,
@@ -400,6 +404,8 @@ class MonitoringSignal(RestTranslatableMixin):
         if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
             return GenerationSafetyQualitySignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.MODEL_PERFORMANCE:
+            return ModelPerformanceSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.GENERATION_TOKEN_STATISTICS:
             return ModelPerformanceSignal._from_rest_object(obj)
 
         return None
@@ -1151,6 +1157,77 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
             production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
             workspace_connection_id=obj.workspace_connection_id,
             metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
+            sampling_rate=obj.sampling_rate,
+        )
+
+@experimental
+class GenerationTokenStatisticsSignal(RestTranslatableMixin):
+    """Generation token statistics signal definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
+     "Enabled".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
+    :ivar properties: Property dictionary. Properties can be added, but not removed or altered.
+    :vartype properties: dict[str, str]
+    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
+     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
+     "FeatureAttributionDrift", "Custom", "ModelPerformance", "GenerationSafetyQuality",
+     "GenerationTokenStatistics".
+    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
+    :ivar metric_thresholds: Required. [Required] Gets or sets the metrics to calculate and the
+     corresponding thresholds.
+    :vartype metric_thresholds:
+     list[~azure.mgmt.machinelearningservices.models.GenerationTokenStatisticsMonitorMetricThreshold]
+    :ivar production_data: Gets or sets the target data for computing metrics.
+    :vartype production_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputDataBase
+    :ivar sampling_rate: Required. [Required] The sample rate of the target data, should be greater
+     than 0 and at most 1.
+    :vartype sampling_rate: float
+    """
+
+    def __init__(
+        self,
+        *,
+        production_data: Optional[List[LlmData]] = None,
+        workspace_connection_id: Optional[str] = None,
+        metric_thresholds: GenerationTokenStatisticsMonitorMetricThreshold,
+        alert_enabled: bool = False,
+        properties: Optional[Dict[str, str]] = None,
+        sampling_rate: Optional[float] = None,
+    ):
+        self.type = MonitorSignalType.GENERATION_TOKEN_STATISTICS
+        self.production_data = production_data
+        self.workspace_connection_id = workspace_connection_id
+        self.metric_thresholds = metric_thresholds
+        self.alert_enabled = alert_enabled
+        self.properties = properties
+        self.sampling_rate = sampling_rate
+
+    def _to_rest_object(self, **kwargs: Any) -> RestGenerationTokenStatisticsSignal:
+        data_window_size = kwargs.get("default_data_window_size")
+        return RestGenerationTokenStatisticsSignal(
+            production_data=[data._to_rest_object(default=data_window_size) for data in self.production_data]
+            if self.production_data is not None
+            else None,
+            workspace_connection_id=self.workspace_connection_id,
+            metric_thresholds=self.metric_thresholds._to_rest_object(),
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
+            sampling_rate=self.sampling_rate,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestGenerationTokenStatisticsSignal) -> "GenerationTokenStatisticsSignal":
+        return cls(
+            production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
+            workspace_connection_id=obj.workspace_connection_id,
+            metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
