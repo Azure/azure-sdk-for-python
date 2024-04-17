@@ -31,7 +31,7 @@ from azure.developer.devcenter.models import PowerState
 from azure.identity import DefaultAzureCredential
 
 """
-FILE: create_devbox_sample.py
+FILE: devbox_restart_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to restart, stop and start a dev box using python DevCenterClient. 
@@ -39,16 +39,11 @@ DESCRIPTION:
     at create_devbox_sample.py sample in this folder
 
 USAGE:
-    python create_devbox_sample.py
+    python devbox_restart_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
-
-def get_project_name(LOG, client):
-    projects = list(client.projects.list_by_dev_center)
-    return projects[0].name
-
 
 def main():
 
