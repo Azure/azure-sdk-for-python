@@ -945,7 +945,7 @@ class WebPubSubClient(
                         _LOGGER.debug("Recovery succeeded")
                         return
                     except RecoverError:
-                        _LOGGER.debug("Fail to recover, and will try in another thread")
+                        _LOGGER.debug("Failed to recover, and will try in another thread")
                         return
                     except Exception as e:  # pylint: disable=broad-except
                         first_time = False

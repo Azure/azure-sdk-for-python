@@ -199,7 +199,7 @@ class WebPubSubClient(
     """WebPubSubClient
 
     :param credential: The url to connect or credential to use when connecting. Required.
-    :type credential: str or WebPubSubClientCredential
+    :type credential: str or ~azure.messaging.webpubsubclient.aio.WebPubSubClientCredential
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
     :keyword ~azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
