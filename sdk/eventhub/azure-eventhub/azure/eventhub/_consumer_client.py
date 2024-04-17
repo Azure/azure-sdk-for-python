@@ -180,6 +180,7 @@ class EventHubConsumerClient(
         )
         self._lock = threading.Lock()
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
+        self._use_tls = kwargs.get("use_tls", True)
 
     def __enter__(self) -> "EventHubConsumerClient":
         return self
@@ -216,7 +217,7 @@ class EventHubConsumerClient(
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             amqp_transport=self._amqp_transport,
-            use_tls=self._use_tls
+            **kwargs
         )
         return handler
 
@@ -454,6 +455,8 @@ class EventHubConsumerClient(
                 on_error=on_error,
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
+                use_tls=self._use_tls,
+                **kwargs
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
