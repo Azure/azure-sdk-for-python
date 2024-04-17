@@ -414,7 +414,7 @@ class TableClient(TablesBaseClient):
         match_condition: Optional[MatchConditions] = None,
         **kwargs,
     ) -> Dict[str, Any]:
-        """Updates an entity in a table.
+        """Updates an already existing entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
@@ -618,7 +618,7 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
-        """Updates (merge or replace) an entity into a table.
+        """Replaces/Merges or Inserts an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]

@@ -317,7 +317,7 @@ class TableClient(AsyncTablesBaseClient):
 
         :param entity: The entity to delete.
         :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword str etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
@@ -422,7 +422,7 @@ class TableClient(AsyncTablesBaseClient):
         match_condition: Optional[MatchConditions] = None,
         **kwargs,
     ) -> Mapping[str, Any]:
-        """Updates an entity in a table.
+        """Updates an already existing entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
@@ -629,7 +629,7 @@ class TableClient(AsyncTablesBaseClient):
     async def upsert_entity(
         self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs
     ) -> Mapping[str, Any]:
-        """Updates (merge or replace) an entity into a table.
+        """Replaces/Merges or Inserts an entity into a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
