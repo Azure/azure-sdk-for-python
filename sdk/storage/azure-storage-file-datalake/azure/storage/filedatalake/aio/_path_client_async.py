@@ -191,7 +191,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :return: A dictionary of response headers.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
@@ -242,7 +242,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary containing information about the deleted path.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
         # The pagination is only for ACL checks, the final request remains the atomic delete operation
@@ -707,6 +707,15 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             Decrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             Required if the file/directory was created with a customer-provided key.
+        :keyword bool upn:
+            Optional. Valid only when Hierarchical Namespace is
+            enabled for the account. If "True", the user identity values returned
+            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            transformed from Azure Active Directory Object IDs to User Principal
+            Names. If "False", the values will be returned as Azure Active
+            Directory Object IDs. The default value is false. Note that group and
+            application Object IDs are not translated because they do not have
+            unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -715,6 +724,11 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             #other-client--per-operation-configuration>`_.
         :rtype: DirectoryProperties or FileProperties
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         return path_properties
 
@@ -819,7 +833,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file/directory-updated property dict (Etag and last modified)
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return await self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
@@ -866,15 +880,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             #other-client--per-operation-configuration>`_.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START acquire_lease_on_file_system]
-                :end-before: [END acquire_lease_on_file_system]
-                :language: python
-                :dedent: 8
-                :caption: Acquiring a lease on the file_system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(lease_duration=lease_duration, **kwargs)

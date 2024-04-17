@@ -17,6 +17,56 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ApiKey(_serialization.Model):
+    """Azure quantum workspace Api key details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: The creation time of the api key.
+    :vartype created_at: ~datetime.datetime
+    :ivar key: The Api key.
+    :vartype key: str
+    """
+
+    _validation = {
+        "key": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "key": {"key": "key", "type": "str"},
+    }
+
+    def __init__(self, *, created_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword created_at: The creation time of the api key.
+        :paramtype created_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_at = created_at
+        self.key = None
+
+
+class APIKeys(_serialization.Model):
+    """List of api keys to be generated.
+
+    :ivar keys: A list of api key names.
+    :vartype keys: list[str or ~azure.mgmt.quantum.models.KeyType]
+    """
+
+    _attribute_map = {
+        "keys": {"key": "keys", "type": "[str]"},
+    }
+
+    def __init__(self, *, keys: Optional[List[Union[str, "_models.KeyType"]]] = None, **kwargs: Any) -> None:
+        """
+        :keyword keys: A list of api key names.
+        :paramtype keys: list[str or ~azure.mgmt.quantum.models.KeyType]
+        """
+        super().__init__(**kwargs)
+        self.keys = keys
+
+
 class CheckNameAvailabilityParameters(_serialization.Model):
     """Details of check name availability request body.
 
@@ -171,6 +221,60 @@ class ErrorResponse(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class ListKeysResult(_serialization.Model):
+    """Result of list Api keys and connection strings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar api_key_enabled: Indicator of enablement of the Quantum workspace Api keys.
+    :vartype api_key_enabled: bool
+    :ivar primary_key: The quantum workspace primary api key.
+    :vartype primary_key: ~azure.mgmt.quantum.models.ApiKey
+    :ivar secondary_key: The quantum workspace secondary api key.
+    :vartype secondary_key: ~azure.mgmt.quantum.models.ApiKey
+    :ivar primary_connection_string: The connection string of the primary api key.
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: The connection string of the secondary api key.
+    :vartype secondary_connection_string: str
+    """
+
+    _validation = {
+        "primary_connection_string": {"readonly": True},
+        "secondary_connection_string": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "api_key_enabled": {"key": "apiKeyEnabled", "type": "bool"},
+        "primary_key": {"key": "primaryKey", "type": "ApiKey"},
+        "secondary_key": {"key": "secondaryKey", "type": "ApiKey"},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        api_key_enabled: Optional[bool] = None,
+        primary_key: Optional["_models.ApiKey"] = None,
+        secondary_key: Optional["_models.ApiKey"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword api_key_enabled: Indicator of enablement of the Quantum workspace Api keys.
+        :paramtype api_key_enabled: bool
+        :keyword primary_key: The quantum workspace primary api key.
+        :paramtype primary_key: ~azure.mgmt.quantum.models.ApiKey
+        :keyword secondary_key: The quantum workspace secondary api key.
+        :paramtype secondary_key: ~azure.mgmt.quantum.models.ApiKey
+        """
+        super().__init__(**kwargs)
+        self.api_key_enabled = api_key_enabled
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+        self.primary_connection_string = None
+        self.secondary_connection_string = None
 
 
 class OfferingsListResult(_serialization.Model):
@@ -461,7 +565,7 @@ class ProviderDescription(_serialization.Model):
     :vartype id: str
     :ivar name: Provider's display name.
     :vartype name: str
-    :ivar properties: A list of provider-specific properties.
+    :ivar properties: Provider properties.
     :vartype properties: ~azure.mgmt.quantum.models.ProviderProperties
     """
 
@@ -485,7 +589,7 @@ class ProviderDescription(_serialization.Model):
         """
         :keyword id: Unique provider's id.
         :paramtype id: str
-        :keyword properties: A list of provider-specific properties.
+        :keyword properties: Provider properties.
         :paramtype properties: ~azure.mgmt.quantum.models.ProviderProperties
         """
         super().__init__(**kwargs)
@@ -640,26 +744,31 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quantum.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -668,6 +777,7 @@ class Resource(_serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class TrackedResource(Resource):
@@ -678,14 +788,17 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quantum.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -696,6 +809,7 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -703,6 +817,7 @@ class TrackedResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
@@ -719,68 +834,51 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class QuantumWorkspace(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class QuantumWorkspace(TrackedResource):
     """The resource proxy definition object for quantum workspace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quantum.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar properties: Gets or sets the properties. Define quantum workspace's specific properties.
+    :vartype properties: ~azure.mgmt.quantum.models.WorkspaceResourceProperties
     :ivar identity: Managed Identity information.
     :vartype identity: ~azure.mgmt.quantum.models.QuantumWorkspaceIdentity
-    :ivar system_data: System metadata.
-    :vartype system_data: ~azure.mgmt.quantum.models.SystemData
-    :ivar providers: List of Providers selected for this Workspace.
-    :vartype providers: list[~azure.mgmt.quantum.models.Provider]
-    :ivar usable: Whether the current workspace is ready to accept Jobs. Known values are: "Yes",
-     "No", and "Partial".
-    :vartype usable: str or ~azure.mgmt.quantum.models.UsableStatus
-    :ivar provisioning_state: Provisioning status field. Known values are: "Succeeded",
-     "ProviderLaunching", "ProviderUpdating", "ProviderDeleting", "ProviderProvisioning", and
-     "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.quantum.models.ProvisioningStatus
-    :ivar storage_account: ARM Resource Id of the storage account associated with this workspace.
-    :vartype storage_account: str
-    :ivar endpoint_uri: The URI of the workspace endpoint.
-    :vartype endpoint_uri: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
-        "usable": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "endpoint_uri": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "WorkspaceResourceProperties"},
         "identity": {"key": "identity", "type": "QuantumWorkspaceIdentity"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "providers": {"key": "properties.providers", "type": "[Provider]"},
-        "usable": {"key": "properties.usable", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "storage_account": {"key": "properties.storageAccount", "type": "str"},
-        "endpoint_uri": {"key": "properties.endpointUri", "type": "str"},
     }
 
     def __init__(
@@ -788,9 +886,8 @@ class QuantumWorkspace(TrackedResource):  # pylint: disable=too-many-instance-at
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.WorkspaceResourceProperties"] = None,
         identity: Optional["_models.QuantumWorkspaceIdentity"] = None,
-        providers: Optional[List["_models.Provider"]] = None,
-        storage_account: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -798,22 +895,15 @@ class QuantumWorkspace(TrackedResource):  # pylint: disable=too-many-instance-at
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword properties: Gets or sets the properties. Define quantum workspace's specific
+         properties.
+        :paramtype properties: ~azure.mgmt.quantum.models.WorkspaceResourceProperties
         :keyword identity: Managed Identity information.
         :paramtype identity: ~azure.mgmt.quantum.models.QuantumWorkspaceIdentity
-        :keyword providers: List of Providers selected for this Workspace.
-        :paramtype providers: list[~azure.mgmt.quantum.models.Provider]
-        :keyword storage_account: ARM Resource Id of the storage account associated with this
-         workspace.
-        :paramtype storage_account: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
         self.identity = identity
-        self.system_data = None
-        self.providers = providers
-        self.usable = None
-        self.provisioning_state = None
-        self.storage_account = storage_account
-        self.endpoint_uri = None
 
 
 class QuantumWorkspaceIdentity(_serialization.Model):
@@ -1179,3 +1269,66 @@ class WorkspaceListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class WorkspaceResourceProperties(_serialization.Model):
+    """Properties of a Workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar providers: List of Providers selected for this Workspace.
+    :vartype providers: list[~azure.mgmt.quantum.models.Provider]
+    :ivar usable: Whether the current workspace is ready to accept Jobs. Known values are: "Yes",
+     "No", and "Partial".
+    :vartype usable: str or ~azure.mgmt.quantum.models.UsableStatus
+    :ivar provisioning_state: Provisioning status field. Known values are: "Succeeded",
+     "ProviderLaunching", "ProviderUpdating", "ProviderDeleting", "ProviderProvisioning", and
+     "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.quantum.models.ProvisioningStatus
+    :ivar storage_account: ARM Resource Id of the storage account associated with this workspace.
+    :vartype storage_account: str
+    :ivar endpoint_uri: The URI of the workspace endpoint.
+    :vartype endpoint_uri: str
+    :ivar api_key_enabled: Indicator of enablement of the Quantum workspace Api keys.
+    :vartype api_key_enabled: bool
+    """
+
+    _validation = {
+        "usable": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "endpoint_uri": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "providers": {"key": "providers", "type": "[Provider]"},
+        "usable": {"key": "usable", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "storage_account": {"key": "storageAccount", "type": "str"},
+        "endpoint_uri": {"key": "endpointUri", "type": "str"},
+        "api_key_enabled": {"key": "apiKeyEnabled", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        providers: Optional[List["_models.Provider"]] = None,
+        storage_account: Optional[str] = None,
+        api_key_enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword providers: List of Providers selected for this Workspace.
+        :paramtype providers: list[~azure.mgmt.quantum.models.Provider]
+        :keyword storage_account: ARM Resource Id of the storage account associated with this
+         workspace.
+        :paramtype storage_account: str
+        :keyword api_key_enabled: Indicator of enablement of the Quantum workspace Api keys.
+        :paramtype api_key_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.providers = providers
+        self.usable = None
+        self.provisioning_state = None
+        self.storage_account = storage_account
+        self.endpoint_uri = None
+        self.api_key_enabled = api_key_enabled

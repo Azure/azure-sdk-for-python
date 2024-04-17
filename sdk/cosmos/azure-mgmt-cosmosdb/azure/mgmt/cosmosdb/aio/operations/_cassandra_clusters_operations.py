@@ -1608,7 +1608,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
     }
 
     async def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[str] = None, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -1657,7 +1657,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_deallocate(
-        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deallocate the Managed Cassandra Cluster and Associated Data Centers. Deallocation will
         deallocate the host virtual machine of this cluster, and reserved the data disk. This won't do
@@ -1671,7 +1671,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :param x_ms_force_deallocate: Force to deallocate a cluster of Cluster Type Production. Force
          to deallocate a cluster of Cluster Type Production might cause data loss. Default value is
          None.
-        :type x_ms_force_deallocate: bool
+        :type x_ms_force_deallocate: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for

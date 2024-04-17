@@ -3,6 +3,5 @@
 -e ../azure-communication-identity
 -e ../azure-communication-phonenumbers
 -e ../../servicebus/azure-servicebus
--e ../../../tools/azure-devtools
 ../../core/azure-core
 aiohttp>=3.0

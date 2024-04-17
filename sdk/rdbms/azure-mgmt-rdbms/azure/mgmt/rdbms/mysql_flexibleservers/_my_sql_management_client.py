@@ -30,6 +30,10 @@ from .operations import (
     LocationBasedCapabilitiesOperations,
     LocationBasedCapabilitySetOperations,
     LogFilesOperations,
+    LongRunningBackupOperations,
+    LongRunningBackupsOperations,
+    MaintenancesOperations,
+    OperationProgressOperations,
     OperationResultsOperations,
     Operations,
     ReplicasOperations,
@@ -55,6 +59,12 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar backup_and_export: BackupAndExportOperations operations
     :vartype backup_and_export:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.BackupAndExportOperations
+    :ivar long_running_backup: LongRunningBackupOperations operations
+    :vartype long_running_backup:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.LongRunningBackupOperations
+    :ivar long_running_backups: LongRunningBackupsOperations operations
+    :vartype long_running_backups:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.LongRunningBackupsOperations
     :ivar configurations: ConfigurationsOperations operations
     :vartype configurations:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.ConfigurationsOperations
@@ -70,6 +80,10 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar servers_migration: ServersMigrationOperations operations
     :vartype servers_migration:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.ServersMigrationOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.AdvancedThreatProtectionSettingsOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
@@ -91,15 +105,16 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar operation_results: OperationResultsOperations operations
     :vartype operation_results:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.OperationResultsOperations
+    :ivar operation_progress: OperationProgressOperations operations
+    :vartype operation_progress:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.OperationProgressOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.mysql_flexibleservers.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.operations.Operations
-    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
-     operations
-    :vartype advanced_threat_protection_settings:
-     azure.mgmt.rdbms.mysql_flexibleservers.operations.AdvancedThreatProtectionSettingsOperations
+    :ivar maintenances: MaintenancesOperations operations
+    :vartype maintenances: azure.mgmt.rdbms.mysql_flexibleservers.operations.MaintenancesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -133,12 +148,21 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.backup_and_export = BackupAndExportOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.long_running_backup = LongRunningBackupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.long_running_backups = LongRunningBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -160,13 +184,14 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.operation_results = OperationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operation_progress = OperationProgressOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.maintenances = MaintenancesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

@@ -25,8 +25,9 @@ stages:
             environment: github
 
             pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
               name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+              os: linux
 
             strategy:
               runOnce:
@@ -52,6 +53,10 @@ stages:
                         PackageName: ${{artifact.name}}
                         ServiceDirectory: ${{parameters.ServiceDirectory}}
                         ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
 
                     - task: PythonScript@0
                       displayName: Verify CI enabled
@@ -81,8 +86,9 @@ stages:
               dependsOn: TagRepository
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -146,6 +152,15 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
+                      - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+                        parameters:
+                          ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                          Artifacts: ${{parameters.Artifacts}}
+                          ConfigFileDir: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo
+                          MarkPackageAsShipped: true
+                          ArtifactName: ${{parameters.ArtifactName}}
+                          PackageName: ${{artifact.name}}
+
           - ${{if ne(artifact.skipPublishDocs, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
@@ -155,7 +170,8 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: MMS2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               strategy:
                 runOnce:
@@ -186,8 +202,9 @@ stages:
                   dependsOn: PublishPackage
 
                   pool:
+                    image: azsdk-pool-mms-ubuntu-2004-1espt
                     name: azsdk-pool-mms-ubuntu-2004-general
-                    vmImage: MMSUbuntu20.04
+                    os: linux
 
                   strategy:
                     runOnce:
@@ -220,8 +237,9 @@ stages:
               dependsOn: PublishPackage
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -249,81 +267,83 @@ stages:
                 ArtifactName: ${{ parameters.ArtifactName }}
                 Artifact: ${{ artifact }}
 
-
-  - stage: Integration
-    dependsOn: ${{parameters.DependsOn}}
-    condition: succeededOrFailed('${{parameters.DependsOn}}')
-    jobs:
-    - job: PublishPackages
-      displayName: "Publish package to daily feed"
-      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-      pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
-      steps:
-      - checkout: none
-      - download: current
-        artifact: ${{parameters.ArtifactName}}
-        timeoutInMinutes: 5
-      - task: UsePythonVersion@0
-      - script: |
-          set -e
-          python -m pip install twine
-        displayName: Install Twine
-
-      - template: ../steps/auth-dev-feed.yml
-        parameters:
-          DevFeedName: ${{ parameters.DevFeedName }}
-
-      - ${{ each artifact in parameters.Artifacts }}:
-        - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
-
-          - pwsh: |
-              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
-
-              if ($fileCount -eq 0) {
-                Write-Host "No alpha packages for ${{artifact.name}} to publish."
-                exit 0
-              }
-
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
-              echo "Uploaded whl to devops feed $(DevFeedName)"
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
-              echo "Uploaded sdist to devops feed $(DevFeedName)"
-            displayName: 'Publish ${{artifact.name}} alpha package'
-
-    - job: PublishDocsToNightlyBranch
-      dependsOn: PublishPackages
-      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-      pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
-      steps:
-        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-          parameters:
-            Paths:
-              - sdk/**/*.md
-              - .github/CODEOWNERS
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - stage: Integration
+      dependsOn: ${{parameters.DependsOn}}
+      condition: succeededOrFailed('${{parameters.DependsOn}}')
+      jobs:
+      - job: PublishPackages
+        displayName: "Publish package to daily feed"
+        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+        pool:
+          image: azsdk-pool-mms-ubuntu-2004-1espt
+          name: azsdk-pool-mms-ubuntu-2004-general
+          os: linux
+        steps:
+        - checkout: none
         - download: current
-        - pwsh: |
-            Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
-          displayName: Show visible artifacts
+          artifact: ${{parameters.ArtifactName}}
+          timeoutInMinutes: 5
+        - task: UsePythonVersion@0
+        - script: |
+            set -e
+            python -m pip install twine
+          displayName: Install Twine
 
-        - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+        - template: ../steps/auth-dev-feed.yml
           parameters:
-            PackageInfoLocations:
-              - ${{ each artifact in parameters.Artifacts }}:
-                - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                  - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-            WorkingDirectory: $(System.DefaultWorkingDirectory)
-            TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-            TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-            Language: 'python'
-            DailyDocsBuild: true
-            SparseCheckoutPaths:
-              - docs-ref-services/
-              - metadata/
-            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-            DocValidationImageId: ${{parameters.DocValidationImageId}}
+            DevFeedName: ${{ parameters.DevFeedName }}
 
-        - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
+        - ${{ each artifact in parameters.Artifacts }}:
+          - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+
+            - pwsh: |
+                $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+
+                if ($fileCount -eq 0) {
+                  Write-Host "No alpha packages for ${{artifact.name}} to publish."
+                  exit 0
+                }
+
+                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
+                echo "Uploaded whl to devops feed $(DevFeedName)"
+                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+                echo "Uploaded sdist to devops feed $(DevFeedName)"
+              displayName: 'Publish ${{artifact.name}} alpha package'
+
+      - job: PublishDocsToNightlyBranch
+        dependsOn: PublishPackages
+        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+        pool:
+          image: azsdk-pool-mms-ubuntu-2004-1espt
+          name: azsdk-pool-mms-ubuntu-2004-general
+          os: linux
+        steps:
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+            parameters:
+              Paths:
+                - sdk/**/*.md
+                - .github/CODEOWNERS
+          - download: current
+          - pwsh: |
+              Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
+            displayName: Show visible artifacts
+
+          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+            parameters:
+              PackageInfoLocations:
+                - ${{ each artifact in parameters.Artifacts }}:
+                  - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                    - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+              WorkingDirectory: $(System.DefaultWorkingDirectory)
+              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+              Language: 'python'
+              DailyDocsBuild: true
+              SparseCheckoutPaths:
+                - docs-ref-services/
+                - metadata/
+              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+              DocValidationImageId: ${{parameters.DocValidationImageId}}
+
+          - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml

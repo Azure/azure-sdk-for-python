@@ -97,6 +97,10 @@ def sample_manage_models():
     print(f"Description: {my_model.description}")
     print(f"Model created on: {my_model.created_date_time}")
     print(f"Model expires on: {my_model.expiration_date_time}")
+    if my_model.warnings:
+        print("Warnings encountered while building the model:")
+        for warning in my_model.warnings:
+            print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
     # [END get_model]
 
     # [START delete_model]

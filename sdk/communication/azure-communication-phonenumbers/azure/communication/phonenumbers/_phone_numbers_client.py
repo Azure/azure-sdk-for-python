@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Optional, cast, List, Union
+from typing import TYPE_CHECKING, Optional, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -40,11 +40,6 @@ if TYPE_CHECKING:
         PhoneNumberLocality,
         PhoneNumberSearchResult,
     )
-
-PhoneNumberSearchType = Union[
-    str,
-    List[str],
-]
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -447,25 +442,24 @@ class PhoneNumbersClient(object):
     @distributed_trace
     def search_operator_information(
             self,
-            phone_numbers,  # type: PhoneNumberSearchType
+            phone_numbers,  # type: Union[ str, list[str] ]
             options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
             **kwargs  # type: Any
     ) -> OperatorInformationResult:
-        """
-        Searches for operator information for a given list of phone numbers.
+        """Searches for operator information for a given list of phone numbers.
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
-        :type phone_numbers: str or List[str]
-        :param options: Options for the operator information search
-        :type options: ~azure.communication.phonenumbers.models.OperatorInformationOptions
+        :type phone_numbers: str or list[str]
+        :param options: Options to modify the search.  Please note: use of options can affect the cost of the search.
+        :type options: OperatorInformationOptions
         :return: A search result containing operator information associated with the requested phone numbers
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
         if not isinstance(phone_numbers, list):
-            phone_numbers = cast(PhoneNumberSearchType, [phone_numbers])
+            phone_numbers = [ phone_numbers ]
         if options is None:
-            options = OperatorInformationOptions(include_additional_phone_and_operator_details=False)
-        request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
+            options = OperatorInformationOptions(include_additional_operator_details=False)
+        request = OperatorInformationRequest(phone_numbers = phone_numbers, options=options)
         return self._phone_number_client.phone_numbers.operator_information_search(
             request,
             **kwargs

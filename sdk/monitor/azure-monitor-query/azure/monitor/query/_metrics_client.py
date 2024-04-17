@@ -13,6 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.metrics.batch import MonitorBatchMetricsClient
 from ._models import MetricsQueryResult
+from ._enums import MetricAggregationType
 from ._helpers import get_authentication_policy, get_timespan_iso8601_endpoints, get_subscription_id_from_resource
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -27,8 +28,6 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword str audience: The audience to use when requesting a token. If not provided, the public cloud audience
-        will be assumed. Defaults to 'https://metrics.monitor.azure.com'.
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
@@ -50,12 +49,12 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     def query_resources(
         self,
         *,
-        resource_uris: Sequence[str],
+        resource_ids: Sequence[str],
         metric_namespace: str,
         metric_names: Sequence[str],
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
-        aggregations: Optional[Sequence[str]] = None,
+        aggregations: Optional[Sequence[Union[MetricAggregationType, str]]] = None,
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
@@ -64,44 +63,60 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
-        :keyword resource_uris: A list of resource URIs to query metrics for. Required.
-        :paramtype resource_uris: list[str]
+        :keyword resource_ids: A list of resource IDs to query metrics for. Required.
+        :paramtype resource_ids: list[str]
         :keyword metric_namespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metric_namespace: str
-        :keyword metric_names: The names of the metrics (comma separated) to retrieve. Required.
+        :keyword metric_names: The names of the metrics to retrieve. Required.
         :paramtype metric_names: list[str]
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
-            a timedelta and a start datetime, or a start datetime/end datetime.
+            a tuple of a start datetime with timedelta, or a tuple with start and end datetimes.
         :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
             tuple[~datetime.datetime, ~datetime.datetime]]]
         :keyword granularity: The granularity (i.e. timegrain) of the query.
         :paramtype granularity: Optional[~datetime.timedelta]
         :keyword aggregations: The list of aggregation types to retrieve. Use
             `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
-        :paramtype aggregations: Optional[list[str]]
+        :paramtype aggregations: Optional[list[Union[~azure.monitor.query.MetricAggregationType, str]]]
         :keyword max_results: The maximum number of records to retrieve.
-            Valid only if $filter is specified. Defaults to 10.
+            Valid only if 'filter' is specified. Defaults to 10.
         :paramtype max_results: Optional[int]
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
-            Only one order can be specified. Examples: sum asc.
+            Only one order can be specified. Examples: 'sum asc', 'maximum desc'.
         :paramtype order_by: Optional[str]
-        :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
-            Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
-            b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
-            eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
-            operator cannot separate two different metadata names. - Return all time series where A = a1,
-            B = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
-            where A = a1 **$filter=A eq 'a1' and B eq '*' and C eq '*'**. Special case: When dimension
-            name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
-            Instead of using **$filter= "dim (test) 1 eq '*'"** use **$filter= "dim %2528test%2529 1 eq '*'"**.
-            When dimension name is **dim (test) 3** and dimension value is **dim3 (test) val**, instead of using
-            **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
-            %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
+        :keyword filter: The **filter** is used to reduce the set of metric data returned. Default value is None.
+
+            Example: Metric contains metadata A, B and C.
+
+            - Return all time series of C where A = a1 and B = b1 or b2:
+
+              **filter="A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'"**
+
+            - Invalid variant:
+
+              **filter="A eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'"**. This is invalid because the
+              logical 'or' operator cannot separate two different metadata names.
+
+            - Return all time series where A = a1, B = b1 and C = c1:
+
+              **filter="A eq 'a1' and B eq 'b1' and C eq 'c1'"**
+
+            - Return all time series where A = a1:
+
+              **filter="A eq 'a1' and B eq '*' and C eq '*'"**
+
+            - Special case: When dimension name or dimension value uses round brackets. Example: When dimension name
+              is **dim (test) 1**, instead of using **filter="dim (test) 1 eq '*'"** use
+              **filter="dim %2528test%2529 1 eq '*'"**.
+
+              When dimension name is **dim (test) 3** and dimension value is
+              **dim3 (test) val**, instead of using **filter="dim (test) 3 eq 'dim3 (test) val'"**, use **filter="dim
+              %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**.
         :paramtype filter: str
         :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
             metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
             separate values for each city, you can specify 'City' to see the results for Seattle
-            and Tacoma rolled up into one timeseries. Default value is None.
+            and Tacoma rolled up into one timeseries.
         :paramtype roll_up_by: str
         :return: A list of MetricsQueryResult objects.
         :rtype: list[~azure.monitor.query.MetricsQueryResult]
@@ -116,15 +131,15 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Get a response for a batch metrics query.
         """
-        if not resource_uris:
-            raise ValueError("resource_uris must be provided and must not be empty.")
+        if not resource_ids:
+            raise ValueError("'resource_ids' must be provided and must not be empty.")
 
         # Metric names with commas need to be encoded.
         metric_names = [x.replace(",", "%2") for x in metric_names]
 
         start_time, end_time = get_timespan_iso8601_endpoints(timespan)
-        resource_id_json: JSON = {"resourceids": list(resource_uris)}
-        subscription_id = get_subscription_id_from_resource(resource_uris[0])
+        resource_id_json: JSON = {"resourceids": list(resource_ids)}
+        subscription_id = get_subscription_id_from_resource(resource_ids[0])
 
         generated = self._batch_metrics_op.batch(
             subscription_id,

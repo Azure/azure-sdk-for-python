@@ -1,5 +1,15 @@
 # Release History
 
+## 10.2.0b15 (2024-03-04)
+
+### Features Added
+
+  - Added operation AdvancedThreatProtectionSettingsOperations.begin_update_put
+  - Added operation group LongRunningBackupOperations
+  - Added operation group LongRunningBackupsOperations
+  - Added operation group MaintenancesOperations
+  - Added operation group OperationProgressOperations
+
 ## 10.2.0b14 (2024-01-23)
 
 ### Features Added
