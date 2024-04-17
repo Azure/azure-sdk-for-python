@@ -149,6 +149,7 @@ def find_field_in_override(field: str, params_override: Optional[list] = None) -
             return res
     return None
 
+
 def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     """Find type in params override.
 

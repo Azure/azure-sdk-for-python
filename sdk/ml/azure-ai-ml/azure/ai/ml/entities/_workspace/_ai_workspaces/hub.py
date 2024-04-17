@@ -96,10 +96,10 @@ class Hub(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
         default_project_resource_group: Optional[str] = None,
-        associated_workspaces: Optional[List[str]] = [],  # hidden input for rest->client conversions.
+        associated_workspaces: Optional[List[str]] = None,  # hidden input for rest->client conversions.
         **kwargs: Any,
     ):
-        self._workspace_id = kwargs.pop("workspace_id", "") 
+        self._workspace_id = kwargs.pop("workspace_id", "")
         # Ensure user can't overwrite/double input kind.
         kwargs.pop("kind", None)
         super().__init__(

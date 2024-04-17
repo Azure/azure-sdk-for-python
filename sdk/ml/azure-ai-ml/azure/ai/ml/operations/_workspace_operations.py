@@ -271,10 +271,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                     # However, some PNA-dependent code is run server-side before that alignment is made, so make sure
                     # they're aligned before the request hits the server.
                     workspace.public_network_access = parent.public_network_access
-
-            except Exception as e:
-                module_logger.warn("Failed to get parent workspace for project," +
-                                   " some values won't be transferred, error: %s", e)
+            except HttpResponseError:
+                module_logger.warning("Failed to get parent hub for project, some values won't be transferred:")
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
