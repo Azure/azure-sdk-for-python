@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, List, Optional, Type
+from typing import Any, List, Optional, Type, Union
 
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._utils._experimental import experimental
@@ -15,7 +15,11 @@ from azure.ai.ml.constants._common import (
     CONNECTION_ACCOUNT_NAME_KEY,
     CONNECTION_CONTAINER_NAME_KEY,
 )
-from azure.ai.ml.entities._credentials import ApiKeyConfiguration
+from azure.ai.ml.entities._credentials import (
+    ApiKeyConfiguration,
+    SasTokenConfiguration,
+    AccessKeyConfiguration,
+)
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
@@ -307,6 +311,13 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
     :type container_name: str
     :param account_name: The name of the account.
     :type account_name: str
+    :param credentials: The credentials for authenticating to the blob store. This type of
+    connection accepts 3 types of credentials: account key and SAS token credentials, or None for credential-less
+    connections.
+    :type credentials: Optional[Union[
+        ~azure.ai.ml.entities.AccessKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration
+        ]]
     """
 
     def __init__(
@@ -315,6 +326,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         target: str,
         container_name: str,
         account_name: str,
+        credentials: Optional[Union[AccessKeyConfiguration,SasTokenConfiguration]] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -324,7 +336,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         super().__init__(
             target=target,
             type=camel_to_snake(ConnectionCategory.AZURE_BLOB),
-            credentials=kwargs.pop("credentials", None),
+            credentials=credentials,
             from_child=True,
             **kwargs,
         )
