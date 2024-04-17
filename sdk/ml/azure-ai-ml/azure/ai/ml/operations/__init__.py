@@ -19,6 +19,7 @@ from ._environment_operations import EnvironmentOperations
 from ._feature_set_operations import FeatureSetOperations
 from ._feature_store_entity_operations import FeatureStoreEntityOperations
 from ._feature_store_operations import FeatureStoreOperations
+from ._index_operations import IndexOperations
 from ._job_operations import JobOperations
 from ._model_operations import ModelOperations
 from ._online_deployment_operations import OnlineDeploymentOperations
@@ -52,4 +53,5 @@ __all__ = [
     "FeatureSetOperations",
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
+    "IndexOperations",
 ]
