@@ -254,7 +254,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         query_params = {
             "question": "How long should my Surface battery last?",
             "top": 3,
-            "userId": "sd53lsY=",
+            "userId": "Sanitized",
             "confidenceScoreThreshold": 0.2,
             "answerSpanRequest": {
                 "enable": True,
@@ -284,7 +284,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 deployment_name='test',
                 question="How long should my Surface battery last?",
                 top=3,
-                user_id="sd53lsY=",
+                user_id="Sanitized",
                 confidence_threshold=0.2,
                 short_answer_options=ShortAnswerOptions(
                     confidence_threshold=0.2,
@@ -304,7 +304,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             query_params = AnswersOptions(
                 question="How long should my Surface battery last?",
                 top=3,
-                user_id="sd53lsY=",
+                user_id="Sanitized",
                 confidence_threshold=0.2,
                 short_answer_options=ShortAnswerOptions(
                     confidence_threshold=0.2,
@@ -325,7 +325,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             query_params = AnswersOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
-                user_id="sd53lsY=",
+                user_id="Sanitized",
                 confidence_threshold=0.2,
                 answer_context=KnowledgeBaseAnswerContext(
                     previous_question="How long should my Surface battery last?",

@@ -306,7 +306,7 @@ def set_common_sanitizers() -> None:
         {"json_path": "$..targetResourceId", "value": SANITIZED},
         {"json_path": "$..urlSource", "value": SANITIZED},
         {"json_path": "$..azureBlobSource.containerUrl", "value": SANITIZED},
-        {"json_path": "$..source", "value": SANITIZED},
+        # {"json_path": "$..source", "value": SANITIZED},
         {"json_path": "$..resourceLocation", "value": SANITIZED},
         {"json_path": "Location", "value": SANITIZED},
         {"json_path": "$..to", "value": SANITIZED},
