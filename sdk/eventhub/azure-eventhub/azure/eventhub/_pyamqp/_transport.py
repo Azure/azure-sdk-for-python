@@ -143,7 +143,6 @@ def to_host_port(host, port=AMQP_PORT):
     :return: Tuple of (host, port).
     :rtype: tuple
     """
-    
     m = IPV6_LITERAL.match(host)
     if m:
         host = m.group(1)
