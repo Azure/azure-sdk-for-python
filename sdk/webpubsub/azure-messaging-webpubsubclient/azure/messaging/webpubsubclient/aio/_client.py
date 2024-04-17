@@ -649,7 +649,7 @@ class WebPubSubClient(
                 success = True
                 break
             except ReconnectError:
-                _LOGGER.debug("fail to reconnect, and will retry in another task")
+                _LOGGER.debug("Failed to reconnect, and will retry in another task")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed: %s", e)

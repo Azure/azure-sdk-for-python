@@ -4,11 +4,12 @@
 
 ### Features Added
 
-- Add Async API
+- Add Async API with same name of Sync API
 
 ### Other Changes
 
 - Change default reconnect times to unlimited
+- Optimize reconnect/recover logic
 
 ## 1.0.0 (2024-01-31)
 

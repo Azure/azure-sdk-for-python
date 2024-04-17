@@ -96,9 +96,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_send_event(self, webpubsubclient_connection_string):
-        client = await self.create_client(
-            connection_string=webpubsubclient_connection_string, message_retry_total=0
-        )
+        client = await self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=0)
         async with client:
             # please register event handler in azure portal before run this test
             try:
@@ -147,4 +145,4 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             async with client:
                 await asyncio.sleep(0)
         assert time.time() - start_time < client._start_timeout
-        assert "During the process, error happened" in str(err)
+        assert "During the process, an error occurred" in str(err)
