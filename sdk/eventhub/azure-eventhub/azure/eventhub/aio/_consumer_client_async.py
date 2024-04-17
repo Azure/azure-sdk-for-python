@@ -448,7 +448,6 @@ class EventHubConsumerClient(
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
                 **self._internal_kwargs,
-                use_tls=self._use_tls,
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
