@@ -2492,7 +2492,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
 
         structured_type, structured_length = None, None
-        if validate_content == 'crc64':
+        if validate_content == ChecksumAlgorithm.CRC64:
             structured_type = SM_HEADER_V1_CRC64
             structured_length = data_length
 
@@ -2512,7 +2512,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'body': data,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'validate_content': validate_content if validate_content is True else None,
+            'validate_content': True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'structured_body_type': structured_type,
@@ -3580,7 +3580,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'lease_access_conditions': access_conditions,
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
+            'validate_content': validate_content if validate_content is True else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
@@ -4001,7 +4001,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
 
         structured_type, structured_length = None, None
-        if validate_content == 'crc64':
+        if validate_content == ChecksumAlgorithm.CRC64:
             structured_type = SM_HEADER_V1_CRC64
             structured_length = data_length
 
@@ -4030,7 +4030,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'lease_access_conditions': access_conditions,
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content if validate_content is True else None,
+            'validate_content': True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'structured_body_type': structured_type,

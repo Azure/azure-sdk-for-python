@@ -18,7 +18,7 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 from encryption_test_helper import KeyWrapper
-from test_content_validation import assert_content_crc64, assert_content_md5
+from test_content_validation import assert_content_crc64, assert_content_md5, assert_structured_message
 from test_helpers_async import GenericTestProxyParametrize1
 
 
@@ -222,10 +222,11 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abc' * 512
         data2 = '你好世界' * 10
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
-        await blob.stage_block('1', data1, validate_content=a)
-        await blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a)
+        await blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
+        await blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
         await blob.commit_block_list([BlobBlock('1'), BlobBlock('2')])
 
         # Assert
@@ -244,10 +245,11 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abcde' * 1024 * 1024  # 5 MiB
         data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
-        await blob.stage_block('1', data1, validate_content=a)
-        await blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a)
+        await blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
+        await blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
         await blob.commit_block_list([BlobBlock('1'), BlobBlock('2')])
 
         # Assert
@@ -280,10 +282,11 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         #         yield s_content[i: i + 500]
 
         data_list = [byte_io, generator()]
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         blocks = []
         for j in range(len(data_list)):
-            await blob.stage_block(str(j), data_list[j], validate_content=a)
+            await blob.stage_block(str(j), data_list[j], validate_content=a, raw_request_hook=assert_method)
             blocks.append(BlobBlock(str(j)))
         await blob.commit_block_list(blocks)
 
@@ -304,11 +307,12 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abc' * 512
         data2 = '你好世界' * 10
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
         await blob.create_append_blob()
-        await blob.append_block(data1, validate_content=a)
-        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+        await blob.append_block(data1, validate_content=a, raw_request_hook=assert_method)
+        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = await blob.download_blob()
@@ -326,15 +330,16 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abcde' * 1024 * 1024  # 5 MiB
         data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
         await blob.create_append_blob()
-        await blob.append_block(data1, validate_content=a)
-        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+        await blob.append_block(data1, validate_content=a, raw_request_hook=assert_method)
+        await blob.append_block(data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = await blob.download_blob()
-        assert content.readall() == data1 + data2
+        assert await content.readall() == data1 + data2
         await self._teardown()
 
     @BlobPreparer()
@@ -350,11 +355,12 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         data1 = b'abc' * 512
         data2 = "你好世界abcd" * 32
         data2_encoded_len = 512
+        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
         await blob.create_page_blob(5 * 1024)
-        await blob.upload_page(data1, offset=0, length=len(data1), validate_content=a)
-        await blob.upload_page(data2, offset=len(data1), length=data2_encoded_len, encoding='utf-8', validate_content=a)
+        await blob.upload_page(data1, offset=0, length=len(data1), validate_content=a, raw_request_hook=assert_method)
+        await blob.upload_page(data2, offset=len(data1), length=data2_encoded_len, encoding='utf-8', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = await blob.download_blob(offset=0, length=len(data1) + data2_encoded_len)

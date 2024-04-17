@@ -24,12 +24,17 @@ from test_helpers import GenericTestProxyParametrize1
 
 def assert_content_md5(request):
     if request.http_request.query.get('comp') in ('block', 'page'):
-        assert request.http_request.headers['Content-MD5']
+        assert request.http_request.headers.get('Content-MD5')
 
 
 def assert_content_crc64(request):
     if request.http_request.query.get('comp') in ('block', 'page'):
-        assert request.http_request.headers['x-ms-content-crc64']
+        assert request.http_request.headers.get('x-ms-content-crc64')
+
+
+def assert_structured_message(request):
+    if request.http_request.query.get('comp') in ('block', 'page'):
+        assert request.http_request.headers.get('x-ms-structured-body')
 
 
 class BlobTypeParameterize:
@@ -225,10 +230,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abc' * 512
         data2 = '你好世界' * 10
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
-        blob.stage_block('1', data1, validate_content=a)
-        blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a)
+        blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
+        blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
         blob.commit_block_list([BlobBlock('1'), BlobBlock('2')])
 
         # Assert
@@ -246,10 +252,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abcde' * 1024 * 1024  # 5 MiB
         data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
-        blob.stage_block('1', data1, validate_content=a)
-        blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a)
+        blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
+        blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
         blob.commit_block_list([BlobBlock('1'), BlobBlock('2')])
 
         # Assert
@@ -281,10 +288,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         #         yield s_content[i: i + 500]
 
         data_list = [byte_io, generator()]
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         blocks = []
         for j in range(len(data_list)):
-            blob.stage_block(str(j), data_list[j], validate_content=a)
+            blob.stage_block(str(j), data_list[j], validate_content=a, raw_request_hook=assert_method)
             blocks.append(BlobBlock(str(j)))
         blob.commit_block_list(blocks)
 
@@ -304,11 +312,12 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abc' * 512
         data2 = '你好世界' * 10
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
         blob.create_append_blob()
-        blob.append_block(data1, validate_content=a)
-        blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+        blob.append_block(data1, validate_content=a, raw_request_hook=assert_method)
+        blob.append_block(data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = blob.download_blob()
@@ -325,11 +334,12 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data1 = b'abcde' * 1024 * 1024  # 5 MiB
         data2 = b'12345' * 1024 * 1024 + b'abcdefg'  # 10 MiB + 7
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
 
         # Act
         blob.create_append_blob()
-        blob.append_block(data1, validate_content=a)
-        blob.append_block(data2, encoding='utf-8-sig', validate_content=a)
+        blob.append_block(data1, validate_content=a, raw_request_hook=assert_method)
+        blob.append_block(data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = blob.download_blob()
@@ -348,11 +358,12 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data1 = b'abc' * 512
         data2 = "你好世界abcd" * 32
         data2_encoded_len = 512
+        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
 
         # Act
         blob.create_page_blob(5 * 1024)
-        blob.upload_page(data1, offset=0, length=len(data1), validate_content=a)
-        blob.upload_page(data2, offset=len(data1), length=data2_encoded_len, encoding='utf-8', validate_content=a)
+        blob.upload_page(data1, offset=0, length=len(data1), validate_content=a, raw_request_hook=assert_method)
+        blob.upload_page(data2, offset=len(data1), length=data2_encoded_len, encoding='utf-8', validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = blob.download_blob(offset=0, length=len(data1) + data2_encoded_len)
