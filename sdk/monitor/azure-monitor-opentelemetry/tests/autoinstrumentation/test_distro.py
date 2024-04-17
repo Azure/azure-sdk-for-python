@@ -32,7 +32,6 @@ class TestDistro(TestCase):
         self.assertEqual(
             azure_core_mock.tracing_implementation, OpenTelemetrySpan
         )
-        print(environ)
         self.assertEqual(
             environ,
             {
@@ -70,7 +69,6 @@ class TestDistro(TestCase):
         self.assertEqual(
             azure_core_mock.tracing_implementation, OpenTelemetrySpan
         )
-        print(environ)
         self.assertEqual(
             environ,
             {
