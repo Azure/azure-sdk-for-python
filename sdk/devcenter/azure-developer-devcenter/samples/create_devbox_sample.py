@@ -40,6 +40,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def create_dev_center_client():
     # [START create_dev_center_client]
     import os
@@ -58,6 +59,7 @@ def create_dev_center_client():
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
     # [END create_dev_center_client]
 
+
 def dev_box_create_connect_delete():
     # [START dev_box_create_connect_delete]
     import os
@@ -75,13 +77,13 @@ def dev_box_create_connect_delete():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
-    # List available Projects 
+    # List available Projects
     projects = client.list_projects()
     if projects:
         print("\nList of projects: ")
         for project in projects:
             print(f"{project.name}")
-        
+
         # Select first project in the list
         target_project_name = list(projects)[0].name
     else:
@@ -93,12 +95,12 @@ def dev_box_create_connect_delete():
         print("\nList of pools: ")
         for pool in pools:
             print(f"{pool.name}")
-        
+
         # Select first pool in the list
         target_pool_name = list(pools)[0].name
     else:
         raise ValueError("Missing Pool - please create one before running the example")
-    
+
     # Stand up a new Dev Box
     print(f"\nStarting to create devbox in project {target_project_name} and pool {target_pool_name}")
 
@@ -113,12 +115,13 @@ def dev_box_create_connect_delete():
     print(f"Connect to the dev box using web URL {remote_connection.web_url}")
 
     # Tear down the Dev Box when finished
-    print(f"Starting to delete dev box.") 
+    print(f"Starting to delete dev box.")
 
     delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
     delete_result = delete_response.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
+
 
 if __name__ == "__main__":
     create_dev_center_client()
