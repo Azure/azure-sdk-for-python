@@ -3,8 +3,9 @@ source:
   type: featureset
   path: azureml://subscriptions/my_sub/resourcegroups/my_rg/workspaces/my_fs/feturesets/source_feature_set_name/versions/version1
   source_delay:
-    name: timestamp
-    format: "%Y-%m-%d %H:%M:%S"
+    days: 2
+    hours: 0
+    minutes: 0
 feature_transformation_code:
   path: ./code
   transformer_class: driver_hourly_transform.DriverHourlyTransformer
