@@ -357,7 +357,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                etag=etag,
+                etag=etag or "*",
                 match_condition=match_condition,
                 **kwargs,
             )
@@ -420,7 +420,7 @@ class TableClient(TablesBaseClient):
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str etag: Etag of the entity.
+        :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.

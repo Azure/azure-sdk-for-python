@@ -317,7 +317,7 @@ class TableClient(AsyncTablesBaseClient):
 
         :param entity: The entity to delete.
         :type entity: Union[TableEntity, Mapping[str, Any]]
-        :keyword etag: Etag of the entity.
+        :keyword str etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
@@ -364,7 +364,7 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                etag=etag,
+                etag=etag or "*",
                 match_condition=match_condition,
                 **kwargs,
             )
