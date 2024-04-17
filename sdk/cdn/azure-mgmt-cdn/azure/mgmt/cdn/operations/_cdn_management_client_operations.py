@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,13 +35,13 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_check_endpoint_name_availability_request(
+def build_check_endpoint_name_availability_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -74,7 +74,7 @@ def build_check_name_availability_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -92,11 +92,13 @@ def build_check_name_availability_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_check_name_availability_with_subscription_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_check_name_availability_with_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -123,7 +125,7 @@ def build_validate_probe_request(subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -167,7 +169,6 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -177,7 +178,7 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
     def check_endpoint_name_availability(
         self,
         resource_group_name: str,
-        check_endpoint_name_availability_input: IO,
+        check_endpoint_name_availability_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -188,11 +189,10 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
         :param check_endpoint_name_availability_input: Input to check. Required.
-        :type check_endpoint_name_availability_input: IO
+        :type check_endpoint_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,7 +202,7 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
     def check_endpoint_name_availability(
         self,
         resource_group_name: str,
-        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, IO],
+        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckEndpointNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
@@ -211,13 +211,9 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
         :param check_endpoint_name_availability_input: Input to check. Is either a
-         CheckEndpointNameAvailabilityInput type or a IO type. Required.
+         CheckEndpointNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_endpoint_name_availability_input:
-         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or IO[bytes]
         :return: CheckEndpointNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -245,23 +241,22 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         else:
             _json = self._serialize.body(check_endpoint_name_availability_input, "CheckEndpointNameAvailabilityInput")
 
-        request = build_check_endpoint_name_availability_request(
+        _request = build_check_endpoint_name_availability_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_endpoint_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -274,13 +269,9 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         deserialized = self._deserialize("CheckEndpointNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_endpoint_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/checkEndpointNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def check_name_availability(
@@ -298,7 +289,6 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -306,17 +296,16 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
 
     @overload
     def check_name_availability(
-        self, check_name_availability_input: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, check_name_availability_input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: Input to check. Required.
-        :type check_name_availability_input: IO
+        :type check_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -324,18 +313,15 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
 
     @distributed_trace
     def check_name_availability(
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO], **kwargs: Any
+        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: Input to check. Is either a CheckNameAvailabilityInput
-         type or a IO type. Required.
-        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or
+         IO[bytes]
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -363,21 +349,20 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         else:
             _json = self._serialize.body(check_name_availability_input, "CheckNameAvailabilityInput")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -390,14 +375,12 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {"url": "/providers/Microsoft.Cdn/checkNameAvailability"}
+        return deserialized  # type: ignore
 
     @overload
-    def check_name_availability_with_subscription(
+    def check_name_availability_with_subscription(  # pylint: disable=name-too-long
         self,
         check_name_availability_input: _models.CheckNameAvailabilityInput,
         *,
@@ -412,44 +395,39 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def check_name_availability_with_subscription(
-        self, check_name_availability_input: IO, *, content_type: str = "application/json", **kwargs: Any
+    def check_name_availability_with_subscription(  # pylint: disable=name-too-long
+        self, check_name_availability_input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: Input to check. Required.
-        :type check_name_availability_input: IO
+        :type check_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def check_name_availability_with_subscription(
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO], **kwargs: Any
+    def check_name_availability_with_subscription(  # pylint: disable=name-too-long
+        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: Input to check. Is either a CheckNameAvailabilityInput
-         type or a IO type. Required.
-        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or
+         IO[bytes]
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -477,22 +455,21 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         else:
             _json = self._serialize.body(check_name_availability_input, "CheckNameAvailabilityInput")
 
-        request = build_check_name_availability_with_subscription_request(
+        _request = build_check_name_availability_with_subscription_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability_with_subscription.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -505,13 +482,9 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability_with_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def validate_probe(
@@ -526,7 +499,6 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateProbeOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -534,18 +506,17 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
 
     @overload
     def validate_probe(
-        self, validate_probe_input: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, validate_probe_input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ValidateProbeOutput:
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
         CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.
 
         :param validate_probe_input: Input to check. Required.
-        :type validate_probe_input: IO
+        :type validate_probe_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateProbeOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -553,19 +524,15 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
 
     @distributed_trace
     def validate_probe(
-        self, validate_probe_input: Union[_models.ValidateProbeInput, IO], **kwargs: Any
+        self, validate_probe_input: Union[_models.ValidateProbeInput, IO[bytes]], **kwargs: Any
     ) -> _models.ValidateProbeOutput:
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
         CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.
 
-        :param validate_probe_input: Input to check. Is either a ValidateProbeInput type or a IO type.
-         Required.
-        :type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param validate_probe_input: Input to check. Is either a ValidateProbeInput type or a IO[bytes]
+         type. Required.
+        :type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput or IO[bytes]
         :return: ValidateProbeOutput or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -593,22 +560,21 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         else:
             _json = self._serialize.body(validate_probe_input, "ValidateProbeInput")
 
-        request = build_validate_probe_request(
+        _request = build_validate_probe_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate_probe.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -621,8 +587,6 @@ class CdnManagementClientOperationsMixin(CdnManagementClientMixinABC):
         deserialized = self._deserialize("ValidateProbeOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate_probe.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/validateProbe"}
+        return deserialized  # type: ignore

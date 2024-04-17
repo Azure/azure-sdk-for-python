@@ -86,6 +86,28 @@ class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     UNKNOWN_SEARCH_ERROR = "UnknownSearchError"
 
 
+class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mapping Error Messages to Codes."""
+
+    NO_ERROR = "NoError"
+    UNKNOWN_ERROR_CODE = "UnknownErrorCode"
+    OUT_OF_STOCK = "OutOfStock"
+    AUTHORIZATION_DENIED = "AuthorizationDenied"
+    MISSING_ADDRESS = "MissingAddress"
+    INVALID_ADDRESS = "InvalidAddress"
+    INVALID_OFFER_MODEL = "InvalidOfferModel"
+    NOT_ENOUGH_LICENSES = "NotEnoughLicenses"
+    NO_WALLET = "NoWallet"
+    NOT_ENOUGH_CREDIT = "NotEnoughCredit"
+    NUMBERS_PARTIALLY_ACQUIRED = "NumbersPartiallyAcquired"
+    ALL_NUMBERS_NOT_ACQUIRED = "AllNumbersNotAcquired"
+    RESERVATION_EXPIRED = "ReservationExpired"
+    PURCHASE_FAILED = "PurchaseFailed"
+    BILLING_UNAVAILABLE = "BillingUnavailable"
+    PROVISIONING_FAILED = "ProvisioningFailed"
+    UNKNOWN_SEARCH_ERROR = "UnknownSearchError"
+
+
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the number type of the offering."""
 

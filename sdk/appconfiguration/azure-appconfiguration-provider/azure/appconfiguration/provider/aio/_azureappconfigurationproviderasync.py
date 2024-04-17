@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-import copy
 from threading import Lock
 import datetime
 import logging
@@ -583,7 +582,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: KeysView[str]
         """
-        return copy.deepcopy(self._dict).keys()
+        return self._dict.keys()
 
     def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
@@ -593,7 +592,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A set-like object of key-value pairs loaded from Azure App Configuration.
         :rtype: ItemsView[str, Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(self._dict).items()
+        return self._dict.items()
 
     def values(self) -> ValuesView[Union[str, Mapping[str, Any]]]:
         """
@@ -604,7 +603,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
          based on there content type.
         :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(self._dict).values()
+        return self._dict.values()
 
     @overload
     def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
@@ -624,7 +623,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: The value of the specified key.
         :rtype: Union[str, JSON]
         """
-        return copy.deepcopy(self._dict).get(key, default)
+        return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):

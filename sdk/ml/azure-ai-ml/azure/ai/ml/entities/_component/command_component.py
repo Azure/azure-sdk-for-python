@@ -113,7 +113,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
                 DistributionConfiguration,
             ]
         ] = None,
-        resources: Optional[Union[Dict, JobResourceConfiguration]] = None,
+        resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
@@ -150,7 +150,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.code = code
         self.environment_variables = environment_variables
         self.environment = environment
-        self.resources = resources
+        self.resources = resources  # type: ignore[assignment]
         self.distribution = distribution
 
         # check mutual exclusivity of promoted properties

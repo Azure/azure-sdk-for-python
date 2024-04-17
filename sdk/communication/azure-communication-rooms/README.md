@@ -49,7 +49,7 @@ valid_from if they are missing. The default for`valid_from` is current date time
 
 ### Create a room
 To create a room, call the `create_room` function from `RoomsClient`. The `valid_from`, `valid_until`, and `participants` arguments are all optional.
-Starting in 1.1.0b1 release, ACS Rooms supports PSTN Dial-Out feature. To create room with PSTN Dial-Out property, call `create_room` function and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled` is not provided, then the default value for `pstn_dial_out_enabled` is false.
+Starting in 1.1.0 release, ACS Rooms supports PSTN Dial-Out feature. To create room with PSTN Dial-Out property, call `create_room` function and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled` is not provided, then the default value for `pstn_dial_out_enabled` is false.
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -83,7 +83,7 @@ except HttpResponseError as ex:
 ```
 ### Update a room
 The `valid_from` and `valid_until` properties of a created room can be updated by calling the `update_room` function from `RoomsClient`.
-Starting in 1.1.0b1 release, ACS Rooms supports PSTN Dial-Out feature. To update a room with PSTN Dial-Out property, call `update_room` and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled`  is not provided, then there is no changes to PstnDialOutEnabled property in the room.
+Starting in 1.1.0 release, ACS Rooms supports PSTN Dial-Out feature. To update a room with PSTN Dial-Out property, call `update_room` and set `pstn_dial_out_enabled` to either true or false. If `pstn_dial_out_enabled`  is not provided, then there is no changes to PstnDialOutEnabled property in the room.
 
 ```python
 try:

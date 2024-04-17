@@ -41,6 +41,15 @@ class SearchField:
         type Edm.String. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is false for simple fields and null for complex fields.
     :vartype key: bool
+    :ivar stored: An immutable value indicating whether the field will be persisted separately on
+       disk to be returned in a search result. You can disable this option if you don't plan to return
+       the field contents in a search response to save on storage overhead. This can only be set
+       during index creation and only for vector fields. This property cannot be changed for existing
+       fields or set as false for new fields. If this property is set as false, the property
+       'hidden' must be set to true. This property must be true or unset for key fields,
+       for new fields, and for non-vector fields, and it must be null for complex fields. Disabling
+       this property will reduce index storage requirements. The default is true for vector fields.
+    :vartype stored: bool
     :ivar searchable: A value indicating whether the field is full-text searchable. This means it
         will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
         value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -169,6 +178,7 @@ class SearchField:
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
         self.hidden = kwargs.get("hidden", None)
+        self.stored = kwargs.get("stored", None)
         self.searchable = kwargs.get("searchable", None)
         self.filterable = kwargs.get("filterable", None)
         self.sortable = kwargs.get("sortable", None)
@@ -190,6 +200,7 @@ class SearchField:
             type=self.type,
             key=self.key,
             retrievable=retrievable,
+            stored=self.stored,
             searchable=self.searchable,
             filterable=self.filterable,
             sortable=self.sortable,
@@ -205,7 +216,7 @@ class SearchField:
         )
 
     @classmethod
-    def _from_generated(cls, search_field):
+    def _from_generated(cls, search_field) -> Optional["SearchField"]:
         if not search_field:
             return None
         # pylint:disable=protected-access
@@ -220,6 +231,7 @@ class SearchField:
             type=search_field.type,
             key=search_field.key,
             hidden=hidden,
+            stored=search_field.stored,
             searchable=search_field.searchable,
             filterable=search_field.filterable,
             sortable=search_field.sortable,
@@ -243,7 +255,7 @@ class SearchField:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchField":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchField"]:
         """Parse a str using the RestAPI syntax and return a SearchField instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -251,7 +263,55 @@ class SearchField:
         :returns: A SearchField instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))  # type: ignore
+        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> Optional["SearchField"]:
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchField instance
+        :rtype: SearchField
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchField.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 def SimpleField(
@@ -673,6 +733,54 @@ class SearchIndex:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndex":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndex instance
+        :rtype: SearchIndex
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndex.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:

@@ -110,7 +110,7 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
             poller = await client.begin_recognize_identity_documents_from_url(None, continuation_token=cont_token)
             result = await poller.result()
             assert result is not None
-            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})

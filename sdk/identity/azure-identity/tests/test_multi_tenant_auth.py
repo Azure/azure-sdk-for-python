@@ -21,6 +21,7 @@ class TestMultiTenantAuth(AzureRecordedTestCase):
         response = client.send_request(request)
         return response
 
+    @pytest.mark.live_test_only
     @pytest.mark.skipif(
         is_live() and not os.environ.get("AZURE_IDENTITY_MULTI_TENANT_CLIENT_ID"),
         reason="Multi-tenant envvars not configured.",

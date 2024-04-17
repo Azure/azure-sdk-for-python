@@ -83,7 +83,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -130,7 +130,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -225,7 +225,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:  # type: ignore
         """Get the specified data asset.
 
@@ -277,7 +277,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -423,7 +423,7 @@ class DataOperations(_ScopeDependentOperations):
                     ) from ex
             raise ex
 
-    @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
     def import_data(self, data_import: DataImport, **kwargs: Any) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
@@ -483,7 +483,7 @@ class DataOperations(_ScopeDependentOperations):
             job=import_pipeline, skip_validation=True, **kwargs
         )
 
-    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     def list_materialization_status(
         self,
         name: str,
@@ -520,7 +520,7 @@ class DataOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_activity(ops_logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Optional[List[str]]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
@@ -584,7 +584,7 @@ class DataOperations(_ScopeDependentOperations):
             )
             return None
 
-    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -623,7 +623,7 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -680,7 +680,7 @@ class DataOperations(_ScopeDependentOperations):
         )
         return self.get(name, version=latest_version)
 
-    @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "data.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self,
@@ -744,7 +744,7 @@ class DataOperations(_ScopeDependentOperations):
         with self._set_registry_client(registry_name):
             return self.create_or_update(data_ref)
 
-    @monitor_with_activity(logger, "data.Mount", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "data.Mount", ActivityType.PUBLICAPI)
     @experimental
     def mount(
         self,

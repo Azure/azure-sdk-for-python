@@ -23,6 +23,7 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
 from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
@@ -59,23 +60,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger: logging.Logger, activity_info: str):
+    def __init__(self, logger: logging.Logger, activity_info: Dict):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
         :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
-        :type activity_info: str
+        :type activity_info: Dict
         """
         self._activity_info = activity_info
         super(ActivityLoggerAdapter, self).__init__(logger, None)  # type: ignore[arg-type]
 
     @property
-    def activity_info(self) -> str:
+    def activity_info(self) -> Dict:
         """Return current activity info.
 
         :return: The info to write to the logger
-        :rtype: str
+        :rtype: Dict
         """
         return self._activity_info
 
@@ -224,7 +225,6 @@ def log_activity(
                 activity_name, completion_status, duration_ms
             )
             if exception:
-                message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__  # type: ignore[index]
                 if isinstance(exception, MlException):
                     activityLogger.activity_info[  # type: ignore[index]
@@ -240,9 +240,14 @@ def log_activity(
                         activityLogger.activity_info["innerException"] = type(  # type: ignore[index]
                             exception.inner_exception
                         ).__name__
+                message += ", Exception={}".format(activityLogger.activity_info["exception"])
+                message += ", ErrorCategory={}".format(activityLogger.activity_info["errorCategory"])
+                message += ", ErrorMessage={}".format(activityLogger.activity_info["errorMessage"])
+
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
+
         except Exception:  # pylint: disable=broad-except
             return  # pylint: disable=lost-exception
 
@@ -260,8 +265,8 @@ def monitor_with_activity(
     To monitor, use the ``@monitor_with_activity`` decorator. As an alternative, you can also wrap the
     logical block of code with the ``log_activity()`` method.
 
-    :param logger: The logger adapter.
-    :type logger: logging.LoggerAdapter
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
+    :type logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -275,8 +280,19 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
-                return f(*args, **kwargs)
+            tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
+            if tracer:
+                with tracer.span():
+                    with log_activity(
+                        logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
+                    ):
+                        return f(*args, **kwargs)
+            elif hasattr(logger, "package_logger"):
+                with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
+            else:
+                with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
 
         return wrapper
 
@@ -300,7 +316,7 @@ def monitor_with_telemetry_mixin(
     will collect from return value.
     To monitor, use the ``@monitor_with_telemetry_mixin`` decorator.
 
-    :param logger: The logger adapter.
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
     :type logger: logging.LoggerAdapter
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
@@ -314,6 +330,8 @@ def monitor_with_telemetry_mixin(
     :type extra_keys: list[str]
     :return:
     """
+
+    logger = logger.package_logger if isinstance(logger, OpsLogger) else logger
 
     def monitor(f):
         def _collect_from_parameters(f, args, kwargs, extra_keys):

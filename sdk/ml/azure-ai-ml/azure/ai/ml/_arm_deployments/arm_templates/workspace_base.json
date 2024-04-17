@@ -1053,6 +1053,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(variables('materializationIdentity'), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName')), 'azureml ds role')]",
                             "scope": "[resourceId(resourceGroup().name, 'Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
                                 "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2018-11-30').principalId, '')]",
@@ -1085,6 +1086,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(variables('materializationIdentity'), variables('offlineStore'), 'storage blob data contributor')]",
                             "scope": "[variables('offlineStore')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
                                 "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
@@ -1116,6 +1118,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(variables('materializationIdentity'), parameters('online_store_resource_id'), 'contributor')]",
                             "scope": "[parameters('online_store_resource_id')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
                                 "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
