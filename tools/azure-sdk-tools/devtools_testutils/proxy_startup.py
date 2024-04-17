@@ -24,7 +24,7 @@ from urllib3.exceptions import SSLError
 from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
-from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS
+from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
 from .helpers import get_http_client, is_live_and_not_recording
 from .sanitizers import (
     add_batch_sanitizers,
@@ -287,7 +287,6 @@ def prepare_local_tool(repo_root: str) -> str:
 
 def set_common_sanitizers() -> None:
     """Register sanitizers that will apply to all recordings throughout the SDK."""
-    SANITIZED = "Sanitized"
     batch_sanitizers = {}
 
     # Remove headers from recordings if we don't need them, and ignore them if present
@@ -316,7 +315,7 @@ def set_common_sanitizers() -> None:
         {"json_path": "$..containerUri", "value": SANITIZED},
         {"json_path": "$..inputDataUri", "value": SANITIZED},
         {"json_path": "$..outputDataUri", "value": SANITIZED},
-        {"json_path": "$..id", "value": SANITIZED},
+        # {"json_path": "$..id", "value": SANITIZED},
         {"json_path": "$..token", "value": SANITIZED},
         {"json_path": "$..appId", "value": SANITIZED},
         {"json_path": "$..userId", "value": SANITIZED},
@@ -377,7 +376,7 @@ def set_common_sanitizers() -> None:
         {"json_path": "$..userName", "value": SANITIZED},
         {"json_path": "$.properties.DOCKER_REGISTRY_SERVER_PASSWORD", "value": SANITIZED},
         {"json_path": "$.value[*].key", "value": SANITIZED},
-        {"json_path": "$.key", "value": SANITIZED},
+        # {"json_path": "$.key", "value": SANITIZED},
         {"json_path": "$..clientId", "value": FAKE_ID},
         {"json_path": "$..principalId", "value": FAKE_ID},
         {"json_path": "$..tenantId", "value": FAKE_ID},
@@ -388,7 +387,7 @@ def set_common_sanitizers() -> None:
         {"regex": "(client_id=)[^&]+", "value": "$1sanitized"},
         {"regex": "(client_secret=)[^&]+", "value": "$1sanitized"},
         {"regex": "(client_assertion=)[^&]+", "value": "$1sanitized"},
-        {"regex": "(?:(sv|sig|se|srt|ss|sp)=)(?<secret>(([^&\\s]*)))", "value": SANITIZED},
+        {"regex": "(?:[\\?&](sv|sig|se|srt|ss|sp)=)(?<secret>(([^&\\s]*)))", "value": SANITIZED},
         {"regex": "refresh_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
         {"regex": "access_token=(?<group>.*?)(?=&|$)", "group_for_replace": "group", "value": SANITIZED},
         {"regex": "token=(?<token>[^\\u0026]+)($|\\u0026)", "group_for_replace": "token", "value": SANITIZED},

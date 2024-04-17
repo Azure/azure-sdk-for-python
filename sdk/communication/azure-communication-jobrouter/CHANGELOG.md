@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0b1 (2024-04-12)
 
 This is the beta release of Azure Communication Job Router Python SDK. For more information, please see the [README][read_me].
