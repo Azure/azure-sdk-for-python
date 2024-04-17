@@ -623,7 +623,7 @@ class WebPubSubClient(
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF.
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
