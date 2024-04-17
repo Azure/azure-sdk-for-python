@@ -119,7 +119,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
             async with client:
                 await asyncio.sleep(1)  # make sure rejoin group is called
-                await client.send_to_group(group_name, "test_rejoin_group", "text")
+                await client.send_to_group(group_name, group_name, "text")
                 await asyncio.sleep(1)  # wait for on_group_message to be called
                 assert assert_func(test_group_name)
 
