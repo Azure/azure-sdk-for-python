@@ -18,11 +18,13 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
 from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey
 from azure.ai.ml.entities._assets import Index
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 
 # pylint: disable=protected-access
@@ -63,6 +65,10 @@ class IndexOperations(_ScopeDependentOperations):
         self._all_operations = all_operations
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
+        # Maps a label to a function which given an asset name,
+        # returns the asset associated with the label
+        self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @property
     def _azure_ai_assets(self) -> AzureAiAssetsClient042024:
@@ -110,18 +116,46 @@ class IndexOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Index.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, version: str) -> Index:
+    def get(self, name: str, *, version: Optional[str] = None, label: Optional[str] = None) -> Index:
         """Returns information about the specified index asset.
 
         :param str name: Name of the index asset.
-        :keyword str version: Version of the index asset.
+        :keyword Optional[str] version: Version of the index asset. Mutually exclusive with `label`.
+        :keyword Optional[str] label: The label of the index asset. Mutually exclusive with  `version`.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Index cannot be successfully validated.
+            Details will be provided in the error message.
         :return: Index asset object.
         :rtype: ~azure.ai.ml.entities.Index
         """
+        if version and label:
+            msg = "Cannot specify both version and label."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.INDEX,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+        if label:
+            return _resolve_label_to_asset(self, name, label)
+
+        if not version:
+            msg = "Must provide either version or label."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.INDEX,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
 
         index_version_resource = self._azure_ai_assets.indexes.get(name=name, version=version)
 
         return Index._from_rest_object(index_version_resource)
+
+    def _get_latest_version(self, name: str) -> Index:
+        return Index._from_rest_object(self._azure_ai_assets.indexes.get_latest(name))
 
     @monitor_with_activity(ops_logger, "Index.List", ActivityType.PUBLICAPI)
     def list(
