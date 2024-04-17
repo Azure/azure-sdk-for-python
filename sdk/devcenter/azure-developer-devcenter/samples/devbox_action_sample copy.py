@@ -31,7 +31,7 @@ from azure.identity import DefaultAzureCredential
 from datetime import timedelta
 
 """
-FILE: create_devbox_sample.py
+FILE: devbox_action_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to get, delay and skip a dev box action using python DevCenterClient. 
@@ -40,16 +40,11 @@ DESCRIPTION:
     and sample on how to create a dev box at create_devbox_sample.py in this folder
 
 USAGE:
-    python create_devbox_sample.py
+    python devbox_action_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
-
-def get_project_name(LOG, client):
-    projects = list(client.projects.list_by_dev_center)
-    return projects[0].name
-
 
 def main():
 

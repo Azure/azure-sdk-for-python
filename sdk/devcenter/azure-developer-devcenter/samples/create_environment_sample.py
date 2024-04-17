@@ -24,12 +24,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
-import os
-
-from azure.developer.devcenter import DevCenterClient
-from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 """
 FILE: create_environment_sample.py
@@ -48,6 +42,11 @@ USAGE:
 
 def environment_create_and_delete():
     # [START environment_create_and_delete]
+    import os
+
+    from azure.developer.devcenter import DevCenterClient
+    from azure.identity import DefaultAzureCredential
+
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
@@ -106,10 +105,7 @@ def environment_create_and_delete():
     else:
         raise ValueError("Missing Environment Type - please create one before running the example")
 
-    target_environment_type_name = list()[0].name
-
-    print(f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name},
-           environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}.")
+    print(f"\nStarting to create environment in project {target_project_name} with catalog {target_catalog_name}, environment definition {target_environment_definition_name}, and environment type {target_environment_type_name}.")
 
     # Stand up a new environment
     environment_name = "MyDevEnv"
