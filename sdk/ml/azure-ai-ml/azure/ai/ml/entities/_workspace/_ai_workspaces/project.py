@@ -29,7 +29,8 @@ class Project(Workspace):
     :type tags: Optional[Dict[str, str]]
     :param display_name: The display name of the project.
     :type display_name: Optional[str]
-    :param location: The location of the project. Must match that of the parent hub.
+    :param location: The location of the project. Must match that of the parent hub
+        and is automatically assigned to match the parent hub's location during creation.
     :type location: Optional[str]
     :param resource_group: The project's resource group name.
     :type resource_group: Optional[str]

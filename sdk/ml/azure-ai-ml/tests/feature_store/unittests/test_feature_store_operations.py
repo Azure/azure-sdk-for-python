@@ -69,7 +69,7 @@ class TestFeatureStoreOperation:
         featurestore = mock_feature_store_operation.get(name="random_name", resource_group="rg")
         mock_feature_store_operation._operation.get.assert_called_once()
 
-        assert featurestore._type == "featurestore"
+        assert featurestore._kind == "featurestore"
         assert featurestore._feature_store_settings.offline_store_connection_name == OFFLINE_STORE_CONNECTION_NAME
         assert featurestore._feature_store_settings.online_store_connection_name == ONLINE_STORE_CONNECTION_NAME
 

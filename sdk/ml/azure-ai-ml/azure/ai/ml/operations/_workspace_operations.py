@@ -259,6 +259,22 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 :dedent: 8
                 :caption: Begin create for a workspace.
         """
+        # Add hub values to project if possible
+        if workspace._kind == WorkspaceKind.PROJECT:
+            try:
+                parent_name = workspace._hub_id.split("/")[-1] if workspace._hub_id else ""
+                parent = self.get(parent_name)
+                if parent:
+                    # Project location can not differ from hub, so try to force match them if possible.
+                    workspace.location = parent.location
+                    # Project's technically don't save their PNA, since it implicitly matches their parent's.
+                    # However, some PNA-dependent code is run server-side before that alignment is made, so make sure
+                    # they're aligned before the request hits the server.
+                    workspace.public_network_access = parent.public_network_access
+
+            except Exception as e:
+                module_logger.warn("Failed to get parent workspace for project," +
+                                   " some values won't be transferred, error: %s", e)
         try:
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:

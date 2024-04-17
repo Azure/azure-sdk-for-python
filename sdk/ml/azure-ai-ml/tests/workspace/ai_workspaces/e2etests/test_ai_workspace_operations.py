@@ -31,7 +31,6 @@ class TestWorkspace(AzureRecordedTestCase):
         assert project1 is not None
         assert project2 is not None
         assert project1.name == project2.name
-        assert project1.location == project2.location
         assert project1.description == project2.description
         assert project1.display_name == project2.display_name
         assert project1.hub_id == project2.hub_id
@@ -61,6 +60,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 display_name="hub display name",
                 location="westus2",
                 default_project_resource_group=client.resource_group_name,
+                public_network_access="Disabled",
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
             assert created_hub.associated_workspaces == []
@@ -70,7 +70,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub_id=created_hub.id,
                 description="project1 description",
                 display_name="project1 display name",
-                location="westus2",
+                # don't set project location, make sure it gets copied via value injection
             )
             created_project1 = client.workspaces.begin_create(workspace=local_project1).result()
 
@@ -79,7 +79,6 @@ class TestWorkspace(AzureRecordedTestCase):
                 hub_id=created_hub.id,
                 description="project2 description",
                 display_name="project2 display name",
-                location="westus2",
             )
             created_project2 = client.workspaces.begin_create(workspace=local_project2).result()
 
@@ -89,6 +88,9 @@ class TestWorkspace(AzureRecordedTestCase):
             self.compare_hub(local_hub, created_hub)
             self.compare_project(local_project1, created_project1)
             self.compare_project(local_project2, created_project2)
+            # Ensure that the projects have the same location as the hub via injection.
+            assert created_project1.location == created_hub.location
+            assert created_project2.location == created_hub.location
 
             # Get created hub and projects
             gotten_hub = client.workspaces.get(local_hub.name)
