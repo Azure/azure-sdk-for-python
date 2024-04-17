@@ -269,6 +269,8 @@ class AzureMLResourceType:
     """Hub resource type."""
     PROJECT = "project"
     """Project resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -279,7 +281,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:
@@ -934,7 +936,7 @@ class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
 
 
-class WorkspaceKind():
+class WorkspaceKind:
     """Enum of workspace categories."""
 
     DEFAULT = "default"

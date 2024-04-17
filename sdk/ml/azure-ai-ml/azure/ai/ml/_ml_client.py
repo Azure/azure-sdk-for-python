@@ -75,6 +75,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    IndexOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -617,6 +618,17 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
+        self._indexes = IndexOperations(
+            operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
+            credential=self._credential,
+            all_operations=self._operation_container,
+            _service_client_kwargs=kwargs,
+            requests_pipeline=self._requests_pipeline,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.INDEX, self._indexes)
+
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
@@ -969,6 +981,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ScheduleOperations
         """
         return self._schedules
+
+    @property
+    def indexes(self) -> IndexOperations:
+        """A collection of index related operations.
+
+        :return: Index operations.
+        :rtype: ~azure.ai.ml.operations.IndexOperations
+        """
+        return self._indexes
 
     @property
     def subscription_id(self) -> str:
