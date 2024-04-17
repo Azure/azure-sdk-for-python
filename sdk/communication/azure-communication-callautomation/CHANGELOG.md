@@ -4,8 +4,8 @@
 
 ### Features Added
 - StartRecording now accepts PauseOnStart.
-- Introduced TeamsComplianceRecording notification
-- You can store your recording in your own storage - Bring-your-own-storage (BYOS)
+- Introduced recording kind to the recording state result
+- You can store your recording in your own storage - Bring-your-own-storage
 
 ### Breaking Changes
 
