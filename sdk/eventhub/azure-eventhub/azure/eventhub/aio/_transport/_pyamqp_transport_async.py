@@ -383,6 +383,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            use_tls=config.use_tls,
         )
 
     @staticmethod
