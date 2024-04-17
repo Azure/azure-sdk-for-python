@@ -18,7 +18,6 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
-
 def sample_chat_completions():
     import os
 

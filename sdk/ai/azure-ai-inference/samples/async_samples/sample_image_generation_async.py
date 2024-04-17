@@ -18,7 +18,6 @@ USAGE:
 """
 import asyncio
 
-
 async def sample_image_generation_async():
     import os
     import base64

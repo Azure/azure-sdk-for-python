@@ -18,13 +18,12 @@ USAGE:
     2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 import asyncio
-import os
-from azure.ai.inference.aio import ChatCompletionsClient
-from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
-from azure.core.credentials import AzureKeyCredential
-
 
 async def sample_chat_completions_streaming_async():
+    import os
+    from azure.ai.inference.aio import ChatCompletionsClient
+    from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
+    from azure.core.credentials import AzureKeyCredential
 
     # Read the values of your model endpoint and key from environment variables
     try:

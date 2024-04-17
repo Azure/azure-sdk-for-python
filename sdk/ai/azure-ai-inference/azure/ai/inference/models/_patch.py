@@ -10,7 +10,6 @@ import queue
 import time
 import re
 import json
-import types
 
 from typing import List, Union, AsyncIterator, Iterator, cast
 from azure.core.rest import HttpResponse, AsyncHttpResponse
@@ -37,7 +36,7 @@ class StreamingChatCompletions:
         self.response = response
         self._bytes_iterator: Union[AsyncIterator[bytes], Iterator[bytes]] = response.iter_bytes()
         self._is_async_iterator = isinstance(self.response, AsyncHttpResponse)
-        self._queue = queue.Queue()
+        self._queue: "queue.Queue[_models.ChatCompletionsUpdate]" = queue.Queue()
         self._incomplete_json = ""
 
     def __aiter__(self):
@@ -75,8 +74,8 @@ class StreamingChatCompletions:
         if self.ENABLE_CLASS_LOGS:
             start_time = time.time()
         try:
-           # Use 'cast' to make 'pyright' error go away
-           element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
+            # Use 'cast' to make 'pyright' error go away
+            element = await cast(AsyncIterator[bytes], self._bytes_iterator).__anext__()
         except StopAsyncIteration:
             await self.aclose()
             return
@@ -135,6 +134,7 @@ class StreamingChatCompletions:
             # where the curly braces contain a valid JSON object. Deserialize it into a ChatCompletionsUpdate object
             # and add it to the queue.
             self._queue.put(
+                # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
                 _models.ChatCompletionsUpdate._deserialize(
                     json.loads(line[len(self.SSE_DATA_EVENT_PREFIX) : -1]), []
                 )
@@ -146,18 +146,17 @@ class StreamingChatCompletions:
     def __enter__(self):
         return self
 
-    def __exit__(self) -> None:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
     def close(self) -> None:
-        if self.response:
+        if isinstance(self.response, HttpResponse):
             self.response.close()
-            self.response = None
 
     async def aclose(self) -> None:
-        if self.response:
+        # `if`` statement added to avoid mypy error: Incompatible types in "await" (actual type "Optional[Coroutine[Any, Any, None]]", expected type "Awaitable[Any]")
+        if isinstance(self.response, AsyncHttpResponse):
             await self.response.close()
-            self.response = None
 
 
 __all__: List[str] = [

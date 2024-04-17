@@ -10,9 +10,8 @@ import json
 import sys
 
 from io import IOBase
-from typing import Any, Callable, Dict, Union, IO, List, Optional, TypeVar, overload
+from typing import Any, Dict, Union, IO, List, Optional, overload
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import (
@@ -34,9 +33,6 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
-T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
@@ -50,8 +46,25 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
-        """
-        TBD
+        """Gets streaming chat completions for the provided chat messages.
+        Completions support a wide variety of tasks and generate text that continues from or
+        "completes" provided prompt data. When using this method, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        object to get content updates as they arrive.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.StreamingChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -77,8 +90,87 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
-        """
-        TBD
+        """Gets streaming chat completions for the provided chat messages.
+        Completions support a wide variety of tasks and generate text that continues from or
+        "completes" provided prompt data. When using this method, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        object to get content updates as they arrive.
+
+        :keyword messages: The collection of context messages associated with this chat completions
+         request.
+         Typical usage begins with a chat message for the System role that provides instructions for
+         the behavior of the assistant, followed by alternating messages between the User and
+         Assistant roles. Required.
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword frequency_penalty: A value that influences the probability of generated tokens
+         appearing based on their cumulative
+         frequency in generated text.
+         Positive values will make tokens less likely to appear as their frequency increases and
+         decrease the likelihood of the model repeating the same statements verbatim. Default value is
+         None.
+        :paramtype frequency_penalty: float
+        :keyword presence_penalty: A value that influences the probability of generated tokens
+         appearing based on their existing
+         presence in generated text.
+         Positive values will make tokens less likely to appear when they already exist and increase
+         the
+         model's likelihood to output new topics. Default value is None.
+        :paramtype presence_penalty: float
+        :keyword temperature: The sampling temperature to use that controls the apparent creativity of
+         generated completions.
+         Higher values will make output more random while lower values will make results more focused
+         and deterministic.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
+         causes the
+         model to consider the results of tokens with the provided probability mass. As an example, a
+         value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+         considered.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype top_p: float
+        :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
+        :paramtype max_tokens: int
+        :keyword response_format: An object specifying the format that the model must output. Used to
+         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword stop: A collection of textual sequences that will end completions generation. Default
+         value is None.
+        :paramtype stop: list[str]
+        :keyword tools: The available tool definitions that the chat completions request can use,
+         including caller-defined functions. Default value is None.
+        :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
+        :keyword tool_choice: If specified, the model will configure which of the provided tools it can
+         use for the chat completions response. Is either a Union[str,
+         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         Default value is None.
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
+        :paramtype seed: int
+        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -91,10 +183,27 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
+        """Gets streaming chat completions for the provided chat messages.
+        Completions support a wide variety of tasks and generate text that continues from or
+        "completes" provided prompt data. When using this method, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        object to get content updates as they arrive.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        TBD
-        """
-    
+
     @distributed_trace_async
     async def create_streaming(
         self,
@@ -118,8 +227,86 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         **kwargs: Any
     ) -> _models.StreamingChatCompletions:
         # pylint: disable=line-too-long
-        """
-        TBD
+        """Gets streaming chat completions for the provided chat messages.
+        Completions support a wide variety of tasks and generate text that continues from or
+        "completes" provided prompt data. When using this method, the response is streamed
+        back to the client. Iterate over the resulting ~azure.ai.inference.models.StreamingChatCompletions
+        object to get content updates as they arrive.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword messages: The collection of context messages associated with this chat completions
+         request.
+         Typical usage begins with a chat message for the System role that provides instructions for
+         the behavior of the assistant, followed by alternating messages between the User and
+         Assistant roles. Required.
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :keyword model_deployment: Name of the deployment to which you would like to route the request.
+         Relevant only to Model-as-a-Platform (MaaP) deployments.
+         Typically used when you want to target a test environment instead of production environment.
+         Default value is None.
+        :paramtype model_deployment: str
+        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
+         standard request payload.
+         They will be passed to the service as-is in the root of the JSON request payload.
+         How the service handles these extra parameters depends on the value of the
+         ``extra-parameters``
+         HTTP request header. Default value is None.
+        :paramtype extras: dict[str, str]
+        :keyword frequency_penalty: A value that influences the probability of generated tokens
+         appearing based on their cumulative
+         frequency in generated text.
+         Positive values will make tokens less likely to appear as their frequency increases and
+         decrease the likelihood of the model repeating the same statements verbatim. Default value is
+         None.
+        :paramtype frequency_penalty: float
+        :keyword presence_penalty: A value that influences the probability of generated tokens
+         appearing based on their existing
+         presence in generated text.
+         Positive values will make tokens less likely to appear when they already exist and increase
+         the
+         model's likelihood to output new topics. Default value is None.
+        :paramtype presence_penalty: float
+        :keyword temperature: The sampling temperature to use that controls the apparent creativity of
+         generated completions.
+         Higher values will make output more random while lower values will make results more focused
+         and deterministic.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature called nucleus sampling. This value
+         causes the
+         model to consider the results of tokens with the provided probability mass. As an example, a
+         value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+         considered.
+         It is not recommended to modify temperature and top_p for the same completions request as the
+         interaction of these two settings is difficult to predict. Default value is None.
+        :paramtype top_p: float
+        :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
+        :paramtype max_tokens: int
+        :keyword response_format: An object specifying the format that the model must output. Used to
+         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
+        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword stop: A collection of textual sequences that will end completions generation. Default
+         value is None.
+        :paramtype stop: list[str]
+        :keyword tools: The available tool definitions that the chat completions request can use,
+         including caller-defined functions. Default value is None.
+        :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
+        :keyword tool_choice: If specified, the model will configure which of the provided tools it can
+         use for the chat completions response. Is either a Union[str,
+         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         Default value is None.
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :keyword seed: If specified, the system will make a best effort to sample deterministically
+         such that repeated requests with the
+         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         Default value is None.
+        :paramtype seed: int
+        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
+        :rtype: ~azure.ai.inference.models.ChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -133,7 +320,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ChatCompletions] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if messages is _Unset:
