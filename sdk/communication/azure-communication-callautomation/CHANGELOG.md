@@ -4,8 +4,8 @@
 
 ### Features Added
 - StartRecording now accepts PauseOnStart.
-- Introduced recording kind to the recording state result
-- You can store your recording in your own storage - Bring-your-own-storage
+- Introduced recording kind to the recording state result.
+- You can store your recording in your own storage - Bring-your-own-storage.
 
 ### Breaking Changes
 
