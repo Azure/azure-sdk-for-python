@@ -29,6 +29,6 @@ def raise_for_empty_message_ack(message_ack: Optional[Any], ack_id: Optional[int
             ack_id=ack_id,
             error_detail=AckMessageError(
                 name=NO_ACK_MESSAGE_ERROR,
-                message="The connection may have been lost during message sending, or the service didn't send ack message.",
+                message="The connection may have been lost during message sending, or the service didn't send ack message.",  # pylint: disable=line-too-long
             ),
         )

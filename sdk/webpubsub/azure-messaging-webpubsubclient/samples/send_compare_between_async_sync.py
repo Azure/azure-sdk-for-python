@@ -70,7 +70,7 @@ async def send_async() -> None:
         ),
     )
     async with client_async:
-        group_name = "test"
+        group_name = "send_compare_between_async_sync"
         await client_async.join_group(group_name)
         start = time.time()
         await asyncio.gather(

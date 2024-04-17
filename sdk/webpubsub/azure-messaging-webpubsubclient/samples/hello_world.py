@@ -52,7 +52,7 @@ def main():
         client.subscribe(CallbackType.CONNECTED, on_connected)
         client.subscribe(CallbackType.DISCONNECTED, on_disconnected)
         client.subscribe(CallbackType.GROUP_MESSAGE, on_group_message)
-        group_name = "test"
+        group_name = "hello_world"
         client.join_group(group_name)
         client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False)
         client.send_to_group(group_name, {"hello": "json"}, WebPubSubDataType.JSON)

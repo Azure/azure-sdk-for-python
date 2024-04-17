@@ -32,6 +32,7 @@ from ..models._models import (
     WebPubSubGroup,
     SendMessageErrorOptionsAsync,
     WebPubSubMessage,
+    SendMessageType,
     SendMessageError,
     SendEventMessage,
     SendToGroupMessage,
@@ -210,7 +211,8 @@ class WebPubSubClient(
      "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
-    :keyword ~azure.messaging.webpubsubclient.RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword ~azure.messaging.webpubsubclient.RetryMode reconnect_retry_mode: Fixed or exponential delay
+     between attemps, default is exponential.
     :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
@@ -292,14 +294,13 @@ class WebPubSubClient(
 
     async def _send_message_with_ack_id(
         self,
-        message_provider: Callable[[int], WebPubSubMessage],
-        ack_id: Optional[int] = None,
+        message: SendMessageType,
         **kwargs: Any,
     ) -> None:
-        if ack_id is None:
-            ack_id = self._next_ack_id()
+        if message.ack_id is None:
+            message.ack_id = self._next_ack_id()
 
-        message = message_provider(ack_id)
+        ack_id = message.ack_id
         # Unless receive ack message, we assume the message is not sent successfully.
         if not self._ack_map.get(ack_id):
             self._ack_map.add(
@@ -351,8 +352,7 @@ class WebPubSubClient(
     async def _join_group_core(self, group_name: str, **kwargs: Any) -> None:
         ack_id = kwargs.pop("ack_id", None)
         await self._send_message_with_ack_id(
-            message_provider=lambda id: JoinGroupMessage(group=group_name, ack_id=id),
-            ack_id=ack_id,
+            message=JoinGroupMessage(group=group_name, ack_id=ack_id),
             **kwargs,
         )
 
@@ -367,8 +367,7 @@ class WebPubSubClient(
             group = self._get_or_add_group(group_name)
             ack_id = kwargs.pop("ack_id", None)
             await self._send_message_with_ack_id(
-                message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
-                ack_id=ack_id,
+                message=LeaveGroupMessage(group=group_name, ack_id=ack_id),
                 **kwargs,
             )
             group.is_joined = False
@@ -472,10 +471,7 @@ class WebPubSubClient(
             ack_id = kwargs.pop("ack_id", None)
             if ack:
                 await self._send_message_with_ack_id(
-                    message_provider=lambda id: SendEventMessage(
-                        data_type=data_type, data=content, ack_id=id, event=event_name
-                    ),
-                    ack_id=ack_id,
+                    message=SendEventMessage(data_type=data_type, data=content, ack_id=ack_id, event=event_name),
                     **kwargs,
                 )
             else:
@@ -501,6 +497,7 @@ class WebPubSubClient(
         :type content: str.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -521,6 +518,7 @@ class WebPubSubClient(
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -542,6 +540,7 @@ class WebPubSubClient(
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
          ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -561,6 +560,7 @@ class WebPubSubClient(
         :type content: Union[str, memoryview, Dict[str, Any]].
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str.
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -569,13 +569,14 @@ class WebPubSubClient(
         async def send_to_group_attempt():
             ack = kwargs.pop("ack", True)
             no_echo = kwargs.pop("no_echo", False)
+            ack_id = kwargs.pop("ack_id", None)
             if ack:
                 await self._send_message_with_ack_id(
-                    message_provider=lambda id: SendToGroupMessage(
+                    message=SendToGroupMessage(
                         group=group_name,
                         data_type=data_type,
                         data=content,
-                        ack_id=id,
+                        ack_id=ack_id,
                         no_echo=no_echo,
                     ),
                     **kwargs,
@@ -688,18 +689,15 @@ class WebPubSubClient(
         return self._state == WebPubSubClientState.CONNECTED and self._ws and not self._ws.closed  # type: ignore
 
     async def _rejoin_group(self, group_name: str):
-        async def _rejoin_group_func():
-            try:
-                await self._join_group_core(group_name)
-                _LOGGER.debug("rejoin group %s successfully", group_name)
-            except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.debug("fail to rejoin group %s", group_name)
-                self._call_back(
-                    CallbackType.REJOIN_GROUP_FAILED,
-                    OnRejoinGroupFailedArgs(group=group_name, error=e),
-                )
-
-        await _rejoin_group_func()
+        try:
+            await self._join_group_core(group_name)
+            _LOGGER.debug("rejoin group %s successfully", group_name)
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("fail to rejoin group %s", group_name)
+            self._call_back(
+                CallbackType.REJOIN_GROUP_FAILED,
+                OnRejoinGroupFailedArgs(group=group_name, error=e),
+            )
 
     async def _connect(
         self,
@@ -967,12 +965,13 @@ class WebPubSubClient(
 
     @staticmethod
     async def _wait_for_tasks(tasks: List[Optional[asyncio.Task]]) -> None:
-        for task in tasks:
-            if task and not task.done():
-                try:
-                    await asyncio.wait_for(task, timeout=1.0)
-                except Exception:  # pylint: disable=broad-except
-                    _LOGGER.warning("Task %s is not done after 1s, cancel it", task.get_name())
+        async def task_with_timeout(task: asyncio.Task):
+            try:
+                await asyncio.wait_for(task, timeout=1.0)
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Task %s is not done after 1s, cancel it", task.get_name())
+
+        await asyncio.gather(*[task_with_timeout(t) for t in tasks if t and not t.done()])
 
     @overload
     async def subscribe(

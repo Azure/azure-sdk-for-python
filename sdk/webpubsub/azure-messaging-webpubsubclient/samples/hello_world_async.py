@@ -53,7 +53,7 @@ async def main():
         await client.subscribe(CallbackType.CONNECTED, on_connected)
         await client.subscribe(CallbackType.DISCONNECTED, on_disconnected)
         await client.subscribe(CallbackType.GROUP_MESSAGE, on_group_message)
-        group_name = "test"
+        group_name = "hello_world_async"
         await client.join_group(group_name)
         await client.send_to_group(
             group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False

@@ -39,7 +39,7 @@ def main():
     # catch SendMessageError
     while True:
         try:
-            client.join_group(group_name="test")
+            client.join_group(group_name="hello_world_exceptions")
             break
         except SendMessageError as err:
             if err.error_detail is None:

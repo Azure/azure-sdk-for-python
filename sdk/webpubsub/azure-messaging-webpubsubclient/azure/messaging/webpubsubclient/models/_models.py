@@ -451,6 +451,14 @@ WebPubSubMessage = TypeVar(
     AckMessage,
 )
 
+SendMessageType = TypeVar(
+    "SendMessageType",
+    SendToGroupMessage,
+    SendEventMessage,
+    JoinGroupMessage,
+    LeaveGroupMessage,
+)
+
 
 def get_pay_load(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     """Get payload from data with data_type
