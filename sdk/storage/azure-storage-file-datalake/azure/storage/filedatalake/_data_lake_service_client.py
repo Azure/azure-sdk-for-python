@@ -151,7 +151,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :type credential:
-            Optional[Union[str, dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -291,7 +294,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: FileSystemClient under the specified account.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
@@ -327,7 +329,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: FileSystemClient with the newly specified name.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
@@ -405,8 +406,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: FileSystemClient after marking the specified file system for deletion.
-        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -617,7 +617,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
         return get_datalake_service_properties(props)
