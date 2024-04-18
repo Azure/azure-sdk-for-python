@@ -65,7 +65,7 @@ class ValidationMixin():
                     return attr_value._validate()
                 rest_field_type = _get_rest_field_type(rest_field)
                 if attr_type != rest_field_type:
-                    raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field._class_type}")
+                    raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field_type}")
                 
 
 @experimental
