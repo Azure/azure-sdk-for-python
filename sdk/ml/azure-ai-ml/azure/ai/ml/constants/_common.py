@@ -135,7 +135,6 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
     "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
     "To specify a conda file via command-line argument, please use --conda-file/-c argument."
 )
-API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
@@ -193,6 +192,21 @@ DEFAULT_OPEN_AI_CONNECTION_NAME = "Default_AzureOpenAI"
 DEFAULT_CONTENT_SAFETY_CONNECTION_NAME = "Default_AzureAIContentSafety"
 USER_AGENT_HEADER_KEY = "Client-User-Agent"
 USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
+
+
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
 
 
 class DefaultOpenEncoding:
@@ -253,6 +267,8 @@ class AzureMLResourceType:
     """Feature store resource type."""
     WORKSPACE_HUB = "workspace_hub"
     """WorkspaceHub resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -263,7 +279,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:

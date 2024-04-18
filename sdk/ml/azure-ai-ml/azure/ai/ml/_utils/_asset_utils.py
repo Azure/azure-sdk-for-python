@@ -69,7 +69,13 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        ComponentOperations,
+        DataOperations,
+        EnvironmentOperations,
+        IndexOperations,
+        ModelOperations,
+    )
 
 hash_type = type(hashlib.md5())  # nosec
 
@@ -975,6 +981,7 @@ def _resolve_label_to_asset(
         "ComponentOperations",
         "EnvironmentOperations",
         "ModelOperations",
+        "IndexOperations",
     ],
     name: str,
     label: str,
@@ -984,7 +991,8 @@ def _resolve_label_to_asset(
     Throws if label does not refer to a version of the named asset
 
     :param assetOperations: The operations class used to retrieve the asset
-    :type assetOperations: Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"]
+    :type assetOperations:
+        Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations", "IndexOperations"]
     :param name: The name of the asset
     :type name: str
     :param label: The label to resolve
