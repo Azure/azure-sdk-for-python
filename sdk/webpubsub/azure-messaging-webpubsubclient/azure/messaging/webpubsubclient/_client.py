@@ -271,6 +271,7 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
             ),
         ]
 
+
 class WebPubSubClient(
     WebPubSubClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
@@ -1065,11 +1066,11 @@ class WebPubSubClient(
         _LOGGER.info("waiting for close")
         self._threads_join(old_threads)
 
-        if self._is_stopping:
+        if self._is_stopping and self._ws and self._ws.on_close:
             # have to manually trigger on_close
             _LOGGER.debug("manually trigger on_close")
-            self._ws.on_close(self._ws)
-            
+            self._ws.on_close(self._ws, None, None) # type: ignore
+
         _LOGGER.info("close client successfully")
 
     @staticmethod

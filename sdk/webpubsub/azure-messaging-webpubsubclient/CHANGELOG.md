@@ -12,6 +12,7 @@
 - Optimize reconnect/recover logic
 - Optmize error message hint when failed to open client
 - Optmize typing annotations
+- Optmize close logic for Sync API.
 
 ## 1.0.0 (2024-01-31)
 
