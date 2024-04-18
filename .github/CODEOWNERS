@@ -64,6 +64,8 @@
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # ServiceLabel: %Storage
+# ServiceOwners: @jalauzon-msft @vincenttran-msft
+
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
@@ -876,9 +878,6 @@
 
 # ServiceLabel: %Service Attention %SQL - Replication & Failover
 #/<NotInRepo>/          @azureSQLGitHub
-
-# ServiceLabel: %Service Attention %Storage
-#/<NotInRepo>/          @xgithubtriage
 
 # ServiceLabel: %Service Attention %Storsimple
 #/<NotInRepo>/          @anoobbacker @ganzee @manuaery @patelkunal

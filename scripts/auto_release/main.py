@@ -244,7 +244,7 @@ class CodegenTestPR:
         print_check(f"pip install {self.get_whl_package} --force-reinstall")
         module = importlib.import_module(self.whole_package_name.replace("-", "."))
         title = ""
-        for item in getattr(module, "__all__"):
+        for item in getattr(module, "__all__", []):
             if item.endswith("Client"):
                 title = item
                 break
