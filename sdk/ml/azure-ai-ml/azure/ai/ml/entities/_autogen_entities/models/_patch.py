@@ -24,7 +24,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
 )
 
-__all__: List[str] = ["ServerlessEndpoint"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["ServerlessEndpoint", "MarketplaceSubscription"]  # Add all objects you want publicly available to users at this package level
 
 _NULL = object()
 
