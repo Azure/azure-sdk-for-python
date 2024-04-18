@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Iterable, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
@@ -53,7 +53,7 @@ class IndexOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         credential: TokenCredential,
         all_operations: OperationsContainer,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super().__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -61,14 +61,14 @@ class IndexOperations(_ScopeDependentOperations):
         # Dataplane service clients are lazily created as they are needed
         self.__azure_ai_assets_client: Optional[AzureAiAssetsClient042024] = None
         # Kwargs to propagate to dataplane service clients
-        self._service_client_kwargs = kwargs.pop("_service_client_kwargs", {})
+        self._service_client_kwargs: Dict[str, Any] = kwargs.pop("_service_client_kwargs", {})
         self._all_operations = all_operations
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
-        self._managed_label_resolver = {"latest": self._get_latest_version}
+        self._managed_label_resolver: Dict[str, Callable[[str], Index]] = {"latest": self._get_latest_version}
 
     @property
     def _azure_ai_assets(self) -> AzureAiAssetsClient042024:
