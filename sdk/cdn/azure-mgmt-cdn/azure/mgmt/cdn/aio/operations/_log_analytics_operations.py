@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -100,7 +100,6 @@ class LogAnalyticsOperations:
         :type continents: list[str]
         :param country_or_regions: Default value is None.
         :type country_or_regions: list[str]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetricsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.MetricsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -119,7 +118,7 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.MetricsResponse] = kwargs.pop("cls", None)
 
-        request = build_get_log_analytics_metrics_request(
+        _request = build_get_log_analytics_metrics_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -133,16 +132,15 @@ class LogAnalyticsOperations:
             continents=continents,
             country_or_regions=country_or_regions,
             api_version=api_version,
-            template_url=self.get_log_analytics_metrics.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -155,13 +153,9 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("MetricsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_log_analytics_metrics.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsMetrics"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_log_analytics_rankings(
@@ -195,7 +189,6 @@ class LogAnalyticsOperations:
         :type date_time_end: ~datetime.datetime
         :param custom_domains: Default value is None.
         :type custom_domains: list[str]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RankingsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.RankingsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -214,7 +207,7 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.RankingsResponse] = kwargs.pop("cls", None)
 
-        request = build_get_log_analytics_rankings_request(
+        _request = build_get_log_analytics_rankings_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -225,16 +218,15 @@ class LogAnalyticsOperations:
             date_time_end=date_time_end,
             custom_domains=custom_domains,
             api_version=api_version,
-            template_url=self.get_log_analytics_rankings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -247,13 +239,9 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("RankingsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_log_analytics_rankings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsRankings"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_log_analytics_locations(
@@ -266,7 +254,6 @@ class LogAnalyticsOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
          which is unique within the resource group. which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ContinentsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ContinentsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -285,21 +272,20 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ContinentsResponse] = kwargs.pop("cls", None)
 
-        request = build_get_log_analytics_locations_request(
+        _request = build_get_log_analytics_locations_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_log_analytics_locations.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -312,13 +298,9 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("ContinentsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_log_analytics_locations.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsLocations"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_log_analytics_resources(
@@ -331,7 +313,6 @@ class LogAnalyticsOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
          which is unique within the resource group. which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourcesResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.ResourcesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -350,21 +331,20 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ResourcesResponse] = kwargs.pop("cls", None)
 
-        request = build_get_log_analytics_resources_request(
+        _request = build_get_log_analytics_resources_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_log_analytics_resources.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -377,13 +357,9 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("ResourcesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_log_analytics_resources.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsResources"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_waf_log_analytics_metrics(
@@ -420,7 +396,6 @@ class LogAnalyticsOperations:
         :type group_by: list[str or ~azure.mgmt.cdn.models.WafRankingGroupBy]
         :param rule_types: Default value is None.
         :type rule_types: list[str or ~azure.mgmt.cdn.models.WafRuleType]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WafMetricsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.WafMetricsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -439,7 +414,7 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.WafMetricsResponse] = kwargs.pop("cls", None)
 
-        request = build_get_waf_log_analytics_metrics_request(
+        _request = build_get_waf_log_analytics_metrics_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -451,16 +426,15 @@ class LogAnalyticsOperations:
             group_by=group_by,
             rule_types=rule_types,
             api_version=api_version,
-            template_url=self.get_waf_log_analytics_metrics.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -473,13 +447,9 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("WafMetricsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_waf_log_analytics_metrics.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsMetrics"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_waf_log_analytics_rankings(
@@ -516,7 +486,6 @@ class LogAnalyticsOperations:
         :type actions: list[str or ~azure.mgmt.cdn.models.WafAction]
         :param rule_types: Default value is None.
         :type rule_types: list[str or ~azure.mgmt.cdn.models.WafRuleType]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WafRankingsResponse or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.WafRankingsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -535,7 +504,7 @@ class LogAnalyticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.WafRankingsResponse] = kwargs.pop("cls", None)
 
-        request = build_get_waf_log_analytics_rankings_request(
+        _request = build_get_waf_log_analytics_rankings_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -547,16 +516,15 @@ class LogAnalyticsOperations:
             actions=actions,
             rule_types=rule_types,
             api_version=api_version,
-            template_url=self.get_waf_log_analytics_rankings.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -569,10 +537,6 @@ class LogAnalyticsOperations:
         deserialized = self._deserialize("WafRankingsResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_waf_log_analytics_rankings.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsRankings"
-    }
+        return deserialized  # type: ignore

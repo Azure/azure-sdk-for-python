@@ -3,14 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import json
-from typing import TYPE_CHECKING
+from typing import Dict, List, Optional
 
 from .config import PROXY_URL
 from .helpers import get_http_client, get_recording_id, is_live, is_live_and_not_recording
 
-if TYPE_CHECKING:
-    from typing import Optional
+
+class Sanitizer(str, Enum):
+    """Sanitizers that can be applied to recordings."""
+
+    BODY_KEY = "BodyKeySanitizer"
+    BODY_REGEX = "BodyRegexSanitizer"
+    BODY_STRING = "BodyStringSanitizer"
+    CONTINUATION = "ContinuationSanitizer"
+    GENERAL_REGEX = "GeneralRegexSanitizer"
+    GENERAL_STRING = "GeneralStringSanitizer"
+    HEADER_REGEX = "HeaderRegexSanitizer"
+    HEADER_STRING = "HeaderStringSanitizer"
+    OAUTH_RESPONSE = "OAuthResponseSanitizer"
+    REMOVE_HEADER = "RemoveHeaderSanitizer"
+    URI_REGEX = "UriRegexSanitizer"
+    URI_STRING = "UriStringSanitizer"
+    URI_SUBSCRIPTION_ID = "UriSubscriptionIdSanitizer"
 
 
 # This file contains methods for adjusting many aspects of test proxy behavior:
@@ -416,6 +432,46 @@ def add_uri_subscription_id_sanitizer(**kwargs) -> None:
     _send_sanitizer_request("UriSubscriptionIdSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
+def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], headers: Optional[Dict] = None) -> None:
+    """Registers a batch of sanitizers at once.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
+    :param sanitizers: A group of sanitizers to add, as a dictionary. Keys should be sanitizer names (from the Sanitizer
+        enum) and values should be lists containing dictionaries of sanitizer constructor parameters. The parameters
+        should be formatted as key-value pairs aligning with keyword-only arguments to sanitizer methods.
+    :type sanitizers: dict[str, list[Optional[dict]]]
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    data = []  # Body content to populate with multiple sanitizer definitions
+
+    for sanitizer in sanitizers:
+        # Iterate over each instance of the particular sanitizer (e.g. each body regex sanitizer)
+        for sanitizer_instance in sanitizers[sanitizer]:
+            sanitizer_definition = {"Name": sanitizer}
+            if sanitizer_instance:
+                sanitizer_definition.update({"Body": _get_request_args(**sanitizer_instance)})
+            data.append(sanitizer_definition)
+
+    headers_to_send = {"Content-Type": "application/json"}
+    if headers is not None:
+        for key in headers:
+            if headers[key] is not None:
+                headers_to_send[key] = headers[key]
+
+    http_client = get_http_client()
+    http_client.request(
+        method="POST",
+        url="{}/Admin/AddSanitizers".format(PROXY_URL),
+        headers=headers_to_send,
+        body=json.dumps(data).encode("utf-8"),
+    )
+
+
 # ----------TRANSFORMS----------
 #
 # A transform extends functionality of the test proxy by applying to responses just before they are returned during
@@ -538,7 +594,7 @@ class PemCertificate:
 # ----------HELPERS----------
 
 
-def _get_recording_option_args(**kwargs) -> dict:
+def _get_recording_option_args(**kwargs) -> Dict:
     """Returns a dictionary of recording option request arguments, formatted for test proxy consumption."""
 
     certificates = kwargs.pop("certificates", None)
@@ -564,7 +620,7 @@ def _get_recording_option_args(**kwargs) -> dict:
     return request_args
 
 
-def _get_request_args(**kwargs) -> dict:
+def _get_request_args(**kwargs) -> Dict:
     """Returns a dictionary of request arguments, formatted for test proxy consumption."""
 
     request_args = {}
@@ -605,7 +661,7 @@ def _get_request_args(**kwargs) -> dict:
     return request_args
 
 
-def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dict]" = None) -> None:
+def _send_matcher_request(matcher: str, headers: Dict, parameters: Optional[Dict] = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
     If live tests are being run, no request will be sent.
@@ -633,7 +689,7 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
     )
 
 
-def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" = None) -> None:
+def _send_recording_options_request(parameters: Dict, headers: Optional[Dict] = None) -> None:
     """Sends a POST request to the test proxy endpoint to set the specified recording options.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -661,7 +717,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     )
 
 
-def _send_reset_request(headers: dict) -> None:
+def _send_reset_request(headers: Dict) -> None:
     """Sends a POST request to the test proxy endpoint to reset setting customizations.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -682,7 +738,7 @@ def _send_reset_request(headers: dict) -> None:
     http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
 
 
-def _send_sanitizer_request(sanitizer: str, parameters: dict, headers: "Optional[dict]" = None) -> None:
+def _send_sanitizer_request(sanitizer: str, parameters: Dict, headers: Optional[Dict] = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -709,7 +765,7 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict, headers: "Optional
     )
 
 
-def _send_transform_request(transform: str, parameters: dict, headers: "Optional[dict]" = None) -> None:
+def _send_transform_request(transform: str, parameters: Dict, headers: Optional[Dict] = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified transform.
 
     If live tests are being run, no request will be sent.
