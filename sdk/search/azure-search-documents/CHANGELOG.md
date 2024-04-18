@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed the bug that SearchCLient Failed when both answer count and answer threshold applied.
+- Fixed the bug that SearchCLient failed when both answer count and answer threshold applied.
 
 ### Other Changes
 
