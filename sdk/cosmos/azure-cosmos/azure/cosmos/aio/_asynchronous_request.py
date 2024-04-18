@@ -21,7 +21,7 @@
 
 """Asynchronous request in the Azure Cosmos database service.
 """
-
+import copy
 import json
 import time
 
@@ -107,7 +107,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         )
 
     response = response.http_response
-    headers = dict(response.headers)
+    headers = copy.copy(response.headers)
 
     data = response.body()
     if data:
