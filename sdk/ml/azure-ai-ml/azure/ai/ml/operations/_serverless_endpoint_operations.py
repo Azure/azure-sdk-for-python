@@ -46,34 +46,13 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
     def begin_create_or_update(self, endpoint: ServerlessEndpoint) -> LROPoller[ServerlessEndpoint]:
         if not endpoint.location:
             endpoint.location = self._get_workspace_location()
-        rest_serverless_endpoint = endpoint._to_rest_object()
-        try:
-            return self._service_client.begin_create_or_update(
-                self._resource_group_name,
-                self._workspace_name,
-                endpoint.name,
-                rest_serverless_endpoint,
-                cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
-            )
-        except HttpResponseError as e:
-            if "The requested model requires an active Azure Marketplace subscription for publisher" in e.message:
-                marketplace_subscription = MarketplaceSubscription(
-                    properties=MarketplaceSubscriptionProperties(
-                        model_id=endpoint.model_id,
-                    )
-                )
-                self._marketplace_subscriptions.begin_create_or_update(
-                    self._resource_group_name, self._workspace_name, endpoint.name, marketplace_subscription
-                ).wait()
-                return self._service_client.begin_create_or_update(
-                    self._resource_group_name,
-                    self._workspace_name,
-                    endpoint.name,
-                    rest_serverless_endpoint,
-                    cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
-                )
-            else:
-                raise e
+        return self._service_client.begin_create_or_update(
+            self._resource_group_name,
+            self._workspace_name,
+            endpoint.name,
+            endpoint._to_rest_object(),
+            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
+        )
 
     @experimental
     def get(self, name: str) -> ServerlessEndpoint:
@@ -93,8 +72,12 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    def begin_delete(self) -> LROPoller[None]:
-        return self._service_client.begin_delete(self._resource_group_name, self._workspace_name)
+    def begin_delete(self, name: str) -> LROPoller[None]:
+        return self._service_client.begin_delete(
+            self._resource_group_name,
+            self._workspace_name,
+            name,
+        )
 
     @experimental
     def get_keys(self, name: str) -> "ServerlessEndpointKeys":

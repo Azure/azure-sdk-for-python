@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, overload
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -32,7 +32,7 @@ class AzureOpenAIDeployment(_model_base.Model):
     :vartype model_version: str
     :ivar connection_name: The name of the connection to deploy to. Required.
     :vartype connection_name: str
-    :ivar id: The ARM resource id of the deployment. Required.
+    :ivar id: The ARM resource id of the deployment.
     :vartype id: str
     """
 
@@ -44,8 +44,8 @@ class AzureOpenAIDeployment(_model_base.Model):
     """The model version to deploy. Required."""
     connection_name: str = rest_field()
     """The name of the connection to deploy to. Required."""
-    id: str = rest_field(visibility=["read"])
-    """The ARM resource id of the deployment. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The ARM resource id of the deployment."""
 
     @overload
     def __init__(
@@ -69,7 +69,94 @@ class AzureOpenAIDeployment(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerlessEndpoint(_model_base.Model):
+class MarketplacePlan(_model_base.Model):
+    """Marketplace Subscription Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar publisher_id: The id of the publisher.
+    :vartype publisher_id: str
+    :ivar offer_id: The id of the offering associated with the plan.
+    :vartype offer_id: str
+    :ivar plan_id: The id of the plan.
+    :vartype plan_id: str
+    :ivar term_id: The term id.
+    :vartype term_id: str
+    """
+
+    publisher_id: Optional[str] = rest_field(visibility=["read"])
+    """The id of the publisher."""
+    offer_id: Optional[str] = rest_field(visibility=["read"])
+    """The id of the offering associated with the plan."""
+    plan_id: Optional[str] = rest_field(visibility=["read"])
+    """The id of the plan."""
+    term_id: Optional[str] = rest_field(visibility=["read"])
+    """The term id."""
+
+
+class MarketplaceSubscription(_model_base.Model):
+    """Marketplace Subscription Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The marketplace subscription name. Required.
+    :vartype name: str
+    :ivar model_id: Model id for which to create marketplace subscription. Required.
+    :vartype model_id: str
+    :ivar marketplace_plan: The plan associated with the marketplace subscription.
+    :vartype marketplace_plan: ~azure.machinelearningservices.models.MarketplacePlan
+    :ivar status: Status of the marketplace subscription. Possible values are:
+     "pending_fulfillment_start", "subscribed", "unsubscribed", "suspended".
+    :vartype status: str
+    :ivar provisioning_state: Provisioning state of the marketplace subscription. Possible values
+     are: "creating", "deleting", "succeeded", "failed", "updating", and "canceled".
+    :vartype provisioning_state: str
+    :ivar id: ARM resource id of the marketplace subscription.
+    :vartype id: str
+    :ivar system_data: System data of the marketplace subscription.
+    :vartype system_data: ~azure.machinelearningservices.models.SystemData
+    """
+
+    name: str = rest_field()
+    """The marketplace subscription name. Required."""
+    model_id: str = rest_field()
+    """Model id for which to create marketplace subscription. Required."""
+    marketplace_plan: Optional["_models.MarketplacePlan"] = rest_field(visibility=["read"])
+    """The plan associated with the marketplace subscription."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the marketplace subscription. Possible values are: \"pending_fulfillment_start\",
+     \"subscribed\", \"unsubscribed\", \"suspended\"."""
+    provisioning_state: Optional[str] = rest_field(visibility=["read"])
+    """Provisioning state of the marketplace subscription. Possible values are: \"creating\",
+     \"deleting\", \"succeeded\", \"failed\", \"updating\", and \"canceled\"."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """ARM resource id of the marketplace subscription."""
+    system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
+    """System data of the marketplace subscription."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        model_id: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Serverless Endpoint Definition.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -84,41 +171,46 @@ class ServerlessEndpoint(_model_base.Model):
     :vartype model_id: str
     :ivar location: Location in which to create endpoint.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the endpoint. Required. Is either a str type or
-     a int type.
-    :vartype provisioning_state: str or int
+    :ivar provisioning_state: Provisioning state of the endpoint. Possible values are: "creating",
+     "deleting", "succeeded", "failed", "updating", and "canceled".
+    :vartype provisioning_state: str
     :ivar tags: Tags for the endpoint.
     :vartype tags: dict[str, str]
     :ivar properties: Properties of the endpoint.
     :vartype properties: dict[str, str]
     :ivar description: Descripton of the endpoint.
     :vartype description: str
-    :ivar scoring_uri: Scoring uri of the endpoint. Required.
+    :ivar scoring_uri: Scoring uri of the endpoint.
     :vartype scoring_uri: str
-    :ivar system_data: System data of the endpoint. Required.
+    :ivar system_data: System data of the endpoint.
     :vartype system_data: ~azure.machinelearningservices.models.SystemData
+    :ivar id: ARM resource id of the endpoint.
+    :vartype id: str
     """
 
-    name: str = rest_field(is_required=True)
+    name: str = rest_field()
     """The deployment name. Required."""
     auth_mode: Optional[str] = rest_field()
     """Authentication mode of the endpoint."""
-    model_id: str = rest_field(is_required=True)
+    model_id: str = rest_field()
     """The id of the model to deploy. Required."""
     location: Optional[str] = rest_field()
     """Location in which to create endpoint."""
     provisioning_state: Optional[str] = rest_field(visibility=["read"])
-    """Provisioning state of the endpoint. Required. Is either a str type or a int type."""
+    """Provisioning state of the endpoint. Possible values are: \"creating\", \"deleting\",
+     \"succeeded\", \"failed\", \"updating\", and \"canceled\"."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Tags for the endpoint."""
     properties: Optional[Dict[str, str]] = rest_field()
     """Properties of the endpoint."""
     description: Optional[str] = rest_field()
     """Descripton of the endpoint."""
-    system_data: "_models.SystemData" = rest_field(visibility=["read"])
-    """System data of the endpoint. Required."""
-    id: str = rest_field(visibility=["read"])
-    """ARM resource id of the endpoint. Required."""
+    scoring_uri: Optional[str] = rest_field(visibility=["read"])
+    """Scoring uri of the endpoint."""
+    system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
+    """System data of the endpoint."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """ARM resource id of the endpoint."""
 
     @overload
     def __init__(
@@ -150,31 +242,23 @@ class SystemData(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar created_by: Required.
+    :ivar created_by:
     :vartype created_by: str
-    :ivar created_by_type: Required.
+    :ivar created_by_type:
     :vartype created_by_type: str
-    :ivar created_at: Required.
+    :ivar created_at:
     :vartype created_at: str
-    :ivar last_modified_by: Required.
+    :ivar last_modified_by:
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: Required.
+    :ivar last_modified_by_type:
     :vartype last_modified_by_type: str
-    :ivar last_modified_at: Required.
+    :ivar last_modified_at:
     :vartype last_modified_at: str
     """
 
-    created_by: str = rest_field(visibility=["read"])
-    """Required."""
-    created_by_type: str = rest_field(visibility=["read"])
-    """Required."""
-    created_at: str = rest_field(visibility=["read"])
-    """Required."""
-    last_modified_by: str = rest_field(visibility=["read"])
-    """Required."""
-    last_modified_by_type: str = rest_field(visibility=["read"])
-    """Required."""
-    last_modified_at: str = rest_field(visibility=["read"])
-    """Required."""
+    created_by: Optional[str] = rest_field(visibility=["read"])
+    created_by_type: Optional[str] = rest_field(visibility=["read"])
+    created_at: Optional[str] = rest_field(visibility=["read"])
+    last_modified_by: Optional[str] = rest_field(visibility=["read"])
+    last_modified_by_type: Optional[str] = rest_field(visibility=["read"])
+    last_modified_at: Optional[str] = rest_field(visibility=["read"])

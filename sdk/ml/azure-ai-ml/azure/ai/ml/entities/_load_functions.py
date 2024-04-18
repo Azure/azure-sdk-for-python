@@ -223,7 +223,7 @@ def load_serverless_endpoint(
     **kwargs: Any,
 ):
     loaded_dict =  _try_load_yaml_dict(source)
-    add_param_overrides(loaded_dict, param_overrides=kwargs.get("param_overrides", None))
+    add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
     serverless_endpoint = ServerlessEndpoint(loaded_dict)
     serverless_endpoint._validate()
     return serverless_endpoint 

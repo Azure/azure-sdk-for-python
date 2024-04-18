@@ -9,15 +9,19 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import inspect
 from typing import List
 
-from ._models import ServerlessEndpoint as _ServerlessEndpoint
+from ._models import ServerlessEndpoint as _ServerlessEndpoint, MarketplaceSubscription as _MarketplaceSubscription, MarketplacePlan
 
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities import SystemData
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ServerlessEndpoint as RestServerlessEndpoint,
     ServerlessEndpointProperties as RestServerlessEndpointProperties,
     ModelSettings as RestModelSettings,
     Sku as RestSku,
+    MarketplaceSubscription as RestMarketplaceSubscription,
+    MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
 )
 
 __all__: List[str] = ["ServerlessEndpoint"]  # Add all objects you want publicly available to users at this package level
@@ -50,6 +54,9 @@ class ValidationMixin():
                 attr_value = self.__getitem__(attr)
                 attr_type = type(attr_value)
             except KeyError:
+                if rest_field._visibility and "read" in rest_field._visibility:
+                    # read-only field, no need to validate
+                    continue
                 if rest_field._type.func.__name__ != "_deserialize_with_optional":
                     # i'm required
                     raise ValueError(f"attr {attr} is a required property for {self.__class__.__name__}")
@@ -82,8 +89,32 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             tags=obj.tags,
             location=obj.location,
             auth_mode=obj.properties.auth_mode,
-            provisioning_state=obj.properties.provisioning_state,
+            provisioning_state=camel_to_snake(obj.properties.provisioning_state),
             model_id=obj.properties.model_settings.model_id,
+            system_data=SystemData._from_rest_object(obj.system_data),
+        )
+
+@experimental
+class MarketPlacesubscription(_MarketplaceSubscription, ValidationMixin):
+
+    def _to_rest_object(self) -> RestMarketplaceSubscription:
+        return RestMarketplaceSubscription(
+            properties=RestMarketplaceSubscriptionProperties(model_id=self.model_id)
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "ServerlessEndpoint":
+        properties = obj.properties
+        return cls(
+            name=obj.name,
+            id=obj.id,
+            model_id=properties.model_id,
+            marketplace_plan=MarketplacePlan(
+                properties.marketplace_plan,
+            ),
+            status=camel_to_snake(properties.marketplace_subscription_status),
+            provisioning_state=camel_to_snake(properties.provisioning_state),
+            system_data=SystemData._from_rest_object(obj.system_data),
         )
 
 
