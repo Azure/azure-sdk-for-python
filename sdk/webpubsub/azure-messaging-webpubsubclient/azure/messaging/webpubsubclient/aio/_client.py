@@ -799,7 +799,7 @@ class WebPubSubClient(
 
         async def on_close(
             ws_instance: WebSocketAppAsync,
-            close_status_code: int,
+            close_status_code: Optional[int] = None,
             close_msg: Optional[str] = None,
         ):
             if self._state == WebPubSubClientState.CONNECTED:
@@ -955,11 +955,13 @@ class WebPubSubClient(
         """close the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
+            _LOGGER.info("client has been closed or is stopping")
             return
         self._is_stopping = True
         old_tasks = [self._task_run_forever, self._task_seq_ack]
 
         await self._ws.close()  # type: ignore
+        _LOGGER.info("waiting for close")
         await self._wait_for_tasks(old_tasks)
         _LOGGER.info("close client successfully")
 

@@ -271,7 +271,6 @@ class WebPubSubClientBase:  # pylint: disable=client-accepts-api-version-keyword
             ),
         ]
 
-
 class WebPubSubClient(
     WebPubSubClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
@@ -898,8 +897,8 @@ class WebPubSubClient(
 
         def on_close(
             ws_instance: WebSocketAppSync,
-            close_status_code: int,
-            close_msg: str,
+            close_status_code: Optional[int] = None,
+            close_msg: Optional[str] = None,
         ):
             if self._state == WebPubSubClientState.CONNECTED:
                 _LOGGER.info(
@@ -1054,14 +1053,23 @@ class WebPubSubClient(
         """close the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
+            _LOGGER.info("client has been closed or is stopping")
             return
         self._is_stopping = True
         old_threads = [self._thread, self._thread_seq_ack]
 
         if self._ws:
+            _LOGGER.info("send close code to drop connection")
             self._ws.close()
 
+        _LOGGER.info("waiting for close")
         self._threads_join(old_threads)
+
+        if self._is_stopping:
+            # have to manually trigger on_close
+            _LOGGER.debug("manually trigger on_close")
+            self._ws.on_close(self._ws)
+            
         _LOGGER.info("close client successfully")
 
     @staticmethod
