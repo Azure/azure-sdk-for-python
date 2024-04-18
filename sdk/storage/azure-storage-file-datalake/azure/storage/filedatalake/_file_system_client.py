@@ -756,6 +756,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties.
         :type file: str or ~azure.storage.filedatalake.FileProperties
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
+        :keyword metadata:
+            Name-value pairs associated with the file as metadata.
+        :paramtype metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
