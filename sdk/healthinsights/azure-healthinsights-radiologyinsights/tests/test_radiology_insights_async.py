@@ -96,10 +96,6 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         poller = await radiology_insights_client.begin_infer_radiology_insights(
             id="test12",
             resource=jobdata,
-            headers={
-                "Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT"),
-                "Repeatability-Request-ID": "5189b7f2-a13a-4cac-bebf-407c4ffc3a7c",
-            },
         )
         response = await poller.result()
         radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
