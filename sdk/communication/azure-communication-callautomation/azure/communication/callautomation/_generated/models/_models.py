@@ -302,6 +302,9 @@ class AnswerCallRequest(_serialization.Model):
     :ivar answered_by: The identifier of the call automation entity which answers the call.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar media_streaming_configuration: Media Streaming Configuration.
+    :vartype media_streaming_configuration:
+     ~azure.communication.callautomation.models.MediaStreamingConfiguration
     """
 
     _validation = {
@@ -315,6 +318,7 @@ class AnswerCallRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
+        "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
     }
 
     def __init__(
@@ -325,6 +329,7 @@ class AnswerCallRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -340,6 +345,9 @@ class AnswerCallRequest(_serialization.Model):
         :keyword answered_by: The identifier of the call automation entity which answers the call.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword media_streaming_configuration: Media Streaming Configuration.
+        :paramtype media_streaming_configuration:
+         ~azure.communication.callautomation.models.MediaStreamingConfiguration
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
@@ -347,6 +355,7 @@ class AnswerCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.call_intelligence_options = call_intelligence_options
         self.answered_by = answered_by
+        self.media_streaming_configuration = media_streaming_configuration
 
 
 class CallConnected(_serialization.Model):
@@ -1535,6 +1544,9 @@ class CreateCallRequest(_serialization.Model):
     :ivar call_intelligence_options: AI options for the call.
     :vartype call_intelligence_options:
      ~azure.communication.callautomation.models.CallIntelligenceOptions
+    :ivar media_streaming_configuration: Media Streaming Configuration.
+    :vartype media_streaming_configuration:
+     ~azure.communication.callautomation.models.MediaStreamingConfiguration
     """
 
     _validation = {
@@ -1550,6 +1562,7 @@ class CreateCallRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+        "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
     }
 
     def __init__(
@@ -1562,6 +1575,7 @@ class CreateCallRequest(_serialization.Model):
         source: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1584,6 +1598,9 @@ class CreateCallRequest(_serialization.Model):
         :keyword call_intelligence_options: AI options for the call.
         :paramtype call_intelligence_options:
          ~azure.communication.callautomation.models.CallIntelligenceOptions
+        :keyword media_streaming_configuration: Media Streaming Configuration.
+        :paramtype media_streaming_configuration:
+         ~azure.communication.callautomation.models.MediaStreamingConfiguration
         """
         super().__init__(**kwargs)
         self.targets = targets
@@ -1593,6 +1610,7 @@ class CreateCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.callback_uri = callback_uri
         self.call_intelligence_options = call_intelligence_options
+        self.media_streaming_configuration = media_streaming_configuration
 
 
 class CustomCallingContext(_serialization.Model):
@@ -1794,6 +1812,116 @@ class GetParticipantsResponse(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class MediaStreamingConfiguration(_serialization.Model):
+    """Configuration of Media streaming.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar transport_url: Transport URL for media streaming. Required.
+    :vartype transport_url: str
+    :ivar transport_type: The type of transport to be used for media streaming, eg. Websocket.
+     Required. "websocket"
+    :vartype transport_type: str or
+     ~azure.communication.callautomation.models.MediaStreamingTransportType
+    :ivar content_type: Content type to stream, eg. audio, audio/video. Required. "audio"
+    :vartype content_type: str or
+     ~azure.communication.callautomation.models.MediaStreamingContentType
+    :ivar audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+     Required. Known values are: "mixed" and "unmixed".
+    :vartype audio_channel_type: str or
+     ~azure.communication.callautomation.models.MediaStreamingAudioChannelType
+    :ivar start_media_streaming: Determines if the media streaming should be started immediately
+     after call is answered or not.
+    :vartype start_media_streaming: bool
+    """
+
+    _validation = {
+        "transport_url": {"required": True},
+        "transport_type": {"required": True},
+        "content_type": {"required": True},
+        "audio_channel_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "transport_url": {"key": "transportUrl", "type": "str"},
+        "transport_type": {"key": "transportType", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "audio_channel_type": {"key": "audioChannelType", "type": "str"},
+        "start_media_streaming": {"key": "startMediaStreaming", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        transport_url: str,
+        transport_type: Union[str, "_models.MediaStreamingTransportType"],
+        content_type: Union[str, "_models.MediaStreamingContentType"],
+        audio_channel_type: Union[str, "_models.MediaStreamingAudioChannelType"],
+        start_media_streaming: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword transport_url: Transport URL for media streaming. Required.
+        :paramtype transport_url: str
+        :keyword transport_type: The type of transport to be used for media streaming, eg. Websocket.
+         Required. "websocket"
+        :paramtype transport_type: str or
+         ~azure.communication.callautomation.models.MediaStreamingTransportType
+        :keyword content_type: Content type to stream, eg. audio, audio/video. Required. "audio"
+        :paramtype content_type: str or
+         ~azure.communication.callautomation.models.MediaStreamingContentType
+        :keyword audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+         Required. Known values are: "mixed" and "unmixed".
+        :paramtype audio_channel_type: str or
+         ~azure.communication.callautomation.models.MediaStreamingAudioChannelType
+        :keyword start_media_streaming: Determines if the media streaming should be started immediately
+         after call is answered or not.
+        :paramtype start_media_streaming: bool
+        """
+        super().__init__(**kwargs)
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.content_type = content_type
+        self.audio_channel_type = audio_channel_type
+        self.start_media_streaming = start_media_streaming
+
+
+class MediaStreamingStateResponse(_serialization.Model):
+    """MediaStreamingStateResponse.
+
+    :ivar media_streaming_state: Known values are: "active" and "inactive".
+    :vartype media_streaming_state: str or
+     ~azure.communication.callautomation.models.MediaStreamingState
+    :ivar media_streaming_type: "audio"
+    :vartype media_streaming_type: str or
+     ~azure.communication.callautomation.models.MediaStreamingType
+    """
+
+    _attribute_map = {
+        "media_streaming_state": {"key": "mediaStreamingState", "type": "str"},
+        "media_streaming_type": {"key": "mediaStreamingType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        media_streaming_state: Optional[Union[str, "_models.MediaStreamingState"]] = None,
+        media_streaming_type: Optional[Union[str, "_models.MediaStreamingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword media_streaming_state: Known values are: "active" and "inactive".
+        :paramtype media_streaming_state: str or
+         ~azure.communication.callautomation.models.MediaStreamingState
+        :keyword media_streaming_type: "audio"
+        :paramtype media_streaming_type: str or
+         ~azure.communication.callautomation.models.MediaStreamingType
+        """
+        super().__init__(**kwargs)
+        self.media_streaming_state = media_streaming_state
+        self.media_streaming_type = media_streaming_type
 
 
 class MicrosoftTeamsAppIdentifierModel(_serialization.Model):
@@ -3529,6 +3657,66 @@ class StartCallRecordingRequest(_serialization.Model):
         self.channel_affinity = channel_affinity
         self.pause_on_start = pause_on_start
         self.external_storage = external_storage
+
+
+class StartMediaStreamingRequest(_serialization.Model):
+    """StartMediaStreamingRequest.
+
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    """
+
+    _attribute_map = {
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(
+        self, *, operation_callback_uri: Optional[str] = None, operation_context: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
+
+
+class StopMediaStreamingRequest(_serialization.Model):
+    """StopMediaStreamingRequest.
+
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    """
+
+    _attribute_map = {
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+    }
+
+    def __init__(self, *, operation_callback_uri: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        """
+        super().__init__(**kwargs)
+        self.operation_callback_uri = operation_callback_uri
 
 
 class TextSource(_serialization.Model):

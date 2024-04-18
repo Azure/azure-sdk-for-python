@@ -76,6 +76,38 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASTERISK = "asterisk"
 
 
+class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+
+    MIXED = "mixed"
+    UNMIXED = "unmixed"
+
+
+class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content type to stream, eg. audio, audio/video."""
+
+    AUDIO = "audio"
+
+
+class MediaStreamingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingState."""
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
+class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for media streaming, eg. Websocket."""
+
+    WEBSOCKET = "websocket"
+
+
+class MediaStreamingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingType."""
+
+    AUDIO = "audio"
+
+
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of the play source."""
 

@@ -40,6 +40,8 @@ from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
+from ._models import MediaStreamingConfiguration
+from ._models import MediaStreamingStateResponse
 from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -74,6 +76,8 @@ from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
+from ._models import StartMediaStreamingRequest
+from ._models import StopMediaStreamingRequest
 from ._models import TextSource
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
@@ -84,6 +88,11 @@ from ._enums import CallRejectReason
 from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
 from ._enums import DtmfTone
+from ._enums import MediaStreamingAudioChannelType
+from ._enums import MediaStreamingContentType
+from ._enums import MediaStreamingState
+from ._enums import MediaStreamingTransportType
+from ._enums import MediaStreamingType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
 from ._enums import RecognizeInputType
@@ -133,6 +142,8 @@ __all__ = [
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
+    "MediaStreamingConfiguration",
+    "MediaStreamingStateResponse",
     "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -167,6 +178,8 @@ __all__ = [
     "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
+    "StartMediaStreamingRequest",
+    "StopMediaStreamingRequest",
     "TextSource",
     "TransferCallResponse",
     "TransferToParticipantRequest",
@@ -176,6 +189,11 @@ __all__ = [
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",
     "DtmfTone",
+    "MediaStreamingAudioChannelType",
+    "MediaStreamingContentType",
+    "MediaStreamingState",
+    "MediaStreamingTransportType",
+    "MediaStreamingType",
     "PlaySourceType",
     "RecognitionType",
     "RecognizeInputType",
