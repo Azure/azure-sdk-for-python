@@ -194,7 +194,8 @@ class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._monitoring.thresholds import GenerationSafetyQualityMonitoringMetricThreshold
 
         return GenerationSafetyQualityMonitoringMetricThreshold(**data)
-    
+
+
 class GenerationTokenStatisticsMonitorMetricThresholdSchema(metaclass=PatchedSchemaMeta):  # pylint: disable=name-too-long
     totaltoken = fields.Dict(
         keys=StringTransformedEnum(

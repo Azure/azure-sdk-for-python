@@ -892,7 +892,7 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
         )
 
 @experimental
-class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin): 
+class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin): # pylint: disable=name-too-long
     """Generation token statistics metric threshold definition.
 
     All required parameters must be populated in order to send to Azure.
@@ -940,7 +940,6 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):
         cls, obj: GenerationTokenStatisticsMetricThreshold
     ) -> "GenerationTokenStatisticsMonitorMetricThreshold":
         totaltoken = {}
-        
         for threshold in obj:
             if threshold.metric == "TotalTokenCount":
                 totaltoken["total_token_count"] = threshold.threshold.value

@@ -322,7 +322,8 @@ class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
 
         data.pop("type", None)
         return GenerationSafetyQualitySignal(**data)
-    
+
+
 class GenerationTokenStatisticsSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_TOKEN_STATISTICS, required=True)
     production_data = NestedField(LlmDataSchema)
