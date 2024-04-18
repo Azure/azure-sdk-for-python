@@ -3,13 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
+from ._generated.models import QueryAnswerType
 
 DEFAULT_AUDIENCE = "https://search.azure.com"
+
+
+def get_answer_query(
+    query_answer: Optional[Union[str, QueryAnswerType]] = None,
+    query_answer_count: Optional[int] = None,
+    query_answer_threshold: Optional[float] = None,
+) -> str:
+    if query_answer_count and query_answer_threshold:
+        answers = "{}|count-{},threshold-{}".format(query_answer, query_answer_count, query_answer_threshold)
+    else:
+        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
+        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
+    return answers
 
 
 def is_retryable_status_code(status_code: Optional[int]) -> bool:

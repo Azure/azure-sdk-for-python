@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the bug that SearchCLient Failed when both answer count and answer threshold applied.
+
 ### Other Changes
 
 ## 11.6.0b3 (2024-04-09)
