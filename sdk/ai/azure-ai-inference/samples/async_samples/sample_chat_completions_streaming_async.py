@@ -24,6 +24,7 @@ async def sample_chat_completions_streaming_async():
     from azure.ai.inference.aio import ChatCompletionsClient
     from azure.ai.inference.models import SystemMessage, UserMessage, ChatCompletionsUpdate
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.pipeline.transport import AsyncioRequestsTransport
 
     # Read the values of your model endpoint and key from environment variables
     try:
@@ -34,8 +35,14 @@ async def sample_chat_completions_streaming_async():
         print("Set them before running this sample.")
         exit()
 
+    # TODO: Remove this.
+    # Example of how the app can change the HTTP buffer size. The default is 4096 bytes. Reducing it here to 64 bytes
+    # does not improve the latency of the streamed results. Is there caching happening on the service? or is the AI model
+    # itself producing output tokens at high-latency?
+    transport = AsyncioRequestsTransport(connection_data_block_size=64)
+
     # Create chat completions client for synchronous operations
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), transport=transport)
 
     # Do a single streaming chat completion operation. Start the operation and get a Future object.
     future = asyncio.ensure_future(
