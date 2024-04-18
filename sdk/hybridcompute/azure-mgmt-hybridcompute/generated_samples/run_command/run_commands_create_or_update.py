@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
 
 """
@@ -14,7 +17,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python license_get.py
+    python run_commands_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +32,27 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.licenses.get(
+    response = client.machine_run_commands.begin_create_or_update(
         resource_group_name="myResourceGroup",
-        license_name="{licenseName}",
-    )
+        machine_name="myMachine",
+        run_command_name="myRunCommand",
+        run_command_properties={
+            "location": "eastus2",
+            "properties": {
+                "asyncExecution": False,
+                "errorBlobUri": "https://mystorageaccount.blob.core.windows.net/mycontainer/MyScriptError.txt",
+                "outputBlobUri": "https://mystorageaccount.blob.core.windows.net/myscriptoutputcontainer/MyScriptoutput.txt",
+                "parameters": [{"name": "param1", "value": "value1"}, {"name": "param2", "value": "value2"}],
+                "runAsPassword": "<runAsPassword>",
+                "runAsUser": "user1",
+                "source": {"script": "Write-Host Hello World!"},
+                "timeoutInSeconds": 3600,
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-06-20-preview/examples/license/License_Get.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-10-03-preview/examples/runCommand/RunCommands_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
