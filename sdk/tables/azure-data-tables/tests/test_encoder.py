@@ -275,7 +275,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 12345,
+            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
+            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": _to_utc_datetime(entity1["Data4"][0]),
@@ -283,6 +285,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "Data5": str(entity1["Data5"][0]),
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
+            "Data6@odata.type": "Edm.String",
             "Data7": 3.14,
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
@@ -304,7 +307,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK2",
             "RowKey": "RK2",
             "Data1": 12345,
+            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
+            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": _to_utc_datetime(entity1["Data4"][0]),
@@ -312,6 +317,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "Data5": str(entity1["Data5"][0]),
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
+            "Data6@odata.type": "Edm.String",
             "Data7": 3.14,
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
@@ -358,11 +364,16 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "Data8": "1152921504606846976",
             "Data8@odata.type": "Edm.Int64"
         }
+        # We keep the odata type when customer provides
         expected_entity = {
             "PartitionKey": "PK",
+            "PartitionKey@odata.type": "Edm.String",
             "RowKey": "RK",
+            "RowKey@odata.type": "Edm.String",
             "Data1": 12345,
+            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
+            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": entity["Data4"],
@@ -370,6 +381,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "Data5": entity["Data5"],
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
+            "Data6@odata.type": "Edm.String",
             "Data7": "3.14",
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
@@ -395,41 +407,30 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "RowKey": "你好",
             "Data":  "你好"
         }
-        # Invalid int32 and int64 values
+        # Test big int value
+        # previousely, we throw an error when value is not in range.
         # TODO: This will likely change if we move to post-request validation.
+        max_int64 = 2 ** 63
         entity2 = {
             "PartitionKey": "PK2",
             "RowKey": "RK",
-            "Data":  2 ** 65 # 2 ** 70 also works
+            "Data": max_int64
         }
-        max_int64 = 9223372036854775807
         entity3 = {
             "PartitionKey": "PK3",
             "RowKey": "RK",
-            "Data": (max_int64, "Edm.Int64")
+            "Data": (max_int64, "Edm.Int64") # Bad request, InvalidInput
         }
-        expected_entity3 = {
-            "PartitionKey": "PK3",
-            "RowKey": "RK",
-            "Data": str(max_int64),
-            "Data@odata.type": "Edm.Int64"
-        }
-        # Test data out of int64 range
+        # Test infinite float values
         entity4 = {
             "PartitionKey": "PK4",
-            "RowKey": "RK",
-            "Data": (max_int64 + 1, "Edm.Int64") # Bad request, InvalidInput
-        }
-        # Infinite float values
-        entity5 = {
-            "PartitionKey": "PK5",
             "RowKey": "RK",
             "Data1":  float('nan'),
             "Data2": float('inf'),
             "Data3": float('-inf')
         }
-        expected_entity5 = {
-            "PartitionKey": "PK5",
+        expected_entity4 = {
+            "PartitionKey": "PK4",
             "RowKey": "RK",
             "Data1":  "NaN",
             "Data1@odata.type": "Edm.Double",
@@ -438,69 +439,55 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "Data3": "-Infinity",
             "Data3@odata.type": "Edm.Double"
         }
-        # Non-string keys
-        entity6 = {
-            "PartitionKey": "PK6",
+        # Test Non-string keys
+        entity5 = {
+            "PartitionKey": "PK5",
             "RowKey": "RK",
-            123:  456
+            123: 456
         }
-        expected_entity6 = {
-            "PartitionKey": "PK6",
+        expected_entity5 = {
+            "PartitionKey": "PK5",
             "RowKey": "RK",
-            "123":  456 # HttpResponseError, code: PropertyNameInvalid
+            123: 456 # HttpResponseError, code: PropertyNameInvalid
         }
         # Test enums
         # TBD: support it in default encoder?
-        entity7 = {
-            "PartitionKey": "PK7",
+        entity6 = {
+            "PartitionKey": "PK6",
             "RowKey": EnumBasicOptions.ONE,
             "Data": EnumBasicOptions.TWO
         }
         # Support the enum by adding conversions in a customized encoder
-        expected_entity7 = {
-            "PartitionKey": "PK7",
+        expected_entity6 = {
+            "PartitionKey": "PK6",
             "RowKey": "One",
             "Data": "Two"
         }
-        entity8 = {
-            "PartitionKey": "PK8",
+        entity7 = {
+            "PartitionKey": "PK7",
             "RowKey": EnumIntOptions.ONE,
             "Data": EnumIntOptions.TWO
         }
         # Key's value always be string type
         # For enum value in normal properties: EnumIntOptions -> int, EnumBasicOptions/EnumStrOptions -> string
-        expected_entity8 = {
+        expected_entity7 = {
             "PartitionKey": "PK8",
             "RowKey": "1",
             "Data": 2
-        }
-        entity9 = {
-            "PartitionKey": "PK9",
-            "RowKey": EnumStrOptions.ONE,
-            "Data": EnumStrOptions.TWO
-        }
-        expected_entity9 = {
-            "PartitionKey": "PK9",
-            "RowKey": "One",
-            "Data": "Two"
         }
         encoder = TableEntityEncoder()
         encoded_entity = encoder.encode_entity(entity1)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(entity1, sort_keys=True)
         encoded_entity = encoder.encode_entity(entity2)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(entity2, sort_keys=True)
-        encoded_entity = encoder.encode_entity(entity3)
-        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity3, sort_keys=True)
+        encoded_entity = encoder.encode_entity(entity4)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity4, sort_keys=True)
         encoded_entity = encoder.encode_entity(entity5)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity5, sort_keys=True)
         encoded_entity = MyEncoder().encode_entity(entity6)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity6, sort_keys=True)
         encoded_entity = MyEncoder().encode_entity(entity7)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity7, sort_keys=True)
-        encoded_entity = MyEncoder().encode_entity(entity8)
-        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity8, sort_keys=True)
-        encoded_entity = MyEncoder().encode_entity(entity9)
-        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity9, sort_keys=True)
 
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
@@ -508,8 +495,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             client.delete_entity(entity1)
             client.create_entity(entity2)
             client.delete_entity(entity2)
-            client.create_entity(entity3)
-            client.delete_entity(entity3)
+            with pytest.raises(HttpResponseError) as exc:
+                client.create_entity(entity3)
+            assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
+            # with pytest.raises(TypeError) as exc:
+            #     client.create_entity(entity3)
+            # assert ("too large to be cast to type EdmType.INT64") in str(exc.value)
             with pytest.raises(HttpResponseError) as exc:
                 client.create_entity(entity4)
             assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
@@ -523,10 +514,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
             client.create_entity(entity7, encoder=MyEncoder())
             client.delete_entity(entity7, encoder=MyEncoder())
-            client.create_entity(entity8, encoder=MyEncoder())
-            client.delete_entity(entity8, encoder=MyEncoder())
-            client.create_entity(entity9, encoder=MyEncoder())
-            client.delete_entity(entity9, encoder=MyEncoder())
             client.delete_table()
 
     @tables_decorator
@@ -543,9 +530,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 1,
                 "Data2": True,
             }
@@ -562,9 +547,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK'@*$!%",
-                "RowKey@odata.type": "Edm.String",
             }
             _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
@@ -577,7 +560,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": 1}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": 1}
+            expected_entity = {"PartitionKey": "PK", "RowKey": "1"}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
@@ -589,7 +572,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # assert error.value.error_code == 'InvalidInput'  TODO: Fix create error
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": True}
+            expected_entity = {"PartitionKey": "PK", "RowKey": "True"}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
@@ -603,9 +586,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
-                "RowKey": 3.14,
-                "RowKey@odata.type": "Edm.Double",
+                "RowKey": "3.14",
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
@@ -640,9 +621,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": _to_utc_datetime(test_entity["PartitionKey"]),
-                "PartitionKey@odata.type": "Edm.DateTime",
                 "RowKey": str(test_entity["RowKey"]),
-                "RowKey@odata.type": "Edm.Guid",
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
@@ -660,8 +639,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": _encode_base64(test_entity["PartitionKey"]),
-                "PartitionKey@odata.type": "Edm.Binary",
-                "RowKey": 1234,
+                "RowKey": "1234",
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
@@ -705,9 +683,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": _encode_base64(b"testdata"),
@@ -717,9 +693,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(test_entity["Data5"]),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
+                "Data8": None,
             }
             _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
@@ -769,9 +745,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": False,
@@ -783,7 +757,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(test_entity["Data5"][0]),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String",
+                "Data6@odata.type": "Edm.STRING",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "1152921504606846976",
@@ -827,21 +801,19 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
-                # "Data3": "None",
-                # "Data3@odata.type": "Edm.String",
+                "Data3": None,
+                "Data3@odata.type": "Edm.STRING",
                 "Data4": test_entity["Data4"][0],
                 "Data4@odata.type": "Edm.DateTime",
                 "Data5": test_entity["Data5"][0],
                 "Data5@odata.type": "Edm.Guid",
-                # "Data6": None,
-                # "Data6@odata.type": "Edm.Boolean",
+                "Data6": None,
+                "Data6@odata.type": "Edm.Boolean",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "9223372036854775807",
@@ -910,34 +882,24 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK",
                 "PartitionKey@odata.type": "Edm.String",
-                "PartitionKey@odata.type@odata.type": "Edm.String",
                 "RowKey": "RK",
                 "RowKey@odata.type": "Edm.String",
-                "RowKey@odata.type@odata.type": "Edm.String",
                 "Data1": "12345",
                 "Data1@odata.type": "Edm.Int32",
-                "Data1@odata.type@odata.type": "Edm.String",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
-                "Data2@odata.type@odata.type": "Edm.String",
                 "Data3": _encode_base64(b"testdata"),
                 "Data3@odata.type": "Edm.Binary",
-                "Data3@odata.type@odata.type": "Edm.String",
                 "Data4": _to_utc_datetime(dt),
                 "Data4@odata.type": "Edm.DateTime",
-                "Data4@odata.type@odata.type": "Edm.String",
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
-                "Data5@odata.type@odata.type": "Edm.String",
                 "Data6": "Foobar",
                 "Data6@odata.type": "Edm.String",
-                "Data6@odata.type@odata.type": "Edm.String",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
-                "Data7@odata.type@odata.type": "Edm.String",
                 "Data8": "1152921504606846976",
                 "Data8@odata.type": "Edm.Int64",
-                "Data8@odata.type@odata.type": "Edm.String",
             }
             response_entity = {
                 "PartitionKey": "PK",
@@ -980,11 +942,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "你好",
-                "RowKey@odata.type": "Edm.String",
-                "Data": "你好",
-                "Data@odata.type": "Edm.String",
+                "Data": "你好"
             }
             _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
@@ -997,16 +956,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             # Invalid int32 and int64 values
-            # TODO: Check with other languages whether they can support big int32. Also Cosmos.
+            # TODO: Check whether other languages support big int32. Also Cosmos.
             # TODO: This will likely change if we move to post-request validation.
             max_int64 = 9223372036854775808
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
-                "Data": int(max_int64 * 1000),
+                "Data": int(max_int64 * 1000)
             }
             with pytest.raises(TypeError):
                 _check_backcompat(test_entity, expected_entity)
@@ -1023,9 +980,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64 - 1),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -1042,9 +997,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK3",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK3",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -1070,9 +1023,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK4",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK4",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": "NaN",
                 "Data1@odata.type": "Edm.Double",
                 "Data2": "Infinity",
@@ -1094,9 +1045,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 123: 456,
             }
             _check_backcompat(test_entity, expected_entity)
@@ -1114,9 +1063,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumBasicOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumBasicOptions.TWO",
                 "Data@odata.type": "Edm.String",
             }
@@ -1135,9 +1082,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumStrOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumStrOptions.TWO",
                 "Data@odata.type": "Edm.String",
             }
@@ -1160,11 +1105,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             if sys.version_info >= (3, 11):
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "1",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "2",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
                 _check_backcompat(test_entity, expected_entity)
@@ -1178,11 +1120,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             else:
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "EnumIntOptions.ONE",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "EnumIntOptions.TWO",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
                 _check_backcompat(test_entity, expected_entity)
@@ -1211,9 +1150,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 1,
                 "Data2": True,
             }
@@ -1240,9 +1177,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK'@*$!%",
-                "RowKey@odata.type": "Edm.String",
             }
             _check_backcompat(test_entity, expected_entity)
             resp = client.upsert_entity(
@@ -1265,7 +1200,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": 1}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": 1}
+            expected_entity = {"PartitionKey": "PK", "RowKey": "1"}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode="merge")
@@ -1275,7 +1210,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": True}
+            expected_entity = {"PartitionKey": "PK", "RowKey": "True"}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode="merge")
@@ -1287,7 +1222,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": 3.14,
                 "RowKey@odata.type": "Edm.Double",
             }
@@ -1325,9 +1259,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = str(test_entity["RowKey"])
             expected_entity = {
                 "PartitionKey": pk,
-                "PartitionKey@odata.type": "Edm.DateTime",
                 "RowKey": rk,
-                "RowKey@odata.type": "Edm.Guid",
                 "Data": True,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": True}
@@ -1362,9 +1294,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = test_entity["RowKey"]
             expected_entity = {
                 "PartitionKey": pk,
-                "PartitionKey@odata.type": "Edm.Binary",
                 "RowKey": rk,
-                "RowKey@odata.type": "Edm.String",
                 "Data": 1,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": 1}
@@ -1425,9 +1355,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": _encode_base64(b"testdata"),
@@ -1437,7 +1365,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(test_entity["Data5"]),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
             }
@@ -1502,11 +1429,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
-                "Data1@odata.type": "Edm.Int32",
+                "Data1@odata.type": "Edm.INT32",
                 "Data2": False,
                 "Data2@odata.type": "Edm.Boolean",
                 "Data3": _encode_base64(b"testdata"),
@@ -1516,7 +1441,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String",
+                "Data6@odata.type": "Edm.STRING",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "1152921504606846976",
@@ -1575,13 +1500,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
-                "Data1@odata.type": "Edm.Int32",
+                "Data1@odata.type": "Edm.INT32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
+                "Data3": None,
+                "Data3@odata.type": "Edm.STRING",
                 "Data4": test_entity["Data4"][0],
                 "Data4@odata.type": "Edm.DateTime",
                 "Data5": test_entity["Data5"][0],
@@ -1677,43 +1602,30 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK",
                 "PartitionKey@odata.type": "Edm.String",
-                "PartitionKey@odata.type@odata.type": "Edm.String",
                 "RowKey": "RK",
                 "RowKey@odata.type": "Edm.String",
-                "RowKey@odata.type@odata.type": "Edm.String",
                 "Data1": "12345",
                 "Data1@odata.type": "Edm.Int32",
-                "Data1@odata.type@odata.type": "Edm.String",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
-                "Data2@odata.type@odata.type": "Edm.String",
                 "Data3": _encode_base64(b"testdata"),
                 "Data3@odata.type": "Edm.Binary",
-                "Data3@odata.type@odata.type": "Edm.String",
                 "Data4": _to_utc_datetime(dt),
                 "Data4@odata.type": "Edm.DateTime",
-                "Data4@odata.type@odata.type": "Edm.String",
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
-                "Data5@odata.type@odata.type": "Edm.String",
                 "Data6": "Foobar",
                 "Data6@odata.type": "Edm.String",
-                "Data6@odata.type@odata.type": "Edm.String",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
-                "Data7@odata.type@odata.type": "Edm.String",
                 "Data8": "1152921504606846976",
                 "Data8@odata.type": "Edm.Int64",
-                "Data8@odata.type@odata.type": "Edm.String",
                 "Data9": _encode_base64(b"testdata"),
                 "Data9@odata.type": "Edm.Binary",
-                "Data9@odata.type@odata.type": "Edm.String",
                 "Data10": _to_utc_datetime(dt),
                 "Data10@odata.type": "Edm.DateTime",
-                "Data10@odata.type@odata.type": "Edm.String",
                 "Data11": str(guid),
                 "Data11@odata.type": "Edm.Guid",
-                "Data11@odata.type@odata.type": "Edm.String",
             }
             response_entity = {
                 "PartitionKey": "PK",
@@ -1781,11 +1693,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "你好",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "你好",
-                "Data@odata.type": "Edm.String",
             }
             _check_backcompat(test_entity, expected_entity)
             verification = json.dumps(expected_entity)
@@ -1821,9 +1730,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
                 "Data": int(max_int64 * 1000),
             }
             with pytest.raises(TypeError):
@@ -1858,9 +1765,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64 - 1),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -1893,9 +1798,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK3",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK3",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -1938,9 +1841,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK4",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK4",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": "NaN",
                 "Data1@odata.type": "Edm.Double",
                 "Data2": "Infinity",
@@ -1976,13 +1877,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             # Non-string keys
-            # TODO: This seems broken? Not sure what the live service will do with a non-string key.
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 123: 456,
             }
             _check_backcompat(test_entity, expected_entity)
@@ -2018,11 +1916,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumBasicOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumBasicOptions.TWO",
-                "Data@odata.type": "Edm.String",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "EnumBasicOptions.ONE", "Data": "EnumBasicOptions.TWO"}
             _check_backcompat(test_entity, expected_entity)
@@ -2056,11 +1951,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumStrOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumStrOptions.TWO",
-                "Data@odata.type": "Edm.String",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "EnumStrOptions.ONE", "Data": "EnumStrOptions.TWO"}
             _check_backcompat(test_entity, expected_entity)
@@ -2098,11 +1990,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             if sys.version_info >= (3, 11):
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "1",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "2",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
                 _check_backcompat(test_entity, expected_entity)
@@ -2133,11 +2022,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             else:
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "EnumIntOptions.ONE",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "EnumIntOptions.TWO",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
                 _check_backcompat(test_entity, expected_entity)
@@ -2183,9 +2069,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 1,
                 "Data2": True,
             }
@@ -2213,9 +2097,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%", "Data": True}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK'@*$!%",
-                "RowKey@odata.type": "Edm.String",
                 "Data": True,
             }
             _check_backcompat(test_entity, expected_entity)
@@ -2240,7 +2122,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": 1}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": 1}
+            expected_entity = {"PartitionKey": "PK", "RowKey": 1}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 client.update_entity(test_entity, mode="merge")
@@ -2250,7 +2132,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
-            expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": True}
+            expected_entity = {"PartitionKey": "PK", "RowKey": True}
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 client.update_entity(test_entity, mode="merge")
@@ -2262,9 +2144,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": 3.14,
-                "RowKey@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
@@ -2300,9 +2180,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = str(test_entity["RowKey"])
             expected_entity = {
                 "PartitionKey": pk,
-                "PartitionKey@odata.type": "Edm.DateTime",
                 "RowKey": rk,
-                "RowKey@odata.type": "Edm.Guid",
                 "Data": True,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": True}
@@ -2332,9 +2210,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = str(test_entity["RowKey"])
             expected_entity = {
                 "PartitionKey": pk,
-                "PartitionKey@odata.type": "Edm.Binary",
                 "RowKey": rk,
-                "RowKey@odata.type": "Edm.String",
                 "Data": 1,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": 1}
@@ -2390,9 +2266,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": _encode_base64(b"testdata"),
@@ -2402,7 +2276,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(test_entity["Data5"]),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
             }
@@ -2462,9 +2335,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": False,
@@ -2530,17 +2401,19 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": 12345,
                 "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
+                "Data3": None,
+                "Data3@odata.type": "EdmType.STRING",
                 "Data4": test_entity["Data4"][0],
                 "Data4@odata.type": "Edm.DateTime",
                 "Data5": test_entity["Data5"][0],
                 "Data5@odata.type": "Edm.Guid",
+                "Data6": None,
+                "Data6@odata.type": "EdmType.BOOLEAN",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "9223372036854775807",
@@ -2627,43 +2500,30 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK",
                 "PartitionKey@odata.type": "Edm.String",
-                "PartitionKey@odata.type@odata.type": "Edm.String",
                 "RowKey": "RK",
                 "RowKey@odata.type": "Edm.String",
-                "RowKey@odata.type@odata.type": "Edm.String",
                 "Data1": "12345",
                 "Data1@odata.type": "Edm.Int32",
-                "Data1@odata.type@odata.type": "Edm.String",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
-                "Data2@odata.type@odata.type": "Edm.String",
                 "Data3": _encode_base64(b"testdata"),
                 "Data3@odata.type": "Edm.Binary",
-                "Data3@odata.type@odata.type": "Edm.String",
                 "Data4": _to_utc_datetime(dt),
                 "Data4@odata.type": "Edm.DateTime",
-                "Data4@odata.type@odata.type": "Edm.String",
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
-                "Data5@odata.type@odata.type": "Edm.String",
                 "Data6": "Foobar",
                 "Data6@odata.type": "Edm.String",
-                "Data6@odata.type@odata.type": "Edm.String",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
-                "Data7@odata.type@odata.type": "Edm.String",
                 "Data8": "1152921504606846976",
                 "Data8@odata.type": "Edm.Int64",
-                "Data8@odata.type@odata.type": "Edm.String",
                 "Data9": _encode_base64(b"testdata"),
                 "Data9@odata.type": "Edm.Binary",
-                "Data9@odata.type@odata.type": "Edm.String",
                 "Data10": _to_utc_datetime(dt),
                 "Data10@odata.type": "Edm.DateTime",
-                "Data10@odata.type@odata.type": "Edm.String",
                 "Data11": str(guid),
                 "Data11@odata.type": "Edm.Guid",
-                "Data11@odata.type@odata.type": "Edm.String",
             }
             response_entity = {
                 "PartitionKey": "PK",
@@ -2726,11 +2586,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "你好",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "你好",
-                "Data@odata.type": "Edm.String",
             }
             _check_backcompat(test_entity, expected_entity)
             client.upsert_entity({"PartitionKey": "PK", "RowKey": "你好"})
@@ -2761,9 +2618,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = {
                 "PartitionKey": "PK1",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK1",
-                "RowKey@odata.type": "Edm.String",
                 "Data": int(max_int64 * 1000),
             }
             client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
@@ -2793,9 +2648,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK2",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK2",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64 - 1),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -2823,9 +2676,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
             expected_entity = {
                 "PartitionKey": "PK3",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK3",
-                "RowKey@odata.type": "Edm.String",
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
@@ -2863,9 +2714,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             }
             expected_entity = {
                 "PartitionKey": "PK4",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK4",
-                "RowKey@odata.type": "Edm.String",
                 "Data1": "NaN",
                 "Data1@odata.type": "Edm.Double",
                 "Data2": "Infinity",
@@ -2896,13 +2745,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             # Non-string keys
-            # TODO: This seems broken? Not sure what the live service will do with a non-string key.
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "RK",
-                "RowKey@odata.type": "Edm.String",
                 123: 456,
             }
             _check_backcompat(test_entity, expected_entity)
@@ -2933,11 +2779,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumBasicOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumBasicOptions.TWO",
-                "Data@odata.type": "Edm.String",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "EnumBasicOptions.ONE", "Data": "EnumBasicOptions.TWO"}
             _check_backcompat(test_entity, expected_entity)
@@ -2966,11 +2809,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
                 "RowKey": "EnumStrOptions.ONE",
-                "RowKey@odata.type": "Edm.String",
                 "Data": "EnumStrOptions.TWO",
-                "Data@odata.type": "Edm.String",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "EnumStrOptions.ONE", "Data": "EnumStrOptions.TWO"}
             _check_backcompat(test_entity, expected_entity)
@@ -3003,11 +2843,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             if sys.version_info >= (3, 11):
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "1",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "2",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
                 _check_backcompat(test_entity, expected_entity)
@@ -3033,11 +2870,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             else:
                 expected_entity = {
                     "PartitionKey": "PK",
-                    "PartitionKey@odata.type": "Edm.String",
                     "RowKey": "EnumIntOptions.ONE",
-                    "RowKey@odata.type": "Edm.String",
                     "Data": "EnumIntOptions.TWO",
-                    "Data@odata.type": "Edm.String",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
                 _check_backcompat(test_entity, expected_entity)
