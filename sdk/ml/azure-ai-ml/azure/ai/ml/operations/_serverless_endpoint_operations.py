@@ -16,12 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.core.polling import LROPoller
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    MarketplaceSubscription,
-    MarketplaceSubscriptionProperties,
-)
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
-from azure.core.exceptions import HttpResponseError
 
 
 class ServerlessEndpointOperations(_ScopeDependentOperations):

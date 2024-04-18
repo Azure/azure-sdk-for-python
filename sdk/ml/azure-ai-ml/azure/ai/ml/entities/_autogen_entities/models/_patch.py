@@ -95,7 +95,7 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
         )
 
 @experimental
-class MarketPlacesubscription(_MarketplaceSubscription, ValidationMixin):
+class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
 
     def _to_rest_object(self) -> RestMarketplaceSubscription:
         return RestMarketplaceSubscription(
