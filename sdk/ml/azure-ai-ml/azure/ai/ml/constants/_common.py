@@ -4,6 +4,7 @@
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
+from .._version import VERSION
 
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
@@ -188,6 +189,10 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+DEFAULT_OPEN_AI_CONNECTION_NAME = "Default_AzureOpenAI"
+DEFAULT_CONTENT_SAFETY_CONNECTION_NAME = "Default_AzureAIContentSafety"
+USER_AGENT_HEADER_KEY = "Client-User-Agent"
+USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
 
 
 class DefaultOpenEncoding:
@@ -899,6 +904,23 @@ class InferenceServerType:
 
 class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
+
+
+class DataIndexTypes:
+    """DataIndexTypes is an enumeration of values for the types out indexes which can be written to by DataIndex."""
+
+    ACS = "acs"
+    """Azure Cognitive Search index type."""
+    FAISS = "faiss"
+    """Faiss index type."""
+
+
+class IndexInputType(object):
+    """An enumeration of values for the types of input data for an index."""
+    GIT = "git"
+    LOCAL = "local"
+    AOAI = "aoai"
+    """Azure OpenAI input data type."""
 
 
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

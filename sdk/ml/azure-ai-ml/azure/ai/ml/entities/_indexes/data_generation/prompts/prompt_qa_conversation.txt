@@ -1,0 +1,43 @@
+Convert Text into a informal QnA conversation between an interviewer and an interviewee.
+Also extract a title for Text in less than 10 words
+Output inside ``` must be valid XML
+
+Example:
+
+Text:
+<|text_start|>
+# Azure Machine Learning Compute instance
+Compute instance is a managed cloud-based workstation for data scientists. It helps them run notebooks and develop code in VSCode.
+For IT administrators, Compute instance provides management and enterprise readiness capabilities - including support for Azure Private Link, Custom Apps, etc.
+Compute instance comes with pre-installed tools:
+- Drivers (CUDA, NVIDIA)
+- Intel MPI library
+- Docker
+<|text_end|>
+Conversation with 3 interactions:
+```xml
+<Root>
+ <Title>Compute instance</Title>
+ <QAs>
+  <QA>
+   <Q>What is Compute instance?</Q>
+   <A>Compute instance is a managed cloud-based workstation for data scientists.</A>
+  </QA>
+  <QA>
+   <Q>It helps them how?</Q>
+   <A>It helps them run notebooks and develop code in VSCode.</A>
+  </QA>
+  <QA>
+   <Q>Does it provide anything for IT administrators?</Q>
+   <A>For IT administrators, Compute instance provides management and enterprise readiness capabilities - including support for Azure Private Link, Custom Apps, etc.</A>
+  </QA>
+ </QAs>
+</Root>
+```
+
+Text:
+<|text_start|>
+{text}
+<|text_end|>
+Conversation with {num_of_questions} interactions:
+```xml
