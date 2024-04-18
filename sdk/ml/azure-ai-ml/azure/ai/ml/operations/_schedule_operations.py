@@ -383,6 +383,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                 for llm_data in signal.production_data:  # type: ignore[union-attr]
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
                 continue
+            if signal.type == MonitorSignalType.GENERATION_TOKEN_STATISTICS:
+                self._job_operations._resolve_job_input(signal.production_data, schedule._base_path)
+                continue
             if signal.type == MonitorSignalType.CUSTOM:
                 if signal.inputs:  # type: ignore[union-attr]
                     for inputs in signal.inputs.values():  # type: ignore[union-attr]
