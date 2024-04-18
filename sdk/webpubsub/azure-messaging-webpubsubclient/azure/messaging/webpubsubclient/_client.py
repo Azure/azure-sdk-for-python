@@ -1069,7 +1069,7 @@ class WebPubSubClient(
         if self._is_stopping and self._ws and self._ws.on_close:
             # have to manually trigger on_close
             _LOGGER.debug("manually trigger on_close")
-            self._ws.on_close(self._ws, None, None) # type: ignore
+            self._ws.on_close(self._ws, None, None)  # type: ignore
 
         _LOGGER.info("close client successfully")
 

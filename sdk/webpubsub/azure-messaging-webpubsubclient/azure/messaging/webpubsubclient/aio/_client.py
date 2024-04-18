@@ -963,6 +963,10 @@ class WebPubSubClient(
         await self._ws.close()  # type: ignore
         _LOGGER.info("waiting for close")
         await self._wait_for_tasks(old_tasks)
+        if self._is_stopping and self._ws and self._ws.on_close:
+            # have to manually trigger on_close
+            _LOGGER.debug("manually trigger on_close")
+            await self._ws.on_close(self._ws, None, None)  # type: ignore
         _LOGGER.info("close client successfully")
 
     @staticmethod
