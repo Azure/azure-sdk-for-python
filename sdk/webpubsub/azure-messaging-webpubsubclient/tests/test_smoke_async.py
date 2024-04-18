@@ -65,16 +65,16 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             # open client again after close
             await client.subscribe("stopped", on_stop)
             await asyncio.sleep(0.1)
-            assert client._is_connected()
+            assert client.is_connected()
             await client.close()
             await asyncio.sleep(1.0)
-            assert client._is_connected()
+            assert client.is_connected()
 
             # remove stopped event and close again
             await client.unsubscribe("stopped", on_stop)
             await client.close()
             await asyncio.sleep(1.0)
-            assert not client._is_connected()
+            assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
@@ -83,7 +83,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
         with pytest.raises(OpenClientError):
             async with client:
                 await client.open()
-        assert not client._is_connected()
+        assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
@@ -91,7 +91,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
         client = await self.create_client(connection_string=webpubsubclient_connection_string)
         async with client:
             await client.close()
-        assert not client._is_connected()
+        assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async

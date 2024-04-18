@@ -5,6 +5,7 @@
 ### Features Added
 
 - Add Async API with same name of Sync API
+- Add api `is_connected`
 
 ### Other Changes
 

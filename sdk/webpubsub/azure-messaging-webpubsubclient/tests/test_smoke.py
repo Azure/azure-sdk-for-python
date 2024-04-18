@@ -65,16 +65,16 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             # open client again after close
             client.subscribe("stopped", on_stop)
             time.sleep(0.1)
-            assert client._is_connected()
+            assert client.is_connected()
             client.close()
             time.sleep(1.0)
-            assert client._is_connected()
+            assert client.is_connected()
 
             # remove stopped event and close again
             client.unsubscribe("stopped", on_stop)
             client.close()
             time.sleep(1.0)
-            assert not client._is_connected()
+            assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
@@ -83,7 +83,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with pytest.raises(OpenClientError):
             with client:
                 client.open()
-        assert not client._is_connected()
+        assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
@@ -91,7 +91,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         with client:
             client.close()
-        assert not client._is_connected()
+        assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy

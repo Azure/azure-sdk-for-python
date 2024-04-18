@@ -766,7 +766,7 @@ class WebPubSubClient(
         else:
             self._handle_connection_stopped()
 
-    def _is_connected(self) -> bool:
+    def is_connected(self) -> bool:
         """check whether the client is still connected to server after open
 
         :return: True if the client is connected to server, otherwise False
@@ -994,7 +994,7 @@ class WebPubSubClient(
         with self._ws.cv:
             self._ws.cv.wait(timeout=self._start_timeout)
         cost_time = time.time() - start_time
-        if not self._is_connected():
+        if not self.is_connected():
             if self._thread.is_alive():
                 if reconnect_tried_times is not None:
                     raise ReconnectError("Failed to reconnect after waiting")
@@ -1006,7 +1006,7 @@ class WebPubSubClient(
         if self._protocol.is_reliable_sub_protocol:
 
             def sequence_id_ack_periodically():
-                while self._is_connected():
+                while self.is_connected():
                     try:
                         is_updated, seq_id = self._sequence_id.try_get_sequence_id()
                         if is_updated and seq_id is not None:
