@@ -221,7 +221,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: None
+        :returns: None.
         :rtype: None
 
         .. admonition:: Example:
@@ -362,7 +362,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient containing the renamed directory.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -463,7 +463,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient for the subdirectory.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.create_directory(metadata=metadata, **kwargs)
@@ -508,7 +508,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient for the subdirectory.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.delete_directory(**kwargs)
@@ -601,7 +601,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeFileClient with the new file.
-        :rtype: DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)

@@ -450,7 +450,7 @@ class PathClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: response dict containing access control options (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         if not any([owner, group, permissions, acl]):
             raise ValueError("At least one parameter should be set for set_access_control API")

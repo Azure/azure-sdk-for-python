@@ -326,7 +326,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: dict containing access control options after setting modifications (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
@@ -379,7 +379,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: response dict containing access control options (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
@@ -799,7 +799,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 

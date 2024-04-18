@@ -42,7 +42,7 @@ except NameError:
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
         PipelineRequest,
         PipelineResponse
     )
@@ -451,7 +451,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -610,7 +610,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -662,7 +662,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

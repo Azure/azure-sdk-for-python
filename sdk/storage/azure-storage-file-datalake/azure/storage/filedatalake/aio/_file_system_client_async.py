@@ -404,7 +404,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -619,7 +619,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient with new directory and metadata.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -673,7 +673,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient after deleting specified directory.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -767,7 +767,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeFileClient with new file created.
-        :rtype: DataLakeFileClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -821,7 +821,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient after deleting specified file.
-        :rtype: DataLakeFileClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeFileClient
 
         .. literalinclude:: ../samples/datalake_samples_file_system_async.py
             :start-after: [START delete_file_from_file_system]

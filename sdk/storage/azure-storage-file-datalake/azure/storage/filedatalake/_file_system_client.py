@@ -676,7 +676,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient with new directory and metadata.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -730,7 +730,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient after deleting specified directory.
-        :rtype: DataLakeDirectoryClient
+        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -824,7 +824,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeFileClient with new file created.
-        :rtype: DataLakeFileClient
+        :rtype: ~azure.storage.file.datalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -878,7 +878,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient after deleting specified file.
-        :rtype: DataLakeFileClient
+        :rtype: azure.storage.file.datalake.DataLakeFileClient
 
         .. admonition:: Example:
 

@@ -348,7 +348,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: FileSystemClient after marking the specified file system for deletion.
-        :rtype: None
+        :rtype: ~azure.storage.filedatalake.aio.FileSystemClient
 
         .. admonition:: Example:
 

@@ -166,7 +166,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :returns: response dict (Etag and last modified).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -229,7 +229,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: None
+        :returns: None.
         :rtype: None
 
         .. admonition:: Example:
@@ -342,14 +342,14 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
+        :type data: bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], or IO[AnyStr]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :paramtype metadata: Optional[dict[str, str]]
+        :paramtype metadata: dict[str, str] or None
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -426,9 +426,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
         :param int offset: start position of the data to be appended to.
-        :param Optional[int] length: Size of the data in bytes.
+        :param length: Size of the data in bytes.
+        :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
         :keyword bool validate_content:
@@ -463,7 +464,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :returns: dict of the response header.
-        :rtype: dict[str, Union[str, ~datetime.datetime, int]]
+        :rtype: dict[str, str], dict[str, ~datetime.datetime], or dict[str, int]
 
         .. admonition:: Example:
 
@@ -559,7 +560,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :returns: response header in dict.
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
