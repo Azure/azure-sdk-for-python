@@ -79,6 +79,7 @@ class Project(Workspace):
             display_name=rest_obj.friendly_name if hasattr(rest_obj, "friendly_name") else None,
             location=rest_obj.location,
             resource_group=rest_obj.group if hasattr(rest_obj, "group") else None,
+            public_network_access=rest_obj.public_network_access if hasattr(rest_obj, "public_network_access") else None,
         )
 
     @property

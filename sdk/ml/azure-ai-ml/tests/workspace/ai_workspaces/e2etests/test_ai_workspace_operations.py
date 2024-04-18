@@ -91,6 +91,9 @@ class TestWorkspace(AzureRecordedTestCase):
             # Ensure that the projects have the same location as the hub via injection.
             assert created_project1.location == created_hub.location
             assert created_project2.location == created_hub.location
+            assert created_hub.public_network_access == "Disabled"
+            assert created_project1.public_network_access == created_hub.public_network_access
+            assert created_project2.public_network_access == created_hub.public_network_access
 
             # Get created hub and projects
             gotten_hub = client.workspaces.get(local_hub.name)
