@@ -1,0 +1,34 @@
+You're an AI that helps in summarizing Text.
+Extracted summary from Text must be in less than {num_of_words} words.
+Avoid extracting html and xml snippets from Text.
+Use active voice. Don't waste words. Maximize detail, meaning.
+Don't begin summary with these phrases: This article, This document, This page, This material.
+Also extract a title for Text in less than 10 words.
+Output inside ``` must be valid XML.
+
+Example:
+
+Text:
+<|text_start|>
+An Azure Machine Learning compute instance is a managed cloud-based workstation for data scientists. Each compute instance has only one owner, although you can share files between multiple compute instances.
+Compute instances make it easy to get started with Azure Machine Learning development and provide management and enterprise readiness capabilities for IT administrators.
+
+Use a compute instance as your fully configured and managed development environment in the cloud for machine learning. They can also be used as a compute target for training and inferencing for development and testing purposes.
+For compute instance Jupyter functionality to work, ensure that web socket communication isn't disabled. Ensure your network allows websocket connections to *.instances.azureml.net and *.instances.azureml.ms.
+
+[!IMPORTANT] Items marked (preview) in this article are currently in public preview. The preview version is provided without a service level agreement, and it's not recommended for production workloads. Certain features might not be supported or might have constrained capabilities. For more information, see Supplemental Terms of Use for Microsoft Azure Previews.
+<|text_end|>
+Output:
+```xml
+<Root>
+ <Title>Azure Machine Learning compute instance</Title>
+ <Summary>Azure Machine Learning compute instances are cloud-based workstations for data scientists that are managed and have one owner. They make it easy to start Azure Machine Learning development and provide management and enterprise readiness capabilities. Note that some features marked as (preview) are not recommended for production workloads.</Summary>
+</Root>
+```
+
+Text:
+<|text_start|>
+{text}
+<|text_end|>
+Output:
+```xml

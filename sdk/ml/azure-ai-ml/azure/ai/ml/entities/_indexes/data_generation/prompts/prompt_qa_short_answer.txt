@@ -1,0 +1,56 @@
+You're an AI that helps in preparing Question/Answer pairs for "Who wants to be a millionaire" tv show.
+Question/Answer pairs must be extracted from given Text. Avoid extracting html and xml snippets from Text.
+Questions should be as descriptive as possible and must include context of Text.
+Answers must be truthful. Answers must be short bite-sized information not more than 5 words. Prefer Answers that are numbers, dates, statistics, monies, names.
+For each pair also extract just the sentence verbatim (as is) from Text that was used to create the pair. This sentence must be complete.
+Also extract a title for Text in less than 10 words.
+Output inside ``` must be valid XML.
+
+Example:
+
+Text:
+<|text_start|>
+The first Mac was released in 1984, and was advertised with the highly acclaimed "1984" ad. Statistics from late 2003 indicate that Apple had 2.06 percent of the desktop share in the United States that had increased to 2.88 percent by Q4 2004.
+As of October 2006, research firms IDC and Gartner reported that Apple's market share in the U.S. had increased to about 6 percent. Figures from December 2006, showing a market share around 6 percent (IDC) and 6.1 percent (Gartner) are based on a more than 30 percent increase in unit sale from 2005 to 2006.
+The installed base of Mac computers is hard to determine, with numbers ranging from 5% (estimated in 2009) to 16% (estimated in 2005).
+<|text_end|>
+Output with 5 QAs:
+```xml
+<Root>
+ <Title>Apple statistics</Title>
+ <QAs>
+  <QA>
+   <Q>When was the first Mac released?</Q>
+   <A>1984</A>
+   <VerbatimSentence>The first Mac was released in 1984, and was advertised with the highly acclaimed "1984" ad.</VerbatimSentence>
+  </QA>
+  <QA>
+   <Q>What percent of the desktop share in the United States did Apple have in 2003?</Q>
+   <A>2.06</A>
+   <VerbatimSentence>Statistics from late 2003 indicate that Apple had 2.06 percent of the desktop share in the United States that had increased to 2.88 percent by Q4 2004.</VerbatimSentence>
+  </QA>
+  <QA>
+   <Q>What were the research firms that reported on Apple's market share in the U.S.?</Q>
+   <A>IDC and Gartner</A>
+   <VerbatimSentence>As of October 2006, research firms IDC and Gartner reported that Apple's market share in the U.S. had increased to about 6 percent.</VerbatimSentence>
+  </QA>
+  <QA>
+   <Q>What percentage of unit sale increase did Apple see from 2005 to 2006?</Q>
+   <A>30</A>
+   <VerbatimSentence>Figures from "December" 2006, showing a market share around 6 percent (IDC) and 6.1 percent (Gartner) are based on a more than 30 percent increase in unit sale from 2005 to 2006.</VerbatimSentence>
+  </QA>
+  <QA>
+   <Q>What was the estimated installed base of Mac computers in 2009?</Q>
+   <A>5%</A>
+   <VerbatimSentence>The installed base of Mac computers is hard to determine, with numbers ranging from 5% (estimated in 2009) to 16% (estimated in 2005).</VerbatimSentence>
+  </QA>
+ </QAs>
+</Root>
+```
+
+Text:
+<|text_start|>
+{text}
+<|text_end|>
+Output with {num_of_questions} QAs:
+```xml

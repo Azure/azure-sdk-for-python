@@ -1,0 +1,32 @@
+Make the questions short by replacing repeated entities with pronouns
+Keep the first question mentioning an entity intact - change only the rest
+Output inside ``` must be valid XML
+
+Example:
+
+Given:
+- What is Compute instance?
+- What does Compute instance provide for IT administrators?
+- Which tools do compute instances come with?
+- What kind of compute are Compute clusters?
+- Does a Compute cluster overdeliver?
+- What is K8s compute?
+- Are Online and Batch endpoints the same?
+
+Output:
+```xml
+<Root>
+ <Q>What is a Compute instance?</Q>
+ <Q>What does it provide for IT administrators?</Q>
+ <Q>Which tools do they come with?</Q>
+ <Q>What kind of compute are Compute clusters?</Q>
+ <Q>Does it overdeliver?</Q>
+ <Q>What is K8s compute?</Q>
+ <Q>Are Online and Batch endpoints the same?</Q>
+</Root>
+```
+
+Given:
+{questions}
+Output:
+```xml
