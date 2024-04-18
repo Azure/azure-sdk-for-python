@@ -23,26 +23,18 @@ from test_helpers import GenericTestProxyParametrize1
 
 
 def assert_content_md5(request):
-    if request.http_request.query.get('comp') in ('block', 'page'):
-        assert request.http_request.headers.get('Content-MD5')
+    if request.http_request.query.get('comp') in ('block', 'page') or request.http_request.headers.get('x-ms-blob-type') == 'BlockBlob':
+        assert request.http_request.headers.get('Content-MD5') is not None
 
 
 def assert_content_crc64(request):
-    if request.http_request.query.get('comp') in ('block', 'page'):
-        assert request.http_request.headers.get('x-ms-content-crc64')
+    if request.http_request.query.get('comp') in ('block', 'page') or request.http_request.headers.get('x-ms-blob-type') == 'BlockBlob':
+        assert request.http_request.headers.get('x-ms-content-crc64') is not None
 
 
 def assert_structured_message(request):
-    if request.http_request.query.get('comp') in ('block', 'page'):
-        assert request.http_request.headers.get('x-ms-structured-body')
-
-
-class BlobTypeParameterize:
-    def __call__(self, fn):
-        # _wrapper accepts the `a` and `b` arguments we want to parametrize with
-        def _wrapper(test_class, blob_type, **kwargs):
-            fn(test_class, blob_type, **kwargs)
-        return _wrapper
+    if request.http_request.query.get('comp') in ('block', 'page') or request.http_request.headers.get('x-ms-blob-type') == 'BlockBlob':
+        assert request.http_request.headers.get('x-ms-structured-body') is not None
 
 
 class TestStorageContentValidation(StorageRecordedTestCase):
@@ -83,10 +75,10 @@ class TestStorageContentValidation(StorageRecordedTestCase):
             blob.upload_blob(b'123', validate_content='crc64')
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_legacy_bool(self, blob_type, **kwargs):
+    def test_upload_blob_legacy_bool(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -95,16 +87,16 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data = b'abc' * 512
 
         # Act
-        response = blob.upload_blob(data, blob_type, validate_content=True, raw_request_hook=assert_content_md5)
+        response = blob.upload_blob(data, a, validate_content=True, raw_request_hook=assert_content_md5)
 
         # Assert
         assert response
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_legacy_bool_chunks(self, blob_type, **kwargs):
+    def test_upload_blob_legacy_bool_chunks(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -115,16 +107,16 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data = b'abc' * 512
 
         # Act
-        response = blob.upload_blob(data, blob_type, validate_content=True, raw_request_hook=assert_content_md5)
+        response = blob.upload_blob(data, a, validate_content=True, raw_request_hook=assert_content_md5)
 
         # Assert
         assert response
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_md5(self, blob_type, **kwargs):
+    def test_upload_blob_md5(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -133,16 +125,16 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data = b'abc' * 512
 
         # Act
-        response = blob.upload_blob(data, blob_type, validate_content='md5', raw_request_hook=assert_content_md5)
+        response = blob.upload_blob(data, a, validate_content='md5', raw_request_hook=assert_content_md5)
 
         # Assert
         assert response
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_md5_chunks(self, blob_type, **kwargs):
+    def test_upload_blob_md5_chunks(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -153,16 +145,16 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data = b'abc' * 512
 
         # Act
-        response = blob.upload_blob(data, blob_type, validate_content='md5', raw_request_hook=assert_content_md5)
+        response = blob.upload_blob(data, a, validate_content='md5', raw_request_hook=assert_content_md5)
 
         # Assert
         assert response
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_crc64(self, blob_type, **kwargs):
+    def test_upload_blob_crc64(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -175,11 +167,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         stream = BytesIO(byte_data)
 
         # Act
-        resp1 = blob.upload_blob(byte_data, blob_type, overwrite=True, validate_content='crc64',
+        resp1 = blob.upload_blob(byte_data, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
-        resp2 = blob.upload_blob(str_data, blob_type, overwrite=True, validate_content='crc64',
+        resp2 = blob.upload_blob(str_data, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
-        resp3 = blob.upload_blob(stream, blob_type, overwrite=True, validate_content='crc64',
+        resp3 = blob.upload_blob(stream, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
 
         # Assert
@@ -188,10 +180,10 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert resp3
 
     @BlobPreparer()
-    @pytest.mark.parametrize('blob_type', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])
-    @BlobTypeParameterize()
+    @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
+    @GenericTestProxyParametrize1()
     @recorded_by_proxy
-    def test_upload_blob_crc64_chunks(self, blob_type, **kwargs):
+    def test_upload_blob_crc64_chunks(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -206,11 +198,11 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         stream = BytesIO(byte_data)
 
         # Act
-        resp1 = blob.upload_blob(byte_data, blob_type, overwrite=True, validate_content='crc64',
+        resp1 = blob.upload_blob(byte_data, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
-        resp2 = blob.upload_blob(str_data, blob_type, overwrite=True, validate_content='crc64',
+        resp2 = blob.upload_blob(str_data, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
-        resp3 = blob.upload_blob(stream, blob_type, overwrite=True, validate_content='crc64',
+        resp3 = blob.upload_blob(stream, a, overwrite=True, validate_content='crc64',
                                  raw_request_hook=assert_content_crc64)
 
         # Assert
