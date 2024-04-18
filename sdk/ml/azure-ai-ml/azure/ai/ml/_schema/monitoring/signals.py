@@ -25,7 +25,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
     GenerationSafetyQualityMetricThresholdSchema,
-    GenerationTokenStatisticsMonitorMetricThresholdSchema
+    GenerationTokenStatisticsMonitorMetricThresholdSchema,
 )
 
 

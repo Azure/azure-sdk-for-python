@@ -387,7 +387,7 @@ class MonitoringSignal(RestTranslatableMixin):
             "FeatureAttributionDriftSignal",
             "CustomMonitoringSignal",
             "GenerationSafetyQualitySignal",
-            "GenerationTokenStatisticsSignal"
+            "GenerationTokenStatisticsSignal",
         ]
     ]:
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
@@ -1164,6 +1164,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
             properties=obj.properties,
             sampling_rate=obj.sampling_rate,
         )
+
 
 @experimental
 class GenerationTokenStatisticsSignal(RestTranslatableMixin):

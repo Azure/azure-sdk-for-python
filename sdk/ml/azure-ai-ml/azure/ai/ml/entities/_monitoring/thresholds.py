@@ -891,8 +891,9 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             similarity=similarity if similarity else None,
         )
 
+
 @experimental
-class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin): # pylint: disable=name-too-long
+class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
     """Generation token statistics metric threshold definition.
 
     All required parameters must be populated in order to send to Azure.
@@ -917,15 +918,11 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin): # 
         metric_thresholds = []
         if self.totaltoken:
             if "total_token_count" in self.totaltoken:
-                acceptable_threshold = MonitoringThreshold(
-                    value=self.totaltoken["total_token_count"]
-                )
+                acceptable_threshold = MonitoringThreshold(value=self.totaltoken["total_token_count"])
             else:
                 acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
-                GenerationTokenStatisticsMetricThreshold(
-                    metric="TotalTokenCount", threshold=acceptable_threshold
-                )
+                GenerationTokenStatisticsMetricThreshold(metric="TotalTokenCount", threshold=acceptable_threshold)
             )
             acceptable_threshold_per_group = MonitoringThreshold(value=self.totaltoken["total_token_count_per_group"])
             metric_thresholds.append(
