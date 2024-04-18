@@ -171,7 +171,7 @@ class JobOperations(_ScopeDependentOperations):
         self._model_dataplane_operations_client: Optional[ModelDataplaneOperations] = None
         # Kwargs to propagate to dataplane service clients
         self._service_client_kwargs = kwargs.pop("_service_client_kwargs", {})
-        self._api_base_url = None
+        self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
         self._orchestrators = OperationOrchestrator(
@@ -254,7 +254,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._model_dataplane_operations_client
 
     @property
-    def _api_url(self) -> Any:
+    def _api_url(self) -> str:
         if not self._api_base_url:
             self._api_base_url = self._get_workspace_url(url_key=WorkspaceDiscoveryUrlKey.API)
         return self._api_base_url
