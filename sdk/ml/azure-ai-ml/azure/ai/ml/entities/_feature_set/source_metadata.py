@@ -48,8 +48,9 @@ class SourceMetadata(object):
                         error_category=ErrorCategory.USER_ERROR,
                     )
                 if timestamp_column or source_delay or source_process_code:
-                    msg = "Cannot provide timestamp_column/source_delay/source_process_code" \
-                        f"for {type} feature source."
+                    msg = (
+                        f"Cannot provide timestamp_column/source_delay/source_process_code for {type} feature source."
+                    )
                     raise ValidationException(
                         message=msg,
                         no_personal_data_message=msg,
