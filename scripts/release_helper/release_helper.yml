@@ -53,14 +53,15 @@ jobs:
         git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
         
         mkdir azure-rest-api-specs
-        git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+        git clone -b $(SPEC_BRANCH) https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
         # import env variable
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
-
+        export TYPESPEC_JSON=$(pwd)/file-storage/data/typespec.json
+        export TEST_ISSUE_NUMBER=$(TEST_ISSUE_NUMBER)
 
         # create virtual env
         python -m venv venv-sdk

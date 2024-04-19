@@ -17,6 +17,7 @@ from opentelemetry.instrumentation.distro import ( # type: ignore
 from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+    OTEL_TRACES_SAMPLER,
 )
 
 from azure.core.settings import settings
@@ -35,7 +36,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
 )
-from azure.monitor.opentelemetry._util.configurations import (
+from azure.monitor.opentelemetry._utils.configurations import (
     _get_otel_disabled_instrumentations,
 )
 
@@ -69,6 +70,9 @@ def _configure_auto_instrumentation() -> None:
     )
     environ.setdefault(
         OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        OTEL_TRACES_SAMPLER, "azure_monitor_opentelemetry_sampler"
     )
     environ.setdefault(
         _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"

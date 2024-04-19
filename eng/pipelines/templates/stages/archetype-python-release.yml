@@ -151,6 +151,15 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
+                      - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+                        parameters:
+                          ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                          Artifacts: ${{parameters.Artifacts}}
+                          ConfigFileDir: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo
+                          MarkPackageAsShipped: true
+                          ArtifactName: ${{parameters.ArtifactName}}
+                          PackageName: ${{artifact.name}}
+
           - ${{if ne(artifact.skipPublishDocs, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage

@@ -43,32 +43,32 @@ if TYPE_CHECKING:
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     """A client to interact with a specific file system, even if that file system
-     may not yet exist.
+    may not yet exist.
 
-     For operations relating to a specific directory or file within this file system, a directory client or file client
-     can be retrieved using the :func:`~get_directory_client` or :func:`~get_file_client` functions.
+    For operations relating to a specific directory or file within this file system, a directory client or file client
+    can be retrieved using the :func:`~get_directory_client` or :func:`~get_file_client` functions.
 
-     :ivar str url:
-         The full endpoint URL to the file system, including SAS token if used.
-     :ivar str primary_endpoint:
-         The full primary endpoint URL.
-     :ivar str primary_hostname:
-         The hostname of the primary endpoint.
-     :param str account_url:
-         The URI to the storage account.
-     :param file_system_name:
-         The file system for the directory or files.
-     :type file_system_name: str
-     :param credential:
-         The credentials with which to authenticate. This is optional if the
-         account URL already has a SAS token. The value can be a SAS token string,
-         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
-         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
-         should be the storage account key.
-     :keyword str api_version:
+    :ivar str url:
+        The full endpoint URL to the file system, including SAS token if used.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :param str account_url:
+        The URI to the storage account.
+    :param file_system_name:
+        The file system for the directory or files.
+    :type file_system_name: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
+    :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
@@ -218,7 +218,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
