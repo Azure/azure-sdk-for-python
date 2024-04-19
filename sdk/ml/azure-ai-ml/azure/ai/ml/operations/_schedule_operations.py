@@ -18,7 +18,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
-from azure.ai.ml.entities._monitoring.signals import BaselineDataRange, FADProductionData, ProductionData, ReferenceData
+from azure.ai.ml.entities._monitoring.signals import BaselineDataRange, FADProductionData, ProductionData, ReferenceData, LlmData
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
 from azure.core.credentials import TokenCredential
@@ -324,7 +324,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
+    def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements,too-many-locals
         self, schedule: MonitorSchedule
     ) -> None:
         # resolve target ARM ID
@@ -392,12 +392,11 @@ class ScheduleOperations(_ScopeDependentOperations):
                 if not signal.production_data:  # type: ignore[union-attr]
                     # if target dataset is absent and data collector for input is enabled,
                     # create a default target dataset with production app traces as target
-                    signal.production_data = ProductionData(  # type: ignore[union-attr]
+                    signal.production_data = LlmData(  # type: ignore[union-attr]
                         input_data=Input(
                             path=f"{app_traces_name}:{app_traces_version}",
                             type=self._data_operations.get(app_traces_name, app_traces_version).type,
                         ),
-                        data_context=MonitorDatasetContext.APP_TRACES,
                         data_window=BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D"),
                     )
                 self._job_operations._resolve_job_input(signal.production_data.input_data, schedule._base_path)
