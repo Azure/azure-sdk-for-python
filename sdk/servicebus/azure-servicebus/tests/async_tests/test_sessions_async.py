@@ -1233,7 +1233,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
             ) as receiver:
-                number_deleted_messages = await receiver.delete_messages()
+                number_deleted_messages = await receiver.delete_messages(max_message_count=1)                                                               1
             assert number_deleted_messages == 1
 
             async with sb_client.get_subscription_receiver(
@@ -1243,5 +1243,5 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as receiver:
-                number_deleted_messages = await receiver.delete_messages()
+                number_deleted_messages = await receiver.delete_messages(max_message_count=1)
             assert number_deleted_messages == 1
