@@ -36,8 +36,10 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.credentials import TokenCredential
 
-from azure.ai.ml.entities._indexes.entities.mlindex import Index as MLIndexAsset
 from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._indexes.dataindex.data_index import index_data as index_data_func
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
@@ -45,6 +47,14 @@ from azure.ai.ml.entities._indexes import (
     LocalSource,
     GitSource,
     ModelConfiguration,
+)
+from azure.ai.ml.entities._indexes.dataindex.entities import (
+    CitationRegex,
+    Data,
+    DataIndex,
+    Embedding,
+    IndexSource,
+    IndexStore,
 )
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 
@@ -271,15 +281,6 @@ class IndexOperations(_ScopeDependentOperations):
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
-        from azure.ai.ml.entities._indexes.dataindex.data_index import index_data
-        from azure.ai.ml.entities._indexes.dataindex.entities import (
-            CitationRegex,
-            Data,
-            DataIndex,
-            Embedding,
-            IndexSource,
-            IndexStore,
-        )
         from azure.ai.ml.entities._indexes.embeddings import EmbeddingsContainer
 
         if not embeddings_model_config.model_name:
@@ -292,7 +293,7 @@ class IndexOperations(_ScopeDependentOperations):
             mlindex_config = {}
             connection_args = {
                 "connection_type": "workspace_connection", 
-                "connection": {"id": build_connection_id(embeddings_model_config.deployment_name, self._scope)}
+                "connection": {"id": build_connection_id(embeddings_model_config.deployment_name, self.operation_scope)}
             }
             mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
                 build_open_ai_protocol(embeddings_model_config.model_name), **connection_args
@@ -322,9 +323,9 @@ class IndexOperations(_ScopeDependentOperations):
                 with open(temp_file, "w") as f:
                     yaml.dump(mlindex_config, f)
 
-                mlindex = MLIndexAsset(name=name, path=temp_dir)
+                mlindex = Index(name=name, path=temp_dir)
                 # Register it
-                return self.indexes.create_or_update(mlindex)
+                return self.create_or_update(mlindex)
 
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)
@@ -348,11 +349,11 @@ class IndexOperations(_ScopeDependentOperations):
             ),
             embedding=Embedding(
                 model=build_open_ai_protocol(embeddings_model_config.model_name),
-                connection=build_connection_id(embeddings_model_config.deployment_name, self._scope),
+                connection=build_connection_id(embeddings_model_config.deployment_name, self.operation_scope),
             ),
             index=IndexStore(
                 type="acs",
-                connection=build_connection_id(index_config.acs_connection_id, self._scope),
+                connection=build_connection_id(index_config.acs_connection_id, self.operation_scope),
                 name=index_config.acs_index_name,
             )
             if index_config is not None
@@ -377,7 +378,7 @@ class IndexOperations(_ScopeDependentOperations):
                 git_clone = git_clone_component(git_repository=git_url, branch_name=branch_name)
                 git_clone.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_GIT"] = git_connection_id
 
-                index_job = index_data(
+                index_job = index_data_func(
                     description=data_index.description,
                     data_index=data_index,
                     input_data_override=git_clone.outputs.output_data,
@@ -395,7 +396,8 @@ class IndexOperations(_ScopeDependentOperations):
             git_index_job.settings.force_rerun = True
 
             # Submit the DataIndex Job
-            return self._ml_client.jobs.create_or_update(git_index_job, identity=input_source_credential)
+            return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(git_index_job)
+            # return self._ml_client.jobs.create_or_update(git_index_job, identity=input_source_credential)
 
         if isinstance(input_source, LocalSource):
             data_index.source.input_data = Data(
@@ -403,13 +405,102 @@ class IndexOperations(_ScopeDependentOperations):
                 path=input_source.input_data.path,
             )
 
-            return self._ml_client.data.index_data(data_index=data_index, identity=input_source_credential)
+            return self.index_data(data_index=data_index, identity=input_source_credential)
         elif isinstance(input_source, str):
             data_index.source.input_data = Data(
                 type="uri_folder",
                 path=input_source,
             )
 
-            return self._ml_client.data.index_data(data_index=data_index, identity=input_source_credential)
+            return self.index_data(data_index=data_index, identity=input_source_credential)
         else:
             raise ValueError(f"Unsupported input source type {type(input_source)}")
+
+    def index_data(
+        self,
+        data_index: DataIndex,
+        identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
+        compute: str = "serverless",
+        serverless_instance_type: Optional[str] = None,
+        input_data_override: Optional[Input] = None,
+        submit_job: bool = True,
+        **kwargs,
+    ) -> PipelineJob:
+        """
+        Returns the data import job that is creating the data asset.
+
+        :param data_index: DataIndex object.
+        :type data_index: azure.ai.ml.entities._dataindex
+        :param identity: Identity configuration for the job.
+        :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+        :param compute: The compute target to use for the job. Default: "serverless".
+        :type compute: str
+        :param serverless_instance_type: The instance type to use for serverless compute.
+        :type serverless_instance_type: Optional[str]
+        :param input_data_override: Input data override for the job.
+            Used to pipe output of step into DataIndex Job in a pipeline.
+        :type input_data_override: Optional[Input]
+        :param submit_job: Whether to submit the job to the service. Default: True.
+        :type submit_job: bool
+        :return: data import job object.
+        :rtype: ~azure.ai.ml.entities.PipelineJob.
+        """
+        from azure.ai.ml import MLClient
+        from azure.ai.ml.constants._common import AssetTypes
+        from azure.ai.ml._utils._asset_utils import (
+            _validate_auto_delete_setting_in_data_output,
+            _validate_workspace_managed_datastore,
+        )
+
+        default_name = "data_index_" + data_index.name
+        experiment_name = kwargs.pop("experiment_name", None) or default_name
+        data_index.type = AssetTypes.URI_FOLDER
+
+        # avoid specifying auto_delete_setting in job output now
+        _validate_auto_delete_setting_in_data_output(data_index.auto_delete_setting)
+
+        # block customer specified path on managed datastore
+        data_index.path = _validate_workspace_managed_datastore(data_index.path)
+
+        # TODO: This is import_data behavior, not sure if it should be default for index_data, or just be documented?
+        if "${{name}}" not in data_index.path and "{name}" not in data_index.path:
+            data_index.path = data_index.path.rstrip("/") + "/${{name}}"
+
+        index_job = index_data_func(
+            description=data_index.description or kwargs.pop("description", None) or default_name,
+            name=data_index.name or kwargs.pop("name", None),
+            display_name=kwargs.pop("display_name", None) or default_name,
+            experiment_name=experiment_name,
+            compute=compute,
+            serverless_instance_type=serverless_instance_type,
+            data_index=data_index,
+            ml_client=MLClient(
+                subscription_id=self._subscription_id,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                credential=self._credential,
+            ),
+            identity=identity,
+            input_data_override=input_data_override,
+            **kwargs,
+        )
+        index_pipeline = PipelineJob(
+            description=index_job.description,
+            tags=index_job.tags,
+            name=index_job.name,
+            display_name=index_job.display_name,
+            experiment_name=experiment_name,
+            properties=index_job.properties or {},
+            settings=PipelineJobSettings(force_rerun=True, default_compute=compute),
+            jobs={default_name: index_job},
+        )
+        index_pipeline.properties["azureml.mlIndexAssetName"] = data_index.name
+        index_pipeline.properties["azureml.mlIndexAssetKind"] = data_index.index.type
+        index_pipeline.properties["azureml.mlIndexAssetSource"] = kwargs.pop("mlindex_asset_source", "Data Asset")
+
+        if submit_job:
+            return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+                job=index_pipeline, skip_validation=True, **kwargs
+            )
+
+        return index_pipeline
