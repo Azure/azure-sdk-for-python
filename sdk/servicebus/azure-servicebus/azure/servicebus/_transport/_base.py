@@ -364,3 +364,14 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
         """
+
+    @staticmethod
+    @abstractmethod
+    def receive_loop(
+        receiver,
+        amqp_receive_client,
+        max_message_count,
+        batch,
+        **kwargs
+    ):
+        """TODO"""
