@@ -70,7 +70,7 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 def _is_local_endpoint(endpoint: str) -> bool:
-    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower())
+    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
@@ -78,13 +78,14 @@ def _parse_conn_str(
         eventhub_name: Optional[str] = None,
         check_case: bool = False,
         **kwargs: Any
-    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
+    use_emulator: Optional[str] = None
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
