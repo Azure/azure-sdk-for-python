@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add experimental support for working with indexes: `ml_client.indexes`
+
 ### Bugs Fixed
 
 ### Breaking Changes

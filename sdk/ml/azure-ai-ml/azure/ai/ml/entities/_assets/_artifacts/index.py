@@ -26,13 +26,15 @@ class Index(Artifact):
      asset is under development. Required.
     :vartype stage: str
     :ivar description: Description information of the asset.
-    :vartype description: str
+    :vartype description: Optional[str]
     :ivar tags: Asset's tags.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
     :ivar properties: Asset's properties.
-    :vartype properties: dict[str, str]
-    :ivar str storage_uri: Default workspace blob storage Uri.
-    :vartype storage_uri: str
+    :vartype properties: Optional[dict[str, str]]
+    :ivar path: The local or remote path to the asset.
+    :vartype path: Optional[Union[str, os.PathLike]]
+    :ivar datastore: The datastore to upload the local artifact to.
+    :vartype datastore: Optional[str]
     """
 
     def __init__(
@@ -41,20 +43,22 @@ class Index(Artifact):
         name: str,
         version: str,
         stage: str,
-        storage_uri: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
+        path: Optional[Union[str, PathLike]] = None,
+        datastore: Optional[str] = None,
         **kwargs: Any,
     ):
         self.stage = stage
-        self.storage_uri = storage_uri
         super().__init__(
             name=name,
             version=version,
             description=description,
             tags=tags,
             properties=properties,
+            path=path,
+            datastore=datastore,
             **kwargs,
         )
 
@@ -66,31 +70,27 @@ class Index(Artifact):
         :return: An Index Asset
         :rtype: Index
         """
-        asset_id = AMLAssetId(asset_id=index_rest_object.properties["id"])
-
-        # FIXME: The typespec's definition of Index doesn't seem to match the actual response returned from the
-        #        generic asset API (fields are nested into "properties" instead of top level).
-        #        Manually handle this until the typespec is updated
-
-        properties = index_rest_object["properties"]
+        asset_id = AMLAssetId(asset_id=index_rest_object.id)
 
         return Index(
-            id=properties["id"],
+            id=index_rest_object.id,
             name=asset_id.asset_name,
             version=asset_id.asset_version,
-            description=properties.get("description"),
-            tags=properties.get("tags"),
-            properties=properties,
-            stage=properties.get("stage"),
-            storage_uri=index_rest_object.storage_uri,
+            description=index_rest_object.description,
+            tags=index_rest_object.tags,
+            properties=index_rest_object.properties,
+            stage=index_rest_object.stage,
+            path=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
-            creation_context=SystemData._from_rest_object(RestSystemData.from_dict(properties["systemData"])),
+            creation_context=SystemData._from_rest_object(
+                RestSystemData.from_dict(index_rest_object.system_data.as_dict())
+            ),
         )
 
     def _to_rest_object(self) -> RestIndex:
         return RestIndex(
             stage=self.stage,
-            storage_uri=self.storage_uri,
+            storage_uri=self.path,
             description=self.description,
             tags=self.tags,
             properties=self.properties,
@@ -114,7 +114,5 @@ class Index(Artifact):
         """Updates an an artifact with the remote path of a local upload.
 
         :param ArtifactStorageInfo asset_artifact: The asset storage info of the artifact
-        :return: Nothing
-        :rtype: None
         """
-        raise NotImplementedError()
+        self.path = asset_artifact.full_storage_path
