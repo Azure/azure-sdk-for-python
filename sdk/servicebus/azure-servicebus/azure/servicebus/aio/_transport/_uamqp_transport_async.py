@@ -364,6 +364,7 @@ try:
         amqp_receive_client: "ReceiveClientAsync",
         max_message_count: int,
         batch: int,
+        abs_timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         first_message_received = expired = False

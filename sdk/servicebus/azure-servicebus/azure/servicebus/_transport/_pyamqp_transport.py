@@ -1088,6 +1088,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         amqp_receive_client: "ReceiveClient",
         max_message_count: int,
         batch: int,
+        abs_timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         
