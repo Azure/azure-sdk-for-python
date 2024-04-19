@@ -35,6 +35,7 @@ class LogsQueryError:
         self.code = kwargs.get("code", "")
         self.message = kwargs.get("message", "")
         self.details = kwargs.get("details", None)
+        self.status = LogsQueryStatus.FAILURE
 
     def __str__(self) -> str:
         return str(self.__dict__)

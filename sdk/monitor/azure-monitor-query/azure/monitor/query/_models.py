@@ -383,6 +383,7 @@ class LogsQueryResult:
         self.tables = kwargs.get("tables", [])
         self.statistics = kwargs.get("statistics", None)
         self.visualization = kwargs.get("visualization", None)
+        self.status = LogsQueryStatus.SUCCESS
 
     def __iter__(self) -> Iterator[LogsTable]:
         return iter(self.tables)
@@ -561,6 +562,7 @@ class LogsQueryPartialResult:
         self.partial_error = kwargs.get("partial_error", None)
         self.statistics = kwargs.get("statistics", None)
         self.visualization = kwargs.get("visualization", None)
+        self.status = LogsQueryStatus.PARTIAL
 
     def __iter__(self) -> Iterator[LogsTable]:
         return iter(self.partial_data)
