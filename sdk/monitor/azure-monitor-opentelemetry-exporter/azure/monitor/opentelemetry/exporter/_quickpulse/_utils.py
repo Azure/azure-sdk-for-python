@@ -55,10 +55,13 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
     return [
         MonitoringDataPoint(
             version=base_monitoring_data_point.version,
+            invariant_version=base_monitoring_data_point.invariant_version,
             instance=base_monitoring_data_point.instance,
             role_name=base_monitoring_data_point.role_name,
             machine_name=base_monitoring_data_point.machine_name,
             stream_id=base_monitoring_data_point.stream_id,
+            is_web_app=base_monitoring_data_point.is_web_app,
+            performance_collection_supported=base_monitoring_data_point.performance_collection_supported,
             timestamp=datetime.now(tz=timezone.utc),
             metrics=metric_points,
             documents=documents,

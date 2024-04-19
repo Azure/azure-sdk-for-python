@@ -21,6 +21,7 @@ from opentelemetry.sdk.metrics.export import (
     MetricReader,
 )
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -78,7 +79,7 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
 
-        self._client = QuickpulseClient(host=self._live_endpoint)
+        self._client = QuickpulseClient(credential=TokenCredential(), endpoint=self._live_endpoint)
         # TODO: Support redirect
 
         MetricExporter.__init__(
@@ -113,10 +114,11 @@ class _QuickpulseExporter(MetricExporter):
 
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            post_response = self._client.post(  # type: ignore
+            post_response = self._client.publish(  # type: ignore
+                endpoint=self._live_endpoint,
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,
-                x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
+                transmission_time=_ticks_since_dot_net_epoch(),
                 cls=_Response,
             )
             if not post_response:
@@ -164,14 +166,20 @@ class _QuickpulseExporter(MetricExporter):
         """
 
 
-    def _ping(self, monitoring_data_point) -> Optional[_Response]:
+    def _ping(self, monitoring_data_point: MonitoringDataPoint) -> Optional[_Response]:
         ping_response = None
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            ping_response = self._client.ping(  # type: ignore
+            ping_response = self._client.is_subscribed(  # type: ignore
+                endpoint=self._live_endpoint,
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,
-                x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
+                transmission_time=_ticks_since_dot_net_epoch(),
+                machine_name=monitoring_data_point.machine_name,
+                instance_name=monitoring_data_point.instance,
+                stream_id=monitoring_data_point.stream_id,
+                role_name=monitoring_data_point.role_name,
+                invariant_version=monitoring_data_point.invariant_version,
                 cls=_Response,
             )
             return ping_response  # type: ignore
