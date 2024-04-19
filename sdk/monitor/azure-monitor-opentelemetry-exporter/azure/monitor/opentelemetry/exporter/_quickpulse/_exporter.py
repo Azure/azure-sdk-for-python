@@ -21,7 +21,6 @@ from opentelemetry.sdk.metrics.export import (
     MetricReader,
 )
 
-from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -79,7 +78,7 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
 
-        self._client = QuickpulseClient(credential=TokenCredential(), endpoint=self._live_endpoint)
+        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint)
         # TODO: Support redirect
 
         MetricExporter.__init__(

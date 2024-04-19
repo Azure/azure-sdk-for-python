@@ -33,8 +33,8 @@ class QuickpulseClientConfiguration:  # pylint: disable=too-many-instance-attrib
     def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-04-01-preview")
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
+        # if credential is None:
+        #     raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
         self.api_version = api_version
@@ -53,7 +53,7 @@ class QuickpulseClientConfiguration:  # pylint: disable=too-many-instance-attrib
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(
-                self.credential, *self.credential_scopes, **kwargs
-            )
+        # if self.credential and not self.authentication_policy:
+        #     self.authentication_policy = policies.BearerTokenCredentialPolicy(
+        #         self.credential, *self.credential_scopes, **kwargs
+        #     )
