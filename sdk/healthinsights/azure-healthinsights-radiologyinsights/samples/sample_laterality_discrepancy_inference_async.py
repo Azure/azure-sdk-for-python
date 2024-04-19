@@ -18,7 +18,7 @@ DESCRIPTION:
 The sample_laterality_discrepancy_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Laterality Mismatch indication and descripancy type extracted by the Radiology Insights service.     
+submit it to the client and display the Laterality Mismatch indication and discrepancy type extracted by the Radiology Insights service.     
 
 
 USAGE:

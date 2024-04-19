@@ -150,8 +150,8 @@ class HealthInsightsSyncSamples:
                                 if code.code is not None and code.display is not None:
                                     print(f"Finding {counter}: Code: {code.system} {code.code} {code.display}")
                         elif attribute == "interpretation" and fin.interpretation is not None:
-                            for intpt in fin.interpretation:  
-                                for code in intpt.coding:                                          
+                            for interpretation in fin.interpretation:  
+                                for code in interpretation.coding:                                          
                                     if code.code is not None and code.display is not None:
                                         print(f"Finding {counter}: Interpretation: {code.system} {code.code} {code.display}")
                         elif attribute == "component" and fin.component is not None:
@@ -175,9 +175,9 @@ class HealthInsightsSyncSamples:
                                     elif attr == "value_boolean" and component.value_boolean is not None:
                                         print(f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}")
                                     elif attr == "value_quantity" and component.value_quantity is not None:
-                                        for attrb in dir(component.value_quantity):
-                                            if not attrb.startswith('_') and not callable(getattr(component.value_quantity, attrb)) and getattr(component.value_quantity, attrb) is not None:
-                                                print(f"Finding {counter}: COMPONENTS: Value Quantity: {attrb.capitalize()}: {getattr(component.value_quantity, attrb)}")       
+                                        for attribute in dir(component.value_quantity):
+                                            if not attribute.startswith('_') and not callable(getattr(component.value_quantity, attribute)) and getattr(component.value_quantity, attribute) is not None:
+                                                print(f"Finding {counter}: COMPONENTS: Value Quantity: {attribute.capitalize()}: {getattr(component.value_quantity, attribute)}")       
                     inference_extension = ri_inference.extension
                     if inference_extension is not None:
                         print(f"Finding {counter}: INFERENCE EXTENSIONS:")

@@ -100,8 +100,8 @@ For an example how to create a client, a request and get the result see the exam
 * [Finding](#get-finding-information)
 * [Follow-up Communication](#get-follow-up-communication-information)
 * [Follow-up Recommendation](#get-follow-up-recommendation-information)
-* [Laterality Descripancy](#get-laterality-discrepancy-information)
-* [Limited Order Descripancy](#get-limited-order-discrepancy-information)
+* [Laterality Discrepancy](#get-laterality-discrepancy-information)
+* [Limited Order Discrepancy](#get-limited-order-discrepancy-information)
 * [Radiology Procedure](#get-radiology-procedure-information)
 * [Sex Mismatch](#get-sex-mismatch-information)
 
@@ -123,14 +123,14 @@ for patient_result in radiology_insights_result.patient_results:
 
 ### Get Complete Order Discrepancy Inference information
 
-<!-- SNIPPET:sample_complete_order_discrespancy_inference_async.display_complete_order_discrepancy-->
+<!-- SNIPPET:sample_complete_order_discrepancy_inference_async.display_complete_order_discrepancy-->
 ```Python
 for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY:
                     print(f"Complete Order Discrepancy Inference found")
 ```
-<!-- SNIPPET:sample_complete_order_discrespancy_inference_async.display_complete_order_discrepancy-->
+<!-- SNIPPET:sample_complete_order_discrepancy_inference_async.display_complete_order_discrepancy-->
 
 ### Get Critical Result Inference information
 

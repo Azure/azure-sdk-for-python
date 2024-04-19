@@ -142,12 +142,12 @@ class HealthInsightsSamples:
                                             print(f"Radiology Procedure: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}")
                                     else:
                                         print(f"Radiology Procedure: IMAGING PROCEDURE: Modality: none") 
-                    orproc = ri_inference.ordered_procedure
+                    ordered_procedure = ri_inference.ordered_procedure
                     print(f"\nRadiology Procedure: ORDERED PROCEDURE:")
-                    if orproc.description is not None:
-                        print(f"Radiology Procedure: ORDERED PROCEDURE: Description: {orproc.description}")
-                    if orproc.code is not None:
-                        for coding in orproc.code.coding:
+                    if ordered_procedure.description is not None:
+                        print(f"Radiology Procedure: ORDERED PROCEDURE: Description: {ordered_procedure.description}")
+                    if ordered_procedure.code is not None:
+                        for coding in ordered_procedure.code.coding:
                             print(f"Radiology Procedure: ORDERED PROCEDURE: Code: {coding.system} {coding.code} {coding.display}")
 
     # [END display_radiology_procedure]

@@ -130,8 +130,8 @@ class HealthInsightsSamples:
                     else:
                         print(f"Follow-up Communication: Date Time: Unknown")
                     if ri_inference.recipient is not None:
-                        for recepient in ri_inference.recipient:
-                            print(f"Follow-up Communication: Recipient: {recepient}")
+                        for recipient in ri_inference.recipient:
+                            print(f"Follow-up Communication: Recipient: {recipient}")
                     else:
                         print(f"Follow-up Communication: Recipient: Unknown")
                     print(f"Follow-up Communication: Was Acknowledged: {ri_inference.was_acknowledged}")
