@@ -46,6 +46,7 @@ def _get_rest_field_type(rest_field):
         return _get_rest_field_type(rest_field.args[0])
     return rest_field
 
+
 class ValidationMixin():
     def _validate(self) -> None:
         # verify types
@@ -66,7 +67,7 @@ class ValidationMixin():
                 rest_field_type = _get_rest_field_type(rest_field)
                 if attr_type != rest_field_type:
                     raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field_type}")
-                
+
 
 @experimental
 class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
