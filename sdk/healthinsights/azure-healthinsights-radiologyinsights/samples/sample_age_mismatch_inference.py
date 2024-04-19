@@ -1,24 +1,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
 import datetime
 import os
 import uuid
 
 
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_age_mismatch_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
-It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
+The sample_age_mismatch_inference.py module processes a sample radiology document with the Radiology Insights service.
+It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client and display 
+-the Age Mismatch patient ID,
+-the Age Mismatch url extension,
+-the Age Mismatch offset extension,
+-the Age Mismatch length extension, and
+-the Age Mismatch evidence
+extracted by the Radiology Insights service.     
 
 
 USAGE:
@@ -26,16 +31,15 @@ USAGE:
 """
 
 
-class HealthInsightsSamples:
-    async def radiology_insights_async(self) -> None:
-        # [START create_radiology_insights_client]
+class HealthInsightsSyncSamples:
+    def radiology_insights_sync(self) -> None:
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
         job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-        # [END create_radiology_insights_client]
+
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
         COMPARISON:   
@@ -101,34 +105,50 @@ class HealthInsightsSamples:
         radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         job_data = models.RadiologyInsightsJob(job_data=radiology_insights_data)
 
+        # Health Insights Radiology Insights
         try:
-            poller = await radiology_insights_client.begin_infer_radiology_insights(
+            poller = radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
                 resource=job_data,
             )
-            job_response = await poller.result()
+            job_response = poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
-            self.display_critical_results(radiology_insights_result)
-            await radiology_insights_client.close()
+            self.display_age_mismatch(radiology_insights_result,doc_content1)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
-        # [START display_critical_results]
+    def display_age_mismatch(self,radiology_insights_result,doc_content1):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.AGE_MISMATCH:
+                    print(f"Age Mismatch Inference found")
+                    print(f"Age Mismatch: Patient ID: {patient_result.patient_id}")
+                    Tokens = ""
+                    for extension in ri_inference.extension:
+                        for attribute in dir(extension):
+                            if attribute == "extension":
+                                offset = -1
+                                length = -1
+                                for sub_extension in extension.extension:
+                                    for sub_attribute in dir(sub_extension):
+                                        if sub_attribute == "url":
+                                            if sub_extension.url.startswith("http"):
+                                                continue
+                                            elif sub_extension.url == "offset":
+                                                offset = sub_extension.value_integer
+                                            elif sub_extension.url == "length":
+                                                length = sub_extension.value_integer
+                                        if offset > 0 and length > 0:
+                                            evidence = doc_content1[offset:offset+length]
+                                            if not evidence in Tokens:
+                                                Tokens = Tokens + " " + evidence
+                    print(f"Age Mismatch: Evidence: {Tokens}")
 
-    # [END display_critical_results]
-
-
-async def main():
-    sample = HealthInsightsSamples()
-    await sample.radiology_insights_async()
+def main():
+    sample = HealthInsightsSyncSamples()
+    sample.radiology_insights_sync()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

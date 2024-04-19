@@ -46,7 +46,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
-        encounter = models.Encounter(
+        encounter = models.PatientEncounter(
             id="encounter2",
             class_property=models.EncounterClass.IN_PATIENT,
             period=models.TimePeriod(start=start, end=end),
@@ -63,7 +63,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
             id="doc2",
             content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
-            created_date_time=create_date_time,
+            created_at=create_date_time,
             specialty_type=models.SpecialtyType.RADIOLOGY,
             administrative_metadata=models.DocumentAdministrativeMetadata(
                 ordered_procedures=[ordered_procedure], encounter_id="encounter2"
@@ -74,7 +74,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         patient1 = models.PatientRecord(
             id="patient_id2",
-            info=patient_info,
+            details=patient_info,
             encounters=[encounter],
             patient_documents=[patient_document1],
         )
@@ -82,7 +82,8 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        return data
+        jobdata = models.RadiologyInsightsJob(job_data=data)
+        return jobdata
 
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy_async
@@ -90,17 +91,14 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         radiology_insights_client = RadiologyInsightsClient(
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
-        data = TestRadiologyInsightsClient.create_request(self)
+        jobdata = TestRadiologyInsightsClient.create_request(self)
         request_time = datetime.datetime(2024, 2, 26, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
         poller = await radiology_insights_client.begin_infer_radiology_insights(
-            data,
-            headers={
-                "Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT"),
-                "Repeatability-Request-ID": "5189b7f2-a13a-4cac-bebf-407c4ffc3a7c",
-            },
+            id="test12",
+            resource=jobdata,
         )
-        radiology_insights_result = await poller.result()
-
+        response = await poller.result()
+        radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
         for patient_result in radiology_insights_result.patient_results:
             assert patient_result.inferences is not None
             for inference in patient_result.inferences:

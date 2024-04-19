@@ -11,13 +11,17 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_radiology_procedure_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_radiology_procedure_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client and display
+- the Procedure code, 
+- the Imaging Procedure anatomy and modality, 
+- Ordered Procedure code and description 
+extracted by the Radiology Insights service.     
 
 
 USAGE:
@@ -34,27 +38,24 @@ class HealthInsightsSyncSamples:
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 
-        doc_content1 = """CLINICAL HISTORY:   
-        20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
-        COMPARISON:   
-        Right upper quadrant sonographic performed 1 day prior.
-        TECHNIQUE:   
-        Transabdominal grayscale pelvic sonography with duplex color Doppler and spectral waveform analysis of the ovaries.
-        FINDINGS:   
-        The uterus is unremarkable given the transabdominal technique with endometrial echo complex within physiologic normal limits. The ovaries are symmetric in size, measuring 2.5 x 1.2 x 3.0 cm and the left measuring 2.8 x 1.5 x 1.9 cm.\n On duplex imaging, Doppler signal is symmetric.
-        IMPRESSION:   
-        1. Normal pelvic sonography. Findings of testicular torsion.
-        A new US pelvis within the next 6 months is recommended.
-        These results have been discussed with Dr. Jones at 3 PM on November 5 2020."""
-
+        doc_content1 = """
+        Exam:  Head CT with Contrast
+        History:  Headaches for 2 months
+        Technique: Axial, sagittal, and coronal images were reconstructed from helical CT through the head without IV contrast.
+        IV contrast:  100 mL IV Omnipaque 300.
+        Findings: There is no mass effect. There is no abnormal enhancement of the brain or within injuries with IV contrast.\
+        However, there is no evidence of enhancing lesion in either internal auditory canal.
+        Impression: Negative CT of the brain without IV contrast.
+        I recommend a new brain CT within nine months."""
+        
         # Create ordered procedure
         procedure_coding = models.Coding(
-            system="Http://hl7.org/fhir/ValueSet/cpt-all",
-            code="USPELVIS",
-            display="US PELVIS COMPLETE",
+            system="Https://loinc.org",
+            code="24727-0",
+            display="CT HEAD W CONTRAST IV",
         )
         procedure_code = models.CodeableConcept(coding=[procedure_coding])
-        ordered_procedure = models.OrderedProcedure(description="US PELVIS COMPLETE", code=procedure_code)
+        ordered_procedure = models.OrderedProcedure(description="CT HEAD W CONTRAST IV", code=procedure_code)
         # Create encounter
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
@@ -107,18 +108,44 @@ class HealthInsightsSyncSamples:
             )
             job_response = poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(job_response)
-            self.display_critical_results(radiology_insights_result)
+            self.display_radiology_procedure(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
+    def display_radiology_procedure(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
-
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE:
+                    print(f"Radiology Procedure Inference found")
+                    for proccod in ri_inference.procedure_codes:
+                        print(f"\nRadiology Procedure: PROCEDURE CODES:")
+                        for coding in proccod.coding:
+                            print(f"Radiology Procedure: PROCEDURE CODES: Code: {coding.system} {coding.code} {coding.display}")  
+                    for improc in ri_inference.imaging_procedures:
+                        print(f"\nRadiology Procedure: IMAGING PROCEDURE:")
+                        for attribute in improc:
+                            if hasattr(improc, attribute) and not attribute.startswith("_") and not callable(getattr(improc, attribute)):
+                                if attribute == "anatomy":
+                                    if improc.anatomy is not None:
+                                        for coding in improc.anatomy.coding:
+                                            print(f"Radiology Procedure: IMAGING PROCEDURE: Anatomy Code: {coding.system} {coding.code} {coding.display}")
+                                    else:
+                                        print(f"Radiology Procedure: IMAGING PROCEDURE: Anatomy: none")
+                                elif attribute == "modality":
+                                    if improc.modality is not None:
+                                        for coding in improc.modality.coding:
+                                            print(f"Radiology Procedure: IMAGING PROCEDURE: Modality Code: {coding.system} {coding.code} {coding.display}")
+                                    else:
+                                        print(f"Radiology Procedure: IMAGING PROCEDURE: Modality: none") 
+                    orproc = ri_inference.ordered_procedure
+                    print(f"\nRadiology Procedure: ORDERED PROCEDURE:")
+                    if orproc.description is not None:
+                        print(f"Radiology Procedure: ORDERED PROCEDURE: Description: {orproc.description}")
+                    if orproc.code is not None:
+                        for coding in orproc.code.coding:
+                            print(f"Radiology Procedure: ORDERED PROCEDURE: Code: {coding.system} {coding.code} {coding.display}")
+        
 
 def main():
     sample = HealthInsightsSyncSamples()
