@@ -121,7 +121,7 @@ class TestEventHubConnectionStringParser:
         fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
             conn_str
         )
-        assert fully_qualified_namespace == 'sb://localhost:6065'
+        assert fully_qualified_namespace == 'localhost:6065'
         assert emulator == True
 
 
