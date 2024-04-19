@@ -38,19 +38,17 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
             for metric in scope_metric.metrics:
                 for point in metric.data.data_points:
                     if point is not None:
+                        value = 0
+                        if isinstance(point, HistogramDataPoint):
+                            if point.count > 0:
+                                value = point.sum / point.count
+                        elif isinstance(point, NumberDataPoint):
+                            value = point.value
                         metric_point = MetricPoint(
                             name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],
                             weight=1,
+                            value=value
                         )
-                        if isinstance(point, HistogramDataPoint):
-                            if point.count > 0:
-                                metric_point.value = point.sum / point.count
-                            else:
-                                metric_point.value = 0
-                        elif isinstance(point, NumberDataPoint):
-                            metric_point.value = point.value
-                        else:
-                            metric_point.value = 0
                         metric_points.append(metric_point)
     return [
         MonitoringDataPoint(
