@@ -446,42 +446,7 @@ class ServiceBusReceiver(
             ):
                 self._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count)
 
-            first_message_received = expired = False
-            receiving = True
-            drain_receive = False
-            # If we have sent a drain, but have not yet received the drain response, we should continue to receive
-            while receiving and drain_receive or not self._handler._link._sent_drain and len(batch) < max_message_count:
-                while receiving and received_messages_queue.qsize() < max_message_count:
-                    if (
-                        abs_timeout
-                        and self._amqp_transport.get_current_time(amqp_receive_client)
-                        > abs_timeout
-                    ):
-                        # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
-                        if not drain_receive:
-                            self._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
-                        drain_receive = True
-                    before = received_messages_queue.qsize()
-                    receiving = amqp_receive_client.do_work()
-                    received = received_messages_queue.qsize() - before
-                    if (
-                        not first_message_received
-                        and received_messages_queue.qsize() > 0
-                        and received > 0
-                    ):
-                        # first message(s) received, continue receiving for some time
-                        first_message_received = True
-                        abs_timeout = (
-                            self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
-                        )
-                while (
-                    not received_messages_queue.empty()
-                    and len(batch) < max_message_count
-                ):
-                    batch.append(received_messages_queue.get())
-                    received_messages_queue.task_done()
-            return [self._build_received_message(message) for message in batch]
+            self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch)
         finally:
             self._receive_context.clear()
 
