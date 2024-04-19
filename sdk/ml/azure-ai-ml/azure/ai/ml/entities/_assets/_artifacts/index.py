@@ -26,15 +26,15 @@ class Index(Artifact):
      asset is under development. Required.
     :vartype stage: str
     :ivar description: Description information of the asset.
-    :vartype description: str
+    :vartype description: Optional[str]
     :ivar tags: Asset's tags.
-    :vartype tags: dict[str, str]
+    :vartype tags: Optional[dict[str, str]]
     :ivar properties: Asset's properties.
-    :vartype properties: dict[str, str]
+    :vartype properties: Optional[dict[str, str]]
     :ivar path: The local or remote path to the asset.
-    :vartype path: Union[str, os.PathLike]
+    :vartype path: Optional[Union[str, os.PathLike]]
     :ivar datastore: The datastore to upload the local artifact to.
-    :vartype datastore: str
+    :vartype datastore: Optional[str]
     """
 
     def __init__(
