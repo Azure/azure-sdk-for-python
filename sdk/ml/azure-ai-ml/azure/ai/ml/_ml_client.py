@@ -625,6 +625,7 @@ class MLClient:
             operation_config=self._operation_config,
             credential=self._credential,
             all_operations=self._operation_container,
+            datastore_operations=self._datastores,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,

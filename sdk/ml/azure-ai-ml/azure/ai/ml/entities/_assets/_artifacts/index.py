@@ -55,6 +55,7 @@ class Index(Artifact):
             description=description,
             tags=tags,
             properties=properties,
+            path=self.storage_uri,
             **kwargs,
         )
 
@@ -110,7 +111,6 @@ class Index(Artifact):
         """Updates an an artifact with the remote path of a local upload.
 
         :param ArtifactStorageInfo asset_artifact: The asset storage info of the artifact
-        :return: Nothing
-        :rtype: None
         """
-        raise NotImplementedError()
+        self.path = asset_artifact.full_storage_path
+        self.storage_uri = asset_artifact.full_storage_path

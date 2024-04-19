@@ -3,6 +3,8 @@
 # ---------------------------------------------------------
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
     MachineLearningServicesClient as AzureAiAssetsClient042024,
@@ -25,6 +27,7 @@ from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
 from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey
 from azure.ai.ml.entities._assets import Index
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.credentials import TokenCredential
 
 # pylint: disable=protected-access
@@ -52,6 +55,7 @@ class IndexOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         credential: TokenCredential,
+        datastore_operations: DatastoreOperations,
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
@@ -64,6 +68,7 @@ class IndexOperations(_ScopeDependentOperations):
         self._service_client_kwargs: Dict[str, Any] = kwargs.pop("_service_client_kwargs", {})
         self._all_operations = all_operations
 
+        self._datastore_operation: DatastoreOperations = datastore_operations
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
         # Maps a label to a function which given an asset name,
@@ -108,6 +113,14 @@ class IndexOperations(_ScopeDependentOperations):
         :return: Index asset object.
         :rtype: ~azure.ai.ml.entities.Index
         """
+
+        _ = _check_and_upload_path(
+            artifact=index,
+            asset_operations=self,
+            datastore_name=index.datastore,
+            artifact_type=ErrorTarget.INDEX,
+            show_progress=self._show_progress,
+        )
 
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
