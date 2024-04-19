@@ -329,6 +329,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     ) -> None:
         # resolve target ARM ID
         model_inputs_name, model_outputs_name = None, None
+        app_traces_name, app_traces_version = None, None
         model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
         target = schedule.create_monitor.monitoring_target
@@ -339,6 +340,10 @@ class ScheduleOperations(_ScopeDependentOperations):
             if deployment_data_collector:
                 in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
                 out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
+                if "app_traces" in deployment_data_collector.collections:
+                    app_traces = AMLVersionedArmId(deployment_data_collector.collections.get("app_traces").data)
+                    app_traces_name = app_traces.asset_name
+                    app_traces_version = app_traces.asset_version
                 model_inputs_name = in_reg.asset_name
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
@@ -384,7 +389,18 @@ class ScheduleOperations(_ScopeDependentOperations):
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
                 continue
             if signal.type == MonitorSignalType.GENERATION_TOKEN_STATISTICS:
-                self._job_operations._resolve_job_input(signal.production_data, schedule._base_path)
+                if not signal.production_data:  # type: ignore[union-attr]
+                    # if target dataset is absent and data collector for input is enabled,
+                    # create a default target dataset with production app traces as target
+                    signal.production_data = ProductionData(  # type: ignore[union-attr]
+                        input_data=Input(
+                            path=f"{app_traces_name}:{app_traces_version}",
+                            type=self._data_operations.get(app_traces_name, app_traces_version).type,
+                        ),
+                        data_context=MonitorDatasetContext.APP_TRACES,
+                        data_window=BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D"),
+                    )
+                self._job_operations._resolve_job_input(signal.production_data.input_data, schedule._base_path)
                 continue
             if signal.type == MonitorSignalType.CUSTOM:
                 if signal.inputs:  # type: ignore[union-attr]

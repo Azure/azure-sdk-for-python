@@ -87,6 +87,7 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST = "test"
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
+    APP_TRACES = "app_traces"
 
 
 class MonitorTargetTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
