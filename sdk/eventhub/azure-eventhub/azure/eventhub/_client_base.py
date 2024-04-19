@@ -70,7 +70,7 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 def _is_local_endpoint(endpoint: str) -> bool:
-    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None
+    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None # pylint:disable=anomalous-backslash-in-string
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
@@ -142,7 +142,8 @@ def _parse_conn_str(
             raise ValueError(
                 "Invalid endpoint on the connection string. "
                 "For development connection strings, should be in the format: "
-                "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;UseDevelopmentEmulator=true;"
+                "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
+                "UseDevelopmentEmulator=true;"
             )
 
     if any([shared_access_key, shared_access_key_name]) and not all(
