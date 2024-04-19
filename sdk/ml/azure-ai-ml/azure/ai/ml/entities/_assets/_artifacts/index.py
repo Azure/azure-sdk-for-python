@@ -31,8 +31,10 @@ class Index(Artifact):
     :vartype tags: dict[str, str]
     :ivar properties: Asset's properties.
     :vartype properties: dict[str, str]
-    :ivar str storage_uri: Default workspace blob storage Uri.
-    :vartype storage_uri: str
+    :ivar path: The local or remote path to the asset.
+    :vartype path: Union[str, os.PathLike]
+    :ivar datastore: The datastore to upload the local artifact to.
+    :vartype datastore: str
     """
 
     def __init__(
@@ -41,21 +43,22 @@ class Index(Artifact):
         name: str,
         version: str,
         stage: str,
-        storage_uri: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
+        path: Optional[Union[str, PathLike]] = None,
+        datastore: Optional[str] = None,
         **kwargs: Any,
     ):
         self.stage = stage
-        self.storage_uri = storage_uri
         super().__init__(
             name=name,
             version=version,
             description=description,
             tags=tags,
             properties=properties,
-            path=self.storage_uri,
+            path=path,
+            datastore=datastore,
             **kwargs,
         )
 
@@ -77,7 +80,7 @@ class Index(Artifact):
             tags=index_rest_object.tags,
             properties=index_rest_object.properties,
             stage=index_rest_object.stage,
-            storage_uri=index_rest_object.storage_uri,
+            path=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
             creation_context=SystemData._from_rest_object(
                 RestSystemData.from_dict(index_rest_object.system_data.as_dict())
@@ -87,7 +90,7 @@ class Index(Artifact):
     def _to_rest_object(self) -> RestIndex:
         return RestIndex(
             stage=self.stage,
-            storage_uri=self.storage_uri,
+            storage_uri=self.path,
             description=self.description,
             tags=self.tags,
             properties=self.properties,
@@ -113,4 +116,3 @@ class Index(Artifact):
         :param ArtifactStorageInfo asset_artifact: The asset storage info of the artifact
         """
         self.path = asset_artifact.full_storage_path
-        self.storage_uri = asset_artifact.full_storage_path
