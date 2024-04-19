@@ -59,7 +59,7 @@ with servicebus_client:
             subscription_name='sb-allmsgs-sub'
         )
     with receiver:
-        deleted_msgs = receiver.delete_messages(max_message_count=20)
+        deleted_msgs = receiver.purge_messages()
         print(deleted_msgs)
 
 print("Delete message is done.")
