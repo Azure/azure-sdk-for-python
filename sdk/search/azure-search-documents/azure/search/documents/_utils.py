@@ -18,13 +18,13 @@ def get_answer_query(
     query_answer_count: Optional[int] = None,
     query_answer_threshold: Optional[float] = None,
 ) -> Optional[Union[str, QueryAnswerType]]:
-    if query_answer_count and query_answer_threshold:
-        answers: Optional[Union[str, QueryAnswerType]] = "{}|count-{},threshold-{}".format(
-            query_answer, query_answer_count, query_answer_threshold
-        )
-    else:
-        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
-        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
+    answers = query_answer
+    separator = "|"
+    if query_answer_count:
+        answers = f"{answers}{separator}count-{query_answer_count}"
+        separator = ","
+    if query_answer_threshold:
+        answers = f"{answers}{separator}threshold-{query_answer_threshold}"
     return answers
 
 
