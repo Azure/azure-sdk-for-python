@@ -66,25 +66,21 @@ class Index(Artifact):
         :return: An Index Asset
         :rtype: Index
         """
-        asset_id = AMLAssetId(asset_id=index_rest_object.properties["id"])
-
-        # FIXME: The typespec's definition of Index doesn't seem to match the actual response returned from the
-        #        generic asset API (fields are nested into "properties" instead of top level).
-        #        Manually handle this until the typespec is updated
-
-        properties = index_rest_object["properties"]
+        asset_id = AMLAssetId(asset_id=index_rest_object.id)
 
         return Index(
-            id=properties["id"],
+            id=index_rest_object.id,
             name=asset_id.asset_name,
             version=asset_id.asset_version,
-            description=properties.get("description"),
-            tags=properties.get("tags"),
-            properties=properties,
-            stage=properties.get("stage"),
+            description=index_rest_object.description,
+            tags=index_rest_object.tags,
+            properties=index_rest_object.properties,
+            stage=index_rest_object.stage,
             storage_uri=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
-            creation_context=SystemData._from_rest_object(RestSystemData.from_dict(properties["systemData"])),
+            creation_context=SystemData._from_rest_object(
+                RestSystemData.from_dict(index_rest_object.system_data.as_dict())
+            ),
         )
 
     def _to_rest_object(self) -> RestIndex:
