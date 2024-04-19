@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast, List
 import time
 import math
 import random
@@ -472,3 +472,46 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
         return callback(status, response, description, amqp_transport=PyamqpTransportAsync)
+
+    async def receive_loop_async(
+        receiver: "ServiceBusReceiver",
+        amqp_receive_client: "ReceiveClientAsync",
+        max_message_count: int,
+        batch: int,
+        **kwargs: Any
+    ) -> List["ServiceBusReceivedMessage"]:
+        first_message_received = expired = False
+        receiving = True
+        drain_receive = False
+        while receiving and (drain_receive or not receiver._handler._link._sent_drain) and len(batch) < max_message_count:
+            while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                if (
+                    abs_timeout
+                    and receiver._amqp_transport.get_current_time(amqp_receive_client)
+                    > abs_timeout
+                ):
+                    # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
+                    if not drain_receive:
+                        await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
+                    drain_receive = True
+                    
+                before = amqp_receive_client._received_messages.qsize()
+                receiving = await amqp_receive_client.do_work_async()
+                received = amqp_receive_client._received_messages.qsize() - before
+                if (
+                    not first_message_received
+                    and amqp_receive_client._received_messages.qsize() > 0
+                    and received > 0
+                ):
+                    # first message(s) received, continue receiving for some time
+                    first_message_received = True
+                    abs_timeout = (
+                        receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        + receiver._further_pull_receive_timeout
+                    )
+            while (
+                not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
+            ):
+                batch.append(amqp_receive_client._received_messages.get())
+                amqp_receive_client._received_messages.task_done()
+        return [receiver._build_received_message(message) for message in batch]
