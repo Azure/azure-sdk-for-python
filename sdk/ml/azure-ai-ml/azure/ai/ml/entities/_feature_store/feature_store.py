@@ -124,9 +124,11 @@ class FeatureStore(Workspace):
         feature_store_settings = kwargs.pop(
             "feature_store_settings",
             FeatureStoreSettings(
-                compute_runtime=compute_runtime
-                if compute_runtime
-                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+                compute_runtime=(
+                    compute_runtime
+                    if compute_runtime
+                    else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION)
+                ),
             ),
         )
         # TODO: Refactor this so that super().__init__() is not called twice coming from _from_rest_object()

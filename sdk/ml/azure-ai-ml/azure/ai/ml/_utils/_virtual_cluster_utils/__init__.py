@@ -38,9 +38,11 @@ def index_entity_response_to_job(entity: IndexEntityResponse) -> Job:
         services={},
         status=annotations.additional_properties["status"],
         creation_context=creation_context,
-        compute=properties.additional_properties["compute"]["armId"]
-        if "compute" in properties.additional_properties
-        else None,
+        compute=(
+            properties.additional_properties["compute"]["armId"]
+            if "compute" in properties.additional_properties
+            else None
+        ),
     )
 
 
