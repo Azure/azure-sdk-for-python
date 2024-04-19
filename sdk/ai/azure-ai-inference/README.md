@@ -263,7 +263,7 @@ import logging
 logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Direct logging output to stdout (the default):
 handler = logging.StreamHandler(stream=sys.stdout)
