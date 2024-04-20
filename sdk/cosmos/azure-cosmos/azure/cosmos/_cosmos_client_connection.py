@@ -3279,5 +3279,5 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             collection = self.ReadContainer(collection_link)
             partition_key_definition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = collection
+            self.collection_properties_cache[collection_link] = collection
         return partition_key_definition
