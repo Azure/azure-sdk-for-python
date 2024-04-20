@@ -407,7 +407,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                             ),
                             data_window=BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D"),
                         )
-                self._job_operations._resolve_job_input(signal.production_data.input_data, schedule._base_path)  # type: ignore[union-attr]
+                self._job_operations._resolve_job_input(
+                    signal.production_data.input_data,
+                    schedule._base_path)  # type: ignore[union-attr]
                 continue
             if signal.type == MonitorSignalType.CUSTOM:
                 if signal.inputs:  # type: ignore[union-attr]
