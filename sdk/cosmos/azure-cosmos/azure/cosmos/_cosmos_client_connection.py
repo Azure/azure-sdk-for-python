@@ -144,6 +144,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
         self.partition_key_definition_cache: Dict[str, Any] = {}
+        self.collection_properties_cache: Dict[str, Any] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -1261,7 +1262,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if base.IsItemContainerLink(database_or_container_link):
             options = self._AddPartitionKey(database_or_container_link, document, options)
-
         return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
 
     def UpsertItem(
@@ -3272,11 +3272,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
         partition_key_definition = None
         # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partition_key_definition = self.partition_key_definition_cache.get(collection_link)
+        if collection_link in self.collection_properties_cache:
+            cached_collection = self.collection_properties_cache.get(collection_link)
+            partition_key_definition = cached_collection.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
             collection = self.ReadContainer(collection_link)
             partition_key_definition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partition_key_definition
+            self.partition_key_definition_cache[collection_link] = collection
         return partition_key_definition

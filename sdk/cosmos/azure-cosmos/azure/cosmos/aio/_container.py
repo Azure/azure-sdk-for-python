@@ -81,19 +81,20 @@ class ContainerProxy:
     ) -> None:
         self.client_connection = client_connection
         self.id = id
-        self._properties = properties
         self.database_link = database_link
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        if properties:
+            self.client_connection.collection_properties_cache[self.client_connection] = properties
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     async def _get_properties(self) -> Dict[str, Any]:
-        if self._properties is None:
-            self._properties = await self.read()
-        return self._properties
+        if self.container_link not in self.client_connection.collection_properties_cache:
+            self.client_connection.collection_properties_cache[self.container_link] = self.read()
+        return self.client_connection.collection_properties_cache[self.container_link]
 
     @property
     async def is_system_key(self) -> bool:
@@ -168,11 +169,11 @@ class ContainerProxy:
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
 
-        collection_link = self.container_link
-        self._properties = await self.client_connection.ReadContainer(
-            collection_link, options=request_options, **kwargs
+        coll_link = self.container_link
+        self.client_connection.collection_properties_cache[coll_link] = await self.client_connection.ReadContainer(
+            coll_link, options=request_options, **kwargs
         )
-        return self._properties
+        return self.client_connection.collection_properties_cache[coll_link]
 
     @distributed_trace_async
     async def create_item(

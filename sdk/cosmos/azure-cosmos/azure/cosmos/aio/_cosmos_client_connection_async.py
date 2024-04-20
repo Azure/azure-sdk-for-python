@@ -145,6 +145,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
         self.partition_key_definition_cache: Dict[str, Any] = {}
+        self.contaner_collection_cache: Dict[str, Any] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -3034,13 +3035,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
 
         # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
+        if collection_link in self.collection_properties_cache:
+            partitionKeyDefinition = self.collection_properties_cache.get(collection_link)
         # Else read the collection from backend and add it to the cache
         else:
             collection = await self.ReadContainer(collection_link)
             partitionKeyDefinition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partitionKeyDefinition
+            self.collection_properties_cache[collection_link] = partitionKeyDefinition
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:

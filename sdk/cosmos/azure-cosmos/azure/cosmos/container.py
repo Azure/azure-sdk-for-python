@@ -83,17 +83,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
-        self._properties = properties
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        if properties:
+            self.client_connection.partition_key_definition_cache[self.container_link] = properties
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_properties(self) -> Dict[str, Any]:
-        if self._properties is None:
-            self._properties = self.read()
-        return self._properties
+        if self.container_link not in self.client_connection.collection_properties_cache:
+            self.client_connection.collection_properties_cache[self.container_link] = self.read()
+        return self.client_connection.collection_properties_cache[self.container_link]
 
     @property
     def is_system_key(self) -> bool:
@@ -174,10 +175,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
         collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(
+        self.client_connection.collection_properties_cache[collection_link] = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-        return self._properties
+        return self.client_connection.collection_properties_cache[collection_link]
 
     @distributed_trace
     def read_item(  # pylint:disable=docstring-missing-param
