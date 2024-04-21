@@ -64,7 +64,9 @@ class TestContainerPropertiesCache(unittest.TestCase):
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             pass
-
+        # Delete The cache as this is meant to test calling operations on a preexisting container
+        # and not a freshly made one
+        client.client_connection.collection_properties_cache = {}
         # We will hot path operations to verify cache persists
         # This will extract partition key from the item body, which will need partition key definition from
         # container properties. We test to check the cache is empty since we just created the container
