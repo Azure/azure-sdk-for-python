@@ -282,7 +282,7 @@ class PathClient(StorageAccountHostsMixin):
         :return: A dictionary of response headers.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
@@ -347,7 +347,7 @@ class PathClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary containing information about the deleted path.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
         # The pagination is only for ACL checks, the final request remains the atomic delete operation
@@ -449,7 +449,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict (Etag and last modified).
+        :returns: response dict containing access control options (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         if not any([owner, group, permissions, acl]):
             raise ValueError("At least one parameter should be set for set_access_control API")
@@ -519,7 +520,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict.
+        :returns: response dict containing access control options with no modifications.
+        :rtype: dict[str, Any]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
@@ -583,7 +585,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -637,7 +639,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -690,7 +692,7 @@ class PathClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -879,6 +881,8 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: response dict containing information about the renamed path.
+        :rtype: dict[str, Any]
         """
         options = self._rename_path_options(
             rename_source,
@@ -933,6 +937,9 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties or FileProperties
 
         .. admonition:: Example:
@@ -980,7 +987,7 @@ class PathClient(StorageAccountHostsMixin):
         :param metadata:
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
-        :type metadata: Dict[str, str]
+        :type metadata: dict[str, str]
         :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
@@ -1012,6 +1019,7 @@ class PathClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
@@ -1052,7 +1060,7 @@ class PathClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file/directory-updated property dict (Etag and last modified)
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
