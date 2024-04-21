@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, too-many-public-methods
+# pylint: disable=too-many-lines, too-many-public-methods, docstring-keyword-should-match-keyword-only
+
 import functools
 import sys
 import time

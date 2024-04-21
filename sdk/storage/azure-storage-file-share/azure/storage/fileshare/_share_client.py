@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 from typing import (
     Optional, Union, Dict, Any, Iterable, Literal, TYPE_CHECKING

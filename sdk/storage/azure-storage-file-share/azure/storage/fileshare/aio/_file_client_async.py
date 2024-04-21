@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method, too-many-public-methods
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 import functools
 import sys
 import time
