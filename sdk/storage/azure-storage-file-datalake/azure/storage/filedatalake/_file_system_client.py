@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+
 import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import urlparse, quote, unquote

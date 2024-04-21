@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
