@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import DocumentTranslationClientConfiguration, SingleDocumentTranslationClientConfiguration
 from ._operations import DocumentTranslationClientOperationsMixin, SingleDocumentTranslationClientOperationsMixin
-from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentTranslationClient(
@@ -34,7 +34,7 @@ class DocumentTranslationClient(
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -42,7 +42,9 @@ class DocumentTranslationClient(
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}/translator"
         self._config = DocumentTranslationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -62,20 +64,22 @@ class DocumentTranslationClient(
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -83,7 +87,7 @@ class DocumentTranslationClient(
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -94,15 +98,15 @@ class DocumentTranslationClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> "DocumentTranslationClient":
-        self._client.__enter__()
+    async def __aenter__(self) -> "DocumentTranslationClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
 
 
 class SingleDocumentTranslationClient(
@@ -116,13 +120,15 @@ class SingleDocumentTranslationClient(
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}/translator"
         self._config = SingleDocumentTranslationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -142,20 +148,22 @@ class SingleDocumentTranslationClient(
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -163,7 +171,7 @@ class SingleDocumentTranslationClient(
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -174,12 +182,12 @@ class SingleDocumentTranslationClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> "SingleDocumentTranslationClient":
-        self._client.__enter__()
+    async def __aenter__(self) -> "SingleDocumentTranslationClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)

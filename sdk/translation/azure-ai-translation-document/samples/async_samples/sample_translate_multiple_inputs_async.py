@@ -38,10 +38,7 @@ async def sample_multiple_translation_async():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
-    from azure.ai.translation.document import (
-        DocumentTranslationInput,
-        TranslationTarget
-    )
+    from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -54,29 +51,19 @@ async def sample_multiple_translation_async():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     async with client:
-        poller = await client.begin_translation(inputs=[
+        poller = await client.begin_translation(
+            inputs=[
                 DocumentTranslationInput(
                     source_url=source_container_url_1,
                     targets=[
-                        TranslationTarget(
-                            target_url=target_container_url_fr,
-                            language="fr"
-                        ),
-                        TranslationTarget(
-                            target_url=target_container_url_ar,
-                            language="ar"
-                        )
-                    ]
+                        TranslationTarget(target_url=target_container_url_fr, language="fr"),
+                        TranslationTarget(target_url=target_container_url_ar, language="ar"),
+                    ],
                 ),
                 DocumentTranslationInput(
                     source_url=source_container_url_2,
-                    targets=[
-                        TranslationTarget(
-                            target_url=target_container_url_es,
-                            language="es"
-                        )
-                    ]
-                )
+                    targets=[TranslationTarget(target_url=target_container_url_es, language="es")],
+                ),
             ]
         )
         result = await poller.result()
@@ -104,5 +91,6 @@ async def sample_multiple_translation_async():
 async def main():
     await sample_multiple_translation_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

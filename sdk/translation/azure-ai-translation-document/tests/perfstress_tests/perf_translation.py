@@ -15,11 +15,12 @@ from azure.storage.blob import generate_container_sas
 
 class Document:
     """Represents a document to be uploaded to source/target container"""
+
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", str(uuid.uuid4()))
         self.suffix = kwargs.get("suffix", ".txt")
         self.prefix = kwargs.get("prefix", "")
-        self.data = kwargs.get("data", b'This is written in english.')
+        self.data = kwargs.get("data", b"This is written in english.")
 
     @classmethod
     def create_docs(cls, docs_count):
@@ -42,20 +43,13 @@ class TranslationPerfStressTest(PerfStressTest):
         self.source_container_name = "source-perf-" + str(uuid.uuid4())
         self.target_container_name = "target-perf-" + str(uuid.uuid4())
 
-        self.service_client = DocumentTranslationClient(
-            endpoint,
-            AzureKeyCredential(key),
-            **self._client_kwargs
-        )
+        self.service_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key), **self._client_kwargs)
         self.async_service_client = AsyncDocumentTranslationClient(
-            endpoint,
-            AzureKeyCredential(key),
-            **self._client_kwargs
+            endpoint, AzureKeyCredential(key), **self._client_kwargs
         )
 
     async def create_source_container(self):
-        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
-                                           self.storage_key)
+        container_client = ContainerClient(self.storage_endpoint, self.source_container_name, self.storage_key)
         async with container_client:
             await container_client.create_container()
             docs = Document.create_docs(10)
@@ -64,8 +58,7 @@ class TranslationPerfStressTest(PerfStressTest):
             return self.generate_sas_url(self.source_container_name, "rl")
 
     async def create_target_container(self):
-        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
-                                           self.storage_key)
+        container_client = ContainerClient(self.storage_endpoint, self.target_container_name, self.storage_key)
         async with container_client:
             await container_client.create_container()
 
@@ -77,7 +70,7 @@ class TranslationPerfStressTest(PerfStressTest):
             container_name=container_name,
             account_key=self.storage_key,
             permission=permission,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2),
         )
 
         container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
@@ -107,16 +100,12 @@ class TranslationPerfStressTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        statuses = self.service_client.list_document_statuses(
-            self.translation_id
-        )
+        statuses = self.service_client.list_document_statuses(self.translation_id)
         for doc in statuses:
             pass
 
     async def run_async(self):
         """The asynchronous perf test."""
-        statuses = self.async_service_client.list_document_statuses(
-            self.translation_id
-        )
+        statuses = self.async_service_client.list_document_statuses(self.translation_id)
         async for doc in statuses:
             pass

@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,7 +13,7 @@ from devtools_testutils import (
     is_live,
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
-    add_oauth_response_sanitizer
+    add_oauth_response_sanitizer,
 )
 from azure.storage.blob import BlobServiceClient
 
@@ -28,10 +27,7 @@ if sys.version_info < (3, 5):
 def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_remove_header_sanitizer(headers="Retry-After")
-    add_general_regex_sanitizer(
-        value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
-    )
+    add_general_regex_sanitizer(value="fakeendpoint", regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)")
     add_general_regex_sanitizer(
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
         value="fakeendpoint",
@@ -46,7 +42,7 @@ def add_sanitizers(test_proxy):
     if is_live() and os.getenv("TRANSLATION_ENVIRONMENT") == "Dogfood":
         client = BlobServiceClient(
             "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
-            os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
+            os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY"),
         )
         for container in client.list_containers():
             client.delete_container(container)
