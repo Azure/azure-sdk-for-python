@@ -86,7 +86,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection.partition_key_definition_cache[self.container_link] = properties
+            self.client_connection.collection_properties_cache[self.container_link] = properties
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
