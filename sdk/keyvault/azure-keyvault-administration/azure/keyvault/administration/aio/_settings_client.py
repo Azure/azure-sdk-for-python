@@ -85,3 +85,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
             **kwargs
         )
         return KeyVaultSetting._from_generated(result)
+
+    async def __aenter__(self) -> "KeyVaultSettingsClient":
+        await self._client.__aenter__()
+        return self
