@@ -86,14 +86,14 @@ class ContainerProxy:
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection.collection_properties_cache[self.client_connection] = properties
+            self.client_connection.collection_properties_cache[self.container_link] = properties
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self.container_link not in self.client_connection.collection_properties_cache:
-            self.client_connection.collection_properties_cache[self.container_link] = self.read()
+            self.client_connection.collection_properties_cache[self.container_link] = await self.read()
         return self.client_connection.collection_properties_cache[self.container_link]
 
     @property
