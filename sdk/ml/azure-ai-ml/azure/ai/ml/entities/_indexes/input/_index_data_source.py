@@ -5,10 +5,11 @@ import os
 import json
 from typing import Optional, Union
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input
 from azure.ai.ml.constants._common import IndexInputType, DataIndexTypes
 
 from azure.ai.ml.entities import PipelineComponent
+from azure.ai.ml.entities._load_functions import load_component
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 
 from ._index_config import IndexConfig
@@ -31,15 +32,15 @@ class IndexDataSource:
     def __init__(self, *, input_type: Union[str, IndexInputType]):
         self.input_type = input_type
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
         """Given the general config values, as well as the config values related to the output index, produce
         and populate a component that creates an index of the specified type from this input config's data source.
 
         :param index_config: An internal helper object containing all I/O-agnostic variables involved in
             index creation.
         :type index_config: ~azure.ai.resources.operations.IndexConfig
-        :param acs_config: A config object containing all output-related variable for index creation.
-        :type acs_config:~azure.ai.resources.operations.AzureAISearchConfig
+        :param ai_search_index_config: A config object containing all output-related variable for index creation.
+        :type ai_search_index_config:~azure.ai.resources.operations.AzureAISearchConfig
         """
         raise NotImplementedError()  # Intended. This base method should never be called.
 
@@ -64,11 +65,11 @@ class GitSource(IndexDataSource):
         self.git_connection_id = git_connection_id
         super().__init__(input_type=IndexInputType.GIT)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
-        if acs_config:
-            acs_index_name = acs_config.acs_index_name
-            acs_import_config = json.dumps({"index_name": acs_index_name})
+        if ai_search_index_config:
+            ai_search_index_name = ai_search_index_config.ai_search_index_name
+            ai_search_index_import_config = json.dumps({"index_name": ai_search_index_name})
             git_create_or_update_acs_component = load_component(
                 os.path.join(curr_file_path, "component-configs", "git_create_or_update_acs_index.yml")
                 )
@@ -87,8 +88,8 @@ class GitSource(IndexDataSource):
                 chunk_prepend_summary=index_config.chunk_prepend_summary,
                 document_path_replacement_regex=index_config.document_path_replacement_regex,
                 embeddings_container=index_config.embeddings_container,
-                acs_connection=acs_config.acs_connection_id,
-                acs_config=acs_import_config
+                acs_connection=ai_search_index_config.ai_search_index_connection_id,
+                acs_config=ai_search_index_import_config
             )
             return rag_job_component
         else:
@@ -118,47 +119,47 @@ class GitSource(IndexDataSource):
 class AISearchSource(IndexDataSource):
     """Config class for creating an ML index from an OpenAI <thing>.
 
-    :param acs_index_name: The name of the ACS index to use as the source.
-    :type acs_index_name: str
-    :param acs_content_key: The key for the content field in the ACS index.
-    :type acs_content_key: str
-    :param acs_embedding_key: The key for the embedding field in the ACS index.
-    :type acs_embedding_key: str
-    :param acs_title_key: The key for the title field in the ACS index.
-    :type acs_title_key: str
-    :param acs_metadata_key: The key for the metadata field in the ACS index.
-    :type acs_metadata_key: str
-    :param acs_connection_id: The connection ID for the ACS index.
-    :type acs_connection_id: str
-    :param num_docs_to_import: Number of documents to import from the existing ACS index. Defaults to 50.
+    :param ai_search_index_name: The name of the Azure AI Search index to use as the source.
+    :type ai_search_index_name: str
+    :param ai_search_index_content_key: The key for the content field in the Azure AI Search index.
+    :type ai_search_index_content_key: str
+    :param ai_search_index_embedding_key: The key for the embedding field in the Azure AI Search index.
+    :type ai_search_index_embedding_key: str
+    :param ai_search_index_title_key: The key for the title field in the Azure AI Search index.
+    :type ai_search_index_title_key: str
+    :param ai_search_index_metadata_key: The key for the metadata field in the Azure AI Search index.
+    :type ai_search_index_metadata_key: str
+    :param ai_search_index_connection_id: The connection ID for the Azure AI Search index.
+    :type ai_search_index_connection_id: str
+    :param num_docs_to_import: Number of documents to import from the existing Azure AI Search index. Defaults to 50.
     :type num_docs_to_import: int
     """
 
     def __init__(self, *,
-        acs_index_name: str,
-        acs_content_key: str,
-        acs_embedding_key: str,
-        acs_title_key: str,
-        acs_metadata_key: str,
-        acs_connection_id: str,
+        ai_search_index_name: str,
+        ai_search_index_content_key: str,
+        ai_search_index_embedding_key: str,
+        ai_search_index_title_key: str,
+        ai_search_index_metadata_key: str,
+        ai_search_index_connection_id: str,
         num_docs_to_import: int = 50,
     ):
-        self.acs_index_name = acs_index_name
-        self.acs_connection_id = acs_connection_id
-        self.acs_content_key = acs_content_key
-        self.acs_embedding_key = acs_embedding_key
-        self.acs_title_key = acs_title_key
-        self.acs_metadata_key= acs_metadata_key
+        self.ai_search_index_name = ai_search_index_name
+        self.ai_search_index_connection_id = ai_search_index_connection_id
+        self.ai_search_index_content_key = ai_search_index_content_key
+        self.ai_search_index_embedding_key = ai_search_index_embedding_key
+        self.ai_search_index_title_key = ai_search_index_title_key
+        self.ai_search_index_metadata_key= ai_search_index_metadata_key
         self.num_docs_to_import = num_docs_to_import
         super().__init__(input_type=IndexInputType.AOAI)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
-        acs_import_config = json.dumps({"index_name": self.acs_index_name,
-                                        "content_key": self.acs_content_key,
-                                        "embedding_key": self.acs_embedding_key,
-                                        "title_key": self.acs_title_key,
-                                        "metadata_key": self.acs_metadata_key,
+        ai_search_index_import_config = json.dumps({"index_name": self.ai_search_index_name,
+                                        "content_key": self.ai_search_index_content_key,
+                                        "embedding_key": self.ai_search_index_embedding_key,
+                                        "title_key": self.ai_search_index_title_key,
+                                        "metadata_key": self.ai_search_index_metadata_key,
                                         "embedding_model_uri": index_config.embeddings_model,
                                         })
         import_acs_component = load_component(os.path.join(curr_file_path, "component-configs", "import_acs_index.yml"))
@@ -167,8 +168,8 @@ class AISearchSource(IndexDataSource):
             embeddings_dataset_name=index_config.output_index_name,
             embedding_connection=index_config.aoai_connection_id,
             num_docs_to_import=self.num_docs_to_import,
-            acs_import_connection=self.acs_connection_id,
-            acs_import_config=acs_import_config,
+            acs_import_connection=self.ai_search_index_connection_id,
+            acs_import_config=ai_search_index_import_config,
             data_source_url=index_config.data_source_url
         )
         return rag_job_component
@@ -184,11 +185,11 @@ class LocalSource(IndexDataSource):
         self.input_data = Input(type="uri_folder", path=input_data)
         super().__init__(input_type=IndexInputType.LOCAL)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
-        if acs_config:
-            acs_index_name = acs_config.acs_index_name
-            acs_import_config = json.dumps({"index_name": acs_index_name})
+        if ai_search_index_config:
+            ai_search_index_name = ai_search_index_config.ai_search_index_name
+            ai_search_index_import_config = json.dumps({"index_name": ai_search_index_name})
             git_create_or_update_acs_component = load_component(
                 os.path.join(curr_file_path, "component-configs", "dataset_create_or_update_acs_index.yml")
                 )
@@ -205,8 +206,8 @@ class LocalSource(IndexDataSource):
                 chunk_prepend_summary=index_config.chunk_prepend_summary,
                 document_path_replacement_regex=index_config.document_path_replacement_regex,
                 embeddings_container=index_config.embeddings_container,
-                acs_connection=acs_config.acs_connection_id,
-                acs_config=acs_import_config
+                acs_connection=ai_search_index_config.ai_search_index_connection_id,
+                acs_config=ai_search_index_import_config
             )
             return rag_job_component
         else:

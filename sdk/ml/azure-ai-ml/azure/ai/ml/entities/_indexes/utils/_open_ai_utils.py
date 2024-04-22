@@ -18,7 +18,7 @@ def build_open_ai_protocol(s: Optional[str] = None):
         return OPEN_AI_PROTOCOL_TEMPLATE.format(s, s)
     
 def build_connection_id(id: Optional[str], scope: OperationScope):
-    if not id or not scope.subscription_id or not scope.resource_group_name or not scope.project_name:
+    if not id or not scope.subscription_id or not scope.resource_group_name or not scope.workspace_name:
         return id
 
     if is_ARM_id_for_resource(id, "connections", True):
@@ -28,5 +28,5 @@ def build_connection_id(id: Optional[str], scope: OperationScope):
     return template.format(
         subscription_id=scope.subscription_id,
         resource_group_name=scope.resource_group_name,
-        workspace_name=scope.project_name,
+        workspace_name=scope.workspace_name,
         id=id)

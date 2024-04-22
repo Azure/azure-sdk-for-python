@@ -240,7 +240,7 @@ def data_index_incremental_update_hosted(
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
-    from azure.ai.ml.entities._indexes.dataindex.data_index.models import build_model_protocol
+    from azure.ai.ml.entities._indexes.dataindex.data_index import build_model_protocol
     from azure.ai.ml.entities._indexes.dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
