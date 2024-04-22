@@ -393,7 +393,7 @@ class WorkspaceConnection(Resource):
         if rest_obj.properties.category == ConnectionCategory.AZURE_ONE_LAKE:
             # The microsoft one lake connection uniquely has client-only inputs
             # that aren't just an alternate name for the target.
-            # This sets those inputs, that way the intializer can still
+            # This sets those inputs, that way the initializer can still
             # required those fields for users.
             rest_kwargs["artifact"] = ""
             rest_kwargs["one_lake_workspace_name"] = ""

@@ -55,7 +55,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         connection's credential type, but not the actual secrets of that credential.
         However, it's extremely common for users to want to know the contents of their connection's credentials.
         This method tries to fill in the user's credentials with the actual values by making
-        a secondary API call to the service. It requires that the user have the necceary permissions to do so,
+        a secondary API call to the service. It requires that the user have the necessary permissions to do so,
         and it only works on api key-based credentials.
 
         :param connection: The connection to try to fill in the credentials for.
