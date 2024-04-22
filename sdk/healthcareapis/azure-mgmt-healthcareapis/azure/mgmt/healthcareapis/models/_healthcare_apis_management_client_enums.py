@@ -138,3 +138,9 @@ class ServiceNameUnavailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMe
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
+
+
+class SmartDataActions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Data Actions that can be enabled for a Smart Identity Provider Application."""
+
+    READ = "Read"

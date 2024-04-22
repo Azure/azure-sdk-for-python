@@ -8,6 +8,10 @@ _JS_ASSIGNEE = {'qiaozha', 'MaryGao'}
 
 
 class IssueProcessJs(IssueProcess):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language_name = 'js'
+
     def auto_assign_policy(self) -> str:
         weeks = datetime.datetime.now().isocalendar()[1]
         assignees = list(self.assignee_candidates)
@@ -19,9 +23,9 @@ class IssueProcessJs(IssueProcess):
 class Js(Common):
     def __init__(self, issues, language_owner, sdk_assignees):
         super(Js, self).__init__(issues, language_owner, sdk_assignees)
-        self.file_out_name = 'release_js_status.md'
         self.issue_process_function = IssueProcessJs
-
+        if not self.for_test():
+            self.file_out_name = 'release_js_status.md'
 
 def js_process(issues: List[Any]) -> Js:
     return Js(issues, _JS_OWNER, _JS_ASSIGNEE)

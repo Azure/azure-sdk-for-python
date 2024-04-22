@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +39,7 @@ def build_check_name_availability_request(location: str, subscription_id: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -104,7 +104,6 @@ class LocationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.hdinsightcontainers.models.NameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -112,18 +111,22 @@ class LocationsOperations:
 
     @overload
     def check_name_availability(
-        self, location: str, name_availability_parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        name_availability_parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.NameAvailabilityResult:
         """Check the availability of the resource name.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param name_availability_parameters: The name and type of the resource. Required.
-        :type name_availability_parameters: IO
+        :type name_availability_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.hdinsightcontainers.models.NameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -131,20 +134,19 @@ class LocationsOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, location: str, name_availability_parameters: Union[_models.NameAvailabilityParameters, IO], **kwargs: Any
+        self,
+        location: str,
+        name_availability_parameters: Union[_models.NameAvailabilityParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.NameAvailabilityResult:
         """Check the availability of the resource name.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param name_availability_parameters: The name and type of the resource. Is either a
-         NameAvailabilityParameters type or a IO type. Required.
+         NameAvailabilityParameters type or a IO[bytes] type. Required.
         :type name_availability_parameters:
-         ~azure.mgmt.hdinsightcontainers.models.NameAvailabilityParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.hdinsightcontainers.models.NameAvailabilityParameters or IO[bytes]
         :return: NameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.hdinsightcontainers.models.NameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -172,23 +174,22 @@ class LocationsOperations:
         else:
             _json = self._serialize.body(name_availability_parameters, "NameAvailabilityParameters")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -201,10 +202,6 @@ class LocationsOperations:
         deserialized = self._deserialize("NameAvailabilityResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.HDInsight/locations/{location}/checkNameAvailability"
-    }
+        return deserialized  # type: ignore

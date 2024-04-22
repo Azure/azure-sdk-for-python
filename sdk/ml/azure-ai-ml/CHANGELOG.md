@@ -1,6 +1,6 @@
 # Release History
 
-## 1.15.0 (unreleased)
+## 1.16.0 (unreleased)
 
 ### Features Added
 
@@ -16,6 +16,10 @@
 - Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
 - workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
 - Removed Workspace Hub Operations from ML Client.
+
+### Other Changes
+
+## 1.15.0 (2024-03-26)
 
 ### Other Changes
 

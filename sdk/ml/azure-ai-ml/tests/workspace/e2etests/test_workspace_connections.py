@@ -108,6 +108,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_cr_msi(
         self,
         client: MLClient,
@@ -150,6 +151,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_git_user_pwd(
         self,
         client: MLClient,
@@ -193,6 +195,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.GIT))
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
         self,
         client: MLClient,
@@ -483,6 +486,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client.workspace_hubs.begin_delete(name=hub.name, delete_dependent_resources=True)
 
     @pytest.mark.shareTest
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connection_data_connection_listing(
         self,
         client: MLClient,

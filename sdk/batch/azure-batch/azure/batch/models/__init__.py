@@ -18,6 +18,7 @@ try:
     from ._models_py3 import ApplicationPackageReference
     from ._models_py3 import ApplicationSummary
     from ._models_py3 import AuthenticationTokenSettings
+    from ._models_py3 import AutomaticOSUpgradePolicy
     from ._models_py3 import AutoPoolSpecification
     from ._models_py3 import AutoScaleRun
     from ._models_py3 import AutoScaleRunError
@@ -189,6 +190,7 @@ try:
     from ._models_py3 import ResizeError
     from ._models_py3 import ResourceFile
     from ._models_py3 import ResourceStatistics
+    from ._models_py3 import RollingUpgradePolicy
     from ._models_py3 import Schedule
     from ._models_py3 import SecurityProfile
     from ._models_py3 import ServiceArtifactReference
@@ -223,6 +225,7 @@ try:
     from ._models_py3 import TaskUpdateOptions
     from ._models_py3 import TaskUpdateParameter
     from ._models_py3 import UefiSettings
+    from ._models_py3 import UpgradePolicy
     from ._models_py3 import UploadBatchServiceLogsConfiguration
     from ._models_py3 import UploadBatchServiceLogsResult
     from ._models_py3 import UsageStatistics
@@ -244,6 +247,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationPackageReference
     from ._models import ApplicationSummary
     from ._models import AuthenticationTokenSettings
+    from ._models import AutomaticOSUpgradePolicy
     from ._models import AutoPoolSpecification
     from ._models import AutoScaleRun
     from ._models import AutoScaleRunError
@@ -415,6 +419,7 @@ except (SyntaxError, ImportError):
     from ._models import ResizeError
     from ._models import ResourceFile
     from ._models import ResourceStatistics
+    from ._models import RollingUpgradePolicy
     from ._models import Schedule
     from ._models import SecurityProfile
     from ._models import ServiceArtifactReference
@@ -449,6 +454,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskUpdateOptions
     from ._models import TaskUpdateParameter
     from ._models import UefiSettings
+    from ._models import UpgradePolicy
     from ._models import UploadBatchServiceLogsConfiguration
     from ._models import UploadBatchServiceLogsResult
     from ._models import UsageStatistics
@@ -502,6 +508,7 @@ from ._batch_service_client_enums import (
     NetworkSecurityGroupRuleAccess,
     IPAddressProvisioningType,
     NodeCommunicationMode,
+    UpgradeMode,
     PoolLifetimeOption,
     OnAllTasksComplete,
     OnTaskFailure,
@@ -537,6 +544,7 @@ __all__ = [
     'ApplicationPackageReference',
     'ApplicationSummary',
     'AuthenticationTokenSettings',
+    'AutomaticOSUpgradePolicy',
     'AutoPoolSpecification',
     'AutoScaleRun',
     'AutoScaleRunError',
@@ -708,6 +716,7 @@ __all__ = [
     'ResizeError',
     'ResourceFile',
     'ResourceStatistics',
+    'RollingUpgradePolicy',
     'Schedule',
     'SecurityProfile',
     'ServiceArtifactReference',
@@ -742,6 +751,7 @@ __all__ = [
     'TaskUpdateOptions',
     'TaskUpdateParameter',
     'UefiSettings',
+    'UpgradePolicy',
     'UploadBatchServiceLogsConfiguration',
     'UploadBatchServiceLogsResult',
     'UsageStatistics',
@@ -794,6 +804,7 @@ __all__ = [
     'NetworkSecurityGroupRuleAccess',
     'IPAddressProvisioningType',
     'NodeCommunicationMode',
+    'UpgradeMode',
     'PoolLifetimeOption',
     'OnAllTasksComplete',
     'OnTaskFailure',
