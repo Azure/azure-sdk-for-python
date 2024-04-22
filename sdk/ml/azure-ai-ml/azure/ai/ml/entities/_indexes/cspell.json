@@ -54,6 +54,6 @@
         "hnsw"
     ],
     "ignorePaths": [
-        "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*"
+        "./sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*"
     ]
 }
