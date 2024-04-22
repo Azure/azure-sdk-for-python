@@ -53,9 +53,8 @@ class TestContainerPropertiesCache(unittest.TestCase):
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_container_properties_cache(self):
-        self.setUpClass()
         client = self.client
-        database_name = str(uuid.uuid4())
+        database_name = self.configs.TEST_DATABASE_ID
         self.client.create_database(database_name)
         container_name = str(uuid.uuid4())
         container_pk = "PK"
@@ -77,7 +76,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         # Since the cache was empty, it should have called a container read to get properties. So now Cache should
         # be populated and available even when we don't have a container instance
         self.assertTrue(client.client_connection.collection_properties_cache != {})
-        client.delete_database(database_name)
+        self.databaseForTest.delete_container(container_name)
 
 
 if __name__ == '__main__':
