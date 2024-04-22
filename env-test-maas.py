@@ -21,5 +21,4 @@ endpoint._validate()
 """serverless_endpoint = client.serverless_endpoints.begin_create_or_update(
     endpoint=endpoint
 ).result()
-
 print(serverless_endpoint.as_dict())"""
