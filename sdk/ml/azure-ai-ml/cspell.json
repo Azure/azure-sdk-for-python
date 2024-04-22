@@ -3,5 +3,10 @@
     "ignoreWords": [
         "kwoa",
         "rslex"
+    ],
+    "words": [
+        "entra",
+        "restclient",
+        "SERP"
     ]
 }
