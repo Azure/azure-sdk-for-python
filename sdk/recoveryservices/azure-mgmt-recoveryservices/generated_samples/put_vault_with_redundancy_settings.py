@@ -17,7 +17,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python check_name_availability_not_available.py
+    python put_vault_with_redundancy_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,14 +32,25 @@ def main():
         subscription_id="77777777-b0c6-47a2-b37c-d8e65a629c18",
     )
 
-    response = client.recovery_services.check_name_availability(
-        resource_group_name="resGroupBar",
-        location="westus",
-        input={"name": "swaggerExample2", "type": "Microsoft.RecoveryServices/Vaults"},
-    )
+    response = client.vaults.begin_create_or_update(
+        resource_group_name="Default-RecoveryServices-ResourceGroup",
+        vault_name="swaggerExample",
+        vault={
+            "identity": {"type": "SystemAssigned"},
+            "location": "West US",
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "redundancySettings": {
+                    "crossRegionRestore": "Enabled",
+                    "standardTierStorageRedundancy": "GeoRedundant",
+                },
+            },
+            "sku": {"name": "Standard"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2024-04-01/examples/CheckNameAvailability_NotAvailable.json
+# x-ms-original-file: specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2024-04-01/examples/PUTVault_WithRedundancySettings.json
 if __name__ == "__main__":
     main()
