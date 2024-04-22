@@ -116,22 +116,22 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self.on_request(request)
         try:
             response = self.next.send(request)
-            self.on_response(request, response)
         except Exception:  # pylint:disable=broad-except
             self.on_exception(request)
             raise
-        else:
-            if response.http_response.status_code == 401:
-                self._token = None  # any cached token is invalid
-                if "WWW-Authenticate" in response.http_response.headers:
-                    request_authorized = self.on_challenge(request, response)
-                    if request_authorized:
-                        try:
-                            response = self.next.send(request)
-                            self.on_response(request, response)
-                        except Exception:  # pylint:disable=broad-except
-                            self.on_exception(request)
-                            raise
+
+        self.on_response(request, response)
+        if response.http_response.status_code == 401:
+            self._token = None  # any cached token is invalid
+            if "WWW-Authenticate" in response.http_response.headers:
+                request_authorized = self.on_challenge(request, response)
+                if request_authorized:
+                    try:
+                        response = self.next.send(request)
+                        self.on_response(request, response)
+                    except Exception:  # pylint:disable=broad-except
+                        self.on_exception(request)
+                        raise
 
         return response
 
