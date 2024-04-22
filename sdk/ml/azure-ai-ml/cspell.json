@@ -5,6 +5,31 @@
         "rslex",
         "FAISS",
         "faiss",
-        "LLMRAG"
+        "LLMRAG",
+        "mpnet",
+        "fsspec",
+        "tiktoken",
+        "tiktokens",
+        "punkt",
+        "rcts",
+        "metadatas",
+        "pypdf",
+        "tika",
+        "Tika",
+        "pyarrow",
+        "mtimes",
+        "dtype",
+        "dprepfuse",
+        "aembed",
+        "pymilvus",
+        "MILVUS",
+        "Milvus",
+        "milvus",
+        "VCORE",
+        "pymongo",
+        "vcore"
+    ],
+    "ignorePaths": [
+        "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*"
     ]
 }
