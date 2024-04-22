@@ -79,7 +79,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
-        :keyword kind: The kind of workspace to list. If not provided, all workspaces varieties will be listed.
+        :keyword filtered_kinds: The kinds of workspaces to list. If not provided, all workspaces varieties will be listed.
             Accepts either a single kind, or a list of them.
             Valid kind options include: "default", "project", and "hub".
         :return: An iterator like instance of Workspace objects
