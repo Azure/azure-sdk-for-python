@@ -114,6 +114,9 @@ class IndexOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Index
         """
 
+        if not index.version and index._auto_increment_version:
+            index.version = self._azure_ai_assets.indexes.get_next_version(index.name).next_version
+
         _ = _check_and_upload_path(
             artifact=index,
             asset_operations=self,
