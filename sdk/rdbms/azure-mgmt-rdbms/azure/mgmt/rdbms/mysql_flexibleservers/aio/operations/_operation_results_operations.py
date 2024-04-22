@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -60,7 +60,6 @@ class OperationResultsOperations:
         :type location_name: str
         :param operation_id: The operation Id. Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationStatusExtendedResult or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusExtendedResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -76,24 +75,23 @@ class OperationResultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-30"))
         cls: ClsType[_models.OperationStatusExtendedResult] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             location_name=location_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -106,10 +104,6 @@ class OperationResultsOperations:
         deserialized = self._deserialize("OperationStatusExtendedResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/operationResults/{operationId}"
-    }
+        return deserialized  # type: ignore

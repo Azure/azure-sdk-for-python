@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -87,7 +87,6 @@ class RecoveryPointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CrrAccessTokenResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessTokenResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -102,7 +101,7 @@ class RecoveryPointsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -125,11 +124,10 @@ class RecoveryPointsOperations:
         :param recovery_point_id: Recovery Point Id. Required.
         :type recovery_point_id: str
         :param parameters: Get Access Token request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CrrAccessTokenResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessTokenResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -144,7 +142,7 @@ class RecoveryPointsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.AADPropertiesResource, IO],
+        parameters: Union[_models.AADPropertiesResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.CrrAccessTokenResource:
         """Returns the Access token for communication between BMS and Protection service.
@@ -164,14 +162,10 @@ class RecoveryPointsOperations:
         :type protected_item_name: str
         :param recovery_point_id: Recovery Point Id. Required.
         :type recovery_point_id: str
-        :param parameters: Get Access Token request. Is either a AADPropertiesResource type or a IO
-         type. Required.
+        :param parameters: Get Access Token request. Is either a AADPropertiesResource type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AADPropertiesResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: CrrAccessTokenResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessTokenResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -200,7 +194,7 @@ class RecoveryPointsOperations:
         else:
             _json = self._serialize.body(parameters, "AADPropertiesResource")
 
-        request = build_get_access_token_request(
+        _request = build_get_access_token_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -212,16 +206,15 @@ class RecoveryPointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_access_token.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -234,10 +227,6 @@ class RecoveryPointsOperations:
         deserialized = self._deserialize("CrrAccessTokenResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_access_token.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/accessToken"
-    }
+        return deserialized  # type: ignore
