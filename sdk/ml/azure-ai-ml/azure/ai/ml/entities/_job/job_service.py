@@ -109,9 +109,11 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _from_rest_job_service_object(cls, obj: RestJobService) -> "JobServiceBase":
         return cls(
             endpoint=obj.endpoint,
-            type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)  # type: ignore[arg-type]
-            if obj.job_service_type
-            else None,
+            type=(
+                JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)  # type: ignore[arg-type]
+                if obj.job_service_type
+                else None
+            ),
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
