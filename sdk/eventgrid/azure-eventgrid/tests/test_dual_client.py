@@ -222,15 +222,10 @@ class TestEGDualClient(AzureRecordedTestCase):
         data = {"message": "Hello World!"}
         cloud_event = CNCFCloudEvent(attributes, data)
 
-        if level==ClientLevel.STANDARD:
-            with pytest.raises(HttpResponseError):
-                client.send(
-                    topic_name=eventgrid_topic_name, events=cloud_event
-                )
-        else:
-            client.send(
-                    topic_name=eventgrid_topic_name, events=cloud_event
-                )
+
+        client.send(
+                topic_name=eventgrid_topic_name, events=cloud_event
+            )
             
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
