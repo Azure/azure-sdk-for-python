@@ -683,13 +683,6 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
-        self._indexes = IndexOperations(
-            self._operation_scope,
-            self._operation_config,
-            self._service_client_08_2023_preview,
-            self._operation_container,
-            self._credential,
-        )
 
     @classmethod
     def from_config(

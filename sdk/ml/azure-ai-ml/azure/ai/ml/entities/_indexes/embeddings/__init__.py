@@ -22,16 +22,16 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import yaml
 from azure.core.credentials import TokenCredential
-from azure.ai.ml.entities._indexes._index.documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
-from azure.ai.ml.entities._indexes._index.embeddings.florence import FlorenceEmbedder
-from azure.ai.ml.entities._indexes._index.embeddings.openai import OpenAIEmbedder
-from azure.ai.ml.entities._indexes._index.indexes.index_stores import IndexStore, IndexStoreType
-from azure.ai.ml.entities._indexes._index.langchain.vendor.document_loaders.base import BaseLoader
-from azure.ai.ml.entities._indexes._index.langchain.vendor.embeddings.base import Embeddings as Embedder
-from azure.ai.ml.entities._indexes._index.langchain.vendor.schema.document import Document as LangChainDocument
-from azure.ai.ml.entities._indexes._index.models import init_open_ai_from_config, init_serverless_from_config, parse_model_uri
-from azure.ai.ml.entities._indexes._index.utils.logging import get_logger, track_activity, write_status_log
-from azure.ai.ml.entities._indexes._index.utils.tokens import tiktoken_cache_dir
+from azure.ai.ml.entities._indexes.documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
+from azure.ai.ml.entities._indexes.embeddings.florence import FlorenceEmbedder
+from azure.ai.ml.entities._indexes.embeddings.openai import OpenAIEmbedder
+from azure.ai.ml.entities._indexes.indexes.index_stores import IndexStore, IndexStoreType
+from azure.ai.ml.entities._indexes.langchain.vendor.document_loaders.base import BaseLoader
+from azure.ai.ml.entities._indexes.langchain.vendor.embeddings.base import Embeddings as Embedder
+from azure.ai.ml.entities._indexes.langchain.vendor.schema.document import Document as LangChainDocument
+from azure.ai.ml.entities._indexes.models import init_open_ai_from_config, init_serverless_from_config, parse_model_uri
+from azure.ai.ml.entities._indexes.utils.logging import get_logger, track_activity, write_status_log
+from azure.ai.ml.entities._indexes.utils.tokens import tiktoken_cache_dir
 
 logger = get_logger(__name__)
 
@@ -60,8 +60,8 @@ class _ActivitySafeEmbedder(Embedder):
 
 def _args_to_openai_embedder(arguments: dict):
     import openai
-    from azure.ai.ml.entities._indexes._index.langchain.vendor.embeddings.openai import OpenAIEmbeddings
-    from azure.ai.ml.entities._indexes._index.utils.logging import langchain_version
+    from azure.ai.ml.entities._indexes.langchain.vendor.embeddings.openai import OpenAIEmbeddings
+    from azure.ai.ml.entities._indexes.utils.logging import langchain_version
 
     arguments = init_open_ai_from_config(arguments)
 
@@ -145,7 +145,7 @@ def get_langchain_embeddings(
 
         return _ActivitySafeEmbedder(embedder)
     elif embedding_kind == "hugging_face":
-        from azure.ai.ml.entities._indexes._index.langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
+        from azure.ai.ml.entities._indexes.langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
 
@@ -180,7 +180,7 @@ def get_embed_fn(
 ) -> Callable[[List[str]], List[List[float]]]:
     """Get an embedding function from the given arguments."""
     if "open_ai" in embedding_kind:
-        # from azure.ai.ml.entities._indexes._index.langchain.openai import patch_openai_embedding_retries
+        # from azure.ai.ml.entities._indexes.langchain.openai import patch_openai_embedding_retries
 
         # embedder = _args_to_openai_embedder(arguments)
 
@@ -1083,7 +1083,7 @@ class EmbeddingsContainer:
         try:
             import sys
 
-            from azure.ai.ml.entities._indexes._index.mlindex import MLIndex
+            from azure.ai.ml.entities._indexes.mlindex import MLIndex
 
             t1 = time.time()
             num_source_docs = 0
@@ -1403,7 +1403,7 @@ class EmbeddingsContainer:
         """Returns a FAISS index that can be used to query the embeddings."""
         if engine == "langchain.vectorstores.FAISS":
             # Using vendored version here would mean promptflow can't unpickle the vectorstore.
-            from azure.ai.ml.entities._indexes._index.utils.logging import langchain_version
+            from azure.ai.ml.entities._indexes.utils.logging import langchain_version
             from langchain.docstore.in_memory import InMemoryDocstore
             from langchain.schema.document import Document as NotVendoredLangchainDocument
             from packaging import version as pkg_version
@@ -1434,8 +1434,8 @@ class EmbeddingsContainer:
             FaissClass = FAISS
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
-            from azure.ai.ml.entities._indexes._index.docstore import FileBasedDocstore
-            from azure.ai.ml.entities._indexes._index.indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me
+            from azure.ai.ml.entities._indexes.docstore import FileBasedDocstore
+            from azure.ai.ml.entities._indexes.indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me
 
             def add_doc(doc_id, emb_doc, documents):
                 documents.append(
@@ -1486,7 +1486,7 @@ class EmbeddingsContainer:
 
     def write_as_faiss_mlindex(self, output_path: Path, engine: str = "langchain.vectorstores.FAISS"):
         """Writes the embeddings to a FAISS MLIndex file."""
-        from azure.ai.ml.entities._indexes._index.mlindex import MLIndex
+        from azure.ai.ml.entities._indexes.mlindex import MLIndex
 
         faiss_index = self.as_faiss_index(engine)
 
@@ -1608,7 +1608,7 @@ class EmbeddingsContainer:
                             if isinstance(embeddings_connection, str):
                                 connection_args["connection"] = {"id": embeddings_connection}
                             else:
-                                from azure.ai.ml.entities._indexes._index.utils.connections import get_id_from_connection
+                                from azure.ai.ml.entities._indexes.utils.connections import get_id_from_connection
 
                                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
                         embeddings_container = EmbeddingsContainer.from_uri(embeddings_model, **connection_args)

@@ -36,8 +36,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.credentials import TokenCredential
 
-from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._indexes.dataindex.data_index import index_data as index_data_func
 from azure.ai.ml.entities._indexes import (
@@ -237,7 +237,7 @@ class IndexOperations(_ScopeDependentOperations):
         input_glob: Optional[str] = None,
         ######## other generic args ########
         document_path_replacement_regex: Optional[str] = None,
-        ######## ACS index info ########
+        ######## Azure AI Search index info ########
         index_config: Optional[AzureAISearchConfig] = None,  # todo better name?
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
@@ -293,7 +293,7 @@ class IndexOperations(_ScopeDependentOperations):
             mlindex_config = {}
             connection_args = {
                 "connection_type": "workspace_connection", 
-                "connection": {"id": build_connection_id(embeddings_model_config.deployment_name, self.operation_scope)}
+                "connection": {"id": build_connection_id(embeddings_model_config.connection_name, self._operation_scope)}
             }
             mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
                 build_open_ai_protocol(embeddings_model_config.model_name), **connection_args
@@ -301,22 +301,22 @@ class IndexOperations(_ScopeDependentOperations):
             mlindex_config["index"] = {
                 "kind": "acs",
                 "connection_type": "workspace_connection",
-                "connection": {"id": input_source.acs_connection_id},
-                "index": input_source.acs_index_name,
+                "connection": {"id": input_source.ai_search_index_connection_id},
+                "index": input_source.ai_search_index_name,
                 "endpoint": get_target_from_connection(
-                    get_connection_by_id_v2(input_source.acs_connection_id, credential=self._ml_client._credential)
+                    get_connection_by_id_v2(input_source.ai_search_index_connection_id, credential=self._credential) # TODO: test
                 ),
                 "engine": "azure-sdk",
                 "field_mapping": {
-                    "content": input_source.acs_content_key,
+                    "content": input_source.ai_search_index_content_key,
                     # "url": input_source., # TODO: Add to AISearchSource
                     # "filename": input_source., # TODO: Add to AISearchSource
-                    "title": input_source.acs_title_key,
-                    "metadata": input_source.acs_metadata_key,
+                    "title": input_source.ai_search_index_title_key,
+                    "metadata": input_source.ai_search_index_metadata_key,
                 },
             }
-            if input_source.acs_embedding_key is not None:
-                mlindex_config["index"]["embedding"] = input_source.acs_embedding_key
+            if input_source.ai_search_index_embedding_key is not None:
+                mlindex_config["index"]["embedding"] = input_source.ai_search_index_embedding_key
 
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_file = os.path.join(temp_dir, "MLIndex")
@@ -349,12 +349,12 @@ class IndexOperations(_ScopeDependentOperations):
             ),
             embedding=Embedding(
                 model=build_open_ai_protocol(embeddings_model_config.model_name),
-                connection=build_connection_id(embeddings_model_config.deployment_name, self.operation_scope),
+                connection=build_connection_id(embeddings_model_config.connection_name, self._operation_scope),
             ),
             index=IndexStore(
                 type="acs",
-                connection=build_connection_id(index_config.acs_connection_id, self.operation_scope),
-                name=index_config.acs_index_name,
+                connection=build_connection_id(index_config.ai_search_connection_id, self._operation_scope),
+                name=index_config.ai_search_index_name,
             )
             if index_config is not None
             else IndexStore(type="faiss"),
@@ -364,8 +364,9 @@ class IndexOperations(_ScopeDependentOperations):
 
         if isinstance(input_source, GitSource):
             from azure.ai.ml.dsl import pipeline
+            from azure.ai.ml import MLClient
 
-            ml_registry = MLClient(credential=self._ml_client._credential, registry_name="azureml")
+            ml_registry = MLClient(credential=self._credential, registry_name="azureml")
             git_clone_component = ml_registry.components.get("llm_rag_git_clone", label="latest")
 
             # Clone Git Repo and use as input to index_job
@@ -382,7 +383,12 @@ class IndexOperations(_ScopeDependentOperations):
                     description=data_index.description,
                     data_index=data_index,
                     input_data_override=git_clone.outputs.output_data,
-                    ml_client=self._ml_client,
+                    ml_client=MLClient(
+                        subscription_id=self._subscription_id,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        credential=self._credential,
+                    ),
                 )
 
                 return index_job.outputs

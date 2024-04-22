@@ -94,7 +94,6 @@ known_modules = [
     "data_import_acs",
     "git_clone",
     "generate_embeddings_parallel",
-    "qa_data_generation",
     "register_mlindex_asset",
     "update_acs_index",
 ]

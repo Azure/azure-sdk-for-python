@@ -5,7 +5,6 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
-from .ai_resource import AIResource
 from .base_connection import BaseConnection
 from .connection_subtypes import (
     AzureOpenAIConnection,
@@ -16,17 +15,7 @@ from .connection_subtypes import (
     AzureBlobStoreConnection,
 )
 from .mlindex import Index
-from .project import Project
-from .data import Data
 from .model_configs import ModelConfiguration
-from .._restclient._azure_open_ai.models import (
-    AzureOpenAIDeployment,
-    AzureOpenAIDeploymentProperties,
-    AzureOpenAIModel,
-    AzureOpenAISku,
-    SystemData,
-)
-
 from azure.ai.ml.entities import ApiKeyConfiguration
 
 __all__ = [
@@ -35,18 +24,10 @@ __all__ = [
     "AzureAISearchConnection",
     "AzureAIServiceConnection",
     "Index",
-    "Project",
-    "AIResource",
-    "Data",
     "ModelConfiguration",
     "GitHubConnection",
     "CustomConnection",
     "AzureBlobStoreConnection",
     "ApiKeyConfiguration",
-    "AzureOpenAIDeployment",
-    "AzureOpenAIDeploymentProperties",
-    "AzureOpenAIModel",
-    "AzureOpenAISku",
-    "SystemData",
 ]
 
