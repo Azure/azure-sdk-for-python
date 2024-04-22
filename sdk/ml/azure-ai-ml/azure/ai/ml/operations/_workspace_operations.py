@@ -43,7 +43,7 @@ module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations(WorkspaceOperationsBase):
-    """WorkspaceOperations. Handles workspaces and its subclasses, hubs and projects.
+    """Handles workspaces and its subclasses, hubs and projects.
 
     You should not instantiate this class directly. Instead, you should create
     an MLClient instance that instantiates it for you and attaches it as an attribute.
