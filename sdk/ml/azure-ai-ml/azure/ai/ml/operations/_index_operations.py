@@ -403,7 +403,6 @@ class IndexOperations(_ScopeDependentOperations):
 
             # Submit the DataIndex Job
             return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(git_index_job)
-            # return self._ml_client.jobs.create_or_update(git_index_job, identity=input_source_credential)
 
         if isinstance(input_source, LocalSource):
             data_index.source.input_data = Data(
