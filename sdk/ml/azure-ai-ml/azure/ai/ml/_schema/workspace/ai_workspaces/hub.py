@@ -14,5 +14,5 @@ from azure.ai.ml.constants import WorkspaceKind
 class HubSchema(WorkspaceSchema):
     # additional_workspace_storage_accounts This field exists in the API, but is unused, and thus not surfaced yet.
     kind = StringTransformedEnum(required=True, allowed_values=WorkspaceKind.HUB)
-    default_project_resource_group = fields.Str(required=False)
+    default_resource_group = fields.Str(required=False)
     associated_workspaces = fields.List(fields.Str(), required=False, dump_only=True)

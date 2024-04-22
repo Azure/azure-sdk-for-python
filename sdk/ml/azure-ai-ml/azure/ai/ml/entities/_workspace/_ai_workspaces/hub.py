@@ -61,9 +61,9 @@ class Hub(Workspace):
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
-    :param default_project_resource_group: The resource group that will be used by projects
+    :param default_resource_group: The resource group that will be used by projects
         created under this hub if no resource group is specified.
-    :type default_project_resource_group: str
+    :type default_resource_group: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -95,7 +95,7 @@ class Hub(Workspace):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
-        default_project_resource_group: Optional[str] = None,
+        default_resource_group: Optional[str] = None,
         associated_workspaces: Optional[List[str]] = None,  # hidden input for rest->client conversions.
         **kwargs: Any,
     ):
@@ -121,7 +121,7 @@ class Hub(Workspace):
             enable_data_isolation=enable_data_isolation,
             **kwargs,
         )
-        self._default_project_resource_group = default_project_resource_group
+        self._default_resource_group = default_resource_group
         self._associated_workspaces = associated_workspaces
 
     @classmethod
@@ -135,11 +135,11 @@ class Hub(Workspace):
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        default_project_resource_group = None
+        default_resource_group = None
 
         if hasattr(rest_obj, "workspace_hub_config"):
             if rest_obj.workspace_hub_config and isinstance(rest_obj.workspace_hub_config, RestWorkspaceHubConfig):
-                default_project_resource_group = rest_obj.workspace_hub_config.default_workspace_resource_group
+                default_resource_group = rest_obj.workspace_hub_config.default_workspace_resource_group
 
         if workspace_object is not None:
             return Hub(
@@ -159,7 +159,7 @@ class Hub(Workspace):
                 container_registry=rest_obj.container_registry,
                 workspace_id=rest_obj.workspace_id,
                 enable_data_isolation=rest_obj.enable_data_isolation,
-                default_project_resource_group=default_project_resource_group,
+                default_resource_group=default_resource_group,
                 associated_workspaces=rest_obj.associated_workspaces if rest_obj.associated_workspaces else [],
                 id=rest_obj.id,
             )
@@ -168,14 +168,14 @@ class Hub(Workspace):
     # Helper function to deal with sub-rest object conversion.
     def _hub_values_to_rest_object(self) -> RestWorkspaceHubConfig:
         additional_workspace_storage_accounts = None
-        default_project_resource_group = None
+        default_resource_group = None
         if hasattr(self, "additional_workspace_storage_accounts"):
             additional_workspace_storage_accounts = None
-        if hasattr(self, "default_project_resource_group"):
-            default_project_resource_group = None
+        if hasattr(self, "default_resource_group"):
+            default_resource_group = None
         return RestWorkspaceHubConfig(
             additional_workspace_storage_accounts=additional_workspace_storage_accounts,
-            default_workspace_resource_group=default_project_resource_group,
+            default_workspace_resource_group=default_resource_group,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -184,16 +184,16 @@ class Hub(Workspace):
         return restWorkspace
 
     @property
-    def default_project_resource_group(self) -> Optional[str]:
+    def default_resource_group(self) -> Optional[str]:
         """The default resource group for this hub and its children.
 
         :return: The resource group.
         :rtype: Optional[str]
         """
-        return self._default_project_resource_group
+        return self._default_resource_group
 
-    @default_project_resource_group.setter
-    def default_project_resource_group(self, value: str):
+    @default_resource_group.setter
+    def default_resource_group(self, value: str):
         """Set the default resource group for child projects of this hub.
 
         :param value: The new resource group.
@@ -201,7 +201,7 @@ class Hub(Workspace):
         """
         if not value:
             return
-        self._default_project_resource_group = value
+        self._default_resource_group = value
 
     # No setter, read-only
     @property

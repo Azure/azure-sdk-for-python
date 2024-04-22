@@ -161,7 +161,7 @@ class TestWorkspaceEntity:
         assert sdk_hub.identity.type == "system_assigned"
 
         # specific to hub
-        assert sdk_hub.default_project_resource_group == "somerg"
+        assert sdk_hub.default_resource_group == "somerg"
 
     def test_feature_store_entity_from_rest_to_ensure_restclient_versions_match(self):
         rest_ws = get_test_rest_workspace_with_all_details()

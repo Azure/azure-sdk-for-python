@@ -3,7 +3,7 @@ location: WestCentralUS
 display_name: wshub
 description: some desc
 public_network_access: enabled
-default_project_resource_group: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources
+default_resource_group: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources
 tags:
   purpose: testing
   team: ws-management

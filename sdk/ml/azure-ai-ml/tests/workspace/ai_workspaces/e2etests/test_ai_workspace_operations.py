@@ -25,7 +25,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert hub1.location == hub2.location
         assert hub1.description == hub2.description
         assert hub1.display_name == hub2.display_name
-        assert hub1.default_project_resource_group in hub2.default_project_resource_group
+        assert hub1.default_resource_group in hub2.default_resource_group
 
     def compare_project(self, project1: Project, project2: Project):
         assert project1 is not None
@@ -59,7 +59,7 @@ class TestWorkspace(AzureRecordedTestCase):
                 description="hub description",
                 display_name="hub display name",
                 location="westus2",
-                default_project_resource_group=client.resource_group_name,
+                default_resource_group=client.resource_group_name,
                 public_network_access="Disabled",
             )
             created_hub = client.workspaces.begin_create(workspace=local_hub).result()
