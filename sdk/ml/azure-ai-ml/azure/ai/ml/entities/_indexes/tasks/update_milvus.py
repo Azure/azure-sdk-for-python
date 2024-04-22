@@ -117,7 +117,7 @@ def create_collection_with_index_if_not_exists(
     ----
         milvus_config (dict): Milvus configuration dictionary. Expected to contain:
             - collection_name: Milvus collection name
-            - field_mapping: Mappings from a set of fields understoon by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Milvus field names.
+            - field_mapping: Mappings from a set of fields understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Milvus field names.
         client (MilvusClient): Milvus client
         embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index. If provided, the index will be configured to support vector search.
 
