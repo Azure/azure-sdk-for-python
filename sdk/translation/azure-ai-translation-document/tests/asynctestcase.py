@@ -5,7 +5,7 @@
 
 from devtools_testutils import AzureRecordedTestCase
 from testcase import DocumentTranslationTest, Document
-from azure.ai.translation.document.models._patch import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCase):
     async def _begin_and_validate_translation_async(

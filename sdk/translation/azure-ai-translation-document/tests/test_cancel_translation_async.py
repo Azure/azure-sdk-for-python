@@ -20,7 +20,7 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 
 class TestCancelTranslation(AsyncDocumentTranslationTest):
-    @pytest.mark.skip()
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
