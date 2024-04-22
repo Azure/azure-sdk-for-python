@@ -222,10 +222,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
             )
         try:
             if isinstance(event, CloudEvent) or _is_cloud_event(event):
-                try:
-                    event = CloudEvent.from_dict(event)
-                except AttributeError:
-                    event = CloudEvent.from_dict(_from_cncf_events(event))
+                if isinstance(event, dict):
+                    try:
+                        event = CloudEvent.from_dict(event)
+                    except AttributeError:
+                        event = CloudEvent.from_dict(_from_cncf_events(event))
             
         except AttributeError:
             raise TypeError("Binary mode is only supported for type CloudEvent.") # pylint: disable=raise-missing-from
