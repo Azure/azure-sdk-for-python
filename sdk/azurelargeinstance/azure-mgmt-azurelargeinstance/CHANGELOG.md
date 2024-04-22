@@ -1,11 +1,10 @@
 # Release History
 
-# 1.0.0b2 (2024-04-15)
+# 1.0.0b2.post1 (2024-04-22)
 
 ### Other Changes
 
-- deprecation release
-
+- This package is no longer being maintained. Use the [azure-mgmt-largeinstance](https://pypi.org/project/azure-mgmt-largeinstance/) package instead, which has exactly same API.
 
 ## 1.0.0b1 (2024-03-04)
 
