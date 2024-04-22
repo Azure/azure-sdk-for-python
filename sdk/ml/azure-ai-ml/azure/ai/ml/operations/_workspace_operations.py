@@ -73,7 +73,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(
-        self, *, scope: str = Scope.RESOURCE_GROUP, filtered_kinds: Optional[Union[WorkspaceKind, List[WorkspaceKind]]] = None
+        self, *, scope: str = Scope.RESOURCE_GROUP, filtered_kinds: Optional[Union[str, List[str]]] = None
     ) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
@@ -97,7 +97,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         # Kind should be converted to a comma-separating string if multiple values are supplied.
         formatted_kinds = filtered_kinds
-        if not isinstance(filtered_kinds, str):
+        if filtered_kinds and not isinstance(filtered_kinds, str):
             formatted_kinds = ",".join(filtered_kinds)  # type: ignore[arg-type]
 
         if scope == Scope.SUBSCRIPTION:
