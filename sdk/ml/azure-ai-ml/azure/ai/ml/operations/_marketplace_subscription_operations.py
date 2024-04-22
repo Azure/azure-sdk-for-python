@@ -29,7 +29,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
 
     @experimental
     def begin_create_or_update(self, marketplace_subscription: MarketplaceSubscription) -> LROPoller[MarketplaceSubscription]:
-            return self._marketplace_subscriptions.begin_create_or_update(
+            return self._service_client.begin_create_or_update(
                 self._resource_group_name,
                 self._workspace_name,
                 marketplace_subscription.name,

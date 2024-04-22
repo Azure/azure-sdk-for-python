@@ -38,6 +38,7 @@ from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
+from ._autogen_entities.models import MarketplaceSubscription, ServerlessEndpoint 
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -454,6 +455,8 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "MarketplaceSubscription",
+    "ServerlessEndpoint",
 ]
 
 # Allow importing these types for backwards compatibility

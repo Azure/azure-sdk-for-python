@@ -30,6 +30,7 @@ from ._workspace_hub_operation import WorkspaceHubOperations
 from ._workspace_operations import WorkspaceOperations
 from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from ._serverless_endpoint_operations import ServerlessEndpointOperations
+from ._marketplace_subscription_operations import MarketplaceSubscriptionOperations
 
 __all__ = [
     "ComputeOperations",
@@ -54,4 +55,5 @@ __all__ = [
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
     "ServerlessEndpointOperations",
+    "MarketplaceSubscriptionOperations",
 ]

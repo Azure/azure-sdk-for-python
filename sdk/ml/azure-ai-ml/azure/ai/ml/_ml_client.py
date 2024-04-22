@@ -85,6 +85,7 @@ from azure.ai.ml.operations import (
     WorkspaceHubOperations,
     WorkspaceOperations,
     ServerlessEndpointOperations,
+    MarketplaceSubscriptionOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -672,6 +673,11 @@ class MLClient:
             self._service_client_01_2024_preview,
             self._operation_container,
         )
+        self._marketplace_subscriptions = MarketplaceSubscriptionOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+        )
         self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
@@ -1006,6 +1012,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ServerlessEndpointOperations
         """
         return self._serverless_endpoints
+
+    @property
+    @experimental
+    def marketplace_subscriptions(self) -> MarketplaceSubscriptionOperations:
+        """A collection of marketplace subscription related operations.
+
+        :return: Marketplace subscription operations.
+        :rtype: ~azure.ai.ml.operations.MarketplaceSubscriptionOperations
+        """
+        return self._marketplace_subscriptions
 
     @property
     def subscription_id(self) -> str:
