@@ -9,7 +9,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import inspect
 from typing import List
 
-from ._models import ServerlessEndpoint as _ServerlessEndpoint, MarketplaceSubscription as _MarketplaceSubscription, MarketplacePlan
+from ._models import (
+    ServerlessEndpoint as _ServerlessEndpoint,
+    MarketplaceSubscription as _MarketplaceSubscription,
+    MarketplacePlan,
+)
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -24,7 +28,10 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
 )
 
-__all__: List[str] = ["ServerlessEndpoint", "MarketplaceSubscription"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ServerlessEndpoint",
+    "MarketplaceSubscription",
+]  # Add all objects you want publicly available to users at this package level
 
 _NULL = object()
 
@@ -33,6 +40,7 @@ func_to_attr_type = {
     "_deserialize_sequence": list,
 }
 
+
 def _get_rest_field_type(rest_field):
     if hasattr(rest_field, "_type"):
         if rest_field._type.func.__name__ == "_deserialize_default":
@@ -40,14 +48,14 @@ def _get_rest_field_type(rest_field):
         if func_to_attr_type.get(rest_field._type.func.__name__):
             return func_to_attr_type[rest_field._type.func.__name__]
         return _get_rest_field_type(rest_field._type.args[0])
-    if hasattr(rest_field, "func" ) and func_to_attr_type.get(rest_field.func.__name__):
+    if hasattr(rest_field, "func") and func_to_attr_type.get(rest_field.func.__name__):
         return func_to_attr_type[rest_field.func.__name__]
     if hasattr(rest_field, "args"):
         return _get_rest_field_type(rest_field.args[0])
     return rest_field
 
 
-class ValidationMixin():
+class ValidationMixin:
     def _validate(self) -> None:
         # verify types
         for attr, rest_field in self._attr_to_rest_field.items():
@@ -71,7 +79,6 @@ class ValidationMixin():
 
 @experimental
 class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
-
     def _to_rest_object(self) -> RestServerlessEndpoint:
         return RestServerlessEndpoint(
             properties=RestServerlessEndpointProperties(
@@ -95,13 +102,11 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             system_data=SystemData._from_rest_object(obj.system_data),
         )
 
+
 @experimental
 class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
-
     def _to_rest_object(self) -> RestMarketplaceSubscription:
-        return RestMarketplaceSubscription(
-            properties=RestMarketplaceSubscriptionProperties(model_id=self.model_id)
-        )
+        return RestMarketplaceSubscription(properties=RestMarketplaceSubscriptionProperties(model_id=self.model_id))
 
     @classmethod
     def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "MarketplaceSubscription":

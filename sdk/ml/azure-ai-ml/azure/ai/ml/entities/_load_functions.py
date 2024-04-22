@@ -174,9 +174,7 @@ def add_param_overrides(data, param_overrides) -> None:
                     if test_layer is None:
                         continue
                     if isinstance(test_layer, str):
-                        raise Exception(
-                            f"Cannot use '--set' on properties defined by reference strings: --set {param}"
-                        )
+                        raise Exception(f"Cannot use '--set' on properties defined by reference strings: --set {param}")
                     test_layer = test_layer.get(layer, None)
                 objects.set_(data, param, val)
 
@@ -222,11 +220,11 @@ def load_serverless_endpoint(
     relative_origin: Optional[str] = None,
     **kwargs: Any,
 ):
-    loaded_dict =  _try_load_yaml_dict(source)
+    loaded_dict = _try_load_yaml_dict(source)
     add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
     serverless_endpoint = ServerlessEndpoint(loaded_dict)
     serverless_endpoint._validate()
-    return serverless_endpoint 
+    return serverless_endpoint
 
 
 def load_workspace(
