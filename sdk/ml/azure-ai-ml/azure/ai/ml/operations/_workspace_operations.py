@@ -97,7 +97,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         # Kind should be converted to a comma-separating string if multiple values are supplied.
         formatted_kinds = filtered_kinds
-        if isinstance(filtered_kinds, list):
+        if not isinstance(filtered_kinds, str):
             formatted_kinds = ",".join(filtered_kinds)  # type: ignore[arg-type]
 
         if scope == Scope.SUBSCRIPTION:
