@@ -1674,7 +1674,9 @@
         "ctxt",
         "unflattened",
         "deseralize",
-        "wday"
+        "wday",
+        "mros",
+        "vcpus"
       ]
     },
     {
