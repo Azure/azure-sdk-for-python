@@ -36,7 +36,7 @@ from ..._operations._patch import (
 )
 
 from ..._legacy import EventGridEvent
-from ..._legacy._helpers import _is_eventgrid_event
+from ..._legacy._helpers import _is_eventgrid_event, _is_cloud_event, _from_cncf_events
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -214,21 +214,34 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     self._http_response_error_handler(exception, "Basic")
                     raise exception
 
-    async def _send_binary(self, topic_name: str, events: Any, **kwargs: Any) -> None:
+    async def _send_binary(self, topic_name: str, event: Any, **kwargs: Any) -> None:
         # If data is passed as a dictionary, make sure it is a CloudEvent
+        if isinstance(event, list):
+            raise TypeError(  # pylint: disable=raise-missing-from
+                "Binary mode is only supported for type CloudEvent."
+            )
         try:
-            if isinstance(events, dict):
-                events = CloudEvent.from_dict(events)
+            if isinstance(event, CloudEvent) or _is_cloud_event(event):
+                try:
+                    event = CloudEvent.from_dict(event)
+                except AttributeError:
+                    event = CloudEvent.from_dict(_from_cncf_events(event))
+            
         except AttributeError:
             raise TypeError("Binary mode is only supported for type CloudEvent.") # pylint: disable=raise-missing-from
 
+        http_request = _to_http_request(
+            topic_name=topic_name,
+            api_version=self._config.api_version,
+            event=event,
+            **kwargs,
+        )
+
         # If data is a cloud event, convert to an HTTP Request in binary mode
-        if isinstance(events, CloudEvent):
-            await self._publish(
-                topic_name, events, self._config.api_version, **kwargs
-            )
-        else:
-            raise TypeError("Binary mode is only supported for type CloudEvent.")
+        await self.send_request(
+            http_request, **kwargs
+        )
+
 
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
@@ -427,75 +440,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         return await super()._renew_cloud_event_locks(
             topic_name, subscription_name, options, **kwargs
         )
-
-    async def _publish(
-        self, topic_name: str, event: Any, api_version, **kwargs: Any
-    ) -> None:
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
-
-        content_type = kwargs.pop("content_type", None) # pylint: disable=unused-variable
-        # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = _to_http_request(
-            topic_name=topic_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-            event=event,
-            **kwargs,
-        )
-
-        _stream = kwargs.pop("stream", False)
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-        }
-        http_request.url = self._client.format_url(
-            http_request.url, **path_format_arguments
-        )
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            http_request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(
-                _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json(),
-            )
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 __all__: List[str] = [
