@@ -18,5 +18,5 @@ def _resolve_cls_and_type(cls, data, params_override):
     return cls, None
 
 
-# Override the _resolve_cls_and_type function in the Data class to support serilization of DataIndex
+# Override the _resolve_cls_and_type function in the Data class to support serialization of DataIndex
 Data._resolve_cls_and_type = _resolve_cls_and_type

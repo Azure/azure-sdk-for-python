@@ -28,12 +28,6 @@
         "VCORE",
         "pymongo",
         "vcore",
-        "kwoa",
-        "rslex",
-        "aadtoken",
-        "FAISS",
-        "faiss",
-        "LLMRAG",
         "swigfaiss",
         "redef",
         "faissanddocstore",
@@ -57,9 +51,11 @@
         "dets",
         "llms",
         "Hnsw",
-        "hnsw"
+        "hnsw",
+        "asearch",
+        "pipelinerunid"
     ],
     "ignorePaths": [
-        "./azure/ai/ml/entities/_indexes/utils/encodings/*"
+        "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*"
     ]
 }
