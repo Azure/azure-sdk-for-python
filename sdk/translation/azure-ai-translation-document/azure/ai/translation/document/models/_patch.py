@@ -6,21 +6,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
-
-def patch_sdk():
-    """Do not remove from this file.
-
-    `patch_sdk` is a last resort escape hatch that allows you to do customizations
-    you can't accomplish using the techniques described in
-    https://aka.ms/azsdk/python/dpcodegen/python/customize
-    """
-
-import datetime
 from typing import List, Optional, Union, Any
+import datetime
+
 from ._models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
@@ -29,6 +18,7 @@ from ._models import (
     Glossary as _Glossary
 )
 from ._enums import StorageInputType
+
 
 def convert_status(status, ll=False):
     if ll is False:
@@ -570,3 +560,23 @@ class DocumentTranslationFileFormat:
                 self.default_format_version,
             )[:1024]
         )
+
+
+__all__: List[str] = [
+    "TranslationGlossary",
+    "TranslationTarget",
+    "DocumentTranslationInput",
+    "TranslationStatus",
+    "DocumentStatus",
+    "DocumentTranslationError",
+    "DocumentTranslationFileFormat",
+]  # Add all objects you want publicly available to users at this package level
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """

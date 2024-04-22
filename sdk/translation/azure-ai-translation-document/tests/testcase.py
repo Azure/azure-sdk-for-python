@@ -9,7 +9,7 @@ import datetime
 import uuid
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
-from azure.ai.translation.document.models._patch import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 class Document:
     """Represents a document to be uploaded to source/target container"""
@@ -208,7 +208,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         assert job_details.total_characters_charged is not None
 
     def _validate_format(self, format):
-        assert format.format is not None
+        assert format.file_format is not None
         assert format.file_extensions is not None
         assert format.content_types is not None
 
