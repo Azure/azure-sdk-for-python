@@ -760,7 +760,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             handler,
             timeout=timeout,
         )
-        links = get_receive_links(message)
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links, start_time=start_time
         ):
@@ -821,7 +821,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
-        links = get_receive_links(message)
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time
         ):
