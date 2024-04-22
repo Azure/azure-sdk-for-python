@@ -55,7 +55,8 @@ class TestContainerPropertiesCache(unittest.TestCase):
     def test_container_properties_cache(self):
         self.setUpClass()
         client = self.client
-        database_name = self.configs.TEST_DATABASE_ID
+        database_name = str(uuid.uuid4())
+        self.client.create_database(database_name)
         container_name = str(uuid.uuid4())
         container_pk = "PK"
         # Create The Container
