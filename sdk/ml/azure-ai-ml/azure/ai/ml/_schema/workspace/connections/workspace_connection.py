@@ -11,6 +11,7 @@ from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, 
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
+    AccountKeyConfigurationSchema,
     ManagedIdentityConfigurationSchema,
     PatTokenConfigurationSchema,
     SasTokenConfigurationSchema,
@@ -21,6 +22,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
+from azure.ai.ml.entities import NoneCredentialConfiguration
 
 
 class WorkspaceConnectionSchema(ResourceSchema):
@@ -38,12 +40,15 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
             WorkspaceConnectionTypes.CUSTOM,
+            WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2,
         ],
         casing_transform=camel_to_snake,
         required=True,
     )
 
-    target = fields.Str()
+    # Sorta false, some connection types require this field, some don't.
+    # And some rename it... for client familiarity reasons.
+    target = fields.Str(required=False)
 
     credentials = UnionField(
         [
@@ -54,7 +59,10 @@ class WorkspaceConnectionSchema(ResourceSchema):
             NestedField(ServicePrincipalConfigurationSchema),
             NestedField(AccessKeyConfigurationSchema),
             NestedField(ApiKeyConfigurationSchema),
-        ]
+            NestedField(AccountKeyConfigurationSchema),
+        ],
+        required=False,
+        load_default=NoneCredentialConfiguration(),
     )
 
     is_shared = fields.Bool(load_default=True)

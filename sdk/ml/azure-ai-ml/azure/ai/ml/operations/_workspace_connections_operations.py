@@ -18,6 +18,9 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.core.credentials import TokenCredential
+from azure.ai.ml.entities._credentials import (
+    ApiKeyConfiguration,
+)
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -46,12 +49,36 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
+    def _try_fill_api_key(self, connection: WorkspaceConnection) -> None:
+        """Try to fill in a connection's credentials with it's actual values.
+        Connection data retrievals normally return an empty credential object that merely includes the
+        connection's credential type, but not the actual secrets of that credential.
+        However, it's extremely common for users to want to know the contents of their connection's credentials.
+        This method tries to fill in the user's credentials with the actual values by making
+        a secondary API call to the service. It requires that the user have the necceary permissions to do so,
+        and it only works on api key-based credentials.
+
+        :param connection: The connection to try to fill in the credentials for.
+        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
+        """
+        if hasattr(connection, "credentials") and isinstance(connection.credentials, ApiKeyConfiguration):
+            list_secrets_response = self._operation.list_secrets(
+                connection_name=connection.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._operation_scope.workspace_name,
+            )
+            if list_secrets_response.properties.credentials is not None:
+                connection.credentials.key = list_secrets_response.properties.credentials.key
+
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceConnection:
+    def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> WorkspaceConnection:
         """Get a workspace connection by name.
 
         :param name: Name of the workspace connection.
         :type name: str
+        :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
+        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+        :paramtype populate_secrets: bool
         :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
             retrieved from the service.
         :return: The workspace connection with the provided name.
@@ -67,24 +94,31 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :caption: Get a workspace connection by name.
         """
 
-        obj = self._operation.get(
-            workspace_name=self._workspace_name,
-            connection_name=name,
-            **self._scope_kwargs,
-            **kwargs,
+        connection = WorkspaceConnection._from_rest_object(
+            rest_obj=self._operation.get(
+                workspace_name=self._workspace_name,
+                connection_name=name,
+                **self._scope_kwargs,
+                **kwargs,
+            )
         )
 
-        return WorkspaceConnection._from_rest_object(rest_obj=obj)  # type: ignore[return-value]
+        if populate_secrets and connection is not None:
+            self._try_fill_api_key(connection)
+        return connection  # type: ignore[return-value]
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, workspace_connection: WorkspaceConnection, **kwargs: Any
+        self, workspace_connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
     ) -> Optional[WorkspaceConnection]:
         """Create or update a workspace connection.
 
         :param workspace_connection: Workspace Connection definition
             or object which can be translated to a workspace connection.
         :type workspace_connection: ~azure.ai.ml.entities.WorkspaceConnection
+        :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
+        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+        :paramtype populate_secrets: bool
         :return: Created or update workspace connection.
         :rtype: ~azure.ai.ml.entities.WorkspaceConnection
 
@@ -105,7 +139,10 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
             **kwargs,
         )
-        return WorkspaceConnection._from_rest_object(rest_obj=response)
+        conn = WorkspaceConnection._from_rest_object(rest_obj=response)
+        if populate_secrets and conn is not None:
+            self._try_fill_api_key(conn)
+        return conn
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
@@ -135,6 +172,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self,
         connection_type: Optional[str] = None,
         *,
+        populate_secrets: bool = False,
         include_data_connections: bool = False,
         **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
@@ -142,6 +180,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         :param connection_type: Type of workspace connection to list.
         :type connection_type: Optional[str]
+        :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
+        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+        :paramtype populate_secrets: bool
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
@@ -163,13 +204,18 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             else:
                 kwargs["params"] = {"includeAll": "true"}
 
-        return cast(
-            Iterable[WorkspaceConnection],
-            self._operation.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
-                category=_snake_to_camel(connection_type) if connection_type else connection_type,
-                **self._scope_kwargs,
-                **kwargs,
-            ),
+        def post_process_conn(rest_obj):
+            result = WorkspaceConnection._from_rest_object(rest_obj)
+            if populate_secrets and result is not None:
+                self._try_fill_api_key(result)
+            return result
+
+        result = self._operation.list(
+            workspace_name=self._workspace_name,
+            cls=lambda objs: [post_process_conn(obj) for obj in objs],
+            category=_snake_to_camel(connection_type) if connection_type else connection_type,
+            **self._scope_kwargs,
+            **kwargs,
         )
+
+        return cast(Iterable[WorkspaceConnection], result)

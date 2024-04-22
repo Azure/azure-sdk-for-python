@@ -24,6 +24,7 @@ from azure.ai.ml.entities._credentials import (
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
     ApiKeyConfiguration,
+    AccountKeyConfiguration,
 )
 
 
@@ -133,3 +134,17 @@ class ApiKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
     def make(self, data: Dict[str, str], **kwargs) -> ApiKeyConfiguration:
         data.pop("type")
         return ApiKeyConfiguration(**data)
+
+
+class AccountKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.ACCOUNT_KEY,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+    account_key = fields.Str()
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> AccountKeyConfiguration:
+        data.pop("type")
+        return AccountKeyConfiguration(**data)

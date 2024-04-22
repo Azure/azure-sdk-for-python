@@ -62,7 +62,10 @@ from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+# Note, this needs to match the restclient that's imported by the
+# Workspace connection class, otherwise some unit tests will start failing
+# Due to the mismatch between expected and received classes in WC rest conversions.
+from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
@@ -72,6 +75,8 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+    AccountKeyAuthTypeWorkspaceConnectionProperties,
+    AADAuthTypeWorkspaceConnectionProperties,
 )
 
 
@@ -81,7 +86,7 @@ class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
 
     @classmethod
     def _get_credential_class_from_rest_type(cls, auth_type: str) -> Type:
-        # Defined in this file instead of in constants file to avoid adding imports there and risking
+        # Defined in this file instead of in constants file to avoid risking
         # circular imports. This map links rest enums to the corresponding client classes.
         # Enums are all lower-cased because rest enums aren't always consistent with their
         # camel casing rules.
@@ -97,6 +102,7 @@ class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
             ConnectionAuthType.SERVICE_PRINCIPAL.lower(): ServicePrincipalConfiguration,
             ConnectionAuthType.MANAGED_IDENTITY.lower(): ManagedIdentityConfiguration,
             ConnectionAuthType.API_KEY.lower(): ApiKeyConfiguration,
+            ConnectionAuthType.ACCOUNT_KEY.lower(): AccountKeyConfiguration,
         }
         if not auth_type:
             return NoneCredentialConfiguration
@@ -122,6 +128,17 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
     def _from_datastore_rest_object(cls, obj: RestAccountKeyDatastoreCredentials) -> "AccountKeyConfiguration":
         return cls(account_key=obj.secrets.key if obj.secrets else None)
 
+    @classmethod
+    def _from_workspace_connection_rest_object(
+        cls, obj: Optional[RestWorkspaceConnectionSharedAccessSignature]
+    ) -> "AccountKeyConfiguration":
+        # As far as I can tell, account key configs use the name underlying
+        # rest object as sas token configs
+        return cls(account_key=obj.sas if obj is not None and obj.sas else None)
+
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionSharedAccessSignature:
+        return RestWorkspaceConnectionSharedAccessSignature(sas=self.account_key)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AccountKeyConfiguration):
             return NotImplemented
@@ -129,6 +146,10 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return AccountKeyAuthTypeWorkspaceConnectionProperties
 
 
 class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
@@ -798,7 +819,9 @@ class IdentityConfiguration(RestTranslatableMixin):
 
 
 class NoneCredentialConfiguration(RestTranslatableMixin):
-    """None Credential Configuration."""
+    """None Credential Configuration. In many uses cases, the presence of
+    this credential configuration indicates that the user's Entra ID will be
+    implicitly used instead of any other form of authentication."""
 
     def __init__(self) -> None:
         self.type = CredentialsType.NONE
@@ -811,6 +834,9 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentialConfiguration":
         return cls()
 
+    def _to_workspace_connection_rest_object(self) -> None:
+        return None
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, NoneCredentialConfiguration):
             return True
@@ -822,6 +848,37 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     @classmethod
     def _get_rest_properties_class(cls) -> Type:
         return NoneAuthTypeWorkspaceConnectionProperties
+
+
+class AadCredentialConfiguration(RestTranslatableMixin):
+    """Azure Active Directory Credential Configuration"""
+
+    def __init__(self) -> None:
+        self.type = camel_to_snake(ConnectionAuthType.AAD)
+
+    def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
+        return RestNoneDatastoreCredentials()
+
+    @classmethod
+    # pylint: disable=unused-argument
+    def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "AadCredentialConfiguration":
+        return cls()
+
+    # Has no credential object, just a property bag class.
+    def _to_workspace_connection_rest_object(self) -> None:
+        return None
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, AadCredentialConfiguration):
+            return True
+        return False
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return AADAuthTypeWorkspaceConnectionProperties
 
 
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):

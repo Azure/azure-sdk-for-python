@@ -67,6 +67,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -194,11 +195,19 @@ from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
-    AzureAISearchWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
     AzureBlobStoreWorkspaceConnection,
+    MicrosoftOneLakeWorkspaceConnection,
     AzureOpenAIWorkspaceConnection,
+    AzureAIServiceWorkspaceConnection,
+    AzureAISearchWorkspaceConnection,
+    AzureContentSafetyWorkspaceConnection,
+    AzureSpeechServicesWorkspaceConnection,
+    APIKeyWorkspaceConnection,
+    OpenAIWorkspaceConnection,
+    SerpWorkspaceConnection,
+    ServerlessWorkspaceConnection,
 )
+from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -277,10 +286,17 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
     "AzureBlobStoreWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
+    "MicrosoftOneLakeWorkspaceConnection",
+    "AzureOpenAIWorkspaceConnection",
     "AzureAIServiceWorkspaceConnection",
+    "AzureAISearchWorkspaceConnection",
+    "AzureContentSafetyWorkspaceConnection",
+    "AzureSpeechServicesWorkspaceConnection",
+    "APIKeyWorkspaceConnection",
+    "OpenAIWorkspaceConnection",
+    "SerpWorkspaceConnection",
+    "ServerlessWorkspaceConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -304,6 +320,7 @@ __all__ = [
     "AzureFileDatastore",
     "OneLakeDatastore",
     "OneLakeArtifact",
+    "OneLakeConnectionArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -454,6 +471,8 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "AccountKeyConfiguration",
+    "AadCredentialConfiguration",
 ]
 
 # Allow importing these types for backwards compatibility
