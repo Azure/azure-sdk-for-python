@@ -42,7 +42,7 @@ from ..models._patch import (
     ReceiveDetails,
 )
 from .. import models as _models
-from ..models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
+from ..models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions, CloudEvent as InternalCloudEvent
 from .._validation import api_version_validation
 
 
@@ -628,13 +628,14 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
 
 
 def _serialize_events(events):
+    from .._model_base import SdkJSONEncoder
     if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
         # Try to serialize cloud events
         try:
             internal_body_list = []
             for item in events:
                 internal_body_list.append(_serialize_cloud_event(item))
-            return json.dumps(internal_body_list)
+            return json.dumps(internal_body_list, cls=SdkJSONEncoder, exclude_readonly=True) 
         except AttributeError:
             # Try to serialize CNCF Cloud Events
             return json.dumps([_from_cncf_events(e) for e in events])
@@ -642,35 +643,28 @@ def _serialize_events(events):
         # Does not conform to format, send as is
         return json.dumps(events)
 
-def _serialize_cloud_event(event):
-    data = {}
-    # CloudEvent required fields but validate they are not set to None
-    if event.type:
-        data["type"] = _SERIALIZER.body(event.type, "str")
-    if event.specversion:
-        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
-    if event.source:
-        data["source"] = _SERIALIZER.body(event.source, "str")
-    if event.id:
-        data["id"] = _SERIALIZER.body(event.id, "str")
+def _serialize_cloud_event(cloud_event):
+    data_kwargs = {}
 
-    # Check if data is bytes and serialize to base64
-    if isinstance(event.data, bytes):
-        data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
-    elif event.data:
-        data["data"] = _SERIALIZER.body(event.data, "str")
+    if isinstance(cloud_event.data, bytes):
+        data_kwargs["data_base64"] = cloud_event.data
+    else:
+        data_kwargs["data"] = cloud_event.data
 
-    if event.subject:
-        data["subject"] = _SERIALIZER.body(event.subject, "str")
-    if event.time:
-        data["time"] = _SERIALIZER.body(event.time, "str")
-    if event.datacontenttype:
-        data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
-    if event.extensions:
-        for extension, value in event.extensions.items():
-            data[extension] = _SERIALIZER.body(value, "str")
-
-    return data
+    internal_event = InternalCloudEvent(
+        id=cloud_event.id,
+        source=cloud_event.source,
+        type=cloud_event.type,
+        specversion=cloud_event.specversion,
+        time=cloud_event.time,
+        dataschema=cloud_event.dataschema,
+        datacontenttype=cloud_event.datacontenttype,
+        subject=cloud_event.subject,
+        **data_kwargs,
+    )
+    if cloud_event.extensions:
+        internal_event.update(cloud_event.extensions)
+    return internal_event
 
 
 __all__: List[str] = [
