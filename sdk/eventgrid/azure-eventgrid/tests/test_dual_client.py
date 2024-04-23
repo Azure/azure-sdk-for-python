@@ -15,6 +15,15 @@ from cloudevents.http import CloudEvent as CNCFCloudEvent
 
 from eventgrid_preparer import EventGridPreparer
 
+def _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level):
+    if level=="Standard":
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        tokens = []
+        for detail in events.value:
+            token = detail.broker_properties.lock_token
+            tokens.append(token)
+        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens)
+
 class ArgPasser:
     def __call__(self, fn):
         def _preparer(test_class, level, **kwargs):
@@ -59,6 +68,8 @@ class TestEGDualClient(AzureRecordedTestCase):
                 topic_name=eventgrid_topic_name, events=event, binary_mode=True
             )
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -88,6 +99,8 @@ class TestEGDualClient(AzureRecordedTestCase):
             client.receive_cloud_events(
                 topic_name=eventgrid_topic_name, subscription_name=eventgrid_event_subscription_name
             )
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -121,6 +134,8 @@ class TestEGDualClient(AzureRecordedTestCase):
                     topic_name=eventgrid_topic_name, events=event
                 )
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -145,6 +160,8 @@ class TestEGDualClient(AzureRecordedTestCase):
         client.send(
             topic_name=eventgrid_topic_name, events=event
         )
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -175,6 +192,8 @@ class TestEGDualClient(AzureRecordedTestCase):
                 topic_name=eventgrid_topic_name, events=event, channel_name=eventgrid_partner_channel_name
             )
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -203,6 +222,8 @@ class TestEGDualClient(AzureRecordedTestCase):
                 topic_name=eventgrid_topic_name, events=event
             )
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -226,7 +247,9 @@ class TestEGDualClient(AzureRecordedTestCase):
         client.send(
                 topic_name=eventgrid_topic_name, events=cloud_event
             )
-            
+        
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -249,6 +272,8 @@ class TestEGDualClient(AzureRecordedTestCase):
         client.send(
             topic_name=eventgrid_topic_name, events=event
         )
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -280,3 +305,5 @@ class TestEGDualClient(AzureRecordedTestCase):
             client.send(
                 topic_name=eventgrid_topic_name, events=event
             )
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)

@@ -134,7 +134,15 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             datacontenttype='text/plain'
         )
 
-        dict_event = {"type": "Contoso.Items.ItemReceived", "source": "source", "subject": "MySubject", "data": b"hello", "datacontenttype": "text/plain"}
+        dict_event = {
+            "type": "Contoso.Items.ItemReceived",
+            "source": "source",
+            "subject": "MySubject",
+            "data": b"hello",
+            "datacontenttype": "text/plain",
+            "id": "randomuuid11",
+            "specversion": "1.0",
+        }
 
         
         client.send(
