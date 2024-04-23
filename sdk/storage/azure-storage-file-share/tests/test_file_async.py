@@ -2638,6 +2638,30 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_copy_file_async_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="targetfile",
+            credential=storage_account_key)
+
+        with pytest.raises(ResourceNotFoundError) as e:
+            await file_client.start_copy_from_url("https://error.file.core.windows.net/")
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "400"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "InvalidQueryParameterValue"
+        assert "Value for one of the query parameters specified in the request URI is invalid." in e.value.message
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_unicode_name(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
