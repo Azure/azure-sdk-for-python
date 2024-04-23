@@ -188,6 +188,7 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+CONNECTION_RESOURCE_ID_KEY = "ResourceId"
 
 
 class DefaultOpenEncoding:
@@ -802,7 +803,7 @@ class WorkspaceConnectionTypes:
     AZURE_SPEECH_SERVICES = "azure_speech_services"  # Corresponds to "cognitive_service" with kind "speech".
     AZURE_SEARCH = "azure_ai_search"  # Corresponds to "cognitive_search"
     AZURE_AI_SERVICES = "azure_ai_services"  # Corresponds to "ai_services"
-    AI_SERVICES_REST_PLACEHOLDER = "AiServices"  # placeholder until REST enum "ai_services" is published.
+    AI_SERVICES_REST_PLACEHOLDER = "AIServices"  # placeholder until REST enum "ai_services" is published.
 
 
 class OneLakeArtifactTypes:

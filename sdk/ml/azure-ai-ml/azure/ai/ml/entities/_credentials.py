@@ -103,6 +103,7 @@ class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
             ConnectionAuthType.MANAGED_IDENTITY.lower(): ManagedIdentityConfiguration,
             ConnectionAuthType.API_KEY.lower(): ApiKeyConfiguration,
             ConnectionAuthType.ACCOUNT_KEY.lower(): AccountKeyConfiguration,
+            ConnectionAuthType.AAD.lower(): AadCredentialConfiguration,
         }
         if not auth_type:
             return NoneCredentialConfiguration

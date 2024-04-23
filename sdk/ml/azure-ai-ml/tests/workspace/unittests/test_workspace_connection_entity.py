@@ -52,7 +52,6 @@ class TestWorkspaceConnectionEntity:
         new_conn = WorkspaceConnection._from_rest_object(rest_obj=rest_conn)
         # Connections should be identical besides their name (which is not set by RestClient objects without API calls)
         # Check them individually to simplify debugging.
-        # import pdb; pdb.set_trace()
         assert new_conn is not None
         assert type(conn) == type(new_conn)
         assert conn.type == new_conn.type
@@ -94,20 +93,37 @@ class TestWorkspaceConnectionEntity:
         )
 
     def test_blob_storage(self):
-        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store.yaml")
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store_acc_key.yaml")
         assert type(ws_connection) == AzureBlobStoreWorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCOUNT_KEY)
         assert ws_connection.credentials.account_key == "9876"
-        assert ws_connection.name == "test_ws_conn_blob_store"
+        assert ws_connection.name == "test_ws_conn_blob_store1"
         assert ws_connection.url == "my_endpoint"
         assert ws_connection.tags["four"] == "five"
         assert ws_connection.container_name == "some_container"
         assert ws_connection.account_name == "some_account"
         self.check_rest_conversion_stable(ws_connection)
 
+        
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store_sas.yaml")
+        assert type(ws_connection) == AzureBlobStoreWorkspaceConnection
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SAS)
+        assert ws_connection.credentials.sas_token == "some_pat"
+        assert ws_connection.name == "test_ws_conn_blob_store2"
+        self.check_rest_conversion_stable(ws_connection)
+
+        
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store_entra.yaml")
+        assert type(ws_connection) == AzureBlobStoreWorkspaceConnection
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
+        assert ws_connection.name == "test_ws_conn_blob_store3"
+        self.check_rest_conversion_stable(ws_connection)
+
     def test_alds_gen2(self):
-        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2.yaml")
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2_sp.yaml")
         assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
@@ -115,7 +131,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.client_id == "12345"
         assert ws_connection.credentials.client_secret == "123456"
         assert ws_connection.credentials.authority_url == "https://login.microsoftonline.com"
-        assert ws_connection.name == "test_gen2_conn"
+        assert ws_connection.name == "test_gen2_conn1"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.tags["four"] == "five"
         # Auth url doesn't get copied back by rest conversion intentionally, so black it here
@@ -123,7 +139,18 @@ class TestWorkspaceConnectionEntity:
         ws_connection.credentials.authority_url = ""
         self.check_rest_conversion_stable(ws_connection)
 
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2_entra.yaml")
+        assert type(ws_connection) == WorkspaceConnection
+        assert ws_connection.type == WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
+        assert ws_connection.name == "test_gen2_conn2"
+        # Auth url doesn't get copied back by rest conversion intentionally, so black it here
+        # to simplify comparison.
+        ws_connection.credentials.authority_url = ""
+        self.check_rest_conversion_stable(ws_connection)
+
     def test_one_lake(self):
+        # Note: also tests SP credential.
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/one_lake_with_name.yaml"
         )
@@ -135,20 +162,21 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.client_secret == "123456"
         assert ws_connection.credentials.authority_url == "https://login.microsoftonline.com"
         assert ws_connection.name == "one_lake_with_name"
-        assert ws_connection.target == "www.endpoint.com/the_workspace_name/my_lake_name.Lakehouse"
+        assert ws_connection.target == "https://www.endpoint.com/the_workspace_name/my_lake_name.Lakehouse"
         # Auth url doesn't get copied back by rest conversion intentionally, so black it here
         # to simplify comparison.
         ws_connection.credentials.authority_url = ""
         self.check_rest_conversion_stable(ws_connection)
 
+        # Note: also tests AAD credential
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/one_lake_with_id.yaml"
         )
         assert type(ws_connection) == MicrosoftOneLakeWorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE)
-        assert ws_connection.credentials.type == ConnectionAuthType.NONE
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.name == "one_lake_with_id"
-        assert ws_connection.target == "www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
+        assert ws_connection.target == "https://www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
         self.check_rest_conversion_stable(ws_connection)
 
     def test_azure_open_ai(self):
@@ -189,6 +217,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_key == "2222"
         assert ws_connection.name == "ai_services_conn_api"
         assert ws_connection.target == "my_endpoint"
+        assert ws_connection.ai_services_resource_id == "this-needs-to-be-a-valid-ai-services-id-in-e2e-tests"
         self.check_rest_conversion_stable(ws_connection)
 
         ws_connection = load_workspace_connection(
@@ -199,6 +228,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "ai_services_conn_entra"
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
+        assert ws_connection.ai_services_resource_id == "this-needs-to-be-a-valid-ai-services-id-in-e2e-tests"
         self.check_rest_conversion_stable(ws_connection)
 
     def test_content_safety(self):

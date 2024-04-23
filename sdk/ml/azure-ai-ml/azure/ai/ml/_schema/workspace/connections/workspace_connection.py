@@ -22,7 +22,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
-from azure.ai.ml.entities import NoneCredentialConfiguration
+from azure.ai.ml.entities import NoneCredentialConfiguration, AadCredentialConfiguration
 
 
 class WorkspaceConnectionSchema(ResourceSchema):
@@ -71,4 +71,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import WorkspaceConnection
 
+        # Replace ALDS gen 2 empty default with AAD over None
+        if data.get("type", None) ==  WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2 and data.get("credentials", None) == NoneCredentialConfiguration():
+            data["credentials"] = AadCredentialConfiguration()
         return WorkspaceConnection(**data)

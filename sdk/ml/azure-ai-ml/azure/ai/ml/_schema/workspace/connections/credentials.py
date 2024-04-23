@@ -52,7 +52,7 @@ class SasTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         required=True,
     )
-    pat = fields.Str()
+    sas_token = fields.Str()
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> SasTokenConfiguration:

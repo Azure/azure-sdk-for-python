@@ -28,10 +28,11 @@ class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     )
     credentials = UnionField(
         [
-            NestedField(AccountKeyConfigurationSchema),
             NestedField(SasTokenConfigurationSchema),
+            NestedField(AccountKeyConfigurationSchema),
         ],
         required=False,
+        load_default=AadCredentialConfiguration()
     )
 
     url = fields.Str()
@@ -45,14 +46,13 @@ class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
         return AzureBlobStoreWorkspaceConnection(**data)
 
-
 # pylint: disable-next=name-too-long
 class MicrosoftOneLakeWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
     )
     credentials = NestedField(
-        ServicePrincipalConfigurationSchema, required=False, load_default=NoneCredentialConfiguration()
+        ServicePrincipalConfigurationSchema, required=False, load_default=AadCredentialConfiguration()
     )
     artifact = NestedField(OneLakeArtifactSchema, required=True)
 
@@ -92,6 +92,7 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     )
     api_key = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str()
+    ai_services_resource_id = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):

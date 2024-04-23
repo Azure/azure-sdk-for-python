@@ -28,6 +28,7 @@ from azure.ai.ml.constants._common import (
     WorkspaceConnectionTypes,
     CognitiveServiceKinds,
     CONNECTION_KIND_KEY,
+    CONNECTION_RESOURCE_ID_KEY,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -48,12 +49,14 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
-    ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, NoneCredentialConfiguration],
-    WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2: [ServicePrincipalConfiguration, NoneCredentialConfiguration],
+    ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
+    WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2: [ServicePrincipalConfiguration, AadCredentialConfiguration],
     ConnectionCategory.GIT: [PatTokenConfiguration, NoneCredentialConfiguration],
     ConnectionCategory.PYTHON_FEED: [UsernamePasswordConfiguration, PatTokenConfiguration, NoneCredentialConfiguration],
     ConnectionCategory.CONTAINER_REGISTRY: [ManagedIdentityConfiguration, UsernamePasswordConfiguration],
 }
+
+DATASTORE_CONNECTIONS = {ConnectionCategory.AZURE_BLOB, WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2, ConnectionCategory.AZURE_ONE_LAKE}
 
 CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoint", "endpoint"]
 
@@ -144,7 +147,6 @@ class WorkspaceConnection(Resource):
             target = kwargs.pop(target_name, target)
         if target is None:
             raise ValueError("target is a required field for WorkspaceConnection.")
-        self.validate_cred_for_conn_cat(type, credentials)
 
         super().__init__(**kwargs)
 
@@ -152,28 +154,33 @@ class WorkspaceConnection(Resource):
         self._target = target
         self._credentials = credentials
         self._is_shared = is_shared
+        self.validate_cred_for_conn_cat()
 
-    def validate_cred_for_conn_cat(self, conn_type: str, credentials: Any) -> None:
+    def validate_cred_for_conn_cat(self) -> None:
         """Given a connection type, ensure that the given credentials are valid for that connection type.
         Does not validate the actual data of the inputted credential, just that they are of the right class
         type.
 
-        :param conn_type: The connection category.
-        :type conn_type: str
-        :param credentials: The credentials for the connection.
-        :type credentials: Any
         """
-        if conn_type in CONNECTION_CATEGORY_TO_CREDENTIAL_MAP:
-            allowed_credentials = CONNECTION_CATEGORY_TO_CREDENTIAL_MAP[conn_type]
-            if credentials is None and NoneCredentialConfiguration not in allowed_credentials:
+        # Convert none credentials to AAD credentials for datastore connection types.
+        # The backend stores datastore aad creds as none, unlike other connection types with aad,
+        # which actually list them as aad. This IS distinct from regular none credentials, or so I've been told,
+        # so I will endeavor to smooth over that inconsistency here.
+        converted_type = _snake_to_camel(self.type).lower()
+        if self._credentials == NoneCredentialConfiguration() and any(converted_type == _snake_to_camel(item).lower() for item in DATASTORE_CONNECTIONS):
+            self._credentials = AadCredentialConfiguration()
+
+        if self.type in CONNECTION_CATEGORY_TO_CREDENTIAL_MAP:
+            allowed_credentials = CONNECTION_CATEGORY_TO_CREDENTIAL_MAP[self.type]
+            if self.credentials is None and NoneCredentialConfiguration not in allowed_credentials:
                 raise ValueError(
-                    f"Cannot instantiate a WorkspaceConnection with a type of {type} and no credentials."
+                    f"Cannot instantiate a WorkspaceConnection with a type of {self.type} and no credentials."
                     f"Please supply credentials from one of the following types: {allowed_credentials}."
                 )
-            cred_type = type(credentials)
+            cred_type = type(self.credentials)
             if cred_type not in allowed_credentials:
                 raise ValueError(
-                    f"Cannot instantiate a WorkspaceConnection with a type of {type} and credentials of type"
+                    f"Cannot instantiate a WorkspaceConnection with a type of {self.type} and credentials of type"
                     f" {cred_type}. Please supply credentials from one of the following types: {allowed_credentials}."
                 )
         # For unknown types, just let the user do whatever they want.
@@ -377,7 +384,6 @@ class WorkspaceConnection(Resource):
         popped_tags = conn_class._get_required_metadata_fields()
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
-
         # Check for alternative name for custom connection type (added for client clarity).
         if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
             rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
@@ -397,7 +403,11 @@ class WorkspaceConnection(Resource):
             # required those fields for users.
             rest_kwargs["artifact"] = ""
             rest_kwargs["one_lake_workspace_name"] = ""
-
+        if rest_obj.properties.category == WorkspaceConnectionTypes.AI_SERVICES_REST_PLACEHOLDER:
+            # AI Services renames it's metadata field when surfaced to users and inputted
+            # into it's initializer for clarity. ResourceId doesn't really tell much on its own.
+            # No default in pop, this should fail if we somehow don't get a resource ID
+            rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         workspace_connection = conn_class(**rest_kwargs)
         return cast(Optional["WorkspaceConnection"], workspace_connection)
 
@@ -466,7 +476,12 @@ class WorkspaceConnection(Resource):
         credentials: Any = NoneCredentialConfiguration()
 
         credentials_class = _BaseIdentityConfiguration._get_credential_class_from_rest_type(properties.auth_type)
-        if credentials_class is not NoneCredentialConfiguration:
+        # None and AAD auth types have a property bag class, but no credentials inside that.
+        # Thankfully they're both inputless.
+        
+        if credentials_class is AadCredentialConfiguration:
+            credentials = AadCredentialConfiguration()
+        elif credentials_class is not NoneCredentialConfiguration:
             credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
 
         tags = properties.metadata if hasattr(properties, "metadata") else None

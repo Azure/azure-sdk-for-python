@@ -446,8 +446,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
-        local_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2.yaml")
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name1')}"
+        local_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2_sp.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(workspace_connection=local_connection)
@@ -463,12 +463,29 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name2')}"
+        local_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/alds_gen2_entra.yaml")
+        local_connection.name = wps_connection_name
+
+        created_connection = client.connections.create_or_update(workspace_connection=local_connection)
+        client.connections.delete(name=wps_connection_name)
+
+        assert isinstance(created_connection, WorkspaceConnection)
+        assert created_connection.name == wps_connection_name
+        assert created_connection.type == WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2
+        assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
+        assert created_connection.tags["four"] == "five"
+        assert created_connection.target == "my_endpoint"
+
+        with pytest.raises(Exception):
+            client.connections.get(name=wps_connection_name)
+
     def test_one_lake_crud(
         self,
         client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name1')}"
         local_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/one_lake_with_name.yaml"
         )
@@ -481,7 +498,24 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE)
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
-        assert created_connection.target == "www.endpoint.com/the_workspace_name/my_lake_name.Lakehouse"
+        assert created_connection.target == "https://www.endpoint.com/the_workspace_name/my_lake_name.Lakehouse"
+
+        with pytest.raises(Exception):
+            client.connections.get(name=wps_connection_name)
+
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name2')}"
+        local_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/one_lake_with_id.yaml"
+        )
+        local_connection.name = wps_connection_name
+
+        created_connection = client.connections.create_or_update(workspace_connection=local_connection)
+        client.connections.delete(name=wps_connection_name)
+        assert isinstance(created_connection, MicrosoftOneLakeWorkspaceConnection)
+        assert created_connection.name == wps_connection_name
+        assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE)
+        assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
+        assert created_connection.target == "https://www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -536,7 +570,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    @pytest.mark.skipif(condition=True, reason="Requires resource ID not noted in v1 spec")
+    @pytest.mark.skipif(condition=True, reason="Backend validation requires valid input data, which I don't want to surface here, or learn to scrub from a recording.")
     def test_azure_ai_services_crud(
         self,
         client: MLClient,
@@ -547,11 +581,13 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/workspace_connection/ai_services_with_key.yaml"
         )
         local_connection.name = wps_connection_name
+        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/" # now-deleted target
+        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"        #local_connection.api_key = "e1501c78fffc4dbf9a3719fcf1a0a8e1"
+        #local_connection.api_key ="<valid-key>"
         created_connection = client.connections.create_or_update(
             workspace_connection=local_connection, populate_secrets=True
         )
         client.connections.delete(name=wps_connection_name)
-
         assert isinstance(created_connection, AzureAIServiceWorkspaceConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
@@ -565,6 +601,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/workspace_connection/ai_services_with_entra.yaml"
         )
         local_connection.name = wps_connection_name
+        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/" # now-deleted target
+        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"        #local_connection.api_key = "e1501c78fffc4dbf9a3719fcf1a0a8e1"
         created_connection = client.connections.create_or_update(
             workspace_connection=local_connection, populate_secrets=True
         )
@@ -577,7 +615,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
-
     def test_content_safety_crud(
         self,
         client: MLClient,
@@ -778,7 +815,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.OPEN_AI)
-        # assert created_connection.target == ""
+        assert created_connection.target == ""
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -800,7 +837,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.SERP)
-        # assert created_connection.target == ""
+        assert created_connection.target == ""
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)

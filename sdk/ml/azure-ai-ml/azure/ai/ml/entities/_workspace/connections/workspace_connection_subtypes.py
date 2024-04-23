@@ -16,13 +16,13 @@ from azure.ai.ml.constants._common import (
     CONNECTION_KIND_KEY,
     CONNECTION_ACCOUNT_NAME_KEY,
     CONNECTION_CONTAINER_NAME_KEY,
+    CONNECTION_RESOURCE_ID_KEY,
     WorkspaceConnectionTypes,
     CognitiveServiceKinds,
 )
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
     AadCredentialConfiguration,
-    NoneCredentialConfiguration,
 )
 
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
@@ -44,7 +44,6 @@ from .workspace_connection import WorkspaceConnection
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 
-
 @experimental
 class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
     """A connection to an Azure Blob Store.
@@ -65,7 +64,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
     :type credentials: Union[
         ~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
-        ~azure.ai.ml.entities.NoneCredentialConfiguration,
+        ~azure.ai.ml.entities.AadCredentialConfiguration,
         ]
     """
 
@@ -171,7 +170,7 @@ class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
     :type credentials: Union[
         ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
-        ~azure.ai.ml.entities.NoneCredentialConfiguration,
+        ~azure.ai.ml.entities.AadCredentialConfiguration,
         ]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -210,15 +209,15 @@ class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
     def _get_schema_class(cls) -> Type:
         return MicrosoftOneLakeWorkspaceConnectionSchema
 
+    # Target is constructued from user inputs, because it's apparently very difficult for users to
+    # directly access a One Lake's target URL.
     @classmethod
     def _construct_target(cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact) -> str:
         artifact_name = artifact.name
         # If an id is supplied, the format is different
         if re.match(".{7}-.{4}-.{4}-.{4}.{12}", artifact_name):
-            return f"{endpoint}/{workspace}/{artifact_name}"
-
-        # Can't even user camel/snake conversions because Lakehouse doesn't follow that...
-        return f"{endpoint}/{workspace}/{artifact_name}.Lakehouse"
+            return f"https://{endpoint}/{workspace}/{artifact_name}"
+        return f"https://{endpoint}/{workspace}/{artifact_name}.Lakehouse"
 
 
 # There are enough types of workspace connections that their only accept an api key credential,
@@ -257,7 +256,7 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
         type: str,
         **kwargs: Any,
     ):
-        # See if credntials directly inputted via kwargs
+        # See if credentials directly inputted via kwargs
         credentials: Union[AadCredentialConfiguration, ApiKeyConfiguration] = kwargs.pop(
             "credentials", AadCredentialConfiguration()
         )
@@ -382,12 +381,16 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
     :param api_key: The api key to connect to the azure endpoint.
     If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
+    :param ai_services_resource_id: The ID of the Azure AI service resource to connect to.
+    :type ai_services_resource_id: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     """
 
     def __init__(
         self,
+        *,
+        ai_services_resource_id: str,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -396,10 +399,40 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
             from_child=True,
             **kwargs,
         )
+        if not hasattr(self, "tags") or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_RESOURCE_ID_KEY] = ai_services_resource_id
 
     @classmethod
     def _get_schema_class(cls) -> Type:
         return AzureAIServiceWorkspaceConnectionSchema
+
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        return [CONNECTION_RESOURCE_ID_KEY]
+    
+    @property
+    def ai_services_resource_id(self) -> Optional[str]:
+        """The resource id of the ai service being connected to.
+
+        :return: The resource id of the ai service being connected to.
+        :rtype: Optional[str]
+        """
+        if self.tags is not None and CONNECTION_RESOURCE_ID_KEY in self.tags:
+            res: str = self.tags[CONNECTION_RESOURCE_ID_KEY]
+            return res
+        return None
+
+    @ai_services_resource_id.setter
+    def ai_services_resource_id(self, value: str) -> None:
+        """Set the ai service resource id of the workspace connection.
+
+        :param value: The new ai service resource id to set.
+        :type value: str
+        """
+        if not hasattr(self, "tags") or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_RESOURCE_ID_KEY] = value 
 
 
 @experimental
