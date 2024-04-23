@@ -52,7 +52,8 @@
         "llms",
         "Hnsw",
         "hnsw",
-        "asearch"
+        "asearch",
+        "pipelinerunid"
     ],
     "ignorePaths": [
         "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*"
