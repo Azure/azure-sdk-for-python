@@ -847,9 +847,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
-            if rest_command_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+                if rest_command_job.identity
+                else None
+            ),
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
@@ -941,15 +943,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
 
 @overload
-def _resolve_job_services(services: Optional[Dict]):
-    ...
+def _resolve_job_services(services: Optional[Dict]): ...
 
 
 @overload
 def _resolve_job_services(
     services: Dict[str, Union[JobServiceBase, Dict]],
-) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
-    ...
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]: ...
 
 
 def _resolve_job_services(

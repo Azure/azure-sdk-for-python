@@ -13,7 +13,7 @@ from conftest import (
     AZURE,
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
-    ENV_AZURE_OPENAI_API_VERSION,
+    LATEST,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     configure,
     reload,
@@ -24,8 +24,8 @@ class TestClient(AzureRecordedTestCase):
     """Azure AD with token provider is missing here because it is tested per feature"""
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_chat_completion_bad_deployment(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_chat_completion_bad_deployment(self, client, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -38,14 +38,14 @@ class TestClient(AzureRecordedTestCase):
         assert "The API deployment for this resource does not exist" in e.value.message
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_chat_completion_endpoint_deployment(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_chat_completion_endpoint_deployment(self, client, api_type, api_version, **kwargs):
 
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -74,13 +74,13 @@ class TestClient(AzureRecordedTestCase):
         f"{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}. Please choose different model and try again" in e.value.message 
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_chat_completion_base_url(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_chat_completion_base_url(self, client, api_type, api_version, **kwargs):
 
         client = openai.AzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -102,8 +102,8 @@ class TestClient(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_str_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_str_token(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -111,7 +111,7 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token=DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token,
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         completion = client.chat.completions.create(messages=messages, **kwargs)
         assert completion.id
@@ -128,20 +128,20 @@ class TestClient(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_no_api_key(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_no_api_key(self, client, api_type, api_version, **kwargs):
 
         with pytest.raises(openai.OpenAIError) as e:
             openai.AzureOpenAI(
                 azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
                 api_key=None,
-                api_version=ENV_AZURE_OPENAI_API_VERSION,
+                api_version=LATEST,
             )
         assert 'Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.' in str(e.value.args)
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_bad_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_bad_token(self, client, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -150,15 +150,15 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token="None",
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         with pytest.raises(openai.AuthenticationError) as e: 
             client.chat.completions.create(messages=messages, **kwargs)
         assert e.value.status_code == 401
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_bad_token_provider(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_bad_token_provider(self, client, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -167,18 +167,18 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token_provider=lambda: None,
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         with pytest.raises(ValueError) as e:
             client.chat.completions.create(messages=messages, **kwargs)
         assert "Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(e.value.args)
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_env_vars_key(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_env_vars_key(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
 
             try:
@@ -206,11 +206,11 @@ class TestClient(AzureRecordedTestCase):
                 del os.environ['OPENAI_API_VERSION']
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_client_env_vars_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_client_env_vars_token(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
 
             try:
@@ -252,7 +252,7 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             api_key="key",
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         response_headers = httpx.Headers(headers)
         options = openai._models.FinalRequestOptions(method="post", url="/completions")

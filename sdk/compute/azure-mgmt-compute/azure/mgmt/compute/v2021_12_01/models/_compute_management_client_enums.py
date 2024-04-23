@@ -30,8 +30,8 @@ class DataAccessAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
     """When export/upload URL is used, the system checks if the user has an identity in Azure Active
-    #: Directory and has necessary permissions to export/upload the data. Please refer to
-    #: aka.ms/DisksAzureADAuth."""
+    Directory and has necessary permissions to export/upload the data. Please refer to
+    aka.ms/DisksAzureADAuth."""
     NONE = "None"
     """No additional authentication would be performed when accessing export/upload URL."""
 
@@ -45,31 +45,28 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disk will be attached to a VM."""
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference or
-    #: galleryImageReference."""
-    IMPORT = "Import"
+    galleryImageReference."""
+    IMPORT_ENUM = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    by storageAccountId."""
     COPY = "Copy"
     """Create a new disk or snapshot by copying from a disk or snapshot specified by the given
-    #: sourceResourceId."""
+    sourceResourceId."""
     RESTORE = "Restore"
     """Create a new disk by copying from a backup recovery point."""
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
-    #: the disk."""
+    the disk."""
     COPY_START = "CopyStart"
     """Create a new disk by using a deep copy process, where the resource creation is considered
-    #: complete only after all data has been copied from the source."""
+    complete only after all data has been copied from the source."""
     IMPORT_SECURE = "ImportSecure"
     """Similar to Import create option. Create a new Trusted Launch VM or Confidential VM supported
-    #: disk by importing additional blob for VM guest state specified by securityDataUri in storage
-    #: account specified by storageAccountId"""
+    disk by importing additional blob for VM guest state specified by securityDataUri in storage
+    account specified by storageAccountId"""
     UPLOAD_PREPARED_SECURE = "UploadPreparedSecure"
     """Similar to Upload create option. Create a new Trusted Launch VM or Confidential VM supported
-    #: disk and upload using write token in both disk and VM guest state"""
-    IMPORT_ENUM = "Import"
-    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    disk and upload using write token in both disk and VM guest state"""
 
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,10 +85,10 @@ class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
     """Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
-    #: be changed and revoked by a customer."""
+    be changed and revoked by a customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
     """Resource using diskEncryptionSet would be encrypted at rest with two layers of encryption. One
-    #: of the keys is Customer managed and the other key is Platform managed."""
+    of the keys is Customer managed and the other key is Platform managed."""
     CONFIDENTIAL_VM_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVmEncryptedWithCustomerKey"
     """Confidential VM supported disk and VM guest state would be encrypted with customer managed key."""
 
@@ -101,17 +98,17 @@ class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "TrustedLaunch"
     """Trusted Launch provides security features such as secure boot and virtual Trusted Platform
-    #: Module (vTPM)"""
+    Module (vTPM)"""
     CONFIDENTIAL_VM_VMGUEST_STATE_ONLY_ENCRYPTED_WITH_PLATFORM_KEY = (
         "ConfidentialVM_VMGuestStateOnlyEncryptedWithPlatformKey"
     )
     """Indicates Confidential VM disk with only VM guest state encrypted"""
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_PLATFORM_KEY = "ConfidentialVM_DiskEncryptedWithPlatformKey"
     """Indicates Confidential VM disk with both OS disk and VM guest state encrypted with a platform
-    #: managed key"""
+    managed key"""
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVM_DiskEncryptedWithCustomerKey"
     """Indicates Confidential VM disk with both OS disk and VM guest state encrypted with a customer
-    #: managed key"""
+    managed key"""
 
 
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -144,16 +141,16 @@ class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium SSD locally redundant storage. Best for production and performance sensitive workloads."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     """Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
-    #: applications and dev/test."""
+    applications and dev/test."""
     ULTRA_SSD_LRS = "UltraSSD_LRS"
     """Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier
-    #: databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
+    databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
     PREMIUM_ZRS = "Premium_ZRS"
     """Premium SSD zone redundant storage. Best for the production workloads that need storage
-    #: resiliency against zone failures."""
+    resiliency against zone failures."""
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     """Standard SSD zone redundant storage. Best for web servers, lightly used enterprise applications
-    #: and dev/test that need storage resiliency against zone failures."""
+    and dev/test that need storage resiliency against zone failures."""
 
 
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,13 +158,13 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
     """Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
-    #: not a valid encryption type for disk encryption sets."""
+    not a valid encryption type for disk encryption sets."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
     """Disk is encrypted at rest with Customer managed key that can be changed and revoked by a
-    #: customer."""
+    customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
     """Disk is encrypted at rest with 2 layers of encryption. One of the keys is Customer managed and
-    #: the other key is Platform managed."""
+    the other key is Platform managed."""
 
 
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -223,12 +220,12 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     """You can generate a SAS URI to access the underlying data of the disk publicly on the internet
-    #: when NetworkAccessPolicy is set to AllowAll. You can access the data via the SAS URI only from
-    #: your trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate."""
+    when NetworkAccessPolicy is set to AllowAll. You can access the data via the SAS URI only from
+    your trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate."""
     DISABLED = "Disabled"
     """You cannot access the underlying data of the disk publicly on the internet even when
-    #: NetworkAccessPolicy is set to AllowAll. You can access the data via the SAS URI only from your
-    #: trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate."""
+    NetworkAccessPolicy is set to AllowAll. You can access the data via the SAS URI only from your
+    trusted Azure VNET when NetworkAccessPolicy is set to AllowPrivate."""
 
 
 class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

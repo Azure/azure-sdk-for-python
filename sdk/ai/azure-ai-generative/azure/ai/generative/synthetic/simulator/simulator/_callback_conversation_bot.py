@@ -46,6 +46,17 @@ class CallbackConversationBot(ConversationBot):
                     "id": None,
                     "template_parameters": {}
                 }
+        if not result:
+            result = {
+                "messages": [{
+                    "content": "Callback did not return a response.",
+                    "role": "assistant"
+                }],
+                "finish_reason": ["stop"],
+                "id": None,
+                "template_parameters": {}
+            } 
+
         self.logger.info("Using user provided callback returning response.")
 
         time_taken = 0

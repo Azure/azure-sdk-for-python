@@ -185,7 +185,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -226,10 +226,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -279,10 +279,10 @@ class ConfidentialLedger(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -338,6 +338,62 @@ class ConfidentialLedger(TrackedResource):
         self.properties = properties
 
 
+class ConfidentialLedgerBackup(_serialization.Model):
+    """Object representing Backup properties of a Confidential Ledger Resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar restore_region: The region where the backup of the ledger will eventually be restored to.
+    :vartype restore_region: str
+    :ivar uri: SAS URI used to access the backup Fileshare. Required.
+    :vartype uri: str
+    """
+
+    _validation = {
+        "uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "restore_region": {"key": "restoreRegion", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+    }
+
+    def __init__(self, *, uri: str, restore_region: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword restore_region: The region where the backup of the ledger will eventually be restored
+         to.
+        :paramtype restore_region: str
+        :keyword uri: SAS URI used to access the backup Fileshare. Required.
+        :paramtype uri: str
+        """
+        super().__init__(**kwargs)
+        self.restore_region = restore_region
+        self.uri = uri
+
+
+class ConfidentialLedgerBackupResponse(_serialization.Model):
+    """Object representing the backup response of a Confidential Ledger Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response body stating if the ledger is being backed up.
+    :vartype message: str
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.message = None
+
+
 class ConfidentialLedgerList(_serialization.Model):
     """Object that includes an array of Confidential Ledgers and a possible link for next set.
 
@@ -369,6 +425,69 @@ class ConfidentialLedgerList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class ConfidentialLedgerRestore(_serialization.Model):
+    """Object representing Restore properties of a Confidential Ledger Resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar file_share_name: Fileshare where the ledger backup is stored. Required.
+    :vartype file_share_name: str
+    :ivar restore_region: The region the ledger is being restored to. Required.
+    :vartype restore_region: str
+    :ivar uri: SAS URI used to access the backup fileshare. Required.
+    :vartype uri: str
+    """
+
+    _validation = {
+        "file_share_name": {"required": True},
+        "restore_region": {"required": True},
+        "uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "file_share_name": {"key": "fileShareName", "type": "str"},
+        "restore_region": {"key": "restoreRegion", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+    }
+
+    def __init__(self, *, file_share_name: str, restore_region: str, uri: str, **kwargs: Any) -> None:
+        """
+        :keyword file_share_name: Fileshare where the ledger backup is stored. Required.
+        :paramtype file_share_name: str
+        :keyword restore_region: The region the ledger is being restored to. Required.
+        :paramtype restore_region: str
+        :keyword uri: SAS URI used to access the backup fileshare. Required.
+        :paramtype uri: str
+        """
+        super().__init__(**kwargs)
+        self.file_share_name = file_share_name
+        self.restore_region = restore_region
+        self.uri = uri
+
+
+class ConfidentialLedgerRestoreResponse(_serialization.Model):
+    """Object representing the restore response of a Confidential Ledger Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response body stating if the ledger is being restored.
+    :vartype message: str
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.message = None
 
 
 class DeploymentType(_serialization.Model):
@@ -517,6 +636,9 @@ class LedgerProperties(_serialization.Model):
     :ivar provisioning_state: Provisioning state of Ledger Resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.confidentialledger.models.ProvisioningState
+    :ivar ledger_sku: SKU associated with the ledger. Known values are: "Standard", "Basic", and
+     "Unknown".
+    :vartype ledger_sku: str or ~azure.mgmt.confidentialledger.models.LedgerSku
     :ivar aad_based_security_principals: Array of all AAD based Security Principals.
     :vartype aad_based_security_principals:
      list[~azure.mgmt.confidentialledger.models.AADBasedSecurityPrincipal]
@@ -541,6 +663,7 @@ class LedgerProperties(_serialization.Model):
         "running_state": {"key": "runningState", "type": "str"},
         "ledger_type": {"key": "ledgerType", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "ledger_sku": {"key": "ledgerSku", "type": "str"},
         "aad_based_security_principals": {"key": "aadBasedSecurityPrincipals", "type": "[AADBasedSecurityPrincipal]"},
         "cert_based_security_principals": {
             "key": "certBasedSecurityPrincipals",
@@ -553,6 +676,7 @@ class LedgerProperties(_serialization.Model):
         *,
         running_state: Optional[Union[str, "_models.RunningState"]] = None,
         ledger_type: Optional[Union[str, "_models.LedgerType"]] = None,
+        ledger_sku: Optional[Union[str, "_models.LedgerSku"]] = None,
         aad_based_security_principals: Optional[List["_models.AADBasedSecurityPrincipal"]] = None,
         cert_based_security_principals: Optional[List["_models.CertBasedSecurityPrincipal"]] = None,
         **kwargs: Any
@@ -564,6 +688,9 @@ class LedgerProperties(_serialization.Model):
         :keyword ledger_type: Type of Confidential Ledger. Known values are: "Unknown", "Public", and
          "Private".
         :paramtype ledger_type: str or ~azure.mgmt.confidentialledger.models.LedgerType
+        :keyword ledger_sku: SKU associated with the ledger. Known values are: "Standard", "Basic", and
+         "Unknown".
+        :paramtype ledger_sku: str or ~azure.mgmt.confidentialledger.models.LedgerSku
         :keyword aad_based_security_principals: Array of all AAD based Security Principals.
         :paramtype aad_based_security_principals:
          list[~azure.mgmt.confidentialledger.models.AADBasedSecurityPrincipal]
@@ -579,6 +706,7 @@ class LedgerProperties(_serialization.Model):
         self.running_state = running_state
         self.ledger_type = ledger_type
         self.provisioning_state = None
+        self.ledger_sku = ledger_sku
         self.aad_based_security_principals = aad_based_security_principals
         self.cert_based_security_principals = cert_based_security_principals
 
@@ -588,10 +716,10 @@ class ManagedCCF(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -647,6 +775,63 @@ class ManagedCCF(TrackedResource):
         self.properties = properties
 
 
+class ManagedCCFBackup(_serialization.Model):
+    """Object representing Backup properties of a Managed CCF Resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar restore_region: The region where the backup of the managed CCF resource will eventually
+     be restored to.
+    :vartype restore_region: str
+    :ivar uri: SAS URI used to access the backup Fileshare. Required.
+    :vartype uri: str
+    """
+
+    _validation = {
+        "uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "restore_region": {"key": "restoreRegion", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+    }
+
+    def __init__(self, *, uri: str, restore_region: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword restore_region: The region where the backup of the managed CCF resource will
+         eventually be restored to.
+        :paramtype restore_region: str
+        :keyword uri: SAS URI used to access the backup Fileshare. Required.
+        :paramtype uri: str
+        """
+        super().__init__(**kwargs)
+        self.restore_region = restore_region
+        self.uri = uri
+
+
+class ManagedCCFBackupResponse(_serialization.Model):
+    """Object representing the backup response of a Managed CCF Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response body stating if the managed CCF resource is being backed up.
+    :vartype message: str
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.message = None
+
+
 class ManagedCCFList(_serialization.Model):
     """Object that includes an array of Managed CCF and a possible link for next set.
 
@@ -692,8 +877,11 @@ class ManagedCCFProperties(_serialization.Model):
      list[~azure.mgmt.confidentialledger.models.MemberIdentityCertificate]
     :ivar deployment_type: Deployment Type of Managed CCF.
     :vartype deployment_type: ~azure.mgmt.confidentialledger.models.DeploymentType
-    :ivar provisioning_state: Provisioning state of Ledger Resource. Known values are: "Unknown",
-     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Updating".
+    :ivar running_state: Object representing RunningState for Managed CCF. Known values are:
+     "Active", "Paused", "Unknown", "Pausing", and "Resuming".
+    :vartype running_state: str or ~azure.mgmt.confidentialledger.models.RunningState
+    :ivar provisioning_state: Provisioning state of Managed CCF Resource. Known values are:
+     "Unknown", "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.confidentialledger.models.ProvisioningState
     :ivar node_count: Number of CCF nodes in the Managed CCF.
     :vartype node_count: int
@@ -712,6 +900,7 @@ class ManagedCCFProperties(_serialization.Model):
         "identity_service_uri": {"key": "identityServiceUri", "type": "str"},
         "member_identity_certificates": {"key": "memberIdentityCertificates", "type": "[MemberIdentityCertificate]"},
         "deployment_type": {"key": "deploymentType", "type": "DeploymentType"},
+        "running_state": {"key": "runningState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "node_count": {"key": "nodeCount", "type": "int"},
     }
@@ -721,6 +910,7 @@ class ManagedCCFProperties(_serialization.Model):
         *,
         member_identity_certificates: Optional[List["_models.MemberIdentityCertificate"]] = None,
         deployment_type: Optional["_models.DeploymentType"] = None,
+        running_state: Optional[Union[str, "_models.RunningState"]] = None,
         node_count: int = 3,
         **kwargs: Any
     ) -> None:
@@ -730,6 +920,9 @@ class ManagedCCFProperties(_serialization.Model):
          list[~azure.mgmt.confidentialledger.models.MemberIdentityCertificate]
         :keyword deployment_type: Deployment Type of Managed CCF.
         :paramtype deployment_type: ~azure.mgmt.confidentialledger.models.DeploymentType
+        :keyword running_state: Object representing RunningState for Managed CCF. Known values are:
+         "Active", "Paused", "Unknown", "Pausing", and "Resuming".
+        :paramtype running_state: str or ~azure.mgmt.confidentialledger.models.RunningState
         :keyword node_count: Number of CCF nodes in the Managed CCF.
         :paramtype node_count: int
         """
@@ -739,8 +932,72 @@ class ManagedCCFProperties(_serialization.Model):
         self.identity_service_uri = None
         self.member_identity_certificates = member_identity_certificates
         self.deployment_type = deployment_type
+        self.running_state = running_state
         self.provisioning_state = None
         self.node_count = node_count
+
+
+class ManagedCCFRestore(_serialization.Model):
+    """Object representing Restore properties of Managed CCF Resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar file_share_name: Fileshare where the managed CCF resource backup is stored. Required.
+    :vartype file_share_name: str
+    :ivar restore_region: The region the managed CCF resource is being restored to. Required.
+    :vartype restore_region: str
+    :ivar uri: SAS URI used to access the backup Fileshare. Required.
+    :vartype uri: str
+    """
+
+    _validation = {
+        "file_share_name": {"required": True},
+        "restore_region": {"required": True},
+        "uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "file_share_name": {"key": "fileShareName", "type": "str"},
+        "restore_region": {"key": "restoreRegion", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+    }
+
+    def __init__(self, *, file_share_name: str, restore_region: str, uri: str, **kwargs: Any) -> None:
+        """
+        :keyword file_share_name: Fileshare where the managed CCF resource backup is stored. Required.
+        :paramtype file_share_name: str
+        :keyword restore_region: The region the managed CCF resource is being restored to. Required.
+        :paramtype restore_region: str
+        :keyword uri: SAS URI used to access the backup Fileshare. Required.
+        :paramtype uri: str
+        """
+        super().__init__(**kwargs)
+        self.file_share_name = file_share_name
+        self.restore_region = restore_region
+        self.uri = uri
+
+
+class ManagedCCFRestoreResponse(_serialization.Model):
+    """Object representing the restore response of a Managed CCF Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response body stating if the managed CCF resource is being restored.
+    :vartype message: str
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.message = None
 
 
 class MemberIdentityCertificate(_serialization.Model):

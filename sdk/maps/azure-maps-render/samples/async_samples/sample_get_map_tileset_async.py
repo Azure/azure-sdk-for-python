@@ -21,7 +21,7 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 async def get_map_tileset_async():
-    # [START get_map_tile_async]
+    # [START get_map_tileset_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render.aio import MapsRenderClient
     from azure.maps.render.models import TilesetID
@@ -35,7 +35,7 @@ async def get_map_tileset_async():
     print(result.map_attribution)
     print(result.bounds)
     print(result.version)
-    # [END get_map_tile_async]
+    # [END get_map_tileset_async]
 
 if __name__ == '__main__':
     asyncio.run(get_map_tileset_async())

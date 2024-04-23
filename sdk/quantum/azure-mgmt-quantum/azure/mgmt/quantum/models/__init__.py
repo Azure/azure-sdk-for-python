@@ -6,11 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import APIKeys
+from ._models_py3 import ApiKey
 from ._models_py3 import CheckNameAvailabilityParameters
 from ._models_py3 import CheckNameAvailabilityResult
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import ListKeysResult
 from ._models_py3 import OfferingsListResult
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -32,22 +35,27 @@ from ._models_py3 import TagsObject
 from ._models_py3 import TargetDescription
 from ._models_py3 import TrackedResource
 from ._models_py3 import WorkspaceListResult
+from ._models_py3 import WorkspaceResourceProperties
 
-from ._azure_quantum_management_client_enums import CreatedByType
-from ._azure_quantum_management_client_enums import ProvisioningStatus
-from ._azure_quantum_management_client_enums import ResourceIdentityType
-from ._azure_quantum_management_client_enums import Status
-from ._azure_quantum_management_client_enums import UsableStatus
+from ._azure_quantum_mgmt_client_enums import CreatedByType
+from ._azure_quantum_mgmt_client_enums import KeyType
+from ._azure_quantum_mgmt_client_enums import ProvisioningStatus
+from ._azure_quantum_mgmt_client_enums import ResourceIdentityType
+from ._azure_quantum_mgmt_client_enums import Status
+from ._azure_quantum_mgmt_client_enums import UsableStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "APIKeys",
+    "ApiKey",
     "CheckNameAvailabilityParameters",
     "CheckNameAvailabilityResult",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "ListKeysResult",
     "OfferingsListResult",
     "Operation",
     "OperationDisplay",
@@ -69,7 +77,9 @@ __all__ = [
     "TargetDescription",
     "TrackedResource",
     "WorkspaceListResult",
+    "WorkspaceResourceProperties",
     "CreatedByType",
+    "KeyType",
     "ProvisioningStatus",
     "ResourceIdentityType",
     "Status",

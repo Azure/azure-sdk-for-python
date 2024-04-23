@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,10 +27,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -54,7 +49,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -99,7 +94,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -139,7 +134,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -184,7 +179,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -232,7 +227,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -278,7 +273,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -325,7 +320,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -371,7 +366,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -412,7 +407,7 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -451,7 +446,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -492,7 +487,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -534,7 +529,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -579,7 +574,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -615,7 +610,7 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -650,7 +645,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -686,7 +681,7 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -726,7 +721,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-05-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-05-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -809,10 +804,6 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -831,7 +822,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -841,16 +832,15 @@ class ShareOperations:
             root_squash=root_squash,
             restype=restype,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -868,9 +858,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -893,10 +881,6 @@ class ShareOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -919,23 +903,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -984,9 +967,7 @@ class ShareOperations:
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1013,10 +994,6 @@ class ShareOperations:
         :type delete_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1039,7 +1016,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
@@ -1047,16 +1024,15 @@ class ShareOperations:
             lease_id=_lease_id,
             restype=restype,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1072,9 +1048,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -1109,16 +1083,6 @@ class ShareOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1139,7 +1103,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_acquire_lease_request(
+        _request = build_acquire_lease_request(
             url=self._config.url,
             timeout=timeout,
             duration=duration,
@@ -1150,16 +1114,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1181,9 +1144,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    acquire_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -1211,16 +1172,6 @@ class ShareOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "release". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1241,7 +1192,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_release_lease_request(
+        _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1251,16 +1202,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1281,9 +1231,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    release_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -1316,16 +1264,6 @@ class ShareOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "change". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1346,7 +1284,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_change_lease_request(
+        _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1357,16 +1295,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1388,9 +1325,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    change_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -1418,16 +1353,6 @@ class ShareOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "renew". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1448,7 +1373,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_renew_lease_request(
+        _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1458,16 +1383,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1489,9 +1413,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    renew_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -1528,16 +1450,6 @@ class ShareOperations:
         :type sharesnapshot: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "break". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1562,7 +1474,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_break_lease_request(
+        _request = build_break_lease_request(
             url=self._config.url,
             timeout=timeout,
             break_period=break_period,
@@ -1573,16 +1485,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1605,9 +1516,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    break_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def create_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -1623,13 +1532,6 @@ class ShareOperations:
         :param metadata: A name-value pair to associate with a file storage object. Default value is
          None.
         :type metadata: dict[str, str]
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "snapshot". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1649,23 +1551,22 @@ class ShareOperations:
         comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_snapshot_request(
+        _request = build_create_snapshot_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.create_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1684,9 +1585,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create_snapshot.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def create_permission(  # pylint: disable=inconsistent-return-statements
@@ -1709,13 +1608,6 @@ class ShareOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1724,7 +1616,7 @@ class ShareOperations:
     @overload
     def create_permission(  # pylint: disable=inconsistent-return-statements
         self,
-        share_permission: IO,
+        share_permission: IO[bytes],
         timeout: Optional[int] = None,
         *,
         content_type: str = "application/json",
@@ -1733,7 +1625,7 @@ class ShareOperations:
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level. Required.
-        :type share_permission: IO
+        :type share_permission: IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1742,13 +1634,6 @@ class ShareOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1756,28 +1641,18 @@ class ShareOperations:
 
     @distributed_trace
     def create_permission(  # pylint: disable=inconsistent-return-statements
-        self, share_permission: Union[_models.SharePermission, IO], timeout: Optional[int] = None, **kwargs: Any
+        self, share_permission: Union[_models.SharePermission, IO[bytes]], timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level. Is either a
-         SharePermission type or a IO type. Required.
-        :type share_permission: ~azure.storage.fileshare.models.SharePermission or IO
+         SharePermission type or a IO[bytes] type. Required.
+        :type share_permission: ~azure.storage.fileshare.models.SharePermission or IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1806,7 +1681,7 @@ class ShareOperations:
         else:
             _json = self._serialize.body(share_permission, "SharePermission")
 
-        request = build_create_permission_request(
+        _request = build_create_permission_request(
             url=self._config.url,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
@@ -1816,16 +1691,15 @@ class ShareOperations:
             version=self._config.version,
             json=_json,
             content=_content,
-            template_url=self.create_permission.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1844,9 +1718,7 @@ class ShareOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create_permission.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_permission(
@@ -1861,13 +1733,6 @@ class ShareOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SharePermission or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1887,7 +1752,7 @@ class ShareOperations:
         comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
         cls: ClsType[_models.SharePermission] = kwargs.pop("cls", None)
 
-        request = build_get_permission_request(
+        _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
             timeout=timeout,
@@ -1895,16 +1760,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_permission.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1922,11 +1786,9 @@ class ShareOperations:
         deserialized = self._deserialize("SharePermission", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_permission.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -1955,13 +1817,6 @@ class ShareOperations:
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1985,7 +1840,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_properties_request(
+        _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
             quota=quota,
@@ -1995,16 +1850,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2022,9 +1876,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -2046,13 +1898,6 @@ class ShareOperations:
         :type metadata: dict[str, str]
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2076,7 +1921,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -2084,16 +1929,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2111,9 +1955,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_access_policy(
@@ -2131,13 +1973,6 @@ class ShareOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier or the result of cls(response)
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2161,23 +1996,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_access_policy_request(
+        _request = build_get_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2197,11 +2031,9 @@ class ShareOperations:
         deserialized = self._deserialize("[SignedIdentifier]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_access_policy.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
@@ -2222,13 +2054,6 @@ class ShareOperations:
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :param share_acl: The ACL for the share. Default value is None.
         :type share_acl: list[~azure.storage.fileshare.models.SignedIdentifier]
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
-         in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2260,7 +2085,7 @@ class ShareOperations:
         else:
             _content = None
 
-        request = build_set_access_policy_request(
+        _request = build_set_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -2269,16 +2094,15 @@ class ShareOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2296,9 +2120,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_statistics(
@@ -2316,13 +2138,6 @@ class ShareOperations:
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "stats". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ShareStats or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2346,23 +2161,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_statistics_request(
+        _request = build_get_statistics_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_statistics.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2382,11 +2196,9 @@ class ShareOperations:
         deserialized = self._deserialize("ShareStats", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_statistics.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def restore(  # pylint: disable=inconsistent-return-statements
@@ -2414,13 +2226,6 @@ class ShareOperations:
         :param deleted_share_version: Specifies the version of the previously-deleted share. Default
          value is None.
         :type deleted_share_version: str
-        :keyword restype: restype. Default value is "share". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2440,7 +2245,7 @@ class ShareOperations:
         comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restore_request(
+        _request = build_restore_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -2449,16 +2254,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.restore.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2479,6 +2283,4 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    restore.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

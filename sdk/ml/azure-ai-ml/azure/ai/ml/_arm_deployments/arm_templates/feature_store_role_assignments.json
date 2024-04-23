@@ -65,6 +65,12 @@
                 "description": "Specifies the name of the resource group."
             }
         },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
         "update_offline_store_role_assignment": {
             "type": "string",
             "defaultValue": "false",
@@ -144,6 +150,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(parameters('materialization_identity_resource_id'), parameters('offline_store_target'), 'storage blob data contributor')]",
                             "scope": "[parameters('offline_store_target')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
                                 "principalId": "[reference(parameters('materialization_identity_resource_id'), '2023-01-31').principalId]",
@@ -172,6 +179,7 @@
                             "apiVersion": "2022-04-01",
                             "name": "[guid(parameters('materialization_identity_resource_id'), parameters('online_store_target'), 'contributor')]",
                             "scope": "[parameters('online_store_target')]",
+                            "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
                                 "principalId": "[reference(parameters('materialization_identity_resource_id'), '2023-01-31').principalId]",

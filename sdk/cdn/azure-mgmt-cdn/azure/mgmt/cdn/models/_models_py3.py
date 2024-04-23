@@ -101,24 +101,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding
@@ -237,7 +219,7 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
 class AFDDomainHttpsParameters(_serialization.Model):
     """The JSON object that contains the properties to secure a domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar certificate_type: Defines the source of the SSL certificate. Required. Known values are:
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -407,7 +389,7 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
@@ -570,7 +552,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -622,7 +604,7 @@ class AFDEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1885,7 +1867,7 @@ class AFDOriginUpdateParameters(_serialization.Model):  # pylint: disable=too-ma
 class AfdPurgeParameters(_serialization.Model):
     """Parameters required for content purge.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
      card directory. Required.
@@ -2018,25 +2000,6 @@ class AzureFirstPartyManagedCertificate(Certificate):
     :vartype expiration_date: str
     """
 
-    _validation = {
-        "subject": {"readonly": True},
-        "expiration_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "subject": {"key": "subject", "type": "str"},
-        "expiration_date": {"key": "expirationDate", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
-        :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
-        """
-        super().__init__(type=type, **kwargs)
-
 
 class SecretParameters(_serialization.Model):
     """The json object containing secret parameters.
@@ -2045,7 +2008,7 @@ class SecretParameters(_serialization.Model):
     AzureFirstPartyManagedCertificateParameters, CustomerCertificateParameters,
     ManagedCertificateParameters, UrlSigningKeyParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -2075,20 +2038,20 @@ class SecretParameters(_serialization.Model):
         self.type: Optional[str] = None
 
 
-class AzureFirstPartyManagedCertificateParameters(SecretParameters):
+class AzureFirstPartyManagedCertificateParameters(SecretParameters):  # pylint: disable=name-too-long
     """Azure FirstParty Managed Certificate provided by other first party resource providers to enable
     HTTPS.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
      format of
-     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -2213,7 +2176,7 @@ class CacheConfiguration(_serialization.Model):
 class CacheExpirationActionParameters(_serialization.Model):
     """Defines the parameters for the cache expiration action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleCacheExpirationActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.CacheExpirationActionParametersTypeName
@@ -2271,7 +2234,7 @@ class CacheExpirationActionParameters(_serialization.Model):
 class CacheKeyQueryStringActionParameters(_serialization.Model):
     """Defines the parameters for the cache-key query string action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParametersTypeName
@@ -2319,7 +2282,7 @@ class CacheKeyQueryStringActionParameters(_serialization.Model):
 class CanMigrateParameters(_serialization.Model):
     """Request body for CanMigrate operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar classic_resource_reference: Resource reference of the classic cdn profile or classic
      frontdoor that need to be migrated. Required.
@@ -2393,7 +2356,7 @@ class CanMigrateResult(_serialization.Model):
 class CdnCertificateSourceParameters(_serialization.Model):
     """Defines the parameters for using CDN managed certificate for securing custom domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "CdnCertificateSourceParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.CdnCertificateSourceParametersTypeName
@@ -2457,7 +2420,7 @@ class CustomDomainHttpsParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     UserManagedHttpsParameters, CdnManagedHttpsParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
      are: "AzureKeyVault" and "Cdn".
@@ -2509,7 +2472,7 @@ class CustomDomainHttpsParameters(_serialization.Model):
 class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
     """Defines the certificate source parameters using CDN managed certificate for enabling SSL.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
      are: "AzureKeyVault" and "Cdn".
@@ -2570,7 +2533,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2724,7 +2687,7 @@ class CdnWebApplicationFirewallPolicyList(_serialization.Model):
         self.next_link = next_link
 
 
-class CdnWebApplicationFirewallPolicyPatchParameters(_serialization.Model):
+class CdnWebApplicationFirewallPolicyPatchParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Properties required to update a CdnWebApplicationFirewallPolicy.
 
     :ivar tags: CdnWebApplicationFirewallPolicy tags.
@@ -2747,7 +2710,7 @@ class CdnWebApplicationFirewallPolicyPatchParameters(_serialization.Model):
 class CheckEndpointNameAvailabilityInput(_serialization.Model):
     """Input of CheckNameAvailability API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name to validate. Required.
     :vartype name: str
@@ -2843,7 +2806,7 @@ class CheckEndpointNameAvailabilityOutput(_serialization.Model):
 class CheckHostNameAvailabilityInput(_serialization.Model):
     """Input of CheckHostNameAvailability API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar host_name: The host name to validate. Required.
     :vartype host_name: str
@@ -2869,7 +2832,7 @@ class CheckHostNameAvailabilityInput(_serialization.Model):
 class CheckNameAvailabilityInput(_serialization.Model):
     """Input of CheckNameAvailability API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name to validate. Required.
     :vartype name: str
@@ -2965,7 +2928,7 @@ class CidrIpAddress(_serialization.Model):
 class ClientPortMatchConditionParameters(_serialization.Model):
     """Defines the parameters for ClientPort match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleClientPortConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.ClientPortMatchConditionParametersTypeName
@@ -3026,7 +2989,9 @@ class ClientPortMatchConditionParameters(_serialization.Model):
         self.transforms = transforms
 
 
-class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(_serialization.Model):
+class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -3054,7 +3019,9 @@ class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesD
         self.value = value
 
 
-class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(_serialization.Model):
+class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -3082,7 +3049,9 @@ class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesData
         self.value = value
 
 
-class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(_serialization.Model):
+class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems.
 
     :ivar metric:
@@ -3250,7 +3219,7 @@ class ContinentsResponseCountryOrRegionsItem(_serialization.Model):
 class CookiesMatchConditionParameters(_serialization.Model):
     """Defines the parameters for Cookies match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleCookiesConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.CookiesMatchConditionParametersTypeName
@@ -3478,7 +3447,7 @@ class CustomerCertificate(Certificate):
     :vartype expiration_date: str
     :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
      format of
-     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Certificate version.
     :vartype secret_version: str
@@ -3527,7 +3496,7 @@ class CustomerCertificate(Certificate):
         :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
         :keyword secret_source: Resource reference to the Azure Key Vault certificate. Expected to be
          in format of
-         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Certificate version.
         :paramtype secret_version: str
@@ -3550,14 +3519,14 @@ class CustomerCertificateParameters(SecretParameters):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
      format of
-     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
      Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Version of the secret to be used.
@@ -3609,7 +3578,7 @@ class CustomerCertificateParameters(SecretParameters):
         """
         :keyword secret_source: Resource reference to the Azure Key Vault certificate. Expected to be
          in format of
-         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
          Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Version of the secret to be used.
@@ -3634,7 +3603,7 @@ class CustomerCertificateParameters(SecretParameters):
 class CustomRule(_serialization.Model):
     """Defines the common attributes for a custom rule that can be included in a waf policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Defines the name of the custom rule. Required.
     :vartype name: str
@@ -3722,7 +3691,7 @@ class CustomRuleList(_serialization.Model):
 class DeepCreatedCustomDomain(_serialization.Model):
     """Custom domains created on the CDN endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Custom domain name. Required.
     :vartype name: str
@@ -3768,7 +3737,7 @@ class DeepCreatedOrigin(_serialization.Model):  # pylint: disable=too-many-insta
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Origin name which must be unique within the endpoint. Required.
     :vartype name: str
@@ -3911,7 +3880,7 @@ class DeepCreatedOriginGroup(_serialization.Model):
     """The origin group for CDN content which is added when creating a CDN endpoint. Traffic is sent
     to the origins within the origin group based on origin health.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Origin group name which must be unique within the endpoint. Required.
     :vartype name: str
@@ -3993,7 +3962,7 @@ class DeepCreatedOriginGroup(_serialization.Model):
 class DeliveryRule(_serialization.Model):
     """A rule that specifies a set of actions and conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the rule.
     :vartype name: str
@@ -4060,7 +4029,7 @@ class DeliveryRuleAction(_serialization.Model):
     DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction, UrlRewriteAction,
     UrlSigningAction
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4100,7 +4069,7 @@ class DeliveryRuleAction(_serialization.Model):
 class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
     """Defines the cache expiration action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4134,7 +4103,7 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
 class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction):
     """Defines the cache-key query string action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4179,7 +4148,7 @@ class DeliveryRuleCondition(_serialization.Model):
     DeliveryRuleUrlFileExtensionCondition, DeliveryRuleUrlFileNameCondition,
     DeliveryRuleUrlPathCondition
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4229,7 +4198,7 @@ class DeliveryRuleCondition(_serialization.Model):
 class DeliveryRuleClientPortCondition(DeliveryRuleCondition):
     """Defines the ClientPort condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4263,7 +4232,7 @@ class DeliveryRuleClientPortCondition(DeliveryRuleCondition):
 class DeliveryRuleCookiesCondition(DeliveryRuleCondition):
     """Defines the Cookies condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4297,7 +4266,7 @@ class DeliveryRuleCookiesCondition(DeliveryRuleCondition):
 class DeliveryRuleHostNameCondition(DeliveryRuleCondition):
     """Defines the HostName condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4331,7 +4300,7 @@ class DeliveryRuleHostNameCondition(DeliveryRuleCondition):
 class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition):
     """Defines the HttpVersion condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4365,7 +4334,7 @@ class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition):
 class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition):
     """Defines the IsDevice condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4399,7 +4368,7 @@ class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition):
 class DeliveryRulePostArgsCondition(DeliveryRuleCondition):
     """Defines the PostArgs condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4433,7 +4402,7 @@ class DeliveryRulePostArgsCondition(DeliveryRuleCondition):
 class DeliveryRuleQueryStringCondition(DeliveryRuleCondition):
     """Defines the QueryString condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4467,7 +4436,7 @@ class DeliveryRuleQueryStringCondition(DeliveryRuleCondition):
 class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition):
     """Defines the RemoteAddress condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4501,7 +4470,7 @@ class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition):
 class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition):
     """Defines the RequestBody condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4535,7 +4504,7 @@ class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition):
 class DeliveryRuleRequestHeaderAction(DeliveryRuleAction):
     """Defines the request header action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4569,7 +4538,7 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction):
 class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition):
     """Defines the RequestHeader condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4603,7 +4572,7 @@ class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition):
 class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition):
     """Defines the RequestMethod condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4637,7 +4606,7 @@ class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition):
 class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition):
     """Defines the RequestScheme condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4671,7 +4640,7 @@ class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition):
 class DeliveryRuleRequestUriCondition(DeliveryRuleCondition):
     """Defines the RequestUri condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4705,7 +4674,7 @@ class DeliveryRuleRequestUriCondition(DeliveryRuleCondition):
 class DeliveryRuleResponseHeaderAction(DeliveryRuleAction):
     """Defines the response header action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4736,11 +4705,11 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction):
         self.parameters = parameters
 
 
-class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):
+class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):  # pylint: disable=name-too-long
     """Defines the route configuration override action for the delivery rule. Only applicable to
     Frontdoor Standard/Premium Profiles.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -4774,7 +4743,7 @@ class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):
 class DeliveryRuleServerPortCondition(DeliveryRuleCondition):
     """Defines the ServerPort condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4808,7 +4777,7 @@ class DeliveryRuleServerPortCondition(DeliveryRuleCondition):
 class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition):
     """Defines the SocketAddress condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4842,7 +4811,7 @@ class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition):
 class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition):
     """Defines the SslProtocol condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4876,7 +4845,7 @@ class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition):
 class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
     """Defines the UrlFileExtension condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4910,7 +4879,7 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
 class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition):
     """Defines the UrlFileName condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -4944,7 +4913,7 @@ class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition):
 class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
     """Defines the UrlPath condition for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the condition for the delivery rule. Required. Known values are:
      "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -5121,7 +5090,7 @@ class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -5574,7 +5543,7 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):  # pylint: disable
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
      e.g. contoso.cloudapp.net/originpath.
@@ -5790,10 +5759,10 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):  # pylint: disable
         self.provisioning_state = None
 
 
-class EndpointPropertiesUpdateParametersDeliveryPolicy(_serialization.Model):
+class EndpointPropertiesUpdateParametersDeliveryPolicy(_serialization.Model):  # pylint: disable=name-too-long
     """A policy that specifies the delivery rules to be used for an endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar description: User-friendly description of the policy.
     :vartype description: str
@@ -5824,7 +5793,9 @@ class EndpointPropertiesUpdateParametersDeliveryPolicy(_serialization.Model):
         self.rules = rules
 
 
-class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(_serialization.Model):
+class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Defines the Web Application Firewall policy for the endpoint (if applicable).
 
     :ivar id: Resource ID.
@@ -6121,7 +6092,7 @@ class ErrorResponse(_serialization.Model):
 class GeoFilter(_serialization.Model):
     """Rules defining user's geo access within a CDN endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar relative_path: Relative path applicable to geo filter. (e.g. '/mypictures',
      '/mypicture/kitty.jpg', and etc.). Required.
@@ -6174,7 +6145,7 @@ class GeoFilter(_serialization.Model):
 class HeaderActionParameters(_serialization.Model):
     """Defines the parameters for the request header action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleHeaderActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.HeaderActionParametersTypeName
@@ -6287,7 +6258,7 @@ class HealthProbeParameters(_serialization.Model):
 class HostNameMatchConditionParameters(_serialization.Model):
     """Defines the parameters for HostName match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleHostNameConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.HostNameMatchConditionParametersTypeName
@@ -6382,7 +6353,7 @@ class HttpErrorRangeParameters(_serialization.Model):
 class HttpVersionMatchConditionParameters(_serialization.Model):
     """Defines the parameters for HttpVersion match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleHttpVersionConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.HttpVersionMatchConditionParametersTypeName
@@ -6481,7 +6452,7 @@ class IpAddressGroup(_serialization.Model):
 class IsDeviceMatchConditionParameters(_serialization.Model):
     """Defines the parameters for IsDevice match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleIsDeviceConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.IsDeviceMatchConditionParametersTypeName
@@ -6543,7 +6514,7 @@ class IsDeviceMatchConditionParameters(_serialization.Model):
 class KeyVaultCertificateSourceParameters(_serialization.Model):
     """Describes the parameters for using a user's KeyVault certificate for securing custom domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "KeyVaultCertificateSourceParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParametersTypeName
@@ -6639,7 +6610,7 @@ class KeyVaultCertificateSourceParameters(_serialization.Model):
 class KeyVaultSigningKeyParameters(_serialization.Model):
     """Describes the parameters for using a user's KeyVault for URL Signing Key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "KeyVaultSigningKeyParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.KeyVaultSigningKeyParametersTypeName
@@ -6756,7 +6727,7 @@ class LoadBalancingSettingsParameters(_serialization.Model):
 class LoadParameters(_serialization.Model):
     """Parameters required for content load.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content_paths: The path to the content to be loaded. Path should be a relative file URL
      of the origin. Required.
@@ -6841,32 +6812,13 @@ class ManagedCertificate(Certificate):
     :vartype expiration_date: str
     """
 
-    _validation = {
-        "subject": {"readonly": True},
-        "expiration_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "subject": {"key": "subject", "type": "str"},
-        "expiration_date": {"key": "expirationDate", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
-        :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
-        """
-        super().__init__(type=type, **kwargs)
-
 
 class ManagedCertificateParameters(SecretParameters):
     """Managed Certificate used for https.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -6961,7 +6913,7 @@ class ManagedRuleGroupDefinition(_serialization.Model):
 class ManagedRuleGroupOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_group_name: Describes the managed rule group within the rule set to override.
      Required.
@@ -6999,7 +6951,7 @@ class ManagedRuleGroupOverride(_serialization.Model):
 class ManagedRuleOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_id: Identifier for the managed rule. Required.
     :vartype rule_id: str
@@ -7048,7 +7000,7 @@ class ManagedRuleOverride(_serialization.Model):
 class ManagedRuleSet(_serialization.Model):
     """Defines a managed rule set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_set_type: Defines the rule set type to use. Required.
     :vartype rule_set_type: str
@@ -7219,7 +7171,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -7233,7 +7185,7 @@ class ManagedServiceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.cdn.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.cdn.models.UserAssignedIdentity]
     """
@@ -7265,7 +7217,7 @@ class ManagedServiceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.cdn.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str, ~azure.mgmt.cdn.models.UserAssignedIdentity]
         """
@@ -7279,7 +7231,7 @@ class ManagedServiceIdentity(_serialization.Model):
 class MatchCondition(_serialization.Model):
     """Define match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar match_variable: Match variable to compare against. Required. Known values are:
      "RemoteAddr", "SocketAddr", "RequestMethod", "RequestHeader", "RequestUri", "QueryString",
@@ -7677,7 +7629,7 @@ class MigrationErrorType(_serialization.Model):
 class MigrationParameters(_serialization.Model):
     """Request body for Migrate operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sku: Sku for the migration. Required.
     :vartype sku: ~azure.mgmt.cdn.models.Sku
@@ -8225,7 +8177,7 @@ class OriginGroupOverride(_serialization.Model):
 class OriginGroupOverrideAction(DeliveryRuleAction):
     """Defines the origin group override action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -8259,7 +8211,7 @@ class OriginGroupOverrideAction(DeliveryRuleAction):
 class OriginGroupOverrideActionParameters(_serialization.Model):
     """Defines the parameters for the origin group override action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleOriginGroupOverrideActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.OriginGroupOverrideActionParametersTypeName
@@ -9030,7 +8982,7 @@ class PolicySettings(_serialization.Model):
 class PostArgsMatchConditionParameters(_serialization.Model):
     """Defines the parameters for PostArgs match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRulePostArgsConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.PostArgsMatchConditionParametersTypeName
@@ -9103,7 +9055,7 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -9139,6 +9091,9 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
      origin. When timeout is reached, the request fails and returns.
     :vartype origin_response_timeout_seconds: int
+    :ivar log_scrubbing: Defines rules that scrub sensitive fields in the Azure Front Door profile
+     logs.
+    :vartype log_scrubbing: ~azure.mgmt.cdn.models.ProfileLogScrubbing
     """
 
     _validation = {
@@ -9171,6 +9126,7 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
         "front_door_id": {"key": "properties.frontDoorId", "type": "str"},
         "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
+        "log_scrubbing": {"key": "properties.logScrubbing", "type": "ProfileLogScrubbing"},
     }
 
     def __init__(
@@ -9181,6 +9137,7 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         origin_response_timeout_seconds: Optional[int] = None,
+        log_scrubbing: Optional["_models.ProfileLogScrubbing"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9196,6 +9153,9 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
+        :keyword log_scrubbing: Defines rules that scrub sensitive fields in the Azure Front Door
+         profile logs.
+        :paramtype log_scrubbing: ~azure.mgmt.cdn.models.ProfileLogScrubbing
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -9206,12 +9166,13 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.extended_properties = None
         self.front_door_id = None
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
+        self.log_scrubbing = log_scrubbing
 
 
 class ProfileChangeSkuWafMapping(_serialization.Model):
     """Parameters required for profile upgrade.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar security_policy_name: The security policy name. Required.
     :vartype security_policy_name: str
@@ -9274,6 +9235,104 @@ class ProfileListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class ProfileLogScrubbing(_serialization.Model):
+    """Defines rules that scrub sensitive fields in the Azure Front Door profile logs.
+
+    :ivar state: State of the log scrubbing config. Default value is Enabled. Known values are:
+     "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.cdn.models.ProfileScrubbingState
+    :ivar scrubbing_rules: List of log scrubbing rules applied to the Azure Front Door profile
+     logs.
+    :vartype scrubbing_rules: list[~azure.mgmt.cdn.models.ProfileScrubbingRules]
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "scrubbing_rules": {"key": "scrubbingRules", "type": "[ProfileScrubbingRules]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.ProfileScrubbingState"]] = None,
+        scrubbing_rules: Optional[List["_models.ProfileScrubbingRules"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: State of the log scrubbing config. Default value is Enabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.cdn.models.ProfileScrubbingState
+        :keyword scrubbing_rules: List of log scrubbing rules applied to the Azure Front Door profile
+         logs.
+        :paramtype scrubbing_rules: list[~azure.mgmt.cdn.models.ProfileScrubbingRules]
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.scrubbing_rules = scrubbing_rules
+
+
+class ProfileScrubbingRules(_serialization.Model):
+    """Defines the contents of the log scrubbing rules.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar match_variable: The variable to be scrubbed from the logs. Required. Known values are:
+     "RequestIPAddress", "RequestUri", and "QueryStringArgNames".
+    :vartype match_variable: str or ~azure.mgmt.cdn.models.ScrubbingRuleEntryMatchVariable
+    :ivar selector_match_operator: When matchVariable is a collection, operate on the selector to
+     specify which elements in the collection this rule applies to. Required. "EqualsAny"
+    :vartype selector_match_operator: str or ~azure.mgmt.cdn.models.ScrubbingRuleEntryMatchOperator
+    :ivar selector: When matchVariable is a collection, operator used to specify which elements in
+     the collection this rule applies to.
+    :vartype selector: str
+    :ivar state: Defines the state of a log scrubbing rule. Default value is enabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.cdn.models.ScrubbingRuleEntryState
+    """
+
+    _validation = {
+        "match_variable": {"required": True},
+        "selector_match_operator": {"required": True},
+    }
+
+    _attribute_map = {
+        "match_variable": {"key": "matchVariable", "type": "str"},
+        "selector_match_operator": {"key": "selectorMatchOperator", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        match_variable: Union[str, "_models.ScrubbingRuleEntryMatchVariable"],
+        selector_match_operator: Union[str, "_models.ScrubbingRuleEntryMatchOperator"],
+        selector: Optional[str] = None,
+        state: Optional[Union[str, "_models.ScrubbingRuleEntryState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword match_variable: The variable to be scrubbed from the logs. Required. Known values are:
+         "RequestIPAddress", "RequestUri", and "QueryStringArgNames".
+        :paramtype match_variable: str or ~azure.mgmt.cdn.models.ScrubbingRuleEntryMatchVariable
+        :keyword selector_match_operator: When matchVariable is a collection, operate on the selector
+         to specify which elements in the collection this rule applies to. Required. "EqualsAny"
+        :paramtype selector_match_operator: str or
+         ~azure.mgmt.cdn.models.ScrubbingRuleEntryMatchOperator
+        :keyword selector: When matchVariable is a collection, operator used to specify which elements
+         in the collection this rule applies to.
+        :paramtype selector: str
+        :keyword state: Defines the state of a log scrubbing rule. Default value is enabled. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.cdn.models.ScrubbingRuleEntryState
+        """
+        super().__init__(**kwargs)
+        self.match_variable = match_variable
+        self.selector_match_operator = selector_match_operator
+        self.selector = selector
+        self.state = state
+
+
 class ProfileUpdateParameters(_serialization.Model):
     """Properties required to update a profile.
 
@@ -9284,6 +9343,8 @@ class ProfileUpdateParameters(_serialization.Model):
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
      origin. When timeout is reached, the request fails and returns.
     :vartype origin_response_timeout_seconds: int
+    :ivar log_scrubbing: Defines rules to scrub sensitive fields in logs.
+    :vartype log_scrubbing: ~azure.mgmt.cdn.models.ProfileLogScrubbing
     """
 
     _validation = {
@@ -9294,6 +9355,7 @@ class ProfileUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
+        "log_scrubbing": {"key": "properties.logScrubbing", "type": "ProfileLogScrubbing"},
     }
 
     def __init__(
@@ -9302,6 +9364,7 @@ class ProfileUpdateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         origin_response_timeout_seconds: Optional[int] = None,
+        log_scrubbing: Optional["_models.ProfileLogScrubbing"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9312,17 +9375,20 @@ class ProfileUpdateParameters(_serialization.Model):
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
+        :keyword log_scrubbing: Defines rules to scrub sensitive fields in logs.
+        :paramtype log_scrubbing: ~azure.mgmt.cdn.models.ProfileLogScrubbing
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
+        self.log_scrubbing = log_scrubbing
 
 
 class ProfileUpgradeParameters(_serialization.Model):
     """Parameters required for profile upgrade.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar waf_mapping_list: Web Application Firewall (WAF) and security policy mapping for the
      profile upgrade. Required.
@@ -9350,7 +9416,7 @@ class ProfileUpgradeParameters(_serialization.Model):
 class PurgeParameters(_serialization.Model):
     """Parameters required for content purge.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
      card directory. Required.
@@ -9378,7 +9444,7 @@ class PurgeParameters(_serialization.Model):
 class QueryStringMatchConditionParameters(_serialization.Model):
     """Defines the parameters for QueryString match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleQueryStringConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.QueryStringMatchConditionParametersTypeName
@@ -9510,7 +9576,7 @@ class RankingsResponseTablesItem(_serialization.Model):
         self.data = data
 
 
-class RankingsResponseTablesPropertiesItemsItem(_serialization.Model):
+class RankingsResponseTablesPropertiesItemsItem(_serialization.Model):  # pylint: disable=name-too-long
     """RankingsResponseTablesPropertiesItemsItem.
 
     :ivar name:
@@ -9543,7 +9609,7 @@ class RankingsResponseTablesPropertiesItemsItem(_serialization.Model):
         self.metrics = metrics
 
 
-class RankingsResponseTablesPropertiesItemsMetricsItem(_serialization.Model):
+class RankingsResponseTablesPropertiesItemsMetricsItem(_serialization.Model):  # pylint: disable=name-too-long
     """RankingsResponseTablesPropertiesItemsMetricsItem.
 
     :ivar metric:
@@ -9585,7 +9651,7 @@ class RankingsResponseTablesPropertiesItemsMetricsItem(_serialization.Model):
 class RateLimitRule(CustomRule):
     """Defines a rate limiting rule that can be included in a waf policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Defines the name of the custom rule. Required.
     :vartype name: str
@@ -9693,7 +9759,7 @@ class RateLimitRuleList(_serialization.Model):
 class RemoteAddressMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RemoteAddress match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRemoteAddressConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParametersTypeName
@@ -9760,7 +9826,7 @@ class RemoteAddressMatchConditionParameters(_serialization.Model):
 class RequestBodyMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestBody match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRequestBodyConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RequestBodyMatchConditionParametersTypeName
@@ -9824,7 +9890,7 @@ class RequestBodyMatchConditionParameters(_serialization.Model):
 class RequestHeaderMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestHeader match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRequestHeaderConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParametersTypeName
@@ -9896,7 +9962,7 @@ class RequestHeaderMatchConditionParameters(_serialization.Model):
 class RequestMethodMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestMethod match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRequestMethodConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RequestMethodMatchConditionParametersTypeName
@@ -9959,7 +10025,7 @@ class RequestMethodMatchConditionParameters(_serialization.Model):
 class RequestSchemeMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestScheme match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRequestSchemeConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersTypeName
@@ -10023,7 +10089,7 @@ class RequestSchemeMatchConditionParameters(_serialization.Model):
 class RequestUriMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestUri match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRequestUriConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.RequestUriMatchConditionParametersTypeName
@@ -10230,7 +10296,7 @@ class ResourcesResponseEndpointsItem(_serialization.Model):
         self.custom_domains = custom_domains
 
 
-class ResourcesResponseEndpointsPropertiesItemsItem(_serialization.Model):
+class ResourcesResponseEndpointsPropertiesItemsItem(_serialization.Model):  # pylint: disable=name-too-long
     """ResourcesResponseEndpointsPropertiesItemsItem.
 
     :ivar id:
@@ -10344,7 +10410,7 @@ class ResourceUsageListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ResponseBasedOriginErrorDetectionParameters(_serialization.Model):
+class ResponseBasedOriginErrorDetectionParameters(_serialization.Model):  # pylint: disable=name-too-long
     """The JSON object that contains the properties to determine origin health using real
     requests/responses.
 
@@ -10548,10 +10614,10 @@ class Route(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.deployment_status = None
 
 
-class RouteConfigurationOverrideActionParameters(_serialization.Model):
+class RouteConfigurationOverrideActionParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Defines the parameters for the route configuration override action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleRouteConfigurationOverrideActionParameters"
     :vartype type_name: str or
@@ -11041,7 +11107,7 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue", "Stop", and "Continue".
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
@@ -11097,7 +11163,7 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue", "Stop", and "Continue".
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -11160,7 +11226,7 @@ class RuleUpdatePropertiesParameters(_serialization.Model):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue", "Stop", and "Continue".
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -11198,7 +11264,7 @@ class RuleUpdatePropertiesParameters(_serialization.Model):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue", "Stop", and "Continue".
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -11234,7 +11300,7 @@ class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue", "Stop", and "Continue".
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -11276,7 +11342,7 @@ class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue", "Stop", and "Continue".
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(
@@ -11429,7 +11495,7 @@ class RuleUpdateParameters(_serialization.Model):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue", "Stop", and "Continue".
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -11467,7 +11533,7 @@ class RuleUpdateParameters(_serialization.Model):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue", "Stop", and "Continue".
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -11746,7 +11812,7 @@ class SecurityPolicyPropertiesParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SecurityPolicyWebApplicationFirewallParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the Security policy to create. Required. "WebApplicationFirewall"
     :vartype type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
@@ -11790,7 +11856,7 @@ class SecurityPolicyUpdateParameters(_serialization.Model):
         self.parameters = parameters
 
 
-class SecurityPolicyWebApplicationFirewallAssociation(_serialization.Model):
+class SecurityPolicyWebApplicationFirewallAssociation(_serialization.Model):  # pylint: disable=name-too-long
     """settings for security policy patterns to match.
 
     :ivar domains: List of domains.
@@ -11822,10 +11888,12 @@ class SecurityPolicyWebApplicationFirewallAssociation(_serialization.Model):
         self.patterns_to_match = patterns_to_match
 
 
-class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesParameters):
+class SecurityPolicyWebApplicationFirewallParameters(
+    SecurityPolicyPropertiesParameters
+):  # pylint: disable=name-too-long
     """The json object containing security policy waf parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the Security policy to create. Required. "WebApplicationFirewall"
     :vartype type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
@@ -11869,7 +11937,7 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
 class ServerPortMatchConditionParameters(_serialization.Model):
     """Defines the parameters for ServerPort match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleServerPortConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.ServerPortMatchConditionParametersTypeName
@@ -12073,7 +12141,7 @@ class Sku(_serialization.Model):
 class SocketAddrMatchConditionParameters(_serialization.Model):
     """Defines the parameters for SocketAddress match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleSocketAddrConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.SocketAddrMatchConditionParametersTypeName
@@ -12135,7 +12203,7 @@ class SocketAddrMatchConditionParameters(_serialization.Model):
 class SslProtocolMatchConditionParameters(_serialization.Model):
     """Defines the parameters for SslProtocol match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleSslProtocolConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.SslProtocolMatchConditionParametersTypeName
@@ -12305,7 +12373,7 @@ class SystemData(_serialization.Model):
 class UrlFileExtensionMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlFileExtension match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlFileExtensionMatchConditionParameters"
     :vartype type_name: str or
@@ -12371,7 +12439,7 @@ class UrlFileExtensionMatchConditionParameters(_serialization.Model):
 class UrlFileNameMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlFilename match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlFilenameConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParametersTypeName
@@ -12435,7 +12503,7 @@ class UrlFileNameMatchConditionParameters(_serialization.Model):
 class UrlPathMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlPath match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlPathMatchConditionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.UrlPathMatchConditionParametersTypeName
@@ -12499,7 +12567,7 @@ class UrlPathMatchConditionParameters(_serialization.Model):
 class UrlRedirectAction(DeliveryRuleAction):
     """Defines the url redirect action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -12533,7 +12601,7 @@ class UrlRedirectAction(DeliveryRuleAction):
 class UrlRedirectActionParameters(_serialization.Model):
     """Defines the parameters for the url redirect action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlRedirectActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.UrlRedirectActionParametersTypeName
@@ -12623,7 +12691,7 @@ class UrlRedirectActionParameters(_serialization.Model):
 class UrlRewriteAction(DeliveryRuleAction):
     """Defines the url rewrite action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -12657,7 +12725,7 @@ class UrlRewriteAction(DeliveryRuleAction):
 class UrlRewriteActionParameters(_serialization.Model):
     """Defines the parameters for the url rewrite action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlRewriteActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.UrlRewriteActionParametersTypeName
@@ -12715,7 +12783,7 @@ class UrlRewriteActionParameters(_serialization.Model):
 class UrlSigningAction(DeliveryRuleAction):
     """Defines the url signing action for the delivery rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the action for the delivery rule. Required. Known values are:
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
@@ -12749,7 +12817,7 @@ class UrlSigningAction(DeliveryRuleAction):
 class UrlSigningActionParameters(_serialization.Model):
     """Defines the parameters for the Url Signing action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type_name: Required. "DeliveryRuleUrlSigningActionParameters"
     :vartype type_name: str or ~azure.mgmt.cdn.models.UrlSigningActionParametersTypeName
@@ -12796,7 +12864,7 @@ class UrlSigningActionParameters(_serialization.Model):
 class UrlSigningKey(_serialization.Model):
     """Url signing key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_id: Defines the customer defined key Id. This id will exist in the incoming request
      to indicate the key used to form the hash. Required.
@@ -12835,7 +12903,7 @@ class UrlSigningKey(_serialization.Model):
 class UrlSigningKeyParameters(SecretParameters):
     """Url signing key parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -12845,7 +12913,7 @@ class UrlSigningKeyParameters(SecretParameters):
     :vartype key_id: str
     :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
      of
-     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
      Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Version of the secret to be used.
@@ -12879,7 +12947,7 @@ class UrlSigningKeyParameters(SecretParameters):
         :paramtype key_id: str
         :keyword secret_source: Resource reference to the Azure Key Vault secret. Expected to be in
          format of
-         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
          Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Version of the secret to be used.
@@ -12895,7 +12963,7 @@ class UrlSigningKeyParameters(SecretParameters):
 class UrlSigningParamIdentifier(_serialization.Model):
     """Defines how to identify a parameter for a specific purpose e.g. expires.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar param_indicator: Indicates the purpose of the parameter. Required. Known values are:
      "Expires", "KeyId", and "Signature".
@@ -12934,7 +13002,7 @@ class Usage(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource identifier.
     :vartype id: str
@@ -13076,7 +13144,7 @@ class UserAssignedIdentity(_serialization.Model):
 class UserManagedHttpsParameters(CustomDomainHttpsParameters):
     """Defines the certificate source parameters using user's keyvault certificate for enabling SSL.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
      are: "AzureKeyVault" and "Cdn".
@@ -13137,7 +13205,7 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
 class ValidateCustomDomainInput(_serialization.Model):
     """Input of the custom domain to be validated for DNS mapping.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
     :vartype host_name: str
@@ -13196,7 +13264,7 @@ class ValidateCustomDomainOutput(_serialization.Model):
 class ValidateProbeInput(_serialization.Model):
     """Input of the validate probe API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar probe_url: The probe URL to validate. Required.
     :vartype probe_url: str
@@ -13255,14 +13323,14 @@ class ValidateProbeOutput(_serialization.Model):
 class ValidateSecretInput(_serialization.Model):
     """Input of the secret to be validated.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_type: The secret type. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype secret_type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
      of
-     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
      Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Secret version, if customer is using a specific version.
@@ -13294,7 +13362,7 @@ class ValidateSecretInput(_serialization.Model):
         :paramtype secret_type: str or ~azure.mgmt.cdn.models.SecretType
         :keyword secret_source: Resource reference to the Azure Key Vault secret. Expected to be in
          format of
-         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.  # pylint: disable=line-too-long
          Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Secret version, if customer is using a specific version.
@@ -13458,7 +13526,7 @@ class WafMetricsResponseSeriesItem(_serialization.Model):
         self.data = data
 
 
-class WafMetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
+class WafMetricsResponseSeriesPropertiesItemsItem(_serialization.Model):  # pylint: disable=name-too-long
     """WafMetricsResponseSeriesPropertiesItemsItem.
 
     :ivar name:
@@ -13562,7 +13630,7 @@ class WafRankingsResponseDataItem(_serialization.Model):
         :paramtype group_values: list[str]
         :keyword metrics:
         :paramtype metrics:
-         list[~azure.mgmt.cdn.models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]
+         list[~azure.mgmt.cdn.models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.group_values = group_values

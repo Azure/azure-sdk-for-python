@@ -6,7 +6,9 @@
 
 import json
 import logging
+import os
 import re
+import time
 import typing
 from collections import Counter
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -16,6 +18,7 @@ from marshmallow import Schema
 from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
+from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
@@ -334,6 +337,27 @@ class PipelineComponent(Component):
         # command component), so we just use rest object to generate hash for pipeline component,
         # which doesn't have reuse issue.
         component_interface_dict = self._to_rest_object().properties.component_spec
+        # Hash local inputs in pipeline component jobs
+        for job_name, job in self.jobs.items():
+            if getattr(job, "inputs", None):
+                for input_name, input_value in job.inputs.items():
+                    try:
+                        if (
+                            isinstance(input_value._data, Input)
+                            and input_value.path
+                            and os.path.exists(input_value.path)
+                        ):
+                            start_time = time.time()
+                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
+                                get_object_hash(input_value.path)
+                            )
+                            module_logger.debug(
+                                "Takes %s seconds to calculate the content hash of local input %s",
+                                time.time() - start_time,
+                                input_value.path,
+                            )
+                    except ValidationException:
+                        pass
         hash_value: str = hash_dict(
             component_interface_dict,
             keys_to_omit=[

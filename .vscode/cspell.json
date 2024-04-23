@@ -577,6 +577,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity-broker/tests/*.py",
+      "words": [
+        "signin"
+      ]
+    },
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -1350,7 +1356,8 @@
         "Ffile",
         "Fsubdir",
         "Fdir",
-        "adal"
+        "adal",
+        "mytestshare"
       ]
     },
     {
@@ -1674,6 +1681,18 @@
       "filename": "sdk/appconfiguration/test-resources.json",
       "words": [
         "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
+      "words": [
+        "kvset"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
+      "words": [
+        "adfsasdfzsd"
       ]
     },
     {

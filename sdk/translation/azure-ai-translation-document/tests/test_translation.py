@@ -511,7 +511,7 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         for doc in result:
             self._validate_doc_status(doc, target_language="es")
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

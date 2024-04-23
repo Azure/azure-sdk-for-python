@@ -248,3 +248,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
             **kwargs
         )
+
+    def __enter__(self) -> "KeyVaultAccessControlClient":
+        self._client.__enter__()
+        return self

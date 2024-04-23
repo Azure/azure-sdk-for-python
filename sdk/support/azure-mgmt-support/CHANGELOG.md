@@ -1,5 +1,26 @@
 # Release History
 
+## 6.1.0b3 (2024-03-18)
+
+### Features Added
+
+  - Added operation ChatTranscriptsNoSubscriptionOperations.list
+  - Added operation CommunicationsNoSubscriptionOperations.list
+  - Added operation ProblemClassificationsOperations.classify_problems
+  - Added operation group LookUpResourceIdOperations
+  - Added operation group ProblemClassificationsNoSubscriptionOperations
+  - Added operation group ServiceClassificationsNoSubscriptionOperations
+  - Added operation group ServiceClassificationsOperations
+  - Model ProblemClassification has a new parameter metadata
+  - Model ProblemClassification has a new parameter parent_problem_classification
+  - Model Service has a new parameter metadata
+  - Model SupportTicketDetails has a new parameter is_temporary_ticket
+
+### Breaking Changes
+
+  - Removed operation group SupportTicketChatTranscriptsNoSubscriptionOperations
+  - Removed operation group SupportTicketCommunicationsNoSubscriptionOperations
+
 ## 6.1.0b2 (2023-10-23)
 
 ### Features Added
