@@ -36,7 +36,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(**kwargs) -> ConnectionAsync:
+    async def create_connection_async(
+        *,
+        host: str,
+        auth: JWTTokenAuthAsync,
+        endpoint: str,
+        container_id: str,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: int,
+        properties: dict,
+        remote_idle_timeout_empty_frame_send_ratio: int,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs
+    ) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
         :keyword str host: The hostname, used by pyamqp.
@@ -55,11 +70,23 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created ConnectionAsync.
         :rtype: ~pyamqp.aio.Connection
         """
-        endpoint = kwargs.pop("endpoint")
-        host = kwargs.pop("host")  # pylint:disable=unused-variable
-        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
-        network_trace = kwargs.pop("debug")
-        return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
+
+        _host = host  # pylint:disable=unused-variable
+        _auth = auth  # pylint:disable=unused-variable
+        network_trace = debug
+        return ConnectionAsync(
+            endpoint,
+            network_trace=network_trace,
+            container_id=container_id,
+            max_frame_size=max_frame_size,
+            channel_max=channel_max,
+            idle_timeout=idle_timeout,
+            properties=properties,
+            remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+            error_policy=error_policy,
+            encoding=encoding,
+            **kwargs
+            )
 
     @staticmethod
     async def close_connection_async(connection):
@@ -70,7 +97,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(
+        *,
+        config,
+        target: str,
+        auth: JWTTokenAuthAsync,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: dict,
+        properties: dict,
+        **kwargs
+    ):
         """
         Creates and returns the pyamqp SendClient.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -88,7 +128,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created SendClientAsync.
         :rtype: ~pyamqp.aio.SendClientAsync
         """
-        target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
         msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
 
@@ -100,6 +139,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            keep_alive_interval=keep_alive_interval,
+            client_name=client_name,
+            link_properties=link_properties,
+            properties=properties,
             **kwargs,
         )
 

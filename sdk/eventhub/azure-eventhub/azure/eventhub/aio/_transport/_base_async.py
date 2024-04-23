@@ -143,7 +143,22 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def create_connection_async(**kwargs: Any) -> Union[uamqp_Connection, pyamqp_Connection]:
+    async def create_connection_async(
+        *,
+        host: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        endpoint: str,
+        container_id: str,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: int,
+        properties: dict,
+        remote_idle_timeout_empty_frame_send_ratio: int,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs: Any
+    ) -> Union[uamqp_Connection, pyamqp_Connection]:
         """
         Creates and returns the uamqp async Connection object.
         :keyword str host: The hostname, used by uamqp.
@@ -180,7 +195,20 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(*, config: Configuration, **kwargs: Any) -> Union[uamqp_SendClient, pyamqp_SendClient]:
+    def create_send_client(
+        *,
+        config: Configuration,
+        target: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: dict,
+        properties: dict,
+        **kwargs: Any
+    ) -> Union[uamqp_SendClient, pyamqp_SendClient]:
         """
         Creates and returns the send client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -242,6 +270,20 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client(
         *,
         config: Configuration,
+        source: Union[uamqp_Source, pyamqp_Source],
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: dict,
+        properties: dict,
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities: str,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: float,
         **kwargs: Any
     ) -> Union[uamqp_ReceiveClient, pyamqp_ReceiveClient]:
         """
