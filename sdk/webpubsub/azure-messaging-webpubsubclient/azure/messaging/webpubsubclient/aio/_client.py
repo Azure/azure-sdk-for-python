@@ -69,6 +69,7 @@ from .._client import (
     _USER_AGENT,
     _ACK_TIMEOUT,
     _START_TIMEOUT,
+    _QUEUE_MAX_SIZE,
 )
 from .._util import format_user_agent, raise_for_empty_message_ack
 
@@ -278,6 +279,12 @@ class WebPubSubClient(
         self._event: asyncio.Event = asyncio.Event()
         self._task_seq_ack: Optional[asyncio.Task] = None
         self._task_run_forever: Optional[asyncio.Task] = None
+        self._tasks: List[asyncio.Task] = []
+
+    def _record_task(self, task: asyncio.Task) -> None:
+        if len(self._tasks) > _QUEUE_MAX_SIZE:
+            self._tasks = [t for t in self._tasks if not t.done()]
+        self._tasks.append(task)
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
@@ -614,7 +621,7 @@ class WebPubSubClient(
 
     def _call_back(self, callback_type: CallbackType, *args):
         for func in self._handler[callback_type]:
-            asyncio.create_task(func(*args))
+            self._record_task(asyncio.create_task(func(*args)))
 
     async def _start_from_restarting(self, reconnect_tried_times: Optional[int] = None):
         if self._state != WebPubSubClientState.DISCONNECTED:
@@ -738,7 +745,7 @@ class WebPubSubClient(
                     if self._auto_rejoin_groups:
                         for group_name, group in self._group_map.items():
                             if group.is_joined:
-                                asyncio.create_task(self._rejoin_group(group_name))
+                                self._record_task(asyncio.create_task(self._rejoin_group(group_name)))
 
                     self._call_back(
                         CallbackType.CONNECTED,
@@ -932,6 +939,7 @@ class WebPubSubClient(
         self._connection_id = None
         self._reconnection_token = None
         self._url = ""
+        self._tasks.clear()
 
         self._url = await self._credential.get_client_access_url()
         await self._connect(self._url, reconnect_tried_times)
@@ -958,7 +966,7 @@ class WebPubSubClient(
             _LOGGER.info("client has been closed or is stopping")
             return
         self._is_stopping = True
-        old_tasks = [self._task_run_forever, self._task_seq_ack]
+        old_tasks = [self._task_run_forever, self._task_seq_ack] + self._tasks
 
         await self._ws.close()  # type: ignore
         _LOGGER.info("waiting for close")

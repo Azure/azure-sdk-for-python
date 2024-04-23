@@ -142,12 +142,10 @@ class JoinGroupData(_model_base.Model):
         type: Literal["joinGroup"] = "joinGroup",  # pylint: disable=redefined-builtin
         group: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -175,12 +173,10 @@ class LeaveGroupData(_model_base.Model):
         type: Literal["leaveGroup"] = "leaveGroup",  # pylint: disable=redefined-builtin
         group: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -216,12 +212,10 @@ class SendEventData(_model_base.Model):
         data: Any,
         event: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -261,12 +255,10 @@ class SendToGroupData(_model_base.Model):
         data: Any,
         no_echo: bool,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -290,12 +282,10 @@ class SequenceAckData(_model_base.Model):
         *,
         type: Literal["sequenceAck"] = "sequenceAck",  # pylint: disable=redefined-builtin
         sequence_id: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -522,7 +512,14 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None,]:
+    ) -> Union[
+        ConnectedMessage,
+        DisconnectedMessage,
+        GroupDataMessage,
+        ServerDataMessage,
+        AckMessage,
+        None,
+    ]:
         """Parse messages from raw message
 
         :param raw_message: The raw message. Required.
@@ -572,9 +569,9 @@ class WebPubSubClientProtocol:
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
-                error=AckMessageError(name=error["name"], message=error["message"])
-                if isinstance(error, dict)
-                else None,
+                error=(
+                    AckMessageError(name=error["name"], message=error["message"]) if isinstance(error, dict) else None
+                ),
             )
         _LOGGER.error("wrong message type: %s", message["type"])
         return None

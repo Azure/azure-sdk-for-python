@@ -54,6 +54,7 @@ from .models._enums import (
 from ._util import format_user_agent, raise_for_empty_message_ack
 
 _THREAD_JOIN_TIME_OUT = 0.1
+_QUEUE_MAX_SIZE = 100
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -358,6 +359,13 @@ class WebPubSubClient(
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
         self._ack_id_lock = threading.Lock()
+        self._threads: List[threading.Thread] = []
+
+    def _record_thread(self, thread: threading.Thread) -> None:
+        if len(self._threads) > _QUEUE_MAX_SIZE:
+            self._threads = [t for t in self._threads if t.is_alive()]
+        self._threads.append(thread)
+        thread.start()
 
     def _next_ack_id(self) -> int:
         with self._ack_id_lock:
@@ -700,7 +708,7 @@ class WebPubSubClient(
         for func in self._handler[callback_type]:
             # _call_back works in listener thread which must not be blocked so we have to execute the func
             # in new thread to avoid dead lock
-            threading.Thread(target=func, args=args, daemon=True).start()
+            self._record_thread(threading.Thread(target=func, args=args, daemon=True))
 
     def _start_from_restarting(self, reconnect_tried_times: Optional[int] = None):
         if self._state != WebPubSubClientState.DISCONNECTED:
@@ -792,7 +800,7 @@ class WebPubSubClient(
                     OnRejoinGroupFailedArgs(group=group_name, error=e),
                 )
 
-        threading.Thread(target=_rejoin_group_func, daemon=True).start()
+        self._record_thread(threading.Thread(target=_rejoin_group_func, daemon=True))
 
     def _connect(
         self,
@@ -1031,6 +1039,7 @@ class WebPubSubClient(
         self._connection_id = None
         self._reconnection_token = None
         self._url = ""
+        self._threads.clear()
 
         self._url = self._credential.get_client_access_url()
         self._connect(self._url, reconnect_tried_times)
@@ -1057,7 +1066,7 @@ class WebPubSubClient(
             _LOGGER.info("client has been closed or is stopping")
             return
         self._is_stopping = True
-        old_threads = [self._thread, self._thread_seq_ack]
+        old_threads = [self._thread, self._thread_seq_ack] + self._threads
 
         if self._ws:
             _LOGGER.info("send close code to drop connection")
