@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that if the retry-after header had comma, we did not handle it correctly.  #35314
+
 ### Other Changes
 
 - HTTP tracing spans will now include an `error.type` attribute if an error status code is returned.  #34619

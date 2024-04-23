@@ -146,3 +146,7 @@ def test_parse_retry_after():
     assert ret == 0
     ret = parse_retry_after("0.9")
     assert ret == 0.9
+    ret = parse_retry_after("1,000")
+    assert ret == 1000
+    ret = parse_retry_after("1,000.1")
+    assert ret == 1000.1
