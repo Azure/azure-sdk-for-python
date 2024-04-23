@@ -287,6 +287,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         get_token: Callable,
         token_type: bytes,
         config: Configuration,
+        *,
+        update_token: bool,
         **kwargs: Any
     ) -> Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]:
         """
@@ -331,7 +333,13 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @abstractmethod
     async def mgmt_client_request_async(
         mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient],
-        mgmt_msg: str, **kwargs: Any
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs: Any
     ) -> None:
         """
         Send mgmt request.

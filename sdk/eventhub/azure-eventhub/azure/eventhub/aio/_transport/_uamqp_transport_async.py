@@ -38,6 +38,7 @@ if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._consumer_async import EventHubConsumer
     from ..._common import EventData
+    from ..._configuration import Configuration
     try:
         from uamqp import Message
     except ImportError:
@@ -191,7 +192,7 @@ if uamqp_installed:
             )
             # pylint:disable=protected-access
             client._streaming_receive = streaming_receive
-            client._message_received_callback = (message_received_callback)
+            client._message_received_callback = message_received_callback
             return client
 
         @staticmethod
@@ -268,7 +269,15 @@ if uamqp_installed:
                     await consumer._on_event_received(None)
 
         @staticmethod
-        async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+        async def create_token_auth_async(
+            auth_uri: str,
+            get_token,
+            token_type: bytes,
+            config: "Configuration",
+            *,
+            update_token: bool,
+            **kwargs
+            ):
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -283,7 +292,6 @@ if uamqp_installed:
             :return: A JWTTokenAsync instance.
             :rtype: ~uamqp.authentication.JWTTokenAsync
             """
-            update_token = kwargs.pop("update_token")
             refresh_window = 300
             if update_token:
                 refresh_window = 0

@@ -21,11 +21,11 @@ from ...exceptions import (
     EventDataSendError,
     OperationTimeoutError
 )
-from ..._common import EventData
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._pyamqp.message import Message
+    from ..._configuration import Configuration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -253,7 +253,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     await asyncio.wait([t], timeout=1)
 
     @staticmethod
-    async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+    async def create_token_auth_async(
+        auth_uri: str,
+        get_token,
+        token_type: bytes,
+        config: "Configuration",
+        *,
+        update_token: bool,
+        **kwargs
+        ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -269,7 +277,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
@@ -321,7 +328,16 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return (await mgmt_auth.get_token()).token
 
     @staticmethod
-    async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
+    async def mgmt_client_request_async(
+        mgmt_client: AMQPClientAsync,
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs
+        ):
         """
         Send mgmt request.
         :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
@@ -334,10 +350,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The mgmt client.
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
         return await mgmt_client.mgmt_request_async(
-            mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
+            mgmt_msg,
+            operation=operation.decode(),
+            operation_type=operation_type.decode(),
+            status_code_field=status_code_field,
+            description_fields=description_fields,
+            **kwargs
         )
 
     @staticmethod

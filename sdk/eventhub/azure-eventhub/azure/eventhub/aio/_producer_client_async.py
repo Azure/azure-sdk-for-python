@@ -504,6 +504,7 @@ class EventHubProducerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: An EventHubProducerClient instance.
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
@@ -808,7 +809,8 @@ class EventHubProducerClient(
             EventHubProducerClient, self
         )._get_partition_properties_async(partition_id)
 
-    async def flush(self, **kwargs: Any) -> None:
+    async def flush(self, *, timeout: Optional[float] = None,  **kwargs: Any) -> None:
+        # pylint: disable=unused-argument
         """
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
@@ -821,13 +823,13 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.flush(
                     timeout_time=timeout_time
                 )
 
-    async def close(self, *, flush: bool = True, **kwargs: Any) -> None:
+    async def close(self, *, flush: bool = True, timeout: Optional[float] = None, **kwargs: Any) -> None:
+        # pylint: disable=unused-argument
         """Close the Producer client underlying AMQP connection and links.
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
@@ -851,7 +853,6 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.close(
                     flush=flush, timeout_time=timeout_time, raise_error=True

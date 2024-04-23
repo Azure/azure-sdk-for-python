@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple, cast
+from typing import Callable, Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -477,7 +477,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
     @staticmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config,
+        *,
+        update_token: bool,
+        **kwargs
+        ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -492,7 +500,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
@@ -546,7 +553,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return mgmt_auth.get_token().token
 
     @staticmethod
-    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(
+        mgmt_client: AMQPClient,
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs):
         """
         Send mgmt request.
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
@@ -560,12 +575,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.message.Message
 
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
         return mgmt_client.mgmt_request(
             mgmt_msg,
             operation=operation.decode(),
             operation_type=operation_type.decode(),
+            status_code_field=status_code_field,
+            description_fields=description_fields,
             **kwargs,
         )
 

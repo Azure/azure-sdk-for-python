@@ -522,6 +522,7 @@ class EventHubProducerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: A EventHubProducerClient instance.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
@@ -830,7 +831,8 @@ class EventHubProducerClient(
             partition_id
         )
 
-    def flush(self, **kwargs: Any) -> None:
+    def flush(self, *, timeout: Optional[float] = None, **kwargs: Any) -> None:
+        # pylint: disable=unused-argument
         """
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
@@ -842,11 +844,10 @@ class EventHubProducerClient(
         """
         with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
 
-    def close(self, *, flush: bool = True, **kwargs: Any) -> None:
+    def close(self, *, flush: bool = True, timeout: Optional[float] = None, **kwargs: Any) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent

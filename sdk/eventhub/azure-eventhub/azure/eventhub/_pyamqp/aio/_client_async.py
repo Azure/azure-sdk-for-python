@@ -844,6 +844,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
          0, the client will continue to wait until at least one message is received. The
          default is 0.
         :paramtype timeout: float
+        :return: Retryable operation coroutine.
+        :rtype: Coroutine[Any, Any, list]
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,
