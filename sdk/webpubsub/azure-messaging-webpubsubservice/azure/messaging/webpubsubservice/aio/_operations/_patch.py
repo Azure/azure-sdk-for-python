@@ -38,6 +38,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         roles: Optional[List[str]] = None,
         minutes_to_expire: Optional[int] = 60,
         jwt_headers: Dict[str, Any] = None,
+        groups: Optional[List[str]] = None,
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -49,6 +50,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
+        :keyword groups: Groups that the connection will join when it connects. Default value is None.
+        :paramtype groups: list[str]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -85,11 +88,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 roles=roles,
                 minutes_to_expire=minutes_to_expire,
                 jwt_headers=jwt_headers or {},
+                groups=groups,
                 **kwargs
             )
         else:
             access_token = await super().get_client_access_token(
-                user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, **kwargs
+                user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, groups=groups, **kwargs
             )
             token = access_token.get("token")
         return {
