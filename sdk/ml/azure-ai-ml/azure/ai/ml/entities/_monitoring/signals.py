@@ -1197,7 +1197,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
         self,
         *,
         production_data: Optional[LlmData] = None,
-        metric_thresholds: GenerationTokenStatisticsMonitorMetricThreshold,
+        metric_thresholds: Optional[GenerationTokenStatisticsMonitorMetricThreshold] = None,
         alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
         sampling_rate: Optional[float] = None,
@@ -1215,10 +1215,12 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
             production_data=self.production_data._to_rest_object(default=data_window_size)
             if self.production_data is not None
             else None,
-            metric_thresholds=self.metric_thresholds._to_rest_object(),
+            metric_thresholds=self.metric_thresholds._to_rest_object()
+            if self.metric_thresholds
+            else GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds()._to_rest_object(),  # pylint: disable=line-too-long
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
-            sampling_rate=self.sampling_rate,
+            sampling_rate=self.sampling_rate if self.sampling_rate else 0.1,
         )
 
     @classmethod
@@ -1231,6 +1233,13 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
             else MonitoringNotificationMode.ENABLED,
             properties=obj.properties,
             sampling_rate=obj.sampling_rate,
+        )
+
+    @classmethod
+    def _get_default_token_statistics_signal(cls) -> "GenerationTokenStatisticsSignal":
+        return cls(
+            metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds(),
+            sampling_rate=0.1,
         )
 
 

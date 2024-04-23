@@ -946,3 +946,7 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  #
         return cls(
             totaltoken=totaltoken if totaltoken else None,
         )
+
+    @classmethod
+    def _get_default_thresholds(cls) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        return cls(totaltoken={"total_token_count": 0, "total_token_count_per_group": 0})

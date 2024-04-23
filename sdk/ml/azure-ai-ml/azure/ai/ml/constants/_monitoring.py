@@ -31,6 +31,7 @@ COMPUTE_MANAGED_IDENTITY_TYPE = "ManagedIdentity"
 DEFAULT_DATA_DRIFT_SIGNAL_NAME = "data-drift-signal"
 DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME = "prediction-drift-signal"
 DEFAULT_DATA_QUALITY_SIGNAL_NAME = "data-quality-signal"
+DEFAULT_TOKEN_USAGE_SIGNAL_NAME = "token-usage-signal"
 
 
 @experimental

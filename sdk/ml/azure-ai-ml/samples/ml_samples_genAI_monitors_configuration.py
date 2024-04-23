@@ -40,38 +40,59 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-# Get a handle to the workspace. You can find the info on the workspace tab on ml.azure.com
+subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+resource_group_name = "INSERT_YOUR_RESOURCE_GROUP_NAME"
+workspace_name = "INSERT_YOUR_PROJECT_NAME"
+aoai_deployment_name = "INSERT_YOUR_AOAI_DEPLOYMENT_NAME"
+
+# Default Monitor configuration for GenAI apps - Enable monitoring with minimal configurations
 ml_client = MLClient(
     credential=credential,
-    subscription_id="2d385bf4-0756-4a76-aa95-28bf9ed3b625",  # os.environ["AZURE_SUBSCRIPTION_ID"],  # this will look like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    resource_group_name=os.environ["RESOURCE_GROUP_NAME"],
-    workspace_name="test-ws1",
+    subscription_id=subscription_id,
+    resource_group_name=resource_group_name,
+    workspace_name=workspace_name,
 )
 
+# This is the compute to run the job on
 spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
 
+# This is the deployment to monitor
 monitoring_target = MonitoringTarget(
     ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
-    endpoint_deployment_id="azureml:endpoint:deployment",
+    endpoint_deployment_id="azureml:endpoint:deployment-1",
 )
 
-token_statistics_metrics = GenerationTokenStatisticsMonitorMetricThreshold(
-    totaltoken={"total_token_count": 0, "total_token_count_per_group": 0}
+# These are the monitoring settings
+monitor_settings = MonitorDefinition(compute=spark_compute, monitoring_target=monitoring_target)
+
+# This is the monitor schedule configuration
+model_monitor = MonitorSchedule(
+    name="qa_model_monitor", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
 )
-token_statistics_signal = GenerationTokenStatisticsSignal(metric_thresholds=token_statistics_metrics, sampling_rate=0.1)
+
+# ml_client.schedules.begin_create_or_update(model_monitor)
+# End of default monitor enabling with minimal configuration
+
+
+# token_statistics_metrics = GenerationTokenStatisticsMonitorMetricThreshold(
+#    totaltoken={"total_token_count": 0, "total_token_count_per_group": 0}
+# )
+token_statistics_signal = (
+    GenerationTokenStatisticsSignal()
+)  # metric_thresholds=token_statistics_metrics, sampling_rate=0.1)
 
 # Thresholds for GSQ signal
 generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(  # need to confirm which one is used, current understanding only one of them is used
-    fluency={"acceptable_fluency_score_per_instance": 3.5, "aggregated_fluency_pass_rate": 2.5},
-    coherence={"acceptable_coherence_score_per_instance": 3.5, "aggregated_coherence_pass_rate": 3.5},
-    groundedness={"aggregated_groundedness_pass_rate": 3.5, "acceptable_groundedness_score_per_instance": 2.5},
-    relevance={"acceptable_relevance_score_per_instance": 3.5, "aggregated_relevance_pass_rate": 2.5},
+    fluency={"acceptable_fluency_score_per_instance": 0.5, "aggregated_fluency_pass_rate": 0.5},
+    coherence={"acceptable_coherence_score_per_instance": 0.5, "aggregated_coherence_pass_rate": 0.5},
+    groundedness={"aggregated_groundedness_pass_rate": 0.5, "acceptable_groundedness_score_per_instance": 0.5},
+    relevance={"acceptable_relevance_score_per_instance": 0.5, "aggregated_relevance_pass_rate": 0.5},
 )
 
 input_data = Input(
     type="uri_folder",
     # not mandatory
-    path="app traces path",
+    path="<data path>",
 )
 data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D")
 
@@ -86,14 +107,14 @@ production_data = LlmData(
 # GSQ signal configuration
 generation_quality_signal = GenerationSafetyQualitySignal(
     # open question - how customer can grab this?
-    workspace_connection_id="<work space connection id>",
+    workspace_connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/Default_AzureOpenAI",
     metric_thresholds=generation_quality_thresholds,
     production_data=[production_data],
     sampling_rate=1.0,
     properties={
-        "aoai_deployment_name": "gpt-35-turbo-16k",  # mandatory field
+        "aoai_deployment_name": aoai_deployment_name,
         "enable_action_analyzer": "false",
-        "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":3.5}},{"metricName":"average_coherence","threshold":{"value":3.5}}]',
+        "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":0.5}},{"metricName":"average_coherence","threshold":{"value":0.5}}]',
     },
 )
 
@@ -103,7 +124,7 @@ monitoring_signals = {
 }
 
 # Emails to send alerts to
-alert_notification = AlertNotification(emails=["achauhan@microsoft.com", "def@example.com"])
+alert_notification = AlertNotification(emails=["test@example.com", "def@example.com"])
 
 monitor_settings = MonitorDefinition(
     compute=spark_compute,
