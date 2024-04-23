@@ -24,7 +24,7 @@ from ...models._patch import ReceiveResult, ReceiveDetails
 from ..._operations._patch import _to_http_request, use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
-from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
+from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions
 from ..._model_base import _deserialize
 from ..._validation import api_version_validation
 
@@ -315,16 +315,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @use_standard_only
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay"]},
-    )
     async def release_cloud_events(
         self,
         topic_name: str,
         subscription_name: str,
         *,
         lock_tokens: List[str],
-        release_delay: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any,
     ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -337,9 +333,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type subscription_name: str
         :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
         :paramtype lock_tokens: List[str]
-        :keyword release_delay: Release cloud events with the specified delay in seconds.
-         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
-        :paramtype release_delay: int or ~azure.eventgrid.models.ReleaseDelay
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -349,7 +342,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             topic_name,
             subscription_name,
             options,
-            release_delay_in_seconds=release_delay,
             **kwargs,
         )
 
@@ -380,37 +372,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         options = RejectOptions(lock_tokens=lock_tokens)
         return await super()._reject_cloud_events(topic_name, subscription_name, options, **kwargs)
 
-    @use_standard_only
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-    )
-    async def renew_cloud_event_locks(
-        self,
-        topic_name: str,
-        subscription_name: str,
-        *,
-        lock_tokens: List[str],
-        **kwargs: Any,
-    ) -> _models.RenewCloudEventLocksResult:
-        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
-        request is successfully accepted. The response body will include the set of successfully
-        renewed lockTokens, along with other failed lockTokens with their corresponding error
-        information.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param subscription_name: Event Subscription Name. Required.
-        :type subscription_name: str
-        :keyword lock_tokens: Array of lock tokens of Cloud Events. Required.
-        :paramtype lock_tokens: List[str]
-        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
-         MutableMapping
-        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        options = RenewLockOptions(lock_tokens=lock_tokens)
-        return await super()._renew_cloud_event_locks(topic_name, subscription_name, options, **kwargs)
 
     async def _publish(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
 
