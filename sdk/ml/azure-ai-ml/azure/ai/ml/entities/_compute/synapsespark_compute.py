@@ -197,9 +197,11 @@ class SynapseSparkCompute(Compute):
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
         )
 
     def _to_dict(self) -> Dict:

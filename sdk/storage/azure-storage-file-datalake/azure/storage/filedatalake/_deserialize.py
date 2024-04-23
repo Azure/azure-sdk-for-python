@@ -28,6 +28,7 @@ def deserialize_dir_properties(response, obj, headers):
         owner=response.headers.get('x-ms-owner'),
         group=response.headers.get('x-ms-group'),
         permissions=response.headers.get('x-ms-permissions'),
+        acl=response.headers.get('x-ms-acl'),
         **headers
     )
     return dir_properties
@@ -42,6 +43,7 @@ def deserialize_file_properties(response, obj, headers):
         owner=response.headers.get('x-ms-owner'),
         group=response.headers.get('x-ms-group'),
         permissions=response.headers.get('x-ms-permissions'),
+        acl=response.headers.get('x-ms-acl'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -108,6 +110,7 @@ def from_blob_properties(blob_properties, **additional_args):
     file_props.owner = additional_args.pop('owner', None)
     file_props.group = additional_args.pop('group', None)
     file_props.permissions = additional_args.pop('permissions', None)
+    file_props.acl = additional_args.pop('acl', None)
 
     return file_props
 

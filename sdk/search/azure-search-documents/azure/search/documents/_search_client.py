@@ -34,7 +34,7 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
-from ._utils import get_authentication_policy
+from ._utils import get_authentication_policy, get_answer_query
 from ._version import SDK_MONIKER
 
 
@@ -326,8 +326,7 @@ class SearchClient(HeadersMixin):
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
 
-        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
-        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
+        answers = get_answer_query(query_answer, query_answer_count, query_answer_threshold)
 
         captions = (
             query_caption
