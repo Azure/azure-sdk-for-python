@@ -163,7 +163,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             type="Contoso.Items.ItemReceived",
             source="source",
             subject="MySubject",
-            data=b'this is binary data',
+            data={"key": "value"},
         )
 
         client.send(
@@ -174,6 +174,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
+        assert events.value[0].event.data == {"key": "value"}
 
         ack = client.acknowledge_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[lock_token])
         assert len(ack.succeeded_lock_tokens) == 1
