@@ -55,6 +55,7 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
+    Index,
     Job,
     Model,
     ModelBatchDeployment,
@@ -1198,6 +1199,12 @@ def _(entity: Component, operations, **kwargs):
 def _(entity: Datastore, operations):
     module_logger.debug("Creating or updating datastores")
     return operations[AzureMLResourceType.DATASTORE].create_or_update(entity)
+
+
+@_create_or_update.register(Index)
+def _(entity: Index, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating indexes")
+    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
 
 
 @singledispatch
