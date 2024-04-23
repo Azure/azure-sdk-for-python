@@ -5,7 +5,7 @@
 - Support for Bring Your Own Storage recording option
 - Support for PauseOnStart Recording Option 
 - Support for Recording state change with Recording Kind
-- 
+   
 ### Other Changes 
 - Support for MicrosoftTeamsAppIdentifier CommunicationIdentifier
 
