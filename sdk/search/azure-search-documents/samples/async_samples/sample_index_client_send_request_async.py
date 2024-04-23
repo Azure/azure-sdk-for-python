@@ -37,7 +37,7 @@ async def sample_send_request():
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(method="GET", url=f"/indexes('{index_name}')?api-version=2024-03-01-Preview")
+    request = HttpRequest(method="GET", url=f"/indexes('{index_name}')?api-version=2024-05-01-Preview")
     async with client:
         response = await client.send_request(request)
     response.raise_for_status()
