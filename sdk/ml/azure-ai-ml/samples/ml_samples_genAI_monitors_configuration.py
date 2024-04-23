@@ -44,6 +44,10 @@ subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 resource_group_name = "INSERT_YOUR_RESOURCE_GROUP_NAME"
 workspace_name = "INSERT_YOUR_PROJECT_NAME"
 aoai_deployment_name = "INSERT_YOUR_AOAI_DEPLOYMENT_NAME"
+endpoint_name = "INSERT_YOUR_ENDPOINT_NAME"
+deployment_name = "INSERT_YOUR_DEPLOYMENT_NAME"
+app_trace_name = "app_traces"
+app_trace_Version= "1"
 
 # Default Monitor configuration for GenAI apps - Enable monitoring with minimal configurations
 ml_client = MLClient(
@@ -59,7 +63,7 @@ spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_
 # This is the deployment to monitor
 monitoring_target = MonitoringTarget(
     ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
-    endpoint_deployment_id="azureml:endpoint:deployment-1",
+    endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
 )
 
 # These are the monitoring settings
@@ -70,7 +74,7 @@ model_monitor = MonitorSchedule(
     name="qa_model_monitor", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
 )
 
-# ml_client.schedules.begin_create_or_update(model_monitor)
+ml_client.schedules.begin_create_or_update(model_monitor)
 # End of default monitor enabling with minimal configuration
 
 
@@ -83,16 +87,15 @@ token_statistics_signal = (
 
 # Thresholds for GSQ signal
 generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(  # need to confirm which one is used, current understanding only one of them is used
-    fluency={"acceptable_fluency_score_per_instance": 0.5, "aggregated_fluency_pass_rate": 0.5},
-    coherence={"acceptable_coherence_score_per_instance": 0.5, "aggregated_coherence_pass_rate": 0.5},
-    groundedness={"aggregated_groundedness_pass_rate": 0.5, "acceptable_groundedness_score_per_instance": 0.5},
-    relevance={"acceptable_relevance_score_per_instance": 0.5, "aggregated_relevance_pass_rate": 0.5},
+    fluency={"acceptable_fluency_score_per_instance": 4, "aggregated_fluency_pass_rate": 0.5},
+    coherence={"acceptable_coherence_score_per_instance": 4, "aggregated_coherence_pass_rate": 0.5},
+    groundedness={"aggregated_groundedness_pass_rate": 4, "acceptable_groundedness_score_per_instance": 0.5},
+    relevance={"acceptable_relevance_score_per_instance": 4, "aggregated_relevance_pass_rate": 0.5},
 )
 
 input_data = Input(
     type="uri_folder",
-    # not mandatory
-    path="<data path>",
+    path=f"{endpoint_name}-{deployment_name}-{app_trace_name}:{app_trace_Version}",
 )
 data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D")
 
@@ -100,7 +103,6 @@ data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offs
 production_data = LlmData(
     data_column_names={"prompt_column": "question", "completion_column": "answer"},  # data column needs to be provided
     input_data=input_data,
-    # data_context=MonitorDatasetContext.TEST, --- is not used by backend
     data_window=data_window,
 )
 
@@ -114,7 +116,7 @@ generation_quality_signal = GenerationSafetyQualitySignal(
     properties={
         "aoai_deployment_name": aoai_deployment_name,
         "enable_action_analyzer": "false",
-        "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":0.5}},{"metricName":"average_coherence","threshold":{"value":0.5}}]',
+        "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":4}},{"metricName":"average_coherence","threshold":{"value":4}}]',
     },
 )
 
@@ -134,7 +136,7 @@ monitor_settings = MonitorDefinition(
 )
 
 model_monitor = MonitorSchedule(
-    name="monitor-name", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
+    name="monitor-name-2", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
 )
 
 ml_client.schedules.begin_create_or_update(model_monitor)
