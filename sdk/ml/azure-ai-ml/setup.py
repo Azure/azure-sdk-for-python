@@ -88,6 +88,7 @@ setup(
         "typing-extensions",
         "opencensus-ext-azure",
         "opencensus-ext-logging",
+        "pyarrow",
         "openai",
         "mmh3",
         "cloudpickle",
