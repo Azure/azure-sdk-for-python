@@ -42,7 +42,9 @@ async def run():
             await client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
             # Receive CloudEvents and parse out lock tokens
-            receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
+            receive_result = await client.receive_cloud_events(
+                topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+            )
             lock_tokens_to_release = []
             for item in receive_result.value:
                 lock_tokens_to_release.append(item.broker_properties.lock_token)
@@ -56,6 +58,7 @@ async def run():
             print("Renewed Event:", renew_events)
         except HttpResponseError:
             raise
+
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(run())

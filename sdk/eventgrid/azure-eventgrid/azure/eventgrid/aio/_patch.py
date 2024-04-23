@@ -46,9 +46,7 @@ class EventGridClient(InternalEventGridClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[
-            AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"
-        ],
+        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
         *,
         api_version: Optional[str] = None,
         level: Union[str, ClientLevel] = "Standard",
@@ -59,17 +57,12 @@ class EventGridClient(InternalEventGridClient):
 
         if level == ClientLevel.BASIC:
             self._client = EventGridPublisherClient(  # type: ignore[assignment]
-                endpoint,
-                credential,
-                api_version=api_version or DEFAULT_BASIC_API_VERSION,
-                **kwargs
+                endpoint, credential, api_version=api_version or DEFAULT_BASIC_API_VERSION, **kwargs
             )
             self._send = self._client.send  # type: ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
-                raise TypeError(
-                    "SAS token authentication is not supported for the standard client."
-                )
+                raise TypeError("SAS token authentication is not supported for the standard client.")
 
             super().__init__(
                 endpoint=endpoint,
@@ -79,9 +72,7 @@ class EventGridClient(InternalEventGridClient):
             )
             self._send = self._publish_cloud_events
         else:
-            raise ValueError(
-                "Unknown client level. Known values are `Standard` and `Basic`."
-            )
+            raise ValueError("Unknown client level. Known values are `Standard` and `Basic`.")
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False

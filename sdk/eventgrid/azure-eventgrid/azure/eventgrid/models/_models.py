@@ -31,9 +31,6 @@ class AcknowledgeOptions(_model_base.Model):
     """Array of lock tokens. Required."""
 
 
- 
-
-
 class AcknowledgeResult(_model_base.Model):
     """The result of the Acknowledge operation.
 
@@ -54,15 +51,13 @@ class AcknowledgeResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -71,10 +66,8 @@ class AcknowledgeResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
 
 
 class BrokerProperties(_model_base.Model):
@@ -92,9 +85,6 @@ class BrokerProperties(_model_base.Model):
     """The token of the lock on the event. Required."""
     delivery_count: int = rest_field(name="deliveryCount")
     """The attempt count for delivering the event. Required."""
-
-
- 
 
 
 class CloudEvent(_model_base.Model):
@@ -153,9 +143,6 @@ class CloudEvent(_model_base.Model):
      source)."""
 
 
- 
-
-
 class Error(_model_base.Model):
     """The error object.
 
@@ -186,9 +173,6 @@ class Error(_model_base.Model):
     """An object containing more specific information than the current object about the error."""
 
 
- 
-
-
 class FailedLockToken(_model_base.Model):
     """Failed LockToken information.
 
@@ -206,15 +190,13 @@ class FailedLockToken(_model_base.Model):
     error: "_models._models.Error" = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         lock_token: str,
         error: "_models._models.Error",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -223,10 +205,8 @@ class FailedLockToken(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
 
 
 class InnerError(_model_base.Model):
@@ -246,17 +226,8 @@ class InnerError(_model_base.Model):
     """Inner error."""
 
 
- 
-
-
 class PublishResult(_model_base.Model):
-    """The result of the Publish operation.
-
-    """
-
-
-
- 
+    """The result of the Publish operation."""
 
 
 class ReceiveDetails(_model_base.Model):
@@ -276,9 +247,6 @@ class ReceiveDetails(_model_base.Model):
     """Cloud Event details. Required."""
 
 
- 
-
-
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
 
@@ -292,9 +260,6 @@ class ReceiveResult(_model_base.Model):
     """Array of receive responses, one per cloud event. Required."""
 
 
- 
-
-
 class RejectOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be rejected.
 
@@ -306,9 +271,6 @@ class RejectOptions(_model_base.Model):
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
-
-
- 
 
 
 class RejectResult(_model_base.Model):
@@ -331,15 +293,13 @@ class RejectResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully rejected cloud events. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -348,10 +308,8 @@ class RejectResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
 
 
 class ReleaseOptions(_model_base.Model):
@@ -365,9 +323,6 @@ class ReleaseOptions(_model_base.Model):
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
     """Array of lock tokens. Required."""
-
-
- 
 
 
 class ReleaseResult(_model_base.Model):
@@ -390,15 +345,13 @@ class ReleaseResult(_model_base.Model):
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
     """Array of lock tokens for the successfully released cloud events. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -407,65 +360,5 @@ class ReleaseResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
-
-
-class RenewCloudEventLocksResult(_model_base.Model):
-    """The result of the RenewLock operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
-     FailedLockToken includes the lock token along with the related error information (namely, the
-     error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of lock tokens for the successfully renewed locks. Required.
-    :vartype succeeded_lock_tokens: list[str]
-    """
-
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
-     along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of lock tokens for the successfully renewed locks. Required."""
-
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
- 
- 
-
-
-class RenewLockOptions(_model_base.Model):
-    """Array of lock tokens for the corresponding received Cloud Events to be renewed.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar lock_tokens: Array of lock tokens. Required.
-    :vartype lock_tokens: list[str]
-    """
-
-    lock_tokens: List[str] = rest_field(name="lockTokens")
-    """Array of lock tokens. Required."""
-
-
- 

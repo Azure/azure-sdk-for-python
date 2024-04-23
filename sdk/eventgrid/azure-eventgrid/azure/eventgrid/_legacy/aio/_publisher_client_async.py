@@ -99,9 +99,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
     def __init__(
         self,
         endpoint: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureKeyCredential, AzureSasCredential
-        ],
+        credential: Union["AsyncTokenCredential", AzureKeyCredential, AzureSasCredential],
         *,
         api_version: Optional[str] = None,
         **kwargs: Any
@@ -114,14 +112,9 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
 
     @staticmethod
     def _policies(
-        credential: Union[
-            AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"
-        ],
-        **kwargs: Any
+        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> List[Any]:
-        auth_policy = _get_authentication_policy(
-            credential, AsyncBearerTokenCredentialPolicy
-        )
+        auth_policy = _get_authentication_policy(credential, AsyncBearerTokenCredentialPolicy)
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
@@ -141,9 +134,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         return policies
 
     @distributed_trace_async
-    async def send(
-        self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    async def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -216,9 +207,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [
-                    _cloud_event_to_generated(e, **kwargs) for e in events
-                ]  # pylint: disable=protected-access
+                events = [_cloud_event_to_generated(e, **kwargs) for e in events]  # pylint: disable=protected-access
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
                 events = [_from_cncf_events(e) for e in events]
@@ -227,8 +216,9 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events,
-                           channel_name=channel_name, api_version=self._api_version),
+            _build_request(
+                self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version
+            ),
             **kwargs
         )
         error_map = {
@@ -237,9 +227,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
             409: ResourceExistsError,
         }
         if response.status_code != 200:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
     async def __aenter__(self) -> "EventGridPublisherClient":

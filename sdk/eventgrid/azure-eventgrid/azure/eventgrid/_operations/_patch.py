@@ -57,9 +57,7 @@ else:
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
@@ -98,9 +96,7 @@ def use_standard_only(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self._level == "Basic":  # pylint: disable=protected-access
-            raise ValueError(
-                "The basic client is not supported for this operation."
-            )
+            raise ValueError("The basic client is not supported for this operation.")
         return func(self, *args, **kwargs)
 
     return wrapper
@@ -119,8 +115,7 @@ def validate_args(**kwargs: Any):
                     arg: level
                     for level, arguments in kwargs_mapping.items()
                     for arg in arguments
-                    if arg
-                    in kwargs.keys()  # pylint: disable=consider-iterating-dictionary
+                    if arg in kwargs.keys()  # pylint: disable=consider-iterating-dictionary
                     and selected_client_level != level
                 }
 
@@ -260,9 +255,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         elif len(args) == 1:
             if events is not None:
                 if topic_name is not None:
-                    raise ValueError(
-                        "topic_name is already passed as a keyword argument."
-                    )
+                    raise ValueError("topic_name is already passed as a keyword argument.")
                 topic_name = args[0]
             else:
                 events = args[0]
@@ -286,9 +279,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 pass
 
             if self._level == "Standard":
-                kwargs["content_type"] = kwargs.get(
-                    "content_type", "application/cloudevents-batch+json; charset=utf-8"
-                )
+                kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
                 if not isinstance(events, list):
                     events = [events]
 
@@ -313,9 +304,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             if isinstance(events, dict):
                 events = CloudEvent.from_dict(events)
         except AttributeError:
-            raise TypeError(  # pylint: disable=raise-missing-from
-                "Binary mode is only supported for type CloudEvent."
-            )
+            raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
 
         # If data is a cloud event, convert to an HTTP Request in binary mode
         # Content type becomes the data content type
@@ -327,9 +316,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
-                raise HttpResponseError(
-                    "Invalid event data. Please check the data and try again."
-                ) from exception
+                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
@@ -357,13 +344,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        content_type = kwargs.pop( # pylint: disable=unused-variable
-            "content_type", None
-        )
+        content_type = kwargs.pop("content_type", None)  # pylint: disable=unused-variable
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,
@@ -377,18 +360,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _stream = kwargs.pop("stream", False)
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        http_request.url = self._client.format_url(
-            http_request.url, **path_format_arguments
-        )
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
 
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                http_request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            http_request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -396,9 +373,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -636,9 +611,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         raise ValueError("CloudEvent datacontenttype must be set when in binary mode.")
     content_type: str = event.datacontenttype
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-10-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,24 +633,18 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     _headers["ce-source"] = _SERIALIZER.header("ce-source", event.source, "str")
     _headers["ce-type"] = _SERIALIZER.header("ce-type", event.type, "str")
     if event.specversion:
-        _headers["ce-specversion"] = _SERIALIZER.header(
-            "ce-specversion", event.specversion, "str"
-        )
+        _headers["ce-specversion"] = _SERIALIZER.header("ce-specversion", event.specversion, "str")
     if event.id:
         _headers["ce-id"] = _SERIALIZER.header("ce-id", event.id, "str")
     if event.time:
         _headers["ce-time"] = _SERIALIZER.header("ce-time", event.time, "str")
     if event.dataschema:
-        _headers["ce-dataschema"] = _SERIALIZER.header(
-            "ce-dataschema", event.dataschema, "str"
-        )
+        _headers["ce-dataschema"] = _SERIALIZER.header("ce-dataschema", event.dataschema, "str")
     if event.subject:
         _headers["ce-subject"] = _SERIALIZER.header("ce-subject", event.subject, "str")
     if event.extensions:
         for extension, value in event.extensions.items():
-            _headers[f"ce-{extension}"] = _SERIALIZER.header(
-                "ce-extensions", value, "str"
-            )
+            _headers[f"ce-{extension}"] = _SERIALIZER.header("ce-extensions", value, "str")
 
     return HttpRequest(
         method="POST",
