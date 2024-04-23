@@ -11,7 +11,7 @@ from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
-from ._eventprocessor.common import LoadBalancingStrategy
+from ._eventprocessor.common import LoadBalancingStrategy, CloseReason
 
 
 if TYPE_CHECKING:
@@ -393,7 +393,22 @@ class EventHubConsumerClient(
                 except KeyError:
                     pass
 
-    def receive(self, on_event: Callable[["PartitionContext", Optional["EventData"]], None], **kwargs: Any) -> None:
+    def receive(
+            self,
+            on_event: Callable[["PartitionContext", Optional["EventData"]], None],
+            *,
+            max_wait_time: Optional[float] = None,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
+            prefetch: Optional[int] = None,
+            track_last_enqueued_event_properties: bool = False,
+            starting_position: Union[str, int, datetime.datetime, Dict[str, Any]] = "@latest",
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[Callable[["PartitionContext", Exception], None]] = None,
+            on_partition_initialize: Optional[Callable[["PartitionContext"], None]] = None,
+            on_partition_close: Optional[Callable[["PartitionContext", CloseReason], None]] = None,
+            **kwargs: Any
+        ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -465,11 +480,38 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
+        self._receive(
+            on_event,
+            batch=False,
+            max_batch_size=1,
+            max_wait_time=max_wait_time,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close,
+            **kwargs
+        )
 
     def receive_batch(
             self,
             on_event_batch: Callable[["PartitionContext", List["EventData"]], None],
+            *,
+            max_batch_size: Optional[int] = None,
+            max_wait_time: Optional[float] = None,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
+            prefetch: Optional[int] = None,
+            track_last_enqueued_event_properties: bool = False,
+            starting_position: Union[str, int, datetime.datetime, Dict[str, Any]] = "@latest",
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[Callable[["PartitionContext", Exception], None]] = None,
+            on_partition_initialize: Optional[Callable[["PartitionContext"], None]] = None,
+            on_partition_close: Optional[Callable[["PartitionContext", CloseReason], None]] = None,
             **kwargs: Any
         ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
@@ -548,7 +590,22 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events in batches from the EventHub.
         """
-        self._receive(on_event_batch, batch=True, **kwargs)
+        self._receive(
+            on_event_batch,
+            batch=True,
+            max_batch_size=max_batch_size,
+            max_wait_time=max_wait_time,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close,
+            **kwargs
+        )
 
     def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.

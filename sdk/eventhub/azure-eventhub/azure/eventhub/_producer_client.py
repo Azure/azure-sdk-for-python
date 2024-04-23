@@ -272,10 +272,7 @@ class EventHubProducerClient(
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
-    def _batch_preparer(self, event_data_batch, **kwargs):
-        partition_id = kwargs.pop("partition_id", None)
-        partition_key = kwargs.pop("partition_key", None)
-
+    def _batch_preparer(self, event_data_batch, *, partition_id, partition_key):
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError(
@@ -297,13 +294,16 @@ class EventHubProducerClient(
             partition_key,
         )
 
-    def _buffered_send_batch(self, event_data_batch, **kwargs):
-        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+    def _buffered_send_batch(self, event_data_batch, partition_id, partition_key, timeout):
+        batch, pid, pkey = self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
-        timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
 
         self._buffered_send(
@@ -626,8 +626,13 @@ class EventHubProducerClient(
     def send_batch(
         self,
         event_data_batch: Union[EventDataBatch, SendEventTypes],
+        *,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        timeout: Optional[float] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=unused-argument
         # pylint: disable=protected-access
         """
         Sends a batch of event data.
@@ -697,13 +702,17 @@ class EventHubProducerClient(
                 :caption: Sends event data
 
         """
-        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+        batch, pid, pkey = self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
         partition_id = pid or ALL_PARTITIONS
-        send_timeout = kwargs.pop("timeout", None)
+        send_timeout = timeout
 
         try:
             try:

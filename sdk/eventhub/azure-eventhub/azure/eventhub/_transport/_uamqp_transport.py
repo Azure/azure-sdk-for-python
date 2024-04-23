@@ -621,7 +621,16 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client: AMQPClient, mgmt_msg: str, **kwargs: Any):
+        def mgmt_client_request(
+            mgmt_client: AMQPClient,
+            mgmt_msg: str,
+            *,
+            operation: bytes,
+            operation_type: bytes,
+            status_code_field: bytes,
+            description_fields: bytes,
+            **kwargs: Any
+        ):
             """
             Send mgmt request.
             :param uamqp.AMQPClient mgmt_client: Client to send request with.
@@ -633,17 +642,15 @@ if uamqp_installed:
             :return: Status code, description, and response.
             :rtype: tuple[str, str, uamqp.Message]
             """
-            operation_type = kwargs.pop("operation_type")
-            operation = kwargs.pop("operation")
             response = mgmt_client.mgmt_request(
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
                 **kwargs
             )
-            status_code = response.application_properties[kwargs.get("status_code_field")]
+            status_code = response.application_properties[status_code_field]
             description: Optional[Union[str, bytes]] = response.application_properties.get(
-                kwargs.get("description_fields")
+                description_fields
             )
             return status_code, description, response
 

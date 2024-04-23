@@ -561,7 +561,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         operation_type: bytes,
         status_code_field: bytes,
         description_fields: bytes,
-        **kwargs):
+        **kwargs
+    ):
         """
         Send mgmt request.
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
