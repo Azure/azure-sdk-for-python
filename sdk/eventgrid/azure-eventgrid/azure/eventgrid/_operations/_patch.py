@@ -628,6 +628,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
 
 
 def _serialize_events(events):
+    # TODO: remove this import when the gen code is fixed
     from .._model_base import SdkJSONEncoder
     if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
         # Try to serialize cloud events
@@ -638,7 +639,7 @@ def _serialize_events(events):
             return json.dumps(internal_body_list, cls=SdkJSONEncoder, exclude_readonly=True) 
         except AttributeError:
             # Try to serialize CNCF Cloud Events
-            return json.dumps([_from_cncf_events(e) for e in events])
+            return json.dumps([_from_cncf_events(e) for e in events], cls=SdkJSONEncoder, exclude_readonly=True)
     else:
         # Does not conform to format, send as is
         return json.dumps(events)
