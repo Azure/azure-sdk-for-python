@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from .._utils import get_authentication_policy
+from .._utils import get_authentication_policy, get_answer_query
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
@@ -329,8 +329,7 @@ class SearchClient(HeadersMixin):
         include_total_result_count = include_total_count
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
-        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
-        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
+        answers = get_answer_query(query_answer, query_answer_count, query_answer_threshold)
         captions = (
             query_caption
             if not query_caption_highlight_enabled

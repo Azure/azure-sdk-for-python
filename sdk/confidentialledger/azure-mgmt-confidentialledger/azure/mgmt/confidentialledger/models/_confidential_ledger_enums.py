@@ -41,6 +41,14 @@ class LedgerRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ADMINISTRATOR = "Administrator"
 
 
+class LedgerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SKU associated with the ledger resource."""
+
+    STANDARD = "Standard"
+    BASIC = "Basic"
+    UNKNOWN = "Unknown"
+
+
 class LedgerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the ledger. Private means transaction data is encrypted."""
 

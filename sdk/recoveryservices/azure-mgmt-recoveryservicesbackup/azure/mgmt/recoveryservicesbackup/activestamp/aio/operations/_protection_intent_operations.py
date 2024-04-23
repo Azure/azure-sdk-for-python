@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -88,7 +88,6 @@ class ProtectionIntentOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PreValidateEnableBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -96,7 +95,7 @@ class ProtectionIntentOperations:
 
     @overload
     async def validate(
-        self, azure_region: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, azure_region: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PreValidateEnableBackupResponse:
         """It will validate followings
 
@@ -115,11 +114,10 @@ class ProtectionIntentOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: Enable backup validation request on Virtual Machine. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PreValidateEnableBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -127,7 +125,7 @@ class ProtectionIntentOperations:
 
     @distributed_trace_async
     async def validate(
-        self, azure_region: str, parameters: Union[_models.PreValidateEnableBackupRequest, IO], **kwargs: Any
+        self, azure_region: str, parameters: Union[_models.PreValidateEnableBackupRequest, IO[bytes]], **kwargs: Any
     ) -> _models.PreValidateEnableBackupResponse:
         """It will validate followings
 
@@ -146,13 +144,10 @@ class ProtectionIntentOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: Enable backup validation request on Virtual Machine. Is either a
-         PreValidateEnableBackupRequest type or a IO type. Required.
+         PreValidateEnableBackupRequest type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupRequest or
+         IO[bytes]
         :return: PreValidateEnableBackupResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -180,23 +175,22 @@ class ProtectionIntentOperations:
         else:
             _json = self._serialize.body(parameters, "PreValidateEnableBackupRequest")
 
-        request = build_validate_request(
+        _request = build_validate_request(
             azure_region=azure_region,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -208,13 +202,9 @@ class ProtectionIntentOperations:
         deserialized = self._deserialize("PreValidateEnableBackupResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate.metadata = {
-        "url": "/Subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupPreValidateProtection"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -233,7 +223,6 @@ class ProtectionIntentOperations:
         :type fabric_name: str
         :param intent_object_name: Backed up item name whose details are to be fetched. Required.
         :type intent_object_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionIntentResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -252,23 +241,22 @@ class ProtectionIntentOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProtectionIntentResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             intent_object_name=intent_object_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -280,13 +268,9 @@ class ProtectionIntentOperations:
         deserialized = self._deserialize("ProtectionIntentResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/backupProtectionIntent/{intentObjectName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -317,7 +301,6 @@ class ProtectionIntentOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionIntentResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -330,7 +313,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -347,11 +330,10 @@ class ProtectionIntentOperations:
         :param intent_object_name: Intent object name. Required.
         :type intent_object_name: str
         :param parameters: resource backed up item. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionIntentResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -364,7 +346,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        parameters: Union[_models.ProtectionIntentResource, IO],
+        parameters: Union[_models.ProtectionIntentResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProtectionIntentResource:
         """Create Intent for Enabling backup of an item. This is a synchronous operation.
@@ -378,14 +360,10 @@ class ProtectionIntentOperations:
         :type fabric_name: str
         :param intent_object_name: Intent object name. Required.
         :type intent_object_name: str
-        :param parameters: resource backed up item. Is either a ProtectionIntentResource type or a IO
-         type. Required.
+        :param parameters: resource backed up item. Is either a ProtectionIntentResource type or a
+         IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource or IO[bytes]
         :return: ProtectionIntentResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -413,7 +391,7 @@ class ProtectionIntentOperations:
         else:
             _json = self._serialize.body(parameters, "ProtectionIntentResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -423,16 +401,15 @@ class ProtectionIntentOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -444,13 +421,9 @@ class ProtectionIntentOperations:
         deserialized = self._deserialize("ProtectionIntentResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/backupProtectionIntent/{intentObjectName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -467,7 +440,6 @@ class ProtectionIntentOperations:
         :type fabric_name: str
         :param intent_object_name: Intent to be deleted. Required.
         :type intent_object_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -486,23 +458,22 @@ class ProtectionIntentOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             intent_object_name=intent_object_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -512,8 +483,4 @@ class ProtectionIntentOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/backupProtectionIntent/{intentObjectName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

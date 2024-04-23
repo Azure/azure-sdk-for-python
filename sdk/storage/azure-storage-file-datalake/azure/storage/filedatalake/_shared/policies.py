@@ -12,7 +12,7 @@ import re
 import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
         parse_qsl,
         urlencode,
@@ -411,9 +411,8 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the next host location.
-        :param request: A pipeline request object.
-        :type request: ~azure.core.pipeline.PipelineRequest
+        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
             url = urlparse(request.url)

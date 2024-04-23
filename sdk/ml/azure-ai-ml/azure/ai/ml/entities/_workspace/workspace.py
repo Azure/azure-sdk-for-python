@@ -288,9 +288,9 @@ class Workspace(Resource):
         if self.serverless_compute:
             serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
         return RestWorkspace(
-            identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
-            if self.identity
-            else None,
+            identity=(
+                self.identity._to_workspace_rest_object() if self.identity else None  # pylint: disable=protected-access
+            ),
             location=self.location,
             tags=self.tags,
             description=self.description,
@@ -305,9 +305,11 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
-            managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
-            if self.managed_network
-            else None,  # pylint: disable=protected-access
+            managed_network=(
+                self.managed_network._to_rest_object()  # pylint: disable=protected-access
+                if self.managed_network
+                else None
+            ),  # pylint: disable=protected-access
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
             hub_resource_id=self.workspace_hub,

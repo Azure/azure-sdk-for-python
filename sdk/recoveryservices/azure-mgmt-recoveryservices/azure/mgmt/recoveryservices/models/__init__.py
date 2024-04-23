@@ -27,6 +27,8 @@ from ._models_py3 import DNSZone
 from ._models_py3 import DNSZoneResponse
 from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import IdentityData
 from ._models_py3 import ImmutabilitySettings
 from ._models_py3 import JobsSummary
@@ -72,10 +74,12 @@ from ._models_py3 import VaultUsageList
 
 from ._recovery_services_client_enums import AlertsState
 from ._recovery_services_client_enums import AuthType
+from ._recovery_services_client_enums import BCDRSecurityLevel
 from ._recovery_services_client_enums import BackupStorageVersion
 from ._recovery_services_client_enums import CreatedByType
 from ._recovery_services_client_enums import CrossRegionRestore
 from ._recovery_services_client_enums import CrossSubscriptionRestoreState
+from ._recovery_services_client_enums import EnhancedSecurityState
 from ._recovery_services_client_enums import ImmutabilityState
 from ._recovery_services_client_enums import InfrastructureEncryptionState
 from ._recovery_services_client_enums import MultiUserAuthorization
@@ -119,6 +123,8 @@ __all__ = [
     "DNSZoneResponse",
     "Error",
     "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "IdentityData",
     "ImmutabilitySettings",
     "JobsSummary",
@@ -163,10 +169,12 @@ __all__ = [
     "VaultUsageList",
     "AlertsState",
     "AuthType",
+    "BCDRSecurityLevel",
     "BackupStorageVersion",
     "CreatedByType",
     "CrossRegionRestore",
     "CrossSubscriptionRestoreState",
+    "EnhancedSecurityState",
     "ImmutabilityState",
     "InfrastructureEncryptionState",
     "MultiUserAuthorization",
