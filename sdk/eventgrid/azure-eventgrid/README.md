@@ -12,7 +12,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, `reject_cloud_events`, and `renew_cloud_event_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
+This is a beta release of Azure EventGrid's `EventGridClient`. `EventGridClient` supports `send`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
 
 ## Getting started
 
@@ -285,14 +285,6 @@ for detail in events.value:
         acknowledge_events.append(broker_properties.lock_token)
     else:
         reject_events.append(broker_properties.lock_token)
-
-    # Renew all Locks
-    renew_tokens = e.broker_properties.lock_token
-    renew_result = client.renew_cloud_events_lock(
-        topic_name=TOPIC_NAME,
-        subscription_name=EVENT_SUBSCRIPTION_NAME,
-        lock_tokens=renew_tokens,
-    )
 
 
 release_result = client.release_cloud_events(

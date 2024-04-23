@@ -47,8 +47,16 @@ except HttpResponseError:
 
 # Publish a CloudEvent
 try:
+    from cloudevents.http import CloudEvent as CNCF
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.send(topic_name=TOPIC_NAME, events=cloud_event)
+    client.send(topic_name=TOPIC_NAME, events= CNCF(
+            attributes={
+                "type": "cloudevent",
+                "source": "/cncf/cloud/event/1.0",
+                "subject": "testing-cncf-event",
+            },
+            data=b"This is a cncf cloud event.",
+        ))
 except HttpResponseError:
     raise
 
