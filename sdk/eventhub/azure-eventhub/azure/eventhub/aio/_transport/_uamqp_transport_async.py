@@ -53,7 +53,22 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def create_connection_async(**kwargs) -> ConnectionAsync:
+        async def create_connection_async(
+            *,
+            host: str,
+            auth: Any,
+            endpoint: str,
+            container_id: str,
+            max_frame_size: int,
+            channel_max: int,
+            idle_timeout: int,
+            properties: dict,
+            remote_idle_timeout_empty_frame_send_ratio: int,
+            error_policy: Any,
+            debug: bool,
+            encoding: str,
+            **kwargs
+        ) -> ConnectionAsync:
             """
             Creates and returns the uamqp async Connection object.
             :keyword str host: The hostname, used by uamqp.
@@ -72,12 +87,19 @@ if uamqp_installed:
             :return: The connection.
             :rtype: ~uamqp.async_ops.ConnectionAsync
             """
-            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
-            host = kwargs.pop("host")
-            auth = kwargs.pop("auth")
+            _endpoint = endpoint # pylint:disable=unused-variable
             return ConnectionAsync(
                 host,
                 auth,
+                container_id=container_id,
+                max_frame_size=max_frame_size,
+                channel_max=channel_max,
+                idle_timeout=idle_timeout,
+                properties=properties,
+                remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+                error_policy=error_policy,
+                debug=debug,
+                encoding=encoding,
                 **kwargs
             )
 

@@ -280,7 +280,22 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(**kwargs):
+        def create_connection(
+            *,
+            host: str,
+            auth: Any,
+            endpoint: str,
+            container_id: str,
+            max_frame_size: int,
+            channel_max: int,
+            idle_timeout: int,
+            properties: dict,
+            remote_idle_timeout_empty_frame_send_ratio: int,
+            error_policy: Any,
+            debug: bool,
+            encoding: str,
+            **kwargs
+        ):
             """
             Creates and returns the uamqp Connection object.
             :keyword str host: The hostname, used by uamqp.
@@ -300,13 +315,22 @@ if uamqp_installed:
             :rtype: uamqp.Connection
 
             """
-            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
+            _endpoint = endpoint # pylint:disable=unused-variable
             custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
-            host = kwargs.pop("host")
-            auth = kwargs.pop("auth")
+            _host = "host" # pylint:disable=unused-variable
             return Connection(
                 host,
                 auth,
+                endpoint=endpoint,
+                container_id=container_id,
+                max_frame_size=max_frame_size,
+                channel_max=channel_max,
+                idle_timeout=idle_timeout,
+                properties=properties,
+                remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+                error_policy=error_policy,
+                debug=debug,
+                encoding=encoding,
                 **kwargs
             )
 
@@ -332,7 +356,20 @@ if uamqp_installed:
             return connection._state    # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(
+            *,
+            config, # pylint:disable=unused-argument,
+            target: str,
+            auth: Any,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            keep_alive_interval: int,
+            client_name: str,
+            link_properties: dict,
+            properties: dict,
+            **kwargs
+        ):
             """
             Creates and returns the uamqp SendClient.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -350,14 +387,16 @@ if uamqp_installed:
             :return: The send client.
             :rtype: uamqp.SendClient
             """
-            target = kwargs.pop("target")
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-
             return SendClient(
                 target,
                 debug=network_trace,
                 error_policy=retry_policy,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                auth=auth,
+                idle_timeout=idle_timeout,
                 **kwargs
             )
 
@@ -455,7 +494,26 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
+        def create_receive_client(
+            *,
+            config,
+            source: str,
+            offset: str,
+            offset_inclusive: str,
+            auth: Any,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            client_name: str,
+            link_properties: dict,
+            properties: dict,
+            link_credit: int,
+            keep_alive_interval: int,
+            desired_capabilities: list,
+            streaming_receive: bool,
+            message_received_callback: Callable,
+            timeout: int,
+            **kwargs): # pylint: disable=unused-argument
             """
             Creates and returns the receive client.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -481,17 +539,11 @@ if uamqp_installed:
             :rtype: uamqp.ReceiveClient
             """
 
-            source = kwargs.pop("source")
-            symbol_array = kwargs.pop("desired_capabilities")
+            symbol_array = desired_capabilities
             desired_capabilities = None
             if symbol_array:
                 symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
                 desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-            link_credit = kwargs.pop("link_credit")
-            streaming_receive = kwargs.pop("streaming_receive")
-            message_received_callback = kwargs.pop("message_received_callback")
 
             client = ReceiveClient(
                 source,
@@ -501,6 +553,15 @@ if uamqp_installed:
                 prefetch=link_credit,
                 receive_settle_mode=constants.ReceiverSettleMode.ReceiveAndDelete,
                 auto_complete=False,
+                offset=offset,
+                offset_inclusive=offset_inclusive,
+                idle_timeout=idle_timeout,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                auth=auth,
+                keep_alive_interval=keep_alive_interval,
+                timeout=timeout,
                 **kwargs
             )
             # pylint:disable=protected-access

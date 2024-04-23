@@ -5,17 +5,17 @@
 import logging
 import threading
 import datetime
-from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple, overload
+from typing import TYPE_CHECKING, List, Literal, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, TransportType
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.common import LoadBalancingStrategy, CloseReason
 
 
 if TYPE_CHECKING:
-    from ._eventprocessor.partition_context import PartitionContext
+    from ._eventprocessor.partition_context import PartitionContext, CheckpointStore
     from ._common import EventData
     from ._client_base import CredentialTypes
 
@@ -218,7 +218,31 @@ class EventHubConsumerClient(
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, consumer_group: str, **kwargs: Any) -> "EventHubConsumerClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        consumer_group: str,
+        *,
+        eventhub_name: Optional[str] = None,
+        logging_enable: bool = False,
+        auth_timeout: float = 60,
+        user_agent: Optional[str] = None,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: float = 120,
+        retry_mode: Literal["exponential", "fixed"] = "exponential",
+        idle_timeout: Optional[float] = None,
+        transport_type: Union[str, TransportType] = TransportType.Amqp,
+        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
+        checkpoint_store: Optional["CheckpointStore"] = None,
+        load_balancing_interval: float = 30,
+        partition_ownership_expiration_interval: Optional[float] = None,
+        load_balancing_strategy: Union[str, LoadBalancingStrategy] = LoadBalancingStrategy.GREEDY,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        uamqp_transport: bool = False,
+        **kwargs: Any
+    ) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -309,7 +333,27 @@ class EventHubConsumerClient(
 
         """
         constructor_args = cls._from_connection_string(
-            conn_str, consumer_group=consumer_group, **kwargs
+            conn_str,
+            consumer_group=consumer_group,
+            eventhub_name=eventhub_name,
+            logging_enable=logging_enable,
+            auth_timeout=auth_timeout,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            idle_timeout=idle_timeout,
+            transport_type=transport_type,
+            http_proxy=http_proxy,
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=load_balancing_interval,
+            partition_ownership_expiration_interval=partition_ownership_expiration_interval,
+            load_balancing_strategy=load_balancing_strategy,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=connection_verify,
+            uamqp_transport=uamqp_transport,
+            **kwargs
         )
         return cls(**constructor_args)
 

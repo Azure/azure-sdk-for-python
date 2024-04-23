@@ -21,7 +21,7 @@ from typing_extensions import Literal
 
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, TransportType
 from ._tracing import TraceAttributes
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
@@ -427,12 +427,26 @@ class EventHubProducerClient(
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: bool = False,
+        buffer_concurrency: Optional[Union[int, ThreadPoolExecutor]] = None,
+        on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
         on_error: Optional[
             Callable[[SendEventTypes, Optional[str], Exception], None]
         ] = None,
-        on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
+        logging_enable: bool = False,
+        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
+        auth_timeout: Optional[float] = None,
+        user_agent: Optional[str] = None,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: float = 120,
+        retry_mode: Literal["exponential", "fixed"] = "exponential",
+        idle_timeout: Optional[float] = None,
+        transport_type: TransportType = TransportType.Amqp,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        uamqp_transport: bool = False,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -506,9 +520,6 @@ class EventHubProducerClient(
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
@@ -538,10 +549,24 @@ class EventHubProducerClient(
             conn_str,
             eventhub_name=eventhub_name,
             buffered_mode=buffered_mode,
+            buffer_concurrency=buffer_concurrency,
             on_success=on_success,
             on_error=on_error,
             max_buffer_length=max_buffer_length,
             max_wait_time=max_wait_time,
+            logging_enable=logging_enable,
+            http_proxy=http_proxy,
+            auth_timeout=auth_timeout,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            idle_timeout=idle_timeout,
+            transport_type=transport_type,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=connection_verify,
+            uamqp_transport=uamqp_transport,
             **kwargs
         )
         return cls(**constructor_args)
@@ -739,7 +764,15 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def create_batch(self, **kwargs: Any) -> EventDataBatch:
+    def create_batch(
+            self,
+            *,
+            partition_id: Optional[str] = None,
+            partition_key: Optional[str] = None,
+            max_size_in_bytes: Optional[int] = None,
+            **kwargs: Any
+        ) -> EventDataBatch:
+        # pylint: disable=unused-argument
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
@@ -770,10 +803,6 @@ class EventHubProducerClient(
         """
         if not self._max_message_size_on_link:
             self._get_max_message_size()
-
-        max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
-        partition_id = kwargs.get("partition_id", None)
-        partition_key = kwargs.get("partition_key", None)
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
