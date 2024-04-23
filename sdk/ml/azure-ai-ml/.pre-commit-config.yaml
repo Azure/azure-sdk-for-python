@@ -43,13 +43,13 @@ repos:
         dependencies = [
             (
                 "azure-pylint-guidelines-checker",
-                "0.2.0",
+                "0.3.1",
                 [
                     "--index-url",
                     "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                 ],
             ),
-            ("pylint", "2.15.8", []),
+            ("pylint", "3.0.3", []),
         ]
 
         # Make sure that correct versions are installed
