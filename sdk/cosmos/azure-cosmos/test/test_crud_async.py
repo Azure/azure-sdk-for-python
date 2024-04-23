@@ -275,7 +275,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA"]'
+        assert self.last_headers[0] == '["WA"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -306,7 +306,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present in the document
         await created_collection2.create_item(document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == [{}]
+        assert self.last_headers[0] == [{}]
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection.id)

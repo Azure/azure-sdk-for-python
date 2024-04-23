@@ -319,7 +319,7 @@ class TestCRUDOperations(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val1"]')
+        self.assertEqual(self.last_headers[0], '["val1"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -347,7 +347,7 @@ class TestCRUDOperations(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val2"]')
+        self.assertEqual(self.last_headers[0], '["val2"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)

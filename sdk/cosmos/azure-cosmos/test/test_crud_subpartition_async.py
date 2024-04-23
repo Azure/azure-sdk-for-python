@@ -227,7 +227,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA","Redmond"]'
+        assert self.last_headers[0] == '["WA","Redmond"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
