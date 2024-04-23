@@ -1,5 +1,17 @@
 # Release History
 
+## 11.6.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the bug that SearchClient failed when both answer count and answer threshold applied.
+
+### Other Changes
+
 ## 11.6.0b3 (2024-04-09)
 
 ### Features Added

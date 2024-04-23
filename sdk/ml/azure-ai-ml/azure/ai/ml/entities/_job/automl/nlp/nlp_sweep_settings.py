@@ -50,9 +50,9 @@ class NlpSweepSettings(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestNlpSweepSettings) -> "NlpSweepSettings":
         return cls(
             sampling_algorithm=obj.sampling_algorithm,
-            early_termination=EarlyTerminationPolicy._from_rest_object(obj.early_termination)
-            if obj.early_termination
-            else None,
+            early_termination=(
+                EarlyTerminationPolicy._from_rest_object(obj.early_termination) if obj.early_termination else None
+            ),
         )
 
     def __eq__(self, other: object) -> bool:

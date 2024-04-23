@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,7 +40,9 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMixinABC):
+class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-long
+    RecoveryServicesBackupClientMixinABC
+):
     @distributed_trace_async
     async def get_operation_status(
         self, vault_name: str, resource_group_name: str, operation_id: str, **kwargs: Any
@@ -54,7 +56,6 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :type resource_group_name: str
         :param operation_id: Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.OperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -73,22 +74,21 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.OperationStatus] = kwargs.pop("cls", None)
 
-        request = build_get_operation_status_request(
+        _request = build_get_operation_status_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_operation_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -101,19 +101,15 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         deserialized = self._deserialize("OperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_operation_status.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/operationStatus/{operationId}"
-    }
+        return deserialized  # type: ignore
 
     async def _bms_prepare_data_move_initial(  # pylint: disable=inconsistent-return-statements
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.PrepareDataMoveRequest, IO],
+        parameters: Union[_models.PrepareDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -139,7 +135,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             _json = self._serialize.body(parameters, "PrepareDataMoveRequest")
 
-        request = build_bms_prepare_data_move_request(
+        _request = build_bms_prepare_data_move_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -147,16 +143,15 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._bms_prepare_data_move_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -167,11 +162,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _bms_prepare_data_move_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/prepareDataMove"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_bms_prepare_data_move(
@@ -195,14 +186,6 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -213,7 +196,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -226,18 +209,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
          present. Required.
         :type resource_group_name: str
         :param parameters: Prepare data move request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -248,7 +223,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.PrepareDataMoveRequest, IO],
+        parameters: Union[_models.PrepareDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
@@ -258,21 +233,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
-        :param parameters: Prepare data move request. Is either a PrepareDataMoveRequest type or a IO
-         type. Required.
+        :param parameters: Prepare data move request. Is either a PrepareDataMoveRequest type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrepareDataMoveRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -302,7 +266,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -311,23 +275,19 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_bms_prepare_data_move.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/prepareDataMove"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _bms_trigger_data_move_initial(  # pylint: disable=inconsistent-return-statements
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.TriggerDataMoveRequest, IO],
+        parameters: Union[_models.TriggerDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -353,7 +313,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             _json = self._serialize.body(parameters, "TriggerDataMoveRequest")
 
-        request = build_bms_trigger_data_move_request(
+        _request = build_bms_trigger_data_move_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -361,16 +321,15 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._bms_trigger_data_move_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -381,11 +340,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _bms_trigger_data_move_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/triggerDataMove"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_bms_trigger_data_move(
@@ -409,14 +364,6 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -427,7 +374,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -440,18 +387,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
          present. Required.
         :type resource_group_name: str
         :param parameters: Trigger data move request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -462,7 +401,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.TriggerDataMoveRequest, IO],
+        parameters: Union[_models.TriggerDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
@@ -472,21 +411,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
-        :param parameters: Trigger data move request. Is either a TriggerDataMoveRequest type or a IO
-         type. Required.
+        :param parameters: Trigger data move request. Is either a TriggerDataMoveRequest type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TriggerDataMoveRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -516,7 +444,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -525,17 +453,13 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_bms_trigger_data_move.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/triggerDataMove"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _move_recovery_point_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -545,7 +469,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.MoveRPAcrossTiersRequest, IO],
+        parameters: Union[_models.MoveRPAcrossTiersRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -571,7 +495,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             _json = self._serialize.body(parameters, "MoveRPAcrossTiersRequest")
 
-        request = build_move_recovery_point_request(
+        _request = build_move_recovery_point_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -583,16 +507,15 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._move_recovery_point_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -602,11 +525,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _move_recovery_point_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/move"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_move_recovery_point(
@@ -645,14 +564,6 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -667,7 +578,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -690,18 +601,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :param recovery_point_id: Required.
         :type recovery_point_id: str
         :param parameters: Move Resource Across Tiers Request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -716,7 +619,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.MoveRPAcrossTiersRequest, IO],
+        parameters: Union[_models.MoveRPAcrossTiersRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Move recovery point from one datastore to another store.
@@ -737,20 +640,9 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         :param recovery_point_id: Required.
         :type recovery_point_id: str
         :param parameters: Move Resource Across Tiers Request. Is either a MoveRPAcrossTiersRequest
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.MoveRPAcrossTiersRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.MoveRPAcrossTiersRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -784,7 +676,7 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -793,14 +685,10 @@ class RecoveryServicesBackupClientOperationsMixin(RecoveryServicesBackupClientMi
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_move_recovery_point.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/move"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
