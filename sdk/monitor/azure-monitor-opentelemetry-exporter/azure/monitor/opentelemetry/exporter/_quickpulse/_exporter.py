@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import logging
 from typing import Any, Optional
 
 from opentelemetry.context import (
@@ -41,6 +42,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
+
+
+_logger = logging.getLogger(__name__)
 
 
 _QUICKPULSE_METRIC_TEMPORALITIES = {
@@ -129,7 +133,7 @@ class _QuickpulseExporter(MetricExporter):
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except,invalid-name
-            # Errors are not reported and assumed as unsuccessful
+            _logger.exception("Exception occured while publishing live metrics.")
             result = MetricExportResult.FAILURE
         finally:
             detach(token)
@@ -183,7 +187,7 @@ class _QuickpulseExporter(MetricExporter):
             )
             return ping_response  # type: ignore
         except HttpResponseError:
-            # Errors are not reported
+            _logger.exception("Exception occured while pinging live metrics.")
             pass
         detach(token)
         return ping_response
@@ -215,14 +219,12 @@ class _QuickpulseMetricReader(MetricReader):
         if _is_ping_state():
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
-                print("pinging...")
                 ping_response = self._exporter._ping(  # pylint: disable=protected-access
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
                     header = ping_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
                     if header and header == "true":
-                        print("ping succeeded: switching to post")
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
                         self._elapsed_num_seconds = 0
@@ -230,7 +232,6 @@ class _QuickpulseMetricReader(MetricReader):
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                         if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                             self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
-                            print("ping failed for 60s, switching to pinging every 60s")
                             _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                 # TODO: Implement redirect
                 else:
@@ -238,10 +239,8 @@ class _QuickpulseMetricReader(MetricReader):
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                     if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
-                        print("ping failed for 60s, switching to pinging every 60s")
                         _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
         else:
-            print("posting...")
             try:
                 self.collect()
             except _UnsuccessfulQuickPulsePostError:
@@ -249,7 +248,6 @@ class _QuickpulseMetricReader(MetricReader):
                 # Backoff after _POST_CANCEL_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
                 if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
-                    print("post failed for 20s, switching to pinging")
                     _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
                     self._elapsed_num_seconds = 0
 
