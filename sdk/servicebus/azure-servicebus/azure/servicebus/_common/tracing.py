@@ -268,7 +268,8 @@ def get_receive_links(messages: Union[ServiceBusReceivedMessage, Iterable[Servic
                 if tracestate:
                     headers["tracestate"] = cast(str, tracestate)
 
-            enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY) if message.raw_amqp_message.annotations else None
+            enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY) \
+                if message.raw_amqp_message.annotations else None
             attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
             links.append(Link(headers, attributes=attributes))
     except AttributeError:
