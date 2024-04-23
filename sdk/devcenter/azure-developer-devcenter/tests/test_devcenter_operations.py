@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, record
 from azure.identity import InteractiveBrowserCredential
 from azure.identity import DefaultAzureCredential
 from azure.developer.devcenter import DevCenterClient
-from azure.core.exceptions import HttpResponseError
+from azure.developer.devcenter.models import DevBoxProvisioningState
 from testcase import DevcenterPowerShellPreparer
 from datetime import timedelta
 
@@ -111,7 +111,6 @@ class TestDevcenter(AzureRecordedTestCase):
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
-    @pytest.mark.skip
     def test_create_dev_box(self, **kwargs):
         self.logger = logging.getLogger(__name__)
         endpoint = kwargs.pop("devcenter_endpoint")
@@ -127,8 +126,8 @@ class TestDevcenter(AzureRecordedTestCase):
         devbox_result = create_devbox_response.result()
         assert devbox_result is not None
         assert devbox_result.provisioning_state in [
-            models.DevBoxProvisioningState.SUCCEEDED,
-            models.DevBoxProvisioningState.PROVISIONED_WITH_WARNING,
+            DevBoxProvisioningState.SUCCEEDED,
+            DevBoxProvisioningState.PROVISIONED_WITH_WARNING,
         ]
 
     @DevcenterPowerShellPreparer()
@@ -402,7 +401,7 @@ class TestDevcenter(AzureRecordedTestCase):
             project_name, default_user, env_name, environment
         )
         create_env_result = create_env_response.result()
-        assert create_env_result.provisioning_state == models.DevBoxProvisioningState.SUCCEEDED
+        assert create_env_result.provisioning_state == DevBoxProvisioningState.SUCCEEDED
 
         env_response = client.get_environment(project_name, default_user, env_name)
         assert env_response.name == env_name
