@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -84,7 +84,6 @@ class ProtectedItemsOperations:
         :type protected_item_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectedItemResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -103,7 +102,7 @@ class ProtectedItemsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProtectedItemResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -112,16 +111,15 @@ class ProtectedItemsOperations:
             subscription_id=self._config.subscription_id,
             filter=filter,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -133,13 +131,9 @@ class ProtectedItemsOperations:
         deserialized = self._deserialize("ProtectedItemResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -150,6 +144,7 @@ class ProtectedItemsOperations:
         container_name: str,
         protected_item_name: str,
         parameters: _models.ProtectedItemResource,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -172,10 +167,11 @@ class ProtectedItemsOperations:
         :type protected_item_name: str
         :param parameters: resource backed up item. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectedItemResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -189,7 +185,8 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -211,11 +208,12 @@ class ProtectedItemsOperations:
         :param protected_item_name: Item name to be backed up. Required.
         :type protected_item_name: str
         :param parameters: resource backed up item. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectedItemResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -229,7 +227,8 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.ProtectedItemResource, IO],
+        parameters: Union[_models.ProtectedItemResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.ProtectedItemResource]:
         """Enables backup of an item or to modifies the backup policy information of an already backed up
@@ -248,14 +247,12 @@ class ProtectedItemsOperations:
         :type container_name: str
         :param protected_item_name: Item name to be backed up. Required.
         :type protected_item_name: str
-        :param parameters: resource backed up item. Is either a ProtectedItemResource type or a IO
-         type. Required.
+        :param parameters: resource backed up item. Is either a ProtectedItemResource type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: ProtectedItemResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectedItemResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -283,27 +280,27 @@ class ProtectedItemsOperations:
         else:
             _json = self._serialize.body(parameters, "ProtectedItemResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             container_name=container_name,
             protected_item_name=protected_item_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -317,13 +314,9 @@ class ProtectedItemsOperations:
             deserialized = self._deserialize("ProtectedItemResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -350,7 +343,6 @@ class ProtectedItemsOperations:
         :type container_name: str
         :param protected_item_name: Backed up item to be deleted. Required.
         :type protected_item_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -369,7 +361,7 @@ class ProtectedItemsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -377,16 +369,15 @@ class ProtectedItemsOperations:
             protected_item_name=protected_item_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -396,8 +387,4 @@ class ProtectedItemsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

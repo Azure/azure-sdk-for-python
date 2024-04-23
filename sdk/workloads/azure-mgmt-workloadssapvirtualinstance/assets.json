@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/workloadssapvirtualinstance/azure-mgmt-workloadssapvirtualinstance",
+    "Tag": "python/workloadssapvirtualinstance/azure-mgmt-workloadssapvirtualinstance_d9cc85ab13"
+}

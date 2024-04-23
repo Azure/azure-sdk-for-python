@@ -6,7 +6,7 @@
 """
 Streaming tests.
 
-Test naming convention: test_{1}_{2}
+Test naming convention for streaming response tests: test_{1}_{2}
 
 1:
 compress or decompress. Refers to the stream that is returned from the testserver / streams.py
@@ -259,3 +259,33 @@ def test_compress_compressed_header_offline(port, transport):
     content = b"".join(list(data))
     with pytest.raises(UnicodeDecodeError):
         content.decode("utf-8")
+
+
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_streaming_request_iterable(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    class Content:
+        def __iter__(self):
+            yield b"test 123"
+
+    client = PipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=Content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123"
+
+
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_streaming_request_generator(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    def content():
+        yield b"test 123"
+        yield b"test 456"
+
+    client = PipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123test 456"
