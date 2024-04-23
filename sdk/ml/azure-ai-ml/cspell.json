@@ -16,7 +16,6 @@
         "pypdf",
         "tika",
         "Tika",
-        "pyarrow",
         "mtimes",
         "dtype",
         "dprepfuse",
