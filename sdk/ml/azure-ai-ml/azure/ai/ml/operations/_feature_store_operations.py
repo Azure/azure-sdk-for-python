@@ -474,11 +474,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_workspace_role_assignment=update_workspace_role_assignment,
             update_offline_store_role_assignment=update_offline_store_role_assignment,
             update_online_store_role_assignment=update_online_store_role_assignment,
-            materialization_identity_id=materialization_identity.resource_id
-            if update_workspace_role_assignment
-            or update_offline_store_role_assignment
-            or update_online_store_role_assignment
-            else None,
+            materialization_identity_id=(
+                materialization_identity.resource_id
+                if update_workspace_role_assignment
+                or update_offline_store_role_assignment
+                or update_online_store_role_assignment
+                else None
+            ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,
             online_store_target=online_store_target_to_update if update_online_store_role_assignment else None,
             **kwargs,

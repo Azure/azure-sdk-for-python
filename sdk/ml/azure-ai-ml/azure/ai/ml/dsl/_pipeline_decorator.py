@@ -66,8 +66,7 @@ def pipeline(
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
     **kwargs: Any,
-) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
-    ...
+) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]: ...
 
 
 # Overload the returns a decorated function when func isn't None
@@ -82,8 +81,7 @@ def pipeline(
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
     **kwargs: Any,
-) -> Callable[P, PipelineJob]:
-    ...
+) -> Callable[P, PipelineJob]: ...
 
 
 def pipeline(
