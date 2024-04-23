@@ -323,6 +323,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
+        :returns: The ServiceBusReceiver.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
@@ -759,7 +760,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             handler,
             timeout=timeout,
         )
-        links = get_receive_links(message)
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links, start_time=start_time
         ):
@@ -820,7 +821,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
-        links = get_receive_links(message)
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time
         ):
