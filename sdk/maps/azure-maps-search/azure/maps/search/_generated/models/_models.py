@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,453 +7,538 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING, Union
+
+from .. import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Address(msrest.serialization.Model):
+class Address(_serialization.Model):
     """The address of the result.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar building_number: The building number on the street. DEPRECATED, use streetNumber instead.
-    :vartype building_number: str
-    :ivar street: The street name. DEPRECATED, use streetName instead.
-    :vartype street: str
-    :ivar cross_street: The name of the street being crossed.
-    :vartype cross_street: str
-    :ivar street_number: The building number on the street.
-    :vartype street_number: str
-    :ivar route_numbers: The codes used to unambiguously identify the street.
-    :vartype route_numbers: list[int]
-    :ivar street_name: The street name.
-    :vartype street_name: str
-    :ivar street_name_and_number: The street name and number.
-    :vartype street_name_and_number: str
-    :ivar municipality: City / Town.
-    :vartype municipality: str
-    :ivar municipality_subdivision: Sub / Super City.
-    :vartype municipality_subdivision: str
-    :ivar country_tertiary_subdivision: Named Area.
-    :vartype country_tertiary_subdivision: str
-    :ivar country_secondary_subdivision: County.
-    :vartype country_secondary_subdivision: str
-    :ivar country_subdivision: State or Province.
-    :vartype country_subdivision: str
-    :ivar postal_code: Postal Code / Zip Code.
+    :ivar address_line: AddressLine that includes Street Name and Number.
+    :vartype address_line: str
+    :ivar locality: locality property.
+    :vartype locality: str
+    :ivar neighborhood: neighborhood property.
+    :vartype neighborhood: str
+    :ivar admin_districts: The subdivision name in the country or region for an address. This
+     element is typically treated as the first order administrative subdivision, but in some cases
+     it also contains the second, third, or fourth order subdivision in a country, dependency, or
+     region.
+    :vartype admin_districts: list[~azure.maps.search.models.AddressAdminDistrictsItem]
+    :ivar postal_code: Postal Code property.
     :vartype postal_code: str
-    :ivar extended_postal_code: Extended postal code (availability is dependent on the region).
-    :vartype extended_postal_code: str
-    :ivar country_code: Country (Note: This is a two-letter code, not a country name.).
-    :vartype country_code: str
-    :ivar country: Country name.
-    :vartype country: str
-    :ivar country_code_iso3: ISO alpha-3 country code.
-    :vartype country_code_iso3: str
-    :ivar freeform_address: An address line formatted according to the formatting rules of a
-     Result's country of origin, or in the case of a country, its full country name.
-    :vartype freeform_address: str
-    :ivar country_subdivision_name: The full name of a first level of country administrative
-     hierarchy. This field appears only in case countrySubdivision is presented in an abbreviated
-     form. Only supported for USA, Canada, and Great Britain.
-    :vartype country_subdivision_name: str
-    :ivar local_name: An address component which represents the name of a geographic area or
-     locality that groups a number of addressable objects for addressing purposes, without being an
-     administrative unit. This field is used to build the ``freeformAddress`` property.
-    :vartype local_name: str
-    :ivar bounding_box: Bounding box coordinates.
-    :vartype bounding_box: object
+    :ivar country_region:
+    :vartype country_region: ~azure.maps.search.models.AddressCountryRegion
+    :ivar formatted_address: Formatted Address property.
+    :vartype formatted_address: str
+    :ivar intersection: The address of the result.
+    :vartype intersection: ~azure.maps.search.models.Intersection
     """
 
-    _validation = {
-        'building_number': {'readonly': True},
-        'street': {'readonly': True},
-        'cross_street': {'readonly': True},
-        'street_number': {'readonly': True},
-        'route_numbers': {'readonly': True},
-        'street_name': {'readonly': True},
-        'street_name_and_number': {'readonly': True},
-        'municipality': {'readonly': True},
-        'municipality_subdivision': {'readonly': True},
-        'country_tertiary_subdivision': {'readonly': True},
-        'country_secondary_subdivision': {'readonly': True},
-        'country_subdivision': {'readonly': True},
-        'postal_code': {'readonly': True},
-        'extended_postal_code': {'readonly': True},
-        'country_code': {'readonly': True},
-        'country': {'readonly': True},
-        'country_code_iso3': {'readonly': True},
-        'freeform_address': {'readonly': True},
-        'country_subdivision_name': {'readonly': True},
-        'local_name': {'readonly': True},
-        'bounding_box': {'readonly': True},
-    }
-
     _attribute_map = {
-        'building_number': {'key': 'buildingNumber', 'type': 'str'},
-        'street': {'key': 'street', 'type': 'str'},
-        'cross_street': {'key': 'crossStreet', 'type': 'str'},
-        'street_number': {'key': 'streetNumber', 'type': 'str'},
-        'route_numbers': {'key': 'routeNumbers', 'type': '[int]'},
-        'street_name': {'key': 'streetName', 'type': 'str'},
-        'street_name_and_number': {'key': 'streetNameAndNumber', 'type': 'str'},
-        'municipality': {'key': 'municipality', 'type': 'str'},
-        'municipality_subdivision': {'key': 'municipalitySubdivision', 'type': 'str'},
-        'country_tertiary_subdivision': {'key': 'countryTertiarySubdivision', 'type': 'str'},
-        'country_secondary_subdivision': {'key': 'countrySecondarySubdivision', 'type': 'str'},
-        'country_subdivision': {'key': 'countrySubdivision', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'extended_postal_code': {'key': 'extendedPostalCode', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-        'country_code_iso3': {'key': 'countryCodeISO3', 'type': 'str'},
-        'freeform_address': {'key': 'freeformAddress', 'type': 'str'},
-        'country_subdivision_name': {'key': 'countrySubdivisionName', 'type': 'str'},
-        'local_name': {'key': 'localName', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': 'object'},
+        "address_line": {"key": "addressLine", "type": "str"},
+        "locality": {"key": "locality", "type": "str"},
+        "neighborhood": {"key": "neighborhood", "type": "str"},
+        "admin_districts": {"key": "adminDistricts", "type": "[AddressAdminDistrictsItem]"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "country_region": {"key": "countryRegion", "type": "AddressCountryRegion"},
+        "formatted_address": {"key": "formattedAddress", "type": "str"},
+        "intersection": {"key": "intersection", "type": "Intersection"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(Address, self).__init__(**kwargs)
-        self.building_number = None
-        self.street = None
-        self.cross_street = None
-        self.street_number = None
-        self.route_numbers = None
-        self.street_name = None
-        self.street_name_and_number = None
-        self.municipality = None
-        self.municipality_subdivision = None
-        self.country_tertiary_subdivision = None
-        self.country_secondary_subdivision = None
-        self.country_subdivision = None
-        self.postal_code = None
-        self.extended_postal_code = None
-        self.country_code = None
-        self.country = None
-        self.country_code_iso3 = None
-        self.freeform_address = None
-        self.country_subdivision_name = None
-        self.local_name = None
-        self.bounding_box = None
+        *,
+        address_line: Optional[str] = None,
+        locality: Optional[str] = None,
+        neighborhood: Optional[str] = None,
+        admin_districts: Optional[List["_models.AddressAdminDistrictsItem"]] = None,
+        postal_code: Optional[str] = None,
+        country_region: Optional["_models.AddressCountryRegion"] = None,
+        formatted_address: Optional[str] = None,
+        intersection: Optional["_models.Intersection"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword address_line: AddressLine that includes Street Name and Number.
+        :paramtype address_line: str
+        :keyword locality: locality property.
+        :paramtype locality: str
+        :keyword neighborhood: neighborhood property.
+        :paramtype neighborhood: str
+        :keyword admin_districts: The subdivision name in the country or region for an address. This
+         element is typically treated as the first order administrative subdivision, but in some cases
+         it also contains the second, third, or fourth order subdivision in a country, dependency, or
+         region.
+        :paramtype admin_districts: list[~azure.maps.search.models.AddressAdminDistrictsItem]
+        :keyword postal_code: Postal Code property.
+        :paramtype postal_code: str
+        :keyword country_region:
+        :paramtype country_region: ~azure.maps.search.models.AddressCountryRegion
+        :keyword formatted_address: Formatted Address property.
+        :paramtype formatted_address: str
+        :keyword intersection: The address of the result.
+        :paramtype intersection: ~azure.maps.search.models.Intersection
+        """
+        super().__init__(**kwargs)
+        self.address_line = address_line
+        self.locality = locality
+        self.neighborhood = neighborhood
+        self.admin_districts = admin_districts
+        self.postal_code = postal_code
+        self.country_region = country_region
+        self.formatted_address = formatted_address
+        self.intersection = intersection
 
 
-class AddressRanges(msrest.serialization.Model):
-    """Describes the address range on both sides of the street for a search result. Coordinates for the start and end locations of the address range are included.
+class AddressAdminDistrictsItem(_serialization.Model):
+    """AddressAdminDistrictsItem.
 
-    :param range_left: Address range on the left side of the street.
-    :type range_left: str
-    :param range_right: Address range on the right side of the street.
-    :type range_right: str
-    :param from_property: A location represented as a latitude and longitude using short names
-     'lat' & 'lon'.
-    :type from_property: ~azure.maps.search.models.LatLongPairAbbreviated
-    :param to: A location represented as a latitude and longitude using short names 'lat' & 'lon'.
-    :type to: ~azure.maps.search.models.LatLongPairAbbreviated
+    :ivar name: The name for the corresponding adminDistrict field,
+     For adminDistrict[0], this could be full name of state such as Washington,
+     For adminDistrict[1], this could be the full name of the county.
+    :vartype name: str
+    :ivar short_name: The short name for the corresponding adminDistrict field,
+     For adminDistrict[0], this could be short name of state such as WA,
+     For adminDistrict[1], this could be the short name of the county.
+    :vartype short_name: str
     """
 
     _attribute_map = {
-        'range_left': {'key': 'rangeLeft', 'type': 'str'},
-        'range_right': {'key': 'rangeRight', 'type': 'str'},
-        'from_property': {'key': 'from', 'type': 'LatLongPairAbbreviated'},
-        'to': {'key': 'to', 'type': 'LatLongPairAbbreviated'},
+        "name": {"key": "name", "type": "str"},
+        "short_name": {"key": "shortName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AddressRanges, self).__init__(**kwargs)
-        self.range_left = kwargs.get('range_left', None)
-        self.range_right = kwargs.get('range_right', None)
-        self.from_property = kwargs.get('from_property', None)
-        self.to = kwargs.get('to', None)
+    def __init__(self, *, name: Optional[str] = None, short_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name for the corresponding adminDistrict field,
+         For adminDistrict[0], this could be full name of state such as Washington,
+         For adminDistrict[1], this could be the full name of the county.
+        :paramtype name: str
+        :keyword short_name: The short name for the corresponding adminDistrict field,
+         For adminDistrict[0], this could be short name of state such as WA,
+         For adminDistrict[1], this could be the short name of the county.
+        :paramtype short_name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.short_name = short_name
 
 
-class BatchRequest(msrest.serialization.Model):
-    """This type represents the request body for the Batch service.
+class AddressCountryRegion(_serialization.Model):
+    """AddressCountryRegion.
 
-    :param batch_items: The list of queries to process.
-    :type batch_items: list[~azure.maps.search.models.BatchRequestItem]
-    """
-
-    _attribute_map = {
-        'batch_items': {'key': 'batchItems', 'type': '[BatchRequestItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchRequest, self).__init__(**kwargs)
-        self.batch_items = kwargs.get('batch_items', None)
-
-
-class BatchRequestItem(msrest.serialization.Model):
-    """Batch request object.
-
-    :param query: This parameter contains a query string used to perform an unstructured geocoding
-     operation. The query string will be passed verbatim to the search API for processing.
-    :type query: str
-    """
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchRequestItem, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-
-
-class BatchResult(msrest.serialization.Model):
-    """This object is returned from a successful Batch service call. Extend with 'batchItems' property.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar batch_summary: Summary of the results for the batch request.
-    :vartype batch_summary: ~azure.maps.search.models.BatchResultSummary
-    """
-
-    _validation = {
-        'batch_summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'batch_summary': {'key': 'summary', 'type': 'BatchResultSummary'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResult, self).__init__(**kwargs)
-        self.batch_summary = None
-
-
-class BatchResultItem(msrest.serialization.Model):
-    """An item returned from Batch API. Extend with 'response' property.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status_code: HTTP request status code.
-    :vartype status_code: int
-    """
-
-    _validation = {
-        'status_code': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResultItem, self).__init__(**kwargs)
-        self.status_code = None
-
-
-class BatchResultSummary(msrest.serialization.Model):
-    """Summary of the results for the batch request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar successful_requests: Number of successful requests in the batch.
-    :vartype successful_requests: int
-    :ivar total_requests: Total number of requests in the batch.
-    :vartype total_requests: int
-    """
-
-    _validation = {
-        'successful_requests': {'readonly': True},
-        'total_requests': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'successful_requests': {'key': 'successfulRequests', 'type': 'int'},
-        'total_requests': {'key': 'totalRequests', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResultSummary, self).__init__(**kwargs)
-        self.successful_requests = None
-        self.total_requests = None
-
-
-class BoundingBox(msrest.serialization.Model):
-    """The viewport that covers the result represented by the top-left and bottom-right coordinates of the viewport.
-
-    :param top_left: A location represented as a latitude and longitude using short names 'lat' &
-     'lon'.
-    :type top_left: ~azure.maps.search.models.LatLongPairAbbreviated
-    :param bottom_right: A location represented as a latitude and longitude using short names 'lat'
-     & 'lon'.
-    :type bottom_right: ~azure.maps.search.models.LatLongPairAbbreviated
-    """
-
-    _attribute_map = {
-        'top_left': {'key': 'topLeftPoint', 'type': 'LatLongPairAbbreviated'},
-        'bottom_right': {'key': 'btmRightPoint', 'type': 'LatLongPairAbbreviated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BoundingBox, self).__init__(**kwargs)
-        self.top_left = kwargs.get('top_left', None)
-        self.bottom_right = kwargs.get('bottom_right', None)
-
-
-class BrandName(msrest.serialization.Model):
-    """The name of the brand for the POI being returned.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of the brand.
+    :ivar iso: ISO of country/region.
+    :vartype iso: str
+    :ivar name: name of country/region.
     :vartype name: str
     """
 
-    _validation = {
-        'name': {'readonly': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "iso": {"key": "ISO", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BrandName, self).__init__(**kwargs)
-        self.name = None
+    def __init__(self, *, iso: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword iso: ISO of country/region.
+        :paramtype iso: str
+        :keyword name: name of country/region.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.iso = iso
+        self.name = name
 
 
-class Classification(msrest.serialization.Model):
-    """The classification for the POI being returned.
+class BoundaryProperties(_serialization.Model):
+    """Properties of a Boundary object.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: Code property.
-    :vartype code: str
-    :ivar names: Names array.
-    :vartype names: list[~azure.maps.search.models.ClassificationName]
-    """
-
-    _validation = {
-        'code': {'readonly': True},
-        'names': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'names': {'key': 'names', 'type': '[ClassificationName]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Classification, self).__init__(**kwargs)
-        self.code = None
-        self.names = None
-
-
-class ClassificationName(msrest.serialization.Model):
-    """Name for the classification.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name_locale: Name Locale property.
-    :vartype name_locale: str
-    :ivar name: Name property.
+    :ivar name: The name associated with the geographical area.
     :vartype name: str
+    :ivar copyright: The copyright string.
+    :vartype copyright: str
+    :ivar copyright_url: A URL that lists many of the data providers for Azure Maps and their
+     related copyright information.
+    :vartype copyright_url: str
+    :ivar geometries_copyright: A collection of copyright information for each geometry of the
+     Boundary object in the same order they appear.
+    :vartype geometries_copyright: list[~azure.maps.search.models.GeometryCopyright]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "copyright": {"key": "copyright", "type": "str"},
+        "copyright_url": {"key": "copyrightURL", "type": "str"},
+        "geometries_copyright": {"key": "geometriesCopyright", "type": "[GeometryCopyright]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        copyright: Optional[str] = None,
+        copyright_url: Optional[str] = None,
+        geometries_copyright: Optional[List["_models.GeometryCopyright"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name associated with the geographical area.
+        :paramtype name: str
+        :keyword copyright: The copyright string.
+        :paramtype copyright: str
+        :keyword copyright_url: A URL that lists many of the data providers for Azure Maps and their
+         related copyright information.
+        :paramtype copyright_url: str
+        :keyword geometries_copyright: A collection of copyright information for each geometry of the
+         Boundary object in the same order they appear.
+        :paramtype geometries_copyright: list[~azure.maps.search.models.GeometryCopyright]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.copyright = copyright
+        self.copyright_url = copyright_url
+        self.geometries_copyright = geometries_copyright
+
+
+class GeoJsonFeatureData(_serialization.Model):
+    """GeoJsonFeatureData.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+     GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+     and GeometryCollection. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+    :vartype geometry: ~azure.maps.search.models.GeoJsonGeometry
+    :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
+     can be any JSON object or a JSON null value.
+    :vartype properties: JSON
+    :ivar id: Identifier for the feature.
+    :vartype id: str
+    :ivar feature_type: The type of the feature. The value depends on the data model the current
+     feature is part of. Some data models may have an empty value.
+    :vartype feature_type: str
     """
 
     _validation = {
-        'name_locale': {'readonly': True},
-        'name': {'readonly': True},
+        "geometry": {"required": True},
     }
 
     _attribute_map = {
-        'name_locale': {'key': 'nameLocale', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "geometry": {"key": "geometry", "type": "GeoJsonGeometry"},
+        "properties": {"key": "properties", "type": "object"},
+        "id": {"key": "id", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(ClassificationName, self).__init__(**kwargs)
-        self.name_locale = None
-        self.name = None
+        *,
+        geometry: "_models.GeoJsonGeometry",
+        properties: Optional[JSON] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        feature_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+         GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+         and GeometryCollection. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.search.models.GeoJsonGeometry
+        :keyword properties: Properties can contain any additional metadata about the ``Feature``.
+         Value can be any JSON object or a JSON null value.
+        :paramtype properties: JSON
+        :keyword id: Identifier for the feature.
+        :paramtype id: str
+        :keyword feature_type: The type of the feature. The value depends on the data model the current
+         feature is part of. Some data models may have an empty value.
+        :paramtype feature_type: str
+        """
+        super().__init__(**kwargs)
+        self.geometry = geometry
+        self.properties = properties
+        self.id = id
+        self.feature_type = feature_type
 
 
-class DataSource(msrest.serialization.Model):
-    """Optional section. Reference ids for use with the `Get Search Polygon <https://docs.microsoft.com/rest/api/maps/search/getsearchpolygon>`_ API.
+class GeoJsonObject(_serialization.Model):
+    """A valid ``GeoJSON`` object. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
 
-    :param geometry: Information about the geometric shape of the result. Only present if type ==
-     Geography.
-    :type geometry: ~azure.maps.search.models.GeometryIdentifier
-    """
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry
 
-    _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeometryIdentifier'},
-    }
+    All required parameters must be populated in order to send to server.
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataSource, self).__init__(**kwargs)
-        self.geometry = kwargs.get('geometry', None)
-
-
-class EntryPoint(msrest.serialization.Model):
-    """The entry point for the POI being returned.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The type of entry point. Value can be either *main* or *minor*. Possible values
-     include: "main", "minor".
-    :vartype type: str or ~azure.maps.search.models.EntryPointType
-    :param position: A location represented as a latitude and longitude using short names 'lat' &
-     'lon'.
-    :type position: ~azure.maps.search.models.LatLongPairAbbreviated
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'type': {'readonly': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'position': {'key': 'position', 'type': 'LatLongPairAbbreviated'},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
+    }
+
+    _subtype_map = {
+        "type": {
+            "Feature": "GeoJsonFeature",
+            "FeatureCollection": "GeoJsonFeatureCollection",
+            "GeoJsonGeometry": "GeoJsonGeometry",
+        }
+    }
+
+    def __init__(self, *, bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.bbox = bbox
+
+
+class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
+    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Boundary
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+     GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+     and GeometryCollection. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+    :vartype geometry: ~azure.maps.search.models.GeoJsonGeometry
+    :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
+     can be any JSON object or a JSON null value.
+    :vartype properties: JSON
+    :ivar id: Identifier for the feature.
+    :vartype id: str
+    :ivar feature_type: The type of the feature. The value depends on the data model the current
+     feature is part of. Some data models may have an empty value.
+    :vartype feature_type: str
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
+    """
+
+    _validation = {
+        "geometry": {"required": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "geometry": {"key": "geometry", "type": "GeoJsonGeometry"},
+        "properties": {"key": "properties", "type": "object"},
+        "id": {"key": "id", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
+    }
+
+    _subtype_map = {"type": {"Boundary": "Boundary"}}
+
+    def __init__(
+        self,
+        *,
+        geometry: "_models.GeoJsonGeometry",
+        properties: Optional[JSON] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        feature_type: Optional[str] = None,
+        bbox: Optional[List[float]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+         GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+         and GeometryCollection. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.search.models.GeoJsonGeometry
+        :keyword properties: Properties can contain any additional metadata about the ``Feature``.
+         Value can be any JSON object or a JSON null value.
+        :paramtype properties: JSON
+        :keyword id: Identifier for the feature.
+        :paramtype id: str
+        :keyword feature_type: The type of the feature. The value depends on the data model the current
+         feature is part of. Some data models may have an empty value.
+        :paramtype feature_type: str
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(
+            bbox=bbox, geometry=geometry, properties=properties, id=id, feature_type=feature_type, **kwargs
+        )
+        self.geometry = geometry
+        self.properties = properties
+        self.id = id
+        self.feature_type = feature_type
+        self.type: str = "Feature"
+        self.bbox = bbox
+
+
+class Boundary(GeoJsonFeature, BoundaryProperties):
+    """``GeoJSON GeocodingFeature`` object that describe the boundaries of a geographical area.
+    Geometry of the feature is described with ``GeoJSON GeometryCollection``.
+
+    Please note, the service typically returns a GeometryCollection with Polygon or MultiPolygon
+    sub-types.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name associated with the geographical area.
+    :vartype name: str
+    :ivar copyright: The copyright string.
+    :vartype copyright: str
+    :ivar copyright_url: A URL that lists many of the data providers for Azure Maps and their
+     related copyright information.
+    :vartype copyright_url: str
+    :ivar geometries_copyright: A collection of copyright information for each geometry of the
+     Boundary object in the same order they appear.
+    :vartype geometries_copyright: list[~azure.maps.search.models.GeometryCopyright]
+    :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+     GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+     and GeometryCollection. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+    :vartype geometry: ~azure.maps.search.models.GeoJsonGeometry
+    :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
+     can be any JSON object or a JSON null value.
+    :vartype properties: JSON
+    :ivar id: Identifier for the feature.
+    :vartype id: str
+    :ivar feature_type: The type of the feature. The value depends on the data model the current
+     feature is part of. Some data models may have an empty value.
+    :vartype feature_type: str
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
+    """
+
+    _validation = {
+        "geometry": {"required": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "copyright": {"key": "copyright", "type": "str"},
+        "copyright_url": {"key": "copyrightURL", "type": "str"},
+        "geometries_copyright": {"key": "geometriesCopyright", "type": "[GeometryCopyright]"},
+        "geometry": {"key": "geometry", "type": "GeoJsonGeometry"},
+        "properties": {"key": "properties", "type": "object"},
+        "id": {"key": "id", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(EntryPoint, self).__init__(**kwargs)
-        self.type = None
-        self.position = kwargs.get('position', None)
+        *,
+        geometry: "_models.GeoJsonGeometry",
+        name: Optional[str] = None,
+        copyright: Optional[str] = None,
+        copyright_url: Optional[str] = None,
+        geometries_copyright: Optional[List["_models.GeometryCopyright"]] = None,
+        properties: Optional[JSON] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        feature_type: Optional[str] = None,
+        bbox: Optional[List[float]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name associated with the geographical area.
+        :paramtype name: str
+        :keyword copyright: The copyright string.
+        :paramtype copyright: str
+        :keyword copyright_url: A URL that lists many of the data providers for Azure Maps and their
+         related copyright information.
+        :paramtype copyright_url: str
+        :keyword geometries_copyright: A collection of copyright information for each geometry of the
+         Boundary object in the same order they appear.
+        :paramtype geometries_copyright: list[~azure.maps.search.models.GeometryCopyright]
+        :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+         GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+         and GeometryCollection. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.search.models.GeoJsonGeometry
+        :keyword properties: Properties can contain any additional metadata about the ``Feature``.
+         Value can be any JSON object or a JSON null value.
+        :paramtype properties: JSON
+        :keyword id: Identifier for the feature.
+        :paramtype id: str
+        :keyword feature_type: The type of the feature. The value depends on the data model the current
+         feature is part of. Some data models may have an empty value.
+        :paramtype feature_type: str
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(
+            geometry=geometry,
+            properties=properties,
+            id=id,
+            feature_type=feature_type,
+            bbox=bbox,
+            name=name,
+            copyright=copyright,
+            copyright_url=copyright_url,
+            geometries_copyright=geometries_copyright,
+            **kwargs
+        )
+        self.name = name
+        self.copyright = copyright
+        self.copyright_url = copyright_url
+        self.geometries_copyright = geometries_copyright
+        self.type: str = "Boundary"
+        self.geometry = geometry
+        self.properties = properties
+        self.id = id
+        self.feature_type = feature_type
+        self.bbox = bbox
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -460,29 +546,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -500,26 +584,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -527,1617 +609,1481 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.maps.search.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.maps.search.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.maps.search.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class GeoJsonFeatureData(msrest.serialization.Model):
-    """GeoJsonFeatureData.
+class FeaturesItem(_serialization.Model):
+    """FeaturesItem.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
-    :type geometry: ~azure.maps.search.models.GeoJsonObject
-    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
-     can be any JSON object or a JSON null value.
-    :type properties: object
-    :param id: Identifier for the feature.
-    :type id: str
-    :param feature_type: The type of the feature. The value depends on the data model the current
-     feature is part of. Some data models may have an empty value.
-    :type feature_type: str
-    """
-
-    _validation = {
-        'geometry': {'required': True},
-    }
-
-    _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'id': {'key': 'id', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureData, self).__init__(**kwargs)
-        self.geometry = kwargs['geometry']
-        self.properties = kwargs.get('properties', None)
-        self.id = kwargs.get('id', None)
-        self.feature_type = kwargs.get('feature_type', None)
-
-
-class GeoJsonObject(msrest.serialization.Model):
-    """A valid ``GeoJSON`` object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry, GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar type: The type of a feature must be Feature. "Feature"
+    :vartype type: str or ~azure.maps.search.models.FeatureTypeEnum
+    :ivar id: ID for feature returned.
+    :vartype id: str
+    :ivar properties:
+    :vartype properties: ~azure.maps.search.models.FeaturesItemProperties
+    :ivar geometry: A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details. Required.
+    :vartype geometry: ~azure.maps.search.models.GeoJsonPoint
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'type': {'required': True},
+        "geometry": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Feature': 'GeoJsonFeature', 'FeatureCollection': 'GeoJsonFeatureCollection', 'GeoJsonGeometry': 'GeoJsonGeometry', 'GeometryCollection': 'GeoJsonGeometryCollection', 'LineString': 'GeoJsonLineString', 'MultiLineString': 'GeoJsonMultiLineString', 'MultiPoint': 'GeoJsonMultiPoint', 'MultiPolygon': 'GeoJsonMultiPolygon', 'Point': 'GeoJsonPoint', 'Polygon': 'GeoJsonPolygon'}
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "FeaturesItemProperties"},
+        "geometry": {"key": "geometry", "type": "GeoJsonPoint"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(GeoJsonObject, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        *,
+        geometry: "_models.GeoJsonPoint",
+        type: Optional[Union[str, "_models.FeatureTypeEnum"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.FeaturesItemProperties"] = None,
+        bbox: Optional[List[float]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of a feature must be Feature. "Feature"
+        :paramtype type: str or ~azure.maps.search.models.FeatureTypeEnum
+        :keyword id: ID for feature returned.
+        :paramtype id: str
+        :keyword properties:
+        :paramtype properties: ~azure.maps.search.models.FeaturesItemProperties
+        :keyword geometry: A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.search.models.GeoJsonPoint
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.id = id
+        self.properties = properties
+        self.geometry = geometry
+        self.bbox = bbox
 
 
-class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
-    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+class FeaturesItemProperties(_serialization.Model):
+    """FeaturesItemProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    :ivar type: One of:
 
-    :param geometry: Required. A valid ``GeoJSON`` object. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
-    :type geometry: ~azure.maps.search.models.GeoJsonObject
-    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
-     can be any JSON object or a JSON null value.
-    :type properties: object
-    :param id: Identifier for the feature.
-    :type id: str
-    :param feature_type: The type of the feature. The value depends on the data model the current
-     feature is part of. Some data models may have an empty value.
-    :type feature_type: str
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+
+     * Address
+     * RoadBlock
+     * RoadIntersection
+     * Neighborhood
+     * PopulatedPlace
+     * Postcode1
+     * AdminDivision1
+     * AdminDivision2
+     * CountryRegion.
+    :vartype type: str
+    :ivar confidence: The level of confidence that the geocoded location result is a match. Use
+     this value with the match code to determine for more complete information about the match.
+
+     The confidence of a geocoded location is based on many factors including the relative
+     importance of the geocoded location and the user’s location, if specified. Known values are:
+     "High", "Medium", and "Low".
+    :vartype confidence: str or ~azure.maps.search.models.ConfidenceEnum
+    :ivar match_codes: One or more match code values that represent the geocoding level for each
+     location in the response.
+
+     For example, a geocoded location with match codes of ``Good`` and ``Ambiguous`` means that
+     more than one geocode location was found for the location information and that the geocode
+     service did not have search up-hierarchy to find a match.
+
+     Similarly, a geocoded location with match codes of ``Ambiguous`` and ``UpHierarchy`` implies
+     that a geocode location could not be found that matched all the provided location information,
+     so the geocode service had to search up-hierarchy and found multiple matches at that level. An
+     example of up an ``Ambiguous`` and ``UpHierarchy`` result is when you provide complete address
+     information, but the geocode service cannot locate a match for the street address and instead
+     returns information for more than one RoadBlock value.
+
+     The possible values are:
+
+     ``Good``\ : The location has only one match or all returned matches are considered strong
+     matches. For example, a query for New York returns several Good matches.
+
+     ``Ambiguous``\ : The location is one of a set of possible matches. For example, when you query
+     for the street address 128 Main St., the response may return two locations for 128 North Main
+     St. and 128 South Main St. because there is not enough information to determine which option to
+     choose.
+
+     ``UpHierarchy``\ : The location represents a move up the geographic hierarchy. This occurs
+     when a match for the location request was not found, so a less precise result is returned. For
+     example, if a match for the requested address cannot be found, then a match code of
+     ``UpHierarchy`` with a RoadBlock entity type may be returned.
+    :vartype match_codes: list[str or ~azure.maps.search.models.MatchCodesEnum]
+    :ivar address: The address of the result.
+    :vartype address: ~azure.maps.search.models.Address
+    :ivar geocode_points: A collection of geocode points that differ in how they were calculated
+     and their suggested use.
+    :vartype geocode_points: list[~azure.maps.search.models.GeocodePointsItem]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "confidence": {"key": "confidence", "type": "str"},
+        "match_codes": {"key": "matchCodes", "type": "[str]"},
+        "address": {"key": "address", "type": "Address"},
+        "geocode_points": {"key": "geocodePoints", "type": "[GeocodePointsItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        confidence: Optional[Union[str, "_models.ConfidenceEnum"]] = None,
+        match_codes: Optional[List[Union[str, "_models.MatchCodesEnum"]]] = None,
+        address: Optional["_models.Address"] = None,
+        geocode_points: Optional[List["_models.GeocodePointsItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: One of:
+
+
+         * Address
+         * RoadBlock
+         * RoadIntersection
+         * Neighborhood
+         * PopulatedPlace
+         * Postcode1
+         * AdminDivision1
+         * AdminDivision2
+         * CountryRegion.
+        :paramtype type: str
+        :keyword confidence: The level of confidence that the geocoded location result is a match. Use
+         this value with the match code to determine for more complete information about the match.
+
+         The confidence of a geocoded location is based on many factors including the relative
+         importance of the geocoded location and the user’s location, if specified. Known values are:
+         "High", "Medium", and "Low".
+        :paramtype confidence: str or ~azure.maps.search.models.ConfidenceEnum
+        :keyword match_codes: One or more match code values that represent the geocoding level for each
+         location in the response.
+
+         For example, a geocoded location with match codes of ``Good`` and ``Ambiguous`` means that
+         more than one geocode location was found for the location information and that the geocode
+         service did not have search up-hierarchy to find a match.
+
+         Similarly, a geocoded location with match codes of ``Ambiguous`` and ``UpHierarchy`` implies
+         that a geocode location could not be found that matched all the provided location information,
+         so the geocode service had to search up-hierarchy and found multiple matches at that level. An
+         example of up an ``Ambiguous`` and ``UpHierarchy`` result is when you provide complete address
+         information, but the geocode service cannot locate a match for the street address and instead
+         returns information for more than one RoadBlock value.
+
+         The possible values are:
+
+         ``Good``\ : The location has only one match or all returned matches are considered strong
+         matches. For example, a query for New York returns several Good matches.
+
+         ``Ambiguous``\ : The location is one of a set of possible matches. For example, when you query
+         for the street address 128 Main St., the response may return two locations for 128 North Main
+         St. and 128 South Main St. because there is not enough information to determine which option to
+         choose.
+
+         ``UpHierarchy``\ : The location represents a move up the geographic hierarchy. This occurs
+         when a match for the location request was not found, so a less precise result is returned. For
+         example, if a match for the requested address cannot be found, then a match code of
+         ``UpHierarchy`` with a RoadBlock entity type may be returned.
+        :paramtype match_codes: list[str or ~azure.maps.search.models.MatchCodesEnum]
+        :keyword address: The address of the result.
+        :paramtype address: ~azure.maps.search.models.Address
+        :keyword geocode_points: A collection of geocode points that differ in how they were calculated
+         and their suggested use.
+        :paramtype geocode_points: list[~azure.maps.search.models.GeocodePointsItem]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.confidence = confidence
+        self.match_codes = match_codes
+        self.address = address
+        self.geocode_points = geocode_points
+
+
+class GeocodePointsItem(_serialization.Model):
+    """GeocodePointsItem.
+
+    :ivar geometry: A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+    :vartype geometry: ~azure.maps.search.models.GeoJsonPoint
+    :ivar calculation_method: The method that was used to compute the geocode point. Known values
+     are: "Interpolation", "InterpolationOffset", "Parcel", and "Rooftop".
+    :vartype calculation_method: str or ~azure.maps.search.models.CalculationMethodEnum
+    :ivar usage_types: The best use for the geocode point.
+     Each geocode point is defined as a ``Route`` point, a ``Display`` point or both.
+     Use ``Route`` points if you are creating a route to the location. Use ``Display`` points if
+     you are showing the location on a map. For example, if the location is a park, a ``Route``
+     point may specify an entrance to the park where you can enter with a car, and a ``Display``
+     point may be a point that specifies the center of the park.
+    :vartype usage_types: list[str or ~azure.maps.search.models.UsageTypeEnum]
+    """
+
+    _attribute_map = {
+        "geometry": {"key": "geometry", "type": "GeoJsonPoint"},
+        "calculation_method": {"key": "calculationMethod", "type": "str"},
+        "usage_types": {"key": "usageTypes", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        geometry: Optional["_models.GeoJsonPoint"] = None,
+        calculation_method: Optional[Union[str, "_models.CalculationMethodEnum"]] = None,
+        usage_types: Optional[List[Union[str, "_models.UsageTypeEnum"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword geometry: A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+        :paramtype geometry: ~azure.maps.search.models.GeoJsonPoint
+        :keyword calculation_method: The method that was used to compute the geocode point. Known
+         values are: "Interpolation", "InterpolationOffset", "Parcel", and "Rooftop".
+        :paramtype calculation_method: str or ~azure.maps.search.models.CalculationMethodEnum
+        :keyword usage_types: The best use for the geocode point.
+         Each geocode point is defined as a ``Route`` point, a ``Display`` point or both.
+         Use ``Route`` points if you are creating a route to the location. Use ``Display`` points if
+         you are showing the location on a map. For example, if the location is a park, a ``Route``
+         point may specify an entrance to the park where you can enter with a car, and a ``Display``
+         point may be a point that specifies the center of the park.
+        :paramtype usage_types: list[str or ~azure.maps.search.models.UsageTypeEnum]
+        """
+        super().__init__(**kwargs)
+        self.geometry = geometry
+        self.calculation_method = calculation_method
+        self.usage_types = usage_types
+
+
+class GeocodingBatchRequestBody(_serialization.Model):
+    """The list of address geocoding queries/requests to process. The list can contain a max of 100
+    queries and must contain at least 1 query.
+
+    :ivar batch_items: The list of queries to process.
+    :vartype batch_items: list[~azure.maps.search.models.GeocodingBatchRequestItem]
+    """
+
+    _attribute_map = {
+        "batch_items": {"key": "batchItems", "type": "[GeocodingBatchRequestItem]"},
+    }
+
+    def __init__(
+        self, *, batch_items: Optional[List["_models.GeocodingBatchRequestItem"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword batch_items: The list of queries to process.
+        :paramtype batch_items: list[~azure.maps.search.models.GeocodingBatchRequestItem]
+        """
+        super().__init__(**kwargs)
+        self.batch_items = batch_items
+
+
+class GeocodingBatchRequestItem(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Batch Query object.
+
+    :ivar optional_id: id of the request which would show in corresponding batchItem.
+    :vartype optional_id: str
+    :ivar top: Maximum number of responses that will be returned. Default: 5, minimum: 1 and
+     maximum: 20.
+    :vartype top: int
+    :ivar query: A string that contains information about a location, such as an address or
+     landmark name.
+    :vartype query: str
+    :ivar address_line: The official street line of an address relative to the area, as specified
+     by the locality, or postalCode, properties. Typical use of this element would be to provide a
+     street address or any official address.
+
+     **If query is given, should not use this parameter.**.
+    :vartype address_line: str
+    :ivar country_region: Signal for the geocoding result to an `ISO 3166-1 Alpha-2 region/country
+     code <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ that is specified e.g. FR./
+
+     **If query is given, should not use this parameter.**.
+    :vartype country_region: str
+    :ivar bbox: A rectangular area on the earth defined as a bounding box object. The sides of the
+     rectangles are defined by longitude and latitude values. For more information, see Location and
+     Area Types. When you specify this parameter, the geographical area is taken into account when
+     computing the results of a location query.
+
+     Example: [lon1, lat1, lon2, lat2].
+    :vartype bbox: list[float]
+    :ivar view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
+     <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
+     borders and labels to align with the specified user region.
+    :vartype view: str
+    :ivar coordinates: A point on the earth specified as a longitude and latitude. When you specify
+     this parameter, the user’s location is taken into account and the results returned may be more
+     relevant to the user. Example: [lon, lat].
+    :vartype coordinates: list[float]
+    :ivar admin_district: The country subdivision portion of an address, such as WA.
+
+     **If query is given, should not use this parameter.**.
+    :vartype admin_district: str
+    :ivar admin_district2: The county for the structured address, such as King.
+
+     **If query is given, should not use this parameter.**.
+    :vartype admin_district2: str
+    :ivar admin_district3: The named area for the structured address.
+
+     **If query is given, should not use this parameter.**.
+    :vartype admin_district3: str
+    :ivar locality: The locality portion of an address, such as Seattle.
+
+     **If query is given, should not use this parameter.**.
+    :vartype locality: str
+    :ivar postal_code: The postal code portion of an address.
+
+     **If query is given, should not use this parameter.**.
+    :vartype postal_code: str
     """
 
     _validation = {
-        'geometry': {'required': True},
-        'type': {'required': True},
+        "top": {"maximum": 20, "minimum": 1},
+        "bbox": {"max_items": 4, "min_items": 4},
+        "coordinates": {"max_items": 2, "min_items": 2},
     }
 
     _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'id': {'key': 'id', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "optional_id": {"key": "optionalId", "type": "str"},
+        "top": {"key": "top", "type": "int"},
+        "query": {"key": "query", "type": "str"},
+        "address_line": {"key": "addressLine", "type": "str"},
+        "country_region": {"key": "countryRegion", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
+        "view": {"key": "view", "type": "str"},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
+        "admin_district": {"key": "adminDistrict", "type": "str"},
+        "admin_district2": {"key": "adminDistrict2", "type": "str"},
+        "admin_district3": {"key": "adminDistrict3", "type": "str"},
+        "locality": {"key": "locality", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(GeoJsonFeature, self).__init__(**kwargs)
-        self.geometry = kwargs['geometry']
-        self.properties = kwargs.get('properties', None)
-        self.id = kwargs.get('id', None)
-        self.feature_type = kwargs.get('feature_type', None)
-        self.type = 'Feature'  # type: str
-        self.type = 'Feature'  # type: str
+        *,
+        optional_id: Optional[str] = None,
+        top: int = 5,
+        query: Optional[str] = None,
+        address_line: Optional[str] = None,
+        country_region: Optional[str] = None,
+        bbox: Optional[List[float]] = None,
+        view: str = "auto",
+        coordinates: Optional[List[float]] = None,
+        admin_district: Optional[str] = None,
+        admin_district2: Optional[str] = None,
+        admin_district3: Optional[str] = None,
+        locality: Optional[str] = None,
+        postal_code: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword optional_id: id of the request which would show in corresponding batchItem.
+        :paramtype optional_id: str
+        :keyword top: Maximum number of responses that will be returned. Default: 5, minimum: 1 and
+         maximum: 20.
+        :paramtype top: int
+        :keyword query: A string that contains information about a location, such as an address or
+         landmark name.
+        :paramtype query: str
+        :keyword address_line: The official street line of an address relative to the area, as
+         specified by the locality, or postalCode, properties. Typical use of this element would be to
+         provide a street address or any official address.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype address_line: str
+        :keyword country_region: Signal for the geocoding result to an `ISO 3166-1 Alpha-2
+         region/country code <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ that is specified e.g.
+         FR./
+
+         **If query is given, should not use this parameter.**.
+        :paramtype country_region: str
+        :keyword bbox: A rectangular area on the earth defined as a bounding box object. The sides of
+         the rectangles are defined by longitude and latitude values. For more information, see Location
+         and Area Types. When you specify this parameter, the geographical area is taken into account
+         when computing the results of a location query.
+
+         Example: [lon1, lat1, lon2, lat2].
+        :paramtype bbox: list[float]
+        :keyword view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
+         <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
+         borders and labels to align with the specified user region.
+        :paramtype view: str
+        :keyword coordinates: A point on the earth specified as a longitude and latitude. When you
+         specify this parameter, the user’s location is taken into account and the results returned may
+         be more relevant to the user. Example: [lon, lat].
+        :paramtype coordinates: list[float]
+        :keyword admin_district: The country subdivision portion of an address, such as WA.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype admin_district: str
+        :keyword admin_district2: The county for the structured address, such as King.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype admin_district2: str
+        :keyword admin_district3: The named area for the structured address.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype admin_district3: str
+        :keyword locality: The locality portion of an address, such as Seattle.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype locality: str
+        :keyword postal_code: The postal code portion of an address.
+
+         **If query is given, should not use this parameter.**.
+        :paramtype postal_code: str
+        """
+        super().__init__(**kwargs)
+        self.optional_id = optional_id
+        self.top = top
+        self.query = query
+        self.address_line = address_line
+        self.country_region = country_region
+        self.bbox = bbox
+        self.view = view
+        self.coordinates = coordinates
+        self.admin_district = admin_district
+        self.admin_district2 = admin_district2
+        self.admin_district3 = admin_district3
+        self.locality = locality
+        self.postal_code = postal_code
 
 
-class GeoJsonFeatureCollectionData(msrest.serialization.Model):
+class GeocodingBatchResponse(_serialization.Model):
+    """This object is returned from a successful Geocoding Batch service call.
+
+    :ivar summary: Summary for the batch request.
+    :vartype summary: ~azure.maps.search.models.GeocodingBatchResponseSummary
+    :ivar batch_items: Array containing the batch results.
+    :vartype batch_items: list[~azure.maps.search.models.GeocodingBatchResponseItem]
+    :ivar next_link: The is the link to the next page of the features returned. If it's the last
+     page, no this field.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "summary": {"key": "summary", "type": "GeocodingBatchResponseSummary"},
+        "batch_items": {"key": "batchItems", "type": "[GeocodingBatchResponseItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        summary: Optional["_models.GeocodingBatchResponseSummary"] = None,
+        batch_items: Optional[List["_models.GeocodingBatchResponseItem"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword summary: Summary for the batch request.
+        :paramtype summary: ~azure.maps.search.models.GeocodingBatchResponseSummary
+        :keyword batch_items: Array containing the batch results.
+        :paramtype batch_items: list[~azure.maps.search.models.GeocodingBatchResponseItem]
+        :keyword next_link: The is the link to the next page of the features returned. If it's the last
+         page, no this field.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.summary = summary
+        self.batch_items = batch_items
+        self.next_link = next_link
+
+
+class GeocodingBatchResponseItem(_serialization.Model):
+    """GeocodingBatchResponseItem.
+
+    :ivar optional_id: id of the batchItem which would be the same as the id in the request.
+    :vartype optional_id: str
+    :ivar type: The type of a FeatureCollection object must be FeatureCollection.
+     "FeatureCollection"
+    :vartype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+    :ivar features:
+    :vartype features: list[~azure.maps.search.models.FeaturesItem]
+    :ivar next_link: The is the link to the next page of the features returned. If it's the last
+     page, no this field.
+    :vartype next_link: str
+    :ivar error: The error detail.
+    :vartype error: ~azure.maps.search.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "optional_id": {"key": "optionalId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "features": {"key": "features", "type": "[FeaturesItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        optional_id: Optional[str] = None,
+        type: Optional[Union[str, "_models.FeatureCollectionEnum"]] = None,
+        features: Optional[List["_models.FeaturesItem"]] = None,
+        next_link: Optional[str] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword optional_id: id of the batchItem which would be the same as the id in the request.
+        :paramtype optional_id: str
+        :keyword type: The type of a FeatureCollection object must be FeatureCollection.
+         "FeatureCollection"
+        :paramtype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+        :keyword features:
+        :paramtype features: list[~azure.maps.search.models.FeaturesItem]
+        :keyword next_link: The is the link to the next page of the features returned. If it's the last
+         page, no this field.
+        :paramtype next_link: str
+        :keyword error: The error detail.
+        :paramtype error: ~azure.maps.search.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.optional_id = optional_id
+        self.type = type
+        self.features = features
+        self.next_link = next_link
+        self.error = error
+
+
+class GeocodingBatchResponseSummary(_serialization.Model):
+    """Summary for the batch request.
+
+    :ivar successful_requests: Number of successful requests in the batch.
+    :vartype successful_requests: int
+    :ivar total_requests: Total number of requests in the batch.
+    :vartype total_requests: int
+    """
+
+    _attribute_map = {
+        "successful_requests": {"key": "successfulRequests", "type": "int"},
+        "total_requests": {"key": "totalRequests", "type": "int"},
+    }
+
+    def __init__(
+        self, *, successful_requests: Optional[int] = None, total_requests: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword successful_requests: Number of successful requests in the batch.
+        :paramtype successful_requests: int
+        :keyword total_requests: Total number of requests in the batch.
+        :paramtype total_requests: int
+        """
+        super().__init__(**kwargs)
+        self.successful_requests = successful_requests
+        self.total_requests = total_requests
+
+
+class GeocodingResponse(_serialization.Model):
+    """This object is returned from a successful Geocoding call.
+
+    :ivar type: The type of a FeatureCollection object must be FeatureCollection.
+     "FeatureCollection"
+    :vartype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+    :ivar features:
+    :vartype features: list[~azure.maps.search.models.FeaturesItem]
+    :ivar next_link: The is the link to the next page of the features returned. If it's the last
+     page, no this field.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "features": {"key": "features", "type": "[FeaturesItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.FeatureCollectionEnum"]] = None,
+        features: Optional[List["_models.FeaturesItem"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of a FeatureCollection object must be FeatureCollection.
+         "FeatureCollection"
+        :paramtype type: str or ~azure.maps.search.models.FeatureCollectionEnum
+        :keyword features:
+        :paramtype features: list[~azure.maps.search.models.FeaturesItem]
+        :keyword next_link: The is the link to the next page of the features returned. If it's the last
+         page, no this field.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.features = features
+        self.next_link = next_link
+
+
+class GeoJsonFeatureCollectionData(_serialization.Model):
     """GeoJsonFeatureCollectionData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
-    :type features: list[~azure.maps.search.models.GeoJsonFeature]
+    :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+    :vartype features: list[~azure.maps.search.models.GeoJsonFeature]
     """
 
     _validation = {
-        'features': {'required': True},
+        "features": {"required": True},
     }
 
     _attribute_map = {
-        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
+        "features": {"key": "features", "type": "[GeoJsonFeature]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureCollectionData, self).__init__(**kwargs)
-        self.features = kwargs['features']
+    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs: Any) -> None:
+        """
+        :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+        :paramtype features: list[~azure.maps.search.models.GeoJsonFeature]
+        """
+        super().__init__(**kwargs)
+        self.features = features
 
 
 class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
-    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
+    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
-    :type features: list[~azure.maps.search.models.GeoJsonFeature]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+    :vartype features: list[~azure.maps.search.models.GeoJsonFeature]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'features': {'required': True},
-        'type': {'required': True},
+        "features": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "features": {"key": "features", "type": "[GeoJsonFeature]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureCollection, self).__init__(**kwargs)
-        self.features = kwargs['features']
-        self.type = 'FeatureCollection'  # type: str
-        self.type = 'FeatureCollection'  # type: str
+        self, *, features: List["_models.GeoJsonFeature"], bbox: Optional[List[float]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+        :paramtype features: list[~azure.maps.search.models.GeoJsonFeature]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, features=features, **kwargs)
+        self.features = features
+        self.type: str = "FeatureCollection"
+        self.bbox = bbox
 
 
 class GeoJsonGeometry(GeoJsonObject):
-    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry
+    types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and
+    GeometryCollection. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint,
+    GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon
 
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometry, self).__init__(**kwargs)
-        self.type = 'GeoJsonGeometry'  # type: str
+    _subtype_map = {
+        "type": {
+            "GeometryCollection": "GeoJsonGeometryCollection",
+            "LineString": "GeoJsonLineString",
+            "MultiLineString": "GeoJsonMultiLineString",
+            "MultiPoint": "GeoJsonMultiPoint",
+            "MultiPolygon": "GeoJsonMultiPolygon",
+            "Point": "GeoJsonPoint",
+            "Polygon": "GeoJsonPolygon",
+        }
+    }
+
+    def __init__(self, *, bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, **kwargs)
+        self.type: str = "GeoJsonGeometry"
 
 
-class GeoJsonGeometryCollectionData(msrest.serialization.Model):
+class GeoJsonGeometryCollectionData(_serialization.Model):
     """GeoJsonGeometryCollectionData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.search.models.GeoJsonObject]
+    :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype geometries: list[~azure.maps.search.models.GeoJsonGeometry]
     """
 
     _validation = {
-        'geometries': {'required': True},
+        "geometries": {"required": True},
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonObject]'},
+        "geometries": {"key": "geometries", "type": "[GeoJsonGeometry]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometryCollectionData, self).__init__(**kwargs)
-        self.geometries = kwargs['geometries']
+    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs: Any) -> None:
+        """
+        :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype geometries: list[~azure.maps.search.models.GeoJsonGeometry]
+        """
+        super().__init__(**kwargs)
+        self.geometries = geometries
 
 
-class GeoJsonGeometryCollection(GeoJsonObject, GeoJsonGeometryCollectionData):
-    """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
+class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
+    """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.search.models.GeoJsonObject]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype geometries: list[~azure.maps.search.models.GeoJsonGeometry]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'geometries': {'required': True},
-        'type': {'required': True},
+        "geometries": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonObject]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "geometries": {"key": "geometries", "type": "[GeoJsonGeometry]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometryCollection, self).__init__(**kwargs)
-        self.geometries = kwargs['geometries']
-        self.type = 'GeometryCollection'  # type: str
-        self.type = 'GeometryCollection'  # type: str
+        self, *, geometries: List["_models.GeoJsonGeometry"], bbox: Optional[List[float]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype geometries: list[~azure.maps.search.models.GeoJsonGeometry]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, geometries=geometries, **kwargs)
+        self.geometries = geometries
+        self.type: str = "GeometryCollection"
+        self.bbox = bbox
 
 
-class GeoJsonLineStringData(msrest.serialization.Model):
+class GeoJsonLineStringData(_serialization.Model):
     """GeoJsonLineStringData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson LineString`` geometry.
-    :type coordinates: list[list[float]]
+    :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+    :vartype coordinates: list[list[float]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonLineStringData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonLineString(GeoJsonObject, GeoJsonLineStringData):
-    """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
+class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
+    """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson LineString`` geometry.
-    :type coordinates: list[list[float]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+    :vartype coordinates: list[list[float]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonLineString, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'LineString'  # type: str
-        self.type = 'LineString'  # type: str
+    def __init__(self, *, coordinates: List[List[float]], bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "LineString"
+        self.bbox = bbox
 
 
-class GeoJsonMultiLineStringData(msrest.serialization.Model):
+class GeoJsonMultiLineStringData(_serialization.Model):
     """GeoJsonMultiLineStringData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[list[float]]]
+    :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+    :vartype coordinates: list[list[list[float]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiLineStringData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
-    """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
+class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
+    """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[list[float]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+    :vartype coordinates: list[list[list[float]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiLineString, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiLineString'  # type: str
-        self.type = 'MultiLineString'  # type: str
+        self, *, coordinates: List[List[List[float]]], bbox: Optional[List[float]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "MultiLineString"
+        self.bbox = bbox
 
 
-class GeoJsonMultiPointData(msrest.serialization.Model):
+class GeoJsonMultiPointData(_serialization.Model):
     """Data contained by a ``GeoJson MultiPoint``.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[list[float]]
+    :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+    :vartype coordinates: list[list[float]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPointData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
-    """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
+    """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[list[float]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+    :vartype coordinates: list[list[float]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPoint, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiPoint'  # type: str
-        self.type = 'MultiPoint'  # type: str
+    def __init__(self, *, coordinates: List[List[float]], bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "MultiPoint"
+        self.bbox = bbox
 
 
-class GeoJsonMultiPolygonData(msrest.serialization.Model):
+class GeoJsonMultiPolygonData(_serialization.Model):
     """GeoJsonMultiPolygonData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[list[float]]]]
+    :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype coordinates: list[list[list[list[float]]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[[float]]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[[float]]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype coordinates: list[list[list[list[float]]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonMultiPolygon(GeoJsonObject, GeoJsonMultiPolygonData):
-    """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
+class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
+    """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[list[float]]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype coordinates: list[list[list[list[float]]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[[float]]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[[float]]]]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
     def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygon, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiPolygon'  # type: str
-        self.type = 'MultiPolygon'  # type: str
+        self, *, coordinates: List[List[List[List[float]]]], bbox: Optional[List[float]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype coordinates: list[list[list[list[float]]]]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "MultiPolygon"
+        self.bbox = bbox
 
 
-class GeoJsonPointData(msrest.serialization.Model):
+class GeoJsonPointData(_serialization.Model):
     """Data contained by a ``GeoJson Point``.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
-     The first two elements are *longitude* and *latitude*\ , precisely in that order.
-     *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
-    :type coordinates: list[float]
+    :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
+     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
+     an optional third element. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+    :vartype coordinates: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[float]'},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPointData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[float], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
+         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+        :paramtype coordinates: list[float]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonPoint(GeoJsonObject, GeoJsonPointData):
-    """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
+    """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
-     The first two elements are *longitude* and *latitude*\ , precisely in that order.
-     *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
-    :type coordinates: list[float]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
+     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
+     an optional third element. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+    :vartype coordinates: list[float]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[float]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPoint, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'Point'  # type: str
-        self.type = 'Point'  # type: str
+    def __init__(self, *, coordinates: List[float], bbox: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
+         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+        :paramtype coordinates: list[float]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "Point"
+        self.bbox = bbox
 
 
-class GeoJsonPolygonData(msrest.serialization.Model):
+class GeoJsonPolygonData(_serialization.Model):
     """GeoJsonPolygonData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson Polygon`` geometry type.
-    :type coordinates: list[list[list[float]]]
+    :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+    :vartype coordinates: list[list[list[float]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPolygonData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
-class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
-    """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
+class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
+    """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson Polygon`` geometry type.
-    :type coordinates: list[list[list[float]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+    :vartype coordinates: list[list[list[float]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.search.models.GeoJsonObjectType
+    :ivar bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+     <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+    :vartype bbox: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
+        "type": {"key": "type", "type": "str"},
+        "bbox": {"key": "bbox", "type": "[float]"},
+    }
+
+    def __init__(
+        self, *, coordinates: List[List[List[float]]], bbox: Optional[List[float]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        :keyword bbox: Bounding box. Projection used - EPSG:3857. Please refer to `RFC 7946
+         <https://datatracker.ietf.org/doc/html/rfc7946#section-5>`_ for details.
+        :paramtype bbox: list[float]
+        """
+        super().__init__(bbox=bbox, coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type: str = "Polygon"
+        self.bbox = bbox
+
+
+class GeometryCopyright(_serialization.Model):
+    """Copyright information of a geometry of a Boundary object.
+
+    :ivar source_name: The name of the data provider.
+    :vartype source_name: str
+    :ivar copyright: The copyright string for the data provider.
+    :vartype copyright: str
+    """
+
+    _attribute_map = {
+        "source_name": {"key": "sourceName", "type": "str"},
+        "copyright": {"key": "copyright", "type": "str"},
+    }
+
+    def __init__(self, *, source_name: Optional[str] = None, copyright: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword source_name: The name of the data provider.
+        :paramtype source_name: str
+        :keyword copyright: The copyright string for the data provider.
+        :paramtype copyright: str
+        """
+        super().__init__(**kwargs)
+        self.source_name = source_name
+        self.copyright = copyright
+
+
+class Intersection(_serialization.Model):
+    """The address of the result.
+
+    :ivar base_street: Primary street for the location.
+    :vartype base_street: str
+    :ivar secondary_street1: The first intersecting street.
+    :vartype secondary_street1: str
+    :ivar secondary_street2: If any, the second intersecting street.
+    :vartype secondary_street2: str
+    :ivar intersection_type: Type of intersection.
+    :vartype intersection_type: str
+    :ivar display_name: Complete name of the intersection.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "base_street": {"key": "baseStreet", "type": "str"},
+        "secondary_street1": {"key": "secondaryStreet1", "type": "str"},
+        "secondary_street2": {"key": "secondaryStreet2", "type": "str"},
+        "intersection_type": {"key": "intersectionType", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(GeoJsonPolygon, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'Polygon'  # type: str
-        self.type = 'Polygon'  # type: str
+        *,
+        base_street: Optional[str] = None,
+        secondary_street1: Optional[str] = None,
+        secondary_street2: Optional[str] = None,
+        intersection_type: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword base_street: Primary street for the location.
+        :paramtype base_street: str
+        :keyword secondary_street1: The first intersecting street.
+        :paramtype secondary_street1: str
+        :keyword secondary_street2: If any, the second intersecting street.
+        :paramtype secondary_street2: str
+        :keyword intersection_type: Type of intersection.
+        :paramtype intersection_type: str
+        :keyword display_name: Complete name of the intersection.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.base_street = base_street
+        self.secondary_street1 = secondary_street1
+        self.secondary_street2 = secondary_street2
+        self.intersection_type = intersection_type
+        self.display_name = display_name
 
 
-class GeometryIdentifier(msrest.serialization.Model):
-    """Information about the geometric shape of the result. Only present if type == Geography.
+class ReverseGeocodingBatchRequestBody(_serialization.Model):
+    """The list of reverse geocoding queries/requests to process. The list can contain a max of 100
+    queries and must contain at least 1 query.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    :ivar batch_items: The list of queries to process.
+    :vartype batch_items: list[~azure.maps.search.models.ReverseGeocodingBatchRequestItem]
+    """
 
-    :ivar id: Pass this as geometryId to the `Get Search Polygon
-     <https://docs.microsoft.com/rest/api/maps/search/getsearchpolygon>`_ API to fetch geometry
-     information for this result.
-    :vartype id: str
+    _attribute_map = {
+        "batch_items": {"key": "batchItems", "type": "[ReverseGeocodingBatchRequestItem]"},
+    }
+
+    def __init__(
+        self, *, batch_items: Optional[List["_models.ReverseGeocodingBatchRequestItem"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword batch_items: The list of queries to process.
+        :paramtype batch_items: list[~azure.maps.search.models.ReverseGeocodingBatchRequestItem]
+        """
+        super().__init__(**kwargs)
+        self.batch_items = batch_items
+
+
+class ReverseGeocodingBatchRequestItem(_serialization.Model):
+    """Batch Query object.
+
+    :ivar optional_id: id of the request which would show in corresponding batchItem.
+    :vartype optional_id: str
+    :ivar coordinates: The coordinates of the location that you want to reverse geocode. Example:
+     [lon,lat].
+    :vartype coordinates: list[float]
+    :ivar result_types: Specify entity types that you want in the response. Only the types you
+     specify will be returned. If the point cannot be mapped to the entity types you specify, no
+     location information is returned in the response.
+     Default value is all possible entities.
+     A comma separated list of entity types selected from the following options.
+
+
+     * Address
+     * Neighborhood
+     * PopulatedPlace
+     * Postcode1
+     * AdminDivision1
+     * AdminDivision2
+     * CountryRegion
+
+     These entity types are ordered from the most specific entity to the least specific entity.
+     When entities of more than one entity type are found, only the most specific entity is
+     returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
+     were found for both types, only the Address entity information is returned in the response.
+    :vartype result_types: list[str or ~azure.maps.search.models.ResultTypeEnum]
+    :ivar view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
+     <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
+     borders and labels to align with the specified user region.
+    :vartype view: str
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "coordinates": {"max_items": 2, "min_items": 2},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "optional_id": {"key": "optionalId", "type": "str"},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
+        "result_types": {"key": "resultTypes", "type": "[str]"},
+        "view": {"key": "view", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(GeometryIdentifier, self).__init__(**kwargs)
-        self.id = None
-
-
-class LatLongPairAbbreviated(msrest.serialization.Model):
-    """A location represented as a latitude and longitude using short names 'lat' & 'lon'.
-
-    :param lat: Latitude property.
-    :type lat: float
-    :param lon: Longitude property.
-    :type lon: float
-    """
-
-    _attribute_map = {
-        'lat': {'key': 'lat', 'type': 'float'},
-        'lon': {'key': 'lon', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LatLongPairAbbreviated, self).__init__(**kwargs)
-        self.lat = kwargs.get('lat', None)
-        self.lon = kwargs.get('lon', None)
-
-
-class OperatingHours(msrest.serialization.Model):
-    """Opening hours for a POI (Points of Interest).
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar mode: Value used in the request: none or "nextSevenDays".
-    :vartype mode: str
-    :ivar time_ranges: List of time ranges for the next 7 days.
-    :vartype time_ranges: list[~azure.maps.search.models.OperatingHoursTimeRange]
-    """
-
-    _validation = {
-        'mode': {'readonly': True},
-        'time_ranges': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'time_ranges': {'key': 'timeRanges', 'type': '[OperatingHoursTimeRange]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperatingHours, self).__init__(**kwargs)
-        self.mode = None
-        self.time_ranges = None
-
-
-class OperatingHoursTime(msrest.serialization.Model):
-    """Represents a date and time.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar date: Represents current calendar date in POI time zone, e.g. "2019-02-07".
-    :vartype date: str
-    :ivar hour: Hours are in the 24 hour format in the local time of a POI; possible values are 0 -
-     23.
-    :vartype hour: int
-    :ivar minute: Minutes are in the local time of a POI; possible values are 0 - 59.
-    :vartype minute: int
-    """
-
-    _validation = {
-        'date': {'readonly': True},
-        'hour': {'readonly': True},
-        'minute': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'date': {'key': 'date', 'type': 'str'},
-        'hour': {'key': 'hour', 'type': 'int'},
-        'minute': {'key': 'minute', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperatingHoursTime, self).__init__(**kwargs)
-        self.date = None
-        self.hour = None
-        self.minute = None
-
-
-class OperatingHoursTimeRange(msrest.serialization.Model):
-    """Open time range for a day.
-
-    :param start_time: The point in the next 7 days range when a given POI is being opened, or the
-     beginning of the range if it was opened before the range.
-    :type start_time: ~azure.maps.search.models.OperatingHoursTime
-    :param end_time: The point in the next 7 days range when a given POI is being closed, or the
-     beginning of the range if it was closed before the range.
-    :type end_time: ~azure.maps.search.models.OperatingHoursTime
-    """
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'OperatingHoursTime'},
-        'end_time': {'key': 'endTime', 'type': 'OperatingHoursTime'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperatingHoursTimeRange, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-
-
-class PointOfInterest(msrest.serialization.Model):
-    """Details of the returned POI including information such as the name, phone, url address, and classifications.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of the POI property.
-    :vartype name: str
-    :ivar phone: Telephone number property.
-    :vartype phone: str
-    :ivar url: Website URL property.
-    :vartype url: str
-    :ivar category_set: The list of the most specific POI categories.
-    :vartype category_set: list[~azure.maps.search.models.PointOfInterestCategorySet]
-    :ivar classifications: Classification array.
-    :vartype classifications: list[~azure.maps.search.models.Classification]
-    :ivar brands: Brands array. The name of the brand for the POI being returned.
-    :vartype brands: list[~azure.maps.search.models.BrandName]
-    :param operating_hours: Opening hours for a POI (Points of Interest).
-    :type operating_hours: ~azure.maps.search.models.OperatingHours
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'phone': {'readonly': True},
-        'url': {'readonly': True},
-        'category_set': {'readonly': True},
-        'classifications': {'readonly': True},
-        'brands': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'category_set': {'key': 'categorySet', 'type': '[PointOfInterestCategorySet]'},
-        'classifications': {'key': 'classifications', 'type': '[Classification]'},
-        'brands': {'key': 'brands', 'type': '[BrandName]'},
-        'operating_hours': {'key': 'openingHours', 'type': 'OperatingHours'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PointOfInterest, self).__init__(**kwargs)
-        self.name = None
-        self.phone = None
-        self.url = None
-        self.category_set = None
-        self.classifications = None
-        self.brands = None
-        self.operating_hours = kwargs.get('operating_hours', None)
-
-
-class PointOfInterestCategory(msrest.serialization.Model):
-    """POI category result.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Unique ID for the category. ID can be used to restrict search results to specific
-     categories through other Search Service APIs, like `Get Search POI
-     <https://docs.microsoft.com/rest/api/maps/search/getsearchpoi>`_.
-    :vartype id: int
-    :ivar name: Name of the category.
-    :vartype name: str
-    :ivar child_ids: Array of child category ids.
-    :vartype child_ids: list[int]
-    :ivar synonyms: Array of alternative names of the category.
-    :vartype synonyms: list[str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'child_ids': {'readonly': True},
-        'synonyms': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'child_ids': {'key': 'childCategoryIds', 'type': '[int]'},
-        'synonyms': {'key': 'synonyms', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PointOfInterestCategory, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.child_ids = None
-        self.synonyms = None
-
-
-class PointOfInterestCategorySet(msrest.serialization.Model):
-    """POI category.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Category ID.
-    :vartype id: int
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PointOfInterestCategorySet, self).__init__(**kwargs)
-        self.id = None
-
-
-class PointOfInterestCategoryTreeResult(msrest.serialization.Model):
-    """This object is returned from a successful POI Category Tree call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar categories: Categories array.
-    :vartype categories: list[~azure.maps.search.models.PointOfInterestCategory]
-    """
-
-    _validation = {
-        'categories': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'categories': {'key': 'poiCategories', 'type': '[PointOfInterestCategory]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PointOfInterestCategoryTreeResult, self).__init__(**kwargs)
-        self.categories = None
-
-
-class Polygon(msrest.serialization.Model):
-    """Polygon.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar provider_id: ID of the returned entity.
-    :vartype provider_id: str
-    :param geometry_data: Geometry data in GeoJSON format. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946>`_ for details. Present only if "error" is not present.
-    :type geometry_data: ~azure.maps.search.models.GeoJsonObject
-    """
-
-    _validation = {
-        'provider_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'provider_id': {'key': 'providerID', 'type': 'str'},
-        'geometry_data': {'key': 'geometryData', 'type': 'GeoJsonObject'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Polygon, self).__init__(**kwargs)
-        self.provider_id = None
-        self.geometry_data = kwargs.get('geometry_data', None)
-
-
-class PolygonResult(msrest.serialization.Model):
-    """This object is returned from a successful Search Polygon call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar polygons: Results array.
-    :vartype polygons: list[~azure.maps.search.models.Polygon]
-    """
-
-    _validation = {
-        'polygons': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'polygons': {'key': 'additionalData', 'type': '[Polygon]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PolygonResult, self).__init__(**kwargs)
-        self.polygons = None
-
-
-class ReverseSearchAddressBatchItem(BatchResultItem):
-    """An item returned from Search Address Reverse Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status_code: HTTP request status code.
-    :vartype status_code: int
-    :ivar response: The result of the query. SearchAddressReverseResponse if the query completed
-     successfully, ErrorResponse otherwise.
-    :vartype response: ~azure.maps.search.models.ReverseSearchAddressBatchItemResponse
-    """
-
-    _validation = {
-        'status_code': {'readonly': True},
-        'response': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'response': {'key': 'response', 'type': 'ReverseSearchAddressBatchItemResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchAddressBatchItem, self).__init__(**kwargs)
-        self.response = None
-
-
-class ReverseSearchAddressResult(msrest.serialization.Model):
-    """This object is returned from a successful Search Address Reverse call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object for a Search Address Reverse response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar addresses: Addresses array.
-    :vartype addresses: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'addresses': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'SearchSummary'},
-        'addresses': {'key': 'addresses', 'type': '[ReverseSearchAddressResultItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchAddressResult, self).__init__(**kwargs)
-        self.summary = None
-        self.addresses = None
-
-
-class ReverseSearchAddressBatchItemResponse(ErrorResponse, ReverseSearchAddressResult):
-    """The result of the query. SearchAddressReverseResponse if the query completed successfully, ErrorResponse otherwise.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object for a Search Address Reverse response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar addresses: Addresses array.
-    :vartype addresses: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
-    :param error: The error object.
-    :type error: ~azure.maps.search.models.ErrorDetail
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'addresses': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'SearchSummary'},
-        'addresses': {'key': 'addresses', 'type': '[ReverseSearchAddressResultItem]'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchAddressBatchItemResponse, self).__init__(**kwargs)
-        self.summary = None
-        self.addresses = None
-        self.error = kwargs.get('error', None)
-
-
-class ReverseSearchAddressBatchProcessResult(BatchResult):
-    """This object is returned from a successful Search Address Reverse Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar batch_summary: Summary of the results for the batch request.
-    :vartype batch_summary: ~azure.maps.search.models.BatchResultSummary
-    :ivar batch_items: Array containing the batch results.
-    :vartype batch_items: list[~azure.maps.search.models.ReverseSearchAddressBatchItem]
-    """
-
-    _validation = {
-        'batch_summary': {'readonly': True},
-        'batch_items': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'batch_summary': {'key': 'summary', 'type': 'BatchResultSummary'},
-        'batch_items': {'key': 'batchItems', 'type': '[ReverseSearchAddressBatchItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchAddressBatchProcessResult, self).__init__(**kwargs)
-        self.batch_items = None
-
-
-class ReverseSearchAddressResultItem(msrest.serialization.Model):
-    """Result object for a Search Address Reverse response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar address: The address of the result.
-    :vartype address: ~azure.maps.search.models.Address
-    :ivar position: Position property in the form of "{latitude},{longitude}".
-    :vartype position: str
-    :ivar road_use:
-    :vartype road_use: list[str or ~azure.maps.search.models.RoadUseType]
-    :ivar match_type: Information on the type of match.
-    
-     One of:
-    
-    
-     * AddressPoint
-     * HouseNumberRange
-     * Street. Possible values include: "AddressPoint", "HouseNumberRange", "Street".
-    :vartype match_type: str or ~azure.maps.search.models.MatchType
-    """
-
-    _validation = {
-        'address': {'readonly': True},
-        'position': {'readonly': True},
-        'road_use': {'readonly': True},
-        'match_type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'address': {'key': 'address', 'type': 'Address'},
-        'position': {'key': 'position', 'type': 'str'},
-        'road_use': {'key': 'roadUse', 'type': '[str]'},
-        'match_type': {'key': 'matchType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchAddressResultItem, self).__init__(**kwargs)
-        self.address = None
-        self.position = None
-        self.road_use = None
-        self.match_type = None
-
-
-class ReverseSearchCrossStreetAddressResult(msrest.serialization.Model):
-    """This object is returned from a successful Search Address Reverse CrossStreet call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object for a Search Address Reverse Cross Street response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar addresses: Addresses array.
-    :vartype addresses: list[~azure.maps.search.models.ReverseSearchCrossStreetAddressResultItem]
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'addresses': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'SearchSummary'},
-        'addresses': {'key': 'addresses', 'type': '[ReverseSearchCrossStreetAddressResultItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchCrossStreetAddressResult, self).__init__(**kwargs)
-        self.summary = None
-        self.addresses = None
-
-
-class ReverseSearchCrossStreetAddressResultItem(msrest.serialization.Model):
-    """Result object for a Search Address Reverse Cross Street response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar address: The address of the result.
-    :vartype address: ~azure.maps.search.models.Address
-    :ivar position: Position property in the form of "{latitude},{longitude}".
-    :vartype position: str
-    """
-
-    _validation = {
-        'address': {'readonly': True},
-        'position': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'address': {'key': 'address', 'type': 'Address'},
-        'position': {'key': 'position', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseSearchCrossStreetAddressResultItem, self).__init__(**kwargs)
-        self.address = None
-        self.position = None
-
-
-class SearchAddressBatchItem(BatchResultItem):
-    """An item returned from Search Address Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status_code: HTTP request status code.
-    :vartype status_code: int
-    :ivar response: The result of the query. SearchAddressResponse if the query completed
-     successfully, ErrorResponse otherwise.
-    :vartype response: ~azure.maps.search.models.SearchAddressBatchItemResponse
-    """
-
-    _validation = {
-        'status_code': {'readonly': True},
-        'response': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'response': {'key': 'response', 'type': 'SearchAddressBatchItemResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAddressBatchItem, self).__init__(**kwargs)
-        self.response = None
-
-
-class SearchAddressResult(msrest.serialization.Model):
-    """This object is returned from a successful Search calls.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object for a Search API response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar results: A list of Search API results.
-    :vartype results: list[~azure.maps.search.models.SearchAddressResultItem]
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'results': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'SearchSummary'},
-        'results': {'key': 'results', 'type': '[SearchAddressResultItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAddressResult, self).__init__(**kwargs)
-        self.summary = None
-        self.results = None
-
-
-class SearchAddressBatchItemResponse(ErrorResponse, SearchAddressResult):
-    """The result of the query. SearchAddressResponse if the query completed successfully, ErrorResponse otherwise.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object for a Search API response.
-    :vartype summary: ~azure.maps.search.models.SearchSummary
-    :ivar results: A list of Search API results.
-    :vartype results: list[~azure.maps.search.models.SearchAddressResultItem]
-    :param error: The error object.
-    :type error: ~azure.maps.search.models.ErrorDetail
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'results': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'SearchSummary'},
-        'results': {'key': 'results', 'type': '[SearchAddressResultItem]'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAddressBatchItemResponse, self).__init__(**kwargs)
-        self.summary = None
-        self.results = None
-        self.error = kwargs.get('error', None)
-
-
-class SearchAddressBatchResult(BatchResult):
-    """This object is returned from a successful Search Address Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar batch_summary: Summary of the results for the batch request.
-    :vartype batch_summary: ~azure.maps.search.models.BatchResultSummary
-    :ivar batch_items: Array containing the batch results.
-    :vartype batch_items: list[~azure.maps.search.models.SearchAddressBatchItem]
-    """
-
-    _validation = {
-        'batch_summary': {'readonly': True},
-        'batch_items': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'batch_summary': {'key': 'summary', 'type': 'BatchResultSummary'},
-        'batch_items': {'key': 'batchItems', 'type': '[SearchAddressBatchItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAddressBatchResult, self).__init__(**kwargs)
-        self.batch_items = None
-
-
-class SearchAddressResultItem(msrest.serialization.Model):
-    """Result object for a Search API response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: One of:
-    
-    
-     * POI
-     * Street
-     * Geography
-     * Point Address
-     * Address Range
-     * Cross Street. Possible values include: "POI", "Street", "Geography", "Point Address",
-     "Address Range", "Cross Street".
-    :vartype type: str or ~azure.maps.search.models.SearchAddressResultType
-    :ivar id: Id property.
-    :vartype id: str
-    :ivar score: The value within a result set to indicate the relative matching score between
-     results.  You can use this to  determine that result x is twice as likely to be as relevant as
-     result y if the value of x is 2x the value of y.   The values vary between queries and is only
-     meant as a relative value for one result set.
-    :vartype score: float
-    :ivar distance_in_meters: Straight line distance between the result and geobias location in
-     meters.
-    :vartype distance_in_meters: float
-    :ivar info: Information about the original data source of the Result. Used for support
-     requests.
-    :vartype info: str
-    :param entity_type:  Possible values include: "Country", "CountrySubdivision",
-     "CountrySecondarySubdivision", "CountryTertiarySubdivision", "Municipality",
-     "MunicipalitySubdivision", "Neighbourhood", "PostalCodeArea".
-    :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
-    :ivar point_of_interest: Details of the returned POI including information such as the name,
-     phone, url address, and classifications.
-    :vartype point_of_interest: ~azure.maps.search.models.PointOfInterest
-    :ivar address: The address of the result.
-    :vartype address: ~azure.maps.search.models.Address
-    :param position: A location represented as a latitude and longitude using short names 'lat' &
-     'lon'.
-    :type position: ~azure.maps.search.models.LatLongPairAbbreviated
-    :ivar viewport: The viewport that covers the result represented by the top-left and bottom-
-     right coordinates of the viewport.
-    :vartype viewport: ~azure.maps.search.models.BoundingBox
-    :ivar entry_points: Array of EntryPoints. Those describe the types of entrances available at
-     the location. The type can be "main" for main entrances such as a front door, or a lobby, and
-     "minor", for side and back doors.
-    :vartype entry_points: list[~azure.maps.search.models.EntryPoint]
-    :ivar address_ranges: Describes the address range on both sides of the street for a search
-     result. Coordinates for the start and end locations of the address range are included.
-    :vartype address_ranges: ~azure.maps.search.models.AddressRanges
-    :ivar data_sources: Optional section. Reference geometry id for use with the `Get Search
-     Polygon <https://docs.microsoft.com/rest/api/maps/search/getsearchpolygon>`_ API.
-    :vartype data_sources: ~azure.maps.search.models.DataSource
-    :ivar match_type: Information on the type of match.
-    
-     One of:
-    
-    
-     * AddressPoint
-     * HouseNumberRange
-     * Street. Possible values include: "AddressPoint", "HouseNumberRange", "Street".
-    :vartype match_type: str or ~azure.maps.search.models.MatchType
-    :ivar detour_time: Detour time in seconds. Only returned for calls to the Search Along Route
-     API.
-    :vartype detour_time: int
-    """
-
-    _validation = {
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'score': {'readonly': True},
-        'distance_in_meters': {'readonly': True},
-        'info': {'readonly': True},
-        'point_of_interest': {'readonly': True},
-        'address': {'readonly': True},
-        'viewport': {'readonly': True},
-        'entry_points': {'readonly': True},
-        'address_ranges': {'readonly': True},
-        'data_sources': {'readonly': True},
-        'match_type': {'readonly': True},
-        'detour_time': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
-        'distance_in_meters': {'key': 'dist', 'type': 'float'},
-        'info': {'key': 'info', 'type': 'str'},
-        'entity_type': {'key': 'entityType', 'type': 'str'},
-        'point_of_interest': {'key': 'poi', 'type': 'PointOfInterest'},
-        'address': {'key': 'address', 'type': 'Address'},
-        'position': {'key': 'position', 'type': 'LatLongPairAbbreviated'},
-        'viewport': {'key': 'viewport', 'type': 'BoundingBox'},
-        'entry_points': {'key': 'entryPoints', 'type': '[EntryPoint]'},
-        'address_ranges': {'key': 'addressRanges', 'type': 'AddressRanges'},
-        'data_sources': {'key': 'dataSources', 'type': 'DataSource'},
-        'match_type': {'key': 'matchType', 'type': 'str'},
-        'detour_time': {'key': 'detourTime', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAddressResultItem, self).__init__(**kwargs)
-        self.type = None
-        self.id = None
-        self.score = None
-        self.distance_in_meters = None
-        self.info = None
-        self.entity_type = kwargs.get('entity_type', None)
-        self.point_of_interest = None
-        self.address = None
-        self.position = kwargs.get('position', None)
-        self.viewport = None
-        self.entry_points = None
-        self.address_ranges = None
-        self.data_sources = None
-        self.match_type = None
-        self.detour_time = None
-
-
-class SearchAlongRouteRequest(msrest.serialization.Model):
-    """This type represents the request body for the Search Along Route service.
-
-    :param route: A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
-    :type route: ~azure.maps.search.models.GeoJsonLineString
-    """
-
-    _attribute_map = {
-        'route': {'key': 'route', 'type': 'GeoJsonLineString'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchAlongRouteRequest, self).__init__(**kwargs)
-        self.route = kwargs.get('route', None)
-
-
-class SearchInsideGeometryRequest(msrest.serialization.Model):
-    """This type represents the request body for the Search Inside Geometry service.
-
-    :param geometry: A valid ``GeoJSON`` object. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
-    :type geometry: ~azure.maps.search.models.GeoJsonObject
-    """
-
-    _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonObject'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchInsideGeometryRequest, self).__init__(**kwargs)
-        self.geometry = kwargs.get('geometry', None)
-
-
-class SearchSummary(msrest.serialization.Model):
-    """Summary object for a Search API response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar query: The query parameter that was used to produce these search results.
-    :vartype query: str
-    :ivar query_type: The type of query being returned: NEARBY or NON_NEAR. Possible values
-     include: "NEARBY", "NON_NEAR".
-    :vartype query_type: str or ~azure.maps.search.models.QueryType
-    :ivar query_time: Time spent resolving the query, in milliseconds.
-    :vartype query_time: int
-    :ivar num_results: Number of results in the response.
-    :vartype num_results: int
-    :ivar top: Maximum number of responses that will be returned.
-    :vartype top: int
-    :ivar skip: The starting offset of the returned Results within the full Result set.
-    :vartype skip: int
-    :ivar total_results: The total number of Results found.
-    :vartype total_results: int
-    :ivar fuzzy_level: The maximum fuzzy level required to provide Results.
-    :vartype fuzzy_level: int
-    :ivar geo_bias: Indication when the internal search engine has applied a geospatial bias to
-     improve the ranking of results.  In  some methods, this can be affected by setting the lat and
-     lon parameters where available.  In other cases it is  purely internal.
-    :vartype geo_bias: ~azure.maps.search.models.LatLongPairAbbreviated
-    """
-
-    _validation = {
-        'query': {'readonly': True},
-        'query_type': {'readonly': True},
-        'query_time': {'readonly': True},
-        'num_results': {'readonly': True},
-        'top': {'readonly': True},
-        'skip': {'readonly': True},
-        'total_results': {'readonly': True},
-        'fuzzy_level': {'readonly': True},
-        'geo_bias': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'query_type': {'key': 'queryType', 'type': 'str'},
-        'query_time': {'key': 'queryTime', 'type': 'int'},
-        'num_results': {'key': 'numResults', 'type': 'int'},
-        'top': {'key': 'limit', 'type': 'int'},
-        'skip': {'key': 'offset', 'type': 'int'},
-        'total_results': {'key': 'totalResults', 'type': 'int'},
-        'fuzzy_level': {'key': 'fuzzyLevel', 'type': 'int'},
-        'geo_bias': {'key': 'geoBias', 'type': 'LatLongPairAbbreviated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SearchSummary, self).__init__(**kwargs)
-        self.query = None
-        self.query_type = None
-        self.query_time = None
-        self.num_results = None
-        self.top = None
-        self.skip = None
-        self.total_results = None
-        self.fuzzy_level = None
-        self.geo_bias = None
-
-
-class Viewport(msrest.serialization.Model):
-    """The viewport that covers the result represented by the top-left and bottom-right coordinates of the viewport.
-
-    :param top_left_point: A location represented as a latitude and longitude using short names
-     'lat' & 'lon'.
-    :type top_left_point: ~azure.maps.search.models.LatLongPairAbbreviated
-    :param btm_right_point: A location represented as a latitude and longitude using short names
-     'lat' & 'lon'.
-    :type btm_right_point: ~azure.maps.search.models.LatLongPairAbbreviated
-    """
-
-    _attribute_map = {
-        'top_left_point': {'key': 'topLeftPoint', 'type': 'LatLongPairAbbreviated'},
-        'btm_right_point': {'key': 'btmRightPoint', 'type': 'LatLongPairAbbreviated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Viewport, self).__init__(**kwargs)
-        self.top_left_point = kwargs.get('top_left_point', None)
-        self.btm_right_point = kwargs.get('btm_right_point', None)
+        *,
+        optional_id: Optional[str] = None,
+        coordinates: Optional[List[float]] = None,
+        result_types: Optional[List[Union[str, "_models.ResultTypeEnum"]]] = None,
+        view: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword optional_id: id of the request which would show in corresponding batchItem.
+        :paramtype optional_id: str
+        :keyword coordinates: The coordinates of the location that you want to reverse geocode.
+         Example: [lon,lat].
+        :paramtype coordinates: list[float]
+        :keyword result_types: Specify entity types that you want in the response. Only the types you
+         specify will be returned. If the point cannot be mapped to the entity types you specify, no
+         location information is returned in the response.
+         Default value is all possible entities.
+         A comma separated list of entity types selected from the following options.
+
+
+         * Address
+         * Neighborhood
+         * PopulatedPlace
+         * Postcode1
+         * AdminDivision1
+         * AdminDivision2
+         * CountryRegion
+
+         These entity types are ordered from the most specific entity to the least specific entity.
+         When entities of more than one entity type are found, only the most specific entity is
+         returned. For example, if you specify Address and AdminDistrict1 as entity types and entities
+         were found for both types, only the Address entity information is returned in the response.
+        :paramtype result_types: list[str or ~azure.maps.search.models.ResultTypeEnum]
+        :keyword view: A string that specifies an `ISO 3166-1 Alpha-2 region/country code
+         <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
+         borders and labels to align with the specified user region.
+        :paramtype view: str
+        """
+        super().__init__(**kwargs)
+        self.optional_id = optional_id
+        self.coordinates = coordinates
+        self.result_types = result_types
+        self.view = view

@@ -29,7 +29,7 @@ We automatically hardcode in that this is `python`.
 ## Basic Information
 
 ```yaml
-tag: 1.0-preview
+tag: package-2023-06
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Search/readme.md
 output-folder: ../azure/maps/search/_generated
 namespace: azure.maps.search
@@ -41,6 +41,7 @@ clear-output-folder: true
 python: true
 no-async: false
 add-credential: false
+models-mode: msrest
 title: MapsSearchClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
