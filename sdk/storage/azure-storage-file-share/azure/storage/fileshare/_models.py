@@ -341,6 +341,10 @@ class ShareProperties(DictMixin):
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
         Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
+    :ivar bool enable_snapshot_virtual_directory_access:
+        Supported in service version 2023-08-03 and greater. Specifies whether the snapshot
+        virtual directory should be accessible at the root of the share mount point when NFS
+        is enabled. if not specified, the default is True.
     """
 
     def __init__(self, **kwargs):
@@ -364,6 +368,8 @@ class ShareProperties(DictMixin):
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
+        self.enable_snapshot_virtual_directory_access = \
+            kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
