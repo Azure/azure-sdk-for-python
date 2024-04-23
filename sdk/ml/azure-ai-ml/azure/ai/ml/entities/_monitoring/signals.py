@@ -194,9 +194,11 @@ class ProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window.lookback_window_size,
-            window_offset=self.data_window.lookback_window_offset
-            if self.data_window.lookback_window_offset is not None
-            else "P0D",
+            window_offset=(
+                self.data_window.lookback_window_offset
+                if self.data_window.lookback_window_offset is not None
+                else "P0D"
+            ),
         )
         return monitoring_input_data._to_rest_object()
 
@@ -279,9 +281,11 @@ class ReferenceData(RestTranslatableMixin):
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
                     window_size=self.data_window.lookback_window_size,
-                    window_offset=self.data_window.lookback_window_offset
-                    if self.data_window.lookback_window_offset is not None
-                    else "P0D",
+                    window_offset=(
+                        self.data_window.lookback_window_offset
+                        if self.data_window.lookback_window_offset is not None
+                        else "P0D"
+                    ),
                 )._to_rest_object()
             if self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return StaticInputData(
@@ -372,9 +376,7 @@ class MonitoringSignal(RestTranslatableMixin):
         self.properties = properties
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: RestMonitoringSignalBase
-    ) -> Optional[
+    def _from_rest_object(cls, obj: RestMonitoringSignalBase) -> Optional[  # pylint: disable=too-many-return-statements
         Union[
             "DataDriftSignal",
             "DataQualitySignal",
@@ -504,19 +506,25 @@ class DataDriftSignal(DataSignal):
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
-            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
-            if self.production_data is not None
-            else None,
-            reference_data=self.reference_data._to_rest_object(
-                default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
-            )
-            if self.reference_data is not None
-            else None,
+            production_data=(
+                self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
+                if self.production_data is not None
+                else None
+            ),
+            reference_data=(
+                self.reference_data._to_rest_object(
+                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                )
+                if self.reference_data is not None
+                else None
+            ),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
-            metric_thresholds=self.metric_thresholds._to_rest_object()
-            if isinstance(self.metric_thresholds, MetricThreshold)
-            else None,
+            metric_thresholds=(
+                self.metric_thresholds._to_rest_object()
+                if isinstance(self.metric_thresholds, MetricThreshold)
+                else None
+            ),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             properties=self.properties,
@@ -530,9 +538,11 @@ class DataDriftSignal(DataSignal):
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
             metric_thresholds=DataDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
             properties=obj.properties,
         )
@@ -586,17 +596,23 @@ class PredictionDriftSignal(MonitoringSignal):
         if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         return RestPredictionDriftMonitoringSignal(
-            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
-            if self.production_data is not None
-            else None,
-            reference_data=self.reference_data._to_rest_object(
-                default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
-            )
-            if self.reference_data is not None
-            else None,
-            metric_thresholds=self.metric_thresholds._to_rest_object()
-            if isinstance(self.metric_thresholds, MetricThreshold)
-            else None,
+            production_data=(
+                self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
+                if self.production_data is not None
+                else None
+            ),
+            reference_data=(
+                self.reference_data._to_rest_object(
+                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                )
+                if self.reference_data is not None
+                else None
+            ),
+            metric_thresholds=(
+                self.metric_thresholds._to_rest_object()
+                if isinstance(self.metric_thresholds, MetricThreshold)
+                else None
+            ),
             properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             model_type="classification",
@@ -608,9 +624,11 @@ class PredictionDriftSignal(MonitoringSignal):
             production_data=ProductionData._from_rest_object(obj.production_data),
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=PredictionDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
         )
 
@@ -681,14 +699,18 @@ class DataQualitySignal(DataSignal):
             else None
         )
         return RestMonitoringDataQualitySignal(
-            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
-            if self.production_data is not None
-            else None,
-            reference_data=self.reference_data._to_rest_object(
-                default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
-            )
-            if self.reference_data is not None
-            else None,
+            production_data=(
+                self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
+                if self.production_data is not None
+                else None
+            ),
+            reference_data=(
+                self.reference_data._to_rest_object(
+                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                )
+                if self.reference_data is not None
+                else None
+            ),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
             metric_thresholds=rest_metrics,
@@ -704,9 +726,11 @@ class DataQualitySignal(DataSignal):
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
             metric_thresholds=DataQualityMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
         )
 
@@ -770,9 +794,11 @@ class FADProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window.lookback_window_size,
-            window_offset=self.data_window.lookback_window_offset
-            if self.data_window.lookback_window_offset is not None
-            else "P0D",
+            window_offset=(
+                self.data_window.lookback_window_offset
+                if self.data_window.lookback_window_offset is not None
+                else "P0D"
+            ),
         )
         return monitoring_input_data._to_rest_object()
 
@@ -833,9 +859,11 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         default_window_size = kwargs.get("default_data_window_size")
         ref_data_window_size = kwargs.get("ref_data_window_size")
         return RestFeatureAttributionDriftMonitoringSignal(
-            production_data=[data._to_rest_object(default=default_window_size) for data in self.production_data]
-            if self.production_data is not None
-            else None,
+            production_data=(
+                [data._to_rest_object(default=default_window_size) for data in self.production_data]
+                if self.production_data is not None
+                else None
+            ),
             reference_data=self.reference_data._to_rest_object(
                 default_data_window=default_window_size, ref_data_window_size=ref_data_window_size
             ),
@@ -850,9 +878,11 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
             production_data=[FADProductionData._from_rest_object(data) for data in obj.production_data],
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=FeatureAttributionDriftMetricThreshold._from_rest_object(obj.metric_threshold),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
         )
 
@@ -920,9 +950,11 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
         )
 
 
@@ -1011,11 +1043,11 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=None) if self.inputs else None,
-            input_assets={
-                asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_data.items()
-            }
-            if self.input_data
-            else None,
+            input_assets=(
+                {asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_data.items()}
+                if self.input_data
+                else None
+            ),
             workspace_connection=self.workspace_connection._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
@@ -1030,9 +1062,11 @@ class CustomMonitoringSignal(RestTranslatableMixin):
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
             ],
             component_id=obj.component_id,
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
             workspace_connection=WorkspaceConnection._from_rest_object(obj.workspace_connection),
         )
@@ -1071,9 +1105,11 @@ class LlmData(RestTranslatableMixin):
             job_type=self.input_data.type,
             uri=self.input_data.path,
             window_size=self.data_window.lookback_window_size,
-            window_offset=self.data_window.lookback_window_offset
-            if self.data_window.lookback_window_offset is not None
-            else "P0D",
+            window_offset=(
+                self.data_window.lookback_window_offset
+                if self.data_window.lookback_window_offset is not None
+                else "P0D"
+            ),
         )._to_rest_object()
 
     @classmethod
@@ -1135,9 +1171,11 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestGenerationSafetyQualityMonitoringSignal:
         data_window_size = kwargs.get("default_data_window_size")
         return RestGenerationSafetyQualityMonitoringSignal(
-            production_data=[data._to_rest_object(default=data_window_size) for data in self.production_data]
-            if self.production_data is not None
-            else None,
+            production_data=(
+                [data._to_rest_object(default=data_window_size) for data in self.production_data]
+                if self.production_data is not None
+                else None
+            ),
             workspace_connection_id=self.workspace_connection_id,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
@@ -1151,9 +1189,11 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
             production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
             workspace_connection_id=obj.workspace_connection_id,
             metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
             sampling_rate=obj.sampling_rate,
         )

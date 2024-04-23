@@ -102,8 +102,7 @@ class InternalInput(Input):
 
     @overload
     @classmethod
-    def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput":
-        ...
+    def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput": ...
 
     @classmethod
     def _from_base(cls, _input: Optional[Union[Input, Dict]]) -> Optional["InternalInput"]:
