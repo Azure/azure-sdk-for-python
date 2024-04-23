@@ -1,5 +1,12 @@
 # Release History
 
+## 4.20.1b1 (2024-04-24)
+
+### Bugs Fixed
+
+- Bug fix for serialization of CNCF CloudEvents.
+- Bug fix for incorrect serialization of CloudEvent data to str on `send`.
+
 ## 4.20.0b1 (2024-04-11)
 
 ### Features Added
