@@ -135,9 +135,7 @@ def test_get_bytes_storage_queue_wrong_content():
     string = "This is a random string which must fail"
     obj = MockQueueMessage(content=string)
 
-    with pytest.raises(
-        ValueError, match="Failed to load JSON content from the object."
-    ):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         _get_json_content(obj)
 
 
@@ -172,9 +170,7 @@ def test_get_bytes_servicebus_wrong_content():
         sequence_number=11219,
         lock_token="233146e3-d5a6-45eb-826f-691d82fb8b13",
     )
-    with pytest.raises(
-        ValueError, match="Failed to load JSON content from the object."
-    ):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
 
@@ -188,9 +184,7 @@ def test_get_bytes_eventhubs():
 def test_get_bytes_eventhubs_wrong_content():
     obj = MockEventhubData(body=MockEhBody(data="random string"))
 
-    with pytest.raises(
-        ValueError, match="Failed to load JSON content from the object."
-    ):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
 

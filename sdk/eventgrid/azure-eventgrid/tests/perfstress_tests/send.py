@@ -25,21 +25,15 @@ class EventGridPerfTest(PerfStressTest):
         endpoint = self.get_from_env("EG_TOPIC_HOSTNAME")
 
         # Create clients
-        self.publisher_client = SyncPublisherClient(
-            endpoint=endpoint, credential=AzureKeyCredential(topic_key)
-        )
-        self.async_publisher_client = AsyncPublisherClient(
-            endpoint=endpoint, credential=AzureKeyCredential(topic_key)
-        )
+        self.publisher_client = SyncPublisherClient(endpoint=endpoint, credential=AzureKeyCredential(topic_key))
+        self.async_publisher_client = AsyncPublisherClient(endpoint=endpoint, credential=AzureKeyCredential(topic_key))
 
         self.event_list = []
         for _ in range(self.args.num_events):
             self.event_list.append(
                 EventGridEvent(
                     event_type="Contoso.Items.ItemReceived",
-                    data={
-                        "services": ["EventGrid", "ServiceBus", "EventHubs", "Storage"]
-                    },
+                    data={"services": ["EventGrid", "ServiceBus", "EventHubs", "Storage"]},
                     subject="Door1",
                     data_version="2.0",
                 )

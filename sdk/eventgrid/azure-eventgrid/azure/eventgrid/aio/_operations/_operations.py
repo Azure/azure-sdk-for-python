@@ -9,9 +9,16 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -19,7 +26,15 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import build_event_grid_acknowledge_cloud_events_request, build_event_grid_publish_cloud_event_request, build_event_grid_publish_cloud_events_request, build_event_grid_receive_cloud_events_request, build_event_grid_reject_cloud_events_request, build_event_grid_release_cloud_events_request, build_event_grid_renew_cloud_event_locks_request
+from ..._operations._operations import (
+    build_event_grid_acknowledge_cloud_events_request,
+    build_event_grid_publish_cloud_event_request,
+    build_event_grid_publish_cloud_events_request,
+    build_event_grid_receive_cloud_events_request,
+    build_event_grid_reject_cloud_events_request,
+    build_event_grid_release_cloud_events_request,
+    build_event_grid_renew_cloud_event_locks_request,
+)
 from ..._validation import api_version_validation
 from .._vendor import EventGridClientMixinABC
 
@@ -27,20 +42,16 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class EventGridClientOperationsMixin( 
-    EventGridClientMixinABC
-):
+
+class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace_async
     async def _publish_cloud_event(  # pylint: disable=protected-access
-        self,
-        topic_name: str,
-        event: _models._models.CloudEvent,
-        **kwargs: Any
+        self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
     ) -> _models._models.PublishResult:
         # pylint: disable=line-too-long
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
@@ -81,20 +92,23 @@ class EventGridClientOperationsMixin(
                       generated, in RFC3339 format.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/cloudevents+json; charset=utf-8")
         )
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        _content = event
+        _content = json.dumps(event, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
@@ -105,22 +119,20 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -128,23 +140,17 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
+                _models._models.PublishResult, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def _publish_cloud_events(  # pylint: disable=protected-access
-        self,
-        topic_name: str,
-        events: List[_models._models.CloudEvent],
-        **kwargs: Any
+        self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
     ) -> _models._models.PublishResult:
         # pylint: disable=line-too-long
         """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
@@ -189,20 +195,23 @@ class EventGridClientOperationsMixin(
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents-batch+json; charset=utf-8"))
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/cloudevents-batch+json; charset=utf-8")
         )
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        _content = events
+        _content = json.dumps(events, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_publish_cloud_events_request(
             topic_name=topic_name,
@@ -213,22 +222,20 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -236,16 +243,13 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
+                _models._models.PublishResult, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def _receive_cloud_events(  # pylint: disable=protected-access
@@ -320,19 +324,19 @@ class EventGridClientOperationsMixin(
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ReceiveResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
-        )
+        cls: ClsType[_models._models.ReceiveResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        
         _request = build_event_grid_receive_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -343,22 +347,20 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -366,16 +368,13 @@ class EventGridClientOperationsMixin(
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ReceiveResult,  # pylint: disable=protected-access
-                response.json()
+                _models._models.ReceiveResult, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def _acknowledge_cloud_events(  # pylint: disable=protected-access
@@ -386,8 +385,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AcknowledgeResult:
-        ...
+    ) -> _models.AcknowledgeResult: ...
     @overload
     async def _acknowledge_cloud_events(
         self,
@@ -397,8 +395,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AcknowledgeResult:
-        ...
+    ) -> _models.AcknowledgeResult: ...
     @overload
     async def _acknowledge_cloud_events(
         self,
@@ -408,8 +405,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AcknowledgeResult:
-        ...
+    ) -> _models.AcknowledgeResult: ...
 
     @distributed_trace_async
     async def _acknowledge_cloud_events(
@@ -474,18 +470,19 @@ class EventGridClientOperationsMixin(
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -504,43 +501,36 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AcknowledgeResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AcknowledgeResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     @api_version_validation(
-        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )  # pylint: disable=protected-access
     async def _release_cloud_events(  # pylint: disable=protected-access
         self,
@@ -551,11 +541,10 @@ class EventGridClientOperationsMixin(
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ReleaseResult:
-        ...
+    ) -> _models.ReleaseResult: ...
     @overload
     @api_version_validation(
-        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
     async def _release_cloud_events(
         self,
@@ -566,11 +555,10 @@ class EventGridClientOperationsMixin(
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ReleaseResult:
-        ...
+    ) -> _models.ReleaseResult: ...
     @overload
     @api_version_validation(
-        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
     async def _release_cloud_events(
         self,
@@ -581,12 +569,11 @@ class EventGridClientOperationsMixin(
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ReleaseResult:
-        ...
+    ) -> _models.ReleaseResult: ...
 
     @distributed_trace_async
     @api_version_validation(
-        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
     )
     async def _release_cloud_events(
         self,
@@ -654,18 +641,19 @@ class EventGridClientOperationsMixin(
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ReleaseResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ReleaseResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -685,39 +673,32 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ReleaseResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ReleaseResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def _reject_cloud_events(  # pylint: disable=protected-access
@@ -728,8 +709,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RejectResult:
-        ...
+    ) -> _models.RejectResult: ...
     @overload
     async def _reject_cloud_events(
         self,
@@ -739,8 +719,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RejectResult:
-        ...
+    ) -> _models.RejectResult: ...
     @overload
     async def _reject_cloud_events(
         self,
@@ -750,8 +729,7 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RejectResult:
-        ...
+    ) -> _models.RejectResult: ...
 
     @distributed_trace_async
     async def _reject_cloud_events(
@@ -815,18 +793,19 @@ class EventGridClientOperationsMixin(
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.RejectResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RejectResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -845,43 +824,37 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.RejectResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.RejectResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
+        params_added_on={"2023-10-01-preview": ["accept"]},
     )  # pylint: disable=protected-access
     async def _renew_cloud_event_locks(  # pylint: disable=protected-access
         self,
@@ -891,11 +864,11 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RenewCloudEventLocksResult:
-        ...
+    ) -> _models.RenewCloudEventLocksResult: ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
+        params_added_on={"2023-10-01-preview": ["accept"]},
     )
     async def _renew_cloud_event_locks(
         self,
@@ -905,11 +878,11 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RenewCloudEventLocksResult:
-        ...
+    ) -> _models.RenewCloudEventLocksResult: ...
     @overload
     @api_version_validation(
         method_added_on="2023-10-01-preview",
+        params_added_on={"2023-10-01-preview": ["accept"]},
     )
     async def _renew_cloud_event_locks(
         self,
@@ -919,12 +892,12 @@ class EventGridClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RenewCloudEventLocksResult:
-        ...
+    ) -> _models.RenewCloudEventLocksResult: ...
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-10-01-preview",
+        params_added_on={"2023-10-01-preview": ["accept"]},
     )
     async def _renew_cloud_event_locks(
         self,
@@ -989,18 +962,19 @@ class EventGridClientOperationsMixin(
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.RenewCloudEventLocksResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RenewCloudEventLocksResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1019,36 +993,29 @@ class EventGridClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.RenewCloudEventLocksResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.RenewCloudEventLocksResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-

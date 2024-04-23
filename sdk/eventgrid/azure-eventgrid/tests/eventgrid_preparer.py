@@ -16,15 +16,9 @@ CUSTOM_EVENT_SCHEMA = InputSchema.custom_event_schema
 ID_JSON_FIELD = JsonField(source_field="customId")
 TOPIC_JSON_FIELD = JsonField(source_field="customTopic")
 EVENT_TIME_JSON_FIELD = JsonField(source_field="customEventTime")
-EVENT_TYPE_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(
-    source_field="customEventType", default_value=""
-)
-SUBJECT_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(
-    source_field="customSubject", default_value=""
-)
-DATA_VERSION_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(
-    source_field="customDataVersion", default_value=""
-)
+EVENT_TYPE_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(source_field="customEventType", default_value="")
+SUBJECT_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(source_field="customSubject", default_value="")
+DATA_VERSION_JSON_FIELD_WITH_DEFAULT = JsonFieldWithDefault(source_field="customDataVersion", default_value="")
 CUSTOM_JSON_INPUT_SCHEMA_MAPPING = JsonInputSchemaMapping(
     id=ID_JSON_FIELD,
     topic=TOPIC_JSON_FIELD,

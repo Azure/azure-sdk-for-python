@@ -44,9 +44,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class EventGridClientOperationsMixin(OperationsMixin):
@@ -167,9 +165,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         elif len(args) == 1:
             if events is not None:
                 if topic_name is not None:
-                    raise ValueError(
-                        "topic_name is already passed as a keyword argument."
-                    )
+                    raise ValueError("topic_name is already passed as a keyword argument.")
                 topic_name = args[0]
             else:
                 events = args[0]
@@ -189,13 +185,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = CloudEvent.from_dict(events)
                 if isinstance(events, list) and isinstance(events[0], dict):
                     events = [CloudEvent.from_dict(e) for e in events]
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 pass
 
             if self._level == "Standard":
-                kwargs["content_type"] = kwargs.get(
-                    "content_type", "application/cloudevents-batch+json; charset=utf-8"
-                )
+                kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
                 if not isinstance(events, list):
                     events = [events]
 
@@ -220,22 +214,18 @@ class EventGridClientOperationsMixin(OperationsMixin):
             if isinstance(events, dict):
                 events = CloudEvent.from_dict(events)
         except AttributeError:
-            raise TypeError("Binary mode is only supported for type CloudEvent.") # pylint: disable=raise-missing-from
+            raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
 
         # If data is a cloud event, convert to an HTTP Request in binary mode
         if isinstance(events, CloudEvent):
-            await self._publish(
-                topic_name, events, self._config.api_version, **kwargs
-            )
+            await self._publish(topic_name, events, self._config.api_version, **kwargs)
         else:
             raise TypeError("Binary mode is only supported for type CloudEvent.")
 
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
-                raise HttpResponseError(
-                    "Invalid event data. Please check the data and try again."
-                ) from exception
+                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
@@ -321,9 +311,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = AcknowledgeOptions(lock_tokens=lock_tokens)
-        return await super()._acknowledge_cloud_events(
-            topic_name, subscription_name, options, **kwargs
-        )
+        return await super()._acknowledge_cloud_events(topic_name, subscription_name, options, **kwargs)
 
     @use_standard_only
     @distributed_trace_async
@@ -390,9 +378,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RejectOptions(lock_tokens=lock_tokens)
-        return await super()._reject_cloud_events(
-            topic_name, subscription_name, options, **kwargs
-        )
+        return await super()._reject_cloud_events(topic_name, subscription_name, options, **kwargs)
 
     @use_standard_only
     @distributed_trace_async
@@ -424,13 +410,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RenewLockOptions(lock_tokens=lock_tokens)
-        return await super()._renew_cloud_event_locks(
-            topic_name, subscription_name, options, **kwargs
-        )
+        return await super()._renew_cloud_event_locks(topic_name, subscription_name, options, **kwargs)
 
-    async def _publish(
-        self, topic_name: str, event: Any, api_version, **kwargs: Any
-    ) -> None:
+    async def _publish(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
 
         error_map = {
             401: ClientAuthenticationError,
@@ -443,11 +425,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        content_type = kwargs.pop("content_type", None) # pylint: disable=unused-variable
+        content_type = kwargs.pop("content_type", None)  # pylint: disable=unused-variable
         # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
         http_request = _to_http_request(
             topic_name=topic_name,
@@ -461,13 +441,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         _stream = kwargs.pop("stream", False)
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        http_request.url = self._client.format_url(
-            http_request.url, **path_format_arguments
-        )
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -479,9 +455,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:

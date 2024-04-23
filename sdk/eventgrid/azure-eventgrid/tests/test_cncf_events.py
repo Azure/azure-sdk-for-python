@@ -13,16 +13,12 @@ from eventgrid_preparer import (
 class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
         credential = self.get_credential(EventGridPublisherClient)
-        client = self.create_client_from_credential(
-            EventGridPublisherClient, credential=credential, endpoint=endpoint
-        )
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
         return client
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_dict(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_dict(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -42,9 +38,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_base64_using_data(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_base64_using_data(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -62,9 +56,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_none(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_none(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -76,9 +68,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_str(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_str(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -96,9 +86,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_as_list(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_as_list(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -110,9 +98,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cncf_data_with_extensions(
-        self, eventgrid_cloud_event_topic_endpoint
-    ):
+    def test_send_cncf_data_with_extensions(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
