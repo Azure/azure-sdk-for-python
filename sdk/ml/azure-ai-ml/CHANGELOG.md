@@ -1,6 +1,6 @@
 # Release History
 
-## 1.16.0 (2024-04-22)
+## 1.16.0 (unreleased)
 
 ### Features Added
 - Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
