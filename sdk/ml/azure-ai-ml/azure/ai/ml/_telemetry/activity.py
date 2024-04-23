@@ -60,23 +60,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger: logging.Logger, activity_info: str):
+    def __init__(self, logger: logging.Logger, activity_info: Dict):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
         :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
-        :type activity_info: str
+        :type activity_info: Dict
         """
         self._activity_info = activity_info
         super(ActivityLoggerAdapter, self).__init__(logger, None)  # type: ignore[arg-type]
 
     @property
-    def activity_info(self) -> str:
+    def activity_info(self) -> Dict:
         """Return current activity info.
 
         :return: The info to write to the logger
-        :rtype: str
+        :rtype: Dict
         """
         return self._activity_info
 
@@ -225,7 +225,6 @@ def log_activity(
                 activity_name, completion_status, duration_ms
             )
             if exception:
-                message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__  # type: ignore[index]
                 if isinstance(exception, MlException):
                     activityLogger.activity_info[  # type: ignore[index]
@@ -241,9 +240,14 @@ def log_activity(
                         activityLogger.activity_info["innerException"] = type(  # type: ignore[index]
                             exception.inner_exception
                         ).__name__
+                message += ", Exception={}".format(activityLogger.activity_info["exception"])
+                message += ", ErrorCategory={}".format(activityLogger.activity_info["errorCategory"])
+                message += ", ErrorMessage={}".format(activityLogger.activity_info["errorMessage"])
+
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
+
         except Exception:  # pylint: disable=broad-except
             return  # pylint: disable=lost-exception
 
@@ -283,8 +287,11 @@ def monitor_with_activity(
                         logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
                         return f(*args, **kwargs)
-            else:
+            elif hasattr(logger, "package_logger"):
                 with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
+            else:
+                with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
                     return f(*args, **kwargs)
 
         return wrapper

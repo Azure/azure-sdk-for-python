@@ -60,9 +60,6 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        # to distinguish with track1
-        if "azure-mgmt-" in package_name:
-            package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:
                 package["language"] = "Python"

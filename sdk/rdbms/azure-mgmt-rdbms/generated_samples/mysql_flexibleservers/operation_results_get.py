@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
 """
@@ -26,16 +27,16 @@ from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 def main():
     client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="11111111-2222-3333-4444-555555555555",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.operation_results.get(
         location_name="westus",
-        operation_id="resource-provisioning-id-farmBeatsResourceName",
+        operation_id="00000000-0000-0000-0000-000000000000",
     )
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/preview/2023-06-01-preview/examples/OperationResults_Get.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/stable/2023-12-30/examples/OperationResults_Get.json
 if __name__ == "__main__":
     main()

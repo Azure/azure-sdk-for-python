@@ -203,7 +203,11 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path,) = get_model_artifacts(  # type: ignore[misc]
+        (
+            model_name,
+            model_version,
+            model_directory_path,
+        ) = get_model_artifacts(  # type: ignore[misc]
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -233,9 +237,9 @@ class _LocalDeploymentHelper(object):
             endpoint_name=endpoint_name,
             deployment_name=str(deployment_name),
             yaml_code_directory_path=str(code_directory_path),
-            yaml_code_scoring_script_file_name=deployment.code_configuration.scoring_script
-            if code_directory_path
-            else None,
+            yaml_code_scoring_script_file_name=(
+                deployment.code_configuration.scoring_script if code_directory_path else None  # type: ignore
+            ),
             model_directory_path=model_directory_path,
             model_mount_path=f"/{model_name}/{model_version}" if model_name else "",
         )

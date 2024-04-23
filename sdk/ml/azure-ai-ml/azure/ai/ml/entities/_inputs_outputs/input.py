@@ -40,6 +40,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         * 'download': Download the data to the compute target,
         * 'direct': Pass in the URI as a string to be accessed at runtime
     :paramtype mode: Optional[str]
+    :keyword path_on_compute: The access path of the data input for compute
+    :paramtype mode: Optional[str]
     :keyword default: The default value of the input. If a default is set, the input data will be optional.
     :paramtype default: Union[str, int, float, bool]
     :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
@@ -70,7 +72,19 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
-    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+    _IO_KEYS = [
+        "path",
+        "type",
+        "mode",
+        "path_on_compute",
+        "description",
+        "default",
+        "min",
+        "max",
+        "enum",
+        "optional",
+        "datastore",
+    ]
 
     @overload
     def __init__(
@@ -105,10 +119,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[float]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[float]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -137,10 +151,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[int]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[int]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -205,6 +219,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         type: str = "uri_folder",
         path: Optional[str] = None,
         mode: Optional[str] = None,
+        path_on_compute: Optional[str] = None,
         default: Optional[Union[str, int, float, bool]] = None,
         optional: Optional[bool] = None,
         min: Optional[Union[int, float]] = None,
@@ -226,6 +241,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             self.path = str(path)
         else:
             self.path = path
+        self.path_on_compute = path_on_compute
         self.mode = None if self._is_primitive_type else mode
         self._update_default(default)
         self.optional = optional

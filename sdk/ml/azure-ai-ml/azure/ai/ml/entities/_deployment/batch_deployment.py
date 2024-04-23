@@ -9,11 +9,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as BatchDeploymentData
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeploymentProperties as RestBatchDeployment
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchOutputAction
+from azure.ai.ml._restclient.v2024_01_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -253,6 +253,27 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         cls, deployment: BatchDeploymentData
     ) -> BatchDeploymentData:
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
+
+        if (
+            hasattr(deployment.properties, "deployment_configuration")
+            and deployment.properties.deployment_configuration is not None
+        ):
+            settings = deployment.properties.deployment_configuration.settings
+            deployment_comp_settings = {
+                "deployment_configuration_type": deployment.properties.deployment_configuration.deployment_configuration_type,  # pylint: disable=line-too-long
+                "componentDeployment.Settings.continue_on_step_failure": settings.get(
+                    "ComponentDeployment.Settings.continue_on_step_failure", None
+                ),
+                "default_datastore": settings.get("default_datastore", None),
+                "default_compute": settings.get("default_compute", None),
+            }
+            properties = {}
+            if deployment.properties.properties:
+                properties.update(deployment.properties.properties)
+            properties.update(deployment_comp_settings)
+        else:
+            properties = deployment.properties.properties
+
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)
             if deployment.properties.code_configuration
@@ -266,10 +287,12 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             model=modelId,
             environment=deployment.properties.environment_id,
             code_configuration=code_configuration,
-            output_file_name=deployment.properties.output_file_name
-            if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
-            == BatchDeploymentOutputAction.APPEND_ROW
-            else None,
+            output_file_name=(
+                deployment.properties.output_file_name
+                if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
+                == BatchDeploymentOutputAction.APPEND_ROW
+                else None
+            ),
             output_action=cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action),
             error_threshold=deployment.properties.error_threshold,
             retry_settings=BatchRetrySettings._from_rest_object(deployment.properties.retry_settings),
@@ -280,7 +303,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             environment_variables=deployment.properties.environment_variables,
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
-            properties=deployment.properties.properties,
+            properties=properties,
             creation_context=SystemData._from_rest_object(deployment.system_data),
             provisioning_state=deployment.properties.provisioning_state,
         )

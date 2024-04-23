@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.healthcareapis import HealthcareApisManagementClient
 
 """
@@ -47,6 +50,18 @@ def main():
                 "authenticationConfiguration": {
                     "audience": "https://azurehealthcareapis.com",
                     "authority": "https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc",
+                    "smartIdentityProviders": [
+                        {
+                            "applications": [
+                                {
+                                    "allowedDataActions": ["Read"],
+                                    "audience": "22222222-2222-2222-2222-222222222222",
+                                    "clientId": "22222222-2222-2222-2222-222222222222",
+                                }
+                            ],
+                            "authority": "https://login.b2clogin.com/11111111-1111-1111-1111-111111111111/v2.0",
+                        }
+                    ],
                     "smartProxyEnabled": True,
                 },
                 "corsConfiguration": {
@@ -75,6 +90,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2023-11-01/examples/fhirservices/FhirServices_Create.json
+# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2024-03-31/examples/fhirservices/FhirServices_Create.json
 if __name__ == "__main__":
     main()

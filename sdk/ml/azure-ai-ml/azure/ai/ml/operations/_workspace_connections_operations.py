@@ -74,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return WorkspaceConnection._from_rest_object(rest_obj=obj)
+        return WorkspaceConnection._from_rest_object(rest_obj=obj)  # type: ignore[return-value]
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
@@ -134,6 +134,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def list(
         self,
         connection_type: Optional[str] = None,
+        *,
         include_data_connections: bool = False,
         **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
@@ -141,8 +142,8 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         :param connection_type: Type of workspace connection to list.
         :type connection_type: Optional[str]
-        :param include_data_connections: If true, also return data connections. Defaults to False.
-        :type include_data_connections: bool
+        :keyword include_data_connections: If true, also return data connections. Defaults to False.
+        :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
         :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
 

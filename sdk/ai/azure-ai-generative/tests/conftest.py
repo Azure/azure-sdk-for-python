@@ -137,6 +137,8 @@ def sanitized_environment_variables(
             "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
             "AI_RESOURCE_GROUP": "00000",
             "AI_WORKSPACE_NAME": "00000",
+            "AI_PROJECT_NAME": "00000",
+            "AI_TEAM_NAME": "00000",
             "AI_FEATURE_STORE_NAME": "00000",
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,

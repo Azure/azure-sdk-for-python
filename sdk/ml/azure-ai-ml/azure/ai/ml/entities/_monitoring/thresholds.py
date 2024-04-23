@@ -104,10 +104,6 @@ class NumericalDriftMetrics(RestTranslatableMixin):
             normalized_wasserstein_distance=0.1,
         )
 
-    @classmethod
-    def defaults(cls) -> "NumericalDriftMetrics":
-        return cls._get_default_thresholds()
-
 
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
@@ -165,13 +161,6 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return cls(
             jensen_shannon_distance=0.1,
         )
-
-    @classmethod
-    def defaults(cls) -> "CategoricalDriftMetrics":
-        return cls._get_default_thresholds()
-
-    def get_name_and_threshold(self) -> Tuple:
-        return self._find_name_and_threshold()
 
 
 class DataDriftMetricThreshold(MetricThreshold):
@@ -241,8 +230,8 @@ class DataDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics._get_default_thresholds(),
+            categorical=CategoricalDriftMetrics._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -316,8 +305,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics._get_default_thresholds(),
+            categorical=CategoricalDriftMetrics._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -576,9 +565,11 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
             metric=snake_to_camel(self.metric_name),
-            threshold=MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
-            if self.normalized_discounted_cumulative_gain
-            else None,
+            threshold=(
+                MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
+                if self.normalized_discounted_cumulative_gain
+                else None
+            ),
         )
 
     @classmethod

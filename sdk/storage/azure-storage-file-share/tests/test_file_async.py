@@ -2054,6 +2054,46 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_list_ranges_diff_support_rename(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        await file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        data = self.get_random_bytes(1536)
+        data2 = self.get_random_bytes(512)
+        await file_client.upload_range(data, offset=0, length=1536)
+        previous_snapshot = await share_client.create_snapshot()
+        await file_client.clear_range(offset=512, length=512)
+        await file_client.upload_range(data2, offset=512, length=512)
+        file_client = await file_client.rename_file(file_name + 'renamed')
+
+        # Assert
+        with pytest.raises(ResourceExistsError):
+            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot)
+        with pytest.raises(ResourceExistsError):
+            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=False)
+        ranges, cleared = await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=True)
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 1
+        assert isinstance(cleared, list)
+        assert len(cleared) == 0
+        assert ranges[0]['start'] == 512
+        assert ranges[0]['end'] == 1023
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_2(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -1,5 +1,18 @@
 # Release History
 
+## 3.1.0b1 (2024-03-18)
+
+### Features Added
+
+  - Added operation ConfigurationsOperations.analysis
+  - Model NginxCertificateProperties has a new parameter certificate_error
+  - Model NginxCertificateProperties has a new parameter key_vault_secret_created
+  - Model NginxCertificateProperties has a new parameter key_vault_secret_version
+  - Model NginxCertificateProperties has a new parameter sha1_thumbprint
+  - Model NginxDeploymentProperties has a new parameter auto_upgrade_profile
+  - Model NginxDeploymentScalingProperties has a new parameter profiles
+  - Model NginxDeploymentUpdateProperties has a new parameter auto_upgrade_profile
+
 ## 3.0.0 (2023-11-20)
 
 ### Features Added

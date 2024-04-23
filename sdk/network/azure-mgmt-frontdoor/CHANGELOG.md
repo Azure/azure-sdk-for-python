@@ -1,5 +1,14 @@
 # Release History
 
+## 1.2.0 (2024-04-15)
+
+### Features Added
+
+  - Model CustomRule has a new parameter group_by
+  - Model PolicySettings has a new parameter javascript_challenge_expiration_in_minutes
+  - Model PolicySettings has a new parameter scrubbing_rules
+  - Model PolicySettings has a new parameter state
+
 ## 1.1.0 (2023-05-19)
 
 ### Features Added

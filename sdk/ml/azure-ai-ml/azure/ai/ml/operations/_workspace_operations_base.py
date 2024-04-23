@@ -150,7 +150,11 @@ class WorkspaceOperationsBase(ABC):
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        (template, param, resources_being_deployed,) = self._populate_arm_parameters(
+        (
+            template,
+            param,
+            resources_being_deployed,
+        ) = self._populate_arm_parameters(
             workspace,
             endpoint_resource_id=endpoint_resource_id,
             endpoint_kind=endpoint_kind,
@@ -783,6 +787,7 @@ class WorkspaceOperationsBase(ABC):
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
         _set_val(param["resource_group_name"], resource_group)
+        _set_val(param["location"], workspace.location)
 
         update_workspace_role_assignment = kwargs.get("update_workspace_role_assignment", None)
         if update_workspace_role_assignment:

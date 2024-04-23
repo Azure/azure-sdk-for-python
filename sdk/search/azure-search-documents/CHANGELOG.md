@@ -1,5 +1,24 @@
 # Release History
 
+## 11.6.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the bug that SearchClient failed when both answer count and answer threshold applied.
+
+### Other Changes
+
+## 11.6.0b3 (2024-04-09)
+
+### Features Added
+
+- Added `IndexerExecutionEnvironment`, `IndexingMode`, `LineEnding`, `NativeBlobSoftDeleteDeletionDetectionPolicy`, `ScalarQuantizationCompressionConfiguration`, `ScalarQuantizationParameters`, `SearchServiceCounters`, `SearchServiceLimits`, `SearchServiceStatistics`, `VectorSearchCompressionConfiguration` & `VectorSearchCompressionTargetDataType`.
+- Added `stored` in `SearchField`.
+
 ## 11.6.0b2 (2024-03-05)
 
 ### Breaking Changes
@@ -9,6 +28,7 @@
 ### Bugs Fixed
 
 - Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
+- Fixed the issue that `context` was missing for `EntityRecognitionSkill` and `SentimentSkill`. #34623
 
 ### Other Changes
 

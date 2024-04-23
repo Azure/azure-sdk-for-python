@@ -33,7 +33,7 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
@@ -41,6 +41,9 @@
 ####
 # Service team
 ####
+
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceLabel: %AI
 
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
@@ -61,8 +64,10 @@
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # ServiceLabel: %Storage
+# ServiceOwners: @jalauzon-msft @vincenttran-msft
+
 # PRLabel: %Storage
-/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %App Configuration
@@ -106,6 +111,9 @@
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                           @DimaKolomiiets @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
+# PRLabel: %Communication - Messages
+/sdk/communication/azure-communication-messages/                      @shamkh
+
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
@@ -132,7 +140,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
-# PRLabel: %Load Testing
+# PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
@@ -241,9 +249,9 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230
+/sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/automl/                      @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
@@ -316,6 +324,8 @@
 
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
+# ServiceOwners: @trrwilson
+
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
@@ -331,8 +341,10 @@
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
-# AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
+# AzureSdkOwners: @xiangyan99
+# ServiceOwners:  @mattgotteiner
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -465,7 +477,7 @@
 #/<NotInRepo>/          @antcp @AzureAppServiceCLI
 
 # ServiceLabel: %App Configuration %Service Attention
-#/<NotInRepo>/          @shenmuxiaosen @avanigupta
+#/<NotInRepo>/          @albertofori @avanigupta @mrm9084
 
 # ServiceLabel: %ARO %Service Attention
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
@@ -684,7 +696,7 @@
 #/<NotInRepo>/          @NarayanThiru
 
 # ServiceLabel: %Azure Data Explorer %Service Attention
-#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft @sagivf @Aviv-Yaniv
+#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Lab Services %Service Attention
 #/<NotInRepo>/          @Tanmayeekamath
@@ -827,9 +839,6 @@
 # ServiceLabel: %Scheduler %Service Attention
 #/<NotInRepo>/          @derek1ee
 
-# ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
-
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav
 
@@ -865,9 +874,6 @@
 
 # ServiceLabel: %Service Attention %SQL - Replication & Failover
 #/<NotInRepo>/          @azureSQLGitHub
-
-# ServiceLabel: %Service Attention %Storage
-#/<NotInRepo>/          @xgithubtriage
 
 # ServiceLabel: %Service Attention %Storsimple
 #/<NotInRepo>/          @anoobbacker @ganzee @manuaery @patelkunal
@@ -907,9 +913,6 @@
 
 # ServiceLabel: %Network - Bastion %Service Attention
 #/<NotInRepo>/          @bastionsuppgithub
-
-# ServiceLabel: %Azure.Spring - Cosmos
-#/<NotInRepo>/          @kushagraThapar
 
 # ServiceLabel: %Network - Private Link %Service Attention
 #/<NotInRepo>/          @privlinksuppgithub
@@ -951,7 +954,7 @@
 #/<NotInRepo>/          @shivanissambare
 
 # ServiceLabel: %ML-Jobs
-#/<NotInRepo>/          @DouglasXiaoMS @TonyJ1 @wangchao1230
+#/<NotInRepo>/          @TonyJ1 @wangchao1230
 
 # ServiceLabel: %ML-Local Endpoints
 #/<NotInRepo>/          @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
@@ -1012,6 +1015,8 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
