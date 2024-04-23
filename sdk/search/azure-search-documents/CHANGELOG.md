@@ -4,6 +4,24 @@
 
 ### Features Added
 
+- Added new models:
+  - azure.search.documents.models.SearchScoreThreshold
+  - azure.search.documents.models.VectorSimilarityThreshold
+  - azure.search.documents.models.VectorThreshold
+  - azure.search.documents.models.VectorThresholdKind
+  - azure.search.documents.models.VectorizableImageBinaryQuery
+  - azure.search.documents.models.VectorizableImageUrlQuery
+  - azure.search.documents.indexes.models.AIServicesVisionParameters
+  - azure.search.documents.indexes.models.AIServicesVisionVectorizer
+  - azure.search.documents.indexes.models.AIStudioModelCatalogName
+  - azure.search.documents.indexes.models.AzureMachineLearningParameters
+  - azure.search.documents.indexes.models.AzureMachineLearningVectorizer
+  - azure.search.documents.indexes.models.AzureOpenAIModelName
+  - azure.search.documents.indexes.models.VectorEncodingFormat
+  - azure.search.documents.indexes.models.VisionVectorizeSkill
+- Added `hybrid_search` support for `SearchClient.search` method.
+- Updated default API version to `2024-05-01-Preview`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
