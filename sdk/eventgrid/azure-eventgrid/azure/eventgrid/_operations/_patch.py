@@ -12,7 +12,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    IO,
     List,
     Optional,
     TypeVar,
@@ -22,12 +21,8 @@ from typing import (
 )
 
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
 )
 from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
@@ -36,7 +31,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
-from .._model_base import _deserialize
 from ..models._patch import (
     ReceiveResult,
     ReceiveDetails,
@@ -616,7 +610,7 @@ def _serialize_events(events):
             internal_body_list = []
             for item in events:
                 internal_body_list.append(_serialize_cloud_event(item))
-            return
+            return internal_body_list
         except AttributeError:
             # Try to serialize CNCF Cloud Events
             return [_from_cncf_events(e) for e in events]
