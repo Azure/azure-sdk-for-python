@@ -149,8 +149,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     ) -> None:
         """Send events to the Event Grid Basic Service.
 
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
          or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
@@ -177,8 +177,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -198,13 +198,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace
-    def send(self, *args, **kwargs) -> None:
+    def send(self, *args, **kwargs) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
@@ -304,12 +304,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
             raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
         try:
             if not isinstance(event, CloudEvent):
-                    try:
-                        # Convert to CloudEvent if it is a dictionary
-                        event = CloudEvent.from_dict(event)
-                    except AttributeError:
-                        # Convert to CloudEvent if it is a CNCF CloudEvent dict
-                        event = CloudEvent.from_dict(_from_cncf_events(event))
+                try:
+                    # Convert to CloudEvent if it is a dictionary
+                    event = CloudEvent.from_dict(event)
+                except AttributeError:
+                    # Convert to CloudEvent if it is a CNCF CloudEvent dict
+                    event = CloudEvent.from_dict(_from_cncf_events(event))
         except AttributeError:
             raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
 

@@ -5,27 +5,21 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar, IO
+from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar
 import sys
 from azure.core.messaging import CloudEvent
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
-from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
 from ..._operations._patch import _to_http_request, use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
 from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
-from ..._model_base import _deserialize
 from ..._validation import api_version_validation
 
 from ..._operations._patch import (
@@ -36,7 +30,7 @@ from ..._operations._patch import (
 )
 
 from ..._legacy import EventGridEvent
-from ..._legacy._helpers import _is_eventgrid_event, _is_cloud_event, _from_cncf_events
+from ..._legacy._helpers import _is_eventgrid_event, _from_cncf_events
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -60,8 +54,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     ) -> None:
         """Send events to the Event Grid Basic Service.
 
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
          or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
@@ -88,8 +82,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -109,13 +103,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace_async
-    async def send(self, *args, **kwargs) -> None:
+    async def send(self, *args, **kwargs) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Namespace Service.
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -215,10 +209,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         try:
             if not isinstance(event, CloudEvent):
                 # if isinstance(event, dict):
-                    try:
-                        event = CloudEvent.from_dict(event)
-                    except AttributeError:
-                        event = CloudEvent.from_dict(_from_cncf_events(event))
+                try:
+                    event = CloudEvent.from_dict(event)
+                except AttributeError:
+                    event = CloudEvent.from_dict(_from_cncf_events(event))
 
         except AttributeError:
             raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
