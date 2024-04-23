@@ -42,11 +42,6 @@ class IndexOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
     property MLClient.index
-
-    :param operation_scope: Scope variables for the operations classes of an MLClient object.
-    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
-    :param operation_config: Common configuration for operations classes of an MLClient object.
-    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     """
 
     def __init__(
