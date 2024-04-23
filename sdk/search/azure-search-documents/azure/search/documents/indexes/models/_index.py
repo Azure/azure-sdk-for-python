@@ -11,7 +11,6 @@ from .._generated.models import (
     SearchIndex as _SearchIndex,
     PatternTokenizer as _PatternTokenizer,
     LexicalAnalyzerName,
-    VectorEncodingFormat,
 )
 from ._models import (
     pack_analyzer,
