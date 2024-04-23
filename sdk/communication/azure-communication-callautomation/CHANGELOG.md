@@ -1,17 +1,13 @@
 # Release History
 
-## 1.2.0 (Unreleased)
-
-### Features Added
-- StartRecording now accepts PauseOnStart.
-- Introduced recording kind to the recording state result.
-- You can store your recording in your own storage - Bring-your-own-storage.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+## 1.2.0 (2024-04-15)
+### Features Added 
+- Support for Bring Your Own Storage recording option
+- Support for PauseOnStart Recording Option 
+- Support for Recording state change with Recording Kind
+- 
+### Other Changes 
+- Support for MicrosoftTeamsAppIdentifier CommunicationIdentifier
 
 ## 1.1.0 (2023-11-23)
 ### Features Added
