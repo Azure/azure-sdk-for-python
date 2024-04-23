@@ -17,7 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document.models import StartTranslationDetails as _StartTranslationDetails
-from azure.ai.translation.document.models._patch import DocumentTranslationInput, TranslationTarget, TranslationGlossary
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget, TranslationGlossary
 from azure.ai.translation.document.aio import DocumentTranslationClient
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -456,7 +456,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         target_container_sas_url = self.create_target_container(variables=variables)
 
         def callback(request):
-            req = _StartTranslationDetails.deserialize(json.loads(request.http_request.body))
+            req = _StartTranslationDetails._deserialize(json.loads(request.http_request.body),[])
             input = req.inputs[0]
             assert input.source.source_url == source_container_sas_url
             assert input.source.language == "en"
