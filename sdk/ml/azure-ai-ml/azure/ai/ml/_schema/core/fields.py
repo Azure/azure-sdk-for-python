@@ -796,7 +796,7 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")
+        raise Exception(f"Type {type(value)} is not supported for version.")  # pylint: disable=broad-except
 
 
 class NumberVersionField(VersionField):

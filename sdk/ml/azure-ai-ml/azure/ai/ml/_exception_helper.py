@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Optional, Tuple, Union, NoReturn
+from typing import Dict, NoReturn, Optional, Tuple, Union
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -334,4 +334,4 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
     else:
         raise error
 
-    raise Exception(formatted_error)
+    raise Exception(formatted_error)  # pylint: disable=broad-except

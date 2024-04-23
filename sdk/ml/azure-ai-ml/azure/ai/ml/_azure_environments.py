@@ -73,7 +73,7 @@ def _get_cloud(cloud: str) -> Dict[str, str]:
         _environments.update(new_cloud)  # type: ignore[arg-type]
         return new_cloud
     except KeyError as e:
-        raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e
+        raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e  # pylint: disable=broad-except
 
 
 def _get_default_cloud_name() -> str:
@@ -111,7 +111,9 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
         try:
             _get_cloud(cloud)
         except Exception as e:
-            raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud)) from e
+            raise Exception(
+                'Unknown cloud environment supplied: "{0}".'.format(cloud)
+            ) from e  # pylint: disable=broad-except
     else:
         cloud = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud

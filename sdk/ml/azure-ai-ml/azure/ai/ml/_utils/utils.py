@@ -965,7 +965,7 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
     :rtype: ListViewType
     """
     if include_archived and archived_only:
-        raise Exception("Cannot provide both archived-only and include-archived.")
+        raise Exception("Cannot provide both archived-only and include-archived.")  # pylint: disable=broad-except
     if include_archived:
         return ListViewType.ALL
     if archived_only:
@@ -1254,7 +1254,7 @@ class DockerProxy:
 
             return getattr(docker, name)
         except ModuleNotFoundError as e:
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-except
                 "Please install docker in the current python environment with `pip install docker` and try again."
             ) from e
 

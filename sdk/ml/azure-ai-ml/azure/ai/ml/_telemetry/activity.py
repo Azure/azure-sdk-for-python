@@ -211,7 +211,7 @@ def log_activity(
                 and activityLogger.activity_info["errorCategory"]  # type: ignore[index]
                 in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ):
-                raise Exception("Got InternalSDKError", e) from e
+                raise Exception("Got InternalSDKError", e) from e  # pylint: disable=broad-except
             raise
         raise
     finally:

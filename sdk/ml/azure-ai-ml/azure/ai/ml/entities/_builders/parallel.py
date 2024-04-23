@@ -423,7 +423,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             elif isinstance(parallel_attr, dict):
                 rest_attr = parallel_attr
             else:
-                raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
+                raise Exception(
+                    f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
+                )  # pylint: disable=broad-except
         # TODO: Bug Item number: 2897665
         res: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
         return res
@@ -541,7 +543,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             node.environment_variables = copy.deepcopy(self.environment_variables)
             node.identity = copy.deepcopy(self.identity)
             return node
-        raise Exception(
+        raise Exception(  # pylint: disable=broad-except
             f"Parallel can be called as a function only when referenced component is {type(Component)}, "
             f"currently got {self._component}."
         )

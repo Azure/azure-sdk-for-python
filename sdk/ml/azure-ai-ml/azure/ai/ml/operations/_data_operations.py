@@ -784,7 +784,7 @@ class DataOperations(_ScopeDependentOperations):
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
         except ImportError as exc:
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-except
                 "Mount operations requires package azureml-dataprep-rslex installed. "
                 + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
             ) from exc
@@ -821,9 +821,13 @@ class DataOperations(_ScopeDependentOperations):
                     if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
-                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                        raise Exception(
+                            f"Mount failed [name: {mount_name}]: {mount.error}"
+                        )  # pylint: disable=broad-except
                     else:
-                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                        raise Exception(
+                            f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        )  # pylint: disable=broad-except
                 except IndexError:
                     pass
                 time.sleep(5)
