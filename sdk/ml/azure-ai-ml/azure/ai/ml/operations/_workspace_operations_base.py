@@ -115,7 +115,7 @@ class WorkspaceOperationsBase(ABC):
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
-        except Exception:  # pylint: disable=broad-exception
+        except Exception:  # pylint: disable=W0718
             pass
 
         # idempotent behavior
@@ -150,11 +150,7 @@ class WorkspaceOperationsBase(ABC):
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        (
-            template,
-            param,
-            resources_being_deployed,
-        ) = self._populate_arm_parameters(
+        (template, param, resources_being_deployed,) = self._populate_arm_parameters(
             workspace,
             endpoint_resource_id=endpoint_resource_id,
             endpoint_kind=endpoint_kind,
@@ -1045,7 +1041,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
 
             if self.poller._exception is not None:
                 error = self.poller._exception
-        except Exception as e:  # pylint: disable=broad-exception
+        except Exception as e:  # pylint: disable=W0718
             error = e
         finally:
             # one last check to make sure all print statements make it

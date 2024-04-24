@@ -69,7 +69,7 @@ def _resolve_source_file() -> Optional[Path]:
             ):
                 module = inspect.getmodule(last_frame.frame)
                 return Path(str(module.__file__)).absolute() if module else None
-    except Exception:  # pylint: disable=broad-exception
+    except Exception:  # pylint: disable=W0718
         pass
     return None
 

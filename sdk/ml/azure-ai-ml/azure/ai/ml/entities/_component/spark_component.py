@@ -202,6 +202,6 @@ class SparkComponent(
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-exception
+        except BaseException:  # pylint: disable=W0718
             toStr: str = super(SparkComponent, self).__str__()
             return toStr

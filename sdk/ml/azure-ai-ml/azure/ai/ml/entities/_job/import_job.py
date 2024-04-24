@@ -180,11 +180,11 @@ class ImportJob(Job, JobIOMixin):
     def _to_rest_object(self) -> JobBaseData:
         # TODO: Remove in PuP
         if not is_private_preview_enabled():
-            raise Exception(JobType.IMPORT + " job not supported.")  # pylint: disable=broad-exception
+            raise Exception(JobType.IMPORT + " job not supported.")  # pylint: disable=W0718
 
         _inputs = self.source._to_job_inputs() if self.source is not None else None  # pylint: disable=protected-access
         if self.compute is None:
-            raise Exception("compute cannot be None.")  # pylint: disable=broad-exception
+            raise Exception("compute cannot be None.")  # pylint: disable=W0718
 
         properties = RestCommandJob(
             display_name=self.display_name,

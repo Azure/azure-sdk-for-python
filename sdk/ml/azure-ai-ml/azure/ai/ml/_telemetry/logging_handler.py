@@ -9,7 +9,7 @@
 import logging
 import platform
 import traceback
-from typing import Optional, Tuple, Union, Any
+from typing import Any, Optional, Tuple, Union
 
 from opencensus.ext.azure.common import utils
 from opencensus.ext.azure.common.protocol import Data, Envelope, ExceptionData, Message
@@ -148,7 +148,7 @@ def get_appinsights_log_handler(
         )
 
         return (handler, tracer)
-    except Exception:  # pylint: disable=broad-exception
+    except Exception:  # pylint: disable=W0718
         # ignore any exceptions, telemetry collection errors shouldn't block an operation
         return (logging.NullHandler(), None)
 
@@ -174,7 +174,7 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             # log the record immediately if it is an error
             if record.exc_info and not all(item is None for item in record.exc_info):
                 self._queue.flush()
-        except Exception:  # pylint: disable=broad-exception
+        except Exception:  # pylint: disable=W0718
             # ignore any exceptions, telemetry collection errors shouldn't block an operation
             return
 

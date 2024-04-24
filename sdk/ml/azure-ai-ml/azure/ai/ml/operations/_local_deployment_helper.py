@@ -98,7 +98,7 @@ class _LocalDeploymentHelper(object):
                 deployment_metadata=deployment_metadata,
             )
             return self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
-        except Exception as ex:  # pylint: disable=broad-exception
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -203,11 +203,7 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (
-            model_name,
-            model_version,
-            model_directory_path,
-        ) = get_model_artifacts(  # type: ignore[misc]
+        (model_name, model_version, model_directory_path,) = get_model_artifacts(  # type: ignore[misc]
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,

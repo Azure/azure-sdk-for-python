@@ -211,7 +211,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return poller
             except Exception as ex:
                 raise ex
-        except Exception as ex:  # pylint: disable=broad-exception
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

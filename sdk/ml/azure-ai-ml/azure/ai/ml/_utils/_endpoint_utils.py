@@ -122,7 +122,7 @@ def validate_response(response: HttpResponse) -> None:
                 r_json = response.json()
             except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=broad-exception
+                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=W0718
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,

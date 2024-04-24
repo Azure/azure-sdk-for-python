@@ -216,7 +216,7 @@ def _check_region_fqdn(workspace_region, response):
     if workspace_region in response.additional_properties["registryFqdns"].keys():
         return
     regions = list(response.additional_properties["registryFqdns"].keys())
-    raise Exception(  # pylint: disable=broad-exception
+    raise Exception(  # pylint: disable=W0718
         f"Workspace region {workspace_region} not supported by the \
                     registry {response.registry_name} regions {regions}"
     )

@@ -326,7 +326,7 @@ class DataOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-exception
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -545,7 +545,7 @@ class DataOperations(_ScopeDependentOperations):
                         requests_pipeline=self._requests_pipeline,
                     )
                     metadata_yaml_path = None
-                except Exception:  # pylint: disable=broad-exception
+                except Exception:  # pylint: disable=W0718
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return None
@@ -577,7 +577,7 @@ class DataOperations(_ScopeDependentOperations):
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return cast(Optional[Dict], download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline))
-        except Exception:  # pylint: disable=broad-exception
+        except Exception:  # pylint: disable=W0718
             module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
@@ -784,7 +784,7 @@ class DataOperations(_ScopeDependentOperations):
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
         except ImportError as exc:
-            raise Exception(  # pylint: disable=broad-exception
+            raise Exception(  # pylint: disable=W0718
                 "Mount operations requires package azureml-dataprep-rslex installed. "
                 + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
             ) from exc
@@ -821,13 +821,11 @@ class DataOperations(_ScopeDependentOperations):
                     if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
-                        raise Exception(
-                            f"Mount failed [name: {mount_name}]: {mount.error}"
-                        )  # pylint: disable=broad-exception
+                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")  # pylint: disable=W0718
                     else:
                         raise Exception(
                             f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
-                        )  # pylint: disable=broad-exception
+                        )  # pylint: disable=W0718
                 except IndexError:
                     pass
                 time.sleep(5)

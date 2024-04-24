@@ -437,7 +437,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                     datastore_operations=self._datastore_operation,
                 )
                 featureset_spec_path = None
-            except Exception as ex:  # pylint: disable=broad-exception
+            except Exception as ex:  # pylint: disable=W0718
                 module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
                 raise ex
             return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)

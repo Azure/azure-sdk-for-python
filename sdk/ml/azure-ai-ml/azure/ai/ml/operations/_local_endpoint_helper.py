@@ -63,7 +63,7 @@ class _LocalEndpointHelper(object):
                 endpoint=endpoint,
             )
             return self.get(endpoint_name=str(endpoint.name))
-        except Exception as ex:  # pylint: disable=broad-exception
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

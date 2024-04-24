@@ -85,7 +85,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         try:
             _toYaml: str = self._to_yaml()
             return _toYaml
-        except BaseException:  # pylint: disable=broad-exception
+        except BaseException:  # pylint: disable=W0718
             _toStr: str = super(DataTransferComponent, self).__str__()
             return _toStr
 

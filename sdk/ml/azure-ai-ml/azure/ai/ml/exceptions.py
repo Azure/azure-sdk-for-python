@@ -403,7 +403,7 @@ class ValidationException(MlException):
         else:
             raise Exception(
                 f"Error type {error_type} is not a member of the ValidationErrorType enum class."
-            )  # pylint: disable=broad-exception
+            )  # pylint: disable=W0718
 
     @property
     def error_type(self):

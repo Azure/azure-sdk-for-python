@@ -145,7 +145,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             for obj in objs:
                 try:
                     result.append(Schedule._from_rest_object(obj))
-                except Exception as e:  # pylint: disable=broad-exception
+                except Exception as e:  # pylint: disable=W0718
                     print(f"Translate {obj.name} to Schedule failed with: {e}")
             return result
 

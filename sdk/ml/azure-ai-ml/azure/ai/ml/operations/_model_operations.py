@@ -162,7 +162,7 @@ class ModelOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-exception
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -230,7 +230,7 @@ class ModelOperations(_ScopeDependentOperations):
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
 
-            except Exception as e:  # pylint: disable=broad-exception
+            except Exception as e:  # pylint: disable=W0718
                 # service side raises an exception if we attempt to update an existing asset's path
                 if str(e) == ASSET_PATH_ERROR:
                     raise AssetPathException(
@@ -247,7 +247,7 @@ class ModelOperations(_ScopeDependentOperations):
                 _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
 
             return model
-        except Exception as ex:  # pylint: disable=broad-exception
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
@@ -368,7 +368,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 try:
                     credential = ds.credentials.sas_token
-                except Exception as e:  # pylint: disable=broad-exception
+                except Exception as e:  # pylint: disable=W0718
                     if not hasattr(ds.credentials, "sas_token"):
                         credential = self._datastore_operation._credential
                     else:

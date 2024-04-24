@@ -334,4 +334,4 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
     else:
         raise error
 
-    raise Exception(formatted_error)  # pylint: disable=broad-exception
+    raise Exception(formatted_error)  # pylint: disable=W0718

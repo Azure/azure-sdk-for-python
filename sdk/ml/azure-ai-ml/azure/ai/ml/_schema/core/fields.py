@@ -648,7 +648,7 @@ class TypeSensitiveUnionField(UnionField):
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
                 with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             pass
         return value
 
@@ -796,7 +796,7 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")  # pylint: disable=broad-except
+        raise Exception(f"Type {type(value)} is not supported for version.")  # pylint: disable=W0718
 
 
 class NumberVersionField(VersionField):
