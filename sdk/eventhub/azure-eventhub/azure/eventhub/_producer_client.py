@@ -272,10 +272,13 @@ class EventHubProducerClient(
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
-    def _batch_preparer(self, event_data_batch, **kwargs):
-        partition_id = kwargs.pop("partition_id", None)
-        partition_key = kwargs.pop("partition_key", None)
-
+    def _batch_preparer(
+            self,
+            event_data_batch: Union[EventDataBatch, SendEventTypes],
+            *,
+            partition_id: Optional[str] = None,
+            partition_key: Optional[str] = None
+        ):
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError(
@@ -297,13 +300,24 @@ class EventHubProducerClient(
             partition_key,
         )
 
-    def _buffered_send_batch(self, event_data_batch, **kwargs):
-        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+    def _buffered_send_batch( # pylint: disable=unused-argument
+        self,
+        event_data_batch: Union[EventDataBatch, SendEventTypes],
+        *,
+        timeout: Optional[float] = None,
+        partition_key: Optional[str] = None,
+        partition_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        batch, pid, pkey = self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
-        timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
 
         self._buffered_send(
@@ -313,14 +327,20 @@ class EventHubProducerClient(
             timeout_time=timeout_time,
         )
 
-    def _buffered_send_event(self, event, **kwargs):
-        partition_key = kwargs.get("partition_key")
+    def _buffered_send_event(
+        self,  # pylint: disable=unused-argument
+        event: Union[EventData, AmqpAnnotatedMessage],
+        *,
+        timeout: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        **kwargs: Any # pylint: disable=unused-argument
+    ) -> None:
         set_event_partition_key(event, partition_key, self._amqp_transport)
-        timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         self._buffered_send(
             event,
-            partition_id=kwargs.get("partition_id"),
+            partition_id=partition_id,
             partition_key=partition_key,
             timeout_time=timeout_time,
         )
@@ -550,10 +570,10 @@ class EventHubProducerClient(
         self,  # pylint: disable=unused-argument
         event_data: Union[EventData, AmqpAnnotatedMessage],
         *,
+        timeout: Optional[float] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any # pylint: disable=unused-argument
     ) -> None:
         """
         Sends an event data.
@@ -623,9 +643,13 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def send_batch(
+    def send_batch( # pylint: disable=unused-argument
         self,
         event_data_batch: Union[EventDataBatch, SendEventTypes],
+        *,
+        timeout: Optional[float] = None,
+        partition_key: Optional[str] = None,
+        partition_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         # pylint: disable=protected-access
@@ -697,13 +721,17 @@ class EventHubProducerClient(
                 :caption: Sends event data
 
         """
-        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+        batch, pid, pkey = self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
         partition_id = pid or ALL_PARTITIONS
-        send_timeout = kwargs.pop("timeout", None)
+        send_timeout = timeout
 
         try:
             try:
