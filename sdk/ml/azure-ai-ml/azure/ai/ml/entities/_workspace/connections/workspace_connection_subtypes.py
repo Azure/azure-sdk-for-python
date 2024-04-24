@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-import resource
 from typing import Any, List, Optional, Type, Union
 import re
 
