@@ -2688,7 +2688,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert e.value.response.headers["x-ms-copy-source-status-code"] == "400"
         assert e.value.response.headers["x-ms-copy-source-error-code"] == "InvalidQueryParameterValue"
-        assert "Value for one of the query parameters specified in the request URI is invalid." in e.value.message
+        assert ("copysourceerrormessage:Value for one of the query parameters specified in the "
+                "request URI is invalid.") in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy_async
