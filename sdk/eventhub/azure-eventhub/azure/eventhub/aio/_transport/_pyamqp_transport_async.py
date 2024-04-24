@@ -21,7 +21,6 @@ from ...exceptions import (
     EventDataSendError,
     OperationTimeoutError
 )
-from ..._common import EventData
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
