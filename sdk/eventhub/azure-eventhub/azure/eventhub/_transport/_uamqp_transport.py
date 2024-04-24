@@ -280,7 +280,22 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(**kwargs):
+        def create_connection(# pylint:disable=unused-argument
+            *,
+            host: str,
+            auth: authentication.JWTTokenAuth,
+            endpoint: str,
+            container_id: str,
+            max_frame_size: int,
+            channel_max: int,
+            idle_timeout: int,
+            properties: Dict[bytes, Any],
+            remote_idle_timeout_empty_frame_send_ratio: int,
+            error_policy: Any,
+            debug: bool,
+            encoding: str,
+            **kwargs: Any
+        ) -> Connection:
             """
             Creates and returns the uamqp Connection object.
             :keyword str host: The hostname, used by uamqp.
@@ -301,12 +316,19 @@ if uamqp_installed:
 
             """
             endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
-            custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
             host = kwargs.pop("host")
             auth = kwargs.pop("auth")
             return Connection(
                 host,
                 auth,
+                container_id=container_id,
+                max_frame_size=max_frame_size,
+                channel_max=channel_max,
+                idle_timeout=idle_timeout,
+                properties=properties,
+                remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+                encoding=encoding,
+                debug=debug,
                 **kwargs
             )
 

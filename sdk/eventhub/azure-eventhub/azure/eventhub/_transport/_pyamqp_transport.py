@@ -234,7 +234,22 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         }
 
     @staticmethod
-    def create_connection(**kwargs):
+    def create_connection(# pylint:disable=unused-argument
+        *,
+        host: str,
+        auth: JWTTokenAuth,
+        endpoint: str,
+        container_id: str,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: int,
+        properties: Dict[bytes, Any],
+        remote_idle_timeout_empty_frame_send_ratio: int,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs: Any
+    ) -> Connection:
         """
         Creates and returns the uamqp Connection object.
         :keyword str host: The hostname, used by uamqp.
@@ -253,11 +268,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The connection object.
         :rtype: ~pyamqp.Connection
         """
-        endpoint = kwargs.pop("endpoint")
         host = kwargs.pop("host")  # pylint:disable=unused-variable
         auth = kwargs.pop("auth")  # pylint:disable=unused-variable
-        network_trace = kwargs.pop("debug")
-        return Connection(endpoint, network_trace=network_trace, **kwargs)
+        network_trace = debug
+        return Connection(
+            endpoint,
+            container_id=container_id,
+            max_frame_size=max_frame_size,
+            channel_max=channel_max,
+            idle_timeout=idle_timeout,
+            properties=properties,
+            idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+            network_trace=network_trace,
+            **kwargs
+        )
 
     @staticmethod
     def close_connection(connection):

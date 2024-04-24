@@ -152,7 +152,22 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_connection(**kwargs: Any):
+    def create_connection(
+        *,
+        host: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        endpoint: str,
+        container_id: str,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: int,
+        properties: Dict[bytes, Any],
+        remote_idle_timeout_empty_frame_send_ratio: int,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs: Any
+    ) -> Union[uamqp_Connection, pyamqp_Connection]:
         """
         Creates and returns the uamqp Connection object.
         :keyword str host: The hostname, used by uamqp.

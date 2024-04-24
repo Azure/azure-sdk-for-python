@@ -35,7 +35,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(**kwargs) -> ConnectionAsync:
+    async def create_connection_async(# pylint:disable=unused-argument
+        *,
+        host: str,
+        auth: JWTTokenAuthAsync,
+        endpoint: str,
+        container_id: str,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: int,
+        properties: Dict[bytes, Any],
+        remote_idle_timeout_empty_frame_send_ratio: int,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs: Any
+    ) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
         :keyword str host: The hostname, used by pyamqp.
@@ -54,11 +69,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created ConnectionAsync.
         :rtype: ~pyamqp.aio.Connection
         """
-        endpoint = kwargs.pop("endpoint")
         host = kwargs.pop("host")  # pylint:disable=unused-variable
         auth = kwargs.pop("auth")  # pylint:disable=unused-variable
-        network_trace = kwargs.pop("debug")
-        return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
+        network_trace = debug
+        return ConnectionAsync(
+            endpoint,
+            container_id=container_id,
+            max_frame_size=max_frame_size,
+            channel_max=channel_max,
+            idle_timeout=idle_timeout,
+            properties=properties,
+            idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+            network_trace=network_trace,
+            **kwargs
+        )
 
     @staticmethod
     async def close_connection_async(connection):
