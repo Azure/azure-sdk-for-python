@@ -35,8 +35,6 @@ class Index(Artifact):
     :vartype properties: Optional[dict[str, str]]
     :ivar path: The local or remote path to the asset.
     :vartype path: Optional[Union[str, os.PathLike]]
-    :ivar datastore: The datastore to upload the local artifact to.
-    :vartype datastore: Optional[str]
     """
 
     def __init__(
