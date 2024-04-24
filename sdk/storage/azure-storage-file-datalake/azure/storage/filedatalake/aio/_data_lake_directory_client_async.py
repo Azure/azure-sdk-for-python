@@ -221,7 +221,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: None
+        :returns: None.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -280,6 +281,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties
 
         .. admonition:: Example:
@@ -357,7 +361,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient
+        :returns: DataLakeDirectoryClient containing the renamed directory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -457,7 +462,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory.
+        :returns: DataLakeDirectoryClient for the subdirectory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.create_directory(metadata=metadata, **kwargs)
@@ -501,7 +507,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeDirectoryClient for the subdirectory
+        :returns: DataLakeDirectoryClient for the subdirectory.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.delete_directory(**kwargs)
@@ -593,7 +600,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: DataLakeFileClient
+        :returns: DataLakeFileClient with the new file.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)

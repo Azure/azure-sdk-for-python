@@ -95,5 +95,5 @@ def azure_monitor_opentelemetry_sampler_factory(sampler_argument):  # pylint: di
     try:
         rate = float(sampler_argument)
         return ApplicationInsightsSampler(rate)
-    except ValueError:
+    except (ValueError, TypeError):
         return ApplicationInsightsSampler()

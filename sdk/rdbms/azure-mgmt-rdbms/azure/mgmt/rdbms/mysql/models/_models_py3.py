@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -17,10 +17,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,7 +30,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -70,7 +66,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -79,22 +75,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Advisor(ProxyResource):
     """Represents a recommendation action advisor.
@@ -102,7 +82,7 @@ class Advisor(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -189,7 +169,7 @@ class Configuration(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -274,7 +254,7 @@ class Database(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -410,10 +390,10 @@ class FirewallRule(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -490,7 +470,7 @@ class LogFile(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -614,7 +594,7 @@ class NameAvailability(_serialization.Model):
 class NameAvailabilityRequest(_serialization.Model):
     """Request from client to check resource name availability.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Resource name to verify. Required.
     :vartype name: str
@@ -928,7 +908,7 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1039,7 +1019,7 @@ class PrivateLinkResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1126,12 +1106,12 @@ class PrivateLinkResourceProperties(_serialization.Model):
         self.required_members = None
 
 
-class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
     """PrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The private link service connection status. Required.
     :vartype status: str
@@ -1206,7 +1186,7 @@ class QueryStatistic(ProxyResource):  # pylint: disable=too-many-instance-attrib
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1313,7 +1293,7 @@ class QueryText(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1386,7 +1366,7 @@ class RecommendationAction(ProxyResource):  # pylint: disable=too-many-instance-
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1546,7 +1526,7 @@ class RecoverableServerResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1645,10 +1625,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1693,10 +1673,10 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1883,7 +1863,7 @@ class ServerAdministratorResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1965,7 +1945,7 @@ class ServerAdministratorResourceListResult(_serialization.Model):
 class ServerForCreate(_serialization.Model):
     """Represents a server to be created.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar identity: The Azure Active Directory identity of the server.
     :vartype identity: ~azure.mgmt.rdbms.mysql.models.ResourceIdentity
@@ -2028,7 +2008,7 @@ class ServerKey(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2159,7 +2139,7 @@ class ServerPrivateEndpointConnection(_serialization.Model):
         self.properties = None
 
 
-class ServerPrivateEndpointConnectionProperties(_serialization.Model):
+class ServerPrivateEndpointConnectionProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of a private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2212,12 +2192,12 @@ class ServerPrivateEndpointConnectionProperties(_serialization.Model):
         self.provisioning_state = None
 
 
-class ServerPrivateLinkServiceConnectionStateProperty(_serialization.Model):
+class ServerPrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
     """ServerPrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The private link service connection status. Required. Known values are:
      "Approved", "Pending", "Rejected", and "Disconnected".
@@ -2265,7 +2245,7 @@ class ServerPropertiesForCreate(_serialization.Model):
     ServerPropertiesForDefaultCreate, ServerPropertiesForGeoRestore, ServerPropertiesForRestore,
     ServerPropertiesForReplica
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: Server version. Known values are: "5.6", "5.7", and "8.0".
     :vartype version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -2357,7 +2337,7 @@ class ServerPropertiesForCreate(_serialization.Model):
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     """The properties used to create a new server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: Server version. Known values are: "5.6", "5.7", and "8.0".
     :vartype version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -2463,7 +2443,7 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
     """The properties used to create a new server by restoring to a different region from a geo
     replicated backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: Server version. Known values are: "5.6", "5.7", and "8.0".
     :vartype version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -2556,7 +2536,7 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
 class ServerPropertiesForReplica(ServerPropertiesForCreate):
     """The properties to create a new replica.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: Server version. Known values are: "5.6", "5.7", and "8.0".
     :vartype version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -2649,7 +2629,7 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
 class ServerPropertiesForRestore(ServerPropertiesForCreate):
     """The properties used to create a new server by restoring from a backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: Server version. Known values are: "5.6", "5.7", and "8.0".
     :vartype version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -2755,7 +2735,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2993,7 +2973,7 @@ class ServerUpgradeParameters(_serialization.Model):
 class Sku(_serialization.Model):
     """Billing information related properties of a server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1, GP_Gen5_8.
      Required.
@@ -3126,7 +3106,7 @@ class TagsObject(_serialization.Model):
 class TopQueryStatisticsInput(_serialization.Model):
     """Input to get top query statistics.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar number_of_top_queries: Max number of top queries to return. Required.
     :vartype number_of_top_queries: int
@@ -3228,7 +3208,7 @@ class VirtualNetworkRule(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3315,7 +3295,7 @@ class WaitStatistic(ProxyResource):  # pylint: disable=too-many-instance-attribu
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3412,7 +3392,7 @@ class WaitStatistic(ProxyResource):  # pylint: disable=too-many-instance-attribu
 class WaitStatisticsInput(_serialization.Model):
     """Input to get wait statistics.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar observation_start_time: Observation start time. Required.
     :vartype observation_start_time: ~datetime.datetime

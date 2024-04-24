@@ -1,4 +1,5 @@
 """Script for mock components."""
+
 import argparse
 import logging
 import sys

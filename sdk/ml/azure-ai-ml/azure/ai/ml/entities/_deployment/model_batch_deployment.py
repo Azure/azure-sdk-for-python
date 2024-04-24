@@ -126,9 +126,11 @@ class ModelBatchDeployment(Deployment):
             ),
             error_threshold=deployment_settings.error_threshold,
             resources=self.resources._to_rest_object() if self.resources else None,  # pylint: disable=protected-access
-            retry_settings=deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
-            if deployment_settings.retry_settings
-            else None,
+            retry_settings=(
+                deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
+                if deployment_settings.retry_settings
+                else None
+            ),
             logging_level=deployment_settings.logging_level,
             mini_batch_size=deployment_settings.mini_batch_size,
             max_concurrency_per_instance=deployment_settings.max_concurrency_per_instance,

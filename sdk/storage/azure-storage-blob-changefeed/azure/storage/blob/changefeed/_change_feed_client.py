@@ -33,6 +33,11 @@ class ChangeFeedClient(object):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_single_get_size:
@@ -79,7 +84,11 @@ class ChangeFeedClient(object):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
 

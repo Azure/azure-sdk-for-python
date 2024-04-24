@@ -27,7 +27,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 class CheckNameAvailabilityParameters(_serialization.Model):
     """Input values.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the service instance to check. Required.
     :vartype name: str
@@ -349,6 +349,10 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
     :vartype event_state: str or ~azure.mgmt.healthcareapis.models.ServiceEventState
     :ivar encryption: The encryption settings of the DICOM service.
     :vartype encryption: ~azure.mgmt.healthcareapis.models.Encryption
+    :ivar storage_configuration: The configuration of external storage account.
+    :vartype storage_configuration: ~azure.mgmt.healthcareapis.models.StorageConfiguration
+    :ivar enable_data_partitions: If data partitions is enabled or not.
+    :vartype enable_data_partitions: bool
     """
 
     _validation = {
@@ -385,6 +389,8 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "event_state": {"key": "properties.eventState", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "storage_configuration": {"key": "properties.storageConfiguration", "type": "StorageConfiguration"},
+        "enable_data_partitions": {"key": "properties.enableDataPartitions", "type": "bool"},
     }
 
     def __init__(
@@ -398,6 +404,8 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         cors_configuration: Optional["_models.CorsConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         encryption: Optional["_models.Encryption"] = None,
+        storage_configuration: Optional["_models.StorageConfiguration"] = None,
+        enable_data_partitions: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -421,6 +429,10 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         :paramtype public_network_access: str or ~azure.mgmt.healthcareapis.models.PublicNetworkAccess
         :keyword encryption: The encryption settings of the DICOM service.
         :paramtype encryption: ~azure.mgmt.healthcareapis.models.Encryption
+        :keyword storage_configuration: The configuration of external storage account.
+        :paramtype storage_configuration: ~azure.mgmt.healthcareapis.models.StorageConfiguration
+        :keyword enable_data_partitions: If data partitions is enabled or not.
+        :paramtype enable_data_partitions: bool
         """
         super().__init__(etag=etag, location=location, tags=tags, identity=identity, **kwargs)
         self.identity = identity
@@ -433,6 +445,8 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         self.public_network_access = public_network_access
         self.event_state = None
         self.encryption = encryption
+        self.storage_configuration = storage_configuration
+        self.enable_data_partitions = enable_data_partitions
         self.id = None
         self.name = None
         self.type = None
@@ -882,12 +896,17 @@ class FhirServiceAuthenticationConfiguration(_serialization.Model):
     :vartype audience: str
     :ivar smart_proxy_enabled: If the SMART on FHIR proxy is enabled.
     :vartype smart_proxy_enabled: bool
+    :ivar smart_identity_providers: The array of identity provider configurations for SMART on FHIR
+     authentication.
+    :vartype smart_identity_providers:
+     list[~azure.mgmt.healthcareapis.models.SmartIdentityProviderConfiguration]
     """
 
     _attribute_map = {
         "authority": {"key": "authority", "type": "str"},
         "audience": {"key": "audience", "type": "str"},
         "smart_proxy_enabled": {"key": "smartProxyEnabled", "type": "bool"},
+        "smart_identity_providers": {"key": "smartIdentityProviders", "type": "[SmartIdentityProviderConfiguration]"},
     }
 
     def __init__(
@@ -896,6 +915,7 @@ class FhirServiceAuthenticationConfiguration(_serialization.Model):
         authority: Optional[str] = None,
         audience: Optional[str] = None,
         smart_proxy_enabled: Optional[bool] = None,
+        smart_identity_providers: Optional[List["_models.SmartIdentityProviderConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -905,11 +925,16 @@ class FhirServiceAuthenticationConfiguration(_serialization.Model):
         :paramtype audience: str
         :keyword smart_proxy_enabled: If the SMART on FHIR proxy is enabled.
         :paramtype smart_proxy_enabled: bool
+        :keyword smart_identity_providers: The array of identity provider configurations for SMART on
+         FHIR authentication.
+        :paramtype smart_identity_providers:
+         list[~azure.mgmt.healthcareapis.models.SmartIdentityProviderConfiguration]
         """
         super().__init__(**kwargs)
         self.authority = authority
         self.audience = audience
         self.smart_proxy_enabled = smart_proxy_enabled
+        self.smart_identity_providers = smart_identity_providers
 
 
 class FhirServiceCollection(_serialization.Model):
@@ -1299,7 +1324,7 @@ class IotDestinationProperties(_serialization.Model):
         self.provisioning_state = None
 
 
-class IotEventHubIngestionEndpointConfiguration(_serialization.Model):
+class IotEventHubIngestionEndpointConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Event Hub ingestion endpoint configuration.
 
     :ivar event_hub_name: Event Hub name to connect to.
@@ -1345,7 +1370,7 @@ class IotFhirDestination(LocationBasedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -1470,7 +1495,7 @@ class IotFhirDestinationProperties(IotDestinationProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: The provisioning state. Known values are: "Deleting", "Succeeded",
      "Creating", "Accepted", "Verifying", "Updating", "Failed", "Canceled", "Deprovisioned",
@@ -1993,7 +2018,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2028,7 +2053,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2093,7 +2118,7 @@ class PrivateEndpointConnectionDescription(PrivateEndpointConnection):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2178,7 +2203,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         self.value = value
 
 
-class PrivateEndpointConnectionListResultDescription(_serialization.Model):
+class PrivateEndpointConnectionListResultDescription(_serialization.Model):  # pylint: disable=name-too-long
     """List of private endpoint connection associated with the specified storage account.
 
     :ivar value: Array of private endpoint connections.
@@ -2206,7 +2231,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2255,7 +2280,7 @@ class PrivateLinkResourceDescription(PrivateLinkResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2407,7 +2432,7 @@ class ResourceVersionPolicyConfiguration(_serialization.Model):
 class ServiceAccessPolicyEntry(_serialization.Model):
     """An access policy entry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_id: An Azure AD object ID (User or Apps) that is allowed access to the FHIR
      service. Required.
@@ -2675,7 +2700,7 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of identity being specified, currently SystemAssigned and None are allowed.
      Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
@@ -2689,7 +2714,7 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
     :vartype tenant_id: str
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.healthcareapis.models.UserAssignedIdentity]
@@ -2722,7 +2747,7 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.healthcareapis.models.ServiceManagedIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.healthcareapis.models.UserAssignedIdentity]
@@ -2778,7 +2803,7 @@ class ServicesResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -2861,7 +2886,7 @@ class ServicesDescription(ServicesResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource identifier.
     :vartype id: str
@@ -3226,6 +3251,117 @@ class ServicesResourceIdentity(_serialization.Model):
         self.type = type
 
 
+class SmartIdentityProviderApplication(_serialization.Model):
+    """An Application configured in the Identity Provider used to access FHIR resources.
+
+    :ivar client_id: The application client id defined in the identity provider. This value will be
+     used to validate bearer tokens against the given authority.
+    :vartype client_id: str
+    :ivar audience: The audience that will be used to validate bearer tokens against the given
+     authority.
+    :vartype audience: str
+    :ivar allowed_data_actions: The actions that are permitted to be performed on FHIR resources
+     for the application.
+    :vartype allowed_data_actions: list[str or ~azure.mgmt.healthcareapis.models.SmartDataActions]
+    """
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+        "audience": {"key": "audience", "type": "str"},
+        "allowed_data_actions": {"key": "allowedDataActions", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        client_id: Optional[str] = None,
+        audience: Optional[str] = None,
+        allowed_data_actions: Optional[List[Union[str, "_models.SmartDataActions"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword client_id: The application client id defined in the identity provider. This value will
+         be used to validate bearer tokens against the given authority.
+        :paramtype client_id: str
+        :keyword audience: The audience that will be used to validate bearer tokens against the given
+         authority.
+        :paramtype audience: str
+        :keyword allowed_data_actions: The actions that are permitted to be performed on FHIR resources
+         for the application.
+        :paramtype allowed_data_actions: list[str or
+         ~azure.mgmt.healthcareapis.models.SmartDataActions]
+        """
+        super().__init__(**kwargs)
+        self.client_id = client_id
+        self.audience = audience
+        self.allowed_data_actions = allowed_data_actions
+
+
+class SmartIdentityProviderConfiguration(_serialization.Model):
+    """An object to configure an identity provider for use with SMART on FHIR authentication.
+
+    :ivar authority: The identity provider token authority also known as the token issuing
+     authority.
+    :vartype authority: str
+    :ivar applications: The array of identity provider applications for SMART on FHIR
+     authentication.
+    :vartype applications: list[~azure.mgmt.healthcareapis.models.SmartIdentityProviderApplication]
+    """
+
+    _attribute_map = {
+        "authority": {"key": "authority", "type": "str"},
+        "applications": {"key": "applications", "type": "[SmartIdentityProviderApplication]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        authority: Optional[str] = None,
+        applications: Optional[List["_models.SmartIdentityProviderApplication"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword authority: The identity provider token authority also known as the token issuing
+         authority.
+        :paramtype authority: str
+        :keyword applications: The array of identity provider applications for SMART on FHIR
+         authentication.
+        :paramtype applications:
+         list[~azure.mgmt.healthcareapis.models.SmartIdentityProviderApplication]
+        """
+        super().__init__(**kwargs)
+        self.authority = authority
+        self.applications = applications
+
+
+class StorageConfiguration(_serialization.Model):
+    """The configuration of connected storage.
+
+    :ivar storage_resource_id: The resource id of connected storage account.
+    :vartype storage_resource_id: str
+    :ivar file_system_name: The filesystem name of connected storage account.
+    :vartype file_system_name: str
+    """
+
+    _attribute_map = {
+        "storage_resource_id": {"key": "storageResourceId", "type": "str"},
+        "file_system_name": {"key": "fileSystemName", "type": "str"},
+    }
+
+    def __init__(
+        self, *, storage_resource_id: Optional[str] = None, file_system_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_resource_id: The resource id of connected storage account.
+        :paramtype storage_resource_id: str
+        :keyword file_system_name: The filesystem name of connected storage account.
+        :paramtype file_system_name: str
+        """
+        super().__init__(**kwargs)
+        self.storage_resource_id = storage_resource_id
+        self.file_system_name = file_system_name
+
+
 class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -3419,17 +3555,6 @@ class WorkspacePatchResource(ResourceTags):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
 
 
 class WorkspaceProperties(_serialization.Model):

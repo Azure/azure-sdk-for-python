@@ -43,8 +43,8 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
 
         :param rule_id: The immutable ID of the Data Collection Rule resource.
         :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule.
-        :type stream: str
+        :param stream_name: The streamDeclaration name as defined in the Data Collection Rule.
+        :type stream_name: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
         :keyword on_error: The callback function that is called when a chunk of logs fails to upload.
