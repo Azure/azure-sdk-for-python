@@ -59,11 +59,6 @@ steps:
     displayName: 'Prep Environment Linux'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - bash: |
-      which python
-    displayName: 'Where is python?'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-
   - script: |
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
@@ -93,9 +88,22 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  - bash: |
+      source $(Build.SourcesDirectory)/venv/bin/activate
+      which python
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
+    displayName: 'Generate Packages'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+    condition: succeededOrFailed()
+    timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
+
+
   - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
     condition: succeededOrFailed()
     timeoutInMinutes: 80
     env:
