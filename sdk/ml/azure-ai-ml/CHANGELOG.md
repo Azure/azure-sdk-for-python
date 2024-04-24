@@ -4,9 +4,18 @@
 
 ### Features Added
 
+- Renamed WorkspaceHub class as Hub.
+- Added Project entity class and YAML support.
+- Project and Hub operations supported by workspace operations.
+- workspace list operation supports type filtering.
+
 ### Bugs Fixed
 
 ### Breaking Changes
+
+- Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
+- workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
+- Removed Workspace Hub Operations from ML Client.
 
 ### Other Changes
 
