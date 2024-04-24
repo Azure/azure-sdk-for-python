@@ -36,6 +36,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
             self._workspace_name,
             marketplace_subscription.name,
             marketplace_subscription._to_rest_object(),
+            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized)
         )
 
     @experimental
