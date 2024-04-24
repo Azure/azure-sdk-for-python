@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python license_list_by_subscription.py
+    python run_commands_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +30,13 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.licenses.list_by_subscription()
-    for item in response:
-        print(item)
+    client.machine_run_commands.begin_delete(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
+        run_command_name="myRunCommand",
+    ).result()
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-06-20-preview/examples/license/License_ListBySubscription.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-10-03-preview/examples/runCommand/RunCommands_Delete.json
 if __name__ == "__main__":
     main()
