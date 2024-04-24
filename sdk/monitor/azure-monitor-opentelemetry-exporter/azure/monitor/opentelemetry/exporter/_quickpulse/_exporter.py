@@ -81,8 +81,8 @@ class _QuickpulseExporter(MetricExporter):
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
-
-        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint)
+        # Pass `None` for now until swagger definition is fixed
+        self._client = QuickpulseClient(credential=None, endpoint=self._live_endpoint)  # type: ignore
         # TODO: Support redirect
 
         MetricExporter.__init__(
@@ -133,7 +133,7 @@ class _QuickpulseExporter(MetricExporter):
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except,invalid-name
-            _logger.exception("Exception occured while publishing live metrics.")
+            _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
         finally:
             detach(token)
@@ -187,8 +187,7 @@ class _QuickpulseExporter(MetricExporter):
             )
             return ping_response  # type: ignore
         except HttpResponseError:
-            _logger.exception("Exception occured while pinging live metrics.")
-            pass
+            _logger.exception("Exception occurred while pinging live metrics.")
         detach(token)
         return ping_response
 
