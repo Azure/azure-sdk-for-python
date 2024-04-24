@@ -17,6 +17,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.core.polling import LROPoller
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys
 
 
 class ServerlessEndpointOperations(_ScopeDependentOperations):
@@ -75,11 +76,12 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    def get_keys(self, name: str) -> "ServerlessEndpointKeys":
+    def get_keys(self, name: str) -> EndpointAuthKeys:
         return self._service_client.list_keys(
             self._resource_group_name,
             self._workspace_name,
             name,
+            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized)
         )
 
     @experimental

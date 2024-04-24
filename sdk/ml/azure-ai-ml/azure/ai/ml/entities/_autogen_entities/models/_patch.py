@@ -13,11 +13,11 @@ from ._models import (
     ServerlessEndpoint as _ServerlessEndpoint,
     MarketplaceSubscription as _MarketplaceSubscription,
     MarketplacePlan,
+    SystemData
 )
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import SystemData
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ServerlessEndpoint as RestServerlessEndpoint,
@@ -91,6 +91,7 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestServerlessEndpoint) -> "ServerlessEndpoint":
+        rest_system_data = obj.system_data
         return cls(
             name=obj.name,
             id=obj.id,
@@ -99,7 +100,14 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             auth_mode=obj.properties.auth_mode,
             provisioning_state=camel_to_snake(obj.properties.provisioning_state),
             model_id=obj.properties.model_settings.model_id,
-            system_data=SystemData._from_rest_object(obj.system_data),
+            system_data=SystemData(
+                created_by=rest_system_data.created_by,
+                created_at=rest_system_data.created_at,
+                created_by_type=rest_system_data.created_by_type,
+                last_modified_by=rest_system_data.last_modified_by,
+                last_modified_by_type=rest_system_data.last_modified_by_type,
+                last_modified_at=rest_system_data.last_modified_at,
+            ),
         )
 
 
@@ -111,6 +119,7 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "MarketplaceSubscription":
         properties = obj.properties
+        rest_system_data = obj.system_data
         return cls(
             name=obj.name,
             id=obj.id,
@@ -120,7 +129,14 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
             ),
             status=camel_to_snake(properties.marketplace_subscription_status),
             provisioning_state=camel_to_snake(properties.provisioning_state),
-            system_data=SystemData._from_rest_object(obj.system_data),
+            system_data=SystemData(
+                created_by=rest_system_data.created_by,
+                created_at=rest_system_data.created_at,
+                created_by_type=rest_system_data.created_by_type,
+                last_modified_by=rest_system_data.last_modified_by,
+                last_modified_by_type=rest_system_data.last_modified_by_type,
+                last_modified_at=rest_system_data.last_modified_at,
+            ),
         )
 
 
