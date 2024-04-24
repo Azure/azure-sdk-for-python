@@ -208,7 +208,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
         try:
             if not isinstance(event, CloudEvent):
-                # if isinstance(event, dict):
                 try:
                     event = CloudEvent.from_dict(event)
                 except AttributeError:
@@ -217,12 +216,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
         except AttributeError:
             raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
 
-        http_request = _to_http_request(
-            topic_name=topic_name,
-            api_version=self._config.api_version,
-            event=event,
-            **kwargs,
-        )
+        if isinstance(event, CloudEvent):
+            http_request = _to_http_request(
+                topic_name=topic_name,
+                api_version=self._config.api_version,
+                event=event,
+                **kwargs,
+            )
+        else:
+            raise TypeError("Binary mode is only supported for type CloudEvent.")
 
         # If data is a cloud event, convert to an HTTP Request in binary mode
         await self.send_request(http_request, **kwargs)

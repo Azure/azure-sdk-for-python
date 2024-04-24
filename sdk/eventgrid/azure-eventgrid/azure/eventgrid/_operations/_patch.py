@@ -268,7 +268,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             self._send_binary(topic_name, events, **kwargs)
         else:
             # If not binary_mode send whatever event is passed
-
             # If a cloud event dict, convert to CloudEvent for serializing
             try:
                 if isinstance(events, dict):
@@ -315,12 +314,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         # If data is a cloud event, convert to an HTTP Request in binary mode
         # Content type becomes the data content type
-        http_request = _to_http_request(
-            topic_name=topic_name,
-            api_version=self._config.api_version,
-            event=event,
-            **kwargs,
-        )
+        if isinstance(event, CloudEvent):
+            http_request = _to_http_request(
+                topic_name=topic_name,
+                api_version=self._config.api_version,
+                event=event,
+                **kwargs,
+            )
+        else:
+            raise TypeError("Binary mode is only supported for type CloudEvent.")
 
         self.send_request(http_request, **kwargs)
 

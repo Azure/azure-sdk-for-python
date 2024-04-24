@@ -15,6 +15,16 @@ from cloudevents.http import CloudEvent as CNCFCloudEvent
 
 from eventgrid_preparer import EventGridPreparer
 
+def _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level):
+    if level == "Standard":
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=100)
+        tokens = []
+        for detail in events.value:
+            token = detail.broker_properties.lock_token
+            tokens.append(token)
+        ack_result = client.acknowledge_cloud_events(
+            eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=tokens
+        )
 
 class ArgPasser:
     def __call__(self, fn):
@@ -58,6 +68,8 @@ class TestEGDualClient(AzureRecordedTestCase):
         else:
             client.send(topic_name=eventgrid_topic_name, events=event, binary_mode=True)
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -90,6 +102,9 @@ class TestEGDualClient(AzureRecordedTestCase):
             client.receive_cloud_events(
                 topic_name=eventgrid_topic_name, subscription_name=eventgrid_event_subscription_name
             )
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -125,6 +140,9 @@ class TestEGDualClient(AzureRecordedTestCase):
             with pytest.raises(TypeError):
                 client.send(topic_name=eventgrid_topic_name, events=event)
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -157,6 +175,9 @@ class TestEGDualClient(AzureRecordedTestCase):
         )
 
         client.send(topic_name=eventgrid_topic_name, events=event)
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -194,6 +215,9 @@ class TestEGDualClient(AzureRecordedTestCase):
         else:
             client.send(topic_name=eventgrid_topic_name, events=event, channel_name=eventgrid_partner_channel_name)
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -219,6 +243,9 @@ class TestEGDualClient(AzureRecordedTestCase):
                 client.send(topic_name=eventgrid_topic_name, events=event)
         else:
             client.send(topic_name=eventgrid_topic_name, events=event)
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -250,6 +277,9 @@ class TestEGDualClient(AzureRecordedTestCase):
         cloud_event = CNCFCloudEvent(attributes, data)
 
         client.send(topic_name=eventgrid_topic_name, events=cloud_event)
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
 
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
@@ -285,6 +315,9 @@ class TestEGDualClient(AzureRecordedTestCase):
 
         client.send(topic_name=eventgrid_topic_name, events=event)
 
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
+
     @pytest.mark.live_test_only()
     @pytest.mark.parametrize("level", ["Standard", "Basic"])
     @EventGridPreparer()
@@ -319,3 +352,6 @@ class TestEGDualClient(AzureRecordedTestCase):
                 client.send(topic_name=eventgrid_topic_name, events=event)
         else:
             client.send(topic_name=eventgrid_topic_name, events=event)
+
+        _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name, level)
+
