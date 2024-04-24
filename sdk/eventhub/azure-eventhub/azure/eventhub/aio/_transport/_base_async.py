@@ -332,7 +332,13 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @abstractmethod
     async def mgmt_client_request_async(
         mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient],
-        mgmt_msg: str, **kwargs: Any
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs: Any
     ) -> None:
         """
         Send mgmt request.

@@ -326,7 +326,16 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return (await mgmt_auth.get_token()).token
 
     @staticmethod
-    async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
+    async def mgmt_client_request_async(
+        mgmt_client: AMQPClientAsync,
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs
+    ):
         """
         Send mgmt request.
         :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
@@ -339,8 +348,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The mgmt client.
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
+        kwargs["status_code_fields"] = status_code_field
+        kwargs["description_fields"] = description_fields
         return await mgmt_client.mgmt_request_async(
             mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
         )

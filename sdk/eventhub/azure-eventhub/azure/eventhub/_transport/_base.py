@@ -354,7 +354,16 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def mgmt_client_request(mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient], mgmt_msg: str, **kwargs: Any):
+    def mgmt_client_request(
+        mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient],
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs: Any
+    ):
         """
         Send mgmt request.
         :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient mgmt_client: Client to send request with.

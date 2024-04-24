@@ -552,7 +552,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return mgmt_auth.get_token().token
 
     @staticmethod
-    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(
+        mgmt_client: AMQPClient,
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs: Any,
+    ): # pylint:disable=unused-argument
         """
         Send mgmt request.
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
@@ -566,8 +575,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.message.Message
 
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
+        kwargs["status_code_field"] = status_code_field
+        kwargs["description_fields"] = description_fields
         return mgmt_client.mgmt_request(
             mgmt_msg,
             operation=operation.decode(),

@@ -350,7 +350,16 @@ class AMQPClientAsync(AMQPClientSync):
             return True
         return await self._client_run_async(**kwargs)
 
-    async def mgmt_request_async(self, message, **kwargs):
+    async def mgmt_request_async(
+            self,
+            message,
+            *,
+            operation: Optional[str] = None,
+            operation_type: Optional[str] = None,
+            node: str = "$management",
+            timeout: float = 0,
+            **kwargs
+        ):
         """
         :param message: The message to send in the management request.
         :type message: ~pyamqp.message.Message
@@ -370,10 +379,6 @@ class AMQPClientAsync(AMQPClientSync):
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
-        operation = kwargs.pop("operation", None)
-        operation_type = kwargs.pop("operation_type", None)
-        node = kwargs.pop("node", "$management")
-        timeout = kwargs.pop('timeout', 0)
         async with self._mgmt_link_lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
