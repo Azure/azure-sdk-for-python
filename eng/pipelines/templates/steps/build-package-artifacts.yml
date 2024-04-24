@@ -93,18 +93,15 @@ steps:
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
 
-
   - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
-    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), ne(variables['Agent.OS'], 'Linux'))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
