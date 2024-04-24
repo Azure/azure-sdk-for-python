@@ -981,7 +981,7 @@ class WebPubSubClient(
         )
 
         # set thread to start listen to server
-        self._thread = threading.Thread(target=self._ws.run_forever)
+        self._thread = threading.Thread(target=self._ws.run_forever, daemon=True)
         self._thread.start()
         start_time = time.time()
         with self._ws.cv:
@@ -1007,7 +1007,7 @@ class WebPubSubClient(
                     finally:
                         time.sleep(1.0)
 
-            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically)
+            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
 
         _LOGGER.info("connected successfully")
