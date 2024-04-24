@@ -159,7 +159,7 @@ def image_classification_multilabel(
             Defaults to .2
     :paramtype validation_data_size: float
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
+    :paramtype kwargs: Any
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageClassificationMultilabelJob

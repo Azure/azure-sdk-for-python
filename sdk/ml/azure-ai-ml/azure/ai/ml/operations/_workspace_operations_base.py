@@ -115,7 +115,7 @@ class WorkspaceOperationsBase(ABC):
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-exception
             pass
 
         # idempotent behavior
@@ -1045,7 +1045,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
 
             if self.poller._exception is not None:
                 error = self.poller._exception
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-exception
             error = e
         finally:
             # one last check to make sure all print statements make it

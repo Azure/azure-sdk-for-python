@@ -26,7 +26,9 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         # this will make context of all PathAwareSchema child class point to one object
         self.context = kwargs.get("context", None)
         if self.context is None or self.context.get(BASE_PATH_CONTEXT_KEY, None) is None:
-            raise Exception("Base path for reading files is required when building PathAwareSchema")
+            raise Exception(
+                "Base path for reading files is required when building PathAwareSchema"
+            )  # pylint: disable=broad-exception
         # set old base path, note it's an Path object and point to the same object with
         # self.context.get(BASE_PATH_CONTEXT_KEY)
         self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)
@@ -47,7 +49,7 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
                         if test_layer is None:
                             continue
                         if isinstance(test_layer, str):
-                            raise Exception(
+                            raise Exception(  # pylint: disable=broad-exceptionion-raised
                                 f"Cannot use '--set' on properties defined by reference strings: --set {param}"
                             )
                         test_layer = test_layer.get(layer, None)

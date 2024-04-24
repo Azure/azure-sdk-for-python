@@ -96,6 +96,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :paramtype local: bool
         :keyword vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :paramtype vscode_debug: bool
+        :keyword skip_script_validation: Whether or not to skip validation of the deployment script. Defaults to False.
+        :paramtype skip_script_validation: bool
         :keyword local_enable_gpu: enable local container to access gpu
         :paramtype local_enable_gpu: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
@@ -209,7 +211,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return poller
             except Exception as ex:
                 raise ex
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-exception
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

@@ -37,14 +37,18 @@ def _get_client_args(**kwargs: Any) -> Optional[dict]:
             if env_key in kwargs:
                 os.environ[env_key] = kwargs[env_key]
             else:
-                raise Exception("Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments")
+                raise Exception(
+                    "Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments"
+                )  # pylint: disable=broad-exception
     else:
         from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
 
         try:
             spark = SparkSession.builder.getOrCreate()
         except Exception as e:
-            raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
+            raise Exception(
+                "Fail to get spark session, please check if spark environment is set up."
+            ) from e  # pylint: disable=broad-exception
 
         spark_conf = spark.sparkContext.getConf()
         spark_conf_vars = {

@@ -153,7 +153,7 @@ class LoopNode(ControlFlowNode, ABC):
                 return str(re.findall(regex, expression)[0])
 
             return expression
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-exception
             module_logger.warning("Cannot get the value from data binding expression %s.", expression)
             return expression
 

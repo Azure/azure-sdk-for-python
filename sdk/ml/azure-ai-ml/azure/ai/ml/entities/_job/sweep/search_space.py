@@ -109,7 +109,7 @@ class Choice(SweepDistribution):
                         # first assume that any dictionary value is a valid distribution (i.e. normal, uniform, etc)
                         # and try to deserialize it into a the correct SDK distribution object
                         from_rest_dict[k] = SweepDistribution._from_rest_object(v)
-                    except Exception:  # pylint: disable=broad-except
+                    except Exception:  # pylint: disable=broad-exception
                         # if an exception is raised, assume that the value was not a valid distribution and use the
                         # value as it is for deserialization
                         from_rest_dict[k] = v

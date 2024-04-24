@@ -52,7 +52,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
             for key, value in self.properties.items():
                 try:
                     self.properties[key] = json.loads(value)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-exception
                     # keep serialized string if load fails
                     pass
 
@@ -68,7 +68,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     elif key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower():
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     serialized_properties[key] = json.dumps(value)
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-exception
                     pass
         else:
             serialized_properties = None

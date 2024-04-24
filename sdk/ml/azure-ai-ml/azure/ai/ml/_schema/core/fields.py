@@ -648,7 +648,7 @@ class TypeSensitiveUnionField(UnionField):
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
                 with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-exception
             pass
         return value
 
@@ -663,8 +663,8 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
+    :keyword kwargs: Optional keyword arguments
+    :paramtype kwargs: Any
     :return: The compute field
     :rtype: Field
     """
@@ -682,8 +682,8 @@ def ComputeField(**kwargs) -> Field:
 
 def CodeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
+    :keyword kwargs: Optional keyword arguments.
+    :paramtype kwargs: Any
     :return: The code field
     :rtype: Field
     """
@@ -705,7 +705,7 @@ def CodeField(**kwargs) -> Field:
 def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
     """Function to return a union field for environment.
 
-    :param extra_fields: extra fields to be added to the union field
+    :keyword extra_fields: Extra fields to be added to the union field
     :paramtype extra_fields: List[Field]
     :return: The environment field
     :rtype: Field
@@ -796,7 +796,7 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")
+        raise Exception(f"Type {type(value)} is not supported for version.")  # pylint: disable=broad-exception
 
 
 class NumberVersionField(VersionField):

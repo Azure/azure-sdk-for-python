@@ -191,6 +191,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         :param workspace_hub: WorkspaceHub resource.
         :type workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
+        :keyword update_dependent_resources: Whether or not to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: bool
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         :raises ~azure.ai.ml.ValidationException: Raised if workspace_hub is not a WorkspaceHub.

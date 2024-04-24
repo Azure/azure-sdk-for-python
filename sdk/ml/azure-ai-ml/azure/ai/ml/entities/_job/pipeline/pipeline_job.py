@@ -489,6 +489,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         :param context: Context of command job YAML file.
         :type context: dict
         :keyword kwargs: Extra arguments.
+        :paramtype kwargs: Any
         :return: Translated command component.
         :rtype: Pipeline
         """
@@ -675,7 +676,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         try:
             res_to_yaml: str = self._to_yaml()
             return res_to_yaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             res: str = super(PipelineJob, self).__str__()
             return res
 

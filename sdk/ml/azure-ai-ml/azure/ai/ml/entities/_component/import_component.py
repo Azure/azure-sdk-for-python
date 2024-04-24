@@ -91,6 +91,6 @@ class ImportComponent(Component):
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             toStr: str = super(ImportComponent, self).__str__()
             return toStr

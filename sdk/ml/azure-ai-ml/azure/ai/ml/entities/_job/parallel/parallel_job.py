@@ -118,6 +118,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         :param context: Context of parallel job YAML file.
         :type context: dict
         :keyword kwargs: Extra arguments.
+        :paramtype kwargs: Any
         :return: Translated parallel component.
         :rtype: ParallelComponent
         """
@@ -188,6 +189,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         :param context: Context of parallel job YAML file.
         :type context: dict
         :keyword kwargs: Extra arguments.
+        :paramtype kwargs: Any
         :return: Translated parallel component.
         :rtype: Parallel
         """

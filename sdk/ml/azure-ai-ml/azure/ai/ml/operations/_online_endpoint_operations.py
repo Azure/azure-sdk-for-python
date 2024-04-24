@@ -248,7 +248,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
             except Exception as ex:
                 raise ex
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-exception
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -315,6 +315,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :paramtype deployment_name: Optional[str]
         :keyword input_data: To use a pre-registered data asset, pass str in format
         :paramtype input_data: Optional[Union[str, Data]]
+        :keyword params_override: A dictionary of payload parameters to override and their desired values.
+        :paramtype params_override: Any
         :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
         :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.

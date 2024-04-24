@@ -110,7 +110,7 @@ def get_datastore_info(
         else:
             try:
                 datastore_info["credential"] = credential.sas_token
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception
                 if not hasattr(credential, "sas_token"):
                     datastore_info["credential"] = operations._credential
                 else:
@@ -121,7 +121,7 @@ def get_datastore_info(
     elif datastore.type == DatastoreType.AZURE_DATA_LAKE_GEN2:
         datastore_info["container_name"] = str(datastore.filesystem)
     else:
-        raise Exception(
+        raise Exception(  # pylint: disable=broad-exception
             f"Datastore type {datastore.type} is not supported for uploads. "
             f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
         )
@@ -156,7 +156,9 @@ def list_logs_in_datastore(
         DatastoreType.AZURE_BLOB,
         DatastoreType.AZURE_DATA_LAKE_GEN2,
     ]:
-        raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
+        raise Exception(
+            "Only Blob and Azure DataLake Storage Gen2 datastores are supported."
+        )  # pylint: disable=broad-exception
 
     storage_client = get_storage_client(
         credential=ds_info["credential"],

@@ -404,7 +404,8 @@ class ComponentTranslatableMixin:
 
         :param context: The context
         :type context: Optional[context]
-        :keyword kwargs:
+        :keyword kwargs: Additional keyword arguments.
+        :paramtype kwargs: Any
         :return: Translated node.
         :rtype: BaseNode
         """

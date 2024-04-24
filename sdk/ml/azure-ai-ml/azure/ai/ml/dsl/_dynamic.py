@@ -86,7 +86,7 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
             # Closure must be set to make sure free variables work.
             closure=func.__closure__,
         )
-    except BaseException:  # pylint: disable=broad-except
+    except BaseException:  # pylint: disable=broad-exception
         # If the dynamic replacing failed in corner cases, simply set the two fields.
         func.__name__ = func.__qualname__ = new_name
         return func

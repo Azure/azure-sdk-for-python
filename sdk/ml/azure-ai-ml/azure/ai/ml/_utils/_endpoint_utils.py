@@ -12,6 +12,7 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
@@ -19,7 +20,6 @@ from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
@@ -90,9 +90,12 @@ def polling_wait(
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
     """Wrapper for polling local endpoint operations.
 
-    :param Callable func: Name of the endpoint.
-    :param str message: Message to print out before starting operation write-out.
-    :keyword dict kwargs: kwargs to be passed to the func
+    :param func: Name of the endpoint.
+    :type func: Callable
+    :param message: Message to print out before starting operation write-out.
+    :type message: str
+    :keyword kwargs: Optional keyword arguments.
+    :paramtype kwargs: Any
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -119,7 +122,7 @@ def validate_response(response: HttpResponse) -> None:
                 r_json = response.json()
             except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8")) from e
+                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=broad-exception
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,
