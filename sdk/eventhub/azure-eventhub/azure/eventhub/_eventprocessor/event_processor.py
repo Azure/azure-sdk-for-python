@@ -87,7 +87,7 @@ class EventProcessor(
         self._batch = batch
         self._max_batch_size = max_batch_size
         self._max_wait_time = max_wait_time
-        self._partition_id: partition_id
+        self._partition_id = partition_id
         self._error_handler: Optional[Callable[[PartitionContext, Exception], None]] = on_error
         self._partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = on_partition_initialize
         self._partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = on_partition_close
