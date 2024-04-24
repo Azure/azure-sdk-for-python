@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_fuzzy_search_async.py
+FILE: sample_reverse_geocode_async.py
 DESCRIPTION:
-    This sample demonstrates how to perform fuzzy search by location and lat/lon.
+    This sample demonstrates how to perform reverse search by given coordinates.
 USAGE:
-    python sample_fuzzy_search_async.py
+    python sample_reverse_geocode_async.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -19,21 +19,20 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = "xxxxxxxx-xxxx-xxxx"
 
-async def fuzzy_search_async():
+
+async def reverse_geocode_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-    async with maps_search_client:
-        result = await maps_search_client.fuzzy_search("seattle", coordinates=(47.60323, -122.33028))
 
-    print("Get Search Fuzzy with coordinates with search query: " + result.query)
-    print("Fuzzy level: {}".format(result.fuzzy_level))
-    print("Total results: {}".format(result.num_results))
-    print("Address from the first item in results: ")
-    print(result.results[0].address)
+    async with maps_search_client:
+        result = await maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+
+    address = result.features[0].properties.address
+    print(address.formatted_address)
 
 if __name__ == '__main__':
-    asyncio.run(fuzzy_search_async())
+    asyncio.run(reverse_geocode_async())

@@ -7,32 +7,29 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_reverse_search_address_async.py
+FILE: sample_reverse_search_address.py
 DESCRIPTION:
     This sample demonstrates how to perform reverse search by given coordinates.
 USAGE:
-    python sample_reverse_search_address_async.py
+    python sample_reverse_search_address.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
-import asyncio
+
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = "xxxxxxxx-xxxx-xxxx"
 
-
-async def reverse_search_address_async():
+def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search.aio import MapsSearchClient
+    from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    async with maps_search_client:
-        result = await maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089), language="en")
-
-    print("Get Search Address Reverse:")
-    print(result)
+    result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+    address = result.features[0].properties.address
+    print(address.formatted_address)
 
 if __name__ == '__main__':
-    asyncio.run(reverse_search_address_async())
+   reverse_geocode()

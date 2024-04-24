@@ -7,28 +7,33 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_search_address.py
+FILE: sample_geocode_async.py
 DESCRIPTION:
-    This sample demonstrates how to perform search address
+    This sample demonstrates how to perform fuzzy search by location and lat/lon.
 USAGE:
-    python sample_search_address.py
+    python sample_geocode_async.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
+import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = "xxxxxxxx-xxxx-xxxx"
 
-def search_address():
+async def geocode_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search.aio import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    async with maps_search_client:
+        result = await maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
 
-    result = maps_search_client.search_address(query="15127 NE 24th Street, Redmond, WA 98052")
+    coordinates = result.features[0].geometry.coordinates
+    longitude = coordinates[0]
+    latitude = coordinates[1]
 
-    print(result.results[0].address)
+    print(longitude, latitude)
 
 if __name__ == '__main__':
-    search_address()
+    asyncio.run(geocode_async())
