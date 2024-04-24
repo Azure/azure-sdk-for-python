@@ -39,7 +39,9 @@ try:
     client.send(topic_name=TOPIC_NAME, events=cloud_event)
 
     # Receive CloudEvents and parse out lock tokens
-    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
+    receive_result = client.receive_cloud_events(
+        topic_name=TOPIC_NAME, subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+    )
     lock_tokens_to_renew = []
     for item in receive_result.value:
         lock_tokens_to_renew.append(item.broker_properties.lock_token)

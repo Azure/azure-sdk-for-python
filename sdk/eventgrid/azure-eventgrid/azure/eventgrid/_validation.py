@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 import functools
 
+
 def api_version_validation(**kwargs):
     params_added_on = kwargs.pop("params_added_on", {})
     method_added_on = kwargs.pop("method_added_on", "")
@@ -33,11 +34,17 @@ def api_version_validation(**kwargs):
                 if parameter in kwargs and api_version > client_api_version
             }
             if unsupported:
-                raise ValueError("".join([
-                    f"'{param}' is not available in API version {client_api_version}. "
-                    f"Use service API version {version} or newer.\n"
-                    for param, version in unsupported.items()
-                ]))
+                raise ValueError(
+                    "".join(
+                        [
+                            f"'{param}' is not available in API version {client_api_version}. "
+                            f"Use service API version {version} or newer.\n"
+                            for param, version in unsupported.items()
+                        ]
+                    )
+                )
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator
