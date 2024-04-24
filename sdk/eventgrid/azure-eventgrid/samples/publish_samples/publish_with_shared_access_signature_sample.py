@@ -48,9 +48,7 @@ def publish_event():
         event_list = []  # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            sample_members = sample(
-                services, k=randint(1, 4)
-            )  # select random subset of team members
+            sample_members = sample(services, k=randint(1, 4))  # select random subset of team members
             event = CloudEvent(
                 type="Azure.Sdk.Demo",
                 source="https://egdemo.dev/demowithsignature",

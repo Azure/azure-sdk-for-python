@@ -43,9 +43,7 @@ class EventGridSerializationTests(object):
     def test_cloud_event_policy_no_copy_if_trace_exists(self):
         policy = CloudEventDistributedTracingPolicy()
 
-        cloud_storage_dict.update(
-            {"traceparent": "exists", "tracestate": "state_exists"}
-        )
+        cloud_storage_dict.update({"traceparent": "exists", "tracestate": "state_exists"})
         body = json.dumps([cloud_storage_dict])
         universal_request = HttpRequest("POST", "http://127.0.0.1/", data=body)
         universal_request.headers["content-type"] = _content_type

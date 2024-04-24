@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ReleaseDelay(int, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported delays for release operation.
-    """
+    """Supported delays for release operation."""
 
     BY0_SECONDS = 0
     """Release the event after 0 seconds."""

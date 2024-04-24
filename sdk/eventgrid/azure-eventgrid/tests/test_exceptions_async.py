@@ -42,9 +42,7 @@ from eventgrid_preparer import (
 class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
         credential = self.get_credential(EventGridPublisherClient, is_async=True)
-        client = self.create_client_from_credential(
-            EventGridPublisherClient, credential=credential, endpoint=endpoint
-        )
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
         return client
 
     @EventGridPreparer()
@@ -90,9 +88,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     async def test_raise_on_large_payload(self, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
-        path = os.path.abspath(
-            os.path.join(os.path.abspath(__file__), "..", "./large_data.json")
-        )
+        path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))
         with open(path) as json_file:
             data = json.load(json_file)
         eg_event = EventGridEvent(

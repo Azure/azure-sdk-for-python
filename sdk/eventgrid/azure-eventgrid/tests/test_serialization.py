@@ -104,10 +104,7 @@ class EventGridSerializationTests:
     def test_import_from_system_events(self):
         var = SystemEventNames.AcsChatMemberAddedToThreadWithUserEventName
         assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
-        assert (
-            SystemEventNames.KeyVaultKeyNearExpiryEventName
-            == "Microsoft.KeyVault.KeyNearExpiry"
-        )
+        assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
         var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName
         assert var == "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
         var = SystemEventNames.AcsChatThreadParticipantAddedEventName
@@ -131,23 +128,9 @@ class EventGridSerializationTests:
             SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName
             == SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName
         )
-        assert (
-            SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName
-            == val
-        )
-        assert (
-            SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName
-            == val
-        )
-        assert (
-            SystemEventNames(val)
-            == SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName
-        )
-        assert (
-            SystemEventNames(val)
-            == SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName
-        )
+        assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName == val
+        assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName == val
+        assert SystemEventNames(val) == SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName
+        assert SystemEventNames(val) == SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName
         with pytest.raises(ValueError):
-            SystemEventNames(
-                "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
-            )
+            SystemEventNames("Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener")

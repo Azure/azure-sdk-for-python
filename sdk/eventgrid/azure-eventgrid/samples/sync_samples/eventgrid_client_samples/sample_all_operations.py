@@ -34,15 +34,9 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-cloud_event_reject = CloudEvent(
-    data="reject", source="https://example.com", type="example"
-)
-cloud_event_release = CloudEvent(
-    data="release", source="https://example.com", type="example"
-)
-cloud_event_ack = CloudEvent(
-    data="acknowledge", source="https://example.com", type="example"
-)
+cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
+cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
+cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
 
 # Publish a CloudEvent
 try:

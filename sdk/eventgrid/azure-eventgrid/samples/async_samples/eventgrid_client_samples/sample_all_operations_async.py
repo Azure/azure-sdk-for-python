@@ -34,33 +34,23 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-cloud_event_reject = CloudEvent(
-    data="reject", source="https://example.com", type="example"
-)
-cloud_event_release = CloudEvent(
-    data="release", source="https://example.com", type="example"
-)
-cloud_event_ack = CloudEvent(
-    data="acknowledge", source="https://example.com", type="example"
-)
+cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
+cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
+cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
 
 
 async def run():
     async with client:
         # Publish a CloudEvent
         try:
-            await client.send(
-                topic_name=TOPIC_NAME, events=cloud_event_reject
-            )
+            await client.send(topic_name=TOPIC_NAME, events=cloud_event_reject)
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event_release, cloud_event_ack]
-            await client.send(
-                topic_name=TOPIC_NAME, events=list_of_cloud_events
-            )
+            await client.send(topic_name=TOPIC_NAME, events=list_of_cloud_events)
         except HttpResponseError:
             raise
 
