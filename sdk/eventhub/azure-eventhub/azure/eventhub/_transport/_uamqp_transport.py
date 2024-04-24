@@ -505,7 +505,7 @@ if uamqp_installed:
             )
             # pylint:disable=protected-access
             client._streaming_receive = streaming_receive
-            client._message_received_callback = (message_received_callback)
+            client._message_received_callback = message_received_callback
             return client
 
         @staticmethod
