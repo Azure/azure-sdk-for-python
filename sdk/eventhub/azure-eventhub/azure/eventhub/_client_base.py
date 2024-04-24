@@ -401,7 +401,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _management_request(
+    def _management_request(# pylint:disable=inconsistent-return-statements
         self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
@@ -584,7 +584,7 @@ class ConsumerProducerMixin():
             exception, self, is_consumer=is_consumer
         )
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs): # pylint:disable=inconsistent-return-statements
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
