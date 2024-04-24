@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0 (2024-05-20)
+
+### Breaking Changes
+
+  - Model APIServerAccessProfile no longer has parameter enable_vnet_integration
+  - Model APIServerAccessProfile no longer has parameter subnet_id
+
 ## 1.1.0 (2024-04-03)
 
 ### Features Added
