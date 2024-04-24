@@ -142,14 +142,30 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise OperationTimeoutError(message=str(exc), details=exc) from exc
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_receive_client(  # pylint:disable=unused-argument
+        *,
+        config,
+        source: str,
+        auth: JWTTokenAuthAsync,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: int,
+        **kwargs
+    ):
         """
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str source: Required. The source.
-        :keyword str offset: Required.
-        :keyword str offset_inclusive: Required.
         :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
@@ -167,8 +183,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created ReceiveClientAsync.
         :rtype: ~pyamqp.aio.ReceiveClientAsync
         """
-
-        source = kwargs.pop("source")
         return ReceiveClientAsync(
             config.hostname,
             source,
@@ -178,6 +192,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            client_name=client_name,
+            link_properties=link_properties,
+            properties=properties,
+            link_credit=link_credit,
+            keep_alive_interval=keep_alive_interval,
+            desired_capabilities=desired_capabilities,
+            streaming_receive=streaming_receive,
+            message_received_callback=message_received_callback,
             **kwargs,
         )
 

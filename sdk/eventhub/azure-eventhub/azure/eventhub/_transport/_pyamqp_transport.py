@@ -424,14 +424,30 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return source
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs):
+    def create_receive_client(# pylint:disable=unused-argument
+        *,
+        config,
+        source: str,
+        auth: JWTTokenAuth,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities: str,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: float,
+        **kwargs
+    ):
         """
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str source: Required. The source.
-        :keyword str offset: Required.
-        :keyword str offset_inclusive: Required.
         :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
@@ -450,7 +466,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.ReceiveClient
         """
 
-        source = kwargs.pop("source")
         return ReceiveClient(
             config.hostname,
             source,
@@ -460,6 +475,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            client_name=client_name,
+            link_properties=link_properties,
+            properties=properties,
+            link_credit=link_credit,
+            desired_capabilities=desired_capabilities,
+            message_received_callback=message_received_callback,
+            keep_alive_interval=keep_alive_interval,
+            streaming_receive=streaming_receive,
             **kwargs,
         )
 

@@ -470,14 +470,30 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
+        def create_receive_client( # pylint: disable=unused-argument
+            *,
+            config,
+            source: str,
+            auth: authentication.JWTTokenAuth,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            client_name: str,
+            link_properties: Dict[bytes, Any],
+            properties: Dict[bytes, Any],
+            link_credit: int,
+            keep_alive_interval: int,
+            desired_capabilities: str,
+            streaming_receive: bool,
+            message_received_callback: Callable,
+            timeout: float,
+            **kwargs
+        ):
             """
             Creates and returns the receive client.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str source: Required. The source.
-            :keyword str offset: Required.
-            :keyword str offset_inclusive: Required.
             :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.
@@ -495,18 +511,11 @@ if uamqp_installed:
             :returns: The receive client.
             :rtype: uamqp.ReceiveClient
             """
-
-            source = kwargs.pop("source")
-            symbol_array = kwargs.pop("desired_capabilities")
+            symbol_array = desired_capabilities
             desired_capabilities = None
             if symbol_array:
                 symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
                 desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-            link_credit = kwargs.pop("link_credit")
-            streaming_receive = kwargs.pop("streaming_receive")
-            message_received_callback = kwargs.pop("message_received_callback")
 
             client = ReceiveClient(
                 source,
@@ -516,6 +525,11 @@ if uamqp_installed:
                 prefetch=link_credit,
                 receive_settle_mode=constants.ReceiverSettleMode.ReceiveAndDelete,
                 auto_complete=False,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                idle_timeout=idle_timeout,
                 **kwargs
             )
             # pylint:disable=protected-access

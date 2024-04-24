@@ -255,6 +255,20 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client(
         *,
         config: Configuration,
+        source: Union[uamqp_Source, pyamqp_Source],
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: int,
         **kwargs: Any
     ) -> Union[uamqp_ReceiveClient, pyamqp_ReceiveClient]:
         """

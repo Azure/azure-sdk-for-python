@@ -276,7 +276,25 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client(*, config: Configuration, **kwargs: Any):
+    def create_receive_client(
+        *,
+        config: Configuration,
+        source: Union[uamqp_Source, pyamqp_Source],
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities: str,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: float,
+        **kwargs: Any
+    ):
         """
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
