@@ -44,14 +44,18 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
+  - pwsh: |
+      sudo python -m pip uninstall -y setuptools
+    displayName: Remove bad setuptools global install
+
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: $(PythonVersion)
 
   - script: |
-      python -m pip install setuptools==58.3.0
-      python -m pip install -r eng/ci_tools.txt
+      python -m pip install --force -r eng/ci_tools.txt
+      python -m pip freeze --all
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml@self
