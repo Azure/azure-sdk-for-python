@@ -758,7 +758,14 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def create_batch(self, **kwargs: Any) -> EventDataBatch:
+    def create_batch(  # pylint: disable=unused-argument
+            self,
+            *,
+            partition_id: Optional[str] = None,
+            partition_key: Optional[str] = None,
+            max_size_in_bytes: Optional[int] = None,
+            **kwargs: Any
+            ) -> EventDataBatch:
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
@@ -789,10 +796,6 @@ class EventHubProducerClient(
         """
         if not self._max_message_size_on_link:
             self._get_max_message_size()
-
-        max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
-        partition_id = kwargs.get("partition_id", None)
-        partition_key = kwargs.get("partition_key", None)
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
