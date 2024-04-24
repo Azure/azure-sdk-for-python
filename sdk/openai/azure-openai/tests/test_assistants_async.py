@@ -94,6 +94,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip(reason="AOAI doesn't support assistants v2 yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
