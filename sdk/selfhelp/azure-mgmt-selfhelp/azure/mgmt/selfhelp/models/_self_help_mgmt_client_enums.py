@@ -128,6 +128,10 @@ class QuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Text Input"""
     MULTI_LINE_INFO_BOX = "MultiLineInfoBox"
     """MultiLineInfoBox"""
+    DATE_TIME_PICKER = "DateTimePicker"
+    """DateTime Picker"""
+    MULTI_SELECT = "MultiSelect"
+    """Multi Select"""
 
 
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -159,6 +163,10 @@ class SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Diagnostics resource type."""
     SOLUTIONS = "Solutions"
     """Solutions resource type."""
+    TROUBLESHOOTERS = "Troubleshooters"
+    """Troubleshooters resource type."""
+    SELF_HELP = "SelfHelp"
+    """SelfHelp resource type."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -193,3 +201,14 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SOLUTION = "Solution"
     INSIGHT = "Insight"
     AUTOMATED_CHECK = "AutomatedCheck"
+    INPUT = "Input"
+
+
+class ValidationScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validation scope."""
+
+    NONE = "None"
+    URL_FORMAT = "URLFormat"
+    GUID_FORMAT = "GuidFormat"
+    IP_ADDRESS_FORMAT = "IpAddressFormat"
+    NUMBER_ONLY_FORMAT = "NumberOnlyFormat"
