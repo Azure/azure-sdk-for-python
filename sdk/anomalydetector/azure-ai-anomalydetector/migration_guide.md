@@ -5,7 +5,7 @@ This guide is intended to assist in the migration to azure-ai-anomalydetector v3
 It will focus on side-by-side comparisons for similar operations between the two packages.
 
 Familiarity with the `azure-cognitiveservices-anomalydetector` v0.3.0 package is assumed.
-For those new to the Azure Form Recognizer library for Python, please refer to the [README for `azure-ai-anomalydetector`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/README.md) rather than this guide. Please note that the Azure AI Anomaly Detector service will be [retired on October 1, 2026](https://azure.microsoft.com/updates/ai-services-anomaly-detector-will-be-retired-on-1-october-2026/).
+For those new to the Azure Anomaly Detector library for Python, please refer to the [README for `azure-ai-anomalydetector`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/README.md) rather than this guide. Please note that the Azure AI Anomaly Detector service will be [retired on October 1, 2026](https://azure.microsoft.com/updates/ai-services-anomaly-detector-will-be-retired-on-1-october-2026/).
 
 ## Table of contents
 
@@ -54,35 +54,33 @@ We have a variety of new features in the version v3.0.0b7 of the AI Anomaly Dete
 
 ## Important changes
 
-### Anomaly Detection for Entire Series in Batch
-
-The `detect_univariate_entire_series` method has replaced `entire_detect` on the AnomalyDetectorClient.
- - The `options` parameter has replaced `body`. The `options` parameter takes type `models.UnivariateDetectionOptions`, `IO`, or `JSON`.
- - `models.UnivariateDetectionOptions` has replaced `models.Request` and has the additional attributes `impute_mode` and `impute_fixed_value`.
- - `content_type` optional parameter, the Content-Type of the `options` parameter, has been added.
- - Optional parameter `raw` has been removed and `cls` of `Type[models.UnivariateEntireDetectionResults]` can be passed in to return the deserialized response as a `models.UnivariateEntireDetectionResults` object.
+For all previously existing methods on the AnomalyDetectorClient, the following changes have been made:
  - The `custom_headers` optional parameter has been replaced by `headers`.
  - `operation_config` is now `kwargs`.
+ - `content_type` optional parameter, the Content-Type of the `options` parameter, has been added.
+ - For information on additional optional arguments to each method, please refer to the [API reference documentation](https://aka.ms/azsdk-python-textanalytics-ref-docs).
+
+More specific changes are listed below.
+
+### Anomaly Detection for Entire Series in Batch
+
+The `detect_univariate_entire_series` method has replaced `entire_detect`. Other changes:
+ - The `options` parameter has replaced `body`. The `options` parameter takes type `models.UnivariateDetectionOptions`, `IO`, or `JSON`.
+ - `models.UnivariateDetectionOptions` has replaced `models.Request` and has the additional attributes `impute_mode` and `impute_fixed_value`.
+ - Optional parameter `raw` has been removed and `cls` of `Type[models.UnivariateEntireDetectionResults]` can be passed in to return the deserialized response as a `models.UnivariateEntireDetectionResults` object.
 
 ### Anomaly Detection Status of Latest Point in Time Series
 
-The `detect_univariate_last_point` method has replaced `last_detect` on the AnomalyDetectorClient.
+The `detect_univariate_last_point` method has replaced `last_detect`. Other changes:
  - The `options` parameter has replaced `body`. The `options` parameter takes type `models.UnivariateDetectionOptions`, `IO`, or `JSON`.
  - `models.UnivariateDetectionOptions` has replaced `models.Request` and has the additional attributes `impute_mode` and `impute_fixed_value`.
- - `content_type` optional parameter, the Content-Type of the `options` parameter, has been added.
- - Optional parameter `raw` has been removed and `cls` of `Type[models.UnivariateLastDetectionResults]` can be passed in to return the deserialized response as a `models.UnivariateLastDetectionResults` object.
- - The `custom_headers` optional parameter has been replaced by `headers`.
- - `operation_config` is now `kwargs`.
 
 ### Change Point Detection for Entire Series
 
-The `detect_univariate_change_point` method has replaced `change_point_detect` on the AnomalyDetectorClient.
+The `detect_univariate_change_point` method has replaced `change_point_detect`. Other changes:
  - The `options` parameter has replaced `body`. The `options` parameter takes type `models.UnivariateChangePointDetectionOptions`, `IO`, or `JSON`.
  - `models.UnivariateChangePointDetectionOptions` has replaced `models.ChangePointDetectRequest`.
- - `content_type` optional parameter, the Content-Type of the `options` parameter, has been added.
  - Optional parameter `raw` has been removed and `cls` of `Type[models.UnivariateChangePointDetectionResults]` can be passed in to return the deserialized response as a `models.UnivariateChangePointDetectionResults` object.
- - The `custom_headers` optional parameter has been replaced by `headers`.
- - `operation_config` is now `kwargs`.
 
 ## Samples
 
