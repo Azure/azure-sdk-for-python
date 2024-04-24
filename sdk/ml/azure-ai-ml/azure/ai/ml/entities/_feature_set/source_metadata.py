@@ -82,3 +82,15 @@ class SourceMetadata(object):
         self.source_delay = source_delay
         self.source_process_code = source_process_code
         self.kwargs = dict
+
+    def validateProperty(propertyName: str, property: object, type: str, shouldProvide: bool):
+        shouldOrNot = "need to" if shouldProvide else "cannot"
+        if bool(property) != shouldProvide:
+            msg = f"You {shouldOrNot} provide {propertyName} for {type} source."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
