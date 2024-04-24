@@ -88,6 +88,8 @@ class Index(Artifact):
         )
 
     def _to_rest_object(self) -> RestIndex:
+        # Note: Index.name and Index.version get dropped going to RestIndex, since both are encoded in the id
+        #       (when present)
         return RestIndex(
             stage=self.stage,
             storage_uri=self.path,
