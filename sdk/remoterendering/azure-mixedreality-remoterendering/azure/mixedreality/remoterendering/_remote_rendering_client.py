@@ -288,6 +288,8 @@ class RemoteRenderingClient:
         :keyword continuation_token:
             A continuation token retrieved from a poller of a session.
         :paramtype continuation_token: str
+        :return: A session poller for the given session
+        :rtype: LROPoller[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 

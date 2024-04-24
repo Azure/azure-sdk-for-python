@@ -17,7 +17,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import Scope
+from azure.ai.ml.constants._common import Scope, WorkspaceKind
 from azure.ai.ml.entities import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
@@ -25,7 +25,6 @@ from azure.ai.ml.entities import (
     WorkspaceConnection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
-    FEATURE_STORE_KIND,
     OFFLINE_MATERIALIZATION_STORE_TYPE,
     OFFLINE_STORE_CONNECTION_CATEGORY,
     OFFLINE_STORE_CONNECTION_NAME,
@@ -94,7 +93,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 self._operation.list_by_subscription(
                     cls=lambda objs: [
                         FeatureStore._from_rest_object(filterObj)
-                        for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
+                        for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.FEATURE_STORE, objs)
                     ],
                 ),
             )
@@ -104,7 +103,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 self._resource_group_name,
                 cls=lambda objs: [
                     FeatureStore._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
+                    for filterObj in filter(lambda ws: ws.kind.lower() == WorkspaceKind.FEATURE_STORE, objs)
                 ],
             ),
         )
@@ -126,7 +125,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         feature_store: Any = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
+        if (
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WorkspaceKind.FEATURE_STORE
+        ):
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
         if feature_store:
@@ -284,7 +287,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group", self._resource_group_name)
         rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WorkspaceKind.FEATURE_STORE
         ):
             raise ValidationError("{0} is not a feature store".format(feature_store.name))
 
@@ -469,11 +474,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_workspace_role_assignment=update_workspace_role_assignment,
             update_offline_store_role_assignment=update_offline_store_role_assignment,
             update_online_store_role_assignment=update_online_store_role_assignment,
-            materialization_identity_id=materialization_identity.resource_id
-            if update_workspace_role_assignment
-            or update_offline_store_role_assignment
-            or update_online_store_role_assignment
-            else None,
+            materialization_identity_id=(
+                materialization_identity.resource_id
+                if update_workspace_role_assignment
+                or update_offline_store_role_assignment
+                or update_online_store_role_assignment
+                else None
+            ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,
             online_store_target=online_store_target_to_update if update_online_store_role_assignment else None,
             **kwargs,
@@ -496,7 +503,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+            rest_workspace_obj
+            and rest_workspace_obj.kind
+            and rest_workspace_obj.kind.lower() == WorkspaceKind.FEATURE_STORE
         ):
             raise ValidationError("{0} is not a feature store".format(name))
 

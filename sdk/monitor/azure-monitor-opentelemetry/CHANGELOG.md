@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 from azure.ai.language.questionanswering.authoring import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
@@ -12,6 +13,7 @@ from testcase import QuestionAnsweringTestCase
 
 class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_add_source(self, recorded_test, qna_creds):
         client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
