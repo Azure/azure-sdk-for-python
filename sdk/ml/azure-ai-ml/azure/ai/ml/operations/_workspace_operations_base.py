@@ -33,16 +33,12 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, WorkspaceKind
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
-from azure.ai.ml.entities import Workspace
+from azure.ai.ml.entities import Workspace, Project, Hub
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-from azure.ai.ml.entities._workspace_hub._constants import (
-    ENDPOINT_AI_SERVICE_KIND,
-    PROJECT_WORKSPACE_KIND,
-    WORKSPACE_HUB_KIND,
-)
+from azure.ai.ml.entities._workspace._ai_workspaces._constants import ENDPOINT_AI_SERVICE_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -83,6 +79,10 @@ class WorkspaceOperationsBase(ABC):
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
+        if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.HUB:
+            return Hub._from_rest_object(obj)
+        if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
+            return Project._from_rest_object(obj)
         return Workspace._from_rest_object(obj)
 
     def begin_create(
@@ -126,7 +126,7 @@ class WorkspaceOperationsBase(ABC):
                 existing_workspace.tags.update(workspace.tags)  # type: ignore
             workspace.tags = existing_workspace.tags
             # TODO do we want projects to do this?
-            if workspace._kind != PROJECT_WORKSPACE_KIND:
+            if workspace._kind != WorkspaceKind.PROJECT:
                 workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
                 workspace.application_insights = (
                     workspace.application_insights or existing_workspace.application_insights
@@ -157,7 +157,7 @@ class WorkspaceOperationsBase(ABC):
             **kwargs,
         )
         # check if create with workspace hub request is valid
-        if workspace._kind == PROJECT_WORKSPACE_KIND:
+        if workspace._kind == WorkspaceKind.PROJECT:
             if not all(
                 x is None
                 for x in [
@@ -440,7 +440,7 @@ class WorkspaceOperationsBase(ABC):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         # prevent dependent resource delete for lean workspace, only delete appinsight and associated log analytics
-        if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+        if workspace._kind == WorkspaceKind.PROJECT and delete_dependent_resources:
             app_insights = get_generic_arm_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -524,7 +524,7 @@ class WorkspaceOperationsBase(ABC):
             )
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
-        if workspace._kind == PROJECT_WORKSPACE_KIND:
+        if workspace._kind == WorkspaceKind.PROJECT:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
         endpoint_resource_id = kwargs.get("endpoint_resource_id") or ""
         endpoint_kind = kwargs.get("endpoint_kind") or ENDPOINT_AI_SERVICE_KIND
@@ -726,19 +726,13 @@ class WorkspaceOperationsBase(ABC):
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
 
-        # Hub related params
-        if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
-            if workspace.workspace_hub_config:  # type: ignore
-                _set_obj_val(
-                    param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object()  # type: ignore
-                )
-            if workspace.existing_workspaces:  # type: ignore
-                _set_val(param["existing_workspaces"], workspace.existing_workspaces)  # type: ignore
+        if workspace._kind and workspace._kind.lower() == WorkspaceKind.HUB:
+            _set_obj_val(param["workspace_hub_config"], workspace._hub_values_to_rest_object())  # type: ignore
             # A user-supplied resource ID (either AOAI or AI Services or null)
             # endpoint_kind differentiates between a 'Bring a legacy AOAI resource hub' and 'any other kind of hub'
             # The former doesn't create non-AOAI endpoints, and is set below if the user provided a byo AOAI
             # resource ID. The latter case is the default and not shown here.
-            elif endpoint_resource_id != "":
+            if endpoint_resource_id != "":
                 _set_val(param["endpoint_resource_id"], endpoint_resource_id)
                 _set_val(param["endpoint_kind"], endpoint_kind)
 
@@ -750,9 +744,13 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
 
         # Lean related param
-        if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
-            if workspace.workspace_hub:
-                _set_val(param["workspace_hub"], workspace.workspace_hub)
+        if (
+            hasattr(workspace, "_kind")
+            and workspace._kind is not None
+            and workspace._kind.lower() == WorkspaceKind.PROJECT
+        ):
+            if hasattr(workspace, "_hub_id"):
+                _set_val(param["workspace_hub"], workspace._hub_id)
 
         # Serverless compute related param
         serverless_compute = workspace.serverless_compute if workspace.serverless_compute else None
