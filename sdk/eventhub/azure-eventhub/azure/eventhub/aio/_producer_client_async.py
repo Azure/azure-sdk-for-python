@@ -827,7 +827,7 @@ class EventHubProducerClient(
                     timeout_time=timeout_time
                 )
 
-    async def close(self, *, flush: bool = True, **kwargs: Any) -> None:
+    async def close(self, *, flush: bool = True, timeout: Optional[float] = None, **kwargs: Any) -> None: # pylint:disable=unused-argument
         """Close the Producer client underlying AMQP connection and links.
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
@@ -851,7 +851,6 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.close(
                     flush=flush, timeout_time=timeout_time, raise_error=True
