@@ -1909,6 +1909,29 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_copy_blob_async_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        source_blob_name = await self._create_block_blob()
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        source_blob_url = source_blob.url
+        target_blob_name = 'targetblob'
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        await source_blob.delete_blob()
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            await target_blob.start_copy_from_url(source_blob_url)
+
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "404"
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "BlobNotFound"
+        assert "The specified blob does not exist." in e.value.message
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_snapshot_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
