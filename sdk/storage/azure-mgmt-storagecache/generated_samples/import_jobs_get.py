@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.storagecache import StorageCacheManagementClient
@@ -17,7 +15,7 @@ from azure.mgmt.storagecache import StorageCacheManagementClient
     pip install azure-identity
     pip install azure-mgmt-storagecache
 # USAGE
-    python storage_targets_create_or_update_blob_nfs.py
+    python import_jobs_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,26 +30,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.storage_targets.begin_create_or_update(
+    response = client.import_jobs.get(
         resource_group_name="scgroup",
-        cache_name="sc1",
-        storage_target_name="st1",
-        storagetarget={
-            "properties": {
-                "blobNfs": {
-                    "target": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scgroup/providers/Microsoft.Storage/storageAccounts/blofnfs/blobServices/default/containers/blobnfs",
-                    "usageModel": "READ_WRITE",
-                    "verificationTimer": 28800,
-                    "writeBackTimer": 3600,
-                },
-                "junctions": [{"namespacePath": "/blobnfs"}],
-                "targetType": "blobNfs",
-            }
-        },
-    ).result()
+        aml_filesystem_name="fs1",
+        import_job_name="job1",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/StorageTargets_CreateOrUpdate_BlobNfs.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/importJobs_Get.json
 if __name__ == "__main__":
     main()

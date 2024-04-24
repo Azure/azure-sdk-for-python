@@ -31,14 +31,11 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._aml_filesystems_operations import (
-    build_archive_request,
-    build_cancel_archive_request,
+from ...operations._import_jobs_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
-    build_list_by_resource_group_request,
-    build_list_request,
+    build_list_by_aml_filesystem_request,
     build_update_request,
 )
 from .._vendor import StorageCacheManagementClientMixinABC
@@ -47,14 +44,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class AmlFilesystemsOperations:
+class ImportJobsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.storagecache.aio.StorageCacheManagementClient`'s
-        :attr:`aml_filesystems` attribute.
+        :attr:`import_jobs` attribute.
     """
 
     models = _models
@@ -66,164 +63,8 @@ class AmlFilesystemsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.AmlFilesystem"]:
-        """Returns all AML file systems the user has access to under a subscription.
-
-        :return: An iterator like instance of either AmlFilesystem or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storagecache.models.AmlFilesystem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AmlFilesystemsListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request = _convert_request(_request)
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                _request = _convert_request(_request)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AmlFilesystemsListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.AmlFilesystem"]:
-        """Returns all AML file systems the user has access to under a resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :return: An iterator like instance of either AmlFilesystem or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storagecache.models.AmlFilesystem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AmlFilesystemsListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_list_by_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request = _convert_request(_request)
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                _request = _convert_request(_request)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AmlFilesystemsListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any
+        self, resource_group_name: str, aml_filesystem_name: str, import_job_name: str, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -242,6 +83,7 @@ class AmlFilesystemsOperations:
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
+            import_job_name=import_job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -257,9 +99,10 @@ class AmlFilesystemsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
@@ -273,9 +116,9 @@ class AmlFilesystemsOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any
+        self, resource_group_name: str, aml_filesystem_name: str, import_job_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Schedules an AML file system for deletion.
+        """Schedules an import job for deletion.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -283,6 +126,9 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -299,6 +145,7 @@ class AmlFilesystemsOperations:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 aml_filesystem_name=aml_filesystem_name,
+                import_job_name=import_job_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -329,8 +176,10 @@ class AmlFilesystemsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any) -> _models.AmlFilesystem:
-        """Returns an AML file system.
+    async def get(
+        self, resource_group_name: str, aml_filesystem_name: str, import_job_name: str, **kwargs: Any
+    ) -> _models.ImportJob:
+        """Returns an import job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -338,8 +187,11 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :return: AmlFilesystem or the result of cls(response)
-        :rtype: ~azure.mgmt.storagecache.models.AmlFilesystem
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.mgmt.storagecache.models.ImportJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -354,11 +206,12 @@ class AmlFilesystemsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AmlFilesystem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
+            import_job_name=import_job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -376,9 +229,10 @@ class AmlFilesystemsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+        deserialized = self._deserialize("ImportJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -389,9 +243,10 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, IO[bytes]],
+        import_job_name: str,
+        import_job: Union[_models.ImportJob, IO[bytes]],
         **kwargs: Any
-    ) -> _models.AmlFilesystem:
+    ) -> _models.ImportJob:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -405,19 +260,20 @@ class AmlFilesystemsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AmlFilesystem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(aml_filesystem, (IOBase, bytes)):
-            _content = aml_filesystem
+        if isinstance(import_job, (IOBase, bytes)):
+            _content = import_job
         else:
-            _json = self._serialize.body(aml_filesystem, "AmlFilesystem")
+            _json = self._serialize.body(import_job, "ImportJob")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
+            import_job_name=import_job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -438,18 +294,19 @@ class AmlFilesystemsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+            deserialized = self._deserialize("ImportJob", pipeline_response)
 
         if response.status_code == 201:
             response_headers["azure-async-operation"] = self._deserialize(
                 "str", response.headers.get("azure-async-operation")
             )
 
-            deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+            deserialized = self._deserialize("ImportJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -461,12 +318,14 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: _models.AmlFilesystem,
+        import_job_name: str,
+        import_job: _models.ImportJob,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Create or update an AML file system.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Create or update an import job. Import jobs are automatically deleted 72 hours after
+        completion.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -474,16 +333,19 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -492,12 +354,14 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: IO[bytes],
+        import_job_name: str,
+        import_job: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Create or update an AML file system.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Create or update an import job. Import jobs are automatically deleted 72 hours after
+        completion.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -505,16 +369,19 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: IO[bytes]
+        :type import_job: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -523,10 +390,12 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, IO[bytes]],
+        import_job_name: str,
+        import_job: Union[_models.ImportJob, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Create or update an AML file system.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Create or update an import job. Import jobs are automatically deleted 72 hours after
+        completion.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -534,13 +403,16 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
-         Is either a AmlFilesystem type or a IO[bytes] type. Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties. Is
+         either a ImportJob type or a IO[bytes] type. Required.
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -548,7 +420,7 @@ class AmlFilesystemsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AmlFilesystem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -556,7 +428,8 @@ class AmlFilesystemsOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 aml_filesystem_name=aml_filesystem_name,
-                aml_filesystem=aml_filesystem,
+                import_job_name=import_job_name,
+                import_job=import_job,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -567,7 +440,7 @@ class AmlFilesystemsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+            deserialized = self._deserialize("ImportJob", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -582,13 +455,13 @@ class AmlFilesystemsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AmlFilesystem].from_continuation_token(
+            return AsyncLROPoller[_models.ImportJob].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AmlFilesystem](
+        return AsyncLROPoller[_models.ImportJob](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -596,9 +469,10 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO[bytes]],
+        import_job_name: str,
+        import_job: Union[_models.ImportJobUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.AmlFilesystem]:
+    ) -> Optional[_models.ImportJob]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -612,19 +486,20 @@ class AmlFilesystemsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.AmlFilesystem]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.ImportJob]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(aml_filesystem, (IOBase, bytes)):
-            _content = aml_filesystem
+        if isinstance(import_job, (IOBase, bytes)):
+            _content = import_job
         else:
-            _json = self._serialize.body(aml_filesystem, "AmlFilesystemUpdate")
+            _json = self._serialize.body(import_job, "ImportJobUpdate")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
             aml_filesystem_name=aml_filesystem_name,
+            import_job_name=import_job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -645,12 +520,13 @@ class AmlFilesystemsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+            deserialized = self._deserialize("ImportJob", pipeline_response)
 
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
@@ -668,12 +544,13 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: _models.AmlFilesystemUpdate,
+        import_job_name: str,
+        import_job: _models.ImportJobUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Update an AML file system instance.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Update an import job instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -681,16 +558,19 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJobUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -699,12 +579,13 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: IO[bytes],
+        import_job_name: str,
+        import_job: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Update an AML file system instance.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Update an import job instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -712,16 +593,19 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: IO[bytes]
+        :type import_job: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -730,10 +614,11 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, IO[bytes]],
+        import_job_name: str,
+        import_job: Union[_models.ImportJobUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AmlFilesystem]:
-        """Update an AML file system instance.
+    ) -> AsyncLROPoller[_models.ImportJob]:
+        """Update an import job instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -741,13 +626,16 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
-         If read-only properties are included, they must match the existing values of those properties.
-         Is either a AmlFilesystemUpdate type or a IO[bytes] type. Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either AmlFilesystem or the result of
+        :param import_job_name: Name for the import job. Allows alphanumerics, underscores, and
+         hyphens. Start and end with alphanumeric. Required.
+        :type import_job_name: str
+        :param import_job: Object containing the user-selectable properties of the import job. If
+         read-only properties are included, they must match the existing values of those properties. Is
+         either a ImportJobUpdate type or a IO[bytes] type. Required.
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJobUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ImportJob or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -755,7 +643,7 @@ class AmlFilesystemsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AmlFilesystem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -763,7 +651,8 @@ class AmlFilesystemsOperations:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 aml_filesystem_name=aml_filesystem_name,
-                aml_filesystem=aml_filesystem,
+                import_job_name=import_job_name,
+                import_job=import_job,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -774,7 +663,7 @@ class AmlFilesystemsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AmlFilesystem", pipeline_response)
+            deserialized = self._deserialize("ImportJob", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -789,154 +678,21 @@ class AmlFilesystemsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AmlFilesystem].from_continuation_token(
+            return AsyncLROPoller[_models.ImportJob].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AmlFilesystem](
+        return AsyncLROPoller[_models.ImportJob](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @overload
-    async def archive(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        aml_filesystem_name: str,
-        archive_info: Optional[_models.AmlFilesystemArchiveInfo] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Archive data from the AML file system.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
-         and hyphens. Start and end with alphanumeric. Required.
-        :type aml_filesystem_name: str
-        :param archive_info: Information about the archive operation. Default value is None.
-        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def archive(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        aml_filesystem_name: str,
-        archive_info: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Archive data from the AML file system.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
-         and hyphens. Start and end with alphanumeric. Required.
-        :type aml_filesystem_name: str
-        :param archive_info: Information about the archive operation. Default value is None.
-        :type archive_info: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def archive(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        aml_filesystem_name: str,
-        archive_info: Optional[Union[_models.AmlFilesystemArchiveInfo, IO[bytes]]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Archive data from the AML file system.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
-         and hyphens. Start and end with alphanumeric. Required.
-        :type aml_filesystem_name: str
-        :param archive_info: Information about the archive operation. Is either a
-         AmlFilesystemArchiveInfo type or a IO[bytes] type. Default value is None.
-        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo or IO[bytes]
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(archive_info, (IOBase, bytes)):
-            _content = archive_info
-        else:
-            if archive_info is not None:
-                _json = self._serialize.body(archive_info, "AmlFilesystemArchiveInfo")
-            else:
-                _json = None
-
-        _request = build_archive_request(
-            resource_group_name=resource_group_name,
-            aml_filesystem_name=aml_filesystem_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request = _convert_request(_request)
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def cancel_archive(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def list_by_aml_filesystem(
         self, resource_group_name: str, aml_filesystem_name: str, **kwargs: Any
-    ) -> None:
-        """Cancel archiving data from the AML file system.
+    ) -> AsyncIterable["_models.ImportJob"]:
+        """Returns all import jobs the user has access to under an AML File System.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -944,45 +700,76 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: An iterator like instance of either ImportJob or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storagecache.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJobsListResult] = kwargs.pop("cls", None)
 
-        _request = build_cancel_archive_request(
-            resource_group_name=resource_group_name,
-            aml_filesystem_name=aml_filesystem_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request = _convert_request(_request)
-        _request.url = self._client.format_url(_request.url)
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                _request = build_list_by_aml_filesystem_request(
+                    resource_group_name=resource_group_name,
+                    aml_filesystem_name=aml_filesystem_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ImportJobsListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

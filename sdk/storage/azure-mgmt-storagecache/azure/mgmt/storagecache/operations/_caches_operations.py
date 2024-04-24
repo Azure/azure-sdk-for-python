@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,7 +43,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +67,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,7 +97,7 @@ def build_delete_request(resource_group_name: str, cache_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +128,7 @@ def build_get_request(resource_group_name: str, cache_name: str, subscription_id
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +161,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -195,7 +195,7 @@ def build_update_request(resource_group_name: str, cache_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -231,7 +231,7 @@ def build_debug_info_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -262,7 +262,7 @@ def build_flush_request(resource_group_name: str, cache_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -293,7 +293,7 @@ def build_start_request(resource_group_name: str, cache_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -324,7 +324,7 @@ def build_stop_request(resource_group_name: str, cache_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -357,7 +357,7 @@ def build_start_priming_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -393,7 +393,7 @@ def build_stop_priming_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -429,7 +429,7 @@ def build_pause_priming_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -465,7 +465,7 @@ def build_resume_priming_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -501,7 +501,7 @@ def build_upgrade_firmware_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -534,7 +534,7 @@ def build_space_allocation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -587,7 +587,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
     def list(self, **kwargs: Any) -> Iterable["_models.Cache"]:
         """Returns all caches the user has access to under a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Cache or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -609,15 +608,14 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -629,13 +627,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("CachesListResult", pipeline_response)
@@ -645,11 +643,11 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -660,8 +658,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/caches"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Cache"]:
@@ -670,7 +666,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Cache or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -692,16 +687,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -713,13 +707,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("CachesListResult", pipeline_response)
@@ -729,11 +723,11 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -744,10 +738,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches"
-    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -766,21 +756,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -797,11 +786,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -813,14 +798,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -847,7 +824,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -856,17 +833,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> _models.Cache:
@@ -878,7 +851,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Cache or the result of cls(response)
         :rtype: ~azure.mgmt.storagecache.models.Cache
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -897,21 +869,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -923,16 +894,12 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("Cache", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, IO], **kwargs: Any
+        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, IO[bytes]], **kwargs: Any
     ) -> Optional[_models.Cache]:
         error_map = {
             401: ClientAuthenticationError,
@@ -957,7 +924,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(cache, "Cache")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -965,16 +932,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -991,13 +957,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("Cache", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update(
@@ -1023,14 +985,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1041,7 +995,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: IO,
+        cache: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1056,18 +1010,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the new cache. If read-only
          properties are included, they must match the existing values of those properties. Required.
-        :type cache: IO
+        :type cache: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1075,7 +1021,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, IO], **kwargs: Any
+        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Create or update a cache.
 
@@ -1087,19 +1033,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the new cache. If read-only
          properties are included, they must match the existing values of those properties. Is either a
-         Cache type or a IO type. Required.
-        :type cache: ~azure.mgmt.storagecache.models.Cache or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Cache type or a IO[bytes] type. Required.
+        :type cache: ~azure.mgmt.storagecache.models.Cache or IO[bytes]
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1130,7 +1065,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Cache", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1140,20 +1075,22 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _update_initial(
-        self, resource_group_name: str, cache_name: str, cache: Optional[Union[_models.Cache, IO]] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        cache_name: str,
+        cache: Optional[Union[_models.Cache, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> Optional[_models.Cache]:
         error_map = {
             401: ClientAuthenticationError,
@@ -1181,7 +1118,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -1189,16 +1126,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1219,13 +1155,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -1252,14 +1184,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1270,7 +1194,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: Optional[IO] = None,
+        cache: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1286,18 +1210,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache: Object containing the user-selectable properties of the cache. If read-only
          properties are included, they must match the existing values of those properties. Default value
          is None.
-        :type cache: IO
+        :type cache: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1305,7 +1221,11 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_update(
-        self, resource_group_name: str, cache_name: str, cache: Optional[Union[_models.Cache, IO]] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        cache_name: str,
+        cache: Optional[Union[_models.Cache, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Update a cache instance.
 
@@ -1317,19 +1237,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the cache. If read-only
          properties are included, they must match the existing values of those properties. Is either a
-         Cache type or a IO type. Default value is None.
-        :type cache: ~azure.mgmt.storagecache.models.Cache or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         Cache type or a IO[bytes] type. Default value is None.
+        :type cache: ~azure.mgmt.storagecache.models.Cache or IO[bytes]
         :return: An instance of LROPoller that returns either Cache or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1360,7 +1269,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Cache", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1372,17 +1281,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}"
-    }
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _debug_info_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -1401,21 +1308,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_debug_info_request(
+        _request = build_debug_info_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._debug_info_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1432,11 +1338,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _debug_info_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/debugInfo"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_debug_info(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1448,14 +1350,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1482,7 +1376,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1493,17 +1387,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_debug_info.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/debugInfo"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _flush_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -1522,21 +1412,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_flush_request(
+        _request = build_flush_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._flush_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1553,11 +1442,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _flush_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/flush"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_flush(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1570,14 +1455,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1604,7 +1481,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1615,17 +1492,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_flush.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/flush"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _start_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -1644,21 +1517,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_start_request(
+        _request = build_start_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1675,11 +1547,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _start_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/start"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_start(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1691,14 +1559,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1725,7 +1585,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1736,17 +1596,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/start"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _stop_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -1765,21 +1621,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_request(
+        _request = build_stop_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1796,11 +1651,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _stop_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/stop"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_stop(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1812,14 +1663,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1846,7 +1689,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1857,23 +1700,19 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/stop"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _start_priming_job_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[Union[_models.PrimingJob, IO]] = None,
+        primingjob: Optional[Union[_models.PrimingJob, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1902,7 +1741,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_start_priming_job_request(
+        _request = build_start_priming_job_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -1910,16 +1749,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._start_priming_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1935,11 +1773,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _start_priming_job_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/startPrimingJob"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_start_priming_job(
@@ -1964,14 +1798,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1982,7 +1808,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[IO] = None,
+        primingjob: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1996,18 +1822,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param primingjob: Object containing the definition of a priming job. Default value is None.
-        :type primingjob: IO
+        :type primingjob: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2018,7 +1836,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[Union[_models.PrimingJob, IO]] = None,
+        primingjob: Optional[Union[_models.PrimingJob, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create a priming job. This operation is only allowed when the cache is healthy.
@@ -2030,19 +1848,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param primingjob: Object containing the definition of a priming job. Is either a PrimingJob
-         type or a IO type. Default value is None.
-        :type primingjob: ~azure.mgmt.storagecache.models.PrimingJob or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Default value is None.
+        :type primingjob: ~azure.mgmt.storagecache.models.PrimingJob or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2072,7 +1879,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2083,23 +1890,19 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start_priming_job.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/startPrimingJob"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _stop_priming_job_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -2128,7 +1931,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_stop_priming_job_request(
+        _request = build_stop_priming_job_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -2136,16 +1939,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._stop_priming_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2162,11 +1964,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _stop_priming_job_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/stopPrimingJob"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_stop_priming_job(
@@ -2191,14 +1989,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2209,7 +1999,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[IO] = None,
+        priming_job_id: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2223,18 +2013,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: IO
+        :type priming_job_id: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2245,7 +2027,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Schedule a priming job for deletion.
@@ -2257,19 +2039,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
-         type or a IO type. Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2299,7 +2070,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2310,23 +2081,19 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_priming_job.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/stopPrimingJob"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _pause_priming_job_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -2355,7 +2122,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_pause_priming_job_request(
+        _request = build_pause_priming_job_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -2363,16 +2130,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._pause_priming_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2389,11 +2155,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _pause_priming_job_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/pausePrimingJob"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_pause_priming_job(
@@ -2418,14 +2180,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2436,7 +2190,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[IO] = None,
+        priming_job_id: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2450,18 +2204,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: IO
+        :type priming_job_id: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2472,7 +2218,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Schedule a priming job to be paused.
@@ -2484,19 +2230,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
-         type or a IO type. Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2526,7 +2261,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2537,23 +2272,19 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_pause_priming_job.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/pausePrimingJob"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _resume_priming_job_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -2582,7 +2313,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_resume_priming_job_request(
+        _request = build_resume_priming_job_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -2590,16 +2321,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._resume_priming_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2616,11 +2346,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _resume_priming_job_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/resumePrimingJob"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_resume_priming_job(
@@ -2645,14 +2371,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2663,7 +2381,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[IO] = None,
+        priming_job_id: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2677,18 +2395,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: IO
+        :type priming_job_id: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2699,7 +2409,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Resumes a paused priming job.
@@ -2711,19 +2421,8 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
-         type or a IO type. Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2753,7 +2452,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2764,17 +2463,13 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_resume_priming_job.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/resumePrimingJob"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _upgrade_firmware_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cache_name: str, **kwargs: Any
@@ -2793,21 +2488,20 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_upgrade_firmware_request(
+        _request = build_upgrade_firmware_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._upgrade_firmware_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2824,11 +2518,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _upgrade_firmware_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/upgrade"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_upgrade_firmware(self, resource_group_name: str, cache_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -2841,14 +2531,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2875,7 +2557,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2886,23 +2568,19 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_upgrade_firmware.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/upgrade"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _space_allocation_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], IO]] = None,
+        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -2931,7 +2609,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_space_allocation_request(
+        _request = build_space_allocation_request(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             subscription_id=self._config.subscription_id,
@@ -2939,16 +2617,15 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._space_allocation_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2964,11 +2641,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _space_allocation_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/spaceAllocation"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_space_allocation(
@@ -2994,14 +2667,6 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3012,7 +2677,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[IO] = None,
+        space_allocation: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3027,18 +2692,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param space_allocation: List containing storage target cache space percentage allocations.
          Default value is None.
-        :type space_allocation: IO
+        :type space_allocation: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3049,7 +2706,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], IO]] = None,
+        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update cache space allocation.
@@ -3061,20 +2718,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param space_allocation: List containing storage target cache space percentage allocations. Is
-         either a [StorageTargetSpaceAllocation] type or a IO type. Default value is None.
+         either a [StorageTargetSpaceAllocation] type or a IO[bytes] type. Default value is None.
         :type space_allocation: list[~azure.mgmt.storagecache.models.StorageTargetSpaceAllocation] or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3104,7 +2750,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -3115,14 +2761,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_space_allocation.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/spaceAllocation"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
