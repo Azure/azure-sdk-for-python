@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python agent_version_get_latest.py
+    python run_commands_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +27,17 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.agent_version.get(
-        os_type="myOsType",
-        version="1.27",
+    response = client.machine_run_commands.get(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
+        run_command_name="myRunCommand",
     )
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-06-20-preview/examples/AgentVersion_GetLatest.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-10-03-preview/examples/runCommand/RunCommands_Get.json
 if __name__ == "__main__":
     main()
