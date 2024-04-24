@@ -9,7 +9,7 @@ import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Coroutine, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -825,7 +825,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._received_messages = queue.Queue()
         await super(ReceiveClientAsync, self).close_async()
 
-    async def receive_message_batch_async(self, **kwargs):
+    async def receive_message_batch_async(self, **kwargs) -> Coroutine[Any, Any, list]:
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -844,6 +844,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
          0, the client will continue to wait until at least one message is received. The
          default is 0.
         :paramtype timeout: float
+        :returns: Retryable operation coroutine.
+        :rtype: Coroutine[Any, Any, list]
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,

@@ -504,6 +504,7 @@ class EventHubProducerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: An EventHubProducerClient instance.
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:

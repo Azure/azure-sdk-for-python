@@ -294,6 +294,7 @@ class EventHubConsumerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: An EventHubConsumerClient instance.
         :rtype: ~azure.eventhub.EventHubConsumerClient
 
 
