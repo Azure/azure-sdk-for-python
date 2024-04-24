@@ -59,6 +59,11 @@ steps:
     displayName: 'Prep Environment Linux'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  - bash: |
+      which python
+    displayName: 'Where is python?'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
   - script: |
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
