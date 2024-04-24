@@ -453,14 +453,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Checks if the configuration setting have been updated since the last refresh.
 
-        :keyword key: key to check for chances
-        :paramtype key: str
-        :keyword label: label to check for changes
-        :paramtype label: str
-        :keyword etag: etag to check for changes
-        :paramtype etag: str
-        :keyword headers: headers to use for the request
-        :paramtype headers: Mapping[str, str]
+        :param str key: key to check for chances
+        :param str label: label to check for changes
+        :param str etag: etag to check for changes
+        :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
