@@ -248,6 +248,10 @@ class AzureMLResourceType:
     """Feature store resource type."""
     WORKSPACE_HUB = "workspace_hub"
     """WorkspaceHub resource type."""
+    SERVERLESS_ENDPOINT = "serverless_endpoints"
+    """Serverless endpoint resource type."""
+    MARKETPLACE_SUBSCRIPTION = "marketplace_subscriptions"
+    """Marketplace subscription resource type."""
 
     NAMED_TYPES = {
         JOB,

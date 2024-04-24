@@ -120,23 +120,28 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
     def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "MarketplaceSubscription":
         properties = obj.properties
         rest_system_data = obj.system_data
-        return cls(
-            name=obj.name,
-            id=obj.id,
-            model_id=properties.model_id,
-            marketplace_plan=MarketplacePlan(
-                properties.marketplace_plan,
-            ),
-            status=camel_to_snake(properties.marketplace_subscription_status),
-            provisioning_state=camel_to_snake(properties.provisioning_state),
-            system_data=SystemData(
+        from_rest_system_data = None
+        if rest_system_data:
+            from_rest_system_data = SystemData(
                 created_by=rest_system_data.created_by,
                 created_at=rest_system_data.created_at,
                 created_by_type=rest_system_data.created_by_type,
                 last_modified_by=rest_system_data.last_modified_by,
                 last_modified_by_type=rest_system_data.last_modified_by_type,
                 last_modified_at=rest_system_data.last_modified_at,
+            )
+        return cls(
+            name=obj.name,
+            id=obj.id,
+            model_id=properties.model_id,
+            marketplace_plan=MarketplacePlan(
+                publisher_id=properties.marketplace_plan.publisher_id,
+                offer_id=properties.marketplace_plan.offer_id,
+                plan_id=properties.marketplace_plan.plan_id,
             ),
+            status=camel_to_snake(properties.marketplace_subscription_status),
+            provisioning_state=camel_to_snake(properties.provisioning_state),
+            system_data=from_rest_system_data,
         )
 
 
