@@ -226,12 +226,12 @@ class CommonRuntimeHelper:
         try:
             client = docker.from_env(version="auto")
         except docker.errors.DockerException as e:
-            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-except
+            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-exception
 
         try:
             client.version()
         except Exception as e:
-            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-except
+            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-exception
 
         if registry:
             try:
@@ -270,7 +270,7 @@ class CommonRuntimeHelper:
         except docker.errors.APIError as e:
             raise Exception(
                 f"Copying {path_in_container} from container has failed. Detailed message: {e}"
-            ) from e  # pylint: disable=broad-except
+            ) from e  # pylint: disable=broad-exception
 
     def get_common_runtime_info_from_response(self, response: Any) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.
@@ -413,7 +413,7 @@ def start_run_if_local(
         temp_dir = unzip_to_temporary_file(job_definition, zip_content)
         invoke_command(temp_dir)
     except Exception as e:
-        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-except
+        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e  # pylint: disable=broad-exception
 
     return snapshot_id
 

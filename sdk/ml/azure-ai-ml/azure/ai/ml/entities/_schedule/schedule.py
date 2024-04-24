@@ -465,7 +465,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         try:
             res_yaml: str = self._to_yaml()
             return res_yaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             res_jobSchedule: str = super(JobSchedule, self).__str__()
             return res_jobSchedule
 

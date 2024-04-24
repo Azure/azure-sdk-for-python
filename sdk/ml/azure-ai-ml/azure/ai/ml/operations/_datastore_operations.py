@@ -225,7 +225,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 skip_validation=True,
             )
             return Datastore._from_rest_object(datastore_resource)
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-exception
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -272,7 +272,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
         except ImportError as exc:
-            raise Exception(  # pylint: disable=broad-except
+            raise Exception(  # pylint: disable=broad-exception
                 "Mount operations requires package azureml-dataprep-rslex installed. "
                 + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
             ) from exc
@@ -311,11 +311,11 @@ class DatastoreOperations(_ScopeDependentOperations):
                     elif mount.mount_state == "MountFailed":
                         raise Exception(
                             f"Mount failed [name: {mount_name}]: {mount.error}"
-                        )  # pylint: disable=broad-except
+                        )  # pylint: disable=broad-exception
                     else:
                         raise Exception(
                             f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
-                        )  # pylint: disable=broad-except
+                        )  # pylint: disable=broad-exception
                 except IndexError:
                     pass
                 time.sleep(5)

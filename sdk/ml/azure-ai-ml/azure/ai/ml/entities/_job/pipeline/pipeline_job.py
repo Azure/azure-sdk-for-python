@@ -675,7 +675,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         try:
             res_to_yaml: str = self._to_yaml()
             return res_to_yaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             res: str = super(PipelineJob, self).__str__()
             return res
 

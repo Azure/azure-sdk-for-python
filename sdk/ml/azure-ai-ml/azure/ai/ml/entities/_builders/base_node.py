@@ -494,7 +494,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     def __str__(self) -> str:
         try:
             return str(self._to_yaml())
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             # add try catch in case component job failed in schema parse
             _obj: _AttrDict = _AttrDict()
             return _obj.__str__()

@@ -57,7 +57,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     # recursively convert Ordered Dict to dictionary
                     serialized_properties[key] = json.loads(json.dumps(value))
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-exception
                     pass
         return RestResourceConfiguration(
             instance_count=self.instance_count,

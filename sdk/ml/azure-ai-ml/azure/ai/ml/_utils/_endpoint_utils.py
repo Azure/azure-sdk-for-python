@@ -90,9 +90,12 @@ def polling_wait(
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
     """Wrapper for polling local endpoint operations.
 
-    :param Callable func: Name of the endpoint.
-    :param str message: Message to print out before starting operation write-out.
-    :keyword dict kwargs: kwargs to be passed to the func
+    :param func: Name of the endpoint.
+    :type func: Callable
+    :param message: Message to print out before starting operation write-out.
+    :type message: str
+    :keyword kwargs: Optional keyword arguments.
+    :paramtype kwargs: Any
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -119,7 +122,7 @@ def validate_response(response: HttpResponse) -> None:
                 r_json = response.json()
             except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=broad-except
+                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=broad-exception
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,

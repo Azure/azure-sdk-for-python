@@ -339,7 +339,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     name=deployment.component.name, version=deployment.component.version
                 )
                 deployment.component = registered_component.id
-            except Exception as err:  # pylint: disable=broad-except
+            except Exception as err:  # pylint: disable=broad-exception
                 if isinstance(err, (ResourceNotFoundError, HttpResponseError)):
                     deployment.component = self._all_operations.all_operations[
                         AzureMLResourceType.COMPONENT

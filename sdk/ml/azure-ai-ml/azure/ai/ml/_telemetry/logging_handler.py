@@ -9,7 +9,7 @@
 import logging
 import platform
 import traceback
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Any
 
 from opencensus.ext.azure.common import utils
 from opencensus.ext.azure.common.protocol import Data, Envelope, ExceptionData, Message
@@ -90,7 +90,7 @@ def get_appinsights_log_handler(
     instrumentation_key=None,
     component_name=None,
     enable_telemetry=True,
-    **kwargs,
+    **kwargs: Any,
 ) -> Tuple[Union["AzureMLSDKLogHandler", logging.NullHandler], Optional[Tracer]]:
     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
 
@@ -98,14 +98,16 @@ def get_appinsights_log_handler(
     :type user_agent: Dict[str, str]
     :param args: Optional arguments for formatting messages.
     :type args: list
+    :keyword kwargs: Optional keyword arguments for adding additional information to messages.
+    :paramtype kwargs: Any
     :keyword instrumentation_key: The Application Insights instrumentation key.
     :paramtype instrumentation_key: str
     :keyword component_name: The component name.
     :paramtype component_name: str
     :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
     :paramtype enable_telemetry: bool
-    :keyword kwargs: Optional keyword arguments for adding additional information to messages.
-    :paramtype kwargs: dict
+    :keyword kwargs: Optional keyword arguments.
+    :paramtype kwargs: Any
     :return: The logging handler and tracer.
     :rtype: Tuple[Union[AzureMLSDKLogHandler, logging.NullHandler], Optional[opencensus.trace.tracer.Tracer]]
     """
@@ -146,7 +148,7 @@ def get_appinsights_log_handler(
         )
 
         return (handler, tracer)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-exception
         # ignore any exceptions, telemetry collection errors shouldn't block an operation
         return (logging.NullHandler(), None)
 
@@ -172,7 +174,7 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             # log the record immediately if it is an error
             if record.exc_info and not all(item is None for item in record.exc_info):
                 self._queue.flush()
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-exception
             # ignore any exceptions, telemetry collection errors shouldn't block an operation
             return
 

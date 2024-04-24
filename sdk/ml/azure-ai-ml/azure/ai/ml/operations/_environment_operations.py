@@ -129,7 +129,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-except
+                    except Exception as err:  # pylint: disable=broad-exception
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -198,7 +198,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             if not env_rest_obj and self._registry_name:
                 env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-exception
             if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:

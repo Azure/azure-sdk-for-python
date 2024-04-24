@@ -425,7 +425,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             else:
                 raise Exception(
                     f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
-                )  # pylint: disable=broad-except
+                )  # pylint: disable=broad-exception
         # TODO: Bug Item number: 2897665
         res: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
         return res

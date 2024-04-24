@@ -39,7 +39,7 @@ def _get_client_args(**kwargs: Any) -> Optional[dict]:
             else:
                 raise Exception(
                     "Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments"
-                )  # pylint: disable=broad-except
+                )  # pylint: disable=broad-exception
     else:
         from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
 
@@ -48,7 +48,7 @@ def _get_client_args(**kwargs: Any) -> Optional[dict]:
         except Exception as e:
             raise Exception(
                 "Fail to get spark session, please check if spark environment is set up."
-            ) from e  # pylint: disable=broad-except
+            ) from e  # pylint: disable=broad-exception
 
         spark_conf = spark.sparkContext.getConf()
         spark_conf_vars = {

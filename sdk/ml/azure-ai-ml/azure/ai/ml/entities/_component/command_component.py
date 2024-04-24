@@ -280,7 +280,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
             else:
                 try:
                     current_obj = current_obj[item]
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-exception
                     return False
         return True
 
@@ -295,6 +295,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             toStr: str = super(CommandComponent, self).__str__()
             return toStr

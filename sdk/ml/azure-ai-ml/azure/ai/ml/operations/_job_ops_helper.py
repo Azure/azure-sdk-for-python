@@ -383,7 +383,7 @@ def get_git_properties() -> Dict[str, str]:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
         except KeyboardInterrupt:
             raise
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=broad-exception
             return None
 
     # Check for environment variable overrides.
