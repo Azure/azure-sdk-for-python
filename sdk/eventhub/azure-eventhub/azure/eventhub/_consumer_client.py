@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
     from ._client_base import CredentialTypes
+    from ._eventprocessor.common import CloseReason
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -331,10 +332,31 @@ class EventHubConsumerClient(
 
     def _receive(
         self,
-        on_event,
-        **kwargs: Any
+        on_event: Callable[
+            ["PartitionContext", Optional["EventData"]], None
+        ],
+        batch=False,
+        *,
+        max_wait_time: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        max_batch_size: int = 300,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], None]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], None]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], None]
+        ] = None
     ) -> None:
-        partition_id = kwargs.get("partition_id")
         with self._lock:
             error: Optional[str] = None
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
@@ -362,21 +384,28 @@ class EventHubConsumerClient(
                 _LOGGER.warning(error)
                 raise ValueError(error)
 
-            initial_event_position = kwargs.pop("starting_position", "@latest")
-            initial_event_position_inclusive = kwargs.pop(
-                "starting_position_inclusive", False
-            )
+            initial_event_position = starting_position if starting_position is not None else "@latest"
+            initial_event_position_inclusive = starting_position_inclusive or False
             event_processor = EventProcessor(
                 self,
                 self._consumer_group,
                 on_event,
+                batch=batch,
+                max_batch_size=max_batch_size,
+                partition_id=partition_id,
                 checkpoint_store=self._checkpoint_store,
                 load_balancing_interval=self._load_balancing_interval,
                 load_balancing_strategy=self._load_balancing_strategy,
                 partition_ownership_expiration_interval=self._partition_ownership_expiration_interval,
                 initial_event_position=initial_event_position,
                 initial_event_position_inclusive=initial_event_position_inclusive,
-                **kwargs
+                max_wait_time=max_wait_time,
+                owner_level=owner_level,
+                prefetch=prefetch,
+                track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+                on_error=on_error,
+                on_partition_initialize=on_partition_initialize,
+                on_partition_close=on_partition_close,
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
@@ -393,7 +422,30 @@ class EventHubConsumerClient(
                 except KeyError:
                     pass
 
-    def receive(self, on_event: Callable[["PartitionContext", Optional["EventData"]], None], **kwargs: Any) -> None:
+    def receive( # pylint:disable=unused-argument
+            self,
+            on_event: Callable[["PartitionContext", Optional["EventData"]], None],
+            *,
+            max_wait_time: Optional[float] = None,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
+            prefetch: int = 300,
+            track_last_enqueued_event_properties: bool = False,
+            starting_position: Optional[
+                Union[str, int, datetime.datetime, Dict[str, Any]]
+            ] = None,
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[
+                Callable[["PartitionContext", Exception], None]
+            ] = None,
+            on_partition_initialize: Optional[
+                Callable[["PartitionContext"], None]
+            ] = None,
+            on_partition_close: Optional[
+                Callable[["PartitionContext", "CloseReason"], None]
+            ] = None,
+            **kwargs: Any,
+        ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -465,7 +517,21 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
+        self._receive(
+            on_event,
+            batch=False,
+            max_batch_size=1,
+            max_wait_time=max_wait_time,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close
+            )
 
     def receive_batch(
             self,

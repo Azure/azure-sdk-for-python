@@ -58,7 +58,23 @@ class EventProcessor(
         eventhub_client: EventHubConsumerClient,
         consumer_group: str,
         on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
-        **kwargs: Any
+        *,
+        batch: Optional[bool] = False,
+        max_batch_size: int = 300,
+        max_wait_time: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        on_error: Optional[Callable[[PartitionContext, Exception], None]] = None,
+        on_partition_initialize: Optional[Callable[[PartitionContext], None]] = None,
+        on_partition_close: Optional[Callable[[PartitionContext, CloseReason], None]] = None,
+        checkpoint_store: Optional[CheckpointStore] = None,
+        initial_event_position: Optional[Union[str, int, datetime, Dict[str, Any]]] = "@latest",
+        initial_event_position_inclusive: Optional[Union[bool, Dict[str, bool]]] = False,
+        load_balancing_interval: Optional[float] = 30.0,
+        load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
+        partition_ownership_expiration_interval: Optional[float] = None,
+        owner_level: Optional[int] = None,
+        prefetch: Optional[int] = None,
+        track_last_enqueued_event_properties: bool = False,
     ) -> None:
         # pylint: disable=line-too-long
         self._consumer_group = consumer_group
@@ -68,50 +84,33 @@ class EventProcessor(
         )
         self._eventhub_name = eventhub_client.eventhub_name
         self._event_handler = on_event
-        self._batch = kwargs.get("batch") or False
-        self._max_batch_size = kwargs.get("max_batch_size") or 300
-        self._max_wait_time = kwargs.get("max_wait_time")
-        self._partition_id: Optional[str] = kwargs.get("partition_id", None)
-        self._error_handler: Optional[Callable[[PartitionContext, Exception], None]] = kwargs.get(
-            "on_error", None
-        )
-        self._partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = kwargs.get(
-            "on_partition_initialize", None
-        )
-        self._partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = kwargs.get(
-            "on_partition_close", None
-        )
-        checkpoint_store: Optional[CheckpointStore] = kwargs.get(
-            "checkpoint_store"
-        )
+        self._batch = batch
+        self._max_batch_size = max_batch_size
+        self._max_wait_time = max_wait_time
+        self._partition_id: partition_id
+        self._error_handler: Optional[Callable[[PartitionContext, Exception], None]] = on_error
+        self._partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = on_partition_initialize
+        self._partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = on_partition_close
         self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
-        self._initial_event_position: Union[str, int, datetime, Dict[str, Any]] = kwargs.get(
-            "initial_event_position", "@latest"
-        )
-        self._initial_event_position_inclusive: Union[bool, Dict[str, bool]] = kwargs.get(
-            "initial_event_position_inclusive", False
-        )
+        self._initial_event_position: Union[str, int, datetime, Dict[str, Any]] = initial_event_position
+        self._initial_event_position_inclusive: Union[bool, Dict[str, bool]] = initial_event_position_inclusive
 
-        self._load_balancing_interval: float = kwargs.get(
-            "load_balancing_interval", 30.0
-        )
-        self._load_balancing_strategy = (
-            kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
-        )
-        self._ownership_timeout = kwargs.get(
-            "partition_ownership_expiration_interval", self._load_balancing_interval * 6
+        self._load_balancing_interval: float = load_balancing_interval
+        self._load_balancing_strategy = load_balancing_strategy
+        self._ownership_timeout = (
+            partition_ownership_expiration_interval
+            if partition_ownership_expiration_interval is not None
+            else self._load_balancing_interval * 6
         )
 
         self._partition_contexts: Dict[str, PartitionContext] = {}
 
         # Receive parameters
-        self._owner_level: Optional[int] = kwargs.get("owner_level", None)
+        self._owner_level: Optional[int] = owner_level
         if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
-        self._prefetch: Optional[int] = kwargs.get("prefetch", None)
-        self._track_last_enqueued_event_properties = kwargs.get(
-            "track_last_enqueued_event_properties", False
-        )
+        self._prefetch: Optional[int] = prefetch
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._id = str(uuid.uuid4())
         self._running = False
         self._lock = threading.RLock()
