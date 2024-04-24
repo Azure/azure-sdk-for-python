@@ -45,6 +45,7 @@ from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
+from azure.ai.ml.entities._autogen_entities.models import MarketplaceSubscription
 
 module_logger = logging.getLogger(__name__)
 
@@ -179,6 +180,18 @@ def add_param_overrides(data, param_overrides) -> None:
                 objects.set_(data, param, val)
 
 
+def load_from_autogen_entity(cls, source: Union[str, PathLike, IO[AnyStr]], **kwargs):
+    loaded_dict = _try_load_yaml_dict(source)
+    add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
+    entity = cls(loaded_dict)
+    try:
+        entity._validate()
+    except ValueError as e:
+        validation_result = ValidationResultBuilder.from_single_message(singular_error_message=str(e))
+        validation_result.try_raise()
+    return entity
+
+
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -214,17 +227,24 @@ def load_job(
     return cast(Job, load_common(Job, source, relative_origin, **kwargs))
 
 
+@experimental
 def load_serverless_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs: Any,
-):
-    loaded_dict = _try_load_yaml_dict(source)
-    add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
-    serverless_endpoint = ServerlessEndpoint(loaded_dict)
-    serverless_endpoint._validate()
-    return serverless_endpoint
+) -> ServerlessEndpoint:
+    return load_from_autogen_entity(ServerlessEndpoint, source, **kwargs)
+
+
+@experimental
+def load_marketplace_subscription(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs: Any,
+) -> MarketplaceSubscription:
+    return load_from_autogen_entity(MarketplaceSubscription, source, **kwargs)
 
 
 def load_workspace(

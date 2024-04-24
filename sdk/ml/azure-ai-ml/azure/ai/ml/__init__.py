@@ -28,10 +28,12 @@ from .entities._load_functions import (
     load_feature_store,
     load_feature_store_entity,
     load_job,
+    load_marketplace_subscription,
     load_model,
     load_model_package,
     load_online_deployment,
     load_online_endpoint,
+    load_serverless_endpoint,
     load_registry,
     load_workspace,
     load_workspace_connection,
@@ -71,6 +73,8 @@ __all__ = [
     "load_workspace_connection",
     "load_workspace_hub",
     "load_model_package",
+    "load_marketplace_subscription",
+    "load_serverless_endpoint",
 ]
 
 __version__ = VERSION
