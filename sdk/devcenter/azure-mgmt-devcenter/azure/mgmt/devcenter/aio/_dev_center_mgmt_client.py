@@ -9,18 +9,19 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import DevCenterMgmtClientConfiguration
 from .operations import (
     AttachedNetworksOperations,
-    CatalogDevBoxDefinitionsOperations,
     CatalogsOperations,
     CheckNameAvailabilityOperations,
-    CustomizationTasksOperations,
+    CheckScopedNameAvailabilityOperations,
     DevBoxDefinitionsOperations,
     DevCentersOperations,
     EnvironmentDefinitionsOperations,
@@ -33,6 +34,8 @@ from .operations import (
     Operations,
     PoolsOperations,
     ProjectAllowedEnvironmentTypesOperations,
+    ProjectCatalogEnvironmentDefinitionsOperations,
+    ProjectCatalogsOperations,
     ProjectEnvironmentTypesOperations,
     ProjectsOperations,
     SchedulesOperations,
@@ -54,6 +57,15 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype projects: azure.mgmt.devcenter.aio.operations.ProjectsOperations
     :ivar attached_networks: AttachedNetworksOperations operations
     :vartype attached_networks: azure.mgmt.devcenter.aio.operations.AttachedNetworksOperations
+    :ivar project_catalogs: ProjectCatalogsOperations operations
+    :vartype project_catalogs: azure.mgmt.devcenter.aio.operations.ProjectCatalogsOperations
+    :ivar environment_definitions: EnvironmentDefinitionsOperations operations
+    :vartype environment_definitions:
+     azure.mgmt.devcenter.aio.operations.EnvironmentDefinitionsOperations
+    :ivar project_catalog_environment_definitions: ProjectCatalogEnvironmentDefinitionsOperations
+     operations
+    :vartype project_catalog_environment_definitions:
+     azure.mgmt.devcenter.aio.operations.ProjectCatalogEnvironmentDefinitionsOperations
     :ivar galleries: GalleriesOperations operations
     :vartype galleries: azure.mgmt.devcenter.aio.operations.GalleriesOperations
     :ivar images: ImagesOperations operations
@@ -81,14 +93,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.devcenter.aio.operations.CheckNameAvailabilityOperations
-    :ivar catalog_dev_box_definitions: CatalogDevBoxDefinitionsOperations operations
-    :vartype catalog_dev_box_definitions:
-     azure.mgmt.devcenter.aio.operations.CatalogDevBoxDefinitionsOperations
-    :ivar customization_tasks: CustomizationTasksOperations operations
-    :vartype customization_tasks: azure.mgmt.devcenter.aio.operations.CustomizationTasksOperations
-    :ivar environment_definitions: EnvironmentDefinitionsOperations operations
-    :vartype environment_definitions:
-     azure.mgmt.devcenter.aio.operations.EnvironmentDefinitionsOperations
+    :ivar check_scoped_name_availability: CheckScopedNameAvailabilityOperations operations
+    :vartype check_scoped_name_availability:
+     azure.mgmt.devcenter.aio.operations.CheckScopedNameAvailabilityOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.devcenter.aio.operations.SkusOperations
     :ivar pools: PoolsOperations operations
@@ -103,8 +110,8 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -120,7 +127,25 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = DevCenterMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -129,6 +154,15 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self.dev_centers = DevCentersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.attached_networks = AttachedNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_catalogs = ProjectCatalogsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.environment_definitions = EnvironmentDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_catalog_environment_definitions = ProjectCatalogEnvironmentDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -155,13 +189,7 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.catalog_dev_box_definitions = CatalogDevBoxDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.customization_tasks = CustomizationTasksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.environment_definitions = EnvironmentDefinitionsOperations(
+        self.check_scoped_name_availability = CheckScopedNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -171,7 +199,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -191,7 +221,7 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
