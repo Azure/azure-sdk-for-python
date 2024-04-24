@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
+import hashlib
+import base64
 from threading import Lock
 import datetime
 import logging
@@ -518,12 +520,23 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label:
+            basic_value = basic_value + f"\n{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
     async def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in self._feature_flag_selectors:
+            endpoint = self._client._impl._config.endpoint # pylint: disable=protected-access
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
@@ -533,6 +546,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if "metadata" not in feature_flag_value["telemetry"]:
                         feature_flag_value["telemetry"]["metadata"] = {}
                     feature_flag_value["telemetry"]["metadata"]["etag"] = feature_flag.etag
+                    feature_flag_reference = f"{endpoint}/kv/{feature_flag.key}"
+                    if feature_flag.label:
+                        feature_flag_reference += f"?label={feature_flag.label}"
+                    feature_flag_value["telemetry"]["metadata"]["feature_flag_reference"] = feature_flag_reference
+                    feature_flag_value["telemetry"]["metadata"]["feature_flag_id"] = self._calculate_feature_id(
+                        feature_flag.key, feature_flag.label
+                    )
                 loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
