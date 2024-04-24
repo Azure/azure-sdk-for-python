@@ -287,7 +287,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         get_token: Callable,
         token_type: bytes,
         config: Configuration,
-        **kwargs: Any
+        *,
+        update_token: bool,
     ) -> Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]:
         """
         Creates the JWTTokenAuth.

@@ -310,7 +310,14 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_token_auth(auth_uri: str, get_token: Callable, token_type: bytes, config: Configuration, **kwargs: Any):
+    def create_token_auth(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config: Configuration,
+        *,
+        update_token: bool,
+    ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.

@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple, cast
+from typing import Callable, Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -477,7 +477,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
     @staticmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config,
+        *,
+        update_token: bool,
+    ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -492,7 +499,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh

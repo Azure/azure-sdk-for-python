@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any, Tuple, TYPE_CHECKING
+from typing import Callable, Optional, Union, Any, Tuple, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -535,7 +535,14 @@ if uamqp_installed:
                 raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
         @staticmethod
-        def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+        def create_token_auth(
+            auth_uri: str,
+            get_token: Callable,
+            token_type: bytes,
+            config,
+            *,
+            update_token: bool,
+        ):
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -551,7 +558,6 @@ if uamqp_installed:
             :rtype: ~uamqp.authentication.JWTTokenAuth
 
             """
-            update_token = kwargs.pop("update_token")
             refresh_window = 300
             if update_token:
                 refresh_window = 0

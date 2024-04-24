@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING, List, Optional, Any
+from typing import Callable, Union, cast, TYPE_CHECKING, List, Optional, Any
 
 try:
     from uamqp import (
@@ -268,7 +268,14 @@ if uamqp_installed:
                     await consumer._on_event_received(None)
 
         @staticmethod
-        async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+        async def create_token_auth_async(
+            auth_uri: str,
+            get_token: Callable,
+            token_type: bytes,
+            config,
+            *,
+            update_token: bool,
+        ):
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -283,7 +290,6 @@ if uamqp_installed:
             :return: A JWTTokenAsync instance.
             :rtype: ~uamqp.authentication.JWTTokenAsync
             """
-            update_token = kwargs.pop("update_token")
             refresh_window = 300
             if update_token:
                 refresh_window = 0

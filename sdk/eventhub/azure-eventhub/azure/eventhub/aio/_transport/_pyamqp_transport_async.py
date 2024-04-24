@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING
+from typing import Callable, Union, cast, TYPE_CHECKING
 
 from ..._pyamqp import constants, error as errors
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
@@ -252,7 +252,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     await asyncio.wait([t], timeout=1)
 
     @staticmethod
-    async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+    async def create_token_auth_async(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config,
+        *,
+        update_token: bool,
+    ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -268,7 +275,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
