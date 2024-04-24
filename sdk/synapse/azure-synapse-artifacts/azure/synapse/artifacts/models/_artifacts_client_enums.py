@@ -305,6 +305,15 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+
+
 class FtpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to be used to connect to the FTP server."""
 
@@ -325,6 +334,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -751,6 +767,13 @@ class SalesforceSourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     QUERY_ALL = "QueryAll"
 
 
+class SalesforceV2SinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The write behavior for the operation. Default is Insert."""
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+
+
 class SapCloudForCustomerSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The write behavior for the operation. Default is 'Insert'."""
 
@@ -825,7 +848,7 @@ class ScriptActivityParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the query. Type: string."""
+    """The type of the ScriptActivityScriptBlock."""
 
     QUERY = "Query"
     NON_QUERY = "NonQuery"
@@ -838,11 +861,26 @@ class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     O_AUTH2 = "OAuth2"
 
 
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
 class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to be used to connect to the FTP server."""
 
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
+
+
+class SnowflakeAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    BASIC = "Basic"
+    KEY_PAIR = "KeyPair"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
