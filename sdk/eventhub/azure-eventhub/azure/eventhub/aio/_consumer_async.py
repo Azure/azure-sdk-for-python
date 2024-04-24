@@ -7,7 +7,7 @@ import uuid
 import asyncio
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, Any
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, Any, Deque
 from functools import partial
 
 from ._client_base_async import ConsumerProducerMixin
@@ -17,8 +17,6 @@ from .._utils import create_properties, event_position_selector
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
-    from typing import Deque
-
     try:
         from uamqp import (  # pylint: disable=unused-import
             ReceiveClientAsync as uamqp_ReceiveClientAsync,
