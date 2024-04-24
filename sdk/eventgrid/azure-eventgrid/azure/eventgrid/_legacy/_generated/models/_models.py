@@ -291,9 +291,7 @@ class SubscriptionValidationResponse(_serialization.Model):
         "validation_response": {"key": "validationResponse", "type": "str"},
     }
 
-    def __init__(
-        self, *, validation_response: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, validation_response: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword validation_response: The validation response sent by the subscriber to Azure Event
          Grid to complete the validation of an event subscription.

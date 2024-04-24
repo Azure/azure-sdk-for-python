@@ -1,5 +1,13 @@
 # Release History
 
+## 4.20.1b1 (2024-04-24)
+
+This is a Beta of the EventGridClient
+
+### Bug Fixes
+
+- Fixed serialization issues with CloudEvent and CNCF Cloud Event
+
 ## 4.20.0b1 (2024-04-11)
 
 ### Features Added

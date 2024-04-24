@@ -12,8 +12,8 @@ def extract(definitions):
         return
     tups = []
     for event in definitions:
-        if event.endswith('Data') and event not in EXCEPTIONS:
-            key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
+        if event.endswith("Data") and event not in EXCEPTIONS:
+            key, txt = "Name".join(event.rsplit("Data", 1)), definitions[event]["description"]
             if key in NAMING_CHANGES:
                 key = key.replace("Acs", "AcsAdvanced")
             try:
@@ -32,9 +32,7 @@ def extract(definitions):
 
 
 def generate_enum_content(tuples):
-    print(
-        "# These names at the top are 'corrected' aliases of duplicate values that appear below, which are"
-    )
+    print("# These names at the top are 'corrected' aliases of duplicate values that appear below, which are")
     print("# deprecated but maintained for backwards compatibility.")
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
