@@ -570,8 +570,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword metadata:
-            Name-value pairs associated with the file as metadata.
-        :type metadata: dict[str, str]
+            Name-value pairs associated with the share as metadata.
+        :paramtype metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1285,7 +1285,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        include_renames: Optional[bool] = None,
+        allow_renames: Optional[bool] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
@@ -1301,7 +1301,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
-        :keyword Optional[bool] include_renames:
+        :keyword Optional[bool] allow_renames:
             Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
             a file that has been renamed or moved between the target snapshot (or live file) and the previous
             snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
@@ -1325,7 +1325,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
-            support_rename=include_renames,
+            support_rename=allow_renames,
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)
