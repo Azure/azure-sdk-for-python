@@ -724,18 +724,11 @@ class WebPubSubClient(
             self._state = WebPubSubClientState.CONNECTED
 
         async def on_message(data: str):
-            async def handle_ack_message(message: AckMessage):
-                ack_option = self._ack_map.get(message.ack_id)
-                if ack_option:
-                    if not (message.success or (message.error and message.error.name == "Duplicate")):
-                        ack_option.error_detail = message.error
-                    else:
-                        ack_option.error_detail = None
-                    ack_option.ack_id = message.ack_id
-                    _LOGGER.debug("Ack message received. Ack id is : %d", message.ack_id)
-                    ack_option.event.set()
-
-            async def handle_connected_message(message: ConnectedMessage):
+            message = self._protocol.parse_messages(data)
+            if message is None:
+                #  None means the message is not recognized.
+                return
+            if message.kind == "connected":
                 _LOGGER.debug("WebSocket is connected with id: %s", message.connection_id)
                 self._connection_id = message.connection_id
                 self._reconnection_token = message.reconnection_token
@@ -751,14 +744,22 @@ class WebPubSubClient(
                         CallbackType.CONNECTED,
                         OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id),
                     )
-
-            async def handle_disconnected_message(message: DisconnectedMessage):
+            elif message.kind == "disconnected":
                 self._last_disconnected_message = message
-
-            async def handle_group_data_message(message: GroupDataMessage):
+            elif message.kind == "ack":
+                ack_option = self._ack_map.get(message.ack_id)
+                if ack_option:
+                    if not (message.success or (message.error and message.error.name == "Duplicate")):
+                        ack_option.error_detail = message.error
+                    else:
+                        ack_option.error_detail = None
+                    ack_option.ack_id = message.ack_id
+                    _LOGGER.debug("Ack message received. Ack id is : %d", message.ack_id)
+                    ack_option.event.set()
+            elif message.kind == "groupData":
                 if message.sequence_id:
                     if not self._sequence_id.try_update(message.sequence_id):
-                        # // drop duplicated message
+                        # drop duplicated message
                         return
 
                 self._call_back(
@@ -771,11 +772,10 @@ class WebPubSubClient(
                         sequence_id=message.sequence_id,
                     ),
                 )
-
-            async def handle_server_data_message(message: ServerDataMessage):
+            elif message.kind == "serverData":
                 if message.sequence_id:
                     if not self._sequence_id.try_update(message.sequence_id):
-                        # // drop duplicated message
+                        # drop duplicated message
                         return
 
                 self._call_back(
@@ -786,23 +786,8 @@ class WebPubSubClient(
                         sequence_id=message.sequence_id,
                     ),
                 )
-
-            parsed_message = self._protocol.parse_messages(data)
-            if parsed_message is None:
-                #  None means the message is not recognized.
-                return
-            if parsed_message.kind == "connected":
-                await handle_connected_message(parsed_message)
-            elif parsed_message.kind == "disconnected":
-                await handle_disconnected_message(parsed_message)
-            elif parsed_message.kind == "ack":
-                await handle_ack_message(parsed_message)
-            elif parsed_message.kind == "groupData":
-                await handle_group_data_message(parsed_message)
-            elif parsed_message.kind == "serverData":
-                await handle_server_data_message(parsed_message)
             else:
-                _LOGGER.warning("unknown message type: %s", parsed_message.kind)
+                _LOGGER.warning("unknown message type: %s", message.kind)
 
         async def on_close(
             ws_instance: WebSocketAppAsync,
