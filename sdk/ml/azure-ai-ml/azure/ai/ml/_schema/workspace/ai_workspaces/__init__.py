@@ -2,6 +2,4 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-WORKSPACE_HUB_KIND = "hub"
-PROJECT_WORKSPACE_KIND = "project"
-ENDPOINT_AI_SERVICE_KIND = "AIServices"
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
