@@ -43,6 +43,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             self._validate_translations(translation)
         return variables
 
+    @pytest.mark.skip(reason="The max number of batch requests returned is limited to 50 and hence this test is no longer valid")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
