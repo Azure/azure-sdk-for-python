@@ -1599,6 +1599,36 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_update_range_from_file_url_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        source_file_name = 'testfile'
+        source_file_client = await self._create_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        await source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = await self._create_empty_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=destination_file_name)
+
+        with pytest.raises(HttpResponseError) as e:
+            await destination_file_client.upload_range_from_url(
+                source_file_client.url, offset=0, length=512, source_offset=0)
+
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
+        assert ("copysourceerrormessage:Server failed to authenticate the request. Please refer to the information in "
+                "the www-authenticate header.") in e.value.message
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
