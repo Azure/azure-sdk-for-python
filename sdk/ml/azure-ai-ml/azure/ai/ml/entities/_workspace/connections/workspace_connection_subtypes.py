@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import resource
 from typing import Any, List, Optional, Type, Union
 import re
 
@@ -314,6 +315,8 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
     :param api_key: The api key to connect to the azure endpoint.
     If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
+    :param open_ai_resource_id: The fully qualified ID of the Azure Open AI resource to connect to.
+    :type open_ai_resource_id: Optional[str]
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
@@ -325,9 +328,14 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
         *,
         api_version: Optional[str] = None,
         api_type: str = "Azure",  # Required API input, hidden to allow for rare overrides
+        open_ai_resource_id: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
+        # Sneak in resource ID as it's inputted from rest conversions as a kwarg.
+        from_rest_resource_id = kwargs.pop("resource_id", None)
+        if open_ai_resource_id is None and from_rest_resource_id is not None:
+            open_ai_resource_id = from_rest_resource_id
         super().__init__(
             type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI),
             from_child=True,
@@ -338,10 +346,11 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
         self.tags[CONNECTION_API_TYPE_KEY] = api_type
+        self.tags[CONNECTION_RESOURCE_ID_KEY] = open_ai_resource_id
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
-        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY]
+        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY, CONNECTION_RESOURCE_ID_KEY]
 
     @classmethod
     def _get_schema_class(cls) -> Type:
@@ -370,6 +379,32 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
+    @property
+    def open_ai_resource_id(self) -> Optional[str]:
+        """The fully qualified ID of the Azure Open AI resource this connects to. 
+
+        :return: The fully qualified ID of the Azure Open AI resource this connects to.
+        :rtype: Optional[str]
+        """
+        if self.tags is not None and CONNECTION_RESOURCE_ID_KEY in self.tags:
+            res: str = self.tags[CONNECTION_RESOURCE_ID_KEY]
+            return res
+        return None
+
+    @open_ai_resource_id.setter
+    def open_ai_resource_id(self, value: Optional[str]) -> None:
+        """Set the fully qualified ID of the Azure Open AI resource to connect to.
+
+        :param value: The new resource id to set.
+        :type value: Optional[str]
+        """
+        if not hasattr(self, "tags") or self.tags is None:
+            self.tags = {}
+        if value is None:
+            self.tags.pop(CONNECTION_RESOURCE_ID_KEY, None)
+            return
+        self.tags[CONNECTION_RESOURCE_ID_KEY] = value
+
 
 class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
     """A Workspace Connection geared towards Azure AI services.
@@ -381,7 +416,7 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
     :param api_key: The api key to connect to the azure endpoint.
     If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
-    :param ai_services_resource_id: The ID of the Azure AI service resource to connect to.
+    :param ai_services_resource_id: The fully qualified ID of the Azure AI service resource to connect to.
     :type ai_services_resource_id: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict

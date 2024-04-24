@@ -76,6 +76,7 @@ class AzureOpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     api_version = fields.Str(required=False, allow_none=True)
 
     azure_endpoint = fields.Str()
+    open_ai_resource_id = fields.Str(required=False, allow_none=True)
 
     @post_load
     def make(self, data, **kwargs):

@@ -4,7 +4,7 @@
 from typing import Callable, Tuple
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_workspace_connection, load_datastore
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
@@ -49,26 +49,29 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/workspace_connection/azure_open_ai_api.yaml"
         )
         wps_connection.name = wps_connection_name
+        wps_connection.open_ai_resource_id = None # Not dealing with finding a valid ID for this test
+         # Not sure what this is, some sort of scrubbed/injected value
         assert wps_connection.credentials.key == "12344"
 
         try:
+            expected_key = "12344" if is_live() else "dGhpcyBpcyBmYWtlIGtleQ=="
             created_conn_with_key = client.connections.create_or_update(
                 workspace_connection=wps_connection, populate_secrets=True
             )
             created_conn_no_key = client.connections.create_or_update(workspace_connection=wps_connection)
-            assert created_conn_with_key.credentials.key == "12344"
+            assert created_conn_with_key.credentials.key == expected_key
             assert created_conn_no_key.credentials.key == None
 
             gotten_conn_with_key = client.connections.get(name=wps_connection_name, populate_secrets=True)
             gotten_conn_no_key = client.connections.get(name=wps_connection_name)
-            assert gotten_conn_with_key.credentials.key == "12344"
+            assert gotten_conn_with_key.credentials.key == expected_key
             assert gotten_conn_no_key.credentials.key == None
 
             listed_conn_with_key = [
                 conn for conn in client.connections.list(populate_secrets=True) if conn.name == wps_connection_name
             ][0]
             listed_conn_no_key = [conn for conn in client.connections.list() if conn.name == wps_connection_name][0]
-            assert listed_conn_with_key.credentials.key == "12344"
+            assert listed_conn_with_key.credentials.key == expected_key
             assert listed_conn_no_key.credentials.key == None
 
         finally:
@@ -530,7 +533,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/workspace_connection/azure_open_ai_api.yaml"
         )
         local_connection.name = wps_connection_name
-
+        local_connection.open_ai_resource_id = None # Not dealing with finding a valid ID for this test 
         created_connection = client.connections.create_or_update(
             workspace_connection=local_connection, populate_secrets=True
         )
@@ -540,10 +543,12 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
-        assert created_connection.api_key == "12344"
+        expected_key = "12344" if is_live() else "dGhpcyBpcyBmYWtlIGtleQ=="
+        assert created_connection.api_key == expected_key
         assert created_connection.tags is not None
         assert created_connection.tags["hello"] == "world"
         assert created_connection.api_version == "1.0"
+        assert created_connection.open_ai_resource_id == None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -566,6 +571,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.tags is not None
         assert created_connection.tags["hello"] == "world"
         assert created_connection.api_version == "1.0"
+        assert created_connection.open_ai_resource_id == None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)

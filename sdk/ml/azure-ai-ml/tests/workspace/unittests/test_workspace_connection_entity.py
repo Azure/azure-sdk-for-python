@@ -193,6 +193,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["hello"] == "world"
         assert ws_connection.tags["ApiType"] == "Azure"
         assert ws_connection.api_version == "1.0"
+        assert ws_connection.open_ai_resource_id == "some id"
         self.check_rest_conversion_stable(ws_connection)
 
         ws_connection = load_workspace_connection(
@@ -206,6 +207,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["hello"] == "world"
         assert ws_connection.tags["ApiType"] == "Azure"
         assert ws_connection.api_version == "1.0"
+        assert ws_connection.open_ai_resource_id is None
         self.check_rest_conversion_stable(ws_connection)
 
     def test_ai_services(self):
