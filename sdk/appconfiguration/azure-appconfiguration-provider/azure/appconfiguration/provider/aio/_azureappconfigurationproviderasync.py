@@ -63,7 +63,7 @@ _T = TypeVar("_T")
 
 
 @overload
-async def load(
+async def load( # pylint: disable=docstring-keyword-should-match-keyword-only
     endpoint: str,
     credential: "AsyncTokenCredential",
     *,
@@ -77,6 +77,9 @@ async def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
@@ -121,7 +124,7 @@ async def load(
 
 
 @overload
-async def load(
+async def load( # pylint: disable=docstring-keyword-should-match-keyword-only
     *,
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
@@ -134,6 +137,9 @@ async def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
