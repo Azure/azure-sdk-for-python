@@ -44,19 +44,26 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
-  - pwsh: |
-      sudo python -m pip uninstall -y setuptools
-    displayName: Remove bad setuptools global install
-
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: $(PythonVersion)
 
+  - bash: |
+      python -m venv $(Build.SourcesDirectory)/venv
+      source $(Build.SourcesDirectory)/venv/bin/activate
+      which python
+      python -m pip install --force -r eng/ci_tools.txt
+      python -m pip freeze --all
+      echo "##vso[task.setvariable variable=PATH;]$PATH"
+    displayName: 'Prep Environment Linux'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
   - script: |
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
     displayName: 'Prep Environment'
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
   - template: set-dev-build.yml@self
     parameters:
