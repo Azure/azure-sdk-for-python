@@ -1,6 +1,6 @@
 # Release History
 
-## 0.3.0.post1 (2024-04-15)
+## 0.3.1 (Unreleased)
 
 This package is no longer being maintained. Please refer to the [Bing Custom Search REST API](https://learn.microsoft.com/bing/search-apis/bing-custom-search/quickstarts/rest/python) instead.
 

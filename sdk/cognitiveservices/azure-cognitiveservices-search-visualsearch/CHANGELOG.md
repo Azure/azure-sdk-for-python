@@ -1,6 +1,6 @@
 # Release History
 
-## 0.2.0.post1 (2024-04-15)
+## 0.2.1 (Unreleased)
 
 This package is no longer being maintained. Please refer to the [Bing Visual Search REST API](https://learn.microsoft.com/bing/search-apis/bing-visual-search/quickstarts/rest/python) instead.
 
