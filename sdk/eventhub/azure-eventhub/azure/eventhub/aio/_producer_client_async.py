@@ -429,11 +429,11 @@ class EventHubProducerClient(
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: bool = False,
-        on_error: Optional[
-            Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]
-        ] = None,
         on_success: Optional[
             Callable[[SendEventTypes, Optional[str]], Awaitable[None]]
+        ] = None,
+        on_error: Optional[
+            Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]
         ] = None,
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
@@ -442,7 +442,14 @@ class EventHubProducerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
+        retry_backoff_factor: Optional[float] = 0.8,
+        retry_backoff_max: Optional[float] = 120,
+        retry_mode: Literal["exponential", "fixed"] = "exponential",
+        idle_timeout: Optional[float] = None,
         transport_type: TransportType = TransportType.Amqp,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        uamqp_transport: bool = False,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -548,7 +555,14 @@ class EventHubProducerClient(
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            idle_timeout=idle_timeout,
             transport_type=transport_type,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=connection_verify,
+            uamqp_transport=uamqp_transport,
             **kwargs
         )
         return cls(**constructor_args)
