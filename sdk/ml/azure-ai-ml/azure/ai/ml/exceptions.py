@@ -90,6 +90,7 @@ class ErrorTarget:
     FEATURE_SET = "FeatureSet"
     FEATURE_STORE_ENTITY = "FeatureStoreEntity"
     MODEL_MONITORING = "ModelMonitoring"
+    SERVERLESS_ENDPOINT = "ServerlessEndpoint" ## EXPERIMENTAL/IN PREVIEW
 
 
 class MlException(AzureError):
