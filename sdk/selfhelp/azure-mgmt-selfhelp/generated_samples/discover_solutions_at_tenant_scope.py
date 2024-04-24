@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.selfhelp import SelfHelpMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
     pip install azure-identity
     pip install azure-mgmt-selfhelp
 # USAGE
-    python list_discovery_solutions_at_resource_scope.py
+    python discover_solutions_at_tenant_scope.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,15 +27,13 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
 def main():
     client = SelfHelpMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.discovery_solution.list(
-        scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read",
-    )
-    for item in response:
-        print(item)
+    response = client.discovery_solution_nlp_tenant_scope.post()
+    print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/ListDiscoverySolutionsAtResourceScope.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2024-03-01-preview/examples/DiscoverSolutionsAtTenantScope.json
 if __name__ == "__main__":
     main()

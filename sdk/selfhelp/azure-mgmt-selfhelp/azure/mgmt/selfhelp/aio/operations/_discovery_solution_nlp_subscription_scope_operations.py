@@ -26,20 +26,20 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._check_name_availability_operations import build_post_request
+from ...operations._discovery_solution_nlp_subscription_scope_operations import build_post_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CheckNameAvailabilityOperations:
+class DiscoverySolutionNLPSubscriptionScopeOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.selfhelp.aio.SelfHelpMgmtClient`'s
-        :attr:`check_name_availability` attribute.
+        :attr:`discovery_solution_nlp_subscription_scope` attribute.
     """
 
     models = _models
@@ -54,77 +54,59 @@ class CheckNameAvailabilityOperations:
     @overload
     async def post(
         self,
-        scope: str,
-        check_name_availability_request: Optional[_models.CheckNameAvailabilityRequest] = None,
+        discover_solution_request: Optional[_models.DiscoveryNlpRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic,
-        troubleshooter or solutions.
+    ) -> _models.DiscoveryNlpResponse:
+        """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
+        issue summary and subscription.
 
-        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
-         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
-         Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Default
+        :param discover_solution_request: Request body for discovering solutions using NLP. Default
          value is None.
-        :type check_name_availability_request: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityRequest
+        :type discover_solution_request: ~azure.mgmt.selfhelp.models.DiscoveryNlpRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
+        :return: DiscoveryNlpResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.selfhelp.models.DiscoveryNlpResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def post(
         self,
-        scope: str,
-        check_name_availability_request: Optional[IO[bytes]] = None,
+        discover_solution_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic,
-        troubleshooter or solutions.
+    ) -> _models.DiscoveryNlpResponse:
+        """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
+        issue summary and subscription.
 
-        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
-         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
-         Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Default
+        :param discover_solution_request: Request body for discovering solutions using NLP. Default
          value is None.
-        :type check_name_availability_request: IO[bytes]
+        :type discover_solution_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
+        :return: DiscoveryNlpResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.selfhelp.models.DiscoveryNlpResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def post(
-        self,
-        scope: str,
-        check_name_availability_request: Optional[Union[_models.CheckNameAvailabilityRequest, IO[bytes]]] = None,
-        **kwargs: Any
-    ) -> _models.CheckNameAvailabilityResponse:
-        """This API is used to check the uniqueness of a resource name used for a diagnostic,
-        troubleshooter or solutions.
+        self, discover_solution_request: Optional[Union[_models.DiscoveryNlpRequest, IO[bytes]]] = None, **kwargs: Any
+    ) -> _models.DiscoveryNlpResponse:
+        """Search for relevant Azure Diagnostics, Solutions and Troubleshooters using a natural language
+        issue summary and subscription.
 
-        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
-         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
-         Required.
-        :type scope: str
-        :param check_name_availability_request: The required parameters for availability check. Is
-         either a CheckNameAvailabilityRequest type or a IO[bytes] type. Default value is None.
-        :type check_name_availability_request: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityRequest
-         or IO[bytes]
-        :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
+        :param discover_solution_request: Request body for discovering solutions using NLP. Is either a
+         DiscoveryNlpRequest type or a IO[bytes] type. Default value is None.
+        :type discover_solution_request: ~azure.mgmt.selfhelp.models.DiscoveryNlpRequest or IO[bytes]
+        :return: DiscoveryNlpResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.selfhelp.models.DiscoveryNlpResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -140,21 +122,21 @@ class CheckNameAvailabilityOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CheckNameAvailabilityResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DiscoveryNlpResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(check_name_availability_request, (IOBase, bytes)):
-            _content = check_name_availability_request
+        if isinstance(discover_solution_request, (IOBase, bytes)):
+            _content = discover_solution_request
         else:
-            if check_name_availability_request is not None:
-                _json = self._serialize.body(check_name_availability_request, "CheckNameAvailabilityRequest")
+            if discover_solution_request is not None:
+                _json = self._serialize.body(discover_solution_request, "DiscoveryNlpRequest")
             else:
                 _json = None
 
         _request = build_post_request(
-            scope=scope,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -177,7 +159,7 @@ class CheckNameAvailabilityOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response)
+        deserialized = self._deserialize("DiscoveryNlpResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
