@@ -453,7 +453,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
-            dict(
+            dict(  # pylint: disable=use-dict-literal
                 name=self.name,
                 type=self.type,
                 display_name=self.display_name,

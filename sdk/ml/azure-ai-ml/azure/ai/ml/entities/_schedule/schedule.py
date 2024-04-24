@@ -87,7 +87,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
+        :paramtype kwargs: Any
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
