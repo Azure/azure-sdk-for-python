@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Callable, Union, cast, TYPE_CHECKING
+from typing import Any, Callable, Dict, Union, cast, TYPE_CHECKING
 
 from ..._pyamqp import constants, error as errors
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
@@ -69,7 +69,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(# pylint: disable=unused-argument
+        *,
+        config,
+        target: str,
+        auth: JWTTokenAuthAsync,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        **kwargs: Any
+    ):
         """
         Creates and returns the pyamqp SendClient.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -87,7 +100,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created SendClientAsync.
         :rtype: ~pyamqp.aio.SendClientAsync
         """
-        target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
         msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
 
@@ -99,6 +111,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            keep_alive_interval=keep_alive_interval,
+            link_properties=link_properties,
+            properties=properties,
+            client_name=client_name,
             **kwargs,
         )
 

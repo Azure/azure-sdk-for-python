@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Callable, Union, cast, TYPE_CHECKING, List, Optional, Any
+from typing import Callable, Dict, Union, cast, TYPE_CHECKING, List, Optional, Any
 
 try:
     from uamqp import (
@@ -89,7 +89,20 @@ if uamqp_installed:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(# pylint: disable=unused-argument
+            *,
+            config,
+            target: str,
+            auth: authentication.JWTTokenAuth,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            keep_alive_interval: int,
+            client_name: str,
+            link_properties: Dict[bytes, Any],
+            properties: Dict[bytes, Any],
+            **kwargs: Any
+        ):
             """
             Creates and returns the uamqp SendClient.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -107,14 +120,16 @@ if uamqp_installed:
             :return: The send client.
             :rtype: ~uamqp.SendClientAsync
             """
-            target = kwargs.pop("target")
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-
             return SendClientAsync(
                 target,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                idle_timeout=idle_timeout,
+                auth=auth,
                 **kwargs
             )
 

@@ -180,7 +180,20 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(*, config: Configuration, **kwargs: Any) -> Union[uamqp_SendClient, pyamqp_SendClient]:
+    def create_send_client(
+        *,
+        config: Configuration,
+        target: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        **kwargs: Any
+    ) -> Union[uamqp_SendClient, pyamqp_SendClient]:
         """
         Creates and returns the send client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -188,7 +201,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
-        :keyword network_trace: Required.
+        :keyword bool network_trace: Required.
         :keyword retry_policy: Required.
         :keyword keep_alive_interval: Required.
         :keyword str client_name: Required.

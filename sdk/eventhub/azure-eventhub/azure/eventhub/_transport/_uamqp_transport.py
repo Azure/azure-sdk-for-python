@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Callable, Optional, Union, Any, Tuple, TYPE_CHECKING
+from typing import Callable, Dict, Optional, Union, Any, Tuple, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -332,7 +332,20 @@ if uamqp_installed:
             return connection._state    # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(# pylint: disable=unused-argument
+            *,
+            config,
+            target: str,
+            auth: authentication.JWTTokenAuth,
+            idle_timeout: int,
+            network_trace: bool,
+            retry_policy: Any,
+            keep_alive_interval: int,
+            client_name: str,
+            link_properties: Dict[bytes, Any],
+            properties: Dict[bytes, Any],
+            **kwargs: Any
+        ):
             """
             Creates and returns the uamqp SendClient.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -350,14 +363,16 @@ if uamqp_installed:
             :return: The send client.
             :rtype: uamqp.SendClient
             """
-            target = kwargs.pop("target")
-            retry_policy = kwargs.pop("retry_policy")
-            network_trace = kwargs.pop("network_trace")
-
             return SendClient(
                 target,
                 debug=network_trace,
                 error_policy=retry_policy,
+                keep_alive_interval=keep_alive_interval,
+                client_name=client_name,
+                properties=properties,
+                link_properties=link_properties,
+                idle_timeout=idle_timeout,
+                auth=auth,
                 **kwargs
             )
 

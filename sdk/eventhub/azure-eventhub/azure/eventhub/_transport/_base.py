@@ -191,7 +191,20 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(*, config: Configuration, **kwargs: Any):
+    def create_send_client(
+        *,
+        config: Configuration,
+        target: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        **kwargs: Any
+    ):
         """
         Creates and returns the send client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.

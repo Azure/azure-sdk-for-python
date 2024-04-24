@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Callable, Optional, Union, Any, Tuple, cast
+from typing import Callable, Dict, Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -280,7 +280,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return connection.state
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(# pylint: disable=unused-argument
+        *,
+        config,
+        target: str,
+        auth: JWTTokenAuth,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Dict[bytes, Any],
+        **kwargs: Any
+    ):
         """
         Creates and returns the pyamqp SendClient.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -298,8 +311,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The SendClient.
         :rtype: ~pyamqp.SendClient
         """
-
-        target = kwargs.pop("target")
         # TODO: not used by pyamqp?
         msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
             "msg_timeout"
@@ -313,6 +324,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            keep_alive_interval=keep_alive_interval,
+            link_properties=link_properties,
+            properties=properties,
+            client_name=client_name,
             **kwargs,
         )
 
