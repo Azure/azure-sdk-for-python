@@ -271,6 +271,15 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+
+
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
@@ -299,7 +308,7 @@ class GlobalParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
@@ -318,6 +327,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -537,7 +553,7 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Notebook parameter type."""
 
     STRING = "string"
-    INT = "int"
+    INT_ENUM = "int"
     FLOAT = "float"
     BOOL = "bool"
 
@@ -587,7 +603,7 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
@@ -677,9 +693,8 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
-    IN = "In"
-    NOT_IN = "NotIn"
     IN_ENUM = "In"
+    NOT_IN = "NotIn"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -819,6 +834,13 @@ class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     O_AUTH2 = "OAuth2"
 
 
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
 class ServicePrincipalCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available servicePrincipalCredentialType values."""
 
@@ -938,7 +960,7 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Stored procedure parameter type."""
 
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     INT64 = "Int64"
     DECIMAL = "Decimal"
     GUID = "Guid"

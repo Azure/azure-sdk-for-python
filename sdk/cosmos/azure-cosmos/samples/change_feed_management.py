@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from datetime import datetime, timezone
+
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -35,12 +37,12 @@ def create_items(container, size):
     for i in range(1, size):
         c = str(uuid.uuid4())
         item_definition = {'id': 'item' + c,
-                                'address': {'street': '1 Microsoft Way'+c,
-                                        'city': 'Redmond'+c,
-                                        'state': 'WA',
-                                        'zip code': 98052
-                                        }
-                                }
+                           'address': {'street': '1 Microsoft Way' + c,
+                                       'city': 'Redmond' + c,
+                                       'state': 'WA',
+                                       'zip code': 98052
+                                       }
+                           }
 
         created_item = container.create_item(body=item_definition)
 
@@ -56,6 +58,19 @@ def read_change_feed(container):
         print(doc)
 
     print('\nFinished reading all the change feed\n')
+
+
+def read_change_feed_with_start_time(container, start_time):
+    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    print('\nReading Change Feed from start time of {}\n'.format(time))
+
+    # You can read change feed from a specific time.
+    # You must pass in a datetime object for the start_time field.
+    response = container.query_items_change_feed(start_time=start_time)
+    for doc in response:
+        print(doc)
+
+    print('\nFinished reading all the change feed from start time of {}\n'.format(time))
 
 
 def run_sample():
@@ -78,8 +93,16 @@ def run_sample():
         except exceptions.CosmosResourceExistsError:
             raise RuntimeError("Container with id '{}' already exists".format(CONTAINER_ID))
 
+        # Create items
         create_items(container, 100)
+        # Timestamp post item creations
+        timestamp = datetime.now(timezone.utc)
+        # Create more items after time stamp
+        create_items(container, 50)
+        # Read change feed from beginning
         read_change_feed(container)
+        # Read Change Feed from timestamp
+        read_change_feed_with_start_time(container, timestamp)
 
         # cleanup database after sample
         try:

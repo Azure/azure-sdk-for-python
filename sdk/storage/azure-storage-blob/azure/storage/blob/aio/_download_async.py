@@ -95,7 +95,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
         # Do optimize and create empty chunk locally if condition is met.
         if self._do_optimize(download_range[0], download_range[1]):
-            chunk_data = b"\x00" * self.chunk_size
+            data_size = download_range[1] - download_range[0] + 1
+            chunk_data = b"\x00" * data_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
@@ -135,7 +136,7 @@ class _AsyncChunkIterator(object):
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
-        self._complete = (size == 0)
+        self._complete = size == 0
 
     def __len__(self):
         return self.size

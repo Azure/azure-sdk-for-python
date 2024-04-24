@@ -115,7 +115,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             tags=tags,
             properties=properties,
             display_name=display_name,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             inputs=inputs,
             outputs=outputs,
             yaml_str=yaml_str,
@@ -342,7 +342,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 tmp_code_dir,
                 additional_includes_file_name=Path(self._source_path)
                 .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
-                .name  # type: ignore[arg-type]
+                .name,  # type: ignore[arg-type]
                 # TODO: Bug 2881943
             )
 

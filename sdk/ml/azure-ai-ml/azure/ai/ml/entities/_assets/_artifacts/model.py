@@ -76,7 +76,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
         path: Optional[Union[str, PathLike]] = None,
         utc_time_created: Optional[str] = None,
-        flavors: Optional[Dict] = None,
+        flavors: Optional[Dict[str, Dict[str, Any]]] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
@@ -145,9 +145,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
-            if rest_model_version.intellectual_property
-            else None,
+            intellectual_property=(
+                IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+                if rest_model_version.intellectual_property
+                else None
+            ),
         )
         return model
 
@@ -172,9 +174,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            flavors={key: FlavorData(data=dict(value)) for key, value in self.flavors.items()}
-            if self.flavors
-            else None,  # flatten OrderedDict to dict
+            flavors=(
+                {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+            ),  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
             stage=self.stage,

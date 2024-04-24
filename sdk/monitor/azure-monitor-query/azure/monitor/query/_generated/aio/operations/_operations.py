@@ -9,7 +9,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -136,7 +136,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -384,9 +384,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -453,7 +450,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -584,7 +581,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -829,9 +826,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -898,7 +892,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1182,9 +1176,6 @@ class QueryOperations:
 
         :param body: The batch request body. Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1295,7 +1286,7 @@ class QueryOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1424,7 +1415,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1669,9 +1660,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1738,7 +1726,7 @@ class QueryOperations:
                     "statistics": {}  # Optional. Statistics represented in JSON format.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2171,7 +2159,7 @@ class MetadataOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2573,7 +2561,7 @@ class MetadataOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

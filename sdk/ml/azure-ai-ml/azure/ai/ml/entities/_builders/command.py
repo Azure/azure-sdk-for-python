@@ -1,9 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 # pylint: disable=protected-access
-
 import copy
 import logging
 import os
@@ -170,7 +168,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        services: Optional[Dict] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
@@ -205,7 +205,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self.queue_settings = queue_settings
 
         if isinstance(self.component, CommandComponent):
-            self.resources = self.resources or self.component.resources
+            self.resources = self.resources or self.component.resources  # type: ignore[assignment]
             self.distribution = self.distribution or self.component.distribution
 
         self._swept: bool = False
@@ -277,12 +277,12 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._distribution = value
 
     @property
-    def resources(self) -> Any:
+    def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
 
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
-        return self._resources
+        return cast(JobResourceConfiguration, self._resources)
 
     @resources.setter
     def resources(self, value: Union[Dict, JobResourceConfiguration]) -> None:
@@ -381,10 +381,10 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
             ~azure.ai.ml.entities.VsCodeJobService]]
         """
-        self._services = _resolve_job_services(value)
+        self._services = _resolve_job_services(value)  # type: ignore[assignment]
 
     @property
-    def component(self) -> Any:
+    def component(self) -> Union[str, CommandComponent]:
         """The ID or instance of the command component or job to be run for the step.
 
         :return: The ID or instance of the command component or job to be run for the step.
@@ -847,15 +847,19 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
-            if rest_command_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+                if rest_command_job.identity
+                else None
+            ),
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
         )
         command_job._id = obj.id
-        command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
+        command_job.resources = cast(
+            JobResourceConfiguration, JobResourceConfiguration._from_rest_object(rest_command_job.resources)
+        )
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
         command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
         if isinstance(command_job.component, CommandComponent):
@@ -939,15 +943,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
 
 @overload
-def _resolve_job_services(services: None) -> None:
-    ...
+def _resolve_job_services(services: Optional[Dict]): ...
 
 
 @overload
 def _resolve_job_services(
     services: Dict[str, Union[JobServiceBase, Dict]],
-) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
-    ...
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]: ...
 
 
 def _resolve_job_services(

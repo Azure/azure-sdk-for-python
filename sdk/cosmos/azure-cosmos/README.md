@@ -153,15 +153,11 @@ Currently, the features below are **not supported**. For alternatives options, c
 
 * Group By queries
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Transactional batch processing
 * Direct TCP Mode access
 * Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
-* Change Feed: Read specific time
-* Change Feed: Read from the beginning
-* Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
 * Enabling diagnostics for async query-type methods
 
@@ -179,7 +175,7 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### Using The Async Client as a Workaround to Bulk
-While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][concurrency_sample] we have developed as a reference for a possible workaround. 
+While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][cosmos_concurrency_sample] we have developed as a reference for a possible workaround. 
 >[WARNING]
 > Using the asynchronous client for concurrent operations like shown in this sample will consume a lot of RUs very fast. We **strongly recommend** testing this out against the cosmos emulator first to verify your code works well and avoid incurring charges.
 

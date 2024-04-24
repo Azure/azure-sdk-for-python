@@ -27,7 +27,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -38,8 +38,8 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any,
     ) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+        # Patch the default polling interval to be 1s.
+        polling_interval = kwargs.pop("polling_interval", 1)
         super().__init__(
             endpoint=endpoint,
             credential=credential,
@@ -60,7 +60,7 @@ class DocumentIntelligenceAdministrationClient(
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -71,8 +71,8 @@ class DocumentIntelligenceAdministrationClient(
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any,
     ) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+        # Patch the default polling interval to be 1s.
+        polling_interval = kwargs.pop("polling_interval", 1)
         super().__init__(
             endpoint=endpoint,
             credential=credential,

@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -113,16 +112,18 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
+    def get(self, name: str, **kwargs: Any) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The feature store with the provided name.
         :rtype: FeatureStore
         """
 
-        feature_store = None
+        feature_store: Any = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
@@ -468,11 +469,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_workspace_role_assignment=update_workspace_role_assignment,
             update_offline_store_role_assignment=update_offline_store_role_assignment,
             update_online_store_role_assignment=update_online_store_role_assignment,
-            materialization_identity_id=materialization_identity.resource_id
-            if update_workspace_role_assignment
-            or update_offline_store_role_assignment
-            or update_online_store_role_assignment
-            else None,
+            materialization_identity_id=(
+                materialization_identity.resource_id
+                if update_workspace_role_assignment
+                or update_offline_store_role_assignment
+                or update_online_store_role_assignment
+                else None
+            ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,
             online_store_target=online_store_target_to_update if update_online_store_role_assignment else None,
             **kwargs,
@@ -503,12 +506,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
-    @experimental
     def begin_provision_network(
         self,
         *,
         feature_store_name: Optional[str] = None,
-        include_spark: Optional[bool] = False,
+        include_spark: bool = False,
         **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the feature store to provision the managed network. Specifying spark enabled

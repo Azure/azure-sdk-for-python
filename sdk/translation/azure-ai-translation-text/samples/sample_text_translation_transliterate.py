@@ -25,7 +25,6 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import InputTextItem
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -43,7 +42,7 @@ def get_text_transliteration():
         language = "zh-Hans"
         from_script = "Hans"
         to_script = "Latn"
-        input_text_elements = [InputTextItem(text="这是个测试。")]
+        input_text_elements = ["这是个测试。"]
 
         response = text_translator.transliterate(
             request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script

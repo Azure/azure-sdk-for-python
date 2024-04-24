@@ -132,9 +132,9 @@ class TrainingSettings(RestTranslatableMixin):
             enable_model_explainability=self.enable_model_explainability,
             enable_stack_ensemble=self.enable_stack_ensemble,
             enable_vote_ensemble=self.enable_vote_ensemble,
-            stack_ensemble_settings=self.stack_ensemble_settings._to_rest_object()
-            if self.stack_ensemble_settings
-            else None,
+            stack_ensemble_settings=(
+                self.stack_ensemble_settings._to_rest_object() if self.stack_ensemble_settings else None
+            ),
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             training_mode=self.training_mode,
         )

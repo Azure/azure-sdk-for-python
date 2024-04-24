@@ -1,12 +1,20 @@
 # Release History
 
-## 5.11.7 (Unreleased)
+## 5.11.8 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 5.11.7 (2024-04-10)
+
+### Bugs Fixed
+
+- Fixed a bug where using `EventHubProducerClient` in buffered mode could potentially drop a buffered message without actually sending it. ([#34712](https://github.com/Azure/azure-sdk-for-python/pull/34712))
 
 ### Other Changes
 

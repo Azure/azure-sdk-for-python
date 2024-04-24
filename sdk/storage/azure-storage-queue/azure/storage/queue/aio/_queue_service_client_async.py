@@ -129,7 +129,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :type credential:
+            Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -286,7 +287,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
-            #other-client--per-operation-configuration>`_. This function may make multiple
+            #other-client--per-operation-configuration>`__. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
