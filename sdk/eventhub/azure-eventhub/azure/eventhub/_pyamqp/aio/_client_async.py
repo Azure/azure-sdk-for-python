@@ -9,7 +9,7 @@ import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Coroutine, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Coroutine, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -772,7 +772,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
-    async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
+    async def _receive_message_batch_impl_async(
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+        ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
@@ -830,7 +836,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._received_messages = queue.Queue()
         await super(ReceiveClientAsync, self).close_async()
 
-    async def receive_message_batch_async(self, **kwargs) -> Coroutine[Any, Any, list]:
+    async def receive_message_batch_async( # pylint: disable=unused-argument
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+            **kwargs
+        ) -> Coroutine[Any, Any, list]:
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -854,7 +867,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,
-            **kwargs
+            max_batch_size=max_batch_size,
+            on_message_received=on_message_received,
+            timeout=timeout,
         )
 
     async def receive_messages_iter_async(self, timeout=None, on_message_received=None):

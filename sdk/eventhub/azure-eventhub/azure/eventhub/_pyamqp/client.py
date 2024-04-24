@@ -15,7 +15,7 @@ import queue
 import time
 import uuid
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Dict, Optional, Tuple, Union, overload, cast
 import certifi
 from typing_extensions import Literal
 
@@ -881,7 +881,11 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(
-        self, max_batch_size=None, on_message_received=None, timeout=0
+        self,
+        *,
+        max_batch_size: Optional[int] = None,
+        on_message_received: Optional[Callable] = None,
+        timeout: float = 0,
     ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
@@ -932,7 +936,14 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
 
-    def receive_message_batch(self, **kwargs):
+    def receive_message_batch( # pylint: disable=unused-argument
+            self,
+            *,
+            max_batch_size: Optional[int] = None,
+            on_message_received: Optional[Callable] = None,
+            timeout: float = 0,
+            **kwargs
+        ):
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -954,7 +965,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :return: A list of messages.
         :rtype: list[~pyamqp.message.Message]
         """
-        return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
+        return self._do_retryable_operation(
+            self._receive_message_batch_impl,
+            max_batch_size=max_batch_size,
+            on_message_received=on_message_received,
+            timeout=timeout
+        )
 
     def receive_messages_iter(self, timeout=None, on_message_received=None):
         """Receive messages by generator. Messages returned in the generator have already been
