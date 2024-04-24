@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
+# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
