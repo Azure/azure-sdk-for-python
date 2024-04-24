@@ -77,7 +77,7 @@ async def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -134,7 +134,7 @@ async def load(
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -269,7 +269,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     if endpoint is not None and credential is not None:
@@ -279,7 +279,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     raise ValueError("Please pass either endpoint and credential, or a connection string.")
@@ -536,7 +536,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in self._feature_flag_selectors:
-            endpoint = self._client._impl._config.endpoint # pylint: disable=protected-access
+            endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )

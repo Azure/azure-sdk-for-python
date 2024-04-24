@@ -642,7 +642,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in self._feature_flag_selectors:
-            endpoint = self._client._impl._config.endpoint # pylint: disable=protected-access
+            endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
