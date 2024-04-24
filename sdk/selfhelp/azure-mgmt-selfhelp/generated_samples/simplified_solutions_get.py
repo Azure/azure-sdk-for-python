@@ -15,7 +15,7 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
     pip install azure-identity
     pip install azure-mgmt-selfhelp
 # USAGE
-    python solution_create.py
+    python simplified_solutions_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.solution.begin_create(
+    response = client.simplified_solutions.get(
         scope="subscriptions/mySubscription/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-rp",
-        solution_resource_name="SolutionResourceName1",
-    ).result()
+        simplified_solutions_resource_name="simplifiedSolutionsResourceName1",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2024-03-01-preview/examples/Solution_Create.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2024-03-01-preview/examples/SimplifiedSolutions_Get.json
 if __name__ == "__main__":
     main()
