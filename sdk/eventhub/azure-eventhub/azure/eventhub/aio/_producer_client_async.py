@@ -809,7 +809,7 @@ class EventHubProducerClient(
             EventHubProducerClient, self
         )._get_partition_properties_async(partition_id)
 
-    async def flush(self, **kwargs: Any) -> None:
+    async def flush(self, *, timeout: Optional[float] = None, **kwargs: Any) -> None: # pylint:disable=unused-argument
         """
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
@@ -822,7 +822,6 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.flush(
                     timeout_time=timeout_time
