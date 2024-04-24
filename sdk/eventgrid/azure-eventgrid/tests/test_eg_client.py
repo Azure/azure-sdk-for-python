@@ -187,8 +187,6 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         client.send(topic_name=eventgrid_topic_name, events=[event])
 
-        time.sleep(5)
-
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         lock_token = events.value[0].broker_properties.lock_token
 
@@ -200,6 +198,8 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, max_events=1)
         assert events.value[0].broker_properties.delivery_count > 1
+
+        client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, lock_tokens=[events.value[0].broker_properties.lock_token])
 
         _clean_up(client, eventgrid_topic_name, eventgrid_event_subscription_name)
 
