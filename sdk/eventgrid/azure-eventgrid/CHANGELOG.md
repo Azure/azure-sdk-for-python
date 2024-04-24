@@ -1,6 +1,6 @@
 # Release History
 
-## 4.20.1b1 (2024-04-24)
+## 4.20.0b2 (2024-04-24)
 
 This is a Beta of the EventGridClient
 
