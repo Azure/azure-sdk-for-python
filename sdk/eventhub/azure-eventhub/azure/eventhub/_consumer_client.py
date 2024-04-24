@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tu
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, TransportType
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.common import LoadBalancingStrategy
 
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from ._common import EventData
     from ._client_base import CredentialTypes
     from ._eventprocessor.common import CloseReason
+    from ._eventprocessor.checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -219,7 +220,22 @@ class EventHubConsumerClient(
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, consumer_group: str, **kwargs: Any) -> "EventHubConsumerClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        consumer_group: str,
+        *,
+        eventhub_name: Optional[str] = None,
+        logging_enable: bool = False,
+        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
+        auth_timeout: float = 60,
+        user_agent: Optional[str] = None,
+        retry_total: int = 3,
+        transport_type: TransportType = TransportType.Amqp,
+        checkpoint_store: Optional["CheckpointStore"] = None,
+        load_balancing_interval: float = 30,
+        **kwargs: Any
+    ) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -310,7 +326,18 @@ class EventHubConsumerClient(
 
         """
         constructor_args = cls._from_connection_string(
-            conn_str, consumer_group=consumer_group, **kwargs
+            conn_str,
+            consumer_group=consumer_group,
+            eventhub_name=eventhub_name,
+            logging_enable=logging_enable,
+            http_proxy=http_proxy,
+            auth_timeout=auth_timeout,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            transport_type=transport_type,
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=load_balancing_interval,
+            **kwargs,
         )
         return cls(**constructor_args)
 
@@ -536,6 +563,26 @@ class EventHubConsumerClient(
     def receive_batch(
             self,
             on_event_batch: Callable[["PartitionContext", List["EventData"]], None],
+            *,
+            max_batch_size: int = 300,
+            max_wait_time: Optional[float] = None,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
+            prefetch: int = 300,
+            track_last_enqueued_event_properties: bool = False,
+            starting_position: Optional[
+                Union[str, int, datetime.datetime, Dict[str, Any]]
+            ] = None,
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[
+                Callable[["PartitionContext", Exception], None]
+            ] = None,
+            on_partition_initialize: Optional[
+                Callable[["PartitionContext"], None]
+            ] = None,
+            on_partition_close: Optional[
+                Callable[["PartitionContext", "CloseReason"], None]
+            ] = None,
             **kwargs: Any
         ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
@@ -614,7 +661,22 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events in batches from the EventHub.
         """
-        self._receive(on_event_batch, batch=True, **kwargs)
+        self._receive(
+            on_event_batch,
+            batch=True,
+            max_batch_size=max_batch_size,
+            max_wait_time=max_wait_time,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close
+            **kwargs
+        )
 
     def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
