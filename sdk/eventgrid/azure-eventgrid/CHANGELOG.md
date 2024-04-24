@@ -4,7 +4,7 @@
 
 This is a Beta of the EventGridClient
 
-### Bug Fixes
+### Bug Fixed
 
 - Fixed serialization issues with CloudEvent and CNCF Cloud Event
 
