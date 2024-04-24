@@ -47,8 +47,8 @@ class EventGridClient(InternalEventGridClient):
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value for namespaces is
-     "2023-10-01-preview". Default value for basic is "2018-01-01". Note that overriding this default value may result in unsupported
-     behavior.
+     "2023-10-01-preview". Default value for basic is "2018-01-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or None
     :keyword level: The level of client to use. Known values are
      `Standard` and `Basic`. Default value is `Standard`.
@@ -78,9 +78,7 @@ class EventGridClient(InternalEventGridClient):
             self._send = self._client.send  # type:ignore[attr-defined]
         elif level == ClientLevel.STANDARD:
             if isinstance(credential, AzureSasCredential):
-                raise TypeError(
-                    "SAS token authentication is not supported for the standard client."
-                )
+                raise TypeError("SAS token authentication is not supported for the standard client.")
             super().__init__(
                 endpoint=endpoint,
                 credential=credential,
@@ -90,9 +88,7 @@ class EventGridClient(InternalEventGridClient):
 
             self._send = self._publish_cloud_events
         else:
-            raise ValueError(
-                "Unknown client level. Known values are `Standard` and `Basic`."
-            )
+            raise ValueError("Unknown client level. Known values are `Standard` and `Basic`.")
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False

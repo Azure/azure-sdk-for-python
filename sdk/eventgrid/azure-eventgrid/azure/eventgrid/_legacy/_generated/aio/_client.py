@@ -28,25 +28,17 @@ class EventGridPublisherClient(
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, **kwargs: Any
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         _endpoint = "https://{topicHostname}"
         self._config = EventGridPublisherClientConfiguration(**kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {
-            k: v for k, v in _models.__dict__.items() if isinstance(v, type)
-        }
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def send_request(
-        self, request: HttpRequest, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

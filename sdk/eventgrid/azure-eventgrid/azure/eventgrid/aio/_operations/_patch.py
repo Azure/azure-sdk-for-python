@@ -5,27 +5,21 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar, IO
+from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar
 import sys
 from azure.core.messaging import CloudEvent
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
-from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
 from ..._operations._patch import _to_http_request, use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
 from ...models._models import AcknowledgeOptions, ReleaseOptions, RejectOptions, RenewLockOptions
-from ..._model_base import _deserialize
 from ..._validation import api_version_validation
 
 from ..._operations._patch import (
@@ -36,7 +30,7 @@ from ..._operations._patch import (
 )
 
 from ..._legacy import EventGridEvent
-from ..._legacy._helpers import _is_eventgrid_event
+from ..._legacy._helpers import _is_eventgrid_event, _from_cncf_events
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,9 +38,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class EventGridClientOperationsMixin(OperationsMixin):
@@ -62,8 +54,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
     ) -> None:
         """Send events to the Event Grid Basic Service.
 
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
          or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
         :keyword channel_name: The name of the channel to send the event to.
         :paramtype channel_name: str or None
@@ -90,8 +82,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -111,13 +103,13 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
     )
     @distributed_trace_async
-    async def send(self, *args, **kwargs) -> None:
+    async def send(self, *args, **kwargs) -> None: # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Namespace Service.
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param event: The event to send.
-        :type event: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
@@ -167,9 +159,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         elif len(args) == 1:
             if events is not None:
                 if topic_name is not None:
-                    raise ValueError(
-                        "topic_name is already passed as a keyword argument."
-                    )
+                    raise ValueError("topic_name is already passed as a keyword argument.")
                 topic_name = args[0]
             else:
                 events = args[0]
@@ -189,13 +179,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     events = CloudEvent.from_dict(events)
                 if isinstance(events, list) and isinstance(events[0], dict):
                     events = [CloudEvent.from_dict(e) for e in events]
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 pass
 
             if self._level == "Standard":
-                kwargs["content_type"] = kwargs.get(
-                    "content_type", "application/cloudevents-batch+json; charset=utf-8"
-                )
+                kwargs["content_type"] = kwargs.get("content_type", "application/cloudevents-batch+json; charset=utf-8")
                 if not isinstance(events, list):
                     events = [events]
 
@@ -214,28 +202,37 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     self._http_response_error_handler(exception, "Basic")
                     raise exception
 
-    async def _send_binary(self, topic_name: str, events: Any, **kwargs: Any) -> None:
+    async def _send_binary(self, topic_name: str, event: Any, **kwargs: Any) -> None:
         # If data is passed as a dictionary, make sure it is a CloudEvent
+        if isinstance(event, list):
+            raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
         try:
-            if isinstance(events, dict):
-                events = CloudEvent.from_dict(events)
-        except AttributeError:
-            raise TypeError("Binary mode is only supported for type CloudEvent.") # pylint: disable=raise-missing-from
+            if not isinstance(event, CloudEvent):
+                try:
+                    event = CloudEvent.from_dict(event)
+                except AttributeError:
+                    event = CloudEvent.from_dict(_from_cncf_events(event))
 
-        # If data is a cloud event, convert to an HTTP Request in binary mode
-        if isinstance(events, CloudEvent):
-            await self._publish(
-                topic_name, events, self._config.api_version, **kwargs
+        except AttributeError:
+            raise TypeError("Binary mode is only supported for type CloudEvent.")  # pylint: disable=raise-missing-from
+
+        if isinstance(event, CloudEvent):
+            http_request = _to_http_request(
+                topic_name=topic_name,
+                api_version=self._config.api_version,
+                event=event,
+                **kwargs,
             )
         else:
             raise TypeError("Binary mode is only supported for type CloudEvent.")
 
+        # If data is a cloud event, convert to an HTTP Request in binary mode
+        await self.send_request(http_request, **kwargs)
+
     def _http_response_error_handler(self, exception, level):
         if isinstance(exception, HttpResponseError):
             if exception.status_code == 400:
-                raise HttpResponseError(
-                    "Invalid event data. Please check the data and try again."
-                ) from exception
+                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
@@ -321,9 +318,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = AcknowledgeOptions(lock_tokens=lock_tokens)
-        return await super()._acknowledge_cloud_events(
-            topic_name, subscription_name, options, **kwargs
-        )
+        return await super()._acknowledge_cloud_events(topic_name, subscription_name, options, **kwargs)
 
     @use_standard_only
     @distributed_trace_async
@@ -390,9 +385,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RejectOptions(lock_tokens=lock_tokens)
-        return await super()._reject_cloud_events(
-            topic_name, subscription_name, options, **kwargs
-        )
+        return await super()._reject_cloud_events(topic_name, subscription_name, options, **kwargs)
 
     @use_standard_only
     @distributed_trace_async
@@ -424,78 +417,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         options = RenewLockOptions(lock_tokens=lock_tokens)
-        return await super()._renew_cloud_event_locks(
-            topic_name, subscription_name, options, **kwargs
-        )
-
-    async def _publish(
-        self, topic_name: str, event: Any, api_version, **kwargs: Any
-    ) -> None:
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
-
-        content_type = kwargs.pop("content_type", None) # pylint: disable=unused-variable
-        # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = _to_http_request(
-            topic_name=topic_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-            event=event,
-            **kwargs,
-        )
-
-        _stream = kwargs.pop("stream", False)
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-        }
-        http_request.url = self._client.format_url(
-            http_request.url, **path_format_arguments
-        )
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            http_request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(
-                _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json(),
-            )
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return await super()._renew_cloud_event_locks(topic_name, subscription_name, options, **kwargs)
 
 
 __all__: List[str] = [
