@@ -113,7 +113,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         Broadcast content inside request body to all the connected client connections.
 
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[str, JSON]
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -135,7 +135,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         Broadcast content inside request body to all the connected client connections.
 
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: str
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -179,7 +179,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         Broadcast content inside request body to all the connected client connections.
 
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[IO, str, JSON]
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -264,7 +264,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          Required.
         :type group: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[str, JSON]
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -296,7 +296,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          Required.
         :type group: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: str
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -360,7 +360,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          Required.
         :type group: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[IO, str, JSON]
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
@@ -438,7 +438,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param connection_id: The connection Id. Required.
         :type connection_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[str, JSON]
         :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
         :paramtype content_type: str
         :return: None
@@ -457,7 +457,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param connection_id: The connection Id. Required.
         :type connection_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: str
         :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
         :paramtype content_type: str
         :return: None
@@ -495,7 +495,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param connection_id: The connection Id. Required.
         :type connection_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[IO, str, JSON]
         :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
         :paramtype content_type: str
         :return: None
@@ -566,7 +566,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param user_id: The user Id. Required.
         :type user_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[str, JSON]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
@@ -588,7 +588,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param user_id: The user Id. Required.
         :type user_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: str
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
@@ -632,7 +632,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :param user_id: The user Id. Required.
         :type user_id: str
         :param message: The payload body. Required.
-        :type message: IO
+        :type message: Union[IO, str, JSON]
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
