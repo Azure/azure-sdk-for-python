@@ -50,7 +50,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
     ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
-    WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2: [ServicePrincipalConfiguration, AadCredentialConfiguration],
+    WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2: [ServicePrincipalConfiguration, AadCredentialConfiguration, ManagedIdentityConfiguration],
     ConnectionCategory.GIT: [PatTokenConfiguration, NoneCredentialConfiguration],
     ConnectionCategory.PYTHON_FEED: [UsernamePasswordConfiguration, PatTokenConfiguration, NoneCredentialConfiguration],
     ConnectionCategory.CONTAINER_REGISTRY: [ManagedIdentityConfiguration, UsernamePasswordConfiguration],
