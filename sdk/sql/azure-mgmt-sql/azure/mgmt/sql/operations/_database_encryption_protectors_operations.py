@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -141,23 +141,22 @@ class DatabaseEncryptionProtectorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_revalidate_request(
+        _request = build_revalidate_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             encryption_protector_name=encryption_protector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._revalidate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -167,11 +166,7 @@ class DatabaseEncryptionProtectorsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _revalidate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/encryptionProtector/{encryptionProtectorName}/revalidate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_revalidate(
@@ -194,14 +189,6 @@ class DatabaseEncryptionProtectorsOperations:
         :param encryption_protector_name: The name of the encryption protector to be updated. "current"
          Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -230,7 +217,7 @@ class DatabaseEncryptionProtectorsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -241,17 +228,13 @@ class DatabaseEncryptionProtectorsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_revalidate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/encryptionProtector/{encryptionProtectorName}/revalidate"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _revert_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -275,23 +258,22 @@ class DatabaseEncryptionProtectorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_revert_request(
+        _request = build_revert_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             encryption_protector_name=encryption_protector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._revert_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -301,11 +283,7 @@ class DatabaseEncryptionProtectorsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _revert_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/encryptionProtector/{encryptionProtectorName}/revert"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_revert(
@@ -328,14 +306,6 @@ class DatabaseEncryptionProtectorsOperations:
         :param encryption_protector_name: The name of the encryption protector to be updated. "current"
          Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -364,7 +334,7 @@ class DatabaseEncryptionProtectorsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -375,14 +345,10 @@ class DatabaseEncryptionProtectorsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_revert.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/encryptionProtector/{encryptionProtectorName}/revert"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,7 +41,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ManagedInstancePrivateEndpointConnectionsOperations:
+class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73,7 +73,6 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :type managed_instance_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedInstancePrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -92,22 +91,21 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.ManagedInstancePrivateEndpointConnection] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -119,20 +117,16 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         deserialized = self._deserialize("ManagedInstancePrivateEndpointConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, IO],
+        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstancePrivateEndpointConnection]:
         error_map = {
@@ -158,7 +152,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         else:
             _json = self._serialize.body(parameters, "ManagedInstancePrivateEndpointConnection")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
@@ -167,16 +161,15 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -190,13 +183,9 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
             deserialized = self._deserialize("ManagedInstancePrivateEndpointConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_or_update(
@@ -223,14 +212,6 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either
          ManagedInstancePrivateEndpointConnection or the result of cls(response)
         :rtype:
@@ -244,7 +225,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -259,18 +240,10 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either
          ManagedInstancePrivateEndpointConnection or the result of cls(response)
         :rtype:
@@ -284,7 +257,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, IO],
+        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstancePrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -296,20 +269,9 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :type managed_instance_name: str
         :param private_endpoint_connection_name: Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is either a ManagedInstancePrivateEndpointConnection type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnection or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: Is either a ManagedInstancePrivateEndpointConnection type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either
          ManagedInstancePrivateEndpointConnection or the result of cls(response)
         :rtype:
@@ -343,7 +305,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ManagedInstancePrivateEndpointConnection", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -353,17 +315,15 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ManagedInstancePrivateEndpointConnection].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return AsyncLROPoller[_models.ManagedInstancePrivateEndpointConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, managed_instance_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -382,22 +342,21 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -407,11 +366,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -426,14 +381,6 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :type managed_instance_name: str
         :param private_endpoint_connection_name: Required.
         :type private_endpoint_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -461,7 +408,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -470,17 +417,13 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_managed_instance(
@@ -493,7 +436,6 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstancePrivateEndpointConnection or the
          result of cls(response)
         :rtype:
@@ -517,24 +459,23 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_managed_instance_request(
+                _request = build_list_by_managed_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_managed_instance.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedInstancePrivateEndpointConnectionListResult", pipeline_response)
@@ -544,11 +485,11 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -559,7 +500,3 @@ class ManagedInstancePrivateEndpointConnectionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_managed_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/privateEndpointConnections"
-    }

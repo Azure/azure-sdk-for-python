@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -128,7 +128,6 @@ class EndpointCertificatesOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EndpointCertificate or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.EndpointCertificate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -150,24 +149,23 @@ class EndpointCertificatesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_instance_request(
+                _request = build_list_by_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_instance.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("EndpointCertificateListResult", pipeline_response)
@@ -177,11 +175,11 @@ class EndpointCertificatesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -192,10 +190,6 @@ class EndpointCertificatesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/endpointCertificates"
-    }
 
     @distributed_trace
     def get(
@@ -211,7 +205,6 @@ class EndpointCertificatesOperations:
         :param endpoint_type: Type of the endpoint whose certificate the customer is looking for.
          Required.
         :type endpoint_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EndpointCertificate or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.EndpointCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -230,22 +223,21 @@ class EndpointCertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[_models.EndpointCertificate] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             endpoint_type=endpoint_type,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -257,10 +249,6 @@ class EndpointCertificatesOperations:
         deserialized = self._deserialize("EndpointCertificate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/endpointCertificates/{endpointType}"
-    }
+        return deserialized  # type: ignore
