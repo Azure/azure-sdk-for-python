@@ -25,6 +25,7 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+from azure.ai.ml.exceptions import MlException
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import is_data_binding_expression
@@ -423,9 +424,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             elif isinstance(parallel_attr, dict):
                 rest_attr = parallel_attr
             else:
-                raise Exception(
-                    f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
-                )  # pylint: disable=W0718
+                msg = f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
+                raise MlException(message=msg, no_personal_data_message=msg)
         # TODO: Bug Item number: 2897665
         res: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
         return res
@@ -543,10 +543,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             node.environment_variables = copy.deepcopy(self.environment_variables)
             node.identity = copy.deepcopy(self.identity)
             return node
-        raise Exception(  # pylint: disable=W0718
-            f"Parallel can be called as a function only when referenced component is {type(Component)}, "
-            f"currently got {self._component}."
-        )
+        msg = f"Parallel can be called as a function only when referenced component is {type(Component)}, \
+            currently got {self._component}."
+        raise MlException(message=msg, no_personal_data_message=msg)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":

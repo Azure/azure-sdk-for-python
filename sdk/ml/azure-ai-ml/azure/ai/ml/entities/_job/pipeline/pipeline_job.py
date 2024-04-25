@@ -488,8 +488,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
-        :paramtype kwargs: Any
         :return: Translated command component.
         :rtype: Pipeline
         """
@@ -694,7 +692,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         :param context: Context of pipeline job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
         :rtype: PipelineComponent
         """

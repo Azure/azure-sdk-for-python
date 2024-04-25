@@ -10,6 +10,7 @@ from typing import Dict, List, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
+from azure.ai.ml.exceptions import MlException
 from azure.core.rest import HttpRequest
 from azure.mgmt.core import ARMPipelineClient
 
@@ -73,7 +74,8 @@ def _get_cloud(cloud: str) -> Dict[str, str]:
         _environments.update(new_cloud)  # type: ignore[arg-type]
         return new_cloud
     except KeyError as e:
-        raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e  # pylint: disable=W0718
+        msg = 'Unknown cloud environment "{0}".'.format(cloud)
+        raise MlException(message=msg, no_personal_data_message=msg) from e
 
 
 def _get_default_cloud_name() -> str:
@@ -111,7 +113,8 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
         try:
             _get_cloud(cloud)
         except Exception as e:
-            raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud)) from e  # pylint: disable=W0718
+            msg = 'Unknown cloud environment supplied: "{0}".'.format(cloud)
+            raise MlException(message=msg, no_personal_data_message=msg) from e
     else:
         cloud = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
@@ -282,7 +285,7 @@ def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
                 metadata_url,
             )
             return cli_cloud_dict
-    except Exception as ex:  # pylint: disable=W0718
+    except Exception as ex:  # pylint: disable=broad-except
         module_logger.warning(
             "Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
             "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "

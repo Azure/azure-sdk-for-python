@@ -3,13 +3,13 @@
 # ---------------------------------------------------------
 
 
-from typing import Dict, Optional, Any
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._schema.workspace import ProjectSchema
+from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities import Workspace
 
-from azure.ai.ml.constants._common import WorkspaceKind
-from azure.ai.ml._schema.workspace import ProjectSchema
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
 class Project(Workspace):
@@ -79,7 +79,9 @@ class Project(Workspace):
             display_name=rest_obj.friendly_name if hasattr(rest_obj, "friendly_name") else None,
             location=rest_obj.location,
             resource_group=rest_obj.group if hasattr(rest_obj, "group") else None,
-            public_network_access=rest_obj.public_network_access if hasattr(rest_obj, "public_network_access") else None,
+            public_network_access=(
+                rest_obj.public_network_access if hasattr(rest_obj, "public_network_access") else None
+            ),
         )
 
     @property

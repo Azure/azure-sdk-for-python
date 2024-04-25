@@ -13,7 +13,7 @@ from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DE
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional
+    from typing import Any, Optional  # pylint: disable=no-typing-import-in-type-check
 
     from azure.core.credentials import AccessToken
 
@@ -50,11 +50,8 @@ class GetTokenMixin(abc.ABC):
 
         This method is called automatically by Azure SDK clients.
 
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :param scopes: Scopes to request access for
+        :type: str
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

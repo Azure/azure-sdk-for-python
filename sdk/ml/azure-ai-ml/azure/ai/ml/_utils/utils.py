@@ -43,6 +43,7 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
     DefaultOpenEncoding,
 )
+from azure.ai.ml.exceptions import MlException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -965,7 +966,8 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
     :rtype: ListViewType
     """
     if include_archived and archived_only:
-        raise Exception("Cannot provide both archived-only and include-archived.")  # pylint: disable=W0718
+        msg = "Cannot provide both archived-only and include-archived."
+        raise MlException(message=msg, no_personal_data_message=msg)
     if include_archived:
         return ListViewType.ALL
     if archived_only:
@@ -1254,9 +1256,8 @@ class DockerProxy:
 
             return getattr(docker, name)
         except ModuleNotFoundError as e:
-            raise Exception(  # pylint: disable=W0718
-                "Please install docker in the current python environment with `pip install docker` and try again."
-            ) from e
+            msg = "Please install docker in the current python environment with `pip install docker` and try again."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
 
 def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:

@@ -42,7 +42,7 @@ def stack_info() -> list:
 
 def connection_info(gc_objects: list) -> List[ConnectionInfo]:
     connections = [obj for obj in gc_objects if isinstance(obj, http.client.HTTPConnection)]
-    return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]  # pylint: disable=superflous-parens
+    return [ConnectionInfo(host=c.host, port=c.port, hasSocket=c.sock is not None) for c in connections]  # disable
 
 
 # pylint: disable=client-incorrect-naming-convention

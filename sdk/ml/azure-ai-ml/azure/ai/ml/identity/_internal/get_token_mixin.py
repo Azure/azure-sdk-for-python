@@ -54,10 +54,8 @@ class GetTokenMixin(ABC):
 
         :param scopes: The desired scopes for the access token. This method requires at least one scope.
         :type scopes: str
-        :param kwargs: Optional keyword arguments.
-        :type kwargs: Any
         :return: The access token
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

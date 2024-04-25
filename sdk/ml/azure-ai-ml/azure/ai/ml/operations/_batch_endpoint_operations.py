@@ -478,7 +478,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         # Input path should not be empty
         if not entry.path:
-            raise Exception("Input path can't be empty for batch endpoint invoke")  # pylint: disable=W0718
+            msg = "Input path can't be empty for batch endpoint invoke"
+            raise MlException(message=msg, no_personal_data_message=msg)
 
         if entry.type in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]:
             return

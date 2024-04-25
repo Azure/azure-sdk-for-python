@@ -40,7 +40,7 @@ from ...constants._common import (
     DefaultOpenEncoding,
 )
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
-from ...exceptions import ValidationException
+from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
@@ -663,8 +663,6 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs) -> Field:
     """
-    :keyword kwargs: Optional keyword arguments
-    :paramtype kwargs: Any
     :return: The compute field
     :rtype: Field
     """
@@ -682,8 +680,6 @@ def ComputeField(**kwargs) -> Field:
 
 def CodeField(**kwargs) -> Field:
     """
-    :keyword kwargs: Optional keyword arguments.
-    :paramtype kwargs: Any
     :return: The code field
     :rtype: Field
     """
@@ -796,7 +792,8 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")  # pylint: disable=W0718
+        msg = f"Type {type(value)} is not supported for version."
+        raise MlException(message=msg, no_personal_data_message=msg)
 
 
 class NumberVersionField(VersionField):

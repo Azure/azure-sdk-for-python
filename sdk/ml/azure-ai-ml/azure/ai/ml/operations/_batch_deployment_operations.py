@@ -96,6 +96,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
+        :keyword skip_script_validation: If set to True, the script validation will be skipped. Defaults to False.
+        :paramtype skip_script_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
             successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchDeployment assets

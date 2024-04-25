@@ -175,6 +175,8 @@ class PipelineComponent(Component):
             - If _skip_required_compute_missing_validation is True, validation will be skipped.
             - All the rest of cases without compute will add compute not set error to validation result.
 
+        :keyword parent_node_name: The name of the parent node.
+        :type parent_node_name: Optional[str]
         :return: The validation result
         :rtype: MutableValidationResult
         """

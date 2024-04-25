@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import (
     SCHEMA_VALIDATION_ERROR_TEMPLATE,
     YAML_CREATION_ERROR_DESCRIPTION,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -334,4 +334,4 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
     else:
         raise error
 
-    raise Exception(formatted_error)  # pylint: disable=W0718
+    raise MlException(message=formatted_error, no_personal_data_message=formatted_error)

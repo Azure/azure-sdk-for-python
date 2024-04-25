@@ -205,7 +205,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param feature_store: FeatureStore definition.
         :type feature_store: FeatureStore
-        :type update_dependent_resources: boolean
+        :keyword grant_materialization_permissions: Whether or not to grant materialization permissions.
+            Defaults to True.
+        :paramtype grant_materialization_permissions: bool
+        :keyword update_dependent_resources: Whether or not to update dependent resources. Defaults to False.
+        :type update_dependent_resources: bool
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
@@ -270,6 +274,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param feature_store: FeatureStore resource.
         :type feature_store: FeatureStore
+        :keyword grant_materialization_permissions: Whether or not to grant materialization permissions.
+            Defaults to True.
+        :paramtype grant_materialization_permissions: bool
         :keyword update_dependent_resources: gives your consent to update the feature store dependent resources.
             Note that updating the feature store attached Azure Container Registry resource may break lineage
             of previous jobs or your ability to rerun earlier jobs in this feature store.
@@ -277,10 +284,6 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             deployed inference endpoints this feature store. Only set this argument if you are sure that you want
             to perform this operation. If this argument is not set, the command to update
             Azure Container Registry and Azure Application Insights will fail.
-        :keyword application_insights: Application insights resource for feature store. Defaults to None.
-        :paramtype application_insights: Optional[str]
-        :keyword container_registry: Container registry resource for feature store. Defaults to None.
-        :paramtype container_registry: Optional[str]
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
@@ -525,6 +528,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :keyword feature_store_name: Name of the feature store.
         :paramtype feature_store_name: str
+        :keyword include_spark: Whether to include spark in the network provisioning. Defaults to False.
+        :paramtype include_spark: bool
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """

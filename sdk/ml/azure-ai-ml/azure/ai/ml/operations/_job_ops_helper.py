@@ -193,6 +193,8 @@ def stream_logs_until_completion(
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails
     :type raise_exception_on_failed_job: Boolean
+    :keyword requests_pipeline: The HTTP pipeline to use for requests.
+    :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
     :return:
     :rtype: None
     """

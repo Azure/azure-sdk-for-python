@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     TemporaryDataReferenceRequestDto,
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
+from azure.ai.ml.exceptions import MlException
 from azure.core.exceptions import HttpResponseError
 
 module_logger = logging.getLogger(__name__)
@@ -216,7 +217,6 @@ def _check_region_fqdn(workspace_region, response):
     if workspace_region in response.additional_properties["registryFqdns"].keys():
         return
     regions = list(response.additional_properties["registryFqdns"].keys())
-    raise Exception(  # pylint: disable=W0718
-        f"Workspace region {workspace_region} not supported by the \
-                    registry {response.registry_name} regions {regions}"
-    )
+    msg = f"Workspace region {workspace_region} not supported by the \
+            registry {response.registry_name} regions {regions}"
+    raise MlException(message=msg, no_personal_data_message=msg)

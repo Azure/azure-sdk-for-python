@@ -96,8 +96,6 @@ def image_classification(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageClassificationJob
@@ -158,8 +156,6 @@ def image_classification_multilabel(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: Any
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageClassificationMultilabelJob
@@ -219,8 +215,6 @@ def image_object_detection(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image object detection job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageObjectDetectionJob
@@ -280,8 +274,6 @@ def image_instance_segmentation(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image instance segmentation job
     :rtype: ~azure.ai.ml.automl.ImageInstanceSegmentationJob

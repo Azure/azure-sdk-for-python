@@ -674,7 +674,7 @@ class JobOperations(_ScopeDependentOperations):
         rest_job_resource = to_rest_job_object(job)
 
         # Make a copy of self._kwargs instead of contaminate the original one
-        kwargs = dict(**self._kwargs)
+        kwargs = {**self._kwargs}
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")

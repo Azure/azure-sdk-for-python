@@ -1083,8 +1083,6 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
         :type resolver: _AssetResolver
-        :keyword resolve_inputs: Whether to resolve inputs.
-        :paramtype resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return

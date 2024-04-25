@@ -36,7 +36,7 @@ from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointKeyTyp
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAadToken, EndpointAuthKeys, EndpointAuthToken
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -397,7 +397,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         if auth_mode is not None and auth_mode.lower() == AAD_TOKEN:
             if self._credentials:
                 return EndpointAadToken(self._credentials.get_token(*_resource_to_scopes(AAD_TOKEN_RESOURCE_ENDPOINT)))
-            raise Exception(EMPTY_CREDENTIALS_ERROR)
+            msg = EMPTY_CREDENTIALS_ERROR
+            raise MlException(message=msg, no_personal_data_message=msg)
 
         return self._online_operation.get_token(
             resource_group_name=self._resource_group_name,

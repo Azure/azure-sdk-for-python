@@ -34,8 +34,8 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
 
         :param scopes: The desired scope for the access token. This credential allows only one scope per request.
         :type scopes: str
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :return: AzureML On behalf of credentials isn't available in the hosting environment
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The access token for temporary access token for the requested scope.
         :raises: ~azure.ai.ml.identity.CredentialUnavailableError
         """
 

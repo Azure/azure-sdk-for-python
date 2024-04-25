@@ -98,16 +98,12 @@ def get_appinsights_log_handler(
     :type user_agent: Dict[str, str]
     :param args: Optional arguments for formatting messages.
     :type args: list
-    :keyword kwargs: Optional keyword arguments for adding additional information to messages.
-    :paramtype kwargs: Any
     :keyword instrumentation_key: The Application Insights instrumentation key.
     :paramtype instrumentation_key: str
     :keyword component_name: The component name.
     :paramtype component_name: str
     :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
     :paramtype enable_telemetry: bool
-    :keyword kwargs: Optional keyword arguments.
-    :paramtype kwargs: Any
     :return: The logging handler and tracer.
     :rtype: Tuple[Union[AzureMLSDKLogHandler, logging.NullHandler], Optional[opencensus.trace.tracer.Tracer]]
     """

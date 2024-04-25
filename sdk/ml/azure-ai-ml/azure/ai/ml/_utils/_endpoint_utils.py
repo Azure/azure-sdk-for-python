@@ -94,8 +94,6 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
     :type func: Callable
     :param message: Message to print out before starting operation write-out.
     :type message: str
-    :keyword kwargs: Optional keyword arguments.
-    :paramtype kwargs: Any
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -122,7 +120,8 @@ def validate_response(response: HttpResponse) -> None:
                 r_json = response.json()
             except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8")) from e  # pylint: disable=W0718
+                msg = response.content.decode("utf-8")
+                raise MlException(message=msg, no_personal_data_message=msg) from e
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,

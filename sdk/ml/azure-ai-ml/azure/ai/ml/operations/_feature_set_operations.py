@@ -349,8 +349,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type version: str
         :keyword feature_name: The feature name. This argument is case-sensitive.
         :paramtype feature_name: str
-        :keyword kwargs: Additional arguments.
-        :paramtype kwargs: Any
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
         """

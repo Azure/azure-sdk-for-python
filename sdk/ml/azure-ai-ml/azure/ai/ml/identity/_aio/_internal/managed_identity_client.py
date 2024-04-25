@@ -11,8 +11,7 @@ from ..._internal.pipeline import build_async_pipeline
 from .._internal import AsyncContextManager
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any
+    from typing import Any  # pylint:disable=ungrouped-imports,no-typing-import-in-type-check
 
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import AsyncPipeline
