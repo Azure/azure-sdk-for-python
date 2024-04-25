@@ -12,7 +12,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
     WorkspaceConnection,
     Workspace,
-    WorkspaceHub,
+    Hub,
     ApiKeyConfiguration,
     AzureBlobDatastore,
     AzureBlobStoreWorkspaceConnection,
@@ -108,6 +108,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_cr_msi(
         self,
         client: MLClient,
@@ -150,6 +151,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_git_user_pwd(
         self,
         client: MLClient,
@@ -193,6 +195,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.GIT))
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
         self,
         client: MLClient,
@@ -378,9 +381,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_workspace_connection_is_shared_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create a workspace hub and 2 child lean workspaces
-        hub = client.workspace_hubs.begin_create(
-            workspace_hub=WorkspaceHub(name=f"e2etest_{randstr('hub_name')}")
-        ).result()
+        hub = client.workspaces.begin_create(workspace=Hub(name=f"e2etest_{randstr('hub_name')}")).result()
         poller1 = client.workspaces.begin_create(
             workspace=Workspace(name=f"e2etest_{randstr('lean_ws1')}", workspace_hub=hub.id)
         )
@@ -485,6 +486,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client.workspace_hubs.begin_delete(name=hub.name, delete_dependent_resources=True)
 
     @pytest.mark.shareTest
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connection_data_connection_listing(
         self,
         client: MLClient,

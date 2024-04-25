@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,6 @@ class ActivityRunsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -87,7 +86,7 @@ class ActivityRunsOperations:
         resource_group_name: str,
         factory_name: str,
         run_id: str,
-        filter_parameters: IO,
+        filter_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101,11 +100,10 @@ class ActivityRunsOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -117,7 +115,7 @@ class ActivityRunsOperations:
         resource_group_name: str,
         factory_name: str,
         run_id: str,
-        filter_parameters: Union[_models.RunFilterParameters, IO],
+        filter_parameters: Union[_models.RunFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityRunsQueryResponse:
         """Query activity runs based on input filter conditions.
@@ -129,12 +127,8 @@ class ActivityRunsOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or IO[bytes]
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -162,7 +156,7 @@ class ActivityRunsOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_by_pipeline_run_request(
+        _request = build_query_by_pipeline_run_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             run_id=run_id,
@@ -171,16 +165,15 @@ class ActivityRunsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_by_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -192,10 +185,6 @@ class ActivityRunsOperations:
         deserialized = self._deserialize("ActivityRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_by_pipeline_run.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns"
-    }
+        return deserialized  # type: ignore

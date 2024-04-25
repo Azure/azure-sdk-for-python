@@ -57,6 +57,7 @@ from azure.ai.ml.entities._indexes.dataindex.entities import (
     IndexStore,
 )
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
+# pylint: disable=protected-access
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -67,14 +68,6 @@ class IndexOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
     property MLClient.index
-
-    :param operation_scope: Scope variables for the operations classes of an MLClient object.
-    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
-    :param operation_config: Common configuration for operations classes of an MLClient object.
-    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client: Service client to allow end users to operate on Azure Machine Learning
-        Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
     """
 
     def __init__(
@@ -141,7 +134,8 @@ class IndexOperations(_ScopeDependentOperations):
         :return: Index asset object.
         :rtype: ~azure.ai.ml.entities.Index
         """
-
+        if not index.version and index._auto_increment_version:
+            index.version = self._azure_ai_assets.indexes.get_next_version(index.name).next_version
         _ = _check_and_upload_path(
             artifact=index,
             asset_operations=self,

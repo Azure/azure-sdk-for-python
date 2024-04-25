@@ -10,6 +10,37 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class EnforcementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enforcement status."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    NOT_AVAILABLE = "NotAvailable"
+
+
+class EnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Environment name."""
+
+    NON_PRODUCTION = "NonProduction"
+    PRODUCTION = "Production"
+
+
+class GroupingIdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GroupingId type. It is a required property. More types of groupIds can be supported in future."""
+
+    SERVICE_TREE_ID = "ServiceTreeId"
+    BILLING_ID = "BillingId"
+
+
 class LimitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The limit object type."""
 
@@ -31,6 +62,18 @@ class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
+
+
+class RequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Request status."""
+
+    ACCEPTED = "Accepted"
+    CREATED = "Created"
+    INVALID = "Invalid"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+    CANCELED = "Canceled"
 
 
 class UsagesTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

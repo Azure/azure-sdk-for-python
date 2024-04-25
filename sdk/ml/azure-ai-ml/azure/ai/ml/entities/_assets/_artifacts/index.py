@@ -7,11 +7,14 @@ from typing import Any, Dict, Optional, Union
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
 from azure.ai.ml._utils._arm_id_utils import AMLAssetId
+
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._system_data import RestSystemData, SystemData
 
 
+@experimental
 class Index(Artifact):
     """Index asset.
 
@@ -33,8 +36,6 @@ class Index(Artifact):
     :vartype properties: Optional[dict[str, str]]
     :ivar path: The local or remote path to the asset.
     :vartype path: Optional[Union[str, os.PathLike]]
-    :ivar datastore: The datastore to upload the local artifact to.
-    :vartype datastore: Optional[str]
     """
 
     def __init__(
@@ -88,6 +89,8 @@ class Index(Artifact):
         )
 
     def _to_rest_object(self) -> RestIndex:
+        # Note: Index.name and Index.version get dropped going to RestIndex, since both are encoded in the id
+        #       (when present)
         return RestIndex(
             stage=self.stage,
             storage_uri=self.path,

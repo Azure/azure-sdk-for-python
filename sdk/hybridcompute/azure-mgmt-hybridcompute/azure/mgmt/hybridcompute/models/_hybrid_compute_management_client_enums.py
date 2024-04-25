@@ -10,6 +10,28 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property that impacts a resource's logging behavior and its connectivity with other resources
+    and public networks.
+    """
+
+    ENFORCED = "enforced"
+    """Indicates that resource access is controlled by the NSP definition."""
+    AUDIT = "audit"
+    """Dry run mode, where traffic is evaluated against NSP Rules, logged but not enforced."""
+    LEARNING = "learning"
+    """Enables traffic evaluation to fall back to resource-specific firewall configurations."""
+
+
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates direction of an access rule."""
+
+    INBOUND = "Inbound"
+    """Traffic originates outside of network."""
+    OUTBOUND = "Outbound"
+    """Traffic originates inside the network"""
+
+
 class AgentConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of configuration mode to use. Modes are pre-defined configurations of security controls,
     extension allowlists and guest configuration, maintained by Microsoft.
@@ -69,10 +91,24 @@ class EsuServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATACENTER = "Datacenter"
 
 
-class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """InstanceViewTypes."""
+class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Script execution status."""
 
-    INSTANCE_VIEW = "instanceView"
+    UNKNOWN = "Unknown"
+    PENDING = "Pending"
+    RUNNING = "Running"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    TIMED_OUT = "TimedOut"
+    CANCELED = "Canceled"
+
+
+class ExtensionsStatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
+
+    INFO = "Info"
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
 class LastAttemptStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,11 +139,46 @@ class LicenseEdition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATACENTER = "Datacenter"
 
 
+class LicenseProfileProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The product type of the license."""
+
+    WINDOWS_SERVER = "WindowsServer"
+    WINDOWS_IO_T_ENTERPRISE = "WindowsIoTEnterprise"
+
+
+class LicenseProfileSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Subscription status of the OS or Product feature."""
+
+    UNKNOWN = "Unknown"
+    ENABLING = "Enabling"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class LicenseProfileSubscriptionStatusUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the new subscription status of the OS or Product Features."""
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
 class LicenseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the state of the license."""
 
     ACTIVATED = "Activated"
     DEACTIVATED = "Deactivated"
+
+
+class LicenseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The license status."""
+
+    UNLICENSED = "Unlicensed"
+    LICENSED = "Licensed"
+    OOB_GRACE = "OOBGrace"
+    OOT_GRACE = "OOTGrace"
+    NON_GENUINE_GRACE = "NonGenuineGrace"
+    NOTIFICATION = "Notification"
+    EXTENDED_GRACE = "ExtendedGrace"
 
 
 class LicenseTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -170,6 +241,28 @@ class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZYPPER = "Zypper"
 
 
+class ProvisioningIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the provisioning issue."""
+
+    WARNING = "Warning"
+    """Warnings can cause connectivity issues after provisioning succeeds."""
+    ERROR = "Error"
+    """Errors will cause association provisioning to fail."""
+
+
+class ProvisioningIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of provisioning issue."""
+
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """Perimeter configuration is missing."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """Identity configuration is missing."""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """Configuration failed to propagate."""
+    OTHER = "Other"
+    """Other failure."""
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state, which only appears in the response."""
 
@@ -190,10 +283,10 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     """Allows Azure Arc agents to communicate with Azure Arc services over both public (internet) and
-    #: private endpoints."""
+    private endpoints."""
     DISABLED = "Disabled"
     """Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet)
-    #: endpoints. The agents must use the private link."""
+    endpoints. The agents must use the private link."""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

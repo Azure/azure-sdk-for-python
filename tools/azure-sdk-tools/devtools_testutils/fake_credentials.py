@@ -1,5 +1,7 @@
 from azure.core.credentials import AccessToken
 
+# General-use placeholder values
+SANITIZED = "Sanitized"
 
 # General-use fake credentials
 FAKE_ACCESS_TOKEN = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJlbWFpbCI6IkJvYkBjb250b3NvLmNvbSIsImdpdmVuX25hbWUiOiJCb2I" \

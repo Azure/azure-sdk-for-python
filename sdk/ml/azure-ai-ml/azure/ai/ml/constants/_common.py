@@ -57,6 +57,11 @@ PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
+AAD_TOKEN = "aadtoken"
+AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
+EMPTY_CREDENTIALS_ERROR = (
+    "Credentials unavailable. Initialize credentials using 'MLClient' for SDK or 'az login' for CLI."
+)
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
@@ -209,6 +214,21 @@ class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STUDIO = "studio"
 
 
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
+
+
 class DefaultOpenEncoding:
     """Enum that captures SDK's default values for the encoding param of open(...)"""
 
@@ -265,8 +285,10 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
-    WORKSPACE_HUB = "workspace_hub"
-    """WorkspaceHub resource type."""
+    HUB = "hub"
+    """Hub resource type."""
+    PROJECT = "project"
+    """Project resource type."""
     INDEX = "indexes"
     """Index resource type."""
 
@@ -411,6 +433,7 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+    KIND = "kind"
 
 
 class SchemaUrl:
@@ -511,7 +534,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
-    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
+    HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -948,3 +971,12 @@ class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_GREATER_THAN = "created_greater_than"
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
+
+
+class WorkspaceKind:
+    """Enum of workspace categories."""
+
+    DEFAULT = "default"
+    HUB = "hub"
+    PROJECT = "project"
+    FEATURE_STORE = "featurestore"

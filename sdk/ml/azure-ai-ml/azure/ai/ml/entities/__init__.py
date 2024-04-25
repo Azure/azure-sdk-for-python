@@ -221,8 +221,9 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
+from ._workspace._ai_workspaces.hub import Hub
+from ._workspace._ai_workspaces.project import Project
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
 
 __all__ = [
     "Resource",
@@ -357,8 +358,8 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
-    "WorkspaceHub",
-    "WorkspaceHubConfig",
+    "Hub",
+    "Project",
     "Feature",
     "FeatureSet",
     "FeatureSetBackfillRequest",

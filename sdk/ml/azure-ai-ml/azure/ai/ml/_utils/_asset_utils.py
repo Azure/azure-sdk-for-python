@@ -934,18 +934,22 @@ def _archive_or_restore(
             )
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            body=version_resource,
-        ) if registry_name else version_operation.create_or_update(
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            body=version_resource,
+        (
+            version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=version_resource,
+            )
+            if registry_name
+            else version_operation.create_or_update(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=version_resource,
+            )
         )
     else:
         container_resource = (
@@ -962,16 +966,20 @@ def _archive_or_restore(
             )
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(  # pylint: disable=expression-not-assigned
-            name=name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            body=container_resource,
-        ) if registry_name else container_operation.create_or_update(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            body=container_resource,
+        (
+            container_operation.create_or_update(  # pylint: disable=expression-not-assigned
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=container_resource,
+            )
+            if registry_name
+            else container_operation.create_or_update(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=container_resource,
+            )
         )
 
 
