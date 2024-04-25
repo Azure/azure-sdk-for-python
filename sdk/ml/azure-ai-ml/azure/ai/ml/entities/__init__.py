@@ -33,6 +33,7 @@ from ._assets._artifacts._package.model_package import (
 )
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.feature_set import FeatureSet
+from ._assets._artifacts.index import Index
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
@@ -455,6 +456,7 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "Index",
 ]
 
 # Allow importing these types for backwards compatibility
