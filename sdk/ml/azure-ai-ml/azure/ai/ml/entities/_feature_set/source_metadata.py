@@ -56,6 +56,7 @@ class SourceMetadata(object):
         self.source_process_code = source_process_code
         self.kwargs = dict
 
+    @staticmethod
     def throw_exception(property_names: str, type: str, should_provide: bool):
         should_or_not = "need to" if should_provide else "cannot"
         msg = f"You {should_or_not} provide {property_names} for {type} feature source."
