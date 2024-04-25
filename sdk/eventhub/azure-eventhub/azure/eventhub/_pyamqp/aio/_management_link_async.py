@@ -7,7 +7,7 @@
 import time
 import logging
 from functools import partial
-from typing import Union
+from typing import Optional, Union
 
 from ..management_link import PendingManagementOperation
 from ._sender_async import SenderLink
@@ -197,7 +197,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             *,
             operation: Union[bytes, str],
             type: Union[bytes, str],
-            locales: str,
+            locales: Optional[str] = None,
             timeout: float
         ):
         """Execute a request and wait on a response.
