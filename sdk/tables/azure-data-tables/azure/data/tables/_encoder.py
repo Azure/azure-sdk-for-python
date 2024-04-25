@@ -1,4 +1,4 @@
-import abc
+import abc, enum
 from typing import Any, Optional, Tuple, Union, Mapping, overload, TypeVar, Generic, Dict
 from uuid import UUID
 from datetime import datetime
@@ -21,15 +21,8 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         except (AttributeError, TypeError):
             raise TypeError('PartitionKey or RowKey must be of type string.')
 
-    def prepare_value(self, value: Any) -> Optional[Union[str, int, float, bool]]:
-        """This is a utility to allow customers to reproduce our internal encoding for types like datetime and bytes.
-        """
-        _, encoded = self.encode_property(None, value)
-        return encoded
-
-    def encode_property(self, name: Optional[str], value: Any) -> Tuple[Optional[Union[EdmType, str]], Optional[Union[str, int, float, bool]]]:
-        """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
-        removing int validation.
+    def prepare_value(self, name: Optional[str], value: Any) -> Optional[Union[str, int, float, bool]]:
+        """This is a utility to allow customers to reproduce our internal encoding for types like datetime, bytes, float and int64.
         """
         if isinstance(value, bool):
             return None, value
@@ -57,17 +50,29 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(value)
-        # To support value in tuple
-        try:
-            if len(value) == 2:
-                if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
-                    return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
-                return self.encode_property(name, value[0])
-        except TypeError:
-            pass
+        if isinstance(value, enum.Enum):
+            return None, value.value
+        if value is None:
+            return None, None
         if name:
             raise TypeError(f"Unsupported data type '{type(value)}' for entity property '{name}'.")
         raise TypeError(f"Unsupported data type '{type(value)}'.")
+
+    def encode_property(self, name: Optional[str], value: Any) -> Tuple[Optional[Union[EdmType, str]], Optional[Union[str, int, float, bool]]]:
+        """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
+        removing int validation.
+        """        
+        try:
+            if isinstance(value, tuple):
+                if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
+                    return EdmType.INT64, value[0]  # TODO: Test what happens if the supplied value exceeds int64
+                edm_type, encoded_value = self.prepare_value(name, value[0])
+                return edm_type or value[1], encoded_value
+        except TypeError:
+            pass
+        
+        return self.prepare_value(name, value)
+        
     
     @abc.abstractmethod
     def encode_entity(self, entity: T) -> Dict[str, Union[str, int, float, bool]]:
@@ -89,25 +94,21 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEnt
         """
         encoded = {}
         for key, value in entity.items():  # TODO: Confirm what to do with None values (before and after encoding).
-            # To make sure key in string type
-            if not isinstance(key, str):
-                key = str(key)
-            if "PartitionKey" in key or "RowKey" in key:
+            if isinstance(key, str):
+                edm_type, value = self.encode_property(key, value)
+                if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
+                    encoded[key] = value
+                    continue
+                # Cast the encoded non-string pk/rk value to string
                 if key == "PartitionKey" or key == "RowKey":
                     encoded[key] = self.prepare_key(value)
-                continue
-            if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
-                if value in ["Edm.String", "Edm.Int32", "Edm.Boolean"]:
                     continue
-                encoded[key] = value
-                continue
-            edm_type, value = self.encode_property(key, value)
-            # The edm type is decided by value
-            # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
-            # the type is string instead of Guid after encoded
-            if edm_type:
-                encoded[key + _ODATA_SUFFIX] = edm_type.value
-            encoded[key] = value
+                # The edm type is decided by value
+                # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
+                # the type is string instead of Guid after encoded
+                if edm_type:
+                    encoded[key + _ODATA_SUFFIX] = edm_type.value if hasattr(edm_type, "value") else edm_type
+            encoded[key] = str(value) if hasattr(edm_type, "value") and edm_type.value == "Edm.Int64" else value
         return encoded
     
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
