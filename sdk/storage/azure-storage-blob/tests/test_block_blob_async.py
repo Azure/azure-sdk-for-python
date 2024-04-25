@@ -600,6 +600,33 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_stage_block_from_url_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        source_blob_name = "sourceblob"
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        target_blob_name = "targetblob"
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        split = 4 * 1024
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            await target_blob.stage_block_from_url(
+                block_id=1,
+                source_url=source_blob.url,
+                source_offset=0,
+                source_length=split)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
+        assert "copysourceerrormessage:Public access is not permitted on this storage account." in e.value.message
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_put_block_with_response(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
