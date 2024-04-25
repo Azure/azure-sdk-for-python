@@ -29,7 +29,7 @@ class DevCenterClient(DevCenterClientOperationsMixin):  # pylint: disable=client
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2023-04-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -84,7 +84,7 @@ class DevCenterClient(DevCenterClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
