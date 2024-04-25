@@ -19,8 +19,8 @@ from ._models import Error
 from ._models import HardwareProfile
 from ._models import ImageReference
 from ._models import InnerError
-from ._models import OSDisk
-from ._models import OperationDetails
+from ._models import OperationStatus
+from ._models import OsDisk
 from ._models import PagedDevBox
 from ._models import PagedDevBoxActionDelayResult
 from ._models import PagedEnvironment
@@ -41,7 +41,7 @@ from ._enums import EnvironmentTypeStatus
 from ._enums import HibernateSupport
 from ._enums import LocalAdministratorStatus
 from ._enums import OSType
-from ._enums import OperationStatus
+from ._enums import OperationStatusValue
 from ._enums import ParameterType
 from ._enums import PoolHealthStatus
 from ._enums import PowerState
@@ -67,8 +67,8 @@ __all__ = [
     "HardwareProfile",
     "ImageReference",
     "InnerError",
-    "OSDisk",
-    "OperationDetails",
+    "OperationStatus",
+    "OsDisk",
     "PagedDevBox",
     "PagedDevBoxActionDelayResult",
     "PagedEnvironment",
@@ -88,7 +88,7 @@ __all__ = [
     "HibernateSupport",
     "LocalAdministratorStatus",
     "OSType",
-    "OperationStatus",
+    "OperationStatusValue",
     "ParameterType",
     "PoolHealthStatus",
     "PowerState",
