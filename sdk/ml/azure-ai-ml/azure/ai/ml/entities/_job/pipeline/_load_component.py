@@ -299,9 +299,7 @@ def _generate_component_function(
             _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])  # type: ignore
             if component_entity.task == DataTransferTaskType.IMPORT_DATA:  # type: ignore
                 return pipeline_node_factory.load_from_dict(
-                    data=dict(
-                        component=component_entity, **kwargs, _from_component_func=True
-                    ),  # pylint: disable=use-dict-literal
+                    data={"component": component_entity, "_from_component_func": True, **kwargs},
                     _type=_type,
                 )
         return pipeline_node_factory.load_from_dict(
