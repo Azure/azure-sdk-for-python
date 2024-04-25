@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -51,7 +51,7 @@ def build_get_parent_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +93,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_create_or_update_or_cancel_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -177,7 +177,7 @@ def build_create_or_update_parent_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -217,7 +217,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,7 +248,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -317,7 +317,6 @@ class ApplyUpdatesOperations:
         :type resource_name: str
         :param apply_update_name: applyUpdate Id. Required.
         :type apply_update_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -336,7 +335,7 @@ class ApplyUpdatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplyUpdate] = kwargs.pop("cls", None)
 
-        request = build_get_parent_request(
+        _request = build_get_parent_request(
             resource_group_name=resource_group_name,
             provider_name=provider_name,
             resource_parent_type=resource_parent_type,
@@ -346,16 +345,15 @@ class ApplyUpdatesOperations:
             apply_update_name=apply_update_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_parent.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -368,13 +366,9 @@ class ApplyUpdatesOperations:
         deserialized = self._deserialize("ApplyUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_parent.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceParentType}/{resourceParentName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/{applyUpdateName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -400,7 +394,6 @@ class ApplyUpdatesOperations:
         :type resource_name: str
         :param apply_update_name: applyUpdate Id. Required.
         :type apply_update_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -419,7 +412,7 @@ class ApplyUpdatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplyUpdate] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             provider_name=provider_name,
             resource_type=resource_type,
@@ -427,16 +420,15 @@ class ApplyUpdatesOperations:
             apply_update_name=apply_update_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -449,13 +441,9 @@ class ApplyUpdatesOperations:
         deserialized = self._deserialize("ApplyUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/{applyUpdateName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update_or_cancel(
@@ -489,7 +477,6 @@ class ApplyUpdatesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -503,7 +490,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        apply_update: IO,
+        apply_update: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -523,11 +510,10 @@ class ApplyUpdatesOperations:
         :param apply_update_name: ApplyUpdate name. Required.
         :type apply_update_name: str
         :param apply_update: The ApplyUpdate. Required.
-        :type apply_update: IO
+        :type apply_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -541,7 +527,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        apply_update: Union[_models.ApplyUpdate, IO],
+        apply_update: Union[_models.ApplyUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplyUpdate:
         """Apply Updates to resource.
@@ -558,12 +544,9 @@ class ApplyUpdatesOperations:
         :type resource_name: str
         :param apply_update_name: ApplyUpdate name. Required.
         :type apply_update_name: str
-        :param apply_update: The ApplyUpdate. Is either a ApplyUpdate type or a IO type. Required.
-        :type apply_update: ~azure.mgmt.maintenance.models.ApplyUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param apply_update: The ApplyUpdate. Is either a ApplyUpdate type or a IO[bytes] type.
+         Required.
+        :type apply_update: ~azure.mgmt.maintenance.models.ApplyUpdate or IO[bytes]
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -591,7 +574,7 @@ class ApplyUpdatesOperations:
         else:
             _json = self._serialize.body(apply_update, "ApplyUpdate")
 
-        request = build_create_or_update_or_cancel_request(
+        _request = build_create_or_update_or_cancel_request(
             resource_group_name=resource_group_name,
             provider_name=provider_name,
             resource_type=resource_type,
@@ -602,16 +585,15 @@ class ApplyUpdatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_or_cancel.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -631,10 +613,6 @@ class ApplyUpdatesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_or_cancel.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/{applyUpdateName}"
-    }
 
     @distributed_trace
     def create_or_update_parent(
@@ -663,7 +641,6 @@ class ApplyUpdatesOperations:
         :type resource_type: str
         :param resource_name: Resource identifier. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -682,7 +659,7 @@ class ApplyUpdatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplyUpdate] = kwargs.pop("cls", None)
 
-        request = build_create_or_update_parent_request(
+        _request = build_create_or_update_parent_request(
             resource_group_name=resource_group_name,
             provider_name=provider_name,
             resource_parent_type=resource_parent_type,
@@ -691,16 +668,15 @@ class ApplyUpdatesOperations:
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update_parent.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -720,10 +696,6 @@ class ApplyUpdatesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_parent.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceParentType}/{resourceParentName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/default"
-    }
 
     @distributed_trace
     def create_or_update(
@@ -741,7 +713,6 @@ class ApplyUpdatesOperations:
         :type resource_type: str
         :param resource_name: Resource identifier. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplyUpdate or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -760,23 +731,22 @@ class ApplyUpdatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplyUpdate] = kwargs.pop("cls", None)
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             provider_name=provider_name,
             resource_type=resource_type,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -797,17 +767,12 @@ class ApplyUpdatesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/default"
-    }
-
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.ApplyUpdate"]:
         """Get Configuration records within a subscription.
 
         Get Configuration records within a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplyUpdate or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.maintenance.models.ApplyUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -829,15 +794,14 @@ class ApplyUpdatesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -849,13 +813,13 @@ class ApplyUpdatesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ListApplyUpdate", pipeline_response)
@@ -865,11 +829,11 @@ class ApplyUpdatesOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -881,5 +845,3 @@ class ApplyUpdatesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/applyUpdates"}

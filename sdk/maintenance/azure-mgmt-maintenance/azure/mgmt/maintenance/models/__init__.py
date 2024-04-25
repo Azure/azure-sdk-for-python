@@ -23,6 +23,7 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationInfo
 from ._models_py3 import OperationsListResult
 from ._models_py3 import Resource
+from ._models_py3 import ScheduledEventApproveResponse
 from ._models_py3 import SystemData
 from ._models_py3 import TagSettingsProperties
 from ._models_py3 import Update
@@ -56,6 +57,7 @@ __all__ = [
     "OperationInfo",
     "OperationsListResult",
     "Resource",
+    "ScheduledEventApproveResponse",
     "SystemData",
     "TagSettingsProperties",
     "Update",

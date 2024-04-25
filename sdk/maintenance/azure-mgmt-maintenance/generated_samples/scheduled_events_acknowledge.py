@@ -15,7 +15,7 @@ from azure.mgmt.maintenance import MaintenanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-maintenance
 # USAGE
-    python configuration_assignments_list.py
+    python scheduled_events_acknowledge.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,15 @@ def main():
         subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     )
 
-    response = client.configuration_assignments.list(
+    response = client.scheduled_event.acknowledge(
         resource_group_name="examplerg",
-        provider_name="Microsoft.Compute",
-        resource_type="virtualMachineScaleSets",
-        resource_name="smdtest1",
+        resource_type="virtualMachines",
+        resource_name="configuration1",
+        scheduled_event_id="ad6d85cf-2c9e-4eec-9a1e-af3213cc0486",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-10-01-preview/examples/ConfigurationAssignments_List.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-10-01-preview/examples/ScheduledEvents_Acknowledge.json
 if __name__ == "__main__":
     main()
