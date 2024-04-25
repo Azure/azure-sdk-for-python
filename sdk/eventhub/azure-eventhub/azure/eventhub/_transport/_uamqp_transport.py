@@ -695,6 +695,8 @@ if uamqp_installed:
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
+                status_code_field=status_code_field,
+                description_fields=description_fields,
                 **kwargs
             )
             status_code = response.application_properties[status_code_field]
