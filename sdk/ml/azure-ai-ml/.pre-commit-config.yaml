@@ -1,7 +1,7 @@
 files: sdk/ml/
 repos:
 -   repo: https://github.com/psf/black
-    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
+    rev: 24.4.0 # Needs to be updated whenever azure sdk team bumps
     hooks:
     -   id: black
         args: [--config=eng/black-pyproject.toml]
@@ -10,8 +10,8 @@ repos:
   hooks:
   - id: cspell
     args: ['--config', '.vscode/cspell.json', "--no-must-find-files"]
-- repo: https://github.com/pre-commit/mirrors-isort
-  rev: v5.8.0
+- repo: https://github.com/PyCQA/isort
+  rev: 5.13.2
   hooks:
   - id: isort
     name: isort (python)
@@ -35,13 +35,13 @@ repos:
         dependencies = [
             (
                 "azure-pylint-guidelines-checker",
-                "0.2.0",
+                "0.3.1",
                 [
                     "--index-url",
                     "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                 ],
             ),
-            ("pylint", "2.15.8", []),
+            ("pylint", "3.0.3", []),
         ]
 
         # Make sure that correct versions are installed

@@ -55,6 +55,7 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
+    Index,
     Job,
     Model,
     ModelBatchDeployment,
@@ -75,6 +76,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    IndexOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -617,6 +619,18 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
+        self._indexes = IndexOperations(
+            operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
+            credential=self._credential,
+            all_operations=self._operation_container,
+            datastore_operations=self._datastores,
+            _service_client_kwargs=kwargs,
+            requests_pipeline=self._requests_pipeline,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.INDEX, self._indexes)
+
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
@@ -969,6 +983,15 @@ class MLClient:
         return self._schedules
 
     @property
+    def indexes(self) -> IndexOperations:
+        """A collection of index related operations.
+
+        :return: Index operations.
+        :rtype: ~azure.ai.ml.operations.IndexOperations
+        """
+        return self._indexes
+
+    @property
     def subscription_id(self) -> str:
         """Get the subscription ID of an MLClient object.
 
@@ -1174,6 +1197,12 @@ def _(entity: Component, operations, **kwargs):
 def _(entity: Datastore, operations):
     module_logger.debug("Creating or updating datastores")
     return operations[AzureMLResourceType.DATASTORE].create_or_update(entity)
+
+
+@_create_or_update.register(Index)
+def _(entity: Index, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating indexes")
+    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
 
 
 @singledispatch

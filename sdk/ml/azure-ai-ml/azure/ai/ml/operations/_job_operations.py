@@ -49,7 +49,6 @@ from azure.ai.ml._utils.utils import (
     is_url,
 )
 from azure.ai.ml.constants._common import (
-    API_URL_KEY,
     AZUREML_RESOURCE_PROVIDER,
     BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
     COMMON_RUNTIME_ENV_VAR,
@@ -63,6 +62,7 @@ from azure.ai.ml.constants._common import (
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    WorkspaceDiscoveryUrlKey,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -171,7 +171,7 @@ class JobOperations(_ScopeDependentOperations):
         self._model_dataplane_operations_client: Optional[ModelDataplaneOperations] = None
         # Kwargs to propagate to dataplane service clients
         self._service_client_kwargs = kwargs.pop("_service_client_kwargs", {})
-        self._api_base_url = None
+        self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
         self._orchestrators = OperationOrchestrator(
@@ -254,9 +254,9 @@ class JobOperations(_ScopeDependentOperations):
         return self._model_dataplane_operations_client
 
     @property
-    def _api_url(self) -> Any:
+    def _api_url(self) -> str:
         if not self._api_base_url:
-            self._api_base_url = self._get_workspace_url(url_key=API_URL_KEY)
+            self._api_base_url = self._get_workspace_url(url_key=WorkspaceDiscoveryUrlKey.API)
         return self._api_base_url
 
     @distributed_trace
@@ -1045,7 +1045,7 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    def _get_workspace_url(self, url_key: str = "history") -> Any:
+    def _get_workspace_url(self, url_key: WorkspaceDiscoveryUrlKey) -> str:
         discovery_url = (
             self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
             .get(self._operation_scope.workspace_name)

@@ -34,7 +34,6 @@ from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServ
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (
-    API_URL_KEY,
     AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
@@ -42,6 +41,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     CommonYamlFields,
     DefaultOpenEncoding,
+    WorkspaceDiscoveryUrlKey,
 )
 from azure.ai.ml.exceptions import MlException
 from azure.core.pipeline.policies import RetryPolicy
@@ -693,44 +693,44 @@ def _(duration: timedelta) -> int:
     return int(duration.days)
 
 
-def _get_mfe_base_url_from_discovery_service(
-    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
-) -> str:
+def _get_base_urls_from_discovery_service(
+    workspace_operations: "WorkspaceOperations", workspace_name: str, requests_pipeline: HttpPipeline
+) -> Dict[WorkspaceDiscoveryUrlKey, str]:
+    """Fetch base urls for a workspace from the discovery service.
+
+    :param WorkspaceOperations workspace_operations:
+    :param str workspace_name: The name of the workspace
+    :param HttpPipeline requests_pipeline: An HTTP pipeline to make requests with
+    :returns: A dictionary mapping url types to base urls
+    :rtype: Dict[WorkspaceDiscoveryUrlKey,str]
+    """
     discovery_url = workspace_operations.get(workspace_name).discovery_url
 
-    all_urls = json.loads(
+    return json.loads(
         download_text_from_url(
             discovery_url,
             create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
         )
     )
-    return f"{all_urls[API_URL_KEY]}{MFE_PATH_PREFIX}"
+
+
+def _get_mfe_base_url_from_discovery_service(
+    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
+) -> str:
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return f"{all_urls[WorkspaceDiscoveryUrlKey.API]}{MFE_PATH_PREFIX}"
 
 
 def _get_mfe_base_url_from_registry_discovery_service(
     workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
 ) -> str:
-    discovery_url = workspace_operations.get(workspace_name).discovery_url
-
-    all_urls = json.loads(
-        download_text_from_url(
-            discovery_url,
-            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
-        )
-    )
-    return all_urls[API_URL_KEY]
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return all_urls[WorkspaceDiscoveryUrlKey.API]
 
 
 def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline) -> str:
-    discovery_url = workspace_operations.get(workspace_name).discovery_url
-
-    all_urls = json.loads(
-        download_text_from_url(
-            discovery_url,
-            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
-        )
-    )
-    return all_urls[API_URL_KEY]
+    all_urls = _get_base_urls_from_discovery_service(workspace_operations, workspace_name, requests_pipeline)
+    return all_urls[WorkspaceDiscoveryUrlKey.API]
 
 
 def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
