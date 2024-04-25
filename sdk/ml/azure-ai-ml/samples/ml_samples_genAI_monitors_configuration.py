@@ -47,7 +47,7 @@ aoai_deployment_name = "INSERT_YOUR_AOAI_DEPLOYMENT_NAME"
 endpoint_name = "INSERT_YOUR_ENDPOINT_NAME"
 deployment_name = "INSERT_YOUR_DEPLOYMENT_NAME"
 app_trace_name = "app_traces"
-app_trace_Version= "1"
+app_trace_Version = "1"
 
 # Default Monitor configuration for GenAI apps - Enable monitoring with minimal configurations
 ml_client = MLClient(

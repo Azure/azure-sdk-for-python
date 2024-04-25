@@ -145,7 +145,7 @@ class MonitorDefinition(RestTranslatableMixin):
     def _populate_default_signal_information(self) -> None:
         if (
             isinstance(self.monitoring_target, MonitoringTarget)
-            and self.monitoring_target.ml_task == MonitorTargetTasks.QUESTION_ANSWERING
+            and self.monitoring_target.ml_task.lower() == MonitorTargetTasks.QUESTION_ANSWERING.lower()
         ):
             self.monitoring_signals = {
                 DEFAULT_TOKEN_USAGE_SIGNAL_NAME: GenerationTokenStatisticsSignal._get_default_token_statistics_signal(),  # pylint: disable=line-too-long
