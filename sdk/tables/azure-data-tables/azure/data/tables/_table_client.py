@@ -388,7 +388,7 @@ class TableClient(TablesBaseClient):
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
-        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
@@ -447,8 +447,10 @@ class TableClient(TablesBaseClient):
     
     @distributed_trace
     def create_entity(self, *args, **kwargs) -> Dict[str, Any]:
-        entity = args[0]
-        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
+        entity = kwargs.pop("entity", None)
+        if not entity:
+            entity = args[0]
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         entity_json = encoder.encode_entity(entity)
         try:
             metadata, content = cast(
@@ -538,8 +540,12 @@ class TableClient(TablesBaseClient):
     
     @distributed_trace
     def update_entity(self, *args, **kwargs) -> Dict[str, Any]:
-        entity = args[0]
-        mode = args[1]
+        entity = kwargs.pop("entity", None)
+        if not entity:
+            entity = args[0]
+        mode = kwargs.pop("mode", None)
+        if not mode:
+            mode = args[1]
         encoder = kwargs.pop(encoder, DEFAULT_ENCODER)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -781,10 +787,14 @@ class TableClient(TablesBaseClient):
     
     @distributed_trace
     def upsert_entity(self, *args, **kwargs) -> Dict[str, Any]:
-        entity = args[0]
-        mode = args[1]
-        encoder = kwargs.pop('encoder', DEFAULT_ENCODER)
-        entity_json = encoder.encode(entity)
+        entity = kwargs.pop("entity", None)
+        if not entity:
+            entity = args[0]
+        mode = kwargs.pop("mode", None)
+        if not mode:
+            mode = args[1]
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
+        entity_json = encoder.encode_entity(entity)
         partition_key = entity_json["PartitionKey"]
         row_key = entity_json["RowKey"]
         
