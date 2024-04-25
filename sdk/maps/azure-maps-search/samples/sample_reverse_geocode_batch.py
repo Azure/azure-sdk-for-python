@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_reverse_search_address.py
+FILE: reverse_geocode_batch.py
 DESCRIPTION:
-    This sample demonstrates how to perform reverse search by given coordinates.
+    This sample demonstrates how to perform reverse search by given coordinates in a batch.
 USAGE:
-    python sample_reverse_search_address.py
+    python reverse_geocode_batch.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -21,7 +21,7 @@ import os
 
 from azure.maps.search._generated.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody
 
-subscription_key = "xxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode_batch():
     from azure.core.credentials import AzureKeyCredential

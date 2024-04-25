@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_reverse_geocode_async.py
+FILE: sample_reverse_geocode_batch_async.py
 DESCRIPTION:
-    This sample demonstrates how to perform reverse search by given coordinates.
+    This sample demonstrates how to perform reverse search by given coordinates in a batch.
 USAGE:
     python sample_reverse_geocode_async.py
 
@@ -21,7 +21,7 @@ import os
 
 from azure.maps.search._generated.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 
 async def reverse_geocode_async():

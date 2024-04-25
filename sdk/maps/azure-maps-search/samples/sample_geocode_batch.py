@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_geocode.py
+FILE: sample_geocode_batch.py
 DESCRIPTION:
-    This sample demonstrates how to perform search address
+    This sample demonstrates how to perform batch search address
 USAGE:
-    python sample_geocode.py
+    python sample_geocode_batch.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -20,7 +20,7 @@ import os
 
 from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode_batch():
     from azure.core.credentials import AzureKeyCredential

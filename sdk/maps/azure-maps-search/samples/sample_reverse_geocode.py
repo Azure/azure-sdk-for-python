@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_reverse_search_address.py
+FILE: sample_reverse_geocode.py
 DESCRIPTION:
     This sample demonstrates how to perform reverse search by given coordinates.
 USAGE:
-    python sample_reverse_search_address.py
+    python sample_reverse_geocode.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -19,7 +19,7 @@ USAGE:
 
 import os
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential

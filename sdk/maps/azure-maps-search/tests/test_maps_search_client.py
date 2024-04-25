@@ -15,7 +15,7 @@ from search_preparer import MapsSearchPreparer
 class TestMapsSearchClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsSearchClient(
-            credential=AzureKeyCredential("xxxxxxxx-xxxx-xxxx")
+            credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key"))
         )
         assert self.client is not None
 

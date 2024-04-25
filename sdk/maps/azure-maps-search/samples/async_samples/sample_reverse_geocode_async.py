@@ -19,7 +19,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 
 async def reverse_geocode_async():

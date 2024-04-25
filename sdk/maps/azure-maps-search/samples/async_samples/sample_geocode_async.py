@@ -9,7 +9,7 @@
 """
 FILE: sample_geocode_async.py
 DESCRIPTION:
-    This sample demonstrates how to perform fuzzy search by location and lat/lon.
+    This sample demonstrates how to perform search by location.
 USAGE:
     python sample_geocode_async.py
 
@@ -19,7 +19,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def geocode_async():
     from azure.core.credentials import AzureKeyCredential

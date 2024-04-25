@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_geocode_async.py
+FILE: sample_geocode_batch_async.py
 DESCRIPTION:
-    This sample demonstrates how to perform fuzzy search by location and lat/lon.
+    This sample demonstrates how to perform batch search by location.
 USAGE:
-    python sample_geocode_async.py
+    python sample_geocode_batch_async.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -21,7 +21,7 @@ import os
 
 from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
 
-subscription_key = "xxxxxxxx-xxxx-xxxx"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def geocode_batch_async():
     from azure.core.credentials import AzureKeyCredential
