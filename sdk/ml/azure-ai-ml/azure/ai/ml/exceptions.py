@@ -63,6 +63,7 @@ class ErrorTarget:
     DATA_TRANSFER_JOB = "DataTransferJob"
     LOCAL_JOB = "LocalJob"
     MODEL = "Model"
+    INDEX = "Index"
     ONLINE_DEPLOYMENT = "OnlineDeployment"
     ONLINE_ENDPOINT = "OnlineEndpoint"
     ASSET = "Asset"
