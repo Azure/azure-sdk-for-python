@@ -775,7 +775,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
     async def _receive_message_batch_impl_async(
             self,
-            *,
             max_batch_size: Optional[int] = None,
             on_message_received: Optional[Callable] = None,
             timeout: float = 0,

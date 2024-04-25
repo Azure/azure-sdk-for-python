@@ -882,7 +882,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
     def _receive_message_batch_impl(
         self,
-        *,
         max_batch_size: Optional[int] = None,
         on_message_received: Optional[Callable] = None,
         timeout: float = 0,
