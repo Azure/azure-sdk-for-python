@@ -34,7 +34,6 @@ steps:
         --tool-path $(Build.BinariesDirectory)/test-proxy `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version $version
-      $(Build.BinariesDirectory)/test-proxy --version
     displayName: "Install test-proxy"
     condition: and(succeeded(), ${{ parameters.condition }})
 
