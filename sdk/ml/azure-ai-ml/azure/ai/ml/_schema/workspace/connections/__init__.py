@@ -4,32 +4,32 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from .workspace_connection import WorkspaceConnectionSchema
-from .workspace_connection_subtypes import (
-    AzureBlobStoreWorkspaceConnectionSchema,
-    MicrosoftOneLakeWorkspaceConnectionSchema,
-    AzureOpenAIWorkspaceConnectionSchema,
-    AzureAIServiceWorkspaceConnectionSchema,
-    AzureAISearchWorkspaceConnectionSchema,
-    AzureContentSafetyWorkspaceConnectionSchema,
-    AzureSpeechServicesWorkspaceConnectionSchema,
-    APIKeyWorkspaceConnectionSchema,
-    OpenAIWorkspaceConnectionSchema,
-    SerpWorkspaceConnectionSchema,
-    ServerlessWorkspaceConnectionSchema,
+from .connection import ConnectionSchema
+from .connection_subtypes import (
+    AzureBlobStoreConnectionSchema,
+    MicrosoftOneLakeConnectionSchema,
+    AzureOpenAIConnectionSchema,
+    AzureAIServiceConnectionSchema,
+    AzureAISearchConnectionSchema,
+    AzureContentSafetyConnectionSchema,
+    AzureSpeechServicesConnectionSchema,
+    APIKeyConnectionSchema,
+    OpenAIConnectionSchema,
+    SerpConnectionSchema,
+    ServerlessConnectionSchema,
 )
 
 __all__ = [
-    "WorkspaceConnectionSchema",
-    "AzureBlobStoreWorkspaceConnectionSchema",
-    "MicrosoftOneLakeWorkspaceConnectionSchema",
-    "AzureOpenAIWorkspaceConnectionSchema",
-    "AzureAIServiceWorkspaceConnectionSchema",
-    "AzureAISearchWorkspaceConnectionSchema",
-    "AzureContentSafetyWorkspaceConnectionSchema",
-    "AzureSpeechServicesWorkspaceConnectionSchema",
-    "APIKeyWorkspaceConnectionSchema",
-    "OpenAIWorkspaceConnectionSchema",
-    "SerpWorkspaceConnectionSchema",
-    "ServerlessWorkspaceConnectionSchema",
+    "ConnectionSchema",
+    "AzureBlobStoreConnectionSchema",
+    "MicrosoftOneLakeConnectionSchema",
+    "AzureOpenAIConnectionSchema",
+    "AzureAIServiceConnectionSchema",
+    "AzureAISearchConnectionSchema",
+    "AzureContentSafetyConnectionSchema",
+    "AzureSpeechServicesConnectionSchema",
+    "APIKeyConnectionSchema",
+    "OpenAIConnectionSchema",
+    "SerpConnectionSchema",
+    "ServerlessConnectionSchema",
 ]

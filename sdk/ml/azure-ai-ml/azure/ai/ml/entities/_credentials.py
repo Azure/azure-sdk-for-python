@@ -62,8 +62,8 @@ from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
-# Note, this needs to match the restclient that's imported by the
-# Workspace connection class, otherwise some unit tests will start failing
+# Note, this import needs to match the restclient that's imported by the
+# Connection class, otherwise some unit tests will start failing
 # Due to the mismatch between expected and received classes in WC rest conversions.
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     ConnectionAuthType,

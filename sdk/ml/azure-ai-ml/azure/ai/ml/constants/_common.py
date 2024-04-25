@@ -236,8 +236,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
-    WORKSPACE_CONNECTION = "workspace_connections"
-    """Workspace connection resource type."""
+    CONNECTION = "connections"
+    """connection resource type."""
     COMPONENT = "components"
     """Component resource type."""
     SCHEDULE = "schedules"
@@ -801,8 +801,8 @@ class InputOutputModes:
     """Direct asset type."""
 
 
-class WorkspaceConnectionTypes:
-    """Names for workspace connection types that are different from that underlying api enum values
+class ConnectionTypes:
+    """Names for connection types that are different from that underlying api enum values
     from the ConnectionCategory class."""
 
     CUSTOM = "custom"  # Corresponds to "custom_keys".
@@ -815,13 +815,13 @@ class WorkspaceConnectionTypes:
 
 
 class OneLakeArtifactTypes:
-    """Names for fabric types that specific sub-types of MicrosoftOneLakeWorkspaceConnections"""
+    """Names for fabric types that specific sub-types of MicrosoftOneLakeConnections"""
 
     ONE_LAKE = "lake_house"
 
 
 class CognitiveServiceKinds:
-    """Subtypes for workspace connections using the Cognitive serive type. These
+    """Subtypes for connections using the Cognitive serive type. These
     values are plugged into the connection's metadata."""
 
     CONTENT_SAFETY = "content_safety"

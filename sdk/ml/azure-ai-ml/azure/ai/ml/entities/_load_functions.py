@@ -39,7 +39,7 @@ from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.connection import Connection
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -704,15 +704,15 @@ def load_batch_endpoint(
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, **kwargs))
 
 
-def load_workspace_connection(
+def load_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs: Any,
-) -> WorkspaceConnection:
-    """Construct a workspace connection object from yaml file.
+) -> Connection:
+    """Construct a connection object from yaml file.
 
-    :param source: The local yaml source of a workspace connection object. Must be either a
+    :param source: The local yaml source of a connection object. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
         An exception is raised if the file does not exist.
@@ -728,19 +728,19 @@ def load_workspace_connection(
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]
 
-    :return: Constructed workspace connection object.
+    :return: Constructed connection object.
     :rtype: WorkspaceConnection
 
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_workspace.py
-            :start-after: [START load_workspace_connection]
-            :end-before: [END load_workspace_connection]
+            :start-after: [START load_connection]
+            :end-before: [END load_connection]
             :language: python
             :dedent: 8
-            :caption: Loading a Workspace Connection from a YAML config file.
+            :caption: Loading a Connection from a YAML config file.
     """
-    return cast(WorkspaceConnection, load_common(WorkspaceConnection, source, relative_origin, **kwargs))
+    return cast(Connection, load_common(Connection, source, relative_origin, **kwargs))
 
 
 def load_schedule(

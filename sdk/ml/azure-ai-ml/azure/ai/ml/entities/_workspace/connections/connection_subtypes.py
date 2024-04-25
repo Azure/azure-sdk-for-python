@@ -17,7 +17,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_ACCOUNT_NAME_KEY,
     CONNECTION_CONTAINER_NAME_KEY,
     CONNECTION_RESOURCE_ID_KEY,
-    WorkspaceConnectionTypes,
+    ConnectionTypes,
     CognitiveServiceKinds,
 )
 from azure.ai.ml.entities._credentials import (
@@ -25,31 +25,31 @@ from azure.ai.ml.entities._credentials import (
     AadCredentialConfiguration,
 )
 
-from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
-    AzureBlobStoreWorkspaceConnectionSchema,
-    MicrosoftOneLakeWorkspaceConnectionSchema,
-    AzureOpenAIWorkspaceConnectionSchema,
-    AzureAIServiceWorkspaceConnectionSchema,
-    AzureAISearchWorkspaceConnectionSchema,
-    AzureContentSafetyWorkspaceConnectionSchema,
-    AzureSpeechServicesWorkspaceConnectionSchema,
-    APIKeyWorkspaceConnectionSchema,
-    OpenAIWorkspaceConnectionSchema,
-    SerpWorkspaceConnectionSchema,
-    ServerlessWorkspaceConnectionSchema,
+from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnectionSchema,
+    MicrosoftOneLakeConnectionSchema,
+    AzureOpenAIConnectionSchema,
+    AzureAIServiceConnectionSchema,
+    AzureAISearchConnectionSchema,
+    AzureContentSafetyConnectionSchema,
+    AzureSpeechServicesConnectionSchema,
+    APIKeyConnectionSchema,
+    OpenAIConnectionSchema,
+    SerpConnectionSchema,
+    ServerlessConnectionSchema,
 )
 from .one_lake_artifacts import OneLakeConnectionArtifact
-from .workspace_connection import WorkspaceConnection
+from .connection import Connection
 
 
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 
 @experimental
-class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
+class AzureBlobStoreConnection(Connection):
     """A connection to an Azure Blob Store.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param url: The URL or ARM resource ID of the external resource.
     :type url: str
@@ -99,11 +99,11 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureBlobStoreWorkspaceConnectionSchema
+        return AzureBlobStoreConnectionSchema
 
     @property
     def container_name(self) -> Optional[str]:
-        """The name of the workspace connection's container.
+        """The name of the connection's container.
 
         :return: The name of the container.
         :rtype: Optional[str]
@@ -114,7 +114,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
 
     @container_name.setter
     def container_name(self, value: str) -> None:
-        """Set the container name of the workspace connection.
+        """Set the container name of the connection.
 
         :param value: The new container name to set.
         :type value: str
@@ -125,7 +125,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
 
     @property
     def account_name(self) -> Optional[str]:
-        """The name of the workspace connection's account
+        """The name of the connection's account
 
         :return: The name of the account.
         :rtype: Optional[str]
@@ -136,7 +136,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
 
     @account_name.setter
     def account_name(self, value: str) -> None:
-        """Set the account name of the workspace connection.
+        """Set the account name of the connection.
 
         :param value: The new account name to set.
         :type value: str
@@ -151,12 +151,12 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
 # Due to this, we construct the target internally by composing more inputs
 # that are more user-accessible.
 @experimental
-class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
+class MicrosoftOneLakeConnection(Connection):
     """A connection to a Microsoft One Lake. Connections of this type
     are further specified by their artifact class type, although
     the number of artifact classes is currently limited.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param endpoint: The endpoint of the connection.
     :type endpoint: str
@@ -191,7 +191,7 @@ class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
         # need to worry about data-availability nonsense.
         target = kwargs.pop("target", None)
         if target is None:
-            target = MicrosoftOneLakeWorkspaceConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
+            target = MicrosoftOneLakeConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
         super().__init__(
             target=target,
             type=camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE),
@@ -208,7 +208,7 @@ class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return MicrosoftOneLakeWorkspaceConnectionSchema
+        return MicrosoftOneLakeConnectionSchema
 
     # Target is constructued from user inputs, because it's apparently very difficult for users to
     # directly access a One Lake's target URL.
@@ -221,19 +221,19 @@ class MicrosoftOneLakeWorkspaceConnection(WorkspaceConnection):
         return f"https://{endpoint}/{workspace}/{artifact_name}.Lakehouse"
 
 
-# There are enough types of workspace connections that their only accept an api key credential,
-# or just an api key credential or no credentials, then it meritted an parent class for
-# all of them. One that's slightly more specific than the base WorkspaceConnection.
+# There are enough types of connections that their only accept an api key credential,
+# or just an api key credential or no credentials, that it merits a parent class for
+# all of them. One that's slightly more specific than the base Connection.
 # This file contains that parent class, as well as all of its children.
 
 
 # Not experimental since users should never see this,
 # No need to add an extra warning.
-class ApiOrAadWorkspaceConnection(WorkspaceConnection):
-    """Internal parent class for all workspace connections that accept either an api key or
+class ApiOrAadConnection(Connection):
+    """Internal parent class for all connections that accept either an api key or
     entra ID as credentials. Entra ID credentials are implicitly assumed if no api key is provided.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
@@ -242,7 +242,7 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
     :type api_key: Optional[str]
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
-    :param type: The type of the workspace connection.
+    :param type: The type of the connection.
     :type type: str
     :param allow_entra: Whether or not this connection allows initialization without
     an API key via Aad. Defaults to True.
@@ -270,7 +270,7 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
             credentials = ApiKeyConfiguration(key=api_key)
         elif not allow_entra and isinstance(credentials, AadCredentialConfiguration):
             # If no creds are provided in any capacity when needed. complain.
-            raise ValueError("This workspace connection type must set the api_key value.")
+            raise ValueError("This connection type must set the api_key value.")
 
         super().__init__(
             type=type,
@@ -280,9 +280,9 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
 
     @property
     def api_key(self) -> Optional[str]:
-        """The API key of the workspace connection.
+        """The API key of the connection.
 
-        :return: The API key of the workspace connection.
+        :return: The API key of the connection.
         :rtype: Optional[str]
         """
         if isinstance(self._credentials, ApiKeyConfiguration):
@@ -291,7 +291,7 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
 
     @api_key.setter
     def api_key(self, value: str) -> None:
-        """Set the API key of the workspace connection. Setting this to None will
+        """Set the API key of the connection. Setting this to None will
         cause the connection to use the user's Entra ID as credentials.
 
         :param value: The new API key to set.
@@ -304,11 +304,11 @@ class ApiOrAadWorkspaceConnection(WorkspaceConnection):
 
 
 @experimental
-class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A Workspace Connection that is specifically designed for handling connections
+class AzureOpenAIConnection(ApiOrAadConnection):
+    """A Connection that is specifically designed for handling connections
     to Azure Open AI.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param azure_endpoint: The URL or ARM resource ID of the Azure Open AI Resource.
     :type azure_endpoint: str
@@ -354,13 +354,13 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureOpenAIWorkspaceConnectionSchema
+        return AzureOpenAIConnectionSchema
 
     @property
     def api_version(self) -> Optional[str]:
-        """The API version of the workspace connection.
+        """The API version of the connection.
 
-        :return: The API version of the workspace connection.
+        :return: The API version of the connection.
         :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
@@ -370,7 +370,7 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @api_version.setter
     def api_version(self, value: str) -> None:
-        """Set the API version of the workspace connection.
+        """Set the API version of the connection.
 
         :param value: The new api version to set.
         :type value: str
@@ -406,10 +406,10 @@ class AzureOpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
         self.tags[CONNECTION_RESOURCE_ID_KEY] = value
 
 
-class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A Workspace Connection geared towards Azure AI services.
+class AzureAIServiceConnection(ApiOrAadConnection):
+    """A Connection geared towards Azure AI services.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param endpoint: The URL or ARM resource ID of the external resource.
     :type endpoint: str
@@ -430,7 +430,7 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
-            type=WorkspaceConnectionTypes.AZURE_AI_SERVICES,
+            type=ConnectionTypes.AZURE_AI_SERVICES,
             from_child=True,
             **kwargs,
         )
@@ -440,7 +440,7 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureAIServiceWorkspaceConnectionSchema
+        return AzureAIServiceConnectionSchema
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
@@ -460,7 +460,7 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @ai_services_resource_id.setter
     def ai_services_resource_id(self, value: str) -> None:
-        """Set the ai service resource id of the workspace connection.
+        """Set the ai service resource id of the connection.
 
         :param value: The new ai service resource id to set.
         :type value: str
@@ -471,11 +471,11 @@ class AzureAIServiceWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
 
 @experimental
-class AzureAISearchWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A Workspace Connection that is specifically designed for handling connections to
+class AzureAISearchConnection(ApiOrAadConnection):
+    """A Connection that is specifically designed for handling connections to
     Azure AI Search.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param endpoint: The URL or ARM resource ID of the Azure AI Search Service
     :type endpoint: str
@@ -492,19 +492,19 @@ class AzureAISearchWorkspaceConnection(ApiOrAadWorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
 
         super().__init__(
-            type=WorkspaceConnectionTypes.AZURE_SEARCH,
+            type=ConnectionTypes.AZURE_SEARCH,
             from_child=True,
             **kwargs,
         )
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureAISearchWorkspaceConnectionSchema
+        return AzureAISearchConnectionSchema
 
 
 @experimental
-class AzureContentSafetyWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A Workspace Connection geared towards a Azure Content Safety service.
+class AzureContentSafetyConnection(ApiOrAadConnection):
+    """A Connection geared towards a Azure Content Safety service.
 
     :param name: Name of the connection.
     :type name: str
@@ -525,7 +525,7 @@ class AzureContentSafetyWorkspaceConnection(ApiOrAadWorkspaceConnection):
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
-            type=WorkspaceConnectionTypes.AZURE_CONTENT_SAFETY,
+            type=ConnectionTypes.AZURE_CONTENT_SAFETY,
             from_child=True,
             **kwargs,
         )
@@ -536,14 +536,14 @@ class AzureContentSafetyWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureContentSafetyWorkspaceConnectionSchema
+        return AzureContentSafetyConnectionSchema
 
 
 @experimental
-class AzureSpeechServicesWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A Workspace Connection geared towards an Azure Speech service.
+class AzureSpeechServicesConnection(ApiOrAadConnection):
+    """A Connection geared towards an Azure Speech service.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param endpoint: The URL or ARM resource ID of the external resource.
     :type endpoint: str
@@ -565,7 +565,7 @@ class AzureSpeechServicesWorkspaceConnection(ApiOrAadWorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(
             endpoint=endpoint,
-            type=WorkspaceConnectionTypes.AZURE_SPEECH_SERVICES,
+            type=ConnectionTypes.AZURE_SPEECH_SERVICES,
             from_child=True,
             **kwargs,
         )
@@ -576,14 +576,14 @@ class AzureSpeechServicesWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureSpeechServicesWorkspaceConnectionSchema
+        return AzureSpeechServicesConnectionSchema
 
 
 @experimental
-class APIKeyWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A generic workspace connection for any API key-based service.
+class APIKeyConnection(ApiOrAadConnection):
+    """A generic connection for any API key-based service.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param api_base: The URL to target with this connection.
     :type api_base: str
@@ -610,15 +610,15 @@ class APIKeyWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return APIKeyWorkspaceConnectionSchema
+        return APIKeyConnectionSchema
 
 
 @experimental
-class OpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A workspace connection geared towards direct connections to Open AI.
+class OpenAIConnection(ApiOrAadConnection):
+    """A connection geared towards direct connections to Open AI.
     Not to be confused with the AzureOpenAIWorkspaceConnection, which is for Azure's Open AI services.
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param api_key: The API key needed to connect to the Open AI.
     :type api_key: str
@@ -646,14 +646,14 @@ class OpenAIWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return OpenAIWorkspaceConnectionSchema
+        return OpenAIConnectionSchema
 
 
 @experimental
-class SerpWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A workspace connection geared towards a Serp service (Open source search API Service)
+class SerpConnection(ApiOrAadConnection):
+    """A connection geared towards a Serp service (Open source search API Service)
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param api_key: The API key needed to connect to the Open AI.
     :type api_key: str
@@ -681,14 +681,14 @@ class SerpWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return SerpWorkspaceConnectionSchema
+        return SerpConnectionSchema
 
 
 @experimental
-class ServerlessWorkspaceConnection(ApiOrAadWorkspaceConnection):
-    """A workspace connection geared towards a MaaS endpoint (Serverless).
+class ServerlessConnection(ApiOrAadConnection):
+    """A connection geared towards a MaaS endpoint (Serverless).
 
-    :param name: Name of the workspace connection.
+    :param name: Name of the connection.
     :type name: str
     :param endpoint: The serverless endpoint.
     :type endpoint: str
@@ -716,4 +716,4 @@ class ServerlessWorkspaceConnection(ApiOrAadWorkspaceConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return ServerlessWorkspaceConnectionSchema
+        return ServerlessConnectionSchema

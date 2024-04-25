@@ -80,7 +80,7 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    WorkspaceConnectionsOperations,
+    ConnectionsOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -465,7 +465,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
-        self._workspace_connections = WorkspaceConnectionsOperations(
+        self._connections = ConnectionsOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
@@ -854,13 +854,13 @@ class MLClient:
         return self._featurestoreentities
 
     @property
-    def connections(self) -> WorkspaceConnectionsOperations:
-        """A collection of workspace connection related operations.
+    def connections(self) -> ConnectionsOperations:
+        """A collection of connection related operations.
 
-        :return: Workspace Connections operations
-        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
+        :return: Connections operations
+        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
         """
-        return self._workspace_connections
+        return self._connections
 
     @property
     def jobs(self) -> JobOperations:

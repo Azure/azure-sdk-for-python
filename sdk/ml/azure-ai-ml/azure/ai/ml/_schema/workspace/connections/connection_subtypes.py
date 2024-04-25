@@ -9,7 +9,7 @@ from marshmallow import fields, post_load
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._common import WorkspaceConnectionTypes
+from azure.ai.ml.constants._common import ConnectionTypes
 from azure.ai.ml._schema.workspace.connections.one_lake_artifacts import OneLakeArtifactSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
     SasTokenConfigurationSchema,
@@ -18,10 +18,10 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
 )
 from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities import AadCredentialConfiguration
-from .workspace_connection import WorkspaceConnectionSchema
+from .connection import ConnectionSchema
 
 # pylint: disable-next=name-too-long
-class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureBlobStoreConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_BLOB, casing_transform=camel_to_snake, required=True
@@ -42,12 +42,12 @@ class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureBlobStoreWorkspaceConnection
+        from azure.ai.ml.entities import AzureBlobStoreConnection
 
-        return AzureBlobStoreWorkspaceConnection(**data)
+        return AzureBlobStoreConnection(**data)
 
 # pylint: disable-next=name-too-long
-class MicrosoftOneLakeWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class MicrosoftOneLakeConnectionSchema(ConnectionSchema):
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
     )
@@ -61,13 +61,13 @@ class MicrosoftOneLakeWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import MicrosoftOneLakeWorkspaceConnection
+        from azure.ai.ml.entities import MicrosoftOneLakeConnection
 
-        return MicrosoftOneLakeWorkspaceConnection(**data)
+        return MicrosoftOneLakeConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class AzureOpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureOpenAIConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_OPEN_AI, casing_transform=camel_to_snake, required=True
@@ -80,16 +80,16 @@ class AzureOpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureOpenAIWorkspaceConnection
+        from azure.ai.ml.entities import AzureOpenAIConnection
 
-        return AzureOpenAIWorkspaceConnection(**data)
+        return AzureOpenAIConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureAIServiceConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
-        allowed_values=WorkspaceConnectionTypes.AZURE_AI_SERVICES, casing_transform=camel_to_snake, required=True
+        allowed_values=ConnectionTypes.AZURE_AI_SERVICES, casing_transform=camel_to_snake, required=True
     )
     api_key = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str()
@@ -97,60 +97,60 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureAIServiceWorkspaceConnection
+        from azure.ai.ml.entities import AzureAIServiceConnection
 
-        return AzureAIServiceWorkspaceConnection(**data)
+        return AzureAIServiceConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class AzureAISearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureAISearchConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
-        allowed_values=WorkspaceConnectionTypes.AZURE_SEARCH, casing_transform=camel_to_snake, required=True
+        allowed_values=ConnectionTypes.AZURE_SEARCH, casing_transform=camel_to_snake, required=True
     )
     api_key = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureAISearchWorkspaceConnection
+        from azure.ai.ml.entities import AzureAISearchConnection
 
-        return AzureAISearchWorkspaceConnection(**data)
+        return AzureAISearchConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class AzureContentSafetyWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureContentSafetyConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
-        allowed_values=WorkspaceConnectionTypes.AZURE_CONTENT_SAFETY, casing_transform=camel_to_snake, required=True
+        allowed_values=ConnectionTypes.AZURE_CONTENT_SAFETY, casing_transform=camel_to_snake, required=True
     )
     api_key = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureContentSafetyWorkspaceConnection
+        from azure.ai.ml.entities import AzureContentSafetyConnection
 
-        return AzureContentSafetyWorkspaceConnection(**data)
+        return AzureContentSafetyConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class AzureSpeechServicesWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureSpeechServicesConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
-        allowed_values=WorkspaceConnectionTypes.AZURE_SPEECH_SERVICES, casing_transform=camel_to_snake, required=True
+        allowed_values=ConnectionTypes.AZURE_SPEECH_SERVICES, casing_transform=camel_to_snake, required=True
     )
     api_key = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureSpeechServicesWorkspaceConnection
+        from azure.ai.ml.entities import AzureSpeechServicesConnection
 
-        return AzureSpeechServicesWorkspaceConnection(**data)
+        return AzureSpeechServicesConnection(**data)
 
 
-class APIKeyWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class APIKeyConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.API_KEY, casing_transform=camel_to_snake, required=True
@@ -160,13 +160,13 @@ class APIKeyWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import APIKeyWorkspaceConnection
+        from azure.ai.ml.entities import APIKeyConnection
 
-        return APIKeyWorkspaceConnection(**data)
+        return APIKeyConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class OpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class OpenAIConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.OPEN_AI, casing_transform=camel_to_snake, required=True
@@ -175,26 +175,26 @@ class OpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OpenAIWorkspaceConnection
+        from azure.ai.ml.entities import OpenAIConnection
 
-        return OpenAIWorkspaceConnection(**data)
+        return OpenAIConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class SerpWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class SerpConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(allowed_values=ConnectionCategory.SERP, casing_transform=camel_to_snake, required=True)
     api_key = fields.Str(required=True)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import SerpWorkspaceConnection
+        from azure.ai.ml.entities import SerpConnection
 
-        return SerpWorkspaceConnection(**data)
+        return SerpConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class ServerlessWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class ServerlessConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.SERVERLESS, casing_transform=camel_to_snake, required=True
@@ -204,6 +204,6 @@ class ServerlessWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import ServerlessWorkspaceConnection
+        from azure.ai.ml.entities import ServerlessConnection
 
-        return ServerlessWorkspaceConnection(**data)
+        return ServerlessConnection(**data)

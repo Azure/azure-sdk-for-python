@@ -16,7 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _snake_to_camel
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.connection import Connection
 from azure.core.credentials import TokenCredential
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
@@ -26,8 +26,8 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class WorkspaceConnectionsOperations(_ScopeDependentOperations):
-    """WorkspaceConnectionsOperations.
+class ConnectionsOperations(_ScopeDependentOperations):
+    """ConnectionsOperations.
 
     You should not instantiate this class directly. Instead, you should create
     an MLClient instance that instantiates it for you and attaches it as an attribute.
@@ -42,14 +42,14 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        super(WorkspaceConnectionsOperations, self).__init__(operation_scope, operation_config)
+        super(ConnectionsOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._all_operations = all_operations
         self._operation = service_client.workspace_connections
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    def _try_fill_api_key(self, connection: WorkspaceConnection) -> None:
+    def _try_fill_api_key(self, connection: Connection) -> None:
         """Try to fill in a connection's credentials with it's actual values.
         Connection data retrievals normally return an empty credential object that merely includes the
         connection's credential type, but not the actual secrets of that credential.
@@ -59,7 +59,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         and it only works on api key-based credentials.
 
         :param connection: The connection to try to fill in the credentials for.
-        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
+        :type connection: ~azure.ai.ml.entities.Connection
         """
         if hasattr(connection, "credentials") and isinstance(connection.credentials, ApiKeyConfiguration):
             list_secrets_response = self._operation.list_secrets(
@@ -71,18 +71,18 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 connection.credentials.key = list_secrets_response.properties.credentials.key
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> WorkspaceConnection:
-        """Get a workspace connection by name.
+    def get(self, name: str, *, populate_secrets: bool = False, **kwargs: Dict) -> Connection:
+        """Get a connection by name.
 
-        :param name: Name of the workspace connection.
+        :param name: Name of the connection.
         :type name: str
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
         connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
             retrieved from the service.
-        :return: The workspace connection with the provided name.
-        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+        :return: The connection with the provided name.
+        :rtype: ~azure.ai.ml.entities.Connection
 
         .. admonition:: Example:
 
@@ -91,10 +91,10 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :end-before: [END get_connection]
                 :language: python
                 :dedent: 8
-                :caption: Get a workspace connection by name.
+                :caption: Get a connection by name.
         """
 
-        connection = WorkspaceConnection._from_rest_object(
+        connection = Connection._from_rest_object(
             rest_obj=self._operation.get(
                 workspace_name=self._workspace_name,
                 connection_name=name,
@@ -109,18 +109,18 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, workspace_connection: WorkspaceConnection, *, populate_secrets: bool = False, **kwargs: Any
-    ) -> Optional[WorkspaceConnection]:
-        """Create or update a workspace connection.
+        self, connection: Connection, *, populate_secrets: bool = False, **kwargs: Any
+    ) -> Optional[Connection]:
+        """Create or update a connection.
 
-        :param workspace_connection: Workspace Connection definition
-            or object which can be translated to a workspace connection.
-        :type workspace_connection: ~azure.ai.ml.entities.WorkspaceConnection
+        :param connection: Connection definition
+            or object which can be translated to a connection.
+        :type connection: ~azure.ai.ml.entities.Connection
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
         connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
-        :return: Created or update workspace connection.
-        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+        :return: Created or update connection.
+        :rtype: ~azure.ai.ml.entities.Connection
 
         .. admonition:: Example:
 
@@ -129,26 +129,26 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :end-before: [END create_or_update_connection]
                 :language: python
                 :dedent: 8
-                :caption: Create or update a workspace connection, this example shows snowflake.
+                :caption: Create or update a connection, this example shows snowflake.
         """
-        rest_workspace_connection = workspace_connection._to_rest_object()
+        rest_workspace_connection = connection._to_rest_object()
         response = self._operation.create(
             workspace_name=self._workspace_name,
-            connection_name=workspace_connection.name,
+            connection_name=connection.name,
             body=rest_workspace_connection,
             **self._scope_kwargs,
             **kwargs,
         )
-        conn = WorkspaceConnection._from_rest_object(rest_obj=response)
+        conn = Connection._from_rest_object(rest_obj=response)
         if populate_secrets and conn is not None:
             self._try_fill_api_key(conn)
         return conn
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
-        """Delete the workspace connection.
+        """Delete the connection.
 
-        :param name: Name of the workspace connection.
+        :param name: Name of the connection.
         :type name: str
 
         .. admonition:: Example:
@@ -158,7 +158,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :end-before: [END delete_connection]
                 :language: python
                 :dedent: 8
-                :caption: Delete a workspace connection.
+                :caption: Delete a connection.
         """
 
         self._operation.delete(
@@ -175,18 +175,18 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         populate_secrets: bool = False,
         include_data_connections: bool = False,
         **kwargs: Any,
-    ) -> Iterable[WorkspaceConnection]:
-        """List all workspace connections for a workspace.
+    ) -> Iterable[Connection]:
+        """List all connections for a workspace.
 
-        :param connection_type: Type of workspace connection to list.
+        :param connection_type: Type of connection to list.
         :type connection_type: Optional[str]
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
         connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
-        :return: An iterator like instance of workspace connection objects
-        :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
+        :return: An iterator like instance of connection objects
+        :rtype: Iterable[~azure.ai.ml.entities.Connection]
 
         .. admonition:: Example:
 
@@ -205,7 +205,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 kwargs["params"] = {"includeAll": "true"}
 
         def post_process_conn(rest_obj):
-            result = WorkspaceConnection._from_rest_object(rest_obj)
+            result = Connection._from_rest_object(rest_obj)
             if populate_secrets and result is not None:
                 self._try_fill_api_key(result)
             return result
@@ -218,4 +218,4 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return cast(Iterable[WorkspaceConnection], result)
+        return cast(Iterable[Connection], result)

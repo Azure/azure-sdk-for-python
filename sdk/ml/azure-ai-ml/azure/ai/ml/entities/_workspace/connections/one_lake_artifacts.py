@@ -13,8 +13,8 @@ from typing import Any
 # Why is this not called a "LakeHouseArtifact"?  Because despite the under-the-hood type,
 # users expect this variety to be called "OneLake".
 class OneLakeConnectionArtifact:
-    """Artifact class used by the WorkspaceConnection subclass known
-    as a MicrosoftOneLakeWorkspaceConnection. Supplying this class further
+    """Artifact class used by the Connection subclass known
+    as a MicrosoftOneLakeConnection. Supplying this class further
     specifies the connection as a Lake House connection.
     """
 

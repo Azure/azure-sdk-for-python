@@ -959,8 +959,8 @@ class ModelPerformanceSignal(RestTranslatableMixin):
 
 
 @experimental
-class WorkspaceConnection(RestTranslatableMixin):
-    """Monitoring Workspace Connection
+class Connection(RestTranslatableMixin):
+    """Monitoring Connection
 
     :param environment_variables: A dictionary of environment variables to set for the workspace.
     :paramtype environment_variables: Optional[dict[str, str]]
@@ -984,7 +984,7 @@ class WorkspaceConnection(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(cls, obj: RestMonitoringWorkspaceConnection) -> "Connection":
         return cls(
             environment_variables=obj.environment_variables,
             secret_config=obj.secrets,
@@ -1008,8 +1008,8 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
         calculate the custom metrics.
     :paramtype component_id: str
-    :keyword workspace_connection: Specify workspace connection with environment variables and secret configs.
-    :paramtype workspace_connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
+    :keyword connection: Specify connection with environment variables and secret configs.
+    :paramtype connection: Optional[~azure.ai.ml.entities.Connection]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
     :keyword properties: A dictionary of custom properties for the signal.
@@ -1022,7 +1022,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         inputs: Optional[Dict[str, Input]] = None,
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
-        workspace_connection: Optional[WorkspaceConnection] = None,
+        connection: Optional[Connection] = None,
         input_data: Optional[Dict[str, ReferenceData]] = None,
         alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
@@ -1034,11 +1034,11 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         self.alert_enabled = alert_enabled
         self.input_data = input_data
         self.properties = properties
-        self.workspace_connection = workspace_connection
+        self.connection = connection
 
     def _to_rest_object(self, **kwargs: Any) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
-        if self.workspace_connection is None:
-            self.workspace_connection = WorkspaceConnection()
+        if self.connection is None:
+            self.connection = Connection()
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
@@ -1048,7 +1048,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
                 if self.input_data
                 else None
             ),
-            workspace_connection=self.workspace_connection._to_rest_object(),
+            connection=self.connection._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
         )
@@ -1068,7 +1068,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
                 else MonitoringNotificationMode.ENABLED
             ),
             properties=obj.properties,
-            workspace_connection=WorkspaceConnection._from_rest_object(obj.workspace_connection),
+            connection=Connection._from_rest_object(obj.workspace_connection),
         )
 
 
@@ -1140,9 +1140,9 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     :paramtype metric_thresholds: ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
-    :keyword workspace_connection_id: Gets or sets the workspace connection ID used to connect to the
+    :keyword connection_id: Gets or sets the connection ID used to connect to the
         content generation endpoint.
-    :paramtype workspace_connection_id: str
+    :paramtype connection_id: str
     :keyword properties: The properties of the signal
     :paramtype properties: Dict[str, str]
     :keyword sampling_rate: The sample rate of the target data, should be greater
@@ -1154,7 +1154,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
         self,
         *,
         production_data: Optional[List[LlmData]] = None,
-        workspace_connection_id: Optional[str] = None,
+        connection_id: Optional[str] = None,
         metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
         alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
@@ -1162,7 +1162,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     ):
         self.type = MonitorSignalType.GENERATION_SAFETY_QUALITY
         self.production_data = production_data
-        self.workspace_connection_id = workspace_connection_id
+        self.connection_id = connection_id
         self.metric_thresholds = metric_thresholds
         self.alert_enabled = alert_enabled
         self.properties = properties
@@ -1176,7 +1176,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
                 if self.production_data is not None
                 else None
             ),
-            workspace_connection_id=self.workspace_connection_id,
+            workspace_connection_id=self.connection_id,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
@@ -1187,7 +1187,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestGenerationSafetyQualityMonitoringSignal) -> "GenerationSafetyQualitySignal":
         return cls(
             production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
-            workspace_connection_id=obj.workspace_connection_id,
+            connection_id=obj.workspace_connection_id,
             metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=(
                 False

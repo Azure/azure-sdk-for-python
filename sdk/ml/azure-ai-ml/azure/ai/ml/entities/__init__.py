@@ -193,19 +193,19 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
-from ._workspace.connections.workspace_connection_subtypes import (
-    AzureBlobStoreWorkspaceConnection,
-    MicrosoftOneLakeWorkspaceConnection,
-    AzureOpenAIWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
-    AzureAISearchWorkspaceConnection,
-    AzureContentSafetyWorkspaceConnection,
-    AzureSpeechServicesWorkspaceConnection,
-    APIKeyWorkspaceConnection,
-    OpenAIWorkspaceConnection,
-    SerpWorkspaceConnection,
-    ServerlessWorkspaceConnection,
+from ._workspace.connections.connection import Connection
+from ._workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnection,
+    MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServiceConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
 )
 from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
@@ -286,18 +286,18 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "WorkspaceConnection",
-    "AzureBlobStoreWorkspaceConnection",
-    "MicrosoftOneLakeWorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
-    "AzureAIServiceWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
-    "AzureContentSafetyWorkspaceConnection",
-    "AzureSpeechServicesWorkspaceConnection",
-    "APIKeyWorkspaceConnection",
-    "OpenAIWorkspaceConnection",
-    "SerpWorkspaceConnection",
-    "ServerlessWorkspaceConnection",
+    "Connection",
+    "AzureBlobStoreConnection",
+    "MicrosoftOneLakeConnection",
+    "AzureOpenAIConnection",
+    "AzureAIServiceConnection",
+    "AzureAISearchConnection",
+    "AzureContentSafetyConnection",
+    "AzureSpeechServicesConnection",
+    "APIKeyConnection",
+    "OpenAIConnection",
+    "SerpConnection",
+    "ServerlessConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",

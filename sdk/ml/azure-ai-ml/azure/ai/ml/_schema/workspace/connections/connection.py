@@ -21,11 +21,11 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     ApiKeyConfigurationSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._common import WorkspaceConnectionTypes
+from azure.ai.ml.constants._common import ConnectionTypes
 from azure.ai.ml.entities import NoneCredentialConfiguration, AadCredentialConfiguration
 
 
-class WorkspaceConnectionSchema(ResourceSchema):
+class ConnectionSchema(ResourceSchema):
     # Inherits name, id, tags, and description fields from ResourceSchema
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     type = StringTransformedEnum(
@@ -39,8 +39,8 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
-            WorkspaceConnectionTypes.CUSTOM,
-            WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2,
+            ConnectionTypes.CUSTOM,
+            ConnectionTypes.AZURE_DATA_LAKE_GEN_2,
         ],
         casing_transform=camel_to_snake,
         required=True,
@@ -69,9 +69,9 @@ class WorkspaceConnectionSchema(ResourceSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import WorkspaceConnection
+        from azure.ai.ml.entities import Connection
 
         # Replace ALDS gen 2 empty default with AAD over None
-        if data.get("type", None) ==  WorkspaceConnectionTypes.AZURE_DATA_LAKE_GEN_2 and data.get("credentials", None) == NoneCredentialConfiguration():
+        if data.get("type", None) ==  ConnectionTypes.AZURE_DATA_LAKE_GEN_2 and data.get("credentials", None) == NoneCredentialConfiguration():
             data["credentials"] = AadCredentialConfiguration()
-        return WorkspaceConnection(**data)
+        return Connection(**data)
