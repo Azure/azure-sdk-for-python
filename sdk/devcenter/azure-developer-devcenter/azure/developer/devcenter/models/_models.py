@@ -699,11 +699,11 @@ class OperationStatus(_model_base.Model):
 
     :ivar id: Fully qualified ID for the operation status. Required.
     :vartype id: str
-    :ivar name: The operation id name.
+    :ivar name: The operation id name. Required.
     :vartype name: str
-    :ivar status: Provisioning state of the resource. Required. Known values are: "Running",
-     "Completed", "Canceled", and "Failed".
-    :vartype status: str or ~azure.developer.devcenter.models.OperationStatusValue
+    :ivar status: Provisioning state of the resource. Required. Known values are: "NotStarted",
+     "Running", "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.developer.devcenter.models.OperationState
     :ivar resource_id: The id of the resource.
     :vartype resource_id: str
     :ivar start_time: The start time of the operation.
@@ -720,11 +720,11 @@ class OperationStatus(_model_base.Model):
 
     id: str = rest_field(visibility=["read"])
     """Fully qualified ID for the operation status. Required."""
-    name: Optional[str] = rest_field()
-    """The operation id name."""
-    status: Union[str, "_models.OperationStatusValue"] = rest_field()
-    """Provisioning state of the resource. Required. Known values are: \"Running\", \"Completed\",
-     \"Canceled\", and \"Failed\"."""
+    name: str = rest_field(visibility=["read"])
+    """The operation id name. Required."""
+    status: Union[str, "_models.OperationState"] = rest_field()
+    """Provisioning state of the resource. Required. Known values are: \"NotStarted\", \"Running\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
     resource_id: Optional[str] = rest_field(name="resourceId")
     """The id of the resource."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
@@ -742,8 +742,7 @@ class OperationStatus(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationStatusValue"],
-        name: Optional[str] = None,
+        status: Union[str, "_models.OperationState"],
         resource_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
@@ -774,181 +773,6 @@ class OsDisk(_model_base.Model):
 
     disk_size_gb: Optional[int] = rest_field(name="diskSizeGB", visibility=["read"])
     """The size of the OS Disk in gigabytes."""
-
-
-class PagedDevBox(_model_base.Model):
-    """The Dev Box list result.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The DevBox items on this page. Required.
-    :vartype value: list[~azure.developer.devcenter.models.DevBox]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.DevBox"] = rest_field()
-    """The DevBox items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.DevBox"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedDevBoxActionDelayResult(_model_base.Model):
-    """The actions list result.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The DevBoxActionDelayResult items on this page. Required.
-    :vartype value: list[~azure.developer.devcenter.models.DevBoxActionDelayResult]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.DevBoxActionDelayResult"] = rest_field()
-    """The DevBoxActionDelayResult items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.DevBoxActionDelayResult"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedEnvironment(_model_base.Model):
-    """Results of the environment list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The Environment items on this page. Required.
-    :vartype value: list[~azure.developer.devcenter.models.Environment]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Environment"] = rest_field()
-    """The Environment items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Environment"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedEnvironmentDefinition(_model_base.Model):
-    """Results of the environment definition list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The EnvironmentDefinition items on this page. Required.
-    :vartype value: list[~azure.developer.devcenter.models.EnvironmentDefinition]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.EnvironmentDefinition"] = rest_field()
-    """The EnvironmentDefinition items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.EnvironmentDefinition"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class PagedEnvironmentType(_model_base.Model):
-    """Result of the environment type list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The EnvironmentType items on this page. Required.
-    :vartype value: list[~azure.developer.devcenter.models.EnvironmentType]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.EnvironmentType"] = rest_field()
-    """The EnvironmentType items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.EnvironmentType"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class Pool(_model_base.Model):

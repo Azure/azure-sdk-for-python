@@ -21,11 +21,6 @@ from ._models import ImageReference
 from ._models import InnerError
 from ._models import OperationStatus
 from ._models import OsDisk
-from ._models import PagedDevBox
-from ._models import PagedDevBoxActionDelayResult
-from ._models import PagedEnvironment
-from ._models import PagedEnvironmentDefinition
-from ._models import PagedEnvironmentType
 from ._models import Pool
 from ._models import Project
 from ._models import RemoteConnection
@@ -41,7 +36,7 @@ from ._enums import EnvironmentTypeStatus
 from ._enums import HibernateSupport
 from ._enums import LocalAdministratorStatus
 from ._enums import OSType
-from ._enums import OperationStatusValue
+from ._enums import OperationState
 from ._enums import ParameterType
 from ._enums import PoolHealthStatus
 from ._enums import PowerState
@@ -69,11 +64,6 @@ __all__ = [
     "InnerError",
     "OperationStatus",
     "OsDisk",
-    "PagedDevBox",
-    "PagedDevBoxActionDelayResult",
-    "PagedEnvironment",
-    "PagedEnvironmentDefinition",
-    "PagedEnvironmentType",
     "Pool",
     "Project",
     "RemoteConnection",
@@ -88,7 +78,7 @@ __all__ = [
     "HibernateSupport",
     "LocalAdministratorStatus",
     "OSType",
-    "OperationStatusValue",
+    "OperationState",
     "ParameterType",
     "PoolHealthStatus",
     "PowerState",

@@ -519,11 +519,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def list_schedules(self, project_name: str, pool_name: str, **kwargs: Any) -> AsyncIterable["_models.Schedule"]:
-        """Lists available schedules for a pool.
+        """Lists all schedules within a pool that are configured by your project administrator.
 
-        :param project_name: Name of the project. Required.
+        :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :param pool_name: Pool name. Required.
+        :param pool_name: The name of a pool of Dev Boxes. Required.
         :type pool_name: str
         :return: An iterator like instance of Schedule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.developer.devcenter.models.Schedule]
@@ -2136,7 +2136,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def _delete_dev_box_initial(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2215,8 +2215,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 # response body for status code(s): 202
                 response == {
                     "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -2233,7 +2234,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -2374,8 +2374,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 # response body for status code(s): 202
                 response == {
                     "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -2392,7 +2393,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -2537,8 +2537,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 # response body for status code(s): 202
                 response == {
                     "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -2555,7 +2556,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -2696,8 +2696,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 # response body for status code(s): 202
                 response == {
                     "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -2714,7 +2715,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
@@ -4264,8 +4264,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 # response body for status code(s): 202
                 response == {
                     "id": "str",  # Fully qualified ID for the operation status. Required.
+                    "name": "str",  # The operation id name. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
-                      values are: "Running", "Completed", "Canceled", and "Failed".
+                      values are: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -4282,7 +4283,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
                     "properties": {},  # Optional. Custom operation properties, populated only
