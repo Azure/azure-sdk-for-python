@@ -25,6 +25,7 @@ from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes imp
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionCategory
 from .workspace_connection import WorkspaceConnection
 
+
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 @experimental

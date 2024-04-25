@@ -29,13 +29,14 @@ from azure.mgmt.support import MicrosoftSupport
 def main():
     client = MicrosoftSupport(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="132d901f-189d-4381-9214-fe68e27e05a1",
     )
 
     response = client.support_tickets.begin_create(
         support_ticket_name="testticket",
         create_support_ticket_parameters={
             "properties": {
+                "advancedDiagnosticConsent": "No",
                 "contactDetails": {
                     "country": "usa",
                     "firstName": "abc",
@@ -58,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2023-06-01-preview/examples/CreateBillingSupportTicketForSubscription.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/stable/2024-04-01/examples/CreateBillingSupportTicketForSubscription.json
 if __name__ == "__main__":
     main()

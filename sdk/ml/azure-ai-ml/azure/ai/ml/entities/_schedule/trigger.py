@@ -101,9 +101,9 @@ class RecurrencePattern(RestTranslatableMixin):
             hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
             minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
             week_days=[self.week_days] if self.week_days and not isinstance(self.week_days, list) else self.week_days,
-            month_days=[self.month_days]
-            if self.month_days and not isinstance(self.month_days, list)
-            else self.month_days,
+            month_days=(
+                [self.month_days] if self.month_days and not isinstance(self.month_days, list) else self.month_days
+            ),
         )
 
     def _to_rest_compute_pattern_object(self) -> RestRecurrencePattern:
