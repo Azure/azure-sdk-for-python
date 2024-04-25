@@ -706,7 +706,7 @@ class SendClient(AMQPClient):
         self._do_retryable_operation(
             self._send_message_impl,
             message=message,
-            timeout=timeout
+            timeout=timeout,
             **kwargs
         )
 
