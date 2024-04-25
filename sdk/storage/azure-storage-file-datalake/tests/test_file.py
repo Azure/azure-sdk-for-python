@@ -1628,11 +1628,10 @@ class TestFile(StorageRecordedTestCase):
             audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         data = b'Hello world'
-        with pytest.raises(ClientAuthenticationError):
-            fc.get_file_properties()
-            fc.upload_data(data, overwrite=True)
+        fc.get_file_properties()
+        fc.upload_data(data, overwrite=True)
 
 
 # ------------------------------------------------------------------------------

@@ -1553,10 +1553,9 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
             credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            await directory_client.exists()
-            await directory_client.create_sub_directory('testsubdir')
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        await directory_client.exists()
+        await directory_client.create_sub_directory('testsubdir')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
