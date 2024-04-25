@@ -315,9 +315,6 @@ if uamqp_installed:
             :rtype: uamqp.Connection
 
             """
-            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
-            host = kwargs.pop("host")
-            auth = kwargs.pop("auth")
             return Connection(
                 host,
                 auth,
@@ -552,6 +549,8 @@ if uamqp_installed:
                 properties=properties,
                 link_properties=link_properties,
                 idle_timeout=idle_timeout,
+                auth=auth,
+                timeout=timeout,
                 **kwargs
             )
             # pylint:disable=protected-access

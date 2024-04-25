@@ -380,8 +380,8 @@ class EventHubConsumerClient(
         on_event: Callable[
             ["PartitionContext", Optional["EventData"]], None
         ],
-        batch=False,
         *,
+        batch: bool = False,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         max_batch_size: int = 300,

@@ -575,8 +575,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 condition=ErrorCondition.UnknownError
             )
 
-    async def _send_message_impl_async(self, message, **kwargs):
-        timeout = kwargs.pop("timeout", 0)
+    async def _send_message_impl_async(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
         await self.open_async()
         message_delivery = _MessageDelivery(
@@ -610,11 +609,19 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
-    async def send_message_async(self, message, **kwargs):
+    async def send_message_async(self, message, *, timeout: float = 0, **kwargs):
         """
         :param ~pyamqp.message.Message message: The message to send.
+        :keyword float timeout: timeout in seconds. If set to
+         0, the client will continue to wait until the message is sent or error happens. The
+         default is 0.
         """
-        await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
+        await self._do_retryable_operation_async(
+            self._send_message_impl_async,
+            message=message,
+            timeout=timeout,
+            **kwargs
+        )
 
 
 class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):

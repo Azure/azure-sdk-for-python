@@ -375,8 +375,8 @@ class EventHubConsumerClient(
     async def _receive(
         self,
         on_event,
-        batch=False,
         *,
+        batch: bool = False,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,

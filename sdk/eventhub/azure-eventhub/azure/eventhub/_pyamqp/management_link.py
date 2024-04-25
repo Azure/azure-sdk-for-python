@@ -195,10 +195,10 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         message,
         on_execute_operation_complete,
         *,
-        operation: Union[bytes, str],
-        type: Union[bytes, str],
+        operation: Optional[Union[bytes, str]] = None,
+        type: Optional[Union[bytes, str]] = None,
         locales: Optional[str] = None,
-        timeout: float,
+        timeout: Optional[float] = None
     ):
         """Execute a request and wait on a response.
 

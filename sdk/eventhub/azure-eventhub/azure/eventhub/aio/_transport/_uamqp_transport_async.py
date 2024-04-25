@@ -86,9 +86,6 @@ if uamqp_installed:
             :return: The connection.
             :rtype: ~uamqp.async_ops.ConnectionAsync
             """
-            endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
-            host = kwargs.pop("host")
-            auth = kwargs.pop("auth")
             return ConnectionAsync(
                 host,
                 auth,
@@ -241,6 +238,8 @@ if uamqp_installed:
                 link_properties=link_properties,
                 idle_timeout=idle_timeout,
                 auth=auth,
+                keep_alive_interval=keep_alive_interval,
+                timeout=timeout,
                 **kwargs
             )
             # pylint:disable=protected-access

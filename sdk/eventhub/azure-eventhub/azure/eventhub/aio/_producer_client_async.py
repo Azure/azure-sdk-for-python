@@ -255,6 +255,7 @@ class EventHubProducerClient(
     async def _batch_preparer(
             self,
             event_data_batch: Union[EventDataBatch, SendEventTypes],
+            *,
             partition_id: Optional[str] = None,
             partition_key: Optional[str] = None,
         ):

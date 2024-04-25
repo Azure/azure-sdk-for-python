@@ -696,14 +696,19 @@ class SendClient(AMQPClient):
                     condition=ErrorCondition.UnknownError, description="Send failed."
                 ) from None
 
-    def send_message(self, message, *, timeout: float = 0, **kwargs): # pylint:disable=unused-argument
+    def send_message(self, message, *, timeout: float = 0, **kwargs):
         """
         :param ~pyamqp.message.Message message:
         :keyword float timeout: timeout in seconds. If set to
          0, the client will continue to wait until the message is sent or error happens. The
          default is 0.
         """
-        self._do_retryable_operation(self._send_message_impl, message=message, timeout=timeout)
+        self._do_retryable_operation(
+            self._send_message_impl,
+            message=message,
+            timeout=timeout
+            **kwargs
+        )
 
 
 class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes

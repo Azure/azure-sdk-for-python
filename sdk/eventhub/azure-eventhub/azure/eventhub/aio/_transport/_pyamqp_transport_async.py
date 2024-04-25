@@ -70,8 +70,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The created ConnectionAsync.
         :rtype: ~pyamqp.aio.Connection
         """
-        host = kwargs.pop("host")  # pylint:disable=unused-variable
-        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
         network_trace = debug
         return ConnectionAsync(
             endpoint,
@@ -167,7 +165,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise OperationTimeoutError(message=str(exc), details=exc) from exc
 
     @staticmethod
-    def create_receive_client(  # pylint:disable=unused-argument
+    def create_receive_client(
         *,
         config,
         source: str,
@@ -229,6 +227,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             desired_capabilities=desired_capabilities,
             streaming_receive=streaming_receive,
             message_received_callback=message_received_callback,
+            timeout=timeout,
             **kwargs,
         )
 
@@ -419,10 +418,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The mgmt client.
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
-        kwargs["status_code_field"] = status_code_field
-        kwargs["description_fields"] = description_fields
         return await mgmt_client.mgmt_request_async(
-            mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
+            mgmt_msg,
+            operation=operation.decode(),
+            operation_type=operation_type.decode(),
+            status_code_field=status_code_field,
+            description_fields=description_fields,
+            **kwargs
         )
 
     @staticmethod

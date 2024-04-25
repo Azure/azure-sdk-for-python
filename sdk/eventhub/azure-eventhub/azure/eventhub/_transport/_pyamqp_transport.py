@@ -268,8 +268,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The connection object.
         :rtype: ~pyamqp.Connection
         """
-        host = kwargs.pop("host")  # pylint:disable=unused-variable
-        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
         network_trace = debug
         return Connection(
             endpoint,
@@ -335,7 +333,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The SendClient.
         :rtype: ~pyamqp.SendClient
         """
-        # TODO: not used by pyamqp?
         msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
             "msg_timeout"
         )
@@ -448,7 +445,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return source
 
     @staticmethod
-    def create_receive_client(# pylint:disable=unused-argument
+    def create_receive_client(
         *,
         config,
         source: str,
@@ -511,6 +508,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             message_received_callback=message_received_callback,
             keep_alive_interval=keep_alive_interval,
             streaming_receive=streaming_receive,
+            timeout=timeout,
             **kwargs,
         )
 
@@ -645,12 +643,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.message.Message
 
         """
-        kwargs["status_code_field"] = status_code_field
-        kwargs["description_fields"] = description_fields
         return mgmt_client.mgmt_request(
             mgmt_msg,
             operation=operation.decode(),
             operation_type=operation_type.decode(),
+            status_code_field=status_code_field,
+            description_fields=description_fields,
             **kwargs,
         )
 
