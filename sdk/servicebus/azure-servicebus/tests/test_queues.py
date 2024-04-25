@@ -3317,6 +3317,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     # New ServiceBusMessageBatch object can be created here to send more data.
                     break
             sender.send_messages(batch_message)
+            sender.send_messages(batch_message)
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             number_deleted_messages = 0
@@ -3345,9 +3346,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     # New ServiceBusMessageBatch object can be created here to send more data.
                     break
             sender.send_messages(batch_message)
+            sender.send_messages(batch_message)
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             number_deleted_messages = 0
             with receiver:
                 number_deleted_messages = receiver.purge_messages()
-            assert number_deleted_messages == 4001
+            assert number_deleted_messages == len(batch_message) * 2
