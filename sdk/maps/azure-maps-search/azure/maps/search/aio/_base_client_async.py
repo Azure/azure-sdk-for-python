@@ -5,11 +5,13 @@
 
 # pylint: disable=unused-import
 from typing import Union, Any
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+
 from .._generated.aio import MapsSearchClient as _MapsSearchClient
-from .._version import VERSION
+
 
 def _authentication_policy(credential):
     authentication_policy = None

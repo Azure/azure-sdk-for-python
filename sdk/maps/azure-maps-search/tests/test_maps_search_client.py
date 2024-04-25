@@ -4,22 +4,26 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from azure.core.credentials import AccessToken, AzureKeyCredential
+
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.search import MapsSearchClient
 from azure.maps.search._generated.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody, \
     ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
+
 from search_preparer import MapsSearchPreparer
+
 
 # cSpell:disable
 class TestMapsSearchClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsSearchClient(
-            credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key"))
+            credential=AzureKeyCredential("0y5lxeFiXRuVKIgMJXiPe93iQK6_VO-1vJB3NuZTI8U")
         )
         assert self.client is not None
 
     @MapsSearchPreparer()
+    @recorded_by_proxy
     def test_geocode(self):
         result = self.client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
 
@@ -32,6 +36,7 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         assert latitude == 47.630356
 
     @MapsSearchPreparer()
+    @recorded_by_proxy
     def test_geocode_batch(self):
         request_item1 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
         request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
@@ -62,6 +67,7 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         assert latitude2 == 47.630356
 
     @MapsSearchPreparer()
+    @recorded_by_proxy
     def test_reverse_geocode(self):
         result = self.client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
         assert len(result.features) == 1
@@ -69,6 +75,7 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         assert address.formatted_address == "2265 152nd Ave NE, Redmond, WA 98052, United States"
 
     @MapsSearchPreparer()
+    @recorded_by_proxy
     def test_reverse_geocode_batch(self):
         coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
         coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=[-122.138679, 47.630356])
@@ -86,3 +93,12 @@ class TestMapsSearchClient(AzureRecordedTestCase):
         assert len(result2.features) == 1
         address2 = result2.features[0].properties.address
         assert address2.formatted_address == "2265 152nd Ave NE, Redmond, WA 98052, United States"
+
+    @MapsSearchPreparer()
+    @recorded_by_proxy
+    def test_get_polygon(self):
+        result = self.client.get_polygon(
+            coordinates=[-122.204141, 47.61256],
+            result_type="locality",
+            resolution="small")
+

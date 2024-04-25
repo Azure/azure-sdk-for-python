@@ -8,7 +8,6 @@ from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import MapsSearchClient as _MapsSearchClient
-from ._version import VERSION
 
 # To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):

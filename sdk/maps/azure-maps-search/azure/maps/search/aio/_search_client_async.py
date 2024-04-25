@@ -5,14 +5,12 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302, too-many-function-args, W0212
-from typing import overload, Any, List, Union, Tuple, Optional, IO
-from collections import namedtuple
-from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import HttpResponseError
+from typing import Any, List, Union, Optional, IO
+
+import azure.maps.search._generated.models as _models
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.polling import AsyncLROPoller
-import azure.maps.search._generated.models as _models
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._base_client_async import AsyncMapsSearchClientBase
 
@@ -391,6 +389,52 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         """
         result = await self._search_client.get_reverse_geocoding_batch(
             reverse_geocoding_batch_request_body,
+            **kwargs
+        )
+        return result
+
+    @distributed_trace_async
+    async def get_polygon(
+            self,
+            *,
+            coordinates: List[float],
+            view: Optional[str] = None,
+            result_type: Union[str, _models.BoundaryResultTypeEnum] = "countryRegion",
+            resolution: Union[str, _models.ResolutionEnum] = "medium",
+            **kwargs: Any
+    ) -> _models.Boundary:
+        """Use to get polygon data of a geographical area shape such as a city or a country region.
+
+        The ``Get Polygon`` API is an HTTP ``GET`` request that supplies polygon data of a geographical
+        area outline such as a city or a country region.
+
+        :keyword coordinates: A point on the earth specified as a longitude and latitude. Example:
+         &coordinates=lon,lat. Required.
+        :paramtype coordinates: list[float]
+        :keyword view: A string that represents an `ISO 3166-1 Alpha-2 region/country code
+         <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_. This will alter Geopolitical disputed
+         borders and labels to align with the specified user region. By default, the View parameter is
+         set to “Auto” even if you haven’t defined it in the request.
+
+         Please refer to `Supported Views <https://aka.ms/AzureMapsLocalizationViews>`_ for details and
+         to see the available Views. Default value is None.
+        :paramtype view: str
+        :keyword result_type: The geopolitical concept to return a boundary for. Known values are:
+         "countryRegion", "adminDistrict", "adminDistrict2", "postalCode", "postalCode2", "postalCode3",
+         "postalCode4", "neighborhood", and "locality". Default value is "countryRegion".
+        :paramtype result_type: str or ~azure.maps.search.models.BoundaryResultTypeEnum
+        :keyword resolution: Resolution determines the amount of points to send back. Known values are:
+         "small", "medium", "large", and "huge". Default value is "medium".
+        :paramtype resolution: str or ~azure.maps.search.models.ResolutionEnum
+        :return: Boundary
+        :rtype: ~azure.maps.search.models.Boundary
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        result = await self._search_client.get_polygon(
+            coordinates=coordinates,
+            view=view,
+            result_type=result_type,
+            resolution=resolution,
             **kwargs
         )
         return result
