@@ -22,6 +22,7 @@ from ...exceptions import (
     OperationTimeoutError
 )
 
+
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._pyamqp.message import Message
@@ -418,7 +419,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :return: The mgmt client.
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
-        kwargs["status_code_fields"] = status_code_field
+        kwargs["status_code_field"] = status_code_field
         kwargs["description_fields"] = description_fields
         return await mgmt_client.mgmt_request_async(
             mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
