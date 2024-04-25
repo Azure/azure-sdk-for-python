@@ -86,10 +86,6 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
-    :keyword bool enable_snapshot_virtual_directory_access:
-        Supported in service version 2023-08-03 and greater. Specifies whether the snapshot
-        virtual directory should be accessible at the root of the share mount point when NFS
-        is enabled. Default value is True.
     """
     def __init__(
             self, account_url: str,
@@ -366,6 +362,10 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :keyword bool enable_snapshot_virtual_directory_access:
+            Supported in service version 2023-08-03 and greater. Specifies whether the snapshot
+            virtual directory should be accessible at the root of the share mount point when NFS
+            is enabled. Default value is True.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
 
