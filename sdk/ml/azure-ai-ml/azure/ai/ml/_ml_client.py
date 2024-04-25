@@ -47,6 +47,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
     BatchDeployment,
