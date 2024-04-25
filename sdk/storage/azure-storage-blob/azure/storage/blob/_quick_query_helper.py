@@ -93,8 +93,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             return data.decode(self._encoding)
         return data
 
-    def readinto(self, stream):
-        # type: (IO) -> None
+    def readinto(self, stream: IO[bytes]) -> None:
         """Download the query result to a stream.
 
         :param IO stream:

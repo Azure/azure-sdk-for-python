@@ -570,7 +570,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2019-07-07'.
 
         :keyword metadata:
-            Name-value pairs associated with the share as metadata.
+            Name-value pairs associated with the file as metadata.
         :paramtype metadata: dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object

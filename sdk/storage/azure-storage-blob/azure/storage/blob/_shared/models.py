@@ -453,22 +453,18 @@ class AccountSasPermissions(object):
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
-    :param bool blob:
-        Access for the `~azure.storage.blob.BlobServiceClient`
-    :param bool queue:
-        Access for the `~azure.storage.queue.QueueServiceClient`
-    :param bool fileshare:
-        Access for the `~azure.storage.fileshare.ShareServiceClient`
+    :keyword bool blob:
+        Access for the `~azure.storage.blob.BlobServiceClient`. Default is False.
+    :keyword bool queue:
+        Access for the `~azure.storage.queue.QueueServiceClient`. Default is False.
+    :keyword bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`. Default is False.
     """
 
-    blob: bool = False
-    queue: bool = False
-    fileshare: bool = False
-
-    def __init__(self, blob: bool = False, queue: bool = False, fileshare: bool = False):
-        self.blob = blob
-        self.queue = queue
-        self.fileshare = fileshare
+    def __init__(self, **kwargs):
+        self.blob = kwargs.get('blob', False)
+        self.queue = kwargs.get('queue', False)
+        self.fileshare = kwargs.get('fileshare', False)
         self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
                 ('f' if self.fileshare else ''))
