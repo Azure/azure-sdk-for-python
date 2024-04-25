@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, Iterable, Optional, Type, TypeVar, cast
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -244,7 +244,7 @@ class MetricDefinitionsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -485,7 +485,7 @@ class MetricsOperations:
                       for metrics.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -592,7 +592,7 @@ class MetricNamespacesOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

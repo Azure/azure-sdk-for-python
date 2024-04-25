@@ -7,11 +7,13 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents._generated.models import SearchDocumentsResult, SearchResult
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.aio._search_client_async import AsyncSearchPageIterator
+from test_search_index_client_async import await_prepared_test
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 
 class TestSearchClientAsync:
+    @await_prepared_test
     @mock.patch(
         "azure.search.documents._generated.aio.operations._documents_operations.DocumentsOperations.search_post"
     )

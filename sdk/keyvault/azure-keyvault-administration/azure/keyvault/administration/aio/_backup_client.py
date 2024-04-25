@@ -244,3 +244,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             polling=polling,
             **kwargs,
         )
+
+    async def __aenter__(self) -> "KeyVaultBackupClient":
+        await self._client.__aenter__()
+        return self
