@@ -151,24 +151,19 @@ class ReplicaClient:
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
             configuration_settings, sentinel_keys = self._load_configuration_settings(selects, refresh_on, **kwargs)
-            if self._feature_flag_enabled:
-                configuration_settings[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
         return need_refresh, sentinel_keys, configuration_settings
 
     def refresh_feature_flags(
-        self, refresh_on, feature_flag_selectors, feature_flag_refresh_enabled, headers, **kwargs
+        self, refresh_on, feature_flag_selectors, headers, **kwargs
     ) -> bool:
         feature_flag_sentinel_keys = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
                 feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(
-                    feature_flag_selectors, feature_flag_refresh_enabled, **kwargs
+                    feature_flag_selectors, True, **kwargs
                 )
-                updated_configurations: Dict[str, Any] = {}
-                updated_configurations[FEATURE_MANAGEMENT_KEY] = {}
-                updated_configurations[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
-                return True, feature_flag_sentinel_keys, updated_configurations
+                return True, feature_flag_sentinel_keys, feature_flags
         return False, None, None
 
 

@@ -224,7 +224,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = provider._client.get_configuration_setting(key, label, headers=headers)  # type:ignore
+                sentinel = provider._client._client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                 provider._refresh_on[(key, label)] = sentinel.etag  # type:ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
@@ -315,20 +315,20 @@ def _buildprovider(
         provider._client = ReplicaClient.from_credential(
             endpoint,
             credential,
-            user_agent=user_agent,
-            retry_total=retry_total,
-            retry_backoff_max=retry_backoff_max,
+            user_agent,
+            retry_total,
+            retry_backoff_max,
             **kwargs
         )
         failover_endpoints = find_auto_failover_endpoints(endpoint)
         for failover_endpoint in failover_endpoints:
             provider._failover_clients.append(
-                ReplicaClient(
+                ReplicaClient.from_credential(
                     endpoint,
                     credential,
-                    user_agent=user_agent,
-                    retry_total=retry_total,
-                    retry_backoff_max=retry_backoff_max,
+                    user_agent,
+                    retry_total,
+                    retry_backoff_max,
                     **kwargs
                 )
             )
@@ -499,26 +499,25 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
         # TODO (mametcal) This needs to be in a try block and go through the replicas till one works
         configuration_settings, sentinel_keys = self._client._load_configuration_settings(self._selects, self._refresh_on, **kwargs)
-        if self.feature_flag_enabled:
-            feature_flags, feature_flag_sentinel_keys = self._client._load_feature_flags(
-                self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
-            )
-            configuration_settings[FEATURE_MANAGEMENT_KEY] = {}
-            configuration_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
-            self._refresh_on_feature_flags = feature_flag_sentinel_keys
         configuration_settings_processed = {}
         for config in configuration_settings:
             key = self._process_key_name(config)
             value = self._process_key_value(config)
             configuration_settings_processed[key] = value
+        if self._feature_flag_enabled:
+            feature_flags, feature_flag_sentinel_keys = self._client._load_feature_flags(
+                self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+            )
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+            self._refresh_on_feature_flags = feature_flag_sentinel_keys
         self._refresh_on = sentinel_keys
-        self._feature_flag_refresh_on = feature_flag_sentinel_keys
-        self._dict = configuration_settings
+        self._dict = configuration_settings_processed
 
     def _process_key_name(self, config):
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
-        for trim in self.trim_prefixes:
+        for trim in self._trim_prefixes:
             if config.key.startswith(trim):
                 trimmed_key = config.key[len(trim) :]
                 break
@@ -527,7 +526,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(
-                config, self._secret_clients, self._keyvault_credential, self._keyvault_client_configs, self._secret_resolver
+                config, self
             )
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
@@ -553,14 +552,27 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         try:
             # TODO (mametcal) This needs to be in a try block and go through the replicas till one works
             if self._refresh_on:
-                need_refresh = self._client.refresh_configuration_settings(
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+                need_refresh, self._refresh_on, configuration_settings = self._client.refresh_configuration_settings(
                     self._selects,
                     self._refresh_on,
-                    self._headers,
+                    headers,
                     **kwargs
                 )
+                configuration_settings_processed = {}
+                for config in configuration_settings:
+                    key = self._process_key_name(config)
+                    value = self._process_key_value(config)
+                    configuration_settings_processed[key] = value
+                if need_refresh and self._feature_flag_enabled:
+                    configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+                self._dict = configuration_settings_processed
             if self._feature_flag_refresh_enabled:
-                need_refresh = self._client.refresh_feature_flags(**kwargs) or need_refresh
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+                need_refresh, self._refresh_on_feature_flags, feature_flags = self._client.refresh_feature_flags(self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs) or need_refresh
+                if need_refresh:
+                    self._dict[FEATURE_MANAGEMENT_KEY] = {}
+                    self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
             # Even if we don't need to refresh, we should reset the timer
             self._refresh_timer.reset()
             success = True

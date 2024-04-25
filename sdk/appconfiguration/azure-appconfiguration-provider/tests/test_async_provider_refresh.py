@@ -25,9 +25,6 @@ try:
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
         async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-            pytest.skip(
-                "This test is failing in ci pipeline, fixing in https://github.com/Azure/azure-sdk-for-python/pull/35126"
-            )
             mock_callback = AsyncMock()
             async with await self.create_aad_client(
                 appconfiguration_endpoint_string,
@@ -42,12 +39,15 @@ try:
                 assert client["my_json"]["key"] == "value"
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
-                setting = await client._client.get_configuration_setting(key="refresh_message")
+
+                appconfig_client = client._client
+
+                setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
-                feature_flag = await client._client.get_configuration_setting(key=".appconfig.featureflag/Alpha")
+                feature_flag = await appconfig_client.get_configuration_setting(key=".appconfig.featureflag/Alpha")
                 feature_flag.enabled = True
-                await client._client.set_configuration_setting(setting)
-                await client._client.set_configuration_setting(feature_flag)
+                await appconfig_client.set_configuration_setting(setting)
+                await appconfig_client.set_configuration_setting(feature_flag)
 
                 # Waiting for the refresh interval to pass
                 time.sleep(2)
@@ -59,8 +59,8 @@ try:
 
                 setting.value = "original value"
                 feature_flag.enabled = False
-                await client._client.set_configuration_setting(setting)
-                await client._client.set_configuration_setting(feature_flag)
+                await appconfig_client.set_configuration_setting(setting)
+                await appconfig_client.set_configuration_setting(feature_flag)
 
                 # Waiting for the refresh interval to pass
                 time.sleep(2)
@@ -72,8 +72,8 @@ try:
 
                 setting.value = "updated value 2"
                 feature_flag.enabled = True
-                await client._client.set_configuration_setting(setting)
-                await client._client.set_configuration_setting(feature_flag)
+                await appconfig_client.set_configuration_setting(setting)
+                await appconfig_client.set_configuration_setting(feature_flag)
 
                 # Not waiting for the refresh interval to pass
                 await client.refresh()
@@ -82,7 +82,7 @@ try:
                 assert mock_callback.call_count == 2
 
                 setting.value = "original value"
-                await client._client.set_configuration_setting(setting)
+                await appconfig_client.set_configuration_setting(setting)
 
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
@@ -106,12 +106,15 @@ try:
                 assert client["my_json"]["key"] == "value"
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
-                setting = await client._client.get_configuration_setting(key="refresh_message")
+
+                appconfig_client = client._client
+                
+                setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
-                await client._client.set_configuration_setting(setting)
-                static_setting = await client._client.get_configuration_setting(key="non_refreshed_message")
+                await appconfig_client.set_configuration_setting(setting)
+                static_setting = await appconfig_client.get_configuration_setting(key="non_refreshed_message")
                 static_setting.value = "updated static"
-                await client._client.set_configuration_setting(static_setting)
+                await appconfig_client.set_configuration_setting(static_setting)
 
                 # Waiting for the refresh interval to pass
                 time.sleep(2)
@@ -122,9 +125,9 @@ try:
                 assert mock_callback.call_count == 0
 
                 setting.value = "original value"
-                await client._client.set_configuration_setting(setting)
+                await appconfig_client.set_configuration_setting(setting)
                 static_setting.value = "Static"
-                await client._client.set_configuration_setting(static_setting)
+                await appconfig_client.set_configuration_setting(static_setting)
 
 except ImportError:
     pass

@@ -49,8 +49,8 @@ from .._azureappconfigurationprovider import (
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
+    _is_json_content_type,
 )
-from .._replica_client import is_json_content_type
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -403,7 +403,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if not success:
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
-                self._on_refresh_success()
+                await self._on_refresh_success()
 
     async def _refresh_configuration_settings(self, **kwargs) -> bool:
         need_refresh = False
@@ -546,7 +546,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return await _resolve_keyvault_reference(config, self)
-        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+        if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
                 return json.loads(config.value)
