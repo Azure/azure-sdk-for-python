@@ -207,7 +207,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
            }
 
         A *geocoding* batchItem object can accept any of the supported *geocoding* `URI parameters
-        </rest/api/maps/search/get-geocoding#uri-parameters>`_.
+        </rest/api/maps/search/get-geocoding#uri-parameters>`__.
 
         The batch should contain at least **1** query.
 
@@ -222,13 +222,9 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         is of one of the following types:
 
 
-        *
-          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
-        query completed successfully.
+        * ``GeocodingResponse`` - If the query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
         :param geocoding_batch_request_body: The list of address geocoding queries/requests to process.
          The list can contain a max of 100 queries and must contain at least 1 query. Is either a
@@ -355,7 +351,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
            }
 
         A *reverse geocoding* batchItem object can accept any of the supported *reverse geocoding* `URI
-        parameters </rest/api/maps/search/get-reverse-geocoding#uri-parameters>`_.
+        parameters </rest/api/maps/search/get-reverse-geocoding#uri-parameters>`__.
 
         The batch should contain at least **1** query.
 
@@ -370,13 +366,9 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         is of one of the following types:
 
 
-        *
-          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
-        If the query completed successfully.
+        * ``GeocodingResponse`` - If the query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
         :param reverse_geocoding_batch_request_body: The list of reverse geocoding queries/requests to
          process. The list can contain a max of 100 queries and must contain at least 1 query. Is either
