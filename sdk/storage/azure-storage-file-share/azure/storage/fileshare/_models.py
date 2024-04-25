@@ -393,6 +393,7 @@ class ShareProperties(DictMixin):
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
             if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
+        props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
 
         return props
 
