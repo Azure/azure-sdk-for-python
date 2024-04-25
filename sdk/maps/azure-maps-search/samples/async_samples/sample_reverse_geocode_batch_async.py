@@ -37,13 +37,28 @@ async def reverse_geocode_async():
 
         result = await maps_search_client.get_reverse_geocoding_batch(reverse_geocode_batch_request)
 
-    result1 = result.batch_items[0]
-    address1 = result1.features[0].properties.address
-    print(address1.formatted_address)
+    if result.batch_items and len(result.batch_items) > 0:
+        features = result.batch_items[0].features
+        if features and len(features) > 0:
+            props = features[0].properties
+            if props and props.address:
+                print(props.address.formatted_address)
+            else:
+                print("Address 1 is None")
+        else:
+            print("No features available for item 1")
 
-    result2 = result.batch_items[1]
-    address2 = result2.features[0].properties.address
-    print(address2.formatted_address)
+        features = result.batch_items[1].features
+        if features and len(features) > 0:
+            props = features[0].properties
+            if props and props.address:
+                print(props.address.formatted_address)
+            else:
+                print("Address 2 is None")
+        else:
+            print("No features available for item 2")
+    else:
+        print("No batch items found")
 
 if __name__ == '__main__':
     asyncio.run(reverse_geocode_async())

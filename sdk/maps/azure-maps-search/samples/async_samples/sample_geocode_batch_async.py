@@ -36,21 +36,31 @@ async def geocode_batch_async():
 
         result = await maps_search_client.get_geocoding_batch(batch_request_body)
 
+    if not (result.batch_items and len(result.batch_items) > 0):
+        print("No geocoding")
+        return
+
     result1 = result.batch_items[0]
 
-    coordinates1 = result1.features[0].geometry.coordinates
-    longitude1 = coordinates1[0]
-    latitude1 = coordinates1[1]
+    if (result1.features and len(result1.features) > 0):
+        coordinates1 = result1.features[0].geometry.coordinates
+        longitude1 = coordinates1[0]
+        latitude1 = coordinates1[1]
 
-    print(longitude1, latitude1)
+        print(longitude1, latitude1)
+    else:
+        print("No geocoding1")
 
     result2 = result.batch_items[1]
 
-    coordinates2 = result2.features[0].geometry.coordinates
-    longitude2 = coordinates2[0]
-    latitude2 = coordinates2[1]
+    if (result2.features and len(result2.features) > 0):
+        coordinates2 = result2.features[0].geometry.coordinates
+        longitude2 = coordinates2[0]
+        latitude2 = coordinates2[1]
 
-    print(longitude2, latitude2)
+        print(longitude2, latitude2)
+    else:
+        print("No geocoding2")
 
 if __name__ == '__main__':
     asyncio.run(geocode_batch_async())

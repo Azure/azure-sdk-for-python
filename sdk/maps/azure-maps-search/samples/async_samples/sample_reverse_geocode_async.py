@@ -31,8 +31,14 @@ async def reverse_geocode_async():
     async with maps_search_client:
         result = await maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
 
-    address = result.features[0].properties.address
-    print(address.formatted_address)
+    if result.features and len(result.features) > 0:
+        props = result.features[0].properties
+        if props and props.address:
+            print(props.address.formatted_address)
+        else:
+            print("Address is None")
+    else:
+        print("No features available")
 
 if __name__ == '__main__':
     asyncio.run(reverse_geocode_async())

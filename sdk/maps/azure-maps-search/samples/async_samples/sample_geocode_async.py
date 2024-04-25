@@ -29,11 +29,14 @@ async def geocode_async():
     async with maps_search_client:
         result = await maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
 
-    coordinates = result.features[0].geometry.coordinates
-    longitude = coordinates[0]
-    latitude = coordinates[1]
+    if (result.features and len(result.features) > 0):
+        coordinates = result.features[0].geometry.coordinates
+        longitude = coordinates[0]
+        latitude = coordinates[1]
 
-    print(longitude, latitude)
+        print(longitude, latitude)
+    else:
+        print("No results")
 
 if __name__ == '__main__':
     asyncio.run(geocode_async())
