@@ -1550,19 +1550,27 @@ class StorageError(_serialization.Model):
 
     :ivar message:
     :vartype message: str
+    :ivar authentication_error_detail:
+    :vartype authentication_error_detail: str
     """
 
     _attribute_map = {
         "message": {"key": "Message", "type": "str"},
+        "authentication_error_detail": {"key": "AuthenticationErrorDetail", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, message: Optional[str] = None, authentication_error_detail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword message:
         :paramtype message: str
+        :keyword authentication_error_detail:
+        :paramtype authentication_error_detail: str
         """
         super().__init__(**kwargs)
         self.message = message
+        self.authentication_error_detail = authentication_error_detail
 
 
 class StorageServiceProperties(_serialization.Model):
