@@ -30,70 +30,39 @@ class SourceMetadata(object):
             # Required: timestamp_column, dict and source_process_code.
             # Not support: path.
             if path:
-                msg = "Cannot provide path for custom feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("path", type, should_provide=False)
             if not (timestamp_column and dict and source_process_code):
-                msg = f"You need to provide timestamp_column/dict/source_process_code for {type} feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("timestamp_column/dict/source_process_code", type, should_provide=True)
         elif type == "featureset":
             # For featureset feature source
             # Required: path.
             # Not support: timestamp_column, source_delay and source_process_code.
             if timestamp_column or source_delay or source_process_code:
-                msg = f"Cannot provide timestamp_column/source_delay/source_process_code for {type} feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("timestamp_column/source_delay/source_process_code", type, should_provide=False)
             if not path:
-                msg = f"You need to provide path for {type} feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("path", type, should_provide=True)
         else:
             # For other type feature source
             # Required: timestamp_column, path.
             # Not support: source_process_code, dict
             if dict or source_process_code:
-                msg = f"Cannot provide dict/source_process_code for {type} feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("dict/source_process_code", type, should_provide=False)
             if not (timestamp_column and path):
-                msg = f"You need to provide timestamp_column/path for {type} feature source."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                    target=ErrorTarget.FEATURE_SET,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                self.throw_exception("timestamp_column/path", type, should_provide=True)
         self.type = type
         self.path = path
         self.timestamp_column = timestamp_column
         self.source_delay = source_delay
         self.source_process_code = source_process_code
         self.kwargs = dict
+
+    def throw_exception(property_names: str, type: str, should_provide: bool):
+        shouldOrNot = "need to" if should_provide else "cannot"
+        msg = f"You {shouldOrNot} provide {property_names} for {type} feature source."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            error_type=ValidationErrorType.INVALID_VALUE,
+            target=ErrorTarget.FEATURE_SET,
+            error_category=ErrorCategory.USER_ERROR,
+        )
