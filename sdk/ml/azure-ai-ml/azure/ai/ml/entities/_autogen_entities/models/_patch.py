@@ -100,6 +100,7 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             auth_mode=obj.properties.auth_mode,
             provisioning_state=camel_to_snake(obj.properties.provisioning_state),
             model_id=obj.properties.model_settings.model_id,
+            scoring_uri=obj.properties.inference_endpoint,
             system_data=SystemData(
                 created_by=rest_system_data.created_by,
                 created_at=rest_system_data.created_at,
