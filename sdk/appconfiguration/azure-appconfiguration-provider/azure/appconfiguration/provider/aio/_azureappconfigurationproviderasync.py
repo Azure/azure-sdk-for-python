@@ -45,12 +45,12 @@ from .._constants import (
     EMPTY_LABEL,
 )
 from .._azureappconfigurationprovider import (
-    _is_json_content_type,
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
 )
+from .._replica_client import is_json_content_type
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -546,7 +546,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return await _resolve_keyvault_reference(config, self)
-        if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
                 return json.loads(config.value)

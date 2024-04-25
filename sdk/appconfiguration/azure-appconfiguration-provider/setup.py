@@ -76,5 +76,6 @@ setup(
         "azure-core>=1.28.0",
         "azure-appconfiguration>=1.5.0",
         "azure-keyvault-secrets>=4.3.0",
+        "dnspython",
     ],
 )
