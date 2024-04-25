@@ -139,8 +139,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
         *,
         pool_name: str,
         local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -191,8 +190,7 @@ class DevBoxAction(_model_base.Model):
         source_id: str,
         suspended_until: Optional[datetime.datetime] = None,
         next: Optional["_models.DevBoxNextAction"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -239,8 +237,7 @@ class DevBoxActionDelayResult(_model_base.Model):
         result: Union[str, "_models.DevBoxActionDelayStatus"],
         action: Optional["_models.DevBoxAction"] = None,
         error: Optional["_models.Error"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -270,8 +267,7 @@ class DevBoxNextAction(_model_base.Model):
         self,
         *,
         scheduled_time: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -347,8 +343,7 @@ class Environment(_model_base.Model):
         catalog_name: str,
         environment_definition_name: str,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -409,8 +404,7 @@ class EnvironmentDefinition(_model_base.Model):
         parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = None,
         parameters_schema: Optional[str] = None,
         template_path: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -481,8 +475,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
         default: Optional[str] = None,
         read_only: Optional[bool] = None,
         allowed: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -529,8 +522,7 @@ class EnvironmentType(_model_base.Model):
         name: str,
         deployment_target_id: str,
         status: Union[str, "_models.EnvironmentTypeStatus"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -581,8 +573,7 @@ class Error(_model_base.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -686,8 +677,7 @@ class InnerError(_model_base.Model):
         *,
         code: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -700,7 +690,7 @@ class InnerError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_model_base.Model):
+class OperationStatus(_model_base.Model):
     """The current status of an async operation.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -713,7 +703,7 @@ class OperationDetails(_model_base.Model):
     :vartype name: str
     :ivar status: Provisioning state of the resource. Required. Known values are: "Running",
      "Completed", "Canceled", and "Failed".
-    :vartype status: str or ~azure.developer.devcenter.models.OperationStatus
+    :vartype status: str or ~azure.developer.devcenter.models.OperationStatusValue
     :ivar resource_id: The id of the resource.
     :vartype resource_id: str
     :ivar start_time: The start time of the operation.
@@ -732,7 +722,7 @@ class OperationDetails(_model_base.Model):
     """Fully qualified ID for the operation status. Required."""
     name: Optional[str] = rest_field()
     """The operation id name."""
-    status: Union[str, "_models.OperationStatus"] = rest_field()
+    status: Union[str, "_models.OperationStatusValue"] = rest_field()
     """Provisioning state of the resource. Required. Known values are: \"Running\", \"Completed\",
      \"Canceled\", and \"Failed\"."""
     resource_id: Optional[str] = rest_field(name="resourceId")
@@ -752,7 +742,7 @@ class OperationDetails(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.OperationStatusValue"],
         name: Optional[str] = None,
         resource_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
@@ -760,8 +750,7 @@ class OperationDetails(_model_base.Model):
         percent_complete: Optional[float] = None,
         properties: Optional[Any] = None,
         error: Optional["_models.Error"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -774,7 +763,7 @@ class OperationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDisk(_model_base.Model):
+class OsDisk(_model_base.Model):
     """Settings for the operating system disk.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -809,8 +798,7 @@ class PagedDevBox(_model_base.Model):
         *,
         value: List["_models.DevBox"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -845,8 +833,7 @@ class PagedDevBoxActionDelayResult(_model_base.Model):
         *,
         value: List["_models.DevBoxActionDelayResult"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -881,8 +868,7 @@ class PagedEnvironment(_model_base.Model):
         *,
         value: List["_models.Environment"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -917,8 +903,7 @@ class PagedEnvironmentDefinition(_model_base.Model):
         *,
         value: List["_models.EnvironmentDefinition"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -953,8 +938,7 @@ class PagedEnvironmentType(_model_base.Model):
         *,
         value: List["_models.EnvironmentType"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1042,8 +1026,7 @@ class Pool(_model_base.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = None,
         stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1087,8 +1070,7 @@ class Project(_model_base.Model):
         *,
         description: Optional[str] = None,
         max_dev_boxes_per_user: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1121,8 +1103,7 @@ class RemoteConnection(_model_base.Model):
         *,
         web_url: Optional[str] = None,
         rdp_connection_url: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1173,8 +1154,7 @@ class Schedule(_model_base.Model):
         frequency: Union[str, "_models.ScheduledFrequency"],
         time: str,
         time_zone: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1214,8 +1194,7 @@ class StopOnDisconnectConfiguration(_model_base.Model):
         *,
         status: Union[str, "_models.StopOnDisconnectStatus"],
         grace_period_minutes: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1232,19 +1211,18 @@ class StorageProfile(_model_base.Model):
     """Storage settings for the Dev Box's disks.
 
     :ivar os_disk: Settings for the operating system disk.
-    :vartype os_disk: ~azure.developer.devcenter.models.OSDisk
+    :vartype os_disk: ~azure.developer.devcenter.models.OsDisk
     """
 
-    os_disk: Optional["_models.OSDisk"] = rest_field(name="osDisk")
+    os_disk: Optional["_models.OsDisk"] = rest_field(name="osDisk")
     """Settings for the operating system disk."""
 
     @overload
     def __init__(
         self,
         *,
-        os_disk: Optional["_models.OSDisk"] = None,
-    ):
-        ...
+        os_disk: Optional["_models.OsDisk"] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

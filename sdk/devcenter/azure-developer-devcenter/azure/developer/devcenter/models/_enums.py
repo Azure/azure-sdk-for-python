@@ -117,7 +117,7 @@ class LocalAdministratorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Owners of Dev Boxes in the pool are not local administrators on the Dev Boxes."""
 
 
-class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationStatusValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether operation status is running, completed, canceled or failed."""
 
     RUNNING = "Running"
