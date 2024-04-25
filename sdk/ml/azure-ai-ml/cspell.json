@@ -2,6 +2,7 @@
     "version": "0.2",
     "ignoreWords": [
         "kwoa",
-        "rslex"
+        "rslex",
+        "aadtoken"
     ]
 }
