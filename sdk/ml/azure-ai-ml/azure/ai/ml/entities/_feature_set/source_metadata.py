@@ -57,8 +57,8 @@ class SourceMetadata(object):
         self.kwargs = dict
 
     def throw_exception(property_names: str, type: str, should_provide: bool):
-        shouldOrNot = "need to" if should_provide else "cannot"
-        msg = f"You {shouldOrNot} provide {property_names} for {type} feature source."
+        should_or_not = "need to" if should_provide else "cannot"
+        msg = f"You {should_or_not} provide {property_names} for {type} feature source."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
