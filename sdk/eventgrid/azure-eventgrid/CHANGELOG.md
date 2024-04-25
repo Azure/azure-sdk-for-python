@@ -1,5 +1,15 @@
 # Release History
 
+## 4.20.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.20.0b2 (2024-04-25)
 
 This is a Beta of the EventGridClient
