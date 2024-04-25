@@ -3,6 +3,7 @@
     "ignoreWords": [
         "kwoa",
         "rslex"
+        "aadtoken"
     ],
     "words": [
         "alds",

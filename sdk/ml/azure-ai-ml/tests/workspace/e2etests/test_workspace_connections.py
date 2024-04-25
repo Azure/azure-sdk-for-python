@@ -12,7 +12,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
     WorkspaceConnection,
     Workspace,
-    WorkspaceHub,
+    Hub,
     ApiKeyConfiguration,
     AzureBlobDatastore,
     AzureBlobStoreWorkspaceConnection,
@@ -280,9 +280,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_workspace_connection_is_shared_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create a workspace hub and 2 child lean workspaces
-        hub = client.workspace_hubs.begin_create(
-            workspace_hub=WorkspaceHub(name=f"e2etest_{randstr('hub_name')}")
-        ).result()
+        hub = client.workspaces.begin_create(workspace=Hub(name=f"e2etest_{randstr('hub_name')}")).result()
         poller1 = client.workspaces.begin_create(
             workspace=Workspace(name=f"e2etest_{randstr('lean_ws1')}", workspace_hub=hub.id)
         )

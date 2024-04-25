@@ -132,6 +132,24 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
+def find_field_in_override(field: str, params_override: Optional[list] = None) -> Optional[str]:
+    """Find specific field in params override.
+
+    :param field: The name of the field to find
+    :type field: str
+    :param params_override: The params override
+    :type params_override: Optional[list]
+    :return: The type
+    :rtype: Optional[str]
+    """
+    params_override = params_override or []
+    for override in params_override:
+        if field in override:
+            res: Optional[str] = override[field]
+            return res
+    return None
+
+
 def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     """Find type in params override.
 
@@ -140,12 +158,7 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
     :return: The type
     :rtype: Optional[str]
     """
-    params_override = params_override or []
-    for override in params_override:
-        if CommonYamlFields.TYPE in override:
-            res: Optional[str] = override[CommonYamlFields.TYPE]
-            return res
-    return None
+    return find_field_in_override(CommonYamlFields.TYPE, params_override)
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:
@@ -443,15 +456,13 @@ def extract_label(input_str: str) -> Union[Tuple, List]:
 
 
 @overload
-def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None:
-    ...
+def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None: ...
 
 
 @overload
 def resolve_pipeline_parameters(
     pipeline_parameters: Dict[str, T], remove_empty: bool = False
-) -> Dict[str, Union[T, str, "NodeOutput"]]:
-    ...
+) -> Dict[str, Union[T, str, "NodeOutput"]]: ...
 
 
 def resolve_pipeline_parameters(pipeline_parameters: Optional[Dict], remove_empty: bool = False) -> Optional[Dict]:

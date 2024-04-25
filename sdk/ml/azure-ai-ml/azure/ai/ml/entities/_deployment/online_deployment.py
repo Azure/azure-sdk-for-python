@@ -598,9 +598,11 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             endpoint_name=_parse_endpoint_name_from_deployment_id(resource.id),
             instance_count=resource.sku.capacity if resource.sku else None,
             instance_type=deployment.instance_type,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector)
-            if hasattr(deployment, "data_collector") and deployment.data_collector
-            else None,
+            data_collector=(
+                DataCollector._from_rest_object(deployment.data_collector)
+                if hasattr(deployment, "data_collector") and deployment.data_collector
+                else None
+            ),
             provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
@@ -838,13 +840,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
             instance_type=deployment.instance_type,
             endpoint_name=_parse_endpoint_name_from_deployment_id(resource.id),
             instance_count=resource.sku.capacity,
-            private_network_connection=deployment.private_network_connection
-            if hasattr(deployment, "private_network_connection")
-            else None,
+            private_network_connection=(
+                deployment.private_network_connection if hasattr(deployment, "private_network_connection") else None
+            ),
             egress_public_network_access=deployment.egress_public_network_access,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector)
-            if hasattr(deployment, "data_collector") and deployment.data_collector
-            else None,
+            data_collector=(
+                DataCollector._from_rest_object(deployment.data_collector)
+                if hasattr(deployment, "data_collector") and deployment.data_collector
+                else None
+            ),
             provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
