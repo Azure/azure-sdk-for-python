@@ -8,6 +8,7 @@ from typing import Iterable
 
 from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
 from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient202401Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import RegenerateEndpointKeysRequest, KeyType
 from azure.ai.ml._scope_dependent_operations import (
@@ -18,9 +19,14 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.core.polling import LROPoller
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys
 from azure.ai.ml.constants._endpoint import EndpointKeyType
+
+
+ops_logger = OpsLogger(__name__)
+module_logger = ops_logger.module_logger
 
 
 class ServerlessEndpointOperations(_ScopeDependentOperations):
@@ -42,6 +48,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: ServerlessEndpoint, **kwargs) -> LROPoller[ServerlessEndpoint]:
         if not endpoint.location:
             endpoint.location = self._get_workspace_location()
@@ -55,6 +62,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, **kwargs) -> ServerlessEndpoint:
         return self._service_client.get(
             self._resource_group_name,
@@ -65,6 +73,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.list", ActivityType.PUBLICAPI)
     def list(self, **kwargs) -> Iterable[ServerlessEndpoint]:
         return self._service_client.list(
             self._resource_group_name,
@@ -74,6 +83,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         return self._service_client.begin_delete(
             self._resource_group_name,
@@ -83,6 +93,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.GetKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str, **kwargs) -> EndpointAuthKeys:
         return self._service_client.list_keys(
             self._resource_group_name,
@@ -93,6 +104,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginRegenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
