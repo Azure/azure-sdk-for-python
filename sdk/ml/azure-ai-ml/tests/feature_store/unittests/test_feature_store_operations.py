@@ -278,7 +278,7 @@ class TestFeatureStoreOperation:
             return_value=None,
         )
         mocker.patch(
-            "azure.ai.ml.operations._connections_operations.WorkspaceConnectionsOperations.get",
+            "azure.ai.ml.operations._connections_operations.ConnectionsOperations.get",
             return_value=None,
         )
 

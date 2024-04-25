@@ -1048,7 +1048,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
                 if self.input_data
                 else None
             ),
-            connection=self.connection._to_rest_object(),
+            workspace_connection=self.connection._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
         )
