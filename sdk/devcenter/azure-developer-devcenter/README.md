@@ -67,8 +67,8 @@ client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 With `DevCenterClient` you can manipulate operations in [Dev Center, Dev Box and Environments REST operations group](https://learn.microsoft.com/rest/api/devcenter/developer/operation-groups).
 
 ## Examples
-* [Create, Connect and Delete a Dev Box](#menage-dev-boxes)
-* [Deploy and Delete Environments](#menage-environments)
+* [Create, Connect and Delete a Dev Box](#create-connect-and-delete-a-dev-box)
+* [Deploy and Delete an Environment](#deploy-and-delete-an-environment)
 
 ### Create, Connect and Delete a Dev Box
 
@@ -137,7 +137,7 @@ print(f"Completed deletion for the dev box with status {delete_result.status}")
 
 <!-- END SNIPPET -->
 
-### Deploy and Delete Environments
+### Deploy and Delete an Environment
 
 <!-- SNIPPET:create_environment_sample.environment_create_and_delete -->
 
