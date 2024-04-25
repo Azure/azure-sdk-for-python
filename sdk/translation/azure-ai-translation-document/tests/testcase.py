@@ -98,7 +98,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         ids = kwargs.pop("ids", None)
         # specific assertions
         assert doc_details.status in status
-        if target_language:
+        if self.is_live and target_language:
             assert doc_details.translated_to == target_language
         # generic assertions
         if ids:

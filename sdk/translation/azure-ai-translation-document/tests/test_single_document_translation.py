@@ -60,51 +60,60 @@ class TestSingleDocumentTranslation(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_translate_text_document(self, **kwargs):        
-        client = kwargs.pop("client")        
-        target_languages = "hi"
-        
-        # prepare translation content
-        document_translate_content = DocumentTranslateContent(document=self._get_document_content())
+    def test_translate_text_document(self, **kwargs):
+        if self.is_live: # running these tests in Live mode only
+            client = kwargs.pop("client")   
+            variables = kwargs.pop("variables", {})     
+            target_languages = "hi"
+            
+            # prepare translation content
+            document_translate_content = DocumentTranslateContent(document=self._get_document_content())
 
-        # Invoke document translation
-        response_stream =client.document_translate(body=document_translate_content, target_language=target_languages)
+            # Invoke document translation
+            response_stream =client.document_translate(body=document_translate_content, target_language=target_languages)
 
-        #validate response
-        translated_response = response_stream.decode('utf-8-sig')
-        assert translated_response is not None
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_translate_single_csv_glossary(self, **kwargs):        
-        client = kwargs.pop("client")
-        target_languages = "hi"
-
-        # prepare translation content
-        document_translate_content = DocumentTranslateContent(document=self._get_document_content(), glossary=self._get_single_glossary_content())
-
-        # Invoke document translation
-        response_stream =client.document_translate(body=document_translate_content, target_language=target_languages)
-
-        #validate response
-        translated_response = response_stream.decode('utf-8-sig')
-        assert translated_response is not None
-        assert "test" in translated_response, "Glossary 'test' not found in translated response"
+            #validate response
+            translated_response = response_stream.decode('utf-8-sig')
+            assert translated_response is not None
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_translate_multiple_csv_glossary(self, **kwargs):        
-        client = kwargs.pop("client")
-        target_languages = "hi"
+    def test_translate_single_csv_glossary(self, **kwargs):
+        if self.is_live: # running these tests in Live mode only
+            client = kwargs.pop("client")
+            variables = kwargs.pop("variables", {})
+            target_languages = "hi"
 
-        # prepare translation content
-        document_translate_content = DocumentTranslateContent(document=self._get_document_content(), glossary=self._get_multiple_glossary_contents())
+            # prepare translation content
+            document_translate_content = DocumentTranslateContent(document=self._get_document_content(), glossary=self._get_single_glossary_content())
 
-        # Invoke document translation and validate exception
-        try:
-            client.document_translate(body=document_translate_content, target_language=target_languages)
-        except HttpResponseError as e:
-            assert e.status_code == 400
+            # Invoke document translation
+            response_stream =client.document_translate(body=document_translate_content, target_language=target_languages)
+
+            #validate response
+            translated_response = response_stream.decode('utf-8-sig')
+            assert translated_response is not None
+            assert "test" in translated_response, "Glossary 'test' not found in translated response"
+            return variables
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    @recorded_by_proxy
+    def test_translate_multiple_csv_glossary(self, **kwargs): 
+        if self.is_live: # running these tests in Live mode only
+            client = kwargs.pop("client")
+            variables = kwargs.pop("variables", {})
+            target_languages = "hi"
+
+            # prepare translation content
+            document_translate_content = DocumentTranslateContent(document=self._get_document_content(), glossary=self._get_multiple_glossary_contents())
+
+            # Invoke document translation and validate exception
+            try:
+                client.document_translate(body=document_translate_content, target_language=target_languages)
+            except HttpResponseError as e:
+                assert e.status_code == 400
+            return variables
     
