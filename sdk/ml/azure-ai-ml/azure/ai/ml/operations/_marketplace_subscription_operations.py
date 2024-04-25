@@ -29,37 +29,41 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
 
     @experimental
     def begin_create_or_update(
-        self, marketplace_subscription: MarketplaceSubscription
+        self, marketplace_subscription: MarketplaceSubscription, **kwargs
     ) -> LROPoller[MarketplaceSubscription]:
         return self._service_client.begin_create_or_update(
             self._resource_group_name,
             self._workspace_name,
             marketplace_subscription.name,
             marketplace_subscription._to_rest_object(),
-            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized)
+            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized),
+            **kwargs,
         )
 
     @experimental
-    def get(self, name: str) -> MarketplaceSubscription:
+    def get(self, name: str, **kwargs) -> MarketplaceSubscription:
         return self._service_client.get(
             self._resource_group_name,
             self._workspace_name,
             name,
             cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized),
+            **kwargs,
         )
 
     @experimental
-    def list(self) -> Iterable[MarketplaceSubscription]:
+    def list(self, **kwargs,) -> Iterable[MarketplaceSubscription]:
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,
             cls=lambda objs: [MarketplaceSubscription._from_rest_object(obj) for obj in objs],
+            **kwargs,
         )
 
     @experimental
-    def begin_delete(self, name: str) -> LROPoller[None]:
+    def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         return self._service_client.begin_delete(
             self._resource_group_name,
             self._workspace_name,
             name=name,
+            **kwargs,
         )

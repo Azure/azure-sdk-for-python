@@ -42,7 +42,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    def begin_create_or_update(self, endpoint: ServerlessEndpoint) -> LROPoller[ServerlessEndpoint]:
+    def begin_create_or_update(self, endpoint: ServerlessEndpoint, **kwargs) -> LROPoller[ServerlessEndpoint]:
         if not endpoint.location:
             endpoint.location = self._get_workspace_location()
         return self._service_client.begin_create_or_update(
@@ -51,40 +51,45 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             endpoint.name,
             endpoint._to_rest_object(),
             cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
+            **kwargs,
         )
 
     @experimental
-    def get(self, name: str) -> ServerlessEndpoint:
+    def get(self, name: str, **kwargs) -> ServerlessEndpoint:
         return self._service_client.get(
             self._resource_group_name,
             self._workspace_name,
             name,
             cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
+            **kwargs,
         )
 
     @experimental
-    def list(self) -> Iterable[ServerlessEndpoint]:
+    def list(self, **kwargs) -> Iterable[ServerlessEndpoint]:
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,
             cls=lambda objs: [ServerlessEndpoint._from_rest_object(obj) for obj in objs],
+            **kwargs,
         )
 
     @experimental
-    def begin_delete(self, name: str) -> LROPoller[None]:
+    def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         return self._service_client.begin_delete(
             self._resource_group_name,
             self._workspace_name,
             name,
+            **kwargs,
         )
 
     @experimental
-    def get_keys(self, name: str) -> EndpointAuthKeys:
+    def get_keys(self, name: str, **kwargs) -> EndpointAuthKeys:
         return self._service_client.list_keys(
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized)
+            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized),
+            **kwargs,
         )
 
     @experimental
@@ -93,6 +98,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         name: str,
         *,
         key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE,
+        **kwargs,
     ) -> LROPoller[None]:
         keys = self.get_keys(
             name=name,
@@ -116,5 +122,6 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             workspace_name=self._workspace_name,
             endpoint_name=name,
             body=key_request,
-            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized)
+            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized),
+            **kwargs,
         )
