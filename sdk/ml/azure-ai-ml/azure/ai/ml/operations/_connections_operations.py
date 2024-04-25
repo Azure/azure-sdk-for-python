@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -77,21 +77,12 @@ class ConnectionsOperations(_ScopeDependentOperations):
         :param name: Name of the connection.
         :type name: str
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
-        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+            connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
             retrieved from the service.
         :return: The connection with the provided name.
         :rtype: ~azure.ai.ml.entities.Connection
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_workspace.py
-                :start-after: [START get_connection]
-                :end-before: [END get_connection]
-                :language: python
-                :dedent: 8
-                :caption: Get a connection by name.
         """
 
         connection = Connection._from_rest_object(
@@ -117,19 +108,10 @@ class ConnectionsOperations(_ScopeDependentOperations):
             or object which can be translated to a connection.
         :type connection: ~azure.ai.ml.entities.Connection
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
-        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+            connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :return: Created or update connection.
         :rtype: ~azure.ai.ml.entities.Connection
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_workspace.py
-                :start-after: [START create_or_update_connection]
-                :end-before: [END create_or_update_connection]
-                :language: python
-                :dedent: 8
-                :caption: Create or update a connection, this example shows snowflake.
         """
         rest_workspace_connection = connection._to_rest_object()
         response = self._operation.create(
@@ -150,15 +132,6 @@ class ConnectionsOperations(_ScopeDependentOperations):
 
         :param name: Name of the connection.
         :type name: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_workspace.py
-                :start-after: [START delete_connection]
-                :end-before: [END delete_connection]
-                :language: python
-                :dedent: 8
-                :caption: Delete a connection.
         """
 
         self._operation.delete(
@@ -181,21 +154,12 @@ class ConnectionsOperations(_ScopeDependentOperations):
         :param connection_type: Type of connection to list.
         :type connection_type: Optional[str]
         :keyword populate_secrets: If true, make a secondary API call to try filling in the workspace
-        connections credentials. Currently only works for api key-based credentials. Defaults to False.
+            connections credentials. Currently only works for api key-based credentials. Defaults to False.
         :paramtype populate_secrets: bool
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of connection objects
         :rtype: Iterable[~azure.ai.ml.entities.Connection]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_workspace.py
-                :start-after: [START list_connection]
-                :end-before: [END list_connection]
-                :language: python
-                :dedent: 8
-                :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
 
         if include_data_connections:

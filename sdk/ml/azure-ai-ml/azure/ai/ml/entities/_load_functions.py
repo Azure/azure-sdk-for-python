@@ -729,16 +729,8 @@ def load_connection(
     :paramtype params_override: List[Dict]
 
     :return: Constructed connection object.
-    :rtype: WorkspaceConnection
+    :rtype: Connection
 
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/ml_samples_workspace.py
-            :start-after: [START load_connection]
-            :end-before: [END load_connection]
-            :language: python
-            :dedent: 8
-            :caption: Loading a Connection from a YAML config file.
     """
     return cast(Connection, load_common(Connection, source, relative_origin, **kwargs))
 

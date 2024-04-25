@@ -60,8 +60,8 @@ class AzureBlobStoreConnection(Connection):
     :param account_name: The name of the account.
     :type account_name: str
     :param credentials: The credentials for authenticating to the blob store. This type of
-    connection accepts 3 types of credentials: account key and SAS token credentials,
-    or NoneCredentialConfiguration for credential-less connections.
+        connection accepts 3 types of credentials: account key and SAS token credentials,
+        or NoneCredentialConfiguration for credential-less connections.
     :type credentials: Union[
         ~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
@@ -163,11 +163,11 @@ class MicrosoftOneLakeConnection(Connection):
     :param artifact: The artifact class used to further specify the connection.
     :type artifact: ~azure.ai.ml.entities.OneLakeArtifact
     :param one_lake_workspace_name: The name, not ID, of the workspace where the One Lake
-    resource lives.
+        resource lives.
     :type one_lake_workspace_name: str
     :param credentials: The credentials for authenticating to the blob store. This type of
-    connection accepts 3 types of credentials: account key and SAS token credentials,
-    or NoneCredentialConfiguration for credential-less connections.
+        connection accepts 3 types of credentials: account key and SAS token credentials,
+        or NoneCredentialConfiguration for credential-less connections.
     :type credentials: Union[
         ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
@@ -238,14 +238,14 @@ class ApiOrAadConnection(Connection):
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
     :param api_key: The api key to connect to the azure endpoint.
-    If unset, tries to use the user's Entra ID as credentials instead.
+        If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param type: The type of the connection.
     :type type: str
     :param allow_entra: Whether or not this connection allows initialization without
-    an API key via Aad. Defaults to True.
+        an API key via Aad. Defaults to True.
     :type allow_entra: bool
     """
 
@@ -313,7 +313,7 @@ class AzureOpenAIConnection(ApiOrAadConnection):
     :param azure_endpoint: The URL or ARM resource ID of the Azure Open AI Resource.
     :type azure_endpoint: str
     :param api_key: The api key to connect to the azure endpoint.
-    If unset, tries to use the user's Entra ID as credentials instead.
+        If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
     :param open_ai_resource_id: The fully qualified ID of the Azure Open AI resource to connect to.
     :type open_ai_resource_id: Optional[str]
@@ -414,7 +414,7 @@ class AzureAIServiceConnection(ApiOrAadConnection):
     :param endpoint: The URL or ARM resource ID of the external resource.
     :type endpoint: str
     :param api_key: The api key to connect to the azure endpoint.
-    If unset, tries to use the user's Entra ID as credentials instead.
+        If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
     :param ai_services_resource_id: The fully qualified ID of the Azure AI service resource to connect to.
     :type ai_services_resource_id: str
@@ -511,7 +511,7 @@ class AzureContentSafetyConnection(ApiOrAadConnection):
     :param endpoint: The URL or ARM resource ID of the external resource.
     :type endpoint: str
     :param api_key: The api key to connect to the azure endpoint.
-    If unset, tries to use the user's Entra ID as credentials instead.
+        If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -548,7 +548,7 @@ class AzureSpeechServicesConnection(ApiOrAadConnection):
     :param endpoint: The URL or ARM resource ID of the external resource.
     :type endpoint: str
     :param api_key: The api key to connect to the azure endpoint.
-    If unset, tries to use the user's Entra ID as credentials instead.
+        If unset, tries to use the user's Entra ID as credentials instead.
     :type api_key: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -635,7 +635,7 @@ class OpenAIConnection(ApiOrAadConnection):
         # "not converting as rest" is defined as there's no inputted target
         target = kwargs.pop("target", None)
         if target is None:
-            target = ""  # TODO GET STATIC VALUE
+            target = "" # Open AI connections have no target, so we just put in a static value.
         super().__init__(
             target=target,
             type=ConnectionCategory.Open_AI,
@@ -670,7 +670,7 @@ class SerpConnection(ApiOrAadConnection):
         # "not converting as rest" is defined as there's no inputted target
         target = kwargs.pop("target", None)
         if target is None:
-            target = ""  # TODO GET STATIC VALUE
+            target = ""  # SERP connections have no target, so we just put in a static value.
         super().__init__(
             target=target,
             type=ConnectionCategory.SERP,
@@ -705,7 +705,7 @@ class ServerlessConnection(ApiOrAadConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         target = kwargs.pop("target", None)
         if target is None:
-            target = "123"  # TODO GET STATIC VALUE
+            target =  ""  # Serverless connections have no target, so we just put in a static value.
         super().__init__(
             target=target,
             type=ConnectionCategory.SERVERLESS,

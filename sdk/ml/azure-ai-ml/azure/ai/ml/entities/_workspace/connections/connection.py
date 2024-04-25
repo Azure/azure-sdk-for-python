@@ -283,7 +283,7 @@ class Connection(Resource):
             ~azure.ai.ml.entities.NoneCredentialConfiguration,
             ~azure.ai.ml.entities.AccountKeyConfiguration,
             ~azure.ai.ml.entities.AadCredentialConfiguration,
-        ]
+            ]
         """
         return self._credentials
 
