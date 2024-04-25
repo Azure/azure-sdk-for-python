@@ -223,7 +223,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-geocoding#geocodingresponse>`_ - If the
         query completed successfully.
 
         *
@@ -371,7 +371,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
 
 
         *
-          `\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
+          `\\ ``GeocodingResponse`` </rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ -
         If the query completed successfully.
 
         *
