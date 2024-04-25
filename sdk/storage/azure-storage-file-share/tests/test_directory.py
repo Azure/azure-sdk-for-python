@@ -1393,9 +1393,8 @@ class TestStorageDirectory(StorageRecordedTestCase):
             audience=f'https://badaudience.file.core.windows.net'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            directory_client.exists()
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        directory_client.exists()
 
 
 # ------------------------------------------------------------------------------
