@@ -56,17 +56,27 @@ class OpenCensusSpan(HttpSpanMixin, object):
         kind: Optional[SpanKind] = (
             OpenCensusSpanKind.CLIENT
             if value == SpanKind.CLIENT
-            else OpenCensusSpanKind.CLIENT
-            if value == SpanKind.PRODUCER
-            else OpenCensusSpanKind.SERVER  # No producer in opencensus
-            if value == SpanKind.SERVER
-            else OpenCensusSpanKind.CLIENT
-            if value == SpanKind.CONSUMER
-            else OpenCensusSpanKind.UNSPECIFIED  # No consumer in opencensus
-            if value == SpanKind.INTERNAL
-            else OpenCensusSpanKind.UNSPECIFIED  # No internal in opencensus
-            if value == SpanKind.UNSPECIFIED
-            else None
+            else (
+                OpenCensusSpanKind.CLIENT
+                if value == SpanKind.PRODUCER
+                else (
+                    OpenCensusSpanKind.SERVER  # No producer in opencensus
+                    if value == SpanKind.SERVER
+                    else (
+                        OpenCensusSpanKind.CLIENT
+                        if value == SpanKind.CONSUMER
+                        else (
+                            OpenCensusSpanKind.UNSPECIFIED  # No consumer in opencensus
+                            if value == SpanKind.INTERNAL
+                            else (
+                                OpenCensusSpanKind.UNSPECIFIED  # No internal in opencensus
+                                if value == SpanKind.UNSPECIFIED
+                                else None
+                            )
+                        )
+                    )
+                )
+            )
         )
         if value and kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
@@ -128,11 +138,11 @@ class OpenCensusSpan(HttpSpanMixin, object):
         return (
             SpanKind.CLIENT
             if value == OpenCensusSpanKind.CLIENT
-            else SpanKind.SERVER
-            if value == OpenCensusSpanKind.SERVER
-            else SpanKind.UNSPECIFIED
-            if value == OpenCensusSpanKind.UNSPECIFIED
-            else None
+            else (
+                SpanKind.SERVER
+                if value == OpenCensusSpanKind.SERVER
+                else SpanKind.UNSPECIFIED if value == OpenCensusSpanKind.UNSPECIFIED else None
+            )
         )
 
     @kind.setter

@@ -903,10 +903,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "Message": # pylint:disable=unused-argument
         """
         :param message: The message to send in the management request.
-        :paramtype message: Any
+        :type message: Any
         :param dict[bytes, str] application_properties: App props.
         :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
         :param str reply_to: Reply to.
+        :return: The message to send in the management request.
         :rtype: ~pyamqp.message.Message
         """
         return Message(

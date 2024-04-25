@@ -32,7 +32,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         def check_poll_value(poll):
             if self.is_live:
-                assert poll == 5
+                assert poll == 1
             else:
                 assert poll == 0
         check_poll_value(client._client._config.polling_interval)

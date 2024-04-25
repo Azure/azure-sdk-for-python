@@ -35,53 +35,52 @@ async def sample_send_request():
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
     
-    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
-    # while adding convenience for endpoint construction and service API versioning.
-    # Now let's use the `send_request` method to make a resource details fetching request.
-    # The URL of the request can be relative (your endpoint is the default base URL),
-    # and the API version of your client will automatically be used for the request.
-    request = HttpRequest(method="GET", url="info")
     async with client:
+        # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+        # while adding convenience for endpoint construction and service API versioning.
+        # Now let's use the `send_request` method to make a resource details fetching request.
+        # The URL of the request can be relative (your endpoint is the default base URL),
+        # and the API version of your client will automatically be used for the request.
+        request = HttpRequest(method="GET", url="info")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+            f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+            f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+            f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+        )
     
-    # pass with absolute url and override the API version
-    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2022-08-31")
-    async with client:
+        # pass with absolute url and override the API version
+        request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2022-08-31")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+            f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        )
     
-    # override the API version to v2.1
-    request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
-    async with client:
+        # override the API version to v2.1
+        request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our account has {response_body['summary']['count']} custom models, "
+            f"and we can have at most {response_body['summary']['limit']} custom models."
+        )
     
-    # pass with absolute url and override the API version to v2.1
-    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.1/custom/models?op=summary")
-    async with client:
+        # pass with absolute url and override the API version to v2.1
+        request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.1/custom/models?op=summary")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our account has {response_body['summary']['count']} custom models, "
+            f"and we can have at most {response_body['summary']['limit']} custom models."
+        )
 
 
 async def sample_send_request_v2():
@@ -92,42 +91,44 @@ async def sample_send_request_v2():
     client = FormTrainingClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    
-    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
-    # while adding convenience for endpoint construction and service API versioning.
-    # Now let's use the `send_request` method to make a resource details fetching request.
-    # The URL of the request can be relative (your endpoint is the default base URL),
-    # and the API version of your client will automatically be used for the request.
-    request = HttpRequest(method="GET", url="custom/models?op=summary")
+
     async with client:
+        # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+        # while adding convenience for endpoint construction and service API versioning.
+        # Now let's use the `send_request` method to make a resource details fetching request.
+        # The URL of the request can be relative (your endpoint is the default base URL),
+        # and the API version of your client will automatically be used for the request.
+        request = HttpRequest(method="GET", url="custom/models?op=summary")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our account has {response_body['summary']['count']} custom models, "
+            f"and we can have at most {response_body['summary']['limit']} custom models."
+        )
     
-    # pass with absolute  url and override the API version
-    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
-    async with client:
+        # pass with absolute  url and override the API version
+        request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(f"Our account has {response_body['summary']['count']} custom models, "
-          f"and we can have at most {response_body['summary']['limit']} custom models.")
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our account has {response_body['summary']['count']} custom models, "
+            f"and we can have at most {response_body['summary']['limit']} custom models."
+        )
     
-    # override the API version to 2023-07-31
-    # can only override the API version to 2022-08-31 or later with absolute url
-    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2023-07-31")
-    async with client:
+        # override the API version to 2023-07-31
+        # can only override the API version to 2022-08-31 or later with absolute url
+        request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2023-07-31")
         response = await client.send_request(request)
-    response.raise_for_status()
-    response_body = response.json()
-    print(
-        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-    )
+        response.raise_for_status()
+        response_body = response.json()
+        print(
+            f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+            f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+            f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+            f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+        )
 
 
 async def main():

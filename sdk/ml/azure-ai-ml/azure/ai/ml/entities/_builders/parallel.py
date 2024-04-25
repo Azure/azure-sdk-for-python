@@ -450,9 +450,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                     "retry_settings": get_rest_dict_for_node_attrs(self.retry_settings),
                     "logging_level": self.logging_level,
                     "mini_batch_size": self.mini_batch_size,
-                    "partition_keys": json.dumps(self.partition_keys)
-                    if self.partition_keys is not None
-                    else self.partition_keys,
+                    "partition_keys": (
+                        json.dumps(self.partition_keys) if self.partition_keys is not None else self.partition_keys
+                    ),
                     "identity": get_rest_dict_for_node_attrs(self.identity),
                     "resources": get_rest_dict_for_node_attrs(self.resources),
                 }

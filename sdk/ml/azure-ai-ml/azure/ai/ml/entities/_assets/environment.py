@@ -249,18 +249,20 @@ class Environment(Asset, LocalizableMixin):
             version=arm_id.asset_version,
             description=rest_env_version.description,
             tags=rest_env_version.tags,
-            creation_context=SystemData._from_rest_object(env_rest_object.system_data)
-            if env_rest_object.system_data
-            else None,
+            creation_context=(
+                SystemData._from_rest_object(env_rest_object.system_data) if env_rest_object.system_data else None
+            ),
             is_anonymous=rest_env_version.is_anonymous,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
-            if rest_env_version.intellectual_property
-            else None,
+            intellectual_property=(
+                IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
+                if rest_env_version.intellectual_property
+                else None
+            ),
         )
 
         if rest_env_version.conda_file:
