@@ -5,16 +5,13 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional  # pylint: disable=no-typing-import-in-type-check
-
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
