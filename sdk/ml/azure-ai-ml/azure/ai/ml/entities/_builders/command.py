@@ -644,6 +644,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             Uniform
 
         ]]]
+
         :keyword queue_settings: The queue settings for the job.
         :paramtype queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
         :keyword job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
