@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable, Optional, cast, List, Union
+from typing import Any, Dict, Iterable, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
@@ -79,8 +79,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
-        :keyword filtered_kinds: The kinds of workspaces to list. If not provided, all workspaces varieties will be listed.
-            Accepts either a single kind, or a list of them.
+        :keyword filtered_kinds: The kinds of workspaces to list. If not provided, all workspaces varieties will
+            be listed. Accepts either a single kind, or a list of them.
             Valid kind options include: "default", "project", and "hub".
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Workspace]

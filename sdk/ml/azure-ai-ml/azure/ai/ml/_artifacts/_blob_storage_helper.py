@@ -196,7 +196,7 @@ class BlobStorageClient:
             self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
         except ResourceNotFoundError:
             pass
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=W0718
             # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
                 msg = (
