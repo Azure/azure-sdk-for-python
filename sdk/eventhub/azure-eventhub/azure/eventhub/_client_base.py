@@ -341,7 +341,6 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             amqp_transport=self._amqp_transport,
             **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
-        self._use_tls = kwargs.get("use_tls")
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:

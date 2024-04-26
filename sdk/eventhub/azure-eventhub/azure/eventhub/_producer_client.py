@@ -199,7 +199,6 @@ class EventHubProducerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.get("logging_enable"),
-            use_tls=kwargs.pop("use_tls", True),
             **kwargs
         )
 
@@ -409,7 +408,7 @@ class EventHubProducerClient(
             idle_timeout=self._idle_timeout,
             amqp_transport=self._amqp_transport,
             keep_alive=self._keep_alive,
-            use_tls=self._use_tls,
+            use_tls=self._config.use_tls,
         )
         return handler
 

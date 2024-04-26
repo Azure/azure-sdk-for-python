@@ -176,7 +176,6 @@ class EventHubConsumerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=network_tracing,
-            use_tls=kwargs.pop("use_tls", True),
             **kwargs
         )
         self._lock = threading.Lock()
@@ -217,7 +216,7 @@ class EventHubConsumerClient(
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             amqp_transport=self._amqp_transport,
-            use_tls=self._use_tls,
+            use_tls=self._config.use_tls,
         )
         return handler
 

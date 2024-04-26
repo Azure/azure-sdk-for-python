@@ -135,7 +135,6 @@ class EventHubConsumer(
         self._message_buffer_lock = asyncio.Lock()
         self._last_callback_called_time = None
         self._callback_task_run = None
-        self._use_tls = kwargs.get("use_tls")
 
     def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
@@ -172,7 +171,7 @@ class EventHubConsumer(
             message_received_callback=partial(
                 self._amqp_transport.message_received_async, self
             ),
-            use_tls=self._use_tls,
+            use_tls=self._client._config.use_tls,
         )
 
     async def _open_with_retry(self) -> None:
