@@ -8,8 +8,8 @@ import logging
 from typing import Iterable
 
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient2020404Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
+from azure.ai.ml._restclient.v2024_04_01_preview.models import EndpointDeploymentResourcePropertiesBasicResource
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations, OperationsContainer
 from azure.ai.ml.entities._autogen_entities.models import AzureOpenAIDeployment
 
 module_logger = logging.getLogger(__name__)
@@ -33,4 +33,3 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
             cls=lambda objs: [AzureOpenAIDeployment._from_rest_object(obj) for obj in objs],
             **kwargs,
         )
-    
