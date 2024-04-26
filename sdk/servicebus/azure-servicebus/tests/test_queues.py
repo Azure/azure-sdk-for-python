@@ -1140,7 +1140,9 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages()
+                assert len(messages) == 1
                 for message in messages:
+                    assert str(message) == "test session sender"
                     receiver.complete_message(message)
     
 
