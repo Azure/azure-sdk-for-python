@@ -692,7 +692,7 @@ class EventHubConsumerClient(
             starting_position_inclusive=starting_position_inclusive,
             on_error=on_error,
             on_partition_initialize=on_partition_initialize,
-            on_partition_close=on_partition_close
+            on_partition_close=on_partition_close,
             **kwargs
         )
 
