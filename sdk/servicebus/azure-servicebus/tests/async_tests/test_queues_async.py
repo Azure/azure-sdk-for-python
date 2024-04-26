@@ -2880,7 +2880,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_message_deleted_maximum_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        with ServiceBusClient.from_connection_string(
+        async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
@@ -2910,7 +2910,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_message_purge_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        with ServiceBusClient.from_connection_string(
+        async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
