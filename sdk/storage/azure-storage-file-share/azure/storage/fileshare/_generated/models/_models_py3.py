@@ -1549,6 +1549,8 @@ class StorageError(_serialization.Model):
     :vartype copy_source_error_code: str
     :ivar copy_source_error_message:
     :vartype copy_source_error_message: str
+    :ivar authentication_error_detail:
+    :vartype authentication_error_detail: str
     """
 
     _attribute_map = {
@@ -1556,6 +1558,7 @@ class StorageError(_serialization.Model):
         "copy_source_status_code": {"key": "CopySourceStatusCode", "type": "int"},
         "copy_source_error_code": {"key": "CopySourceErrorCode", "type": "str"},
         "copy_source_error_message": {"key": "CopySourceErrorMessage", "type": "str"},
+        "authentication_error_detail": {"key": "AuthenticationErrorDetail", "type": "str"},
     }
 
     def __init__(
@@ -1565,6 +1568,7 @@ class StorageError(_serialization.Model):
         copy_source_status_code: Optional[int] = None,
         copy_source_error_code: Optional[str] = None,
         copy_source_error_message: Optional[str] = None,
+        authentication_error_detail: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1576,12 +1580,15 @@ class StorageError(_serialization.Model):
         :paramtype copy_source_error_code: str
         :keyword copy_source_error_message:
         :paramtype copy_source_error_message: str
+        :keyword authentication_error_detail:
+        :paramtype authentication_error_detail: str
         """
         super().__init__(**kwargs)
         self.message = message
         self.copy_source_status_code = copy_source_status_code
         self.copy_source_error_code = copy_source_error_code
         self.copy_source_error_message = copy_source_error_message
+        self.authentication_error_detail = authentication_error_detail
 
 
 class StorageServiceProperties(_serialization.Model):

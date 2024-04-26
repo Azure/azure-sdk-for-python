@@ -10,7 +10,12 @@ from datetime import datetime, timedelta
 
 import pytest
 import requests
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError
+)
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -24,7 +29,8 @@ from azure.storage.fileshare import (
     ShareProtocols,
     ShareRootSquash,
     ShareSasPermissions,
-    ShareServiceClient
+    ShareServiceClient,
+    StorageErrorCode
 )
 
 from devtools_testutils import recorded_by_proxy
@@ -949,6 +955,32 @@ class TestStorageShare(StorageRecordedTestCase):
         assert shares[0] is not None
         self.assertNamedItemInContainer(shares, share.share_name)
         self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_shares_account_sas_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share = self._create_share()
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() - timedelta(hours=1)
+        )
+
+        # Act
+        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        with pytest.raises(ClientAuthenticationError) as e:
+            shares = list(fsc.list_shares())
+
+        # Assert
+        assert e.value.error_code == StorageErrorCode.AUTHENTICATION_FAILED
+        assert "authenticationerrordetail" in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy
