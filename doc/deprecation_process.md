@@ -7,7 +7,7 @@ they shouldn't use the package you used to release anymore.
 
 The overall idea is that PyPI do not support an official deprecation logic. We concluded that the best way was:
 - Change the classifier as `Inactive`, to showcase in metadata that this package is longer worked on
-- Add a disclaimer on the main Readme file to explain deprecation, and guide to migration guide to other package as necessary
+- Add a disclaimer on the main Readme file to explain deprecation, and guide to migration guide to other package as necessary. While a migration guide should always be written, you may decide to postpone this work based on downloads numbers (through [pypistats](https://pypistats.org/), [pype.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 - Push a new release to PyPI
 
 **Important Note**: The best versioning approach would be to do a [post release](https://peps.python.org/pep-0440/#post-releases). However, due to some tooling issues at the moment, currently version should be the next beta, or the next patch version ([example](https://github.com/Azure/azure-sdk-for-python/commit/cf3bfed65a65fcbb4b5c93db89a221c2959c5bb4)). Follow those issues for details https://github.com/Azure/azure-sdk/issues/7479 and https://github.com/Azure/azure-sdk-tools/issues/5916.
