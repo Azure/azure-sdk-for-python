@@ -214,7 +214,7 @@ class AMQPClient(
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
-        # EventHub Emulator
+        # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)
 
     def __enter__(self):
