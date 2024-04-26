@@ -69,7 +69,7 @@ def compare(lhs: str, rhs: str):
         if curr_level == (n - 1) and i != j:
             if i > j:
                 return -1
-            elif i < j:
+            if i < j:
                 return 1
             else:
                 return 0
@@ -90,7 +90,7 @@ def compare(lhs: str, rhs: str):
         else:
             if w1 < w2:
                 return -1
-            elif w1 > w2:
+            if w1 > w2:
                 return 1
             else:
                 return 0
@@ -107,7 +107,6 @@ def _wrap_exception(ex, desired_type):
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
     # Define the custom alphabet for weights
-    # custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
     header_dict = {}
