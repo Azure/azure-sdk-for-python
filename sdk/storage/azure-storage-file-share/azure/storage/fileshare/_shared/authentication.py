@@ -62,7 +62,7 @@ table_lv4 = [
     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
 ]
 
-def compare(lhs: str, rhs: str):
+def compare(lhs: str, rhs: str):  # pylint:disable=too-many-return-statements
     tables = [table_lv0, table_lv2, table_lv4]
     curr_level, i, j, n = 0, 0, 0, len(tables)
     while curr_level < n:
@@ -71,8 +71,7 @@ def compare(lhs: str, rhs: str):
                 return -1
             if i < j:
                 return 1
-            else:
-                return 0
+            return 0
 
         w1 = tables[curr_level][ord(lhs[i])] if i < len(lhs) else 0x1
         w2 = tables[curr_level][ord(rhs[j])] if j < len(rhs) else 0x1
@@ -92,8 +91,7 @@ def compare(lhs: str, rhs: str):
                 return -1
             if w1 > w2:
                 return 1
-            else:
-                return 0
+            return 0
     return 1
 
 
