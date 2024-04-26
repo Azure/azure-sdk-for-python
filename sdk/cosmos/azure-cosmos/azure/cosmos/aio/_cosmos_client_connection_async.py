@@ -144,8 +144,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
-        self.collection_properties_cache: Dict[str, Any] = {}
-        self.default_headers: Dict[str, Dict[str, Any]] = {
+        self.collection_properties_cache: Dict[str, Dict[str, Any]] = {}
+        self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
