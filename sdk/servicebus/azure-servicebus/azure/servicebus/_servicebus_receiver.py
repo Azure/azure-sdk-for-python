@@ -896,9 +896,7 @@ class ServiceBusReceiver(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
         )
 
-        links = get_receive_links(deleted)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
-            return deleted
+        return deleted
 
     def purge_messages(
         self,
@@ -941,9 +939,7 @@ class ServiceBusReceiver(
             )
             batch_count += deleted
 
-        links = get_receive_links(batch_count)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
-            return batch_count
+        return batch_count
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
