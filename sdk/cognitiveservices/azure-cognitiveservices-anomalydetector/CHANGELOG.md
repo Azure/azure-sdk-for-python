@@ -2,7 +2,7 @@
 
 ## 0.3.1 (Unreleased)
 
-This package is no longer being maintained. Use the [azure-ai-formrecognizer](https://pypi.org/project/azure-ai-formrecognizer/) package instead for latest features and support.
+This package is no longer being maintained. Use the [azure-ai-textanalytics](https://pypi.org/project/azure-ai-textanalytics/) package instead for latest features and support.
 
 ## 0.3.0 (2020-07-23)
 
