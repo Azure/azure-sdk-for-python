@@ -246,7 +246,6 @@ class ClientBaseAsync(ClientBase):
             amqp_transport=self._amqp_transport,
             **kwargs
         )
-        self._use_tls = kwargs.get("use_tls", True)
 
     def __enter__(self) -> None:
         raise TypeError(

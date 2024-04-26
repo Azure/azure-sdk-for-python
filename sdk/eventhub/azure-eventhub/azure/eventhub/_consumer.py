@@ -89,7 +89,7 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
-        self._use_tls = kwargs.get("use_tls", True)
+        self._use_tls = kwargs.get("use_tls")
 
         self.running = False
         self.closed = False

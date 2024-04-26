@@ -176,11 +176,11 @@ class EventHubConsumerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=network_tracing,
+            use_tls=kwargs.pop("use_tls", True),
             **kwargs
         )
         self._lock = threading.Lock()
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
-        self._use_tls = kwargs.get("use_tls", True)
 
     def __enter__(self) -> "EventHubConsumerClient":
         return self

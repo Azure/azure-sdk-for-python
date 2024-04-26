@@ -135,7 +135,7 @@ class EventHubConsumer(
         self._message_buffer_lock = asyncio.Lock()
         self._last_callback_called_time = None
         self._callback_task_run = None
-        self._use_tls = kwargs.get("use_tls", True)
+        self._use_tls = kwargs.get("use_tls")
 
     def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
