@@ -14,32 +14,10 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
-class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
-        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-        imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
-        if url and imds:
-            return ManagedIdentityClient(
-                _per_retry_policies=[ArcChallengeAuthPolicy()],
-                request_factory=functools.partial(_get_request, url),
-                **kwargs
-            )
-        return None
-
-    def __enter__(self) -> "AzureArcCredential":
-        if self._client:
-            self._client.__enter__()
-        return self
-
-    def __exit__(self, *args: Any) -> None:
-        if self._client:
-            self._client.__exit__(*args)
-
-    def close(self) -> None:
-        self.__exit__()
-
+class AzureArcCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self) -> str:
         return "Azure Arc managed identity configuration not found in environment"
 

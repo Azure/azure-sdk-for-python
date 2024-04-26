@@ -12,11 +12,6 @@ from .._constants import EnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 class AppServiceCredential(MsalManagedIdentityClient):
-    def __init__(self, **kwargs: Any) -> None:
-        managed_identity = self.get_managed_identity(**kwargs)
-
-        super(AppServiceCredential, self).__init__(managed_identity=managed_identity, **kwargs)
-
     def get_unavailable_message(self) -> str:
         return "App Service managed identity configuration not found in environment"
 

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 import time
 
 import msal
@@ -15,17 +15,15 @@ from .._exceptions import CredentialUnavailableError
 
 class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
     """Base class for managed identity client wrapping MSAL ManagedIdentityClient.
-
-    :param managed_identity: the managed identity instance
-    :type managed_identity: msal.ManagedIdentity
     """
 
     def __init__(
         self,
-        managed_identity: msal.ManagedIdentity,
         **kwargs: Any
     ) -> None:
+        self._settings = kwargs
         self._client = MsalClient(**kwargs)
+        managed_identity = self.get_managed_identity(**kwargs)
         self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)
 
     def __enter__(self) -> "MsalManagedIdentityClient":
@@ -49,7 +47,7 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         error_message = self.get_unavailable_message()
         raise CredentialUnavailableError(error_message)
 
-    def get_managed_identity(self, **kwargs: Any) -> msal.ManagedIdentity:
+    def get_managed_identity(self, **kwargs: Any):
         if "client_id" in kwargs and kwargs["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=kwargs["client_id"])
         identity_config = kwargs.pop("identity_config", None) or {}
@@ -60,3 +58,15 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         if "object_id" in identity_config and identity_config["object_id"]:
             return msal.UserAssignedManagedIdentity(object_id=identity_config["object_id"])
         return msal.SystemAssignedManagedIdentity()
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_msal_client"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        managed_identity = self.get_managed_identity(**self._settings)
+        self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)

@@ -57,11 +57,6 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
 
 
 class ImdsCredential(MsalManagedIdentityClient):
-    def __init__(self, **kwargs: Any) -> None:
-        managed_identity = self.get_managed_identity(**kwargs)
-
-        super(ImdsCredential, self).__init__(managed_identity=managed_identity, **kwargs)
-
     def __enter__(self) -> "ImdsCredential":
         self._client.__enter__()
         return self

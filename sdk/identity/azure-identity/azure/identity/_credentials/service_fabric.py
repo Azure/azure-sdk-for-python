@@ -11,15 +11,10 @@ from azure.core.pipeline.transport import HttpRequest
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
-class ServiceFabricCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
-        client_args = _get_client_args(**kwargs)
-        if client_args:
-            return ManagedIdentityClient(**client_args)
-        return None
-
+class ServiceFabricCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self) -> str:
         return "Service Fabric managed identity configuration not found in environment"
 
