@@ -172,7 +172,7 @@ class ReplicaClientManager:
 
     def backoff(self, client: ReplicaClient):
         client.failed_attempts += 1
-        backoff_time = client._calculate_backoff(client.failed_attempts)
+        backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = time.time() + backoff_time
 
     def _calculate_backoff(self, attempts) -> float:

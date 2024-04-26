@@ -500,8 +500,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
-                            provider._refresh_on[(key, label)] = sentinel.etag  # type:ignore
+                            headers = kwargs.get("headers", {})
+                            sentinel = client._client.get_configuration_setting(key, label, headers=headers)  # type:ignore
+                            self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
@@ -510,11 +511,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                                     key,
                                     label,
                                 )
-                                provider._refresh_on[(key, label)] = None  # type: ignore
+                                self._refresh_on[(key, label)] = None  # type: ignore
                             else:
                                 _delay_failure(start_time)
                                 raise e
                         break
+                return
             except:
                 self._replica_client_manager.backoff(client)
             _delay_failure(start_time)
