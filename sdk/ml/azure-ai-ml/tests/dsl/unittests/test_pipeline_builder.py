@@ -168,10 +168,9 @@ class TestPipelineBuilder:
         def sub_components(input_path: Input):
             if is_true:
                 node = single_output_component_func(component_in_path=input_path, component_in_number=0.2)
-                return {"component_out_path": node.outputs["component_out_path"]}
             else:
                 node = single_output_component_func(component_in_path=input_path, component_in_number=0.7)
-                return {"component_out_path": node.outputs["component_out_path"]}
+            return {"component_out_path": node.outputs["component_out_path"]}
 
         @dsl.pipeline
         def pipeline_func(input_path: Input):

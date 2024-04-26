@@ -206,6 +206,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",
@@ -1222,6 +1223,7 @@ class TestComponent(AzureRecordedTestCase):
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
         target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
         component = load_component(

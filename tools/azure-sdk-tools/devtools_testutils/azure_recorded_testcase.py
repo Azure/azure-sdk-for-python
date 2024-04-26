@@ -32,19 +32,6 @@ _LOGGER = logging.getLogger()
 load_dotenv(find_dotenv())
 
 
-def _sanitize_token(token, fake_token):
-    add_general_string_sanitizer(value=fake_token, target=token)
-
-    # By this point, the token sig value should've been sanitized.
-    token = re.sub(r"(?<=sig=)[^&]*", SANITIZED, token)
-    add_general_string_sanitizer(value=fake_token, target=token)
-
-    url_safe_token = token.replace("/", "%2F")
-    add_general_string_sanitizer(value=fake_token, target=url_safe_token)
-    async_token = token.replace("%3A", ":")
-    add_general_string_sanitizer(value=fake_token, target=async_token)
-
-
 class AzureRecordedTestCase(object):
     """Test class for use by data-plane tests that use the azure-sdk-tools test proxy.
 
@@ -255,45 +242,16 @@ class AzureRecordedTestCase(object):
             time.sleep(seconds)
 
     def generate_sas(self, *args, **kwargs):
-        """Generates a SAS token using a generation function and arguments, and sanitizes token params in recordings.
+        """This is a deprecated method that just returns the token from the passed-in function as-is.
 
-        By default, this sanitizes the values of the `sig`, `st`, and `se` parameters to "fake_token_value", "start",
-        and "end", respectively. By providing a dictionary of `fake_parameters` mapping parameter names to values they
-        should be sanitized with, you can customize this sanitization and include other parameters.
+        SAS token sanitization is now handled by test proxy centrally.
 
         :keyword fake_parameters: A dictionary with token parameter names as keys, and the values to sanitize these keys
-            with as values. For example: {"sktid": "00000000-0000-0000-0000-000000000000", "sig": "sanitized"}
+            with as values. For example: {"sktid": "00000000-0000-0000-0000-000000000000", "sig": "Sanitized"}
         :paramtype fake_parameters: Dict[str, str]
         :keyword str fake_value: The value used to sanitize `sig`. Defaults to "Sanitized".
         """
         sas_func = args[0]
         sas_func_pos_args = args[1:]
-
-        fake_value = kwargs.pop("fake_value", SANITIZED)
-        fake_parameters = kwargs.pop("fake_parameters", {})
         token = sas_func(*sas_func_pos_args, **kwargs)
-
-        fake_token = self._create_fake_token(token, fake_value, fake_parameters)
-        _sanitize_token(token, fake_token)
-
-        if self.is_live:
-            return token
-        return fake_token
-
-    def _create_fake_token(self, token: str, fake_sig_value: str, fake_parameters: Dict[str, str]) -> str:
-        """Returns a replacement value for sanitizing `sig`, `st`, `se`, and provided params of a given SAS token."""
-        parameters = token.split("&")
-
-        for idx, parameter in enumerate(parameters):
-            key = parameter.split("=")[0]
-            fake_value = fake_parameters.get(key)
-            if fake_value is not None:
-                parameters[idx] = "=".join([key, fake_value])
-            elif key == "sig":
-                parameters[idx] = "=".join([key, fake_sig_value])
-            elif key == "st":
-                parameters[idx] = "=".join([key, "start"])
-            elif key == "se":
-                parameters[idx] = "=".join([key, "end"])
-
-        return "&".join(parameters)
+        return token
