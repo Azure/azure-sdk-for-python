@@ -36,7 +36,7 @@ from ._enums import EnvironmentTypeStatus
 from ._enums import HibernateSupport
 from ._enums import LocalAdministratorStatus
 from ._enums import OSType
-from ._enums import OperationState
+from ._enums import OperationStatus
 from ._enums import ParameterType
 from ._enums import PoolHealthStatus
 from ._enums import PowerState
@@ -78,7 +78,7 @@ __all__ = [
     "HibernateSupport",
     "LocalAdministratorStatus",
     "OSType",
-    "OperationState",
+    "OperationStatus",
     "ParameterType",
     "PoolHealthStatus",
     "PowerState",
