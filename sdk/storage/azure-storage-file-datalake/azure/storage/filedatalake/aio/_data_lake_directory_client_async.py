@@ -269,7 +269,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword bool upn:
             Optional. Valid only when Hierarchical Namespace is
             enabled for the account. If "True", the user identity values returned
-            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            in the :attr:`~DirectoryProperties.owner`, :attr:`~DirectoryProperties.group`,
+            and :attr:`~DirectoryProperties.permission` response headers will be
             transformed from Azure Active Directory Object IDs to User Principal
             Names. If "False", the values will be returned as Azure Active
             Directory Object IDs. The default value is false. Note that group and
