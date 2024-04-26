@@ -131,3 +131,11 @@ class TestEventHubConnectionStringParser:
             fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
                 conn_str
             )
+
+    def test_eh_emulator_slug_parse_ipv6(self, **kwargs):
+        conn_str = 'Endpoint=sb://::1;SharedAccessKeyName=test-policy;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;UseDevelopmentEmulator=true'
+        fully_qualified_namespace, policy, key, entity, signature, expiry, emulator = _parse_conn_str(
+            conn_str
+        )
+        assert fully_qualified_namespace == '::1'
+        assert emulator == True
