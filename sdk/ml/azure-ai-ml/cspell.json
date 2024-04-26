@@ -2,10 +2,8 @@
     "version": "0.2",
     "ignoreWords": [
         "kwoa",
-        "rslex"
-        "aadtoken"
-    ],
-    "words": [
+        "rslex",
+        "aadtoken",
         "alds",
         "entra",
         "restclient",

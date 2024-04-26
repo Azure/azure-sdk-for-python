@@ -210,7 +210,7 @@ class MicrosoftOneLakeConnection(Connection):
     def _get_schema_class(cls) -> Type:
         return MicrosoftOneLakeConnectionSchema
 
-    # Target is constructued from user inputs, because it's apparently very difficult for users to
+    # Target is constructed from user inputs, because it's apparently very difficult for users to
     # directly access a One Lake's target URL.
     @classmethod
     def _construct_target(cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact) -> str:
