@@ -476,7 +476,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
@@ -1033,7 +1033,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

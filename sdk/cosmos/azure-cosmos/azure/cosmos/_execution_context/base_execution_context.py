@@ -170,6 +170,6 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         super(_DefaultQueryExecutionContext, self).__init__(client, options)
         self._fetch_function = fetch_function
 
-    def _fetch_next_block(self):
+    def _fetch_next_block(self):  # pylint: disable=inconsistent-return-statements
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:
             return self._fetch_items_helper_with_retries(self._fetch_function)
