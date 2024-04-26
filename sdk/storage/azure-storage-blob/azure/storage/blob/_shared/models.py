@@ -489,7 +489,7 @@ class Services(object):
         res_queue = 'q' in string
         res_file = 'f' in string
 
-        parsed = cls(res_blob, res_queue, res_file)
+        parsed = cls(blob=res_blob, queue=res_queue, fileshare=res_file)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 
