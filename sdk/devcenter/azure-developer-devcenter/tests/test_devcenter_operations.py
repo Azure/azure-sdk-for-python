@@ -13,6 +13,7 @@ from azure.identity import InteractiveBrowserCredential
 from azure.identity import DefaultAzureCredential
 from azure.developer.devcenter import DevCenterClient
 from azure.developer.devcenter.models import DevBoxProvisioningState
+from azure.developer.devcenter.models import OperationStatus
 from testcase import DevcenterPowerShellPreparer
 from datetime import timedelta
 
@@ -255,7 +256,7 @@ class TestDevcenter(AzureRecordedTestCase):
 
         restart_response = client.begin_restart_dev_box(project_name, default_user, devbox_name)
         restart_result = restart_response.result()
-        assert restart_result.status == "Succeeded"
+        assert restart_result.status == OperationStatus.SUCCEEDED
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -270,15 +271,15 @@ class TestDevcenter(AzureRecordedTestCase):
 
         stop_response = client.begin_stop_dev_box(project_name, default_user, devbox_name)
         stop_result = stop_response.result()
-        assert stop_result.status == "Succeeded"
+        assert stop_result.status == OperationStatus.SUCCEEDED
 
         start_response = client.begin_start_dev_box(project_name, default_user, devbox_name)
         start_result = start_response.result()
-        assert start_result.status == "Succeeded"
+        assert start_result.status == OperationStatus.SUCCEEDED
 
         delete_response = client.begin_delete_dev_box(project_name, default_user, devbox_name)
         delete_result = delete_response.result()
-        assert delete_result.status == "Succeeded"
+        assert delete_result.status == OperationStatus.SUCCEEDED
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -418,4 +419,4 @@ class TestDevcenter(AzureRecordedTestCase):
 
         delete_response = client.begin_delete_environment(project_name, default_user, env_name)
         delete_result = delete_response.result()
-        assert delete_result.status == "Succeeded"
+        assert delete_result.status == OperationStatus.SUCCEEDED
