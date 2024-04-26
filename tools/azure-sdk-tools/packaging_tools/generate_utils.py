@@ -387,7 +387,8 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
-        check_output(f"npx tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {rest_repo_url.strip('https://github.com/')}", shell=True)
+        repo_url = rest_repo_url.replace('https://github.com/', "")
+        check_output(f"npx tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug", shell=True)
     except CalledProcessError as e:
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
