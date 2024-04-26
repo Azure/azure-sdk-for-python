@@ -631,13 +631,7 @@ class OpenAIConnection(ApiOrAadConnection):
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        # Inject static target into target if we're not converting from rest.
-        # "not converting as rest" is defined as there's no inputted target
-        target = kwargs.pop("target", None)
-        if target is None:
-            target = "" # Open AI connections have no target, so we just put in a static value.
         super().__init__(
-            target=target,
             type=ConnectionCategory.Open_AI,
             allow_entra=False,
             from_child=True,
@@ -666,13 +660,7 @@ class SerpConnection(ApiOrAadConnection):
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        # Inject static target into target if we're not converting from rest.
-        # "not converting as rest" is defined as there's no inputted target
-        target = kwargs.pop("target", None)
-        if target is None:
-            target = ""  # SERP connections have no target, so we just put in a static value.
         super().__init__(
-            target=target,
             type=ConnectionCategory.SERP,
             allow_entra=False,
             from_child=True,
@@ -703,11 +691,7 @@ class ServerlessConnection(ApiOrAadConnection):
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        target = kwargs.pop("target", None)
-        if target is None:
-            target =  ""  # Serverless connections have no target, so we just put in a static value.
         super().__init__(
-            target=target,
             type=ConnectionCategory.SERVERLESS,
             allow_entra=False,
             from_child=True,

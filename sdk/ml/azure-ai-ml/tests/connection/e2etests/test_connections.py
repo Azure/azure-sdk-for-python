@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing import Callable, Tuple
 
+from time import sleep
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
@@ -59,6 +60,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
                 connection=wps_connection, populate_secrets=True
             )
             created_conn_no_key = client.connections.create_or_update(connection=wps_connection)
+            sleep(5) # Give a little time before we start searching for a newly created connection
             assert created_conn_with_key.credentials.key == expected_key
             assert created_conn_no_key.credentials.key == None
 
@@ -385,7 +387,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client.workspace_hubs.begin_delete(name=hub.name, delete_dependent_resources=True)
 
     @pytest.mark.shareTest
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
+    @pytest.mark.skipif(condition=True, reason="Backend behavior this test relies on has shifted. Need to refactor.")
     def test_workspace_connection_data_connection_listing(
         self,
         client: MLClient,
@@ -585,8 +587,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/connection/ai_services_with_key.yaml"
         )
         local_connection.name = wps_connection_name
-        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/" # now-deleted target
-        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"        #local_connection.api_key = "e1501c78fffc4dbf9a3719fcf1a0a8e1"
+        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/"
+        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"
         #local_connection.api_key ="<valid-key>"
         created_connection = client.connections.create_or_update(
             connection=local_connection, populate_secrets=True
@@ -605,8 +607,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/connection/ai_services_with_entra.yaml"
         )
         local_connection.name = wps_connection_name
-        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/" # now-deleted target
-        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"        #local_connection.api_key = "e1501c78fffc4dbf9a3719fcf1a0a8e1"
+        # Need similar value injection as before
         created_connection = client.connections.create_or_update(
             connection=local_connection, populate_secrets=True
         )
@@ -819,7 +820,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.OPEN_AI)
-        assert created_connection.target == ""
+        assert created_connection.target is None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -841,7 +842,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.SERP)
-        assert created_connection.target == ""
+        assert created_connection.target is None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -975,7 +976,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.SERVERLESS)
-        assert created_connection.target == "123"  # TODO Replace with static value once known
+        assert created_connection.target == "serverless_endpoint"  
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)

@@ -145,7 +145,7 @@ class Connection(Resource):
         target = None
         for target_name in CONNECTION_ALTERNATE_TARGET_NAMES:
             target = kwargs.pop(target_name, target)
-        if target is None:
+        if target is None and type not in {ConnectionCategory.SERP, ConnectionCategory.Open_AI}:
             raise ValueError("target is a required field for Connection.")
 
         super().__init__(**kwargs)

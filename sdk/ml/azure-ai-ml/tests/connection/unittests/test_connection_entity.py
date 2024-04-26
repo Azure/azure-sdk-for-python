@@ -329,7 +329,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.type == camel_to_snake(ConnectionCategory.OPEN_AI)
         assert ws_connection.api_key == "123446"
         assert ws_connection.name == "open_ai_conn"
-        # assert ws_connection.target == "??" TODO check for this once I know the intended static value
+        assert ws_connection.target is None
         self.check_rest_conversion_stable(ws_connection)
 
     def test_serp(self):
@@ -338,7 +338,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.type == camel_to_snake(ConnectionCategory.SERP)
         assert ws_connection.api_key == "1234467"
         assert ws_connection.name == "serp_conn"
-        # assert ws_connection.target == "??" TODO check for this once I know the intended static value
+        assert ws_connection.target is None
         self.check_rest_conversion_stable(ws_connection)
 
     def test_git(self):
@@ -426,7 +426,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.type == camel_to_snake(ConnectionCategory.SERVERLESS)
         assert ws_connection.api_key == "1029"
         assert ws_connection.name == "serverless_with_api"
-        # assert ws_connection.target == "my_ndpoint" TODO CHECK ONCE I KNOW THE EXPECTED STATIC VALUE
+        assert ws_connection.target == "serverless_endpoint"
         self.check_rest_conversion_stable(ws_connection)
 
     # Old connection tests. These have not had their valid credential inputs verified by any known recent spec.
