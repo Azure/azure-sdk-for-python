@@ -446,7 +446,7 @@ class ServiceBusReceiver(
             ):
                 self._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count)
 
-            self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch, abs_timeout)
+            return self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch, abs_timeout)
         finally:
             self._receive_context.clear()
 

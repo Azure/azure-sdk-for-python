@@ -435,7 +435,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count)
 
-            await self._amqp_transport.receive_loop_async(self, amqp_receive_client, max_message_count, batch, abs_timeout)
+            return await self._amqp_transport.receive_loop_async(self, amqp_receive_client, max_message_count, batch, abs_timeout)
         finally:
             self._receive_context.clear()
 
