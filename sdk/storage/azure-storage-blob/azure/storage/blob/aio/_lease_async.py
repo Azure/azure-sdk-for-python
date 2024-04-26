@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
-# mypy: disable-error-code=func-returns-value
 
 import uuid
 
@@ -19,7 +18,6 @@ from .._serialize import get_modify_conditions
 if TYPE_CHECKING:
     from azure.storage.blob.aio import BlobClient, ContainerClient
     from datetime import datetime
-    from .._generated.aio.operations import BlobOperations, ContainerOperations
 
 
 class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
@@ -43,7 +41,6 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     last_modified: Optional["datetime"]
     """The last modified timestamp of the lease currently being maintained.
     This will be `None` if no lease has yet been acquired or modified."""
-    _client: Union["BlobOperations", "ContainerOperations"]
 
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["BlobClient", "ContainerClient"],
