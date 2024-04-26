@@ -1,5 +1,5 @@
 import abc, enum
-from typing import Any, Optional, Tuple, Union, Mapping, overload, TypeVar, Generic, Dict
+from typing import Any, Optional, Tuple, Union, Mapping, TypeVar, Generic, Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -101,7 +101,7 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEnt
                     continue
                 # Cast the encoded non-string pk/rk value to string
                 if key == "PartitionKey" or key == "RowKey":
-                    encoded[key] = self.prepare_key(value)
+                    encoded[key] = str(value)
                     continue
                 # The edm type is decided by value
                 # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
