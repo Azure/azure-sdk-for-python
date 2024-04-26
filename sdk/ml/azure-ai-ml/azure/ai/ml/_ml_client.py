@@ -698,7 +698,8 @@ class MLClient:
             }
 
         Then, you can use this method to load the same workspace in different Python notebooks or projects without
-        retyping the workspace ARM properties.
+        retyping the workspace ARM properties. Note that `from_config` accepts the same kwargs as the main
+        `~azure.ai.ml.MLClient` constructor such as `cloud`.
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
