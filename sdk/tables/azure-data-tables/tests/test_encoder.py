@@ -114,6 +114,11 @@ class EncoderVerificationTransport(RequestsTransport):
 
 def _check_backcompat(entity, new_encoding):
     old_encoding = _add_entity_properties(entity)
+    old_encoding.pop("PartitionKey@odata.type", None)
+    old_encoding.pop("RowKey@odata.type", None)
+    keys = [key for key, val in new_encoding.items() if val is None]
+    for key in keys:
+        new_encoding.pop(key, None)
     assert old_encoding == new_encoding, f"Old:\n'{old_encoding}'\ndoes not match new:\n'{new_encoding}'."
 
 
@@ -533,10 +538,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data1": 1,
                 "Data2": True,
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
@@ -546,12 +551,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": "RK'@*$!%", # this will fail, actual encoded value is "RK''@*$!%"
+                "RowKey": "RK'@*$!%"
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(test_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
@@ -560,36 +565,34 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             test_entity = {"PartitionKey": "PK", "RowKey": 1}
             expected_entity = {"PartitionKey": "PK", "RowKey": "1"}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            expected_backcompat_entity = {"PartitionKey": "PK", "RowKey": 1}
+            _check_backcompat(test_entity, expected_backcompat_entity)
             client.create_entity(
                 test_entity,
-                encoder=MyEncoder(), # Default encoder doesn't support non-string type pk/rk value.
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
             )
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = {"PartitionKey": "PK", "RowKey": "True"}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            expected_backcompat_entity = {"PartitionKey": "PK", "RowKey": True}
+            _check_backcompat(test_entity, expected_backcompat_entity)
             client.create_entity(
                 test_entity,
-                encoder=MyEncoder(), # Default encoder doesn't support non-string type pk/rk value.
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
             )
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
-            expected_entity = {
-                "PartitionKey": "PK",
-                "RowKey": "3.14",
-            }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            expected_entity = {"PartitionKey": "PK", "RowKey": "3.14"}
+            expected_backcompat_entity = {"PartitionKey": "PK", "RowKey": 3.14}
+            _check_backcompat(test_entity, expected_backcompat_entity)
             client.create_entity(
                 test_entity,
                 encoder=MyEncoder(), # Default encoder doesn't support non-string type pk/rk value.
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
             )
@@ -617,11 +620,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "PartitionKey": str(_to_utc_datetime(test_entity["PartitionKey"])),
                 "RowKey": str(test_entity["RowKey"]),
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             client.create_entity(
                 test_entity,
-                encoder=MyEncoder(), # Default encoder doesn't support non-string type pk/rk value.
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
             )
@@ -634,11 +636,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "PartitionKey": _encode_base64(test_entity["PartitionKey"]),
                 "RowKey": "1234",
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            expected_backcompat_entity = {
+                "PartitionKey": _encode_base64(test_entity["PartitionKey"]),
+                "RowKey": 1234,
+            }
+            _check_backcompat(test_entity, expected_backcompat_entity)
             client.create_entity(
                 test_entity,
-                encoder=MyEncoder(), # Default encoder doesn't support non-string type pk/rk value.
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
             )
@@ -687,7 +692,24 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7@odata.type": "Edm.Double",
                 "Data8": None,
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            expected_backcompat_entity = {
+                "PartitionKey": "PK",
+                "RowKey": "RK",
+                "Data1": 12345,
+                "Data2": False,
+                "Data3": _encode_base64(b"testdata"),
+                "Data3@odata.type": "Edm.Binary",
+                "Data4": _to_utc_datetime(test_entity["Data4"]),
+                "Data4@odata.type": "Edm.DateTime",
+                "Data5": str(test_entity["Data5"]),
+                "Data5@odata.type": "Edm.Guid",
+                "Data6": "Foobar",
+                "Data6@odata.type": "Edm.String", # diff, not in expected_entity
+                "Data7": 3.14,
+                "Data7@odata.type": "Edm.Double",
+                "Data8": None,
+            }
+            _check_backcompat(test_entity, expected_backcompat_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -763,7 +785,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": EntityProperty(2**60, EdmType.INT64),
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -817,7 +839,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": (9223372036854775807, "Edm.Int64"),
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
