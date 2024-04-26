@@ -4,10 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import dns.resolver
-from dns.resolver import NXDOMAIN
 import time
 from dataclasses import dataclass
+import dns.resolver
+from dns.resolver import NXDOMAIN
 
 
 @dataclass
@@ -72,6 +72,7 @@ def _request_record(request):
             return dns.resolver.resolve(request, "SRV")
         except NXDOMAIN:
             break
+    return None
 
 
 def _validate(known_domain, endpoint):
@@ -89,3 +90,4 @@ def _get_known_domains(known_host):
         index = known_host.lower().find(label)
         if index > 0:
             return known_host[index:]
+    return None

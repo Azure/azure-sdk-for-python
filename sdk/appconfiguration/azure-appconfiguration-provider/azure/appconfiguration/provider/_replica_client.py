@@ -28,6 +28,17 @@ class ReplicaClient:
 
     @classmethod
     def from_credential(cls, endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs):
+        """
+        Creates a new instance of the ReplicaClient class, using the provided credential to authenticate requests.
+
+        :param str endpoint: The endpoint of the App Configuration service
+        :param TokenCredential credential: The credential to use for authentication
+        :param str user_agent: The user agent string to use for the request
+        :param int retry_total: The total number of retries to allow for requests
+        :param int retry_backoff_max: The maximum backoff time for retries
+        :return: A new instance of the ReplicaClient class
+        :rtype: ReplicaClient
+        """
         return cls(
             endpoint,
             AzureAppConfigurationClient(
@@ -42,6 +53,18 @@ class ReplicaClient:
 
     @classmethod
     def from_connection_string(cls, endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs):
+        """
+        Creates a new instance of the ReplicaClient class, using the provided connection string to authenticate
+        requests.
+
+        :param str endpoint: The endpoint of the App Configuration service
+        :param str connection_string: The connection string to use for authentication
+        :param str user_agent: The user agent string to use for the request
+        :param int retry_total: The total number of retries to allow for requests
+        :param int retry_backoff_max: The maximum backoff time for retries
+        :return: A new instance of the ReplicaClient class
+        :rtype: ReplicaClient
+        """
         return cls(
             endpoint,
             AzureAppConfigurationClient.from_connection_string(
@@ -92,7 +115,7 @@ class ReplicaClient:
                 raise e
         return False, None
 
-    def _load_configuration_settings(self, selects, refresh_on, **kwargs):
+    def load_configuration_settings(self, selects, refresh_on, **kwargs):
         configuration_settings = []
         sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
         for select in selects:
@@ -113,7 +136,7 @@ class ReplicaClient:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
-    def _load_feature_flags(self, feature_flag_selectors, feature_flag_refresh_enabled, **kwargs):
+    def load_feature_flags(self, feature_flag_selectors, feature_flag_refresh_enabled, **kwargs):
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
@@ -130,6 +153,17 @@ class ReplicaClient:
         return loaded_feature_flags, feature_flag_sentinel_keys
 
     def refresh_configuration_settings(self, selects, refresh_on, headers, **kwargs) -> bool:
+        """
+        Gets the refreshed configuration settings if they have changed.
+
+        :param List[SettingSelector] selects: The selectors to use to load configuration settings
+        :param List[SettingSelector] refresh_on: The configuration settings to check for changes
+        :param Mapping[str, str] headers: The headers to use for the request
+
+        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
+        value of the configuration sentinel keys. The third item is the updated configuration settings.
+        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[ConfigurationSetting], None]]
+        """
         need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
         for (key, label), etag in updated_sentinel_keys.items():
@@ -142,19 +176,41 @@ class ReplicaClient:
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
-            configuration_settings, sentinel_keys = self._load_configuration_settings(selects, refresh_on, **kwargs)
+            configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
         return need_refresh, sentinel_keys, configuration_settings
 
     def refresh_feature_flags(self, refresh_on, feature_flag_selectors, headers, **kwargs) -> bool:
+        """
+        Gets the refreshed feature flags if they have changed.
+
+        :param List[SettingSelector] refresh_on: The feature flags to check for changes
+        :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
+        :param Mapping[str, str] headers: The headers to use for the request
+
+        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
+        value of the feature flag sentinel keys. The third item is the updated feature flags.
+        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None]]
+        """
         feature_flag_sentinel_keys = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
-                feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(
+                feature_flags, feature_flag_sentinel_keys = self.load_feature_flags(
                     feature_flag_selectors, True, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags
         return False, None, None
+
+    def get_configuration_setting(self, key, label, **kwargs):
+        """
+        Gets a configuration setting from the replica client.
+
+        :param str key: The key of the configuration setting
+        :param str label: The label of the configuration setting
+        :return: The configuration setting
+        :rtype: ConfigurationSetting
+        """
+        return self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
 
 class ReplicaClientManager:
@@ -193,3 +249,16 @@ class ReplicaClientManager:
         return min_backoff_milliseconds + (
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
         )
+
+    def close(self):
+        for client in self._replica_clients:
+            client._client.close()
+
+    def __enter__(self):
+        for client in self._replica_clients:
+            client._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        for client in self._replica_clients:
+            client._client.__exit__(*args)

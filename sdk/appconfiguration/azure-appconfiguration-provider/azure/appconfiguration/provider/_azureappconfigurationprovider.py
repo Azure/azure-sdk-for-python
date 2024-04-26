@@ -28,7 +28,7 @@ from typing import (
     TypeVar,
 )
 from azure.appconfiguration import SecretReferenceConfigurationSetting, FeatureFlagConfigurationSetting
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
@@ -170,9 +170,6 @@ def load(
 
 
 def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
-    # pylint:disable=protected-access
-
-    # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
@@ -215,7 +212,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     try:
-        provider._load_all(start_time, headers=headers)
+        provider._load_all(start_time, headers=headers)  # pylint:disable=protected-access
     except Exception as e:
         _delay_failure(start_time)
         raise e
@@ -282,8 +279,10 @@ def _buildprovider(
     max_backoff: int = 600 if 600 <= interval else interval
 
     if connection_string:
-        provider._client = ReplicaClient.from_connection_string(
-            endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
+        clients.append(
+            ReplicaClient.from_connection_string(
+                endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
+            )
         )
         endpoint = connection_string.split(";")[0].split("=")[1]
         failover_endpoints = find_auto_failover_endpoints(endpoint)
@@ -297,8 +296,8 @@ def _buildprovider(
         provider._replica_client_manager = ReplicaClientManager(clients, min_backoff, max_backoff)
         return provider
     if endpoint is not None and credential is not None:
-        provider._client = ReplicaClient.from_credential(
-            endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
+        clients.append(
+            ReplicaClient.from_credential(endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs)
         )
         failover_endpoints = find_auto_failover_endpoints(endpoint)
         for failover_endpoint in failover_endpoints:
@@ -443,7 +442,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._origin_endpoint = endpoint
         self._replica_client_manager = None
         self._dict: Dict[str, str] = {}
-        self._client: Optional[ReplicaClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
@@ -478,7 +476,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
         for client in active_clients:
             try:
-                configuration_settings, sentinel_keys = self._client._load_configuration_settings(
+                configuration_settings, sentinel_keys = client.load_configuration_settings(
                     self._selects, self._refresh_on, **kwargs
                 )
                 configuration_settings_processed = {}
@@ -487,7 +485,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys = self._client._load_feature_flags(
+                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
                     )
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -496,18 +494,22 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._refresh_on = sentinel_keys
                 self._dict = configuration_settings_processed
 
-                # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
+                # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the
+                # provider.
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
                             headers = kwargs.get("headers", {})
-                            sentinel = client._client.get_configuration_setting(key, label, headers=headers)  # type:ignore
+                            sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                             self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
                                 logging.debug(
-                                    "WatchKey key: %s label %s was configured but not found. Refresh will be triggered if created.",
+                                    """
+                                    WatchKey key: %s label %s was configured but not found. Refresh will be triggered
+                                    if created.
+                                    """,
                                     key,
                                     label,
                                 )
@@ -517,9 +519,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                                 raise e
                         break
                 return
-            except:
+            except Exception:
                 self._replica_client_manager.backoff(client)
-            _delay_failure(start_time)
             raise RuntimeError(
                 "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
             )
@@ -557,6 +558,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return
         success = False
         need_refresh = False
+        exception = None
         try:
             active_clients = self._replica_client_manager.get_active_clients()
 
@@ -592,16 +594,19 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._refresh_timer.reset()
                     success = True
                     break
-                except:
+                except Exception as e:
+                    exception = e
                     self._replica_client_manager.backoff(client)
 
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
-                    self._on_refresh_error(e)
+                    self._on_refresh_error(exception)
                     return
                 raise RuntimeError(
-                    "Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed."
+                    """
+                    Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed.
+                    """
                 )
             self._on_refresh_success()
         finally:
@@ -688,8 +693,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return False
         if self._trim_prefixes != other._trim_prefixes:
             return False
-        if self._client != other._client:
+        if len(self._replica_client_manager._replica_clients) != len(other._replica_client_manager._replica_clients):
             return False
+        for i in range(len(self._replica_client_manager._replica_clients)):
+            if self._replica_client_manager._replica_clients[i] != other._replica_client_manager._replica_clients[i]:
+                return False
         return True
 
     def __ne__(self, other: Any) -> bool:
@@ -701,15 +709,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             client.close()
-        self._client.close()  # type: ignore
+        self._replica_client_manager.close()
 
     def __enter__(self) -> "AzureAppConfigurationProvider":
-        self._client.__enter__()  # type: ignore
+        self._replica_client_manager.__enter__()
         for client in self._secret_clients.values():
             client.__enter__()
         return self
 
     def __exit__(self, *args) -> None:
-        self._client.__exit__(*args)  # type: ignore
+        self._replica_client_manager.__exit__()
         for client in self._secret_clients.values():
             client.__exit__()
