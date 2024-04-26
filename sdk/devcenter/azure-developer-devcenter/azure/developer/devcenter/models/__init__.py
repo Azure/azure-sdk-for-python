@@ -19,8 +19,8 @@ from ._models import Error
 from ._models import HardwareProfile
 from ._models import ImageReference
 from ._models import InnerError
-from ._models import OperationStatus
-from ._models import OsDisk
+from ._models import OSDisk
+from ._models import OperationDetails
 from ._models import Pool
 from ._models import Project
 from ._models import RemoteConnection
@@ -62,8 +62,8 @@ __all__ = [
     "HardwareProfile",
     "ImageReference",
     "InnerError",
-    "OperationStatus",
-    "OsDisk",
+    "OSDisk",
+    "OperationDetails",
     "Pool",
     "Project",
     "RemoteConnection",

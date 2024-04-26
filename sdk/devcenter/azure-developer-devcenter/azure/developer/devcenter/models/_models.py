@@ -690,7 +690,7 @@ class InnerError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatus(_model_base.Model):
+class OperationDetails(_model_base.Model):
     """The current status of an async operation.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -762,7 +762,7 @@ class OperationStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OsDisk(_model_base.Model):
+class OSDisk(_model_base.Model):
     """Settings for the operating system disk.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -1035,17 +1035,17 @@ class StorageProfile(_model_base.Model):
     """Storage settings for the Dev Box's disks.
 
     :ivar os_disk: Settings for the operating system disk.
-    :vartype os_disk: ~azure.developer.devcenter.models.OsDisk
+    :vartype os_disk: ~azure.developer.devcenter.models.OSDisk
     """
 
-    os_disk: Optional["_models.OsDisk"] = rest_field(name="osDisk")
+    os_disk: Optional["_models.OSDisk"] = rest_field(name="osDisk")
     """Settings for the operating system disk."""
 
     @overload
     def __init__(
         self,
         *,
-        os_disk: Optional["_models.OsDisk"] = None,
+        os_disk: Optional["_models.OSDisk"] = None,
     ): ...
 
     @overload
