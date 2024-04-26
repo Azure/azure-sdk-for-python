@@ -6,7 +6,7 @@
 # mypy: disable-error-code="attr-defined"
 
 import logging
-from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
