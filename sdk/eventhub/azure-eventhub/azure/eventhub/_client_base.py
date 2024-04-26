@@ -136,9 +136,8 @@ def _parse_conn_str(
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
 
-    emulator = bool(use_emulator=="true")
-    if emulator:
-        if not _is_local_endpoint(host):
+    emulator = use_emulator=="true"
+    if emulator and not _is_local_endpoint(host):
             raise ValueError(
                 "Invalid endpoint on the connection string. "
                 "For development connection strings, should be in the format: "
