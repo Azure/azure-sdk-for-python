@@ -130,7 +130,7 @@ class EventHubProducer(
         self._link_properties = self._amqp_transport.create_link_properties(
             {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
-        self._use_tls = kwargs.get("use_tls", True)
+        self._use_tls = kwargs.get("use_tls")
 
 
         super(EventHubProducer, self).__init__()

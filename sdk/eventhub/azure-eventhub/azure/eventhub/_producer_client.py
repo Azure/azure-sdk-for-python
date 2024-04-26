@@ -199,6 +199,7 @@ class EventHubProducerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.get("logging_enable"),
+            use_tls=kwargs.pop("use_tls", True),
             **kwargs
         )
 

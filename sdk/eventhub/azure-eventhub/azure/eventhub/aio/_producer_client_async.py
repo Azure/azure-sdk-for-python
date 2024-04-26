@@ -186,6 +186,7 @@ class EventHubProducerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.pop("logging_enable", False),
+            use_tls=kwargs.pop("use_tls", True),
             **kwargs
         )
         self._keep_alive = kwargs.get("keep_alive", None)
@@ -391,8 +392,8 @@ class EventHubProducerClient(
             idle_timeout=self._idle_timeout,
             amqp_transport = self._amqp_transport,
             keep_alive = self._keep_alive,
-            **self._internal_kwargs,
             use_tls=self._use_tls,
+            **self._internal_kwargs,
         )
         return handler
 
