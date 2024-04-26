@@ -9,6 +9,7 @@ Operations are classes contain logic to interact with backend services, usually 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 
+from ._azure_openai_deployment_operations import AzureOpenAIDeploymentOperations
 from ._batch_deployment_operations import BatchDeploymentOperations
 from ._batch_endpoint_operations import BatchEndpointOperations
 from ._component_operations import ComponentOperations
@@ -52,4 +53,5 @@ __all__ = [
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
     "IndexOperations",
+    "AzureOpenAIDeploymentOperations"
 ]
