@@ -31,12 +31,20 @@ def main():
 
     response = client.agent_pool.begin_create_or_update(
         connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
-        agent_pool_name="test-hybridaksnodepool",
-        agent_pool={"location": "westus", "properties": {"count": 1, "osType": "Linux", "vmSize": "Standard_A4_v2"}},
+        agent_pool_name="testnodepool",
+        agent_pool={
+            "properties": {
+                "count": 1,
+                "nodeLabels": {"env": "dev", "goal": "test"},
+                "nodeTaints": ["env=prod:NoSchedule", "sku=gpu:NoSchedule"],
+                "osType": "Linux",
+                "vmSize": "Standard_A4_v2",
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/PutAgentPool.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/PutAgentPool.json
 if __name__ == "__main__":
     main()

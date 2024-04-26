@@ -9,7 +9,7 @@ import logging
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Generator, List, Optional, Type, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
@@ -19,6 +19,7 @@ from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value, is_group
@@ -37,20 +38,20 @@ module_logger = logging.getLogger(__name__)
 
 
 class _PipelineComponentBuilderStack:
-    def __init__(self):
-        self.items = []
+    def __init__(self) -> None:
+        self.items: List["PipelineComponentBuilder"] = []
 
-    def top(self) -> "PipelineComponentBuilder":
+    def top(self) -> Optional["PipelineComponentBuilder"]:
         if self.is_empty():
             return None
         return self.items[-1]
 
-    def pop(self) -> "PipelineComponentBuilder":
+    def pop(self) -> Optional["PipelineComponentBuilder"]:
         if self.is_empty():
             return None
         return self.items.pop()
 
-    def push(self, item):
+    def push(self, item: object) -> None:
         error_msg = f"{self.__class__.__name__} only " f"allows pushing `{PipelineComponentBuilder.__name__}` element"
         assert isinstance(item, PipelineComponentBuilder), error_msg
 
@@ -66,10 +67,10 @@ class _PipelineComponentBuilderStack:
                 no_personal_data_message=msg.format("[current_pipeline]", _BUILDER_STACK_MAX_DEPTH),
             )
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return len(self.items) == 0
 
-    def size(self):
+    def size(self) -> int:
         return len(self.items)
 
 
@@ -86,10 +87,11 @@ def _is_inside_dsl_pipeline_func() -> bool:
     return _definition_builder_stack.size() > 0
 
 
-def _add_component_to_current_definition_builder(component):
+def _add_component_to_current_definition_builder(component: Union[BaseNode, AutoMLJob]) -> None:
     if _is_inside_dsl_pipeline_func():
         builder = _definition_builder_stack.top()
-        builder.add_node(component)
+        if builder is not None:
+            builder.add_node(component)
 
 
 class PipelineComponentBuilder:
@@ -106,24 +108,22 @@ class PipelineComponentBuilder:
     def __init__(
         self,
         func: Callable,
-        name=None,
-        version=None,
-        display_name=None,
-        description=None,
-        default_datastore=None,
-        tags=None,
-        source_path=None,
-        non_pipeline_inputs=None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        default_datastore: Any = None,
+        tags: Optional[Union[Dict[str, str], str]] = None,
+        source_path: Optional[str] = None,
+        non_pipeline_inputs: Optional[List] = None,
     ):
         self.func = func
-        name = name if name else func.__name__
+        name = name if name is not None else func.__name__
         display_name = display_name if display_name else name
         description = description if description else func.__doc__
         self._args_description = parse_args_description_from_docstring(func.__doc__)
-        if name is None:
-            name = func.__name__
         # List of nodes, order by it's creation order in pipeline.
-        self.nodes = []
+        self.nodes: List = []
         self.non_pipeline_parameter_names = non_pipeline_inputs or []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
@@ -146,7 +146,7 @@ class PipelineComponentBuilder:
         """
         return self._name
 
-    def add_node(self, node: Union[BaseNode, AutoMLJob]):
+    def add_node(self, node: Union[BaseNode, AutoMLJob]) -> None:
         """Add node to pipeline builder.
 
         :param node: A pipeline node.
@@ -155,7 +155,11 @@ class PipelineComponentBuilder:
         self.nodes.append(node)
 
     def build(
-        self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None
+        self,
+        *,
+        user_provided_kwargs: Optional[Dict] = None,
+        non_pipeline_inputs_dict: Optional[Dict] = None,
+        non_pipeline_inputs: Optional[List] = None,
     ) -> PipelineComponent:
         """Build a pipeline component from current pipeline builder.
 
@@ -191,7 +195,7 @@ class PipelineComponentBuilder:
         if outputs is None:
             outputs = {}
 
-        jobs = self._update_nodes_variable_names(_locals)
+        jobs: Dict = self._update_nodes_variable_names(_locals)
         pipeline_component = PipelineComponent(
             name=self.name,
             version=self.version,
@@ -199,7 +203,7 @@ class PipelineComponentBuilder:
             description=self.description,
             inputs=self.inputs,
             jobs=jobs,
-            tags=self.tags,
+            tags=self.tags,  # type: ignore[arg-type]
             source_path=self.source_path,
             _source=ComponentSource.DSL,
         )
@@ -208,7 +212,7 @@ class PipelineComponentBuilder:
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
 
-    def _validate_group_annotation(self, name: str, val: GroupInput):
+    def _validate_group_annotation(self, name: str, val: GroupInput) -> None:
         for k, v in val.values.items():
             if isinstance(v, GroupInput):
                 self._validate_group_annotation(k, v)
@@ -222,8 +226,10 @@ class PipelineComponentBuilder:
             else:
                 raise UserErrorException(f"Unsupported annotation type {type(v)} for group field {name}.{k}")
 
-    def _build_inputs(self, func):
-        inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
+    def _build_inputs(self, func: Union[Callable, Type]) -> Dict:
+        inputs: Dict = _get_param_with_standard_annotation(
+            func, is_func=True, skip_params=self.non_pipeline_parameter_names
+        )
         for k, v in inputs.items():
             if isinstance(v, GroupInput):
                 self._validate_group_annotation(name=k, val=v)
@@ -269,11 +275,15 @@ class PipelineComponentBuilder:
                 :rtype: str
                 """
                 if type(_meta).__name__ != "InternalOutput":
-                    return _meta.type
-                return _meta.map_pipeline_output_type()
+                    return str(_meta.type)
+                return str(_meta.map_pipeline_output_type())  # type: ignore[attr-defined]
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
+            output_meta = Output(
+                type=_map_internal_output_type(meta),  # type: ignore[arg-type]
+                description=meta.description,
+                mode=meta.mode,
+            )
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
@@ -286,9 +296,11 @@ class PipelineComponentBuilder:
                 binding_output=value,
             )
             # copy node level output setting to pipeline output
-            copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
+            copy_output_setting(
+                source=value._owner.outputs[value._port_name], target=pipeline_output  # type: ignore[arg-type]
+            )
 
-            value._owner.outputs[value._port_name]._data = pipeline_output
+            value._owner.outputs[value._port_name]._data = pipeline_output  # type: ignore[union-attr]
 
             output_dict[key] = pipeline_output
             output_meta_dict[key] = output_meta._to_dict()
@@ -296,7 +308,7 @@ class PipelineComponentBuilder:
         self._validate_inferred_outputs(output_meta_dict, output_dict)
         return output_dict
 
-    def _get_group_parameter_defaults(self):
+    def _get_group_parameter_defaults(self) -> Dict:
         group_defaults = {}
         for key, val in self.inputs.items():
             if not isinstance(val, GroupInput):
@@ -336,7 +348,7 @@ class PipelineComponentBuilder:
         :rtype: Dict[str, Union[BaseNode, AutoMLJob]]
         """
 
-        def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
+        def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]) -> Optional[Union[str, Component]]:
             # TODO(1979547): refactor this
             if isinstance(node, AutoMLJob):
                 return node.name or _sanitize_python_variable_name(node.__class__.__name__)
@@ -377,7 +389,7 @@ class PipelineComponentBuilder:
                     f"node name: {name!r}. Duplicate check is case-insensitive."
                 )
             local_names.add(name)
-            id_name_dict[v._instance_id] = name
+            id_name_dict[v._instance_id] = name  # type: ignore[union-attr]
             name_count_dict[name] = 1
 
         # Find the last user-defined name for the same type of components
@@ -398,7 +410,7 @@ class PipelineComponentBuilder:
                     name_count_dict[target_name] = 0
                 name_count_dict[target_name] += 1
                 suffix = "" if name_count_dict[target_name] == 1 else f"_{name_count_dict[target_name] - 1}"
-                id_name_dict[_id] = f"{_sanitize_python_variable_name(target_name)}{suffix}"
+                id_name_dict[_id] = f"{_sanitize_python_variable_name(str(target_name))}{suffix}"
             final_name = id_name_dict[_id]
             node.name = final_name
             result[final_name] = node
@@ -407,13 +419,14 @@ class PipelineComponentBuilder:
             self._validate_keyword_in_node_io(node)
         return result
 
-    def _update_inputs(self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]):
+    def _update_inputs(self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]) -> None:
         """Update the pipeline inputs by the dict.
 
         :param pipeline_inputs: The pipeline inputs
         :type pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]
         """
         for input_name, value in pipeline_inputs.items():
+            anno: Any = None
             if input_name not in self.inputs:
                 if isinstance(value, PipelineInput):
                     value = value._data
@@ -461,7 +474,7 @@ class PipelineComponentBuilder:
             output_annotations[key] = val._to_dict()
         return output_annotations
 
-    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]):
+    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]) -> None:
         """Validate inferred output dict against annotation.
 
         :param output_meta_dict: The output meta dict
@@ -491,12 +504,15 @@ class PipelineComponentBuilder:
                 unmatched_outputs.append(
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
+            res = output_dict[key]._meta
             if expected_description:
-                output_dict[key]._meta.description = expected_description
+                if res is not None:
+                    res.description = expected_description
                 # also copy the description to pipeline job
                 output_dict[key].description = expected_description
             if expected_mode:
-                output_dict[key]._meta.mode = expected_mode
+                if res is not None:
+                    res.mode = expected_mode
                 # also copy the mode to pipeline job
                 output_dict[key].mode = expected_mode
 
@@ -504,9 +520,9 @@ class PipelineComponentBuilder:
             raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")
 
     @staticmethod
-    def _validate_keyword_in_node_io(node: Union[BaseNode, AutoMLJob]):
+    def _validate_keyword_in_node_io(node: Union[BaseNode, AutoMLJob]) -> None:
         if has_attr_safe(node, "inputs"):
-            for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
+            for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:  # type: ignore[arg-type]
                 module_logger.warning(
                     'Reserved word "%s" is used as input name in node "%s", '
                     "can only be accessed with '%s.inputs[\"%s\"]'",
@@ -516,7 +532,7 @@ class PipelineComponentBuilder:
                     input_name,
                 )
         if has_attr_safe(node, "outputs"):
-            for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
+            for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:  # type: ignore[arg-type]
                 module_logger.warning(
                     'Reserved word "%s" is used as output name in node "%s", '
                     "can only be accessed with '%s.outputs[\"%s\"]'",
@@ -527,7 +543,13 @@ class PipelineComponentBuilder:
                 )
 
 
-def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
+def _build_pipeline_parameter(
+    func: Optional[Callable],
+    *,
+    user_provided_kwargs: Dict,
+    group_default_kwargs: Optional[Dict] = None,
+    non_pipeline_inputs: Optional[List] = None,
+) -> Dict:
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @group
@@ -549,9 +571,8 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
             }
         )
 
-    def all_params(parameters):
-        for value in parameters.values():
-            yield value
+    def all_params(parameters: Any) -> Generator:
+        yield from parameters.values()
 
     if func is None:
         return transformed_kwargs
@@ -576,7 +597,9 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
     return transformed_kwargs
 
 
-def _wrap_pipeline_parameter(key, default_value, actual_value, group_names=None):
+def _wrap_pipeline_parameter(
+    key: str, default_value: Any, actual_value: Any, group_names: Optional[List[str]] = None
+) -> Union[_GroupAttrDict, PipelineInput]:
     # Append parameter path in group
     group_names = [*group_names] if group_names else []
     if isinstance(default_value, _GroupAttrDict):

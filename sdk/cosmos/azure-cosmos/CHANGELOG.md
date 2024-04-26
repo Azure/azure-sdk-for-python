@@ -1,19 +1,52 @@
 ## Release History
 
-### 4.5.2b4 (Unreleased)
+### 4.6.1 (Unreleased)
 
 #### Features Added
+* Added support for using the start time option for change feed query API. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed a bug where change feed query in Async client was not returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
+* Fixed a bug when a retryable exception occurs in the first page of a query execution causing query to return 0 results. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
+
 
 #### Other Changes
+
+### 4.6.0 (2024-03-14)
+
+#### Features Added
+* GA release of hierarchical partitioning, index metrics and transactional batch.
+
+#### Bugs Fixed
+* Keyword arguments were not being passed down for `create_container_if_not_exists()` methods. See [PR 34286](https://github.com/Azure/azure-sdk-for-python/pull/34286).
+
+#### Other Changes
+* Made several updates to the type hints used throughout the SDK for greater detail. See [PR 33269](https://github.com/Azure/azure-sdk-for-python/pull/33269), [PR 33341](https://github.com/Azure/azure-sdk-for-python/pull/33341), [PR 33738](https://github.com/Azure/azure-sdk-for-python/pull/33738).
+
+### 4.5.2b5 (2024-03-02)
+
+#### Bugs Fixed
+* Fixed bug with async lock not properly releasing on async global endpoint manager. see [PR 34579](https://github.com/Azure/azure-sdk-for-python/pull/34579).
+
+#### Other Changes
+* Marked `computed_properties` keyword as provisional, un-marked `continuation_token_limit` as provisional. See [PR 34207](https://github.com/Azure/azure-sdk-for-python/pull/34207).
+
+### 4.5.2b4 (2024-02-02)
+This version and all future versions will require Python 3.8+.
+
+#### Features Added
+* Added **preview** support for Computed Properties on Python SDK (Must be enabled on the account level before it can be used). See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626).
+
+#### Bugs Fixed
+* Made use of `response_hook` thread-safe in the sync client. See [PR 33790](https://github.com/Azure/azure-sdk-for-python/pull/33790).
+* Fixed bug with the session container not being properly maintained. See [33738](https://github.com/Azure/azure-sdk-for-python/pull/33738).
 
 ### 4.5.2b3 (2023-11-10)
 
 #### Features Added
-* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034).
 
 ### 4.5.2b2 (2023-10-31)
 

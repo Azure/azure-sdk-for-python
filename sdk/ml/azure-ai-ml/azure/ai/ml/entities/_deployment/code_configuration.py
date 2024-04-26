@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Optional
+import os
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
@@ -34,14 +35,14 @@ class CodeConfiguration(DictMixin):
 
     def __init__(
         self,
-        code: Optional[str] = None,
-        scoring_script: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
+        scoring_script: Optional[Union[str, os.PathLike]] = None,
     ) -> None:
-        self.code = code
-        self._scoring_script = scoring_script
+        self.code: Optional[Union[str, os.PathLike]] = code
+        self._scoring_script: Optional[Union[str, os.PathLike]] = scoring_script
 
     @property
-    def scoring_script(self) -> str:
+    def scoring_script(self) -> Optional[Union[str, os.PathLike]]:
         """The scoring script file path relative to the code directory.
 
         :rtype: str

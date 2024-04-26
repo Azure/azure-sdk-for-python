@@ -9,7 +9,7 @@ import re
 from enum import Enum
 from os import PathLike, path
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import INCLUDE, Schema
 
@@ -70,11 +70,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :param component: The ID or instance of the Spark component or job to be run during the step.
     :type component: Union[str, ~azure.ai.ml.entities.SparkComponent]
     :param identity: The identity that the Spark job will use while running on compute.
-    :type identity: Union[
-        Dict[str, str],
+    :type identity: Union[Dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
-        ~azure.ai.ml.entities.UserIdentityConfiguration]
+        ~azure.ai.ml.entities.UserIdentityConfiguration
+
+    ]
+
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
@@ -100,15 +102,16 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :type conf: Dict[str, str]
     :param inputs: A mapping of input names to input data sources used in the job.
     :type inputs: Dict[str, Union[
-        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
-        ~azure.ai.ml.Input,
         str,
         bool,
         int,
         float,
         Enum,
-        ]
-    ]
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.Input
+
+    ]]
+
     :param outputs: A mapping of output names to output data sources used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.
@@ -134,16 +137,16 @@ class Spark(BaseNode, SparkJobEntryMixin):
         *,
         component: Union[str, SparkComponent],
         identity: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        driver_cores: Optional[int] = None,
+        driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
+        executor_cores: Optional[Union[int, str]] = None,
         executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
+        executor_instances: Optional[Union[int, str]] = None,
+        dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
+        dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
+        dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
         conf: Optional[Dict[str, str]] = None,
         inputs: Optional[
             Dict[
@@ -169,7 +172,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
         args: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -196,18 +199,19 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if is_spark_component:
             # conf is dict and we need copy component conf here, otherwise node conf setting will affect component
             # setting
-            self.conf = self.conf or copy.copy(component.conf)
-            self.driver_cores = self.driver_cores or component.driver_cores
-            self.driver_memory = self.driver_memory or component.driver_memory
-            self.executor_cores = self.executor_cores or component.executor_cores
-            self.executor_memory = self.executor_memory or component.executor_memory
-            self.executor_instances = self.executor_instances or component.executor_instances
-            self.dynamic_allocation_enabled = self.dynamic_allocation_enabled or component.dynamic_allocation_enabled
+            _component = cast(SparkComponent, component)
+            self.conf = self.conf or copy.copy(_component.conf)
+            self.driver_cores = self.driver_cores or _component.driver_cores
+            self.driver_memory = self.driver_memory or _component.driver_memory
+            self.executor_cores = self.executor_cores or _component.executor_cores
+            self.executor_memory = self.executor_memory or _component.executor_memory
+            self.executor_instances = self.executor_instances or _component.executor_instances
+            self.dynamic_allocation_enabled = self.dynamic_allocation_enabled or _component.dynamic_allocation_enabled
             self.dynamic_allocation_min_executors = (
-                self.dynamic_allocation_min_executors or component.dynamic_allocation_min_executors
+                self.dynamic_allocation_min_executors or _component.dynamic_allocation_min_executors
             )
             self.dynamic_allocation_max_executors = (
-                self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
+                self.dynamic_allocation_max_executors or _component.dynamic_allocation_max_executors
             )
         if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
             self.executor_instances = self.dynamic_allocation_min_executors
@@ -221,13 +225,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
         # arm_id, we expect get remote returned values.
         # 3.when we load a remote job, component now is an arm_id, we need get entry from node level returned from
         # service
-        self.entry = component.entry if is_spark_component else entry
-        self.py_files = component.py_files if is_spark_component else py_files
-        self.jars = component.jars if is_spark_component else jars
-        self.files = component.files if is_spark_component else files
-        self.archives = component.archives if is_spark_component else archives
-        self.args = component.args if is_spark_component else args
-        self.environment = component.environment if is_spark_component else None
+        self.entry = _component.entry if is_spark_component else entry
+        self.py_files = _component.py_files if is_spark_component else py_files
+        self.jars = _component.jars if is_spark_component else jars
+        self.files = _component.files if is_spark_component else files
+        self.archives = _component.archives if is_spark_component else archives
+        self.args = _component.args if is_spark_component else args
+        self.environment: Any = _component.environment if is_spark_component else None
 
         self.resources = resources
         self.identity = identity
@@ -235,7 +239,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self._init = False
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> Tuple:
         return str, Output
 
     @property
@@ -244,18 +248,19 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         :rtype: ~azure.ai.ml.entities.SparkComponent
         """
-        return self._component
+        res: Union[str, SparkComponent] = self._component
+        return res
 
     @property
-    def resources(self) -> Optional[SparkResourceConfiguration]:
+    def resources(self) -> Optional[Union[Dict, SparkResourceConfiguration]]:
         """The compute resource configuration for the job.
 
         :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
         """
-        return self._resources
+        return self._resources  # type: ignore
 
     @resources.setter
-    def resources(self, value: Union[Dict[str, str], SparkResourceConfiguration, None]):
+    def resources(self, value: Optional[Union[Dict, SparkResourceConfiguration]]) -> None:
         """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
@@ -268,7 +273,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration,
@@ -288,7 +293,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def identity(
         self,
         value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration],
-    ):
+    ) -> None:
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
@@ -313,7 +318,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
         :rtype: Union[str, PathLike]
         """
         if isinstance(self.component, Component):
-            return self.component.code
+            _code: Optional[Union[str, PathLike]] = self.component.code
+            return _code
         return None
 
     @code.setter
@@ -356,11 +362,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return obj
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Spark":
         from .spark_func import spark
 
         loaded_data = load_from_dict(SparkJobSchema, data, context, additional_message, **kwargs)
-        spark_job = spark(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        spark_job: Spark = spark(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return spark_job
 
@@ -371,7 +377,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         rest_spark_job: RestSparkJob = obj.properties
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
 
-        spark_job = spark(
+        spark_job: Spark = spark(
             name=obj.name,
             id=obj.id,
             entry=SparkJobEntry._from_rest_object(rest_spark_job.entry),
@@ -386,9 +392,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
-            if rest_spark_job.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+                if rest_spark_job.identity
+                else None
+            ),
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -418,17 +426,50 @@ class Spark(BaseNode, SparkJobEntryMixin):
         }
 
     @property
-    def _skip_required_compute_missing_validation(self):
+    def _skip_required_compute_missing_validation(self) -> bool:
         return self.resources is not None
 
     def _to_job(self) -> SparkJob:
+        if isinstance(self.component, SparkComponent):
+            return SparkJob(
+                experiment_name=self.experiment_name,
+                name=self.name,
+                display_name=self.display_name,
+                description=self.description,
+                tags=self.tags,
+                code=self.component.code,
+                entry=self.entry,
+                py_files=self.py_files,
+                jars=self.jars,
+                files=self.files,
+                archives=self.archives,
+                identity=self.identity,
+                driver_cores=self.driver_cores,
+                driver_memory=self.driver_memory,
+                executor_cores=self.executor_cores,
+                executor_memory=self.executor_memory,
+                executor_instances=self.executor_instances,
+                dynamic_allocation_enabled=self.dynamic_allocation_enabled,
+                dynamic_allocation_min_executors=self.dynamic_allocation_min_executors,
+                dynamic_allocation_max_executors=self.dynamic_allocation_max_executors,
+                conf=self.conf,
+                environment=self.environment,
+                status=self.status,
+                inputs=self._job_inputs,
+                outputs=self._job_outputs,
+                services=self.services,
+                args=self.args,
+                compute=self.compute,
+                resources=self.resources,
+            )
+
         return SparkJob(
             experiment_name=self.experiment_name,
             name=self.name,
             display_name=self.display_name,
             description=self.description,
             tags=self.tags,
-            code=self.component.code,
+            code=self.component,
             entry=self.entry,
             py_files=self.py_files,
             jars=self.jars,
@@ -455,7 +496,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         )
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import SparkSchema
 
         return SparkSchema(context=context)
@@ -474,8 +515,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             "args",
         ]
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        rest_obj = super()._to_rest_object(**kwargs)
+    def _to_rest_object(self, **kwargs: Any) -> dict:
+        rest_obj: dict = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {
@@ -488,7 +529,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         )
         return rest_obj
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> dict:
         inputs = super(Spark, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -497,7 +538,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 built_inputs[key] = value
         return built_inputs
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         result = super()._customized_validate()
         if (
             isinstance(self.component, SparkComponent)
@@ -527,7 +568,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             pass
         else:
             if not path.isabs(self.code):
-                code_path = Path(self.component.base_path) / self.code
+                _component: SparkComponent = self.component  # type: ignore
+                code_path = Path(_component.base_path) / self.code
                 if code_path.exists():
                     code_path = code_path.resolve().absolute()
                 else:
@@ -586,7 +628,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return validation_result
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> "Spark":
+    def __call__(self, *args: Any, **kwargs: Any) -> "Spark":
         """Call Spark as a function will return a new instance each time.
 
         :return: A Spark object
@@ -594,7 +636,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: Spark = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -604,7 +646,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of output won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             node._name = self.name
             node.compute = self.compute

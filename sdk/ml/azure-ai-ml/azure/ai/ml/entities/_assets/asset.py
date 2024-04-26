@@ -5,7 +5,7 @@
 import uuid
 from abc import abstractmethod
 from os import PathLike
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -41,7 +41,7 @@ class Asset(Resource):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
@@ -78,7 +78,7 @@ class Asset(Resource):
         """Dump the artifact content into a pure dict object."""
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
         """The asset version.
 
         :return: The asset version.
@@ -109,15 +109,13 @@ class Asset(Resource):
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the asset content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -125,8 +123,8 @@ class Asset(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        return bool(
             self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -139,7 +137,7 @@ class Asset(Resource):
             and self.auto_delete_setting == other.auto_delete_setting
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -56,7 +56,7 @@ class MetricsBatchOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: JSON,
+        batch_request: JSON,
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -67,15 +67,17 @@ class MetricsBatchOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
+        rollupby: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
-        :param resource_ids: The comma separated list of resource IDs to query metrics for. Required.
-        :type resource_ids: JSON
+        :param batch_request: Metrics batch body including the list of resource ids. Required.
+        :type batch_request: JSON
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -89,8 +91,10 @@ class MetricsBatchOperations:
         :keyword endtime: The end time of the query. It is a string in the format
          'yyyy-MM-ddTHH:mm:ss.fffZ'. Default value is None.
         :paramtype endtime: str
-        :keyword interval: The interval (i.e. timegrain) of the query.
-         *Examples: PT15M, PT1H, P1D*. Default value is None.
+        :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
          *Examples: average, minimum, maximum*. Default value is None.
@@ -113,6 +117,11 @@ class MetricsBatchOperations:
          :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
          *’ and C eq ‘*\ ’**. Default value is None.
         :paramtype filter: str
+        :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
+         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype rollupby: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -124,7 +133,7 @@ class MetricsBatchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                resource_ids = {
+                batch_request = {
                     "resourceids": [
                         "str"  # Optional. The list of resource IDs to query metrics for.
                     ]
@@ -140,7 +149,7 @@ class MetricsBatchOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "id": "str",  # the metric Id. Required.
+                                    "id": "str",  # The metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -186,7 +195,7 @@ class MetricsBatchOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # the resource type of the
+                                    "type": "str",  # The resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
@@ -201,11 +210,12 @@ class MetricsBatchOperations:
                                       message encountered querying this specific metric.
                                 }
                             ],
-                            "interval": "1 day, 0:00:00",  # Optional. The interval
-                              (window size) for which the metric data was returned in. Follows the
-                              IS8601/RFC3339 duration format (e.g. 'P1D' for 1 day). This may be
-                              adjusted in the future and returned back from what was originally
-                              requested.  This is not present if a metadata request was made.
+                            "interval": "str",  # Optional. The interval (window size)
+                              for which the metric data was returned in ISO 8601 duration format with a
+                              special case for 'FULL' value that returns single datapoint for entire
+                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
+                              be adjusted and different from what was originally requested if
+                              AutoAdjustTimegrain=true is specified.
                             "namespace": "str",  # Optional. The namespace of the metrics
                               been queried.
                             "resourceid": "str",  # Optional. The resource that has been
@@ -221,7 +231,7 @@ class MetricsBatchOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: IO,
+        batch_request: IO[bytes],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -232,15 +242,17 @@ class MetricsBatchOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
+        rollupby: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
-        :param resource_ids: The comma separated list of resource IDs to query metrics for. Required.
-        :type resource_ids: IO
+        :param batch_request: Metrics batch body including the list of resource ids. Required.
+        :type batch_request: IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -254,8 +266,10 @@ class MetricsBatchOperations:
         :keyword endtime: The end time of the query. It is a string in the format
          'yyyy-MM-ddTHH:mm:ss.fffZ'. Default value is None.
         :paramtype endtime: str
-        :keyword interval: The interval (i.e. timegrain) of the query.
-         *Examples: PT15M, PT1H, P1D*. Default value is None.
+        :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
          *Examples: average, minimum, maximum*. Default value is None.
@@ -278,6 +292,11 @@ class MetricsBatchOperations:
          :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
          *’ and C eq ‘*\ ’**. Default value is None.
         :paramtype filter: str
+        :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
+         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype rollupby: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -298,7 +317,7 @@ class MetricsBatchOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "id": "str",  # the metric Id. Required.
+                                    "id": "str",  # The metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -344,7 +363,7 @@ class MetricsBatchOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # the resource type of the
+                                    "type": "str",  # The resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
@@ -359,11 +378,12 @@ class MetricsBatchOperations:
                                       message encountered querying this specific metric.
                                 }
                             ],
-                            "interval": "1 day, 0:00:00",  # Optional. The interval
-                              (window size) for which the metric data was returned in. Follows the
-                              IS8601/RFC3339 duration format (e.g. 'P1D' for 1 day). This may be
-                              adjusted in the future and returned back from what was originally
-                              requested.  This is not present if a metadata request was made.
+                            "interval": "str",  # Optional. The interval (window size)
+                              for which the metric data was returned in ISO 8601 duration format with a
+                              special case for 'FULL' value that returns single datapoint for entire
+                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
+                              be adjusted and different from what was originally requested if
+                              AutoAdjustTimegrain=true is specified.
                             "namespace": "str",  # Optional. The namespace of the metrics
                               been queried.
                             "resourceid": "str",  # Optional. The resource that has been
@@ -379,7 +399,7 @@ class MetricsBatchOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: Union[JSON, IO],
+        batch_request: Union[JSON, IO[bytes]],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -390,15 +410,17 @@ class MetricsBatchOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
+        rollupby: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
-        :param resource_ids: The comma separated list of resource IDs to query metrics for. Is either a
-         JSON type or a IO type. Required.
-        :type resource_ids: JSON or IO
+        :param batch_request: Metrics batch body including the list of resource ids. Is either a JSON
+         type or a IO[bytes] type. Required.
+        :type batch_request: JSON or IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -412,8 +434,10 @@ class MetricsBatchOperations:
         :keyword endtime: The end time of the query. It is a string in the format
          'yyyy-MM-ddTHH:mm:ss.fffZ'. Default value is None.
         :paramtype endtime: str
-        :keyword interval: The interval (i.e. timegrain) of the query.
-         *Examples: PT15M, PT1H, P1D*. Default value is None.
+        :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
          *Examples: average, minimum, maximum*. Default value is None.
@@ -436,9 +460,11 @@ class MetricsBatchOperations:
          :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
          *’ and C eq ‘*\ ’**. Default value is None.
         :paramtype filter: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
+         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype rollupby: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -447,7 +473,7 @@ class MetricsBatchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                resource_ids = {
+                batch_request = {
                     "resourceids": [
                         "str"  # Optional. The list of resource IDs to query metrics for.
                     ]
@@ -463,7 +489,7 @@ class MetricsBatchOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "id": "str",  # the metric Id. Required.
+                                    "id": "str",  # The metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -509,7 +535,7 @@ class MetricsBatchOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # the resource type of the
+                                    "type": "str",  # The resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
@@ -524,11 +550,12 @@ class MetricsBatchOperations:
                                       message encountered querying this specific metric.
                                 }
                             ],
-                            "interval": "1 day, 0:00:00",  # Optional. The interval
-                              (window size) for which the metric data was returned in. Follows the
-                              IS8601/RFC3339 duration format (e.g. 'P1D' for 1 day). This may be
-                              adjusted in the future and returned back from what was originally
-                              requested.  This is not present if a metadata request was made.
+                            "interval": "str",  # Optional. The interval (window size)
+                              for which the metric data was returned in ISO 8601 duration format with a
+                              special case for 'FULL' value that returns single datapoint for entire
+                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
+                              be adjusted and different from what was originally requested if
+                              AutoAdjustTimegrain=true is specified.
                             "namespace": "str",  # Optional. The namespace of the metrics
                               been queried.
                             "resourceid": "str",  # Optional. The resource that has been
@@ -539,7 +566,7 @@ class MetricsBatchOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -556,10 +583,10 @@ class MetricsBatchOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(resource_ids, (IOBase, bytes)):
-            _content = resource_ids
+        if isinstance(batch_request, (IOBase, bytes)):
+            _content = batch_request
         else:
-            _json = resource_ids
+            _json = batch_request
 
         _request = build_metrics_batch_batch_request(
             subscription_id=subscription_id,
@@ -572,6 +599,7 @@ class MetricsBatchOperations:
             top=top,
             orderby=orderby,
             filter=filter,
+            rollupby=rollupby,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,

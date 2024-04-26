@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 
-class Configuration(object):  # pylint:disable=too-many-instance-attributes
+class Configuration:  # pylint:disable=too-many-instance-attributes
     def __init__(
             self,  # pylint:disable=unused-argument
             *,

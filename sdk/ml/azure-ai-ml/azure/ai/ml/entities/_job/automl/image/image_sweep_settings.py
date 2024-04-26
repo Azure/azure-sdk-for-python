@@ -22,13 +22,22 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     :keyword sampling_algorithm: Required. Type of the hyperparameter sampling.
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
-    :paramtype sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
+    :paramtype sampling_algorithm: Union[
+        str,
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
-        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM
+
+    ]
     :keyword early_termination: Type of early termination policy.
-    :paramtype early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    :paramtype early_termination: Union[
+
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy
+
+    ]
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py
@@ -45,7 +54,9 @@ class ImageSweepSettings(RestTranslatableMixin):
         sampling_algorithm: Union[
             str, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN, SamplingAlgorithmType.RANDOM
         ],
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
@@ -60,9 +71,9 @@ class ImageSweepSettings(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestImageSweepSettings) -> "ImageSweepSettings":
         return cls(
             sampling_algorithm=obj.sampling_algorithm,
-            early_termination=EarlyTerminationPolicy._from_rest_object(obj.early_termination)
-            if obj.early_termination
-            else None,
+            early_termination=(
+                EarlyTerminationPolicy._from_rest_object(obj.early_termination) if obj.early_termination else None
+            ),
         )
 
     def __eq__(self, other: object) -> bool:

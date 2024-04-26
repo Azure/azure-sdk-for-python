@@ -5,7 +5,7 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -16,35 +16,29 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from azure.core.credentials import AccessToken
-
 _LOGGER = logging.getLogger(__name__)
 
 
 class GetTokenMixin(ABC):
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
+    from azure.core.credentials import AccessToken
+
+    def __init__(self, *args: Any, **kwargs: Any):
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
-        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+        super(GetTokenMixin, self).__init__(*args, **kwargs)
 
     @abc.abstractmethod
     # pylint: disable-next=docstring-missing-param
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod
     # pylint: disable-next=docstring-missing-param
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token from the STS."""
 
-    def _should_refresh(self, token):
-        # type: (AccessToken) -> bool
+    def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
@@ -53,17 +47,15 @@ class GetTokenMixin(ABC):
         return True
 
     # pylint: disable-next=docstring-missing-return
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :param scopes: The desired scopes for the access token. This method requires at least one scope.
+        :type scopes: str
+        :return: The access token
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

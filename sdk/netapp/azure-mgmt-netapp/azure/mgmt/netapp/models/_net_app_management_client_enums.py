@@ -278,6 +278,8 @@ class RelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     IDLE = "Idle"
     TRANSFERRING = "Transferring"
+    FAILED = "Failed"
+    UNKNOWN = "Unknown"
 
 
 class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):

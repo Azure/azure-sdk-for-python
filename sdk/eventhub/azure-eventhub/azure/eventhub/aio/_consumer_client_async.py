@@ -160,7 +160,7 @@ class EventHubConsumerClient(
         eventhub_name: str,
         consumer_group: str,
         credential: "CredentialTypes",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
@@ -193,10 +193,10 @@ class EventHubConsumerClient(
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EventHubConsumerClient":
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     def _create_consumer(

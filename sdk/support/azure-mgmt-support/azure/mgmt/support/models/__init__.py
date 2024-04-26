@@ -47,6 +47,7 @@ from ._microsoft_support_enums import CommunicationDirection
 from ._microsoft_support_enums import CommunicationType
 from ._microsoft_support_enums import Consent
 from ._microsoft_support_enums import CreatedByType
+from ._microsoft_support_enums import IsTemporaryTicket
 from ._microsoft_support_enums import PreferredContactMethod
 from ._microsoft_support_enums import SeverityLevel
 from ._microsoft_support_enums import Status
@@ -98,6 +99,7 @@ __all__ = [
     "CommunicationType",
     "Consent",
     "CreatedByType",
+    "IsTemporaryTicket",
     "PreferredContactMethod",
     "SeverityLevel",
     "Status",

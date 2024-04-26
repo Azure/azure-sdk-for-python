@@ -28,7 +28,7 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_build_classifier(self, client, documentintelligence_training_data_classifier, **kwargs):
+    def test_build_classifier(self, client, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
@@ -39,27 +39,27 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-A/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-B/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-B/train"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-C/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-C/train"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-D/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-D/train"
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-E/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-E/train"
                     )
                 ),
             },
@@ -109,7 +109,7 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_build_classifier_file_list(self, client, documentintelligence_training_data_classifier, **kwargs):
+    def test_build_classifier_file_list(self, client, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
@@ -119,27 +119,32 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-A.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-A.jsonl",
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-B.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-B.jsonl",
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-C.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-C.jsonl",
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-D.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-D.jsonl",
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-E.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-E.jsonl",
                     )
                 ),
             },

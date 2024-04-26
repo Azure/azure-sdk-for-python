@@ -113,7 +113,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
         # Do optimize and create empty chunk locally if condition is met.
         if self._do_optimize(download_range[0], download_range[1]):
-            chunk_data = b"\x00" * self.chunk_size
+            data_size = download_range[1] - download_range[0] + 1
+            chunk_data = b"\x00" * data_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
@@ -545,11 +546,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 except HttpResponseError as error:
                     process_storage_error(error)
                 try:
-                    next_chunk = next(dl_tasks)
+                    for _ in range(0, len(done)):
+                        next_chunk = next(dl_tasks)
+                        running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
                 except StopIteration:
                     break
-                else:
-                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
             if running_futures:
                 # Wait for the remaining downloads to finish
@@ -623,10 +624,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encoding = encoding
         return await self.readall()
 
-    async def readinto(self, stream: IO[T]) -> int:
+    async def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this blob to a stream.
 
-        :param IO[T] stream:
+        :param IO[bytes] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
@@ -703,11 +704,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError as error:
                 process_storage_error(error)
             try:
-                next_chunk = next(dl_tasks)
+                for _ in range(0, len(done)):
+                    next_chunk = next(dl_tasks)
+                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
             except StopIteration:
                 break
-            else:
-                running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
         if running_futures:
             # Wait for the remaining downloads to finish

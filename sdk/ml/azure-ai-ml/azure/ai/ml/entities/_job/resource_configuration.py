@@ -27,12 +27,12 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.instance_count = instance_count
         self.instance_type = instance_type
@@ -57,7 +57,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     # recursively convert Ordered Dict to dictionary
                     serialized_properties[key] = json.loads(json.dumps(value))
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     pass
         return RestResourceConfiguration(
             instance_count=self.instance_count,

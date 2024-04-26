@@ -7,7 +7,8 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
+from azure.ai.ml.entities import Data
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._documents import Document
 from azure.ai.resources._index._embeddings import EmbeddingsContainer
@@ -51,7 +52,7 @@ class MLIndex:
 
     def __init__(
         self,
-        uri: Optional[Union[str, Path, object]] = None,
+        uri: Optional[Union[str, Path, Data]] = None,
         mlindex_config: Optional[dict] = None
     ):
         """
@@ -92,8 +93,8 @@ class MLIndex:
                 self.base_uri = uri
 
                 mlindex_config = None
-                uri = uri.rstrip("/")
-                mlindex_uri = f"{uri}/MLIndex" if not uri.endswith("MLIndex") else uri
+                uri = str(uri).rstrip("/")
+                mlindex_uri = f"{uri}/MLIndex" if not str(uri).endswith("MLIndex") else uri
                 try:
                     mlindex_file = fsspec.open(mlindex_uri, "r")
                     if hasattr(mlindex_file.fs, "_path"):
@@ -210,7 +211,7 @@ class MLIndex:
                     logger.warning(f"azure-search-documents=={azure_search_documents_version} not compatible langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
 
                     return AzureCognitiveSearchVectorStore(
-                        index_name=self.index_config.get("index"),
+                        index_name=self.index_config.get("index", ""),
                         endpoint=self.index_config.get(
                             "endpoint",
                             get_target_from_connection(
@@ -228,7 +229,7 @@ class MLIndex:
                 from fsspec.core import url_to_fs
 
                 store = None
-                engine = self.index_config.get("engine")
+                engine: str = self.index_config.get("engine", "")
                 if engine == "langchain.vectorstores.FAISS":
                     from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
 
@@ -250,11 +251,11 @@ class MLIndex:
                         from azure.ai.resources._index._langchain.faiss import azureml_faiss_as_langchain_faiss
                     except Exception as e:
                         logger.warning(error_fmt_str.format(e=e))
-                        azureml_faiss_as_langchain_faiss = None
+                        azureml_faiss_as_langchain_faiss = None  # type: ignore[assignment]
 
                     embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
-                    store = FaissAndDocStore.load(self.base_uri, embeddings.embed_query)
+                    store: FaissAndDocStore = FaissAndDocStore.load(self.base_uri, embeddings.embed_query)  # type: ignore[no-redef]
                     if azureml_faiss_as_langchain_faiss is not None:
                         try:
                             store = azureml_faiss_as_langchain_faiss(FaissAndDocStore.load(self.base_uri, embeddings.embed_query))
@@ -277,7 +278,7 @@ class MLIndex:
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
                 return AzureCognitiveSearchVectorStore(
-                    index_name=self.index_config.get("index"),
+                    index_name=self.index_config.get("index", ""),
                     endpoint=self.index_config.get(
                         "endpoint",
                         get_target_from_connection(
@@ -305,7 +306,7 @@ class MLIndex:
             "embeddings": self.embeddings_config,
         })
 
-    def save(self, output_uri: Optional[str], just_config: bool = False):
+    def save(self, output_uri: str, just_config: bool = False):
         """
         Save the MLIndex to a uri.
 

@@ -42,7 +42,7 @@
                 "description": "The application client secret used to run tests."
             }
         },
-        "formRecognizerEndpointSuffix": {
+        "documentIntelligenceEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "String"
         },
@@ -215,18 +215,18 @@
     },
     "variables": {
         "authorizationApiVersion": "2018-09-01-preview",
-        "formRecognizerBaseName": "[concat('formrecognizer', parameters('baseName'))]",
-        "formRecognizerApiVersion": "2017-04-18",
-        "azureFormRecognizerUrl": "[concat('https://', variables('formRecognizerBaseName'), parameters('formRecognizerEndpointSuffix'))]",
+        "documentIntelligenceBaseName": "[concat('documentintelligence', parameters('baseName'))]",
+        "documentIntelligenceApiVersion": "2023-10-31-preview",
+        "azureDocumentIntelligenceUrl": "[concat('https://', variables('documentIntelligenceBaseName'), parameters('documentIntelligenceEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "[variables('authorizationApiVersion')]",
-            "name": "[guid(concat(variables('cognitiveServiceUserRoleId'), variables('formRecognizerBaseName')))]",
+            "name": "[guid(concat(variables('cognitiveServiceUserRoleId'), variables('documentIntelligenceBaseName')))]",
             "dependsOn": [
-                "[variables('formRecognizerBaseName')]"
+                "[variables('documentIntelligenceBaseName')]"
             ],
             "properties": {
                 "principalId": "[parameters('testApplicationOid')]",
@@ -235,15 +235,15 @@
         },
         {
             "type": "Microsoft.CognitiveServices/accounts",
-            "name": "[variables('formRecognizerBaseName')]",
-            "apiVersion": "[variables('formRecognizerApiVersion')]",
+            "name": "[variables('documentIntelligenceBaseName')]",
+            "apiVersion": "[variables('documentIntelligenceApiVersion')]",
             "sku": {
                 "name": "S0"
             },
-            "kind": "FormRecognizer",
+            "kind": "DocumentIntelligence",
             "location": "[parameters('location')]",
             "properties": {
-                "customSubDomainName": "[variables('formRecognizerBaseName')]"
+                "customSubDomainName": "[variables('documentIntelligenceBaseName')]"
             }
         }
     ],
@@ -262,69 +262,33 @@
         },
         "DOCUMENTINTELLIGENCE_NAME": {
             "type": "string",
-            "value": "[variables('formRecognizerBaseName')]"
+            "value": "[variables('documentIntelligenceBaseName')]"
         },
         "DOCUMENTINTELLIGENCE_API_KEY": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('documentIntelligenceBaseName')), variables('documentIntelligenceApiVersion')).key1]"
         },
         "DOCUMENTINTELLIGENCE_ENDPOINT": {
             "type": "string",
-            "value": "[variables('azureFormRecognizerUrl')]"
+            "value": "[variables('azureDocumentIntelligenceUrl')]"
         },
-        "DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL_V2": {
+        "DOCUMENTINTELLIGENCE_TARGET_API_KEY": {
             "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('documentIntelligenceBaseName')), variables('documentIntelligenceApiVersion')).key1]"
+        },
+        "DOCUMENTINTELLIGENCE_TARGET_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureDocumentIntelligenceUrl')]"
         },
         "DOCUMENTINTELLIGENCE_TESTING_DATA_CONTAINER_SAS_URL": {
             "type": "string",
             "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('testingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('testingDataSasProperties')).serviceSasToken)]"
         },
-        "DOCUMENTINTELLIGENCE_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_V2": {
-            "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('multiPageTestingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('multiPageTestingDataSasProperties')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2_V2": {
-            "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('multiPageTestingDataContainer2'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('multiPageTestingDataSasProperties2')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL_V2": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('selectionMarkTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('selectionMarkTrainingDataSasProperties')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_TABLE_VARIABLE_ROWS_CONTAINER_SAS_URL_V2": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_TABLE_FIXED_ROWS_CONTAINER_SAS_URL_V2": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesFixedRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesFixedRowsSasProperties')).serviceSasToken)]"
-        },
         "DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL": {
             "type": "string",
             "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasPropertiesV3')).serviceSasToken)]"
         },
-        "DOCUMENTINTELLIGENCE_MULTIPAGE_STORAGE_CONTAINER_SAS_URL": {
-            "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('multiPageTestingDataContainer'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('multiPageTestingDataSasPropertiesV3')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2": {
-            "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('multiPageTestingDataContainer2'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('multiPageTestingDataSasProperties2V3')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('selectionMarkTrainingDataContainer'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('selectionMarkTrainingDataSasPropertiesV3')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_TABLE_VARIABLE_ROWS_CONTAINER_SAS_URL": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasPropertiesV3')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_TABLE_FIXED_ROWS_CONTAINER_SAS_URL": {
-          "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesFixedRowsContainer'), '-v3?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesFixedRowsSasPropertiesV3')).serviceSasToken)]"
-        },
-        "DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_CONTAINER_SAS_URL": {
+        "DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL": {
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifier'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
         },
@@ -334,11 +298,7 @@
         },
         "DOCUMENTINTELLIGENCE_RESOURCE_ID": {
             "type": "string",
-            "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName'))]"
-        },
-        "PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL": {
-            "type": "string",
-            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '-v3', '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasPropertiesV3')).serviceSasToken)]"
+            "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('documentIntelligenceBaseName'))]"
         }
     }
 }

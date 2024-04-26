@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from marshmallow import Schema
 
@@ -49,7 +49,7 @@ class ImportComponent(Component):
         source: Optional[Dict] = None,
         output: Optional[Dict] = None,
         is_deterministic: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.IMPORT
         # Set default base path
@@ -72,18 +72,25 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
+        # TODO: Bug Item number: 2897665
+        res: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(ImportComponent, self)._to_dict()}
+        )
+        return res
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return ImportComponentSchema(context=context)
 
     @classmethod
-    def _parse_args_description_from_docstring(cls, docstring):
-        return parse_args_description_from_docstring(docstring)
+    def _parse_args_description_from_docstring(cls, docstring: str) -> Dict:
+        res: dict = parse_args_description_from_docstring(docstring)
+        return res
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(ImportComponent, self).__str__()
+            toYaml: str = self._to_yaml()
+            return toYaml
+        except BaseException:  # pylint: disable=W0718
+            toStr: str = super(ImportComponent, self).__str__()
+            return toStr

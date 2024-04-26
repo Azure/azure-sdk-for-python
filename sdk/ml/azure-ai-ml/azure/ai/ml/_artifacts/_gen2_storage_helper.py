@@ -11,10 +11,12 @@ import time
 import uuid
 from pathlib import Path, PurePosixPath
 from typing import Dict, List, Optional, Union
-from typing_extensions import Literal
-from colorama import Fore
 
-from azure.ai.ml._artifacts._constants import UPLOAD_CONFIRMATION, FILE_SIZE_WARNING
+from colorama import Fore
+from typing_extensions import Literal
+
+from azure.ai.ml._artifacts._constants import FILE_SIZE_WARNING, UPLOAD_CONFIRMATION
+from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml._utils._asset_utils import (
     AssetNotChangedError,
     IgnoreFile,
@@ -24,7 +26,6 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceExistsError
@@ -133,10 +134,10 @@ class Gen2StorageClient:
                 time.sleep(0.5)
             self._set_confirmation_metadata(name, version)
         except AssetNotChangedError:
-            name = self.name
-            version = self.version
+            name = str(self.name)
+            version = str(self.version)
 
-        artifact_info = {
+        artifact_info: Dict = {
             "remote path": dest,
             "name": name,
             "version": version,
@@ -155,7 +156,7 @@ class Gen2StorageClient:
         overwritten with a complete upload.
         """
         try:
-            if self.directory_client.exists():
+            if self.directory_client is not None and self.directory_client.exists():
                 metadata = self.directory_client.get_directory_properties().metadata
 
                 if (
@@ -164,7 +165,7 @@ class Gen2StorageClient:
                     self.name = metadata.get("name")
                     self.version = metadata.get("version")
                     raise AssetNotChangedError
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=W0718
             # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
                 msg = (
@@ -181,7 +182,8 @@ class Gen2StorageClient:
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
-        self.directory_client.set_metadata(_build_metadata_dict(name, version))
+        if self.directory_client is not None:
+            self.directory_client.set_metadata(_build_metadata_dict(name, version))
 
     def download(self, starts_with: str, destination: Union[str, os.PathLike] = Path.home()) -> None:
         """Downloads all items inside a specified filesystem directory with the prefix `starts_with` to the destination

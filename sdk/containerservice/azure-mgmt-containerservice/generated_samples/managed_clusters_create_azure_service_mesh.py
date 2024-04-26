@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservice import ContainerServiceClient
 
 """
@@ -76,7 +79,7 @@ def main():
                             }
                         },
                         "components": {
-                            "egressGateways": [{"enabled": True, "nodeSelector": {"istio": "egress"}}],
+                            "egressGateways": [{"enabled": True}],
                             "ingressGateways": [{"enabled": True, "mode": "Internal"}],
                         },
                     },
@@ -92,6 +95,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-10-01/examples/ManagedClustersCreate_AzureServiceMesh.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-02-01/examples/ManagedClustersCreate_AzureServiceMesh.json
 if __name__ == "__main__":
     main()

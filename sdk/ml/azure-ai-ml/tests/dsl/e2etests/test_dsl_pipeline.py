@@ -2504,6 +2504,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_node_identity_with_component(self, client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func = load_component(path)
@@ -2662,6 +2663,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (

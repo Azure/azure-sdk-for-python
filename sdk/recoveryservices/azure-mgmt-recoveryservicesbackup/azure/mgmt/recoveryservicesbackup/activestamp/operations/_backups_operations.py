@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,7 +47,7 @@ def build_trigger_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -130,7 +130,6 @@ class BackupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -144,7 +143,7 @@ class BackupsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -165,11 +164,10 @@ class BackupsOperations:
         :param protected_item_name: Backup item for which backup needs to be triggered. Required.
         :type protected_item_name: str
         :param parameters: resource backup request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -183,7 +181,7 @@ class BackupsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.BackupRequestResource, IO],
+        parameters: Union[_models.BackupRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Triggers backup for specified backed up item. This is an asynchronous operation. To know the
@@ -201,14 +199,10 @@ class BackupsOperations:
         :type container_name: str
         :param protected_item_name: Backup item for which backup needs to be triggered. Required.
         :type protected_item_name: str
-        :param parameters: resource backup request. Is either a BackupRequestResource type or a IO
-         type. Required.
+        :param parameters: resource backup request. Is either a BackupRequestResource type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupRequestResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,7 +230,7 @@ class BackupsOperations:
         else:
             _json = self._serialize.body(parameters, "BackupRequestResource")
 
-        request = build_trigger_request(
+        _request = build_trigger_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -247,16 +241,15 @@ class BackupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.trigger.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -266,8 +259,4 @@ class BackupsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    trigger.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/backup"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

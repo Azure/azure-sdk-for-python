@@ -5,7 +5,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
@@ -22,8 +22,14 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import MlException
 
 from .job import Job
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import Import
+    from azure.ai.ml.entities._component.import_component import ImportComponent
 
 module_logger = logging.getLogger(__name__)
 
@@ -39,7 +45,7 @@ class ImportSource(ABC):
         self.connection = connection
 
     @abstractmethod
-    def _to_job_inputs(self) -> Dict[str, str]:
+    def _to_job_inputs(self) -> Dict[str, Optional[str]]:
         pass
 
     @classmethod
@@ -151,7 +157,7 @@ class ImportJob(Job, JobIOMixin):
         experiment_name: Optional[str] = None,
         source: Optional[ImportSource] = None,
         output: Optional[Output] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.IMPORT
 
@@ -169,20 +175,26 @@ class ImportJob(Job, JobIOMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _to_rest_object(self) -> JobBaseData:
         # TODO: Remove in PuP
         if not is_private_preview_enabled():
-            raise Exception(JobType.IMPORT + " job not supported.")
+            msg = JobType.IMPORT + " job not supported."
+            raise MlException(message=msg, no_personal_data_message=msg)
+
+        _inputs = self.source._to_job_inputs() if self.source is not None else None  # pylint: disable=protected-access
+        if self.compute is None:
+            msg = "compute cannot be None."
+            raise MlException(message=msg, no_personal_data_message=msg)
+
         properties = RestCommandJob(
             display_name=self.display_name,
             description=self.description,
             compute_id=self.compute,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(
-                self.source._to_job_inputs(), job_type=self.type  # pylint: disable=protected-access
-            ),
+            inputs=to_rest_dataset_literal_inputs(_inputs, job_type=self.type),  # pylint: disable=protected-access
             outputs=to_rest_data_outputs({"output": self.output}),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
             # No longer applicable once new import job type is ready on MFE in PuP
@@ -201,7 +213,7 @@ class ImportJob(Job, JobIOMixin):
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "ImportJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "ImportJob":
         loaded_data = load_from_dict(ImportJobSchema, data, context, additional_message, **kwargs)
         return ImportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
@@ -224,12 +236,11 @@ class ImportJob(Job, JobIOMixin):
         )
         return import_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ImportComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "ImportComponent":
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated import component.
         :rtype: ImportComponent
         """
@@ -238,35 +249,36 @@ class ImportJob(Job, JobIOMixin):
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         context = context or {BASE_PATH_CONTEXT_KEY: Path("import/")}
 
+        _inputs = self.source._to_job_inputs() if self.source is not None else None  # pylint: disable=protected-access
+
         # Create anonymous command component with default version as 1
         return ImportComponent(
             is_anonymous=True,
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
             source=self._to_inputs(
-                inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
+                inputs=_inputs,  # pylint: disable=protected-access
                 pipeline_job_dict=pipeline_job_dict,
             ),
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Import":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "Import":
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated import node.
         :rtype: Import
         """
         from azure.ai.ml.entities._builders import Import
 
         component = self._to_component(context, **kwargs)
-
+        _inputs = self.source._to_job_inputs() if self.source is not None else None  # pylint: disable=protected-access
         return Import(
             component=component,
             compute=self.compute,
-            inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
+            inputs=_inputs,  # pylint: disable=protected-access
             outputs={"output": self.output},
             description=self.description,
             display_name=self.display_name,

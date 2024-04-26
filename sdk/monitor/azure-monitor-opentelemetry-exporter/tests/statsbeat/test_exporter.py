@@ -52,12 +52,10 @@ class TestStatsbeatExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "false"
-        cls._exporter = _StatsBeatExporter()
+        cls._exporter = _StatsBeatExporter(
+            disable_offline_storage=True,
+        )
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
-
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(cls._exporter.storage._path, True)
 
     @mock.patch(
         'azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics')

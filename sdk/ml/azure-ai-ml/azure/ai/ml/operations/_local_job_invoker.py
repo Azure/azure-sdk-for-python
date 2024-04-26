@@ -16,10 +16,7 @@ import urllib.parse
 import zipfile
 from pathlib import Path
 from threading import Thread
-from typing import Dict, Optional, Tuple
-
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import AzureError
+from typing import Any, Dict, Optional, Tuple
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -33,13 +30,15 @@ from azure.ai.ml.constants._common import (
     LOCAL_JOB_FAILURE_MSG,
     DefaultOpenEncoding,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, MlException
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import AzureError
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 
 
-def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: bytes) -> Path:
+def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: Any) -> Path:
     temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_definition.name)
     temp_dir.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(io.BytesIO(zip_content)) as zip_ref:
@@ -49,8 +48,8 @@ def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: bytes) -> 
 
 def _get_creationflags_and_startupinfo_for_background_process(
     os_override: Optional[str] = None,
-) -> None:
-    args = {
+) -> Dict:
+    args: Dict = {
         "startupinfo": None,
         "creationflags": None,
         "stdin": None,
@@ -70,9 +69,10 @@ def _get_creationflags_and_startupinfo_for_background_process(
         CREATE_NEW_CONSOLE = 0x00000010
         args["creationflags"] = CREATE_NEW_CONSOLE
 
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = subprocess.SW_HIDE
+        # Bug Item number: 2895261
+        startupinfo = subprocess.STARTUPINFO()  # type: ignore
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # type: ignore
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # type: ignore
         args["startupinfo"] = startupinfo
 
     else:
@@ -144,10 +144,10 @@ def get_execution_service_response(
 
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
-        body = json.loads(body)
-        response = requests_pipeline.post(url, json=body, headers={"Authorization": "Bearer " + token})
+        body_dict: Dict = json.loads(body)
+        response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
-        return (response.content, body.get("SnapshotId", None))
+        return (response.content, body_dict.get("SnapshotId", None))
     except AzureError as err:
         raise SystemExit(err) from err
     except Exception as e:
@@ -161,6 +161,8 @@ def get_execution_service_response(
 
 
 def is_local_run(job_definition: JobBaseData) -> bool:
+    if not job_definition.properties.services:
+        return False
     local = job_definition.properties.services.get("Local", None)
     return local is not None and EXECUTION_SERVICE_URL_KEY in local.endpoint
 
@@ -196,7 +198,7 @@ class CommonRuntimeHelper:
         "information or re-submit with flag --use-local-runtime to try running on your local runtime: {}"
     )
 
-    def __init__(self, job_name):
+    def __init__(self, job_name: str):
         self.common_runtime_temp_folder = os.path.join(Path.home(), ".azureml-common-runtime", job_name)
         if os.path.exists(self.common_runtime_temp_folder):
             shutil.rmtree(self.common_runtime_temp_folder)
@@ -212,7 +214,8 @@ class CommonRuntimeHelper:
             os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
 
-    def get_docker_client(self, registry: Dict[str, str]) -> "docker.DockerClient":
+    # Bug Item number: 2885723
+    def get_docker_client(self, registry: Dict) -> "docker.DockerClient":  # type: ignore
         """Retrieves the Docker client for performing docker operations.
 
         :param registry: Registry information
@@ -223,12 +226,14 @@ class CommonRuntimeHelper:
         try:
             client = docker.from_env(version="auto")
         except docker.errors.DockerException as e:
-            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e)) from e
+            msg = self.DOCKER_CLIENT_FAILURE_MSG.format(e)
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
         try:
             client.version()
         except Exception as e:
-            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e)) from e
+            msg = self.DOCKER_DAEMON_FAILURE_MSG.format(e)
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
         if registry:
             try:
@@ -244,7 +249,8 @@ class CommonRuntimeHelper:
 
         return client
 
-    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:
+    # Bug Item number: 2885719
+    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:  # type: ignore
         """Copy file/folder from container to local machine.
 
         :param container: Docker container
@@ -264,9 +270,10 @@ class CommonRuntimeHelper:
                     tar.extract(file_name, os.path.dirname(path_in_host))
             os.remove(tar_file)
         except docker.errors.APIError as e:
-            raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}") from e
+            msg = f"Copying {path_in_container} from container has failed. Detailed message: {e}"
+            raise MlException(message=msg, no_personal_data_message=msg) from e  # pylint: disable=W0718
 
-    def get_common_runtime_info_from_response(self, response: Dict[str, str]) -> Tuple[Dict[str, str], str]:
+    def get_common_runtime_info_from_response(self, response: Any) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.
 
         :param response: Content of zip file from Execution Service containing all the
@@ -289,7 +296,7 @@ class CommonRuntimeHelper:
 
         return bootstrapper_json, job_spec
 
-    def get_bootstrapper_binary(self, bootstrapper_info: Dict[str, str]) -> None:
+    def get_bootstrapper_binary(self, bootstrapper_info: Dict) -> None:
         """Copy bootstrapper binary from the bootstrapper image to local machine.
 
         :param bootstrapper_info:
@@ -298,7 +305,7 @@ class CommonRuntimeHelper:
         Path(self.common_runtime_temp_folder).mkdir(parents=True, exist_ok=True)
 
         # Pull and build the docker image
-        registry = bootstrapper_info.get("registry")
+        registry: Any = bootstrapper_info.get("registry")
         docker_client = self.get_docker_client(registry)
         repo_prefix = bootstrapper_info.get("repo_prefix")
         repository = registry.get("url")
@@ -365,7 +372,7 @@ class CommonRuntimeHelper:
         process.kill()
         raise RuntimeError(LOCAL_JOB_FAILURE_MSG.format(self.stderr.read()))
 
-    def check_bootstrapper_process_status(self, bootstrapper_process: subprocess.Popen) -> int:
+    def check_bootstrapper_process_status(self, bootstrapper_process: subprocess.Popen) -> Optional[int]:
         """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
@@ -407,13 +414,14 @@ def start_run_if_local(
         temp_dir = unzip_to_temporary_file(job_definition, zip_content)
         invoke_command(temp_dir)
     except Exception as e:
-        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
+        msg = LOCAL_JOB_FAILURE_MSG.format(e)
+        raise MlException(message=msg, no_personal_data_message=msg) from e
 
     return snapshot_id
 
 
-def _log_subprocess(output_io, file, show_in_console=False):
-    def log_subprocess():
+def _log_subprocess(output_io: Any, file: Any, show_in_console: bool = False) -> None:
+    def log_subprocess() -> None:
         for line in iter(output_io.readline, ""):
             if show_in_console:
                 print(line, end="")

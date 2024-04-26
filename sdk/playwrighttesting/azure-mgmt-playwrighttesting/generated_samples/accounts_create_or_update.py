@@ -32,14 +32,7 @@ def main():
     response = client.accounts.begin_create_or_update(
         resource_group_name="dummyrg",
         name="myPlaywrightAccount",
-        resource={
-            "location": "westus",
-            "properties": {
-                "dashboardUri": "https://dashboard.00000000-0000-0000-0000-000000000000.domain.com",
-                "regionalAffinity": "Enabled",
-            },
-            "tags": {"Team": "Dev Exp"},
-        },
+        resource={"location": "westus", "properties": {"regionalAffinity": "Enabled"}, "tags": {"Team": "Dev Exp"}},
     ).result()
     print(response)
 

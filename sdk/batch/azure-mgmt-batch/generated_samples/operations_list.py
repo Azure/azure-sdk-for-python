@@ -34,6 +34,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-05-01/examples/OperationsList.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-02-01/examples/OperationsList.json
 if __name__ == "__main__":
     main()

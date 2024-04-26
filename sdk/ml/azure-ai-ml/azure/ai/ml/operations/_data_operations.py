@@ -5,9 +5,11 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 import os
+import time
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -23,6 +25,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -71,6 +75,7 @@ from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
     ErrorTarget,
+    MlException,
     ValidationErrorType,
     ValidationException,
 )
@@ -79,7 +84,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -108,14 +113,16 @@ class DataOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
+        service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._compute_operation = service_client_012024_preview.compute
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -124,7 +131,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -184,7 +191,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    def _get(self, name: str, version: Optional[str] = None) -> Data:
+    def _get(self, name: Optional[str], version: Optional[str] = None) -> Data:
         if version:
             return (
                 self._operation.get(
@@ -219,8 +226,8 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
+    @monitor_with_activity(ops_logger, "Data.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:  # type: ignore
         """Get the specified data asset.
 
         :param name: Name of data asset.
@@ -271,7 +278,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -320,7 +327,7 @@ class DataOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-except
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -417,9 +424,9 @@ class DataOperations(_ScopeDependentOperations):
                     ) from ex
             raise ex
 
-    @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
-    def import_data(self, data_import: DataImport, **kwargs) -> PipelineJob:
+    def import_data(self, data_import: DataImport, **kwargs: Any) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
 
         :param data_import: DataImport object.
@@ -437,7 +444,7 @@ class DataOperations(_ScopeDependentOperations):
                 :caption: Import data assets example.
         """
 
-        experiment_name = "data_import_" + data_import.name
+        experiment_name = "data_import_" + str(data_import.name)
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
 
         # avoid specifying auto_delete_setting in job output now
@@ -446,8 +453,8 @@ class DataOperations(_ScopeDependentOperations):
         # block cumtomer specified path on managed datastore
         data_import.path = _validate_workspace_managed_datastore(data_import.path)
 
-        if "${{name}}" not in data_import.path:
-            data_import.path = data_import.path.rstrip("/") + "/${{name}}"
+        if "${{name}}" not in str(data_import.path):
+            data_import.path = data_import.path.rstrip("/") + "/${{name}}"  # type: ignore
         import_job = import_data_func(
             description=data_import.description or experiment_name,
             display_name=experiment_name,
@@ -457,7 +464,7 @@ class DataOperations(_ScopeDependentOperations):
             outputs={
                 "sink": Output(
                     type=data_import.type,
-                    path=data_import.path,
+                    path=data_import.path,  # type: ignore
                     name=data_import.name,
                     version=data_import.version,
                 )
@@ -477,13 +484,13 @@ class DataOperations(_ScopeDependentOperations):
             job=import_pipeline, skip_validation=True, **kwargs
         )
 
-    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     def list_materialization_status(
         self,
         name: str,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[PipelineJob]:
         """List materialization jobs of the asset.
 
@@ -504,15 +511,18 @@ class DataOperations(_ScopeDependentOperations):
                 :caption: List materialization jobs example.
         """
 
-        return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
-            job_type="Pipeline",
-            asset_name=name,
-            list_view_type=list_view_type,
-            **kwargs,
+        return cast(
+            Iterable[PipelineJob],
+            self._all_operations.all_operations[AzureMLResourceType.JOB].list(
+                job_type="Pipeline",
+                asset_name=name,
+                list_view_type=list_view_type,
+                **kwargs,
+            ),
         )
 
-    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
-    def _validate(self, data: Data) -> Union[List[str], None]:
+    @monitor_with_activity(ops_logger, "Data.Validate", ActivityType.INTERNALCALL)
+    def _validate(self, data: Data) -> Optional[List[str]]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
             raise ValidationException(
@@ -536,7 +546,7 @@ class DataOperations(_ScopeDependentOperations):
                         requests_pipeline=self._requests_pipeline,
                     )
                     metadata_yaml_path = None
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return None
@@ -550,7 +560,7 @@ class DataOperations(_ScopeDependentOperations):
                     mltable_metadata_dict=metadata_contents,
                     mltable_schema=mltable_metadata_schema,
                 )
-            return metadata.referenced_uris()
+            return cast(Optional[List[str]], metadata.referenced_uris())
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
@@ -559,29 +569,30 @@ class DataOperations(_ScopeDependentOperations):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
-            _assert_local_path_matches_asset_type(abs_path, asset_type)
+            _assert_local_path_matches_asset_type(str(abs_path), asset_type)
 
         return None
 
-    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
+    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: Optional[str]) -> Optional[Dict]:
         if mltable_schema_url is None:
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
-            return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
-        except Exception:  # pylint: disable=broad-except
+            return cast(Optional[Dict], download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline))
+        except Exception:  # pylint: disable=W0718
             module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
             )
             return None
 
-    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive a data asset.
 
@@ -613,13 +624,14 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived data asset.
 
@@ -669,17 +681,17 @@ class DataOperations(_ScopeDependentOperations):
         )
         return self.get(name, version=latest_version)
 
-    @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "data.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self,
-        name,
-        version,
+        name: str,
+        version: str,
         *,
-        share_with_name,
-        share_with_version,
-        registry_name,
-        **kwargs,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
+        **kwargs: Any,
     ) -> Data:
         """Share a data asset from workspace to registry.
 
@@ -733,9 +745,100 @@ class DataOperations(_ScopeDependentOperations):
         with self._set_registry_client(registry_name):
             return self.create_or_update(data_ref)
 
+    @monitor_with_activity(ops_logger, "data.Mount", ActivityType.PUBLICAPI)
+    @experimental
+    def mount(
+        self,
+        path: str,
+        mount_point: Optional[str] = None,
+        mode: str = "ro_mount",
+        debug: bool = False,
+        persistent: bool = False,
+        **_kwargs,
+    ) -> None:
+        """Mount a data asset to a local path, so that you can access data inside it
+        under a local path with any tools of your choice.
+
+        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :type path: str
+        :param mount_point: A local path used as mount point.
+        :type mount_point: str
+        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :type mode: str
+        :param debug: Whether to enable verbose logging.
+        :type debug: bool
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+                where the 'CI_NAME' environment variable is set."
+        :type persistent: bool
+        :return: None
+        """
+
+        assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
+        read_only = mode == "ro_mount"
+        assert read_only, "read-write mount for data asset is not supported yet"
+
+        ci_name = os.environ.get("CI_NAME")
+        assert not persistent or (
+            persistent and ci_name is not None
+        ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
+
+        try:
+            from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        except ImportError as exc:
+            raise MlException(  # pylint: disable=W0718
+                "Mount operations requires package azureml-dataprep-rslex installed. "
+                + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            ) from exc
+
+        uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(
+            self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
+        )
+        if persistent and ci_name is not None:
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
+            self._compute_operation.update_data_mounts(
+                self._resource_group_name,
+                self._workspace_name,
+                ci_name,
+                [
+                    ComputeInstanceDataMount(
+                        source=uri,
+                        source_type="URI",
+                        mount_name=mount_name,
+                        mount_action="Mount",
+                        mount_path=mount_point or "",
+                    )
+                ],
+                api_version="2021-01-01",
+            )
+            print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
+            while True:
+                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
+                mounts = compute.properties.properties.data_mounts
+                try:
+                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
+                    if mount.mount_state == "Mounted":
+                        print(f"Mounted [name: {mount_name}].")
+                        break
+                    if mount.mount_state == "MountRequested":
+                        pass
+                    elif mount.mount_state == "MountFailed":
+                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
+                    else:
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
+                except IndexError:
+                    pass
+                time.sleep(5)
+
+        else:
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
+                uri, mount_point, read_only, debug, credential=self._operation._config.credential
+            )
+
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the data operations.
 
         :param registry_name: Name of the registry.
@@ -765,7 +868,7 @@ class DataOperations(_ScopeDependentOperations):
 
 def _assert_local_path_matches_asset_type(
     local_path: str,
-    asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER],
+    asset_type: str,
 ) -> None:
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):

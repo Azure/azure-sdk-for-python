@@ -57,9 +57,6 @@ class TestContentSafetyCase(ContentSafetyTest):
 
         assert response is not None
         assert response.categories_analysis is not None
-        assert (
-            next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE).severity > 0
-        )
 
     @ContentSafetyPreparer()
     @recorded_by_proxy

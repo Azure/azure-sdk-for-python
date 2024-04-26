@@ -151,6 +151,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
 
+    async def __aenter__(self) -> "ServiceBusSender":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
     @classmethod
     def _from_connection_string(
         cls, conn_str: str, **kwargs: Any
@@ -168,6 +177,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+        :returns: The ServiceBusSender
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.

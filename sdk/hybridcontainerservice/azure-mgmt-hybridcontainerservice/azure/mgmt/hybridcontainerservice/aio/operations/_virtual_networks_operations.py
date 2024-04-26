@@ -68,9 +68,9 @@ class VirtualNetworksOperations:
     async def retrieve(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
     ) -> _models.VirtualNetwork:
-        """Gets the virtual network.
+        """Gets the specified virtual network resource.
 
-        Gets the Hybrid AKS virtual network.
+        Gets the specified virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -213,16 +213,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource definition. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -252,16 +252,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource definition. Required.
         :type virtual_networks: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -289,16 +289,17 @@ class VirtualNetworksOperations:
         virtual_networks: Union[_models.VirtualNetwork, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Is either a VirtualNetwork type or a IO type. Required.
+        :param virtual_networks: Virtual Network resource definition. Is either a VirtualNetwork type
+         or a IO type. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetwork or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -424,9 +425,9 @@ class VirtualNetworksOperations:
     async def begin_delete(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes the virtual network.
+        """Deletes the specified virtual network resource.
 
-        Deletes the Hybrid AKS virtual network.
+        Deletes the specified virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -549,15 +550,11 @@ class VirtualNetworksOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
-        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("VirtualNetwork", pipeline_response)
 
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
@@ -575,16 +572,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource patch definition. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -614,16 +611,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource patch definition. Required.
         :type virtual_networks: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -651,16 +648,17 @@ class VirtualNetworksOperations:
         virtual_networks: Union[_models.VirtualNetworksPatch, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Is either a VirtualNetworksPatch type or a IO type. Required.
+        :param virtual_networks: Virtual Network resource patch definition. Is either a
+         VirtualNetworksPatch type or a IO type. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -734,9 +732,9 @@ class VirtualNetworksOperations:
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetwork"]:
-        """List virtual networks by resource group.
+        """Lists the virtual networks in the specified resource group.
 
-        Lists the Hybrid AKS virtual networks by resource group.
+        Lists the virtual networks in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -824,9 +822,9 @@ class VirtualNetworksOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.VirtualNetwork"]:
-        """List virtual networks by subscription.
+        """Lists the virtual networks in the specified subscription.
 
-        Lists the Hybrid AKS virtual networks by subscription.
+        Lists the virtual networks in the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)

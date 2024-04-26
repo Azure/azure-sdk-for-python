@@ -6,9 +6,9 @@
 
 import os
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BuildContext as RestBuildContext
@@ -61,16 +61,17 @@ class BuildContext:
         return RestBuildContext(context_uri=self.path, dockerfile_path=self.dockerfile_path)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestBuildContext) -> None:
+    def _from_rest_object(cls, rest_obj: RestBuildContext) -> "BuildContext":
         return BuildContext(
             path=rest_obj.context_uri,
             dockerfile_path=rest_obj.dockerfile_path,
         )
 
-    def __eq__(self, other) -> bool:
-        return self.dockerfile_path == other.dockerfile_path and self.path == other.path
+    def __eq__(self, other: Any) -> bool:
+        res: bool = self.dockerfile_path == other.dockerfile_path and self.path == other.path
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
 
@@ -116,12 +117,15 @@ class Environment(Asset, LocalizableMixin):
         description: Optional[str] = None,
         image: Optional[str] = None,
         build: Optional[BuildContext] = None,
-        conda_file: Optional[Union[str, os.PathLike]] = None,
+        conda_file: Optional[Union[str, os.PathLike, Dict]] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         datastore: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
+        self._arm_type: str = ""
+        self.latest_version: str = ""  # type: ignore[assignment]
+        self.image: Optional[str] = None
         inference_config = kwargs.pop("inference_config", None)
         os_type = kwargs.pop("os_type", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
@@ -171,16 +175,16 @@ class Environment(Asset, LocalizableMixin):
                 )
 
     @property
-    def conda_file(self) -> Dict:
+    def conda_file(self) -> Optional[Union[str, os.PathLike, Dict]]:
         """Conda environment specification.
 
         :return: Conda dependencies loaded from `conda_file` param.
-        :rtype: Dict
+        :rtype: Optional[Union[str, os.PathLike]]
         """
         return self._conda_file
 
     @conda_file.setter
-    def conda_file(self, value: Union[str, os.PathLike, Dict]) -> None:
+    def conda_file(self, value: Optional[Union[str, os.PathLike, Dict]]) -> None:
         """Set conda environment specification.
 
         :param value: A path to a local conda dependencies yaml file or a loaded yaml dictionary of dependencies.
@@ -197,7 +201,7 @@ class Environment(Asset, LocalizableMixin):
         data: Optional[dict] = None,
         yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Environment":
         params_override = params_override or []
         data = data or {}
@@ -205,7 +209,8 @@ class Environment(Asset, LocalizableMixin):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(EnvironmentSchema, data, context, **kwargs)
+        res: Environment = load_from_dict(EnvironmentSchema, data, context, **kwargs)
+        return res
 
     def _to_rest_object(self) -> EnvironmentVersion:
         self.validate()
@@ -244,18 +249,20 @@ class Environment(Asset, LocalizableMixin):
             version=arm_id.asset_version,
             description=rest_env_version.description,
             tags=rest_env_version.tags,
-            creation_context=SystemData._from_rest_object(env_rest_object.system_data)
-            if env_rest_object.system_data
-            else None,
+            creation_context=(
+                SystemData._from_rest_object(env_rest_object.system_data) if env_rest_object.system_data else None
+            ),
             is_anonymous=rest_env_version.is_anonymous,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
-            if rest_env_version.intellectual_property
-            else None,
+            intellectual_property=(
+                IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
+                if rest_env_version.intellectual_property
+                else None
+            ),
         )
 
         if rest_env_version.conda_file:
@@ -280,7 +287,7 @@ class Environment(Asset, LocalizableMixin):
         env.version = None
         return env
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {
@@ -292,9 +299,10 @@ class Environment(Asset, LocalizableMixin):
         }
 
     def _to_dict(self) -> Dict:
-        return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
-    def validate(self):
+    def validate(self) -> None:
         """Validate the environment by checking its name, image and build
 
         .. admonition:: Example:
@@ -338,7 +346,7 @@ class Environment(Asset, LocalizableMixin):
             )
             log_and_raise_error(err)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Environment):
             return NotImplemented
         return (
@@ -358,12 +366,12 @@ class Environment(Asset, LocalizableMixin):
             and self._intellectual_property == other._intellectual_property
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def _generate_anonymous_name_version(
         self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None
-    ):
+    ) -> None:
         hash_str = ""
         if source == "image":
             hash_str = hash_str.join(get_md5_string(self.image))
@@ -372,17 +380,18 @@ class Environment(Asset, LocalizableMixin):
             if conda_file:
                 hash_str = hash_str.join(get_md5_string(conda_file))
         if source == "build":
-            if not self.build.dockerfile_path:
+            if self.build is not None and not self.build.dockerfile_path:
                 hash_str = hash_str.join(get_md5_string(self._upload_hash))
             else:
-                hash_str = hash_str.join(get_md5_string(self._upload_hash)).join(
-                    get_md5_string(self.build.dockerfile_path)
-                )
+                if self.build is not None:
+                    hash_str = hash_str.join(get_md5_string(self._upload_hash)).join(
+                        get_md5_string(self.build.dockerfile_path)
+                    )
         version_hash = get_md5_string(hash_str)
         self.version = version_hash
         self.name = ANONYMOUS_ENV_NAME
 
-    def _localize(self, base_path: str):
+    def _localize(self, base_path: str) -> None:
         """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
         base_path.
 
@@ -410,24 +419,25 @@ class _DockerBuild:
         self.dockerfile = _deserialize(base_path, dockerfile)
 
     @classmethod
-    def _to_rest_object(cls):
+    def _to_rest_object(cls) -> None:
         return None
 
-    def _from_rest_object(self, rest_obj) -> None:
+    def _from_rest_object(self, rest_obj: Any) -> None:
         self.dockerfile = rest_obj.dockerfile
 
-    def __eq__(self, other) -> bool:
-        return self.dockerfile == other.dockerfile
+    def __eq__(self, other: Any) -> bool:
+        res: bool = self.dockerfile == other.dockerfile
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
 
 def _deserialize(
-    base_path: Union[str, os.PathLike],
-    input: Union[str, os.PathLike, Dict],  # pylint: disable=redefined-builtin
+    base_path: Optional[Union[str, os.PathLike]],
+    input: Optional[Union[str, os.PathLike, Dict]],  # pylint: disable=redefined-builtin
     is_conda: bool = False,
-) -> Union[str, Dict]:
+) -> Optional[Union[str, os.PathLike, Dict]]:
     """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
@@ -442,6 +452,7 @@ def _deserialize(
 
     if input:
         path = _resolve_path(base_path=base_path, input=input)
+        data: Union[str, Dict] = ""
         if is_conda:
             data = load_yaml(path)
         else:
@@ -450,9 +461,7 @@ def _deserialize(
     return input
 
 
-def _resolve_path(
-    base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]
-) -> Path:  # pylint: disable=redefined-builtin
+def _resolve_path(base_path: Any, input: Any) -> Path:  # pylint: disable=redefined-builtin
     """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.

@@ -86,7 +86,7 @@ def get_hotel_index(name: str):
     ]
     vector_search = VectorSearch(
         profiles=[VectorSearchProfile(name="my-vector-config", algorithm_configuration_name="my-algorithms-config")],
-        algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
+        algorithms=[HnswAlgorithmConfiguration(name="my-algorithms-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
 
@@ -184,7 +184,7 @@ def simple_hybrid_search():
         vector_queries=[vector_query],
         select=["hotelId", "hotelName"],
     )
-    print(results.get_answers())
+
     for result in results:
         print(result)
     # [END simple_hybrid_search]

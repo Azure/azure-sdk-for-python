@@ -14,7 +14,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
+    <https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow>`__ for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
@@ -40,12 +40,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create an AuthorizationCodeCredential.
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AuthorizationCodeCredential":
         if self._client:
             await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         if self._client:
@@ -59,7 +59,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         redirect_uri: str,
         *,
         client_secret: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
@@ -81,7 +81,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
@@ -92,7 +92,9 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
-        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return await super(AuthorizationCodeCredential, self).get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
+        )
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

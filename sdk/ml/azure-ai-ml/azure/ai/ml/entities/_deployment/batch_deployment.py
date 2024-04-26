@@ -9,11 +9,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as BatchDeploymentData
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeploymentProperties as RestBatchDeployment
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchOutputAction
+from azure.ai.ml._restclient.v2024_01_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -21,8 +21,8 @@ from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
@@ -98,7 +98,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         compute: Optional[str] = None,
         resources: Optional[ResourceConfiguration] = None,
         output_file_name: Optional[str] = None,
-        output_action: Optional[BatchDeploymentOutputAction] = None,
+        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
         error_threshold: Optional[int] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         logging_level: Optional[str] = None,
@@ -110,9 +110,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -153,8 +153,15 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             self.resources = ResourceConfiguration(instance_count=instance_count)
 
     @property
-    def instance_count(self) -> int:
+    def instance_count(self) -> Optional[int]:
         return self.resources.instance_count if self.resources else None
+
+    @instance_count.setter
+    def instance_count(self, value: int) -> None:
+        if not self.resources:
+            self.resources = ResourceConfiguration()
+
+        self.resources.instance_count = value
 
     @property
     def provisioning_state(self) -> Optional[str]:
@@ -165,15 +172,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         """
         return self._provisioning_state
 
-    @instance_count.setter
-    def instance_count(self, value: int) -> None:
-        if not self.resources:
-            self.resources = ResourceConfiguration()
-
-        self.resources.instance_count = value
-
     def _to_dict(self) -> Dict:
-        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
     @classmethod
     def _rest_output_action_to_yaml_output_action(cls, rest_output_action: str) -> str:
@@ -185,7 +186,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         return output_switcher.get(rest_output_action, rest_output_action)
 
     @classmethod
-    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
+    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: Any) -> str:
         output_switcher = {
             BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
             BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
@@ -193,7 +194,8 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -206,29 +208,72 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         model = IdAssetReference(asset_id=self.model) if self.model else None
         environment = self.environment
 
-        batch_deployment = RestBatchDeployment(
-            compute=self.compute,
-            description=self.description,
-            resources=self.resources._to_rest_object() if self.resources else None,
-            code_configuration=code_config,
-            environment_id=environment,
-            model=model,
-            output_file_name=self.output_file_name,
-            output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
-            error_threshold=self.error_threshold,
-            retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
-            logging_level=self.logging_level,
-            mini_batch_size=self.mini_batch_size,
-            max_concurrency_per_instance=self.max_concurrency_per_instance,
-            environment_variables=self.environment_variables,
-            properties=self.properties,
-        )
+        batch_deployment: RestBatchDeployment = None
+        if isinstance(self.output_action, str):
+            batch_deployment = RestBatchDeployment(
+                compute=self.compute,
+                description=self.description,
+                resources=self.resources._to_rest_object() if self.resources else None,
+                code_configuration=code_config,
+                environment_id=environment,
+                model=model,
+                output_file_name=self.output_file_name,
+                output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
+                error_threshold=self.error_threshold,
+                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+                logging_level=self.logging_level,
+                mini_batch_size=self.mini_batch_size,
+                max_concurrency_per_instance=self.max_concurrency_per_instance,
+                environment_variables=self.environment_variables,
+                properties=self.properties,
+            )
+        else:
+            batch_deployment = RestBatchDeployment(
+                compute=self.compute,
+                description=self.description,
+                resources=self.resources._to_rest_object() if self.resources else None,
+                code_configuration=code_config,
+                environment_id=environment,
+                model=model,
+                output_file_name=self.output_file_name,
+                output_action=None,
+                error_threshold=self.error_threshold,
+                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+                logging_level=self.logging_level,
+                mini_batch_size=self.mini_batch_size,
+                max_concurrency_per_instance=self.max_concurrency_per_instance,
+                environment_variables=self.environment_variables,
+                properties=self.properties,
+            )
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
     @classmethod
-    def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, deployment: BatchDeploymentData
+    ) -> BatchDeploymentData:
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
+
+        if (
+            hasattr(deployment.properties, "deployment_configuration")
+            and deployment.properties.deployment_configuration is not None
+        ):
+            settings = deployment.properties.deployment_configuration.settings
+            deployment_comp_settings = {
+                "deployment_configuration_type": deployment.properties.deployment_configuration.deployment_configuration_type,  # pylint: disable=line-too-long
+                "componentDeployment.Settings.continue_on_step_failure": settings.get(
+                    "ComponentDeployment.Settings.continue_on_step_failure", None
+                ),
+                "default_datastore": settings.get("default_datastore", None),
+                "default_compute": settings.get("default_compute", None),
+            }
+            properties = {}
+            if deployment.properties.properties:
+                properties.update(deployment.properties.properties)
+            properties.update(deployment_comp_settings)
+        else:
+            properties = deployment.properties.properties
+
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)
             if deployment.properties.code_configuration
@@ -242,10 +287,12 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             model=modelId,
             environment=deployment.properties.environment_id,
             code_configuration=code_configuration,
-            output_file_name=deployment.properties.output_file_name
-            if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
-            == BatchDeploymentOutputAction.APPEND_ROW
-            else None,
+            output_file_name=(
+                deployment.properties.output_file_name
+                if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
+                == BatchDeploymentOutputAction.APPEND_ROW
+                else None
+            ),
             output_action=cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action),
             error_threshold=deployment.properties.error_threshold,
             retry_settings=BatchRetrySettings._from_rest_object(deployment.properties.retry_settings),
@@ -256,7 +303,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             environment_variables=deployment.properties.environment_variables,
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
-            properties=deployment.properties.properties,
+            properties=properties,
             creation_context=SystemData._from_rest_object(deployment.system_data),
             provisioning_state=deployment.properties.provisioning_state,
         )
@@ -269,7 +316,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "BatchDeployment":
         data = data or {}
         params_override = params_override or []
@@ -279,13 +326,14 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(BatchDeploymentSchema, data, context, **kwargs)
+        res: BatchDeployment = load_from_dict(BatchDeploymentSchema, data, context, **kwargs)
+        return res
 
     def _validate(self) -> None:
         self._validate_output_action()
 
     @classmethod
-    def _update_params(cls, params_override) -> None:
+    def _update_params(cls, params_override: Any) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):

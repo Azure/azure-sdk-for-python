@@ -27,6 +27,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
 )
+from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -189,18 +190,18 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
 
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.user.id"), "testId")
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
 
     def test_span_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -219,9 +220,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         envelope = exporter._span_to_envelope(test_span)
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE))
 
     def test_span_to_envelope_client_http(self):
         exporter = self._exporter
@@ -762,7 +763,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_type, "RequestData")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -842,9 +843,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
 
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
-        self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         
@@ -864,7 +865,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "net.peer.ip": "peer_ip"
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.location.ip"], "peer_ip")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
         # url
         span._attributes = {
@@ -902,14 +903,14 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         span._attributes = {
             "http.method": "GET",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
@@ -937,14 +938,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_type, "RequestData")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
         
-        self.assertEqual(envelope.tags["ai.location.ip"], "127.0.0.1")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "127.0.0.1")
         self.assertEqual(envelope.data.base_data.source, "test name/celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
 
@@ -1153,13 +1154,13 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
@@ -1204,13 +1205,13 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
@@ -1257,13 +1258,13 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")

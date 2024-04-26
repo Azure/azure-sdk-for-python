@@ -16,7 +16,6 @@ import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.mgmt.network.models
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
-
 from devtools_testutils import (
     AzureMgmtRecordedTestCase, recorded_by_proxy,
     ResourceGroupPreparer,

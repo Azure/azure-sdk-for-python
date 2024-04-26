@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
+from typing import Any, Optional, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -26,11 +27,11 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         self.evaluation_interval = evaluation_interval
 
     @classmethod
-    def _from_rest_object(cls, obj: RestEarlyTerminationPolicy) -> "EarlyTerminationPolicy":
+    def _from_rest_object(cls, obj: RestEarlyTerminationPolicy) -> Optional["EarlyTerminationPolicy"]:
         if not obj:
             return None
 
-        policy = None
+        policy: Any = None
         if obj.policy_type == EarlyTerminationPolicyType.BANDIT:
             policy = BanditPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
@@ -40,12 +41,13 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         if obj.policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
             policy = TruncationSelectionPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
-        return policy
+        return cast(Optional["EarlyTerminationPolicy"], policy)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, EarlyTerminationPolicy):
-            return NotImplementedError
-        return self._to_rest_object() == other._to_rest_object()
+            raise NotImplementedError
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class BanditPolicy(EarlyTerminationPolicy):

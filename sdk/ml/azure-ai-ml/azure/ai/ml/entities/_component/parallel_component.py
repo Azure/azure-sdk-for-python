@@ -5,7 +5,7 @@
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -106,7 +106,7 @@ class ParallelComponent(
         code: Optional[str] = None,  # promoted property from task.code
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -128,7 +128,7 @@ class ParallelComponent(
         # No validation on value passed here because in pipeline job, required code&environment maybe absent
         # and fill in later with job defaults.
         self.task = task
-        self.mini_batch_size = mini_batch_size
+        self.mini_batch_size: int = 0
         self.partition_keys = partition_keys
         self.input_data = input_data
         self.retry_settings = retry_settings
@@ -150,36 +150,36 @@ class ParallelComponent(
         self.instance_count = instance_count
         self.code = code
 
-        if self.mini_batch_size is not None:
+        if mini_batch_size is not None:
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
-            if not pattern.match(self.mini_batch_size):
+            if not pattern.match(mini_batch_size):
                 raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
 
             try:
-                self.mini_batch_size = int(self.mini_batch_size)
+                self.mini_batch_size = int(mini_batch_size)
             except ValueError as e:
-                unit = self.mini_batch_size[-2:].lower()
+                unit = mini_batch_size[-2:].lower()
                 if unit == "kb":
-                    self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024
+                    self.mini_batch_size = int(mini_batch_size[0:-2]) * 1024
                 elif unit == "mb":
-                    self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024
+                    self.mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024
                 elif unit == "gb":
-                    self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
+                    self.mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
                     raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
     @property
-    def instance_count(self) -> int:
+    def instance_count(self) -> Optional[int]:
         """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
         :rtype: Optional[int]
         """
-        return self.resources.instance_count if self.resources else None
+        return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
-    def instance_count(self, value: int):
+    def instance_count(self, value: int) -> None:
         """Set the value of the promoted property resources.instance_count.
 
         :param value: The value to set for resources.instance_count.
@@ -190,10 +190,11 @@ class ParallelComponent(
         if not self.resources:
             self.resources = JobResourceConfiguration(instance_count=value)
         else:
-            self.resources.instance_count = value
+            if not isinstance(self.resources, dict):
+                self.resources.instance_count = value
 
     @property
-    def code(self) -> str:
+    def code(self) -> Optional[str]:
         """Return value of promoted property task.code, which is a local or
         remote path pointing at source code.
 
@@ -203,7 +204,7 @@ class ParallelComponent(
         return self.task.code if self.task else None
 
     @code.setter
-    def code(self, value: str):
+    def code(self, value: str) -> None:
         """Set the value of the promoted property task.code.
 
         :param value: The value to set for task.code.
@@ -223,24 +224,26 @@ class ParallelComponent(
         :rtype: Dict
         """
 
-        obj = super()._to_ordered_dict_for_yaml_dump()
+        obj: dict = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
         if self.code and isinstance(self.code, str):
             obj["task"]["code"] = self.code
         return obj
 
     @property
-    def environment(self) -> str:
+    def environment(self) -> Optional[str]:
         """Return value of promoted property task.environment, indicate the
         environment that training job will run in.
 
         :return: Value of task.environment.
         :rtype: Optional[Environment, str]
         """
-        return self.task.environment if self.task else None
+        if self.task:
+            return cast(Optional[str], self.task.environment)
+        return None
 
     @environment.setter
-    def environment(self, value: str):
+    def environment(self, value: str) -> None:
         """Set the value of the promoted property task.environment.
 
         :param value: The value to set for task.environment.
@@ -286,14 +289,17 @@ class ParallelComponent(
         partition_keys = obj.properties.component_spec.get("partition_keys", None)
         if partition_keys:
             obj.properties.component_spec["partition_keys"] = json.loads(partition_keys)
-        return super()._from_rest_object_to_init_params(obj)
+        res: dict = super()._from_rest_object_to_init_params(obj)
+        return res
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return ParallelComponentSchema(context=context)
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(ParallelComponent, self).__str__()
+            toYaml: str = self._to_yaml()
+            return toYaml
+        except BaseException:  # pylint: disable=W0718
+            toStr: str = super(ParallelComponent, self).__str__()
+            return toStr

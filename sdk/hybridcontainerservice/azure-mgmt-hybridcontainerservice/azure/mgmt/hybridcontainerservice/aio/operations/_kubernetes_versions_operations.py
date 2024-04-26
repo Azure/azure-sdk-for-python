@@ -59,9 +59,9 @@ class KubernetesVersionsOperations:
     ) -> AsyncIterable["_models.KubernetesVersionProfile"]:
         """Lists the supported kubernetes versions.
 
-        Lists the supported kubernetes versions from the underlying custom location.
+        Lists the supported kubernetes versions for the specified custom location.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

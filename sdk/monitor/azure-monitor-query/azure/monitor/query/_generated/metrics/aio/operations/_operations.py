@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,8 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, cast
+from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar, cast
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -59,11 +60,12 @@ class MetricDefinitionsOperations:
 
     @distributed_trace
     def list(self, resource_uri: str, *, metricnamespace: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
-        :keyword metricnamespace: Metric namespace to query metric definitions for. Default value is
+        :keyword metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :paramtype metricnamespace: str
         :return: An iterator like instance of JSON object
@@ -84,16 +86,16 @@ class MetricDefinitionsOperations:
                     ],
                     "displayDescription": "str",  # Optional. Detailed description of this
                       metric.
-                    "id": "str",  # Optional. the resource identifier of the metric definition.
+                    "id": "str",  # Optional. The resource identifier of the metric definition.
                     "isDimensionRequired": bool,  # Optional. Flag to indicate whether the
                       dimension is required.
                     "metricAvailabilities": [
                         {
-                            "retention": "1 day, 0:00:00",  # Optional. the retention
+                            "retention": "1 day, 0:00:00",  # Optional. The retention
                               period for the metric at the specified timegrain.  Expressed as a
                               duration 'PT1M', 'P1D', etc.
-                            "timeGrain": "1 day, 0:00:00"  # Optional. the time grain
-                              specifies the aggregation interval for the metric. Expressed as a
+                            "timeGrain": "1 day, 0:00:00"  # Optional. The time grain
+                              specifies a supported aggregation interval for the metric. Expressed as a
                               duration 'PT1M', 'P1D', etc.
                         }
                     ],
@@ -103,14 +105,14 @@ class MetricDefinitionsOperations:
                         "value": "str",  # The invariant value. Required.
                         "localizedValue": "str"  # Optional. The display name.
                     },
-                    "namespace": "str",  # Optional. the namespace the metric belongs to.
-                    "primaryAggregationType": "str",  # Optional. the primary aggregation type
+                    "namespace": "str",  # Optional. The namespace the metric belongs to.
+                    "primaryAggregationType": "str",  # Optional. The primary aggregation type
                       value defining how to use the values for display. Known values are: "None",
                       "Average", "Count", "Minimum", "Maximum", and "Total".
-                    "resourceId": "str",  # Optional. the resource identifier of the resource
+                    "resourceId": "str",  # Optional. The resource identifier of the resource
                       that emitted the metric.
                     "supportedAggregationTypes": [
-                        "str"  # Optional. the collection of what aggregation types are
+                        "str"  # Optional. The collection of what aggregation types are
                           supported.
                     ],
                     "unit": "str"  # Optional. The unit of the metric. Known values are: "Count",
@@ -120,12 +122,11 @@ class MetricDefinitionsOperations:
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -139,14 +140,25 @@ class MetricDefinitionsOperations:
                 _request = build_metric_definitions_list_request(
                     resource_uri=resource_uri,
                     metricnamespace=metricnamespace,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
 
             return _request
@@ -209,8 +221,12 @@ class MetricsOperations:
         filter: Optional[str] = None,
         result_type: Optional[str] = None,
         metricnamespace: Optional[str] = None,
+        auto_adjust_timegrain: Optional[bool] = None,
+        validate_dimensions: Optional[bool] = None,
+        rollupby: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource. Required.
@@ -223,41 +239,51 @@ class MetricsOperations:
          span requested.
          *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
         :paramtype interval: ~datetime.timedelta
-        :keyword metricnames: The names of the metrics (comma separated) to retrieve. Special case: If
-         a metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
-         **'Metric%2Name1'**. Default value is None.
+        :keyword metricnames: The names of the metrics (comma separated) to retrieve. Default value is
+         None.
         :paramtype metricnames: str
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve. Default
-         value is None.
+        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
+         *Examples: average, minimum, maximum*. Default value is None.
         :paramtype aggregation: str
-        :keyword top: The maximum number of records to retrieve.
-         Valid only if $filter is specified.
+        :keyword top: The maximum number of records to retrieve per resource ID in the request.
+         Valid only if filter is specified.
          Defaults to 10. Default value is None.
         :paramtype top: int
         :keyword orderby: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
-         Examples: sum asc. Default value is None.
+         *Examples: sum asc*. Default value is None.
         :paramtype orderby: str
-        :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
-         Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
-         b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
-         eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
-         operator cannot separate two different metadata names. - Return all time series where A = a1, B
-         = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
-         where A = a1 **$filter=A eq 'a1' and B eq '\ *' and C eq '*\ '**. Special case: When dimension
-         name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
-         Instead of using $filter= "dim (test) 1 eq '\ *' " use **$filter= "dim %2528test%2529 1 eq '*\
-         ' "\ ** When dimension name is **\ dim (test) 3\ ** and dimension value is **\ dim3 (test) val\
-         ** Instead of using $filter= "dim (test) 3 eq 'dim3 (test) val' " use **\ $filter= "dim
-         %2528test%2529 3 eq 'dim3 %2528test%2529 val' "**. Default value is None.
+        :keyword filter: The **$filter** is used to reduce the set of metric data
+         returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
+         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
+         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **$filter=A
+         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the
+         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
+         series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
+         ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
+         B eq ‘\ *’ and C eq ‘*\ ’**. Default value is None.
         :paramtype filter: str
         :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
         :paramtype result_type: str
-        :keyword metricnamespace: Metric namespace to query metric definitions for. Default value is
+        :keyword metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :paramtype metricnamespace: str
+        :keyword auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
+         this metric, the API will return the result using the closest supported timespan. When set to
+         false, an error is returned for invalid timespan parameters. Defaults to false. Default value
+         is None.
+        :paramtype auto_adjust_timegrain: bool
+        :keyword validate_dimensions: When set to false, invalid filter parameter values will be
+         ignored. When set to true, an error is returned for invalid filter parameters. Defaults to
+         true. Default value is None.
+        :paramtype validate_dimensions: bool
+        :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
+         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype rollupby: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -273,7 +299,7 @@ class MetricsOperations:
                       Required.
                     "value": [
                         {
-                            "id": "str",  # the metric Id. Required.
+                            "id": "str",  # The metric Id. Required.
                             "name": {
                                 "value": "str",  # The invariant value. Required.
                                 "localizedValue": "str"  # Optional. The display
@@ -314,7 +340,7 @@ class MetricsOperations:
                                     ]
                                 }
                             ],
-                            "type": "str",  # the resource type of the metric resource.
+                            "type": "str",  # The resource type of the metric resource.
                               Required.
                             "unit": "str",  # The unit of the metric. Required. Known
                               values are: "Count", "Bytes", "Seconds", "CountPerSecond",
@@ -341,7 +367,7 @@ class MetricsOperations:
                       for metrics.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -350,9 +376,8 @@ class MetricsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_metrics_list_request(
@@ -366,7 +391,10 @@ class MetricsOperations:
             filter=filter,
             result_type=result_type,
             metricnamespace=metricnamespace,
-            api_version=api_version,
+            auto_adjust_timegrain=auto_adjust_timegrain,
+            validate_dimensions=validate_dimensions,
+            rollupby=rollupby,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -442,12 +470,11 @@ class MetricNamespacesOperations:
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -461,14 +488,25 @@ class MetricNamespacesOperations:
                 _request = build_metric_namespaces_list_request(
                     resource_uri=resource_uri,
                     start_time=start_time,
-                    api_version=api_version,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
 
             return _request

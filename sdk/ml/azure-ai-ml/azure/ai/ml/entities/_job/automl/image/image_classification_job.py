@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationPrimaryMetrics
@@ -46,7 +46,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         self,
         *,
         primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
 
         # Extract any super class init settings
@@ -67,11 +67,11 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         self.primary_metric = primary_metric or ImageClassificationJob._DEFAULT_PRIMARY_METRIC
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Optional[Union[str, ClassificationPrimaryMetrics]]:
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -141,9 +141,9 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            "identity": (
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             "queue_settings": properties.queue_settings,
         }
 
@@ -183,7 +183,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ImageClassificationJob":
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMulticlassNodeSchema
@@ -217,10 +217,11 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMulticlassNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = ImageClassificationMulticlassNodeSchema(
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
@@ -230,7 +231,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
 
         return schema_dict
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ImageClassificationJob):
             return NotImplemented
 
@@ -239,5 +240,5 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

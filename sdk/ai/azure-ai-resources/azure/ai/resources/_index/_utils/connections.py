@@ -13,7 +13,7 @@ from azure.ai.resources._index._utils.requests import create_session_with_retry,
 try:
     from azure.ai.resources.entities import BaseConnection
 except Exception:
-    BaseConnection = None
+    BaseConnection = None  # type: ignore[misc,assignment]
 try:
     from azure.ai.ml import MLClient
     from azure.ai.ml.entities import WorkspaceConnection
@@ -23,13 +23,26 @@ except Exception:
 try:
     from azure.core.credentials import TokenCredential
 except Exception:
-    TokenCredential = object
+    TokenCredential = object  # type: ignore[misc,assignment]
 
 logger = get_logger("connections")
+
+def get_pinecone_environment(config, credential: Optional[TokenCredential] = None):
+    """Get the Pinecone project environment from a connection."""
+    connection_type = config.get("connection_type", None)
+    if connection_type != "workspace_connection":
+        raise ValueError(f"Unsupported connection type for Pinecone index: {connection_type}")
+
+    connection_id = config.get("connection", {}).get("id")
+    connection = get_connection_by_id_v2(connection_id, credential=credential)
+    return get_metadata_from_connection(connection)["environment"]
 
 
 def get_connection_credential(config, credential: Optional[TokenCredential] = None):
     """Get a credential for a connection."""
+
+    connection_credential: Union[TokenCredential, AzureKeyCredential]
+
     try:
         from azure.core.credentials import AzureKeyCredential
     except ImportError as e:
@@ -75,7 +88,10 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
     elif config.get("connection_type", None) == "environment":
         import os
         key = os.environ.get(config.get("connection", {}).get("key", "OPENAI_API_KEY"))
-        connection_credential = (credential if credential is not None else DefaultAzureCredential(process_timeout=60)) if key is None else AzureKeyCredential(key)
+        if key:
+            connection_credential = AzureKeyCredential(key)
+        else:
+            connection_credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)
     else:
         connection_credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)
 
@@ -143,7 +159,7 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
-def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
+def get_connection_by_id_v2(connection_id: str, credential: Optional[TokenCredential] = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
     """
     Get a connection by id using azure.ai.ml or azure.ai.resources.
 
@@ -202,7 +218,7 @@ def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = No
     return connection
 
 
-def get_id_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> str:
+def get_id_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> Optional[str]:
     """Get a connection id from a connection."""
     if isinstance(connection, dict):
         return connection["id"]

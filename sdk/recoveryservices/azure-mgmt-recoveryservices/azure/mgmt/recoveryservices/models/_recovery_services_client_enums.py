@@ -35,6 +35,15 @@ class BackupStorageVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNASSIGNED = "Unassigned"
 
 
+class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Security levels of Recovery Services Vault for business continuity and disaster recovery."""
+
+    POOR = "Poor"
+    FAIR = "Fair"
+    GOOD = "Good"
+    EXCELLENT = "Excellent"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -57,6 +66,15 @@ class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     ENABLED = "Enabled"
     DISABLED = "Disabled"
     PERMANENTLY_DISABLED = "PermanentlyDisabled"
+
+
+class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EnhancedSecurityState."""
+
+    INVALID = "Invalid"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    ALWAYS_ON = "AlwaysON"
 
 
 class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,6 +183,7 @@ class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StandardTierStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The storage redundancy setting of a vault."""
 
+    INVALID = "Invalid"
     LOCALLY_REDUNDANT = "LocallyRedundant"
     GEO_REDUNDANT = "GeoRedundant"
     ZONE_REDUNDANT = "ZoneRedundant"

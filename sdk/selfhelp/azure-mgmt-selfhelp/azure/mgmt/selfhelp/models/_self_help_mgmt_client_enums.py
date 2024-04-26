@@ -61,6 +61,8 @@ class DiagnosticProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Some Diagnostics are still running or failed."""
     FAILED = "Failed"
     """All Diagnostics failed to run."""
+    RUNNING = "Running"
+    """All Diagnostics are still running."""
     CANCELED = "Canceled"
     """When Diagnostic request gets canceled."""
 
@@ -69,9 +71,13 @@ class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of Troubleshooter Step execution."""
 
     SUCCESS = "Success"
+    """Step execution succeeded."""
     RUNNING = "Running"
+    """Step execution running"""
     FAILED = "Failed"
+    """Step execution failed"""
     WARNING = "Warning"
+    """Step execution warning"""
 
 
 class ImportanceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -112,7 +118,7 @@ class QuestionContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class QuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text Input. Will be a single line input."""
+    """Type of Question."""
 
     RADIO_BUTTON = "RadioButton"
     """SingleChoice radio button"""
@@ -122,6 +128,10 @@ class QuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Text Input"""
     MULTI_LINE_INFO_BOX = "MultiLineInfoBox"
     """MultiLineInfoBox"""
+    DATE_TIME_PICKER = "DateTimePicker"
+    """DateTime Picker"""
+    MULTI_SELECT = "MultiSelect"
+    """Multi Select"""
 
 
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -135,8 +145,15 @@ class SolutionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of solution provisioning."""
 
     SUCCEEDED = "Succeeded"
+    """All Solutions in the Batch succeeded."""
+    PARTIAL_COMPLETE = "PartialComplete"
+    """Some Solutions are still running or failed."""
     FAILED = "Failed"
+    """All Solutions failed to run."""
+    RUNNING = "Running"
+    """All Solutions are still running."""
     CANCELED = "Canceled"
+    """When Solutions request gets canceled."""
 
 
 class SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -146,6 +163,10 @@ class SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Diagnostics resource type."""
     SOLUTIONS = "Solutions"
     """Solutions resource type."""
+    TROUBLESHOOTERS = "Troubleshooters"
+    """Troubleshooters resource type."""
+    SELF_HELP = "SelfHelp"
+    """SelfHelp resource type."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -180,3 +201,14 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SOLUTION = "Solution"
     INSIGHT = "Insight"
     AUTOMATED_CHECK = "AutomatedCheck"
+    INPUT = "Input"
+
+
+class ValidationScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validation scope."""
+
+    NONE = "None"
+    URL_FORMAT = "URLFormat"
+    GUID_FORMAT = "GuidFormat"
+    IP_ADDRESS_FORMAT = "IpAddressFormat"
+    NUMBER_ONLY_FORMAT = "NumberOnlyFormat"

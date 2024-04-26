@@ -5,7 +5,7 @@
 import logging
 import threading
 import datetime
-from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple
+from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -179,10 +179,10 @@ class EventHubConsumerClient(
         self._lock = threading.Lock()
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 
-    def __enter__(self):
+    def __enter__(self) -> "EventHubConsumerClient":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _create_consumer(
@@ -312,7 +312,27 @@ class EventHubConsumerClient(
         )
         return cls(**constructor_args)
 
-    def _receive(self, on_event, **kwargs):
+    @overload
+    def _receive(
+        self,
+        on_event: Callable[["PartitionContext", Optional["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    @overload
+    def _receive(
+        self,
+        on_event: Callable[["PartitionContext", List["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    def _receive(
+        self,
+        on_event,
+        **kwargs: Any
+    ) -> None:
         partition_id = kwargs.get("partition_id")
         with self._lock:
             error: Optional[str] = None
@@ -444,7 +464,6 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-
         self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
     def receive_batch(

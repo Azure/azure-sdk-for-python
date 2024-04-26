@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 import os
 
 from typing import Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
@@ -21,7 +23,8 @@ from ._shared.models import (
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode,
-    UserDelegationKey
+    UserDelegationKey,
+    Services
 )
 from ._generated.models import RehydratePriority
 from ._models import (
@@ -58,7 +61,7 @@ from ._models import (
     ArrowType,
     ObjectReplicationPolicy,
     ObjectReplicationRule,
-    ImmutabilityPolicy
+    ImmutabilityPolicy,
 )
 from ._list_blobs_helper import BlobPrefix
 
@@ -92,7 +95,11 @@ def upload_blob_to_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -156,7 +163,11 @@ def download_blob_from_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
@@ -247,5 +258,6 @@ __all__ = [
     'ArrowType',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
-    'ObjectReplicationRule'
+    'ObjectReplicationRule',
+    'Services',
 ]

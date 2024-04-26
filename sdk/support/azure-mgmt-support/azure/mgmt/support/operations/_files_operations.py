@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,7 +41,7 @@ def build_list_request(file_workspace_name: str, subscription_id: str, **kwargs:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +69,7 @@ def build_get_request(file_workspace_name: str, file_name: str, subscription_id:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +98,7 @@ def build_create_request(file_workspace_name: str, file_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -132,7 +132,7 @@ def build_upload_request(file_workspace_name: str, file_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -185,7 +185,6 @@ class FilesOperations:
 
         :param file_workspace_name: File Workspace Name. Required.
         :type file_workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FileDetails or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.support.models.FileDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -207,16 +206,15 @@ class FilesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     file_workspace_name=file_workspace_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -228,13 +226,13 @@ class FilesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("FilesListResult", pipeline_response)
@@ -244,11 +242,11 @@ class FilesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -261,10 +259,6 @@ class FilesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}/files"
-    }
-
     @distributed_trace
     def get(self, file_workspace_name: str, file_name: str, **kwargs: Any) -> _models.FileDetails:
         """Returns details of a specific file in a work space.
@@ -273,7 +267,6 @@ class FilesOperations:
         :type file_workspace_name: str
         :param file_name: File Name. Required.
         :type file_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -292,21 +285,20 @@ class FilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.FileDetails] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             file_workspace_name=file_workspace_name,
             file_name=file_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -319,13 +311,9 @@ class FilesOperations:
         deserialized = self._deserialize("FileDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}/files/{fileName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create(
@@ -348,7 +336,6 @@ class FilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -359,7 +346,7 @@ class FilesOperations:
         self,
         file_workspace_name: str,
         file_name: str,
-        create_file_parameters: IO,
+        create_file_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -371,11 +358,10 @@ class FilesOperations:
         :param file_name: File name. Required.
         :type file_name: str
         :param create_file_parameters: Create file object. Required.
-        :type create_file_parameters: IO
+        :type create_file_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,7 +372,7 @@ class FilesOperations:
         self,
         file_workspace_name: str,
         file_name: str,
-        create_file_parameters: Union[_models.FileDetails, IO],
+        create_file_parameters: Union[_models.FileDetails, IO[bytes]],
         **kwargs: Any
     ) -> _models.FileDetails:
         """Creates a new file under a workspace for the specified subscription.
@@ -395,13 +381,9 @@ class FilesOperations:
         :type file_workspace_name: str
         :param file_name: File name. Required.
         :type file_name: str
-        :param create_file_parameters: Create file object. Is either a FileDetails type or a IO type.
-         Required.
-        :type create_file_parameters: ~azure.mgmt.support.models.FileDetails or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param create_file_parameters: Create file object. Is either a FileDetails type or a IO[bytes]
+         type. Required.
+        :type create_file_parameters: ~azure.mgmt.support.models.FileDetails or IO[bytes]
         :return: FileDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -429,7 +411,7 @@ class FilesOperations:
         else:
             _json = self._serialize.body(create_file_parameters, "FileDetails")
 
-        request = build_create_request(
+        _request = build_create_request(
             file_workspace_name=file_workspace_name,
             file_name=file_name,
             subscription_id=self._config.subscription_id,
@@ -437,16 +419,15 @@ class FilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -459,13 +440,9 @@ class FilesOperations:
         deserialized = self._deserialize("FileDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}/files/{fileName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def upload(  # pylint: disable=inconsistent-return-statements
@@ -488,7 +465,6 @@ class FilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -499,7 +475,7 @@ class FilesOperations:
         self,
         file_workspace_name: str,
         file_name: str,
-        upload_file: IO,
+        upload_file: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -511,11 +487,10 @@ class FilesOperations:
         :param file_name: File Name. Required.
         :type file_name: str
         :param upload_file: UploadFile object. Required.
-        :type upload_file: IO
+        :type upload_file: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -523,7 +498,7 @@ class FilesOperations:
 
     @distributed_trace
     def upload(  # pylint: disable=inconsistent-return-statements
-        self, file_workspace_name: str, file_name: str, upload_file: Union[_models.UploadFile, IO], **kwargs: Any
+        self, file_workspace_name: str, file_name: str, upload_file: Union[_models.UploadFile, IO[bytes]], **kwargs: Any
     ) -> None:
         """This API allows you to upload content to a file.
 
@@ -531,12 +506,9 @@ class FilesOperations:
         :type file_workspace_name: str
         :param file_name: File Name. Required.
         :type file_name: str
-        :param upload_file: UploadFile object. Is either a UploadFile type or a IO type. Required.
-        :type upload_file: ~azure.mgmt.support.models.UploadFile or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param upload_file: UploadFile object. Is either a UploadFile type or a IO[bytes] type.
+         Required.
+        :type upload_file: ~azure.mgmt.support.models.UploadFile or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -564,7 +536,7 @@ class FilesOperations:
         else:
             _json = self._serialize.body(upload_file, "UploadFile")
 
-        request = build_upload_request(
+        _request = build_upload_request(
             file_workspace_name=file_workspace_name,
             file_name=file_name,
             subscription_id=self._config.subscription_id,
@@ -572,16 +544,15 @@ class FilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.upload.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -592,8 +563,4 @@ class FilesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    upload.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}/files/{fileName}/upload"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

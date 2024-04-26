@@ -15,25 +15,33 @@ build:
 requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - aiohttp
+    - isodate
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - aiohttp
     - requests-oauthlib >=0.5.0
+    - isodate
 
 test:
   imports:
     - azure.storage.blob
+    - azure.storage.blob.aio
     - azure.storage.queue
+    - azure.storage.queue.aio
     - azure.storage.fileshare
+    - azure.storage.fileshare.aio
     - azure.storage.filedatalake
+    - azure.storage.filedatalake.aio
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage"
@@ -41,6 +49,9 @@ about:
   license_family: MIT
   license_file:
   summary: Microsoft Azure Storage Client Library for Python.
+  description: |
+    This package is the Microsoft Azure Storage bundle.
+    Please see https://aka.ms/azsdk/conda/releases/storage for version details.
   doc_url:
   dev_url:
 

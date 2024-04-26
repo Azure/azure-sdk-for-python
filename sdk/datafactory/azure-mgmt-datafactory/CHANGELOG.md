@@ -1,5 +1,75 @@
 # Release History
 
+## 7.0.0 (2024-04-22)
+
+### Breaking Changes
+
+  - Model ManagedIdentityCredential no longer has parameter resource_id
+
+## 6.1.0 (2024-03-18)
+
+### Features Added
+
+  - Added model ExpressionV2
+  - Added model ExpressionV2Type
+  - Added model GoogleBigQueryV2AuthenticationType
+  - Added model GoogleBigQueryV2LinkedService
+  - Added model GoogleBigQueryV2ObjectDataset
+  - Added model GoogleBigQueryV2Source
+  - Added model PostgreSqlV2LinkedService
+  - Added model PostgreSqlV2Source
+  - Added model PostgreSqlV2TableDataset
+  - Added model ServiceNowV2AuthenticationType
+  - Added model ServiceNowV2LinkedService
+  - Added model ServiceNowV2ObjectDataset
+  - Added model ServiceNowV2Source
+
+## 6.0.0 (2024-03-04)
+
+### Features Added
+
+  - Model SalesforceServiceCloudV2LinkedService has a new parameter authentication_type
+  - Model SalesforceServiceCloudV2Source has a new parameter include_deleted_objects
+  - Model SalesforceV2LinkedService has a new parameter authentication_type
+  - Model SalesforceV2Source has a new parameter include_deleted_objects
+
+### Breaking Changes
+
+  - Model SalesforceServiceCloudV2Source no longer has parameter read_behavior
+  - Model SalesforceV2Source no longer has parameter read_behavior
+
+## 5.0.0 (2024-01-26)
+
+### Features Added
+
+  - Model AzureBlobFSWriteSettings has a new parameter metadata
+  - Model AzureBlobStorageWriteSettings has a new parameter metadata
+  - Model AzureDataLakeStoreWriteSettings has a new parameter metadata
+  - Model AzureFileStorageWriteSettings has a new parameter metadata
+  - Model FileServerWriteSettings has a new parameter metadata
+  - Model LakeHouseWriteSettings has a new parameter metadata
+  - Model MariaDBLinkedService has a new parameter database
+  - Model MariaDBLinkedService has a new parameter driver_version
+  - Model MariaDBLinkedService has a new parameter password
+  - Model MariaDBLinkedService has a new parameter port
+  - Model MariaDBLinkedService has a new parameter server
+  - Model MariaDBLinkedService has a new parameter username
+  - Model MySqlLinkedService has a new parameter database
+  - Model MySqlLinkedService has a new parameter driver_version
+  - Model MySqlLinkedService has a new parameter port
+  - Model MySqlLinkedService has a new parameter server
+  - Model MySqlLinkedService has a new parameter ssl_mode
+  - Model MySqlLinkedService has a new parameter use_system_trust_store
+  - Model MySqlLinkedService has a new parameter username
+  - Model SftpWriteSettings has a new parameter metadata
+  - Model StoreWriteSettings has a new parameter metadata
+  - Model WebActivity has a new parameter http_request_timeout
+  - Model WebActivity has a new parameter turn_off_async
+
+### Breaking Changes
+
+  - Model MariaDBLinkedService no longer has parameter pwd
+
 ## 4.0.0 (2023-11-20)
 
 ### Features Added

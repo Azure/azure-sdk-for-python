@@ -12,6 +12,7 @@ from copy import deepcopy
 from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
@@ -403,7 +404,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :returns: Returns the properties of the queue.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
@@ -492,7 +493,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
-                queue.name, request_body, if_match="*", **kwargs  # type: ignore
+                queue.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     async def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -661,7 +662,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :return: Returns the properties of the topic.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
 
@@ -739,7 +740,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                topic.name, request_body, if_match="*", **kwargs  # type: ignore
+                topic.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     async def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -912,6 +913,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
         :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :return: Returns the properties of the topic subscription that was created.
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         # pylint:disable=protected-access
@@ -1010,7 +1012,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
-                topic_name, subscription.name, request_body, if_match="*", **kwargs
+                topic_name, subscription.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs
             )
 
     async def delete_subscription(
@@ -1136,7 +1138,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
-
+        :return: Returns the rules of the topic subscription.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
@@ -1217,7 +1219,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                if_match="*",
+                match_condition=MatchConditions.IfPresent,
                 **kwargs
             )
 

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 import json
+from typing import Optional, Union
 
 from azure.ai.ml import Input, load_component
 
@@ -25,13 +26,13 @@ class IndexDataSource:
 
     :param input_type: A type enum describing the source of the index. Used to avoid
         direct type checking.
-    :type input_type: ~azure.ai.resources.constants.IndexInputType
+    :type input_type: Union[str, ~azure.ai.resources.constants.IndexInputType]
     """
 
-    def __init__(self, *, input_type: IndexInputType):
+    def __init__(self, *, input_type: Union[str, IndexInputType]):
         self.input_type = input_type
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         """Given the general config values, as well as the config values related to the output index, produce
         and populate a component that creates an index of the specified type from this input config's data source.
 
@@ -45,15 +46,16 @@ class IndexDataSource:
 
 
 # Field bundle for creating an index from files located in a Git repo.
+# TODO Does git_url need to specifically be an SSH or HTTPS style link?
+# TODO What is git connection id?
 class GitSource(IndexDataSource):
     """Config class for creating an ML index from files located in a git repository.
 
-    :param git_url: A link to the repository to use. TODO Does this need to specifically be
-        an SSH or HTTPS style link?
+    :param git_url: A link to the repository to use.
     :type git_url: str
     :param git_branch_name: The name of the branch to use from the target repository.
     :type git_branch_name: str
-    :param git_connection_id: TODO what is this?
+    :param git_connection_id: The connection ID for GitHub
     :type git_connection_id: str
     """
 
@@ -63,7 +65,7 @@ class GitSource(IndexDataSource):
         self.git_connection_id = git_connection_id
         super().__init__(input_type=IndexInputType.GIT)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         if acs_config:
             acs_index_name = acs_config.acs_index_name
@@ -94,7 +96,7 @@ class GitSource(IndexDataSource):
             data_to_faiss_component: PipelineComponent = load_component(
                 os.path.join(curr_file_path, "component-configs", "git_to_faiss.yml")
             )
-            rag_job_component: Pipeline = data_to_faiss_component(
+            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
                 embeddings_dataset_name=index_config.output_index_name,
                 git_connection=self.git_connection_id,
                 git_repository=self.git_url,
@@ -117,7 +119,19 @@ class GitSource(IndexDataSource):
 class ACSSource(IndexDataSource):
     """Config class for creating an ML index from an OpenAI <thing>.
 
-    :param num_docs_to_import: Number of docs to import from the existing ACS index.
+    :param acs_index_name: The name of the ACS index to use as the source.
+    :type acs_index_name: str
+    :param acs_content_key: The key for the content field in the ACS index.
+    :type acs_content_key: str
+    :param acs_embedding_key: The key for the embedding field in the ACS index.
+    :type acs_embedding_key: str
+    :param acs_title_key: The key for the title field in the ACS index.
+    :type acs_title_key: str
+    :param acs_metadata_key: The key for the metadata field in the ACS index.
+    :type acs_metadata_key: str
+    :param acs_connection_id: The connection ID for the ACS index.
+    :type acs_connection_id: str
+    :param num_docs_to_import: Number of documents to import from the existing ACS index. Defaults to 50.
     :type num_docs_to_import: int
     """
 
@@ -127,8 +141,8 @@ class ACSSource(IndexDataSource):
         acs_embedding_key: str,
         acs_title_key: str,
         acs_metadata_key: str,
-        acs_connection_id: str = None,
-        num_docs_to_import=50,
+        acs_connection_id: str,
+        num_docs_to_import: int = 50,
     ):
         self.acs_index_name = acs_index_name
         self.acs_connection_id = acs_connection_id
@@ -139,7 +153,7 @@ class ACSSource(IndexDataSource):
         self.num_docs_to_import = num_docs_to_import
         super().__init__(input_type=IndexInputType.AOAI)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         acs_import_config = json.dumps({"index_name": self.acs_index_name,
                                         "content_key": self.acs_content_key,
@@ -164,14 +178,14 @@ class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 
     :param input_data: An input object describing the local location of index source files.
-    :type input_data: ~azure.ai.ml.input
+    :type input_data: ~azure.ai.ml.Input
     """
 
     def __init__(self, *, input_data: str):  # todo Make sure type of input_data is correct
         self.input_data = Input(type="uri_folder", path=input_data)
         super().__init__(input_type=IndexInputType.LOCAL)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         if acs_config:
             acs_index_name = acs_config.acs_index_name
@@ -200,7 +214,7 @@ class LocalSource(IndexDataSource):
             data_to_faiss_component: PipelineComponent = load_component(
                 os.path.join(curr_file_path, "component-configs", "data_to_faiss.yml")
             )
-            rag_job_component: Pipeline = data_to_faiss_component(
+            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
                 embeddings_dataset_name=index_config.output_index_name,
                 data_source_url=index_config.data_source_url,
                 input_data=self.input_data,

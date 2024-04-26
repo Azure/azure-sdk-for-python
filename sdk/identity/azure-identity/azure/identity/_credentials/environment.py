@@ -108,12 +108,12 @@ class EnvironmentCredential:
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    def __enter__(self):
+    def __enter__(self) -> "EnvironmentCredential":
         if self._credential:
             self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         if self._credential:
             self._credential.__exit__(*args)
 
@@ -131,7 +131,7 @@ class EnvironmentCredential:
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

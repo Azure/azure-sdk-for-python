@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .._producer_client import EventHubProducerClient
 
 
-class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
+class OwnershipManager:  # pylint:disable=too-many-instance-attributes
     """Increases or decreases the number of partitions owned by an EventProcessor
     so the number of owned partitions are balanced among multiple EventProcessors
 

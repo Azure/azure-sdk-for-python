@@ -2,10 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """OpenAI Embeddings generation and management tools."""
+import os
 import time
 from typing import Any, Dict, List, Optional
 
+from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
+from azure.ai.resources._user_agent import USER_AGENT
 from azure.ai.resources._index._utils.logging import get_logger
+from packaging import version
 
 logger = get_logger("embeddings.openai")
 
@@ -17,7 +21,7 @@ class OpenAIEmbedder:
         self,
         api_base: str,
         api_type: str,
-        api_version: str = "2023-03-15-preview",
+        api_version: Optional[str] = None,
         api_key: Optional[str] = None,
         azure_credential: Optional[Any] = None,
         model: str = "text-embedding-ada-002",
@@ -31,8 +35,7 @@ class OpenAIEmbedder:
         """Initialize an OpenAI Embedding client."""
         self.api_base = api_base
         self.api_type = api_type
-        self.api_version = api_version
-        self.api_key = api_key
+        self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY") or ""
         # TODO: If azure_credential set, check api_type is azure or azure_ad and setup auth accordingly
         self.azure_credential = azure_credential
 
@@ -41,9 +44,10 @@ class OpenAIEmbedder:
         elif batch_size is None:
             batch_size = 1000
         self.batch_size = int(batch_size)
+        self._dynamic_batch_size: Optional[int] = None
 
         if max_retries is None:
-            max_retries = 20
+            max_retries = 10
         self.max_retries = max_retries
 
         if model is None:
@@ -59,14 +63,70 @@ class OpenAIEmbedder:
         self.embedding_ctx_length = embedding_ctx_length
 
         self.show_progress_bar = show_progress_bar
+        self.openai_passthrough_args = openai_passthrough_args or {}
 
         try:
             import openai
         except ImportError as e:
             raise ImportError("Please install openai via `pip install openai`") from e
 
-        self.openai_passthrough_args = openai_passthrough_args or {}
-        self.embedding_client = openai.Embedding
+        if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+            self.openai_v1plus = True
+            self.api_version = api_version if api_version else "2023-05-15"
+
+            if "azure" in self.api_type:
+                client = openai.AzureOpenAI(
+                    api_key=self.api_key,
+                    api_version=self.api_version,
+                    azure_endpoint=self.api_base,
+                    azure_deployment=self.deployment,
+                    default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
+                )
+            else:
+                client = openai.OpenAI(
+                    api_key=self.api_key,
+                    base_url=self.api_base,
+                    default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
+                )
+
+            self.embedding_client = client.embeddings
+
+            self._params = {
+                "model": self.model,
+                **self.openai_passthrough_args,
+            }
+            self._retry_exceptions = [
+                openai._exceptions.APIStatusError,
+                openai._exceptions.APITimeoutError,
+                openai._exceptions.APIError,
+                openai._exceptions.APIConnectionError,
+                openai._exceptions.RateLimitError,
+                openai._exceptions.InternalServerError,
+                openai._exceptions.APIResponseValidationError,
+            ]
+            self._RateLimitError = openai._exceptions.RateLimitError
+        else:
+            self.openai_v1plus = False
+            self.api_version = api_version if api_version else "2023-03-15-preview"
+            self.embedding_client = openai.Embeddings
+            self._params = {
+                "model": self.model,
+                "api_base": self.api_base,
+                "api_type": self.api_type,
+                "api_version": self.api_version,
+                "api_key": self.api_key,
+                **self.openai_passthrough_args,
+            }
+            if self.deployment is not None:
+                self._params["engine"] = self.deployment
+            self._retry_exceptions = [
+                openai.error.Timeout,
+                openai.error.APIError,
+                openai.error.APIConnectionError,
+                openai.error.RateLimitError,
+                openai.error.ServiceUnavailableError,
+            ]
+            self._RateLimitError = openai.error.RateLimitError
 
         self._statistics = {
             "num_retries": 0,
@@ -76,32 +136,24 @@ class OpenAIEmbedder:
 
     @property
     def _openai_client_params(self) -> dict:
-        params = {
-            "model": self.model,
-            "api_base": self.api_base,
-            "api_type": self.api_type,
-            "api_version": self.api_version,
-            "api_key": self.api_key,
-            **self.openai_passthrough_args
-        }
-        if self.deployment is not None:
-            params["engine"] = self.deployment
-        return params
+        return self._params
 
     @property
     def _retryable_openai_errors(self) -> List[Exception]:
-        import openai
-        return [
-            openai.error.Timeout,
-            openai.error.APIError,
-            openai.error.APIConnectionError,
-            openai.error.RateLimitError,
-            openai.error.ServiceUnavailableError
-        ]
+        return self._retry_exceptions
 
     def _dynamic_batch_size_embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
         try:
-            return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
+            if self._dynamic_batch_size is None:
+                return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
+            else:
+                embedding_response: Dict[str, List] = {"data": []}
+                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
+                    embedding_response["data"].extend(
+                        self._embed_request(
+                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
+                        )["data"]
+                    )
         except Exception as e:
             err_msg = str(e)
             if "Too many inputs" not in err_msg:
@@ -111,14 +163,20 @@ class OpenAIEmbedder:
             match = re.match(r".*The max number of inputs is ([0-9]+).*", err_msg)
             if match and match.group(1):
                 try:
-                    self.batch_size = int(match.group(1))
+                    self._dynamic_batch_size = int(match.group(1))
                 except Exception:
-                    logger.error("Failed to parse max number of inputs from error message, falling back to batch_size=1.")
-                    self.batch_size = 1
-                logger.warning(f"Reducing batch_size to {self.batch_size} and retrying.")
-                embedding_response = {"data": []}
-                for i in range(0, len(tokenized_texts), self.batch_size):
-                    embedding_response["data"].extend(self._embed_request(tokenized_texts=tokenized_texts[i : i + self.batch_size], **kwargs)["data"])
+                    logger.error(
+                        "Failed to parse max number of inputs from error message, falling back to batch_size=1."
+                    )
+                    self._dynamic_batch_size = 1
+                logger.warning(f"Reducing batch_size to {self._dynamic_batch_size} and retrying.")
+                embedding_response: Dict[str, List] = {"data": []}  # type: ignore[no-redef]
+                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
+                    embedding_response["data"].extend(
+                        self._embed_request(
+                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
+                        )["data"]
+                    )
             else:
                 raise
 
@@ -126,28 +184,38 @@ class OpenAIEmbedder:
 
     def _embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
         try:
-            min_seconds = 4
-            max_seconds = 10
             total_delay = 0
             last_exception = None
             for retry in range(self.max_retries):
                 logger.info(f"Attempt {retry} to embed {len(tokenized_texts)} documents.")
                 try:
-                    return self.embedding_client.create(
+                    response = self.embedding_client.create(
                         input=tokenized_texts,
                         **kwargs,
                     )
+                    if self.openai_v1plus:
+                        response = {"object": "list", "data": [{"object": "embedding", "embedding": d.embedding} for d in response.data]}
+                    return response
                 except Exception as e:
                     err_msg = str(e)
                     logger.warning(f"Error embedding: {err_msg}", exc_info=e)
                     last_exception = e
                     retrying = False
                     for retryable_error in self._retryable_openai_errors:
-                        if isinstance(e, retryable_error):
-                            # Retry with exponential backoff
+                        if isinstance(e, type(retryable_error)):
                             retrying = True
-                            exp = 2 ** (retry - 1)
-                            delay = max(min(1 * exp, max_seconds), min_seconds)
+
+                            # Retry with retry-after if found in RateLimitError
+                            if isinstance(e, self._RateLimitError):
+                                logger.warning(f"Retrying error type {type(e)}.")
+                                response_headers = e.headers if hasattr(e, "headers") else {}
+                                if "Retry-After" in response_headers:
+                                    delay = int(response_headers["Retry-After"])
+                                    logger.warning(f"OpenAI throws RateLimitError with Retry-After {delay} seconds.")
+                                else:
+                                    # Wait for 1 minute as suggested by openai https://help.openai.com/en/articles/6897202-ratelimiterror
+                                    logger.warning("Retry after 60 seconds.")
+                                    delay = 60
                             total_delay += delay
                             logger.warning(f"Sleeping for {delay} seconds before retrying.")
                             time.sleep(delay)
@@ -167,9 +235,11 @@ class OpenAIEmbedder:
         """Embed the given texts."""
         import numpy as np
         import tiktoken
+        from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir
 
         try:
-            encoding = tiktoken.encoding_for_model(self.model)
+            with tiktoken_cache_dir():
+                encoding = tiktoken.encoding_for_model(self.model)
         except KeyError:
             logger.warning("Warning: model not found. Using cl100k_base encoding.")
             model = "cl100k_base"
@@ -186,8 +256,7 @@ class OpenAIEmbedder:
 
             tokens = encoding.encode(
                 text,
-                # TODO: Do these need to be configurable? Our use cases treat all text as raw data.
-                allowed_special="all",
+                # TODO: Does this need to be configurable? Our use cases treat all text as raw data.
                 disallowed_special=(),
             )
             # Text longer than a models context length can be split and the embeddings averaged to approximate full text
@@ -227,7 +296,8 @@ class OpenAIEmbedder:
         for i in range(len(texts)):
             _result = embedding_results[i]
             if len(_result) == 0:
-                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]
+                # TODO: Bug 2875482
+                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]  # type: ignore[arg-type]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()
@@ -241,16 +311,6 @@ class OpenAIEmbedder:
     def embed_query(self, query: str) -> List[float]:
         """Embed a single query."""
         return self.embed_documents([query])[0]
-
-    # # TODO: _aembed
-    # async def aembed_documents(self, documents: List[str]) -> List[List[float]]:
-    #     """Batch embed documents."""
-    #     return await self._aembed(documents)
-
-    # async def aembed_query(self, query: str) -> List[float]:
-    #     """Embed a single query."""
-    #     embeddings = await self.aembed_documents([query])
-    #     return embeddings[0]
 
     @property
     def statistics(self) -> Dict[str, Any]:

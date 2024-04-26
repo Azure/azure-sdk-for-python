@@ -119,8 +119,35 @@ def replace_item(container, doc_id):
     print('Replaced Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
 
 
+def replace_item_using_etags(container, doc_id):
+    print('\n1.7 Replace an Item using Etags and IfMatch\n')
+    # The use of etags and if-match/if-none-match options allows users to run conditional replace operations
+    # based on the etag value passed. When using if-match, the request will only succeed if the item's latest etag
+    # matches the passed in value. For more on optimistic concurrency control, see the link below:
+    # https://learn.microsoft.com/azure/cosmos-db/nosql/database-transactions-optimistic-concurrency
+
+    read_item = container.read_item(item=doc_id, partition_key=doc_id)
+    item_etag = read_item["_etag"]
+    read_item['subtotal'] = read_item['subtotal'] + 1
+    response = container.replace_item(
+        read_item,
+        read_item,
+        if_match=item_etag)
+
+    print('Replaced Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
+
+    read_item = container.read_item(item=doc_id, partition_key=doc_id)
+    read_item['subtotal'] = read_item['subtotal'] + 1
+    response = container.replace_item(
+        read_item,
+        read_item,
+        if_none_match="some-etag")
+
+    print('Replaced Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
+
+
 def upsert_item(container, doc_id):
-    print('\n1.7 Upserting an item\n')
+    print('\n1.8 Upserting an item\n')
 
     read_item = container.read_item(item=doc_id, partition_key=doc_id)
     read_item['subtotal'] = read_item['subtotal'] + 1
@@ -130,7 +157,7 @@ def upsert_item(container, doc_id):
 
 
 def conditional_patch_item(container, doc_id):
-    print('\n1.8 Patching Item by Id based on filter\n')
+    print('\n1.9 Patching Item by Id based on filter\n')
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
         {"op": "remove", "path": "/ttl"},
@@ -151,7 +178,7 @@ def conditional_patch_item(container, doc_id):
 
 
 def patch_item(container, doc_id):
-    print('\n1.9 Patching Item by Id\n')
+    print('\n1.10 Patching Item by Id\n')
 
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
@@ -172,7 +199,7 @@ def patch_item(container, doc_id):
 
 
 def execute_item_batch(database):
-    print('\n1.10 Executing Batch Item operations\n')
+    print('\n1.11 Executing Batch Item operations\n')
     container = database.create_container_if_not_exists(id="batch_container",
                                                         partition_key=PartitionKey(path='/account_number'))
     # We create three items to use for the sample.
@@ -216,6 +243,7 @@ def execute_item_batch(database):
 
     # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
     # error returned for your application debugging, making it easy to pinpoint the failing operation
+    # [START handle_batch_error]
     batch_operations = [create_item_operation, create_item_operation]
     try:
         container.execute_item_batch(batch_operations, partition_key="Account1")
@@ -224,10 +252,11 @@ def execute_item_batch(database):
         error_operation_response = e.operation_responses[error_operation_index]
         error_operation = batch_operations[error_operation_index]
         print("\nError operation: {}, error operation response: {}\n".format(error_operation, error_operation_response))
+    # [END handle_batch_error]
 
 
 def delete_item(container, doc_id):
-    print('\n1.11 Deleting Item by Id\n')
+    print('\n1.12 Deleting Item by Id\n')
 
     response = container.delete_item(item=doc_id, partition_key=doc_id)
 
@@ -235,7 +264,7 @@ def delete_item(container, doc_id):
 
 
 def delete_all_items_by_partition_key(db, partitionkey):
-    print('\n1.12 Deleting all Items by Partition Key\n')
+    print('\n1.13 Deleting all Items by Partition Key\n')
 
     # A container with a partition key that is different from id is needed
     container = db.create_container_if_not_exists(id="Partition Key Delete Container",
@@ -278,7 +307,7 @@ def delete_all_items_by_partition_key(db, partitionkey):
 
 def create_mh_items(container):
     print('Creating Items')
-    print('\n1.13 Create Item with Multi Hash Partition Key\n')
+    print('\n2.1 Create Item with Multi Hash Partition Key\n')
 
     # Create a SalesOrder object. This object has nested properties and various types including numbers, DateTimes and strings.
     # This can be saved as JSON as is without converting into rows/columns.
@@ -292,7 +321,7 @@ def create_mh_items(container):
 
 
 def read_mh_item(container, doc_id, pk):
-    print('\n1.14 Reading Item by Multi Hash Partition Key\n')
+    print('\n2.2 Reading Item by Multi Hash Partition Key\n')
 
     # Note that Reads require a partition key to be specified.
     response = container.read_item(item=doc_id, partition_key=pk)
@@ -303,7 +332,7 @@ def read_mh_item(container, doc_id, pk):
 
 
 def query_mh_items(container, pk):
-    print('\n1.15 Querying for an  Item by Multi Hash Partition Key\n')
+    print('\n2.3 Querying for an  Item by Multi Hash Partition Key\n')
 
     # enable_cross_partition_query should be set to True as the container is partitioned
     items = list(container.query_items(
@@ -320,7 +349,7 @@ def query_mh_items(container, pk):
 
 
 def replace_mh_item(container, doc_id, pk):
-    print('\n1.16 Replace an Item with Multi Hash Partition Key\n')
+    print('\n2.4 Replace an Item with Multi Hash Partition Key\n')
 
     read_item = container.read_item(item=doc_id, partition_key=pk)
     read_item['subtotal'] = read_item['subtotal'] + 1
@@ -331,7 +360,7 @@ def replace_mh_item(container, doc_id, pk):
 
 
 def upsert_mh_item(container, doc_id, pk):
-    print('\n1.17 Upserting an item with Multi Hash Partition Key\n')
+    print('\n2.5 Upserting an item with Multi Hash Partition Key\n')
 
     read_item = container.read_item(item=doc_id, partition_key=pk)
     read_item['subtotal'] = read_item['subtotal'] + 1
@@ -342,7 +371,7 @@ def upsert_mh_item(container, doc_id, pk):
 
 
 def patch_mh_item(container, doc_id, pk):
-    print('\n1.18 Patching Item by Multi Hash Partition Key\n')
+    print('\n2.6 Patching Item by Multi Hash Partition Key\n')
 
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
@@ -363,14 +392,14 @@ def patch_mh_item(container, doc_id, pk):
 
 
 def delete_mh_item(container, doc_id, pk):
-    print('\n1.19 Deleting Item by Multi Hash Partition Key\n')
+    print('\n2.7 Deleting Item by Multi Hash Partition Key\n')
 
     response = container.delete_item(item=doc_id, partition_key=pk)
     print('Deleted item\'s Account Number is {0} Purchase Order Number is {1}'.format(pk[0], pk[1]))
 
 
 def delete_all_items_by_partition_key_mh(db, partitionkey):
-    print('\n1.20 Deleting all Items by Partition Key Multi Hash\n')
+    print('\n2.8 Deleting all Items by Partition Key Multi Hash\n')
 
     # A container with a partition key that is different from id is needed
     container = db.create_container_if_not_exists(id="Partition Key Delete Container Multi Hash",
@@ -413,7 +442,7 @@ def delete_all_items_by_partition_key_mh(db, partitionkey):
 
 
 def query_items_with_continuation_token_size_limit(container, doc_id):
-    print('\n1.21 Query Items With Continuation Token Size Limit.\n')
+    print('\n2.9 Query Items With Continuation Token Size Limit.\n')
 
     size_limit_in_kb = 8
     sales_order = get_sales_order(doc_id)
@@ -495,6 +524,7 @@ def run_sample():
         query_items(container, 'SalesOrder1')
         query_items_with_continuation_token(container)
         replace_item(container, 'SalesOrder1')
+        replace_item_using_etags(container, 'SalesOrder1')
         upsert_item(container, 'SalesOrder1')
         conditional_patch_item(container, 'SalesOrder1')
         patch_item(container, 'SalesOrder1')

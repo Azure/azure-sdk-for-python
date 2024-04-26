@@ -40,7 +40,7 @@ def build_list_request(custom_location_resource_uri: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,11 +83,11 @@ class VMSkusOperations:
 
     @distributed_trace
     def list(self, custom_location_resource_uri: str, **kwargs: Any) -> Iterable["_models.VmSkuProfile"]:
-        """Lists the supported VM SKUs.
+        """Lists the supported VM skus.
 
-        Lists the supported VM SKUs from the underlying custom location.
+        Lists the supported VM skus for the specified custom location.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

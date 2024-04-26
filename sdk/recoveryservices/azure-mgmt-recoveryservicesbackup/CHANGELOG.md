@@ -1,5 +1,60 @@
 # Release History
 
+## 9.1.0 (2024-04-22)
+
+### Features Added
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter snapshot_consistency_type
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter resource_guard_operation_requests
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter resource_guard_operation_requests
+  - Operation BackupResourceVaultConfigsOperations.put has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupResourceVaultConfigsOperations.update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation ProtectedItemsOperations.create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation ProtectionPoliciesOperations.create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation RestoresOperations.begin_trigger has a new optional parameter x_ms_authorization_auxiliary
+  - Operation SecurityPINsOperations.get has a new optional parameter x_ms_authorization_auxiliary
+
+## 9.0.0 (2024-01-24)
+
+### Features Added
+
+  - Added operation group FetchTieringCostOperations
+  - Added operation group GetTieringCostOperationResultOperations
+  - Added operation group TieringCostOperationStatusOperations
+  - Model AzureFileShareProtectionPolicy has a new parameter vault_retention_policy
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model SubProtectionPolicy has a new parameter snapshot_backup_additional_details
+
+### Breaking Changes
+
+  - Parameter resource_guard_resource_id of model ResourceGuardProxyBase is now required
+
+## 8.0.0 (2024-01-15)
+
+### Features Added
+
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter vault_id
+  - Model BackupStatusResponse has a new parameter acquire_storage_account_lock
+  - Model BackupStatusResponse has a new parameter protected_items_count
+
+### Breaking Changes
+
+  - Renamed operation ProtectionContainersOperations.register to ProtectionContainersOperations.begin_register
+
 ## 7.0.0 (2023-09-18)
 
 ### Features Added

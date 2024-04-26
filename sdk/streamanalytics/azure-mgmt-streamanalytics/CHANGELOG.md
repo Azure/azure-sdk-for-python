@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0b2 (2024-01-22)
+
+### Features Added
+
+  - Added model AzureDataExplorerOutputDataSource
+  - Added model DeltaSerialization
+
 ## 2.0.0b1 (2022-11-11)
 
 ### Features Added

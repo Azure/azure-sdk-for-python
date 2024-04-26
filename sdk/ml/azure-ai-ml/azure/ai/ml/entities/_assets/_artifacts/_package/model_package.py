@@ -4,10 +4,10 @@
 
 # pylint: disable=protected-access, redefined-builtin
 
+import re
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Optional, Union
-import re
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
@@ -169,6 +169,13 @@ class ModelPackageInput:
         self.mount_path = mount_path
 
     def _to_rest_object(self) -> RestModelPackageInput:
+        if self.path is None:
+            return RestModelPackageInput(
+                input_type=snake_to_pascal(self.type),
+                path=None,
+                mode=snake_to_pascal(self.mode),
+                mount_path=self.mount_path,
+            )
         return RestModelPackageInput(
             input_type=snake_to_pascal(self.type),
             path=self.path._to_rest_object(),
@@ -223,12 +230,12 @@ class ModelPackage(Resource, PackageRequest):
         *,
         target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
-        base_environment_source: BaseEnvironment = None,
+        base_environment_source: Optional[BaseEnvironment] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         if isinstance(target_environment, dict):
             target_environment = target_environment["name"]
@@ -260,7 +267,7 @@ class ModelPackage(Resource, PackageRequest):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ModelPackage":
         params_override = params_override or []
         data = data or {}
@@ -268,12 +275,14 @@ class ModelPackage(Resource, PackageRequest):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ModelPackageSchema, data, context, **kwargs)
+        res: ModelPackage = load_from_dict(ModelPackageSchema, data, context, **kwargs)
+        return res
 
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Dumps the job content into a file in YAML format.
 
@@ -288,10 +297,10 @@ class ModelPackage(Resource, PackageRequest):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
     def _to_dict(self) -> Dict:
-        return ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return dict(ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
 
     @classmethod
-    def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> "ModelPackageResponse":
+    def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> Any:
         target_environment_id = model_package_rest_object.target_environment_id
         return target_environment_id
 
@@ -317,9 +326,9 @@ class ModelPackage(Resource, PackageRequest):
 
         package_request = PackageRequest(
             target_environment_id=self.target_environment_id,
-            base_environment_source=self.base_environment_source._to_rest_object()
-            if self.base_environment_source
-            else None,
+            base_environment_source=(
+                self.base_environment_source._to_rest_object() if self.base_environment_source else None
+            ),
             inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
             model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
             inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,

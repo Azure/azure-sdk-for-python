@@ -1,5 +1,37 @@
 # Release History
 
+## 10.2.0b16 (2024-04-22)
+
+### Features Added
+
+  - Model MigrationResource has a new parameter migrate_roles
+  - Model MigrationResource has a new parameter migration_instance_resource_id
+  - Model MigrationResourceForPatch has a new parameter migrate_roles
+
+## 10.2.0b15 (2024-03-04)
+
+### Features Added
+
+  - Added operation AdvancedThreatProtectionSettingsOperations.begin_update_put
+  - Added operation group LongRunningBackupOperations
+  - Added operation group LongRunningBackupsOperations
+  - Added operation group MaintenancesOperations
+  - Added operation group OperationProgressOperations
+
+## 10.2.0b14 (2024-01-23)
+
+### Features Added
+
+  - Added operation group AdvancedThreatProtectionSettingsOperations
+  - Added operation group LocationBasedCapabilitySetOperations
+  - Added operation group OperationResultsOperations
+
+## 10.2.0b13 (2023-12-18)
+
+### Other Changes
+
+  - Fix for ServerThreatProtectionSettingsOperations.begin_create_or_update
+
 ## 10.2.0b12 (2023-11-20)
 
 ### Features Added

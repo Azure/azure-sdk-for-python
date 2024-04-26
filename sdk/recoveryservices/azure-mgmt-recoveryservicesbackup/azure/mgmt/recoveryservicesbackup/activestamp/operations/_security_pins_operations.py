@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,11 +35,18 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(vault_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -60,6 +67,10 @@ def build_get_request(vault_name: str, resource_group_name: str, subscription_id
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -91,6 +102,7 @@ class SecurityPINsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         parameters: Optional[_models.SecurityPinBase] = None,
         *,
         content_type: str = "application/json",
@@ -103,12 +115,13 @@ class SecurityPINsOperations:
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :param parameters: security pin request. Default value is None.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecurityPinBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TokenInformation or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TokenInformation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -119,7 +132,8 @@ class SecurityPINsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Optional[IO] = None,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -131,12 +145,13 @@ class SecurityPINsOperations:
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :param parameters: security pin request. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TokenInformation or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TokenInformation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -147,7 +162,8 @@ class SecurityPINsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Optional[Union[_models.SecurityPinBase, IO]] = None,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[Union[_models.SecurityPinBase, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.TokenInformation:
         """Get the security PIN.
@@ -157,13 +173,12 @@ class SecurityPINsOperations:
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
-        :param parameters: security pin request. Is either a SecurityPinBase type or a IO type. Default
-         value is None.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecurityPinBase or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: security pin request. Is either a SecurityPinBase type or a IO[bytes] type.
          Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecurityPinBase or
+         IO[bytes]
         :return: TokenInformation or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.TokenInformation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -194,24 +209,24 @@ class SecurityPINsOperations:
             else:
                 _json = None
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -223,10 +238,6 @@ class SecurityPINsOperations:
         deserialized = self._deserialize("TokenInformation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupSecurityPIN"
-    }
+        return deserialized  # type: ignore

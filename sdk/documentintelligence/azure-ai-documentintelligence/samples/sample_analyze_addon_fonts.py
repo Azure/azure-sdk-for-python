@@ -13,12 +13,11 @@ DESCRIPTION:
     This sample demonstrates how to extract font information using the add-on
     'STYLE_FONT' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
     The following capabilities are free:
     - BARCODES
@@ -28,6 +27,7 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
@@ -41,7 +41,13 @@ USAGE:
 
 import os
 from collections import defaultdict
-from utils import get_styled_text
+
+
+def get_styled_text(styles, content):
+    # Iterate over the styles and merge the spans from each style.
+    spans = [span for style in styles for span in style.spans]
+    spans.sort(key=lambda span: span.offset)
+    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
 
 def analyze_fonts():
@@ -55,21 +61,21 @@ def analyze_fonts():
     # [START analyze_fonts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     # Specify which add-on capabilities to enable.
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.STYLE_FONT],
             content_type="application/octet-stream",
         )
-    result = poller.result()
+    result: AnalyzeResult = poller.result()
 
     # DocumentStyle has the following font related attributes:
     similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
@@ -78,10 +84,11 @@ def analyze_fonts():
     font_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
     font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
 
-    if any([style.is_handwritten for style in result.styles]):
+    if result.styles and any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
     else:
         print("Document does not contain handwritten content")
+        return
 
     print("\n----Fonts styles detected in the document----")
 
@@ -135,10 +142,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_fonts()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

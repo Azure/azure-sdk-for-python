@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: skip-file
 import copy
 import time
 import asyncio
@@ -9,7 +9,7 @@ import uuid
 import logging
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Deque, Dict, List, Optional, Union, Sized
 from collections import deque
 
 from aiohttp import TraceConfig
@@ -25,7 +25,7 @@ MAX_TIME_TAKEN_RECORDS = 20_000
 
 
 def get_model_class_from_url(endpoint_url: str):
-    '''Convert an endpoint URL to the appropriate model class.'''
+    """Convert an endpoint URL to the appropriate model class."""
     endpoint_path = urlparse(endpoint_url).path  # remove query params
 
     if endpoint_path.endswith("chat/completions"):
@@ -40,23 +40,24 @@ def get_model_class_from_url(endpoint_url: str):
 
 # ===================== HTTP Retry ======================
 class AsyncHTTPClientWithRetry:
-    def __init__(self, n_retry, retry_timeout, logger):
+    def __init__(self, n_retry, retry_timeout, logger, retry_options=None):
         self.attempts = n_retry
         self.logger = logger
 
         # Set up async HTTP client with retry
 
         trace_config = TraceConfig()  # set up request logging
-        trace_config.on_request_start.append(self.on_request_start)
-        trace_config.on_request_end.append(self.on_request_end)
-
-        retry_options = RandomRetry(  # set up retry configuration
-            statuses=[104, 408, 409, 424, 429, 500, 502,
-                      503, 504],  # on which statuses to retry
-            attempts=n_retry,
-            min_timeout=retry_timeout,
-            max_timeout=retry_timeout,
-        )
+        trace_config.on_request_end.append(self.delete_auth_header)
+        # trace_config.on_request_start.append(self.on_request_start)
+        # trace_config.on_request_end.append(self.on_request_end) 
+        if retry_options is None:
+            retry_options = RandomRetry(  # set up retry configuration
+                statuses=[104, 408, 409, 424, 429, 500, 502,
+                        503, 504],  # on which statuses to retry
+                attempts=n_retry,
+                min_timeout=retry_timeout,
+                max_timeout=retry_timeout,
+            )
 
         self.client = RetryClient(
             trace_configs=[trace_config], retry_options=retry_options)
@@ -66,6 +67,13 @@ class AsyncHTTPClientWithRetry:
         self.logger.info("[ATTEMPT %s] Sending %s request to %s" % (
             current_attempt, params.method, params.url
         ))
+
+    async def delete_auth_header(self, session, trace_config_ctx, params):
+        request_headers = dict(params.response.request_info.headers)
+        if "Authorization" in request_headers:
+            del request_headers["Authorization"]
+        if "api-key" in request_headers:
+            del request_headers["api-key"]
 
     async def on_request_end(self, session, trace_config_ctx, params):
         current_attempt = trace_config_ctx.trace_request_ctx["current_attempt"]
@@ -83,9 +91,9 @@ class AsyncHTTPClientWithRetry:
 # ===========================================================
 
 class LLMBase(ABC):
-    '''
+    """
     Base class for all LLM models.
-    '''
+    """
 
     def __init__(self, endpoint_url: str, name: str = "unknown", additional_headers: Optional[dict] = {}):
         self.endpoint_url = endpoint_url
@@ -95,7 +103,7 @@ class LLMBase(ABC):
 
         # Metric tracking
         self.lock = asyncio.Lock()
-        self.response_times = deque(maxlen=MAX_TIME_TAKEN_RECORDS)
+        self.response_times: Deque[Union[int, float]]  = deque(maxlen=MAX_TIME_TAKEN_RECORDS)
         self.step = 0
         self.error_count = 0
 
@@ -113,7 +121,7 @@ class LLMBase(ABC):
         session: RetryClient,
         **request_params,
     ) -> dict:
-        '''
+        """
         Query the model a single time with a prompt.
 
         Parameters
@@ -121,7 +129,7 @@ class LLMBase(ABC):
         prompt: Prompt str to query model with.
         session: aiohttp RetryClient object to use for the request.
         **request_params: Additional parameters to pass to the request.
-        '''
+        """
         request_data = self.format_request_data(prompt, **request_params)
         return await self.request_api(
             session=session,
@@ -172,7 +180,7 @@ class LLMBase(ABC):
     def _log_request(self, request: dict) -> None:
         self.logger.info(f"Request: {request}")
 
-    async def _add_successful_response(self, time_taken: float) -> None:
+    async def _add_successful_response(self, time_taken: Union[int, float]) -> None:
         async with self.lock:
             self.response_times.append(time_taken)
             self.step += 1
@@ -211,9 +219,9 @@ class LLMBase(ABC):
 # ===========================================================
 
 class OpenAICompletionsModel(LLMBase):
-    '''
+    """
     Object for calling a Completions-style API for OpenAI models.
-    '''
+    """
     prompt_idx_key = "__prompt_idx__"
 
     max_stop_tokens = 4
@@ -230,7 +238,7 @@ class OpenAICompletionsModel(LLMBase):
     def __init__(
         self, *,
         endpoint_url: str,
-        name: str = 'OpenAICompletionsModel',
+        name: str = "OpenAICompletionsModel",
         additional_headers: Optional[dict] = {},
         api_version: Optional[str] = "2023-03-15-preview",
         token_manager: APITokenManager,
@@ -257,17 +265,17 @@ class OpenAICompletionsModel(LLMBase):
         self.n = n
         self.frequency_penalty = frequency_penalty
         self.presence_penalty = presence_penalty
-        self.stop = stop
         self.image_captions = image_captions
 
         # Default stop to end token if not provided
-        if not self.stop:
-            self.stop = []
+        if not stop:
+            stop = []
         # Else if stop sequence is given as a string (Ex: "["\n", "<im_end>"]"), convert
-        elif type(self.stop) is str and self.stop.startswith('[') and self.stop.endswith(']'):
-            self.stop = eval(self.stop)
-        elif type(self.stop) is str:
-            self.stop = [self.stop]
+        elif type(stop) is str and stop.startswith("[") and stop.endswith("]"):
+            stop = eval(stop)
+        elif type(stop) is str:
+            stop = [stop]
+        self.stop: List = stop  # type: ignore[assignment]
 
         # If stop tokens do not include default end tokens, add them
         for token in self.stop_tokens:
@@ -286,10 +294,10 @@ class OpenAICompletionsModel(LLMBase):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
 
 
-    def format_request_data(self, prompt: str, **request_params):
-        '''
+    def format_request_data(self, prompt: str, **request_params) -> Dict[str, str]:
+        """
         Format the request data for the OpenAI API.
-        '''
+        """
         # Caption images if available
         if len(self.image_captions.keys()):
             prompt = replace_prompt_captions(
@@ -309,7 +317,7 @@ class OpenAICompletionsModel(LLMBase):
         role: str = "assistant",
         **request_params,
     ) -> dict:
-        '''
+        """
         Query the model a single time with a message.
 
         Parameters
@@ -318,30 +326,30 @@ class OpenAICompletionsModel(LLMBase):
         session: aiohttp RetryClient object to query the model with.
         role: Role of the user sending the message.
         request_params: Additional parameters to pass to the model.
-        '''
+        """
         prompt = []
         for message in messages:
             prompt.append(f"{self.CHAT_START_TOKEN}{message['role']}\n{message['content']}\n{self.CHAT_END_TOKEN}\n")
-        prompt = "".join(prompt)
-        prompt += f"{self.CHAT_START_TOKEN}{role}\n"
+        prompt_string: str = "".join(prompt)
+        prompt_string += f"{self.CHAT_START_TOKEN}{role}\n"
 
         return await self.get_completion(
-            prompt=prompt,
+            prompt=prompt_string,
             session=session,
             **request_params,
         )
 
 
-    async def get_all_completions(
+    async def get_all_completions(  # type: ignore[override]
         self,
-        prompts: List[str],
+        prompts: List[Dict[str, str]],
         session: RetryClient,
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
         **request_params,
     ) -> List[dict]:
-        '''
+        """
         Run a batch of prompts through the model and return the results in the order given.
 
         Parameters
@@ -352,22 +360,22 @@ class OpenAICompletionsModel(LLMBase):
         api_call_delay_seconds: Number of seconds to wait between API requests.
         request_error_rate_threshold: Maximum error rate allowed before raising an error.
         request_params: Additional parameters to pass to the API.
-        '''
+        """
         if api_call_max_parallel_count > 1:
             self.logger.info(f"Using {api_call_max_parallel_count} parallel workers to query the API..")
 
         # Format prompts and tag with index
-        request_datas = []
+        request_datas: List[Dict] = []
         for idx, prompt in enumerate(prompts):
-            prompt = self.format_request_data(prompt, **request_params)
-            prompt[self.prompt_idx_key] = idx
+            prompt: Dict[str, str] = self.format_request_data(prompt, **request_params)  # type: ignore[no-redef,arg-type]
+            prompt[self.prompt_idx_key] = idx  # type: ignore[assignment]
             request_datas.append(prompt)
 
         # Perform inference
         if len(prompts) == 0:
             return []  # queue is empty
 
-        output_collector = []
+        output_collector: List = []
         tasks = [  # create a set of worker-tasks to query inference endpoint in parallel
             asyncio.create_task(self.request_api_parallel(
                 request_datas=request_datas,
@@ -404,9 +412,9 @@ class OpenAICompletionsModel(LLMBase):
         Query the model for all prompts given as a list and append the output to output_collector.
         No return value, output_collector is modified in place.
         """
-        logger_tasks = []  # to await for logging to finish
+        logger_tasks: List = []  # to await for logging to finish
 
-        while True:  # process data from queue until it's empty
+        while True:  # process data from queue until it"s empty
             try:
                 request_data = request_datas.pop()
                 prompt_idx = request_data.pop(self.prompt_idx_key)
@@ -416,7 +424,7 @@ class OpenAICompletionsModel(LLMBase):
                         session=session,
                         request_data=request_data,
                     )
-                    await self._add_successful_response(response['time_taken'])
+                    await self._add_successful_response(response["time_taken"])
                 except Exception as e:
                     response = {
                         "request": request_data,
@@ -469,7 +477,7 @@ class OpenAICompletionsModel(LLMBase):
         headers = {
             "Content-Type": "application/json",
             "X-CV": f"{uuid.uuid4()}",
-            "X-ModelType": self.model or '',
+            "X-ModelType": self.model or "",
         }
 
         if self.token_manager.auth_header == "Bearer":
@@ -483,7 +491,8 @@ class OpenAICompletionsModel(LLMBase):
             headers["azureml-model-deployment"] = self.azureml_model_deployment
 
         # add all additional headers
-        headers.update(self.additional_headers)
+        if self.additional_headers:
+            headers.update(self.additional_headers)
 
         params = {}
         if self.api_version:
@@ -538,21 +547,21 @@ class OpenAICompletionsModel(LLMBase):
 # ===========================================================
 
 class OpenAIChatCompletionsModel(OpenAICompletionsModel):
-    '''
+    """
     OpenAIChatCompletionsModel is a wrapper around OpenAICompletionsModel that
     formats the prompt for chat completion.
-    '''
+    """
 
-    def __init__(self, name='OpenAIChatCompletionsModel', *args, **kwargs):
+    def __init__(self, name="OpenAIChatCompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
 
 
-    def format_request_data(self, messages: List[dict], **request_params):
+    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
             for message in messages:
-                message['content'] = replace_prompt_captions(
-                    message['content'],
+                message["content"] = replace_prompt_captions(
+                    message["content"],
                     captions=self.image_captions,
                 )
 
@@ -568,7 +577,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         role: str = "assistant",
         **request_params,
     ) -> dict:
-        '''
+        """
         Query the model a single time with a message.
 
         Parameters
@@ -577,7 +586,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         session: aiohttp RetryClient object to query the model with.
         role: Not used for this model, since it is a chat model.
         request_params: Additional parameters to pass to the model.
-        '''
+        """
         request_data = self.format_request_data(
             messages=messages,
             **request_params,
@@ -594,7 +603,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         session: RetryClient,
         **request_params,
     ) -> dict:
-        '''
+        """
         Query a ChatCompletions model with a single prompt.  Note: entire message will be inserted into a "system" call.
 
         Parameters
@@ -602,7 +611,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         prompt: Prompt str to query model with.
         session: aiohttp RetryClient object to use for the request.
         **request_params: Additional parameters to pass to the request.
-        '''
+        """
         messages = [{"role": "system", "content": prompt}]
 
         request_data = self.format_request_data(
@@ -617,17 +626,17 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
 
     async def get_all_completions(
         self,
-        prompts: List[str],
+        prompts: List[str],  # type: ignore[override]
         session: RetryClient,
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
         **request_params,
     ) -> List[dict]:
-        prompts = [[{"role": "system", "content": prompt}] for prompt in prompts]
+        prompts_list = [{"role": "system", "content": prompt} for prompt in prompts]
 
         return await super().get_all_completions(
-            prompts=prompts,
+            prompts=prompts_list,
             session=session,
             api_call_max_parallel_count=api_call_max_parallel_count,
             api_call_delay_seconds=api_call_delay_seconds,
@@ -640,11 +649,12 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []
+
         for choice in response_data["choices"]:
-            if 'message' in choice and 'content' in choice['message']:
-                samples.append(choice['message']['content'])
-            if 'message' in choice and 'finish_reason' in choice['message']:
-                finish_reason.append(choice['message']['finish_reason'])
+            if "message" in choice and "content" in choice["message"]:
+                samples.append(choice["message"]["content"])
+            if "message" in choice and "finish_reason" in choice["message"]:
+                finish_reason.append(choice["message"]["finish_reason"])
 
         return {
             "samples": samples,
@@ -657,13 +667,13 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
 # ===========================================================
 
 class OpenAIMultiModalCompletionsModel(OpenAICompletionsModel):
-    '''
+    """
     Wrapper around OpenAICompletionsModel that formats the prompt for multimodal
     completions containing images.
-    '''
+    """
     model_param_names = ["temperature", "max_tokens", "top_p", "n", "stop"]
 
-    def __init__(self, name='OpenAIMultiModalCompletionsModel', images_dir: Optional[str] = None, *args, **kwargs):
+    def __init__(self, name="OpenAIMultiModalCompletionsModel", images_dir: Optional[str] = None, *args, **kwargs):
         self.images_dir = images_dir
 
         super().__init__(name=name, *args, **kwargs)
@@ -681,13 +691,13 @@ class OpenAIMultiModalCompletionsModel(OpenAICompletionsModel):
 
 
     def _log_request(self, request: dict) -> None:
-        '''Log prompt, ignoring image data if multimodal.'''
+        """Log prompt, ignoring image data if multimodal."""
         loggable_prompt_transcript = {
-            'transcript': [
-                (c if c['type'] != 'image' else {'type': 'image', 'data': '...'})
-                for c in request['transcript']
+            "transcript": [
+                (c if c["type"] != "image" else {"type": "image", "data": "..."})
+                for c in request["transcript"]
             ],
-            **{k: v for k, v in request.items() if k != 'transcript'}
+            **{k: v for k, v in request.items() if k != "transcript"}
         }
         super()._log_request(loggable_prompt_transcript)
 
@@ -697,20 +707,20 @@ class OpenAIMultiModalCompletionsModel(OpenAICompletionsModel):
 # ===========================================================
 
 class LLAMACompletionsModel(OpenAICompletionsModel):
-    '''
+    """
     Object for calling a Completions-style API for LLAMA models.
-    '''
+    """
 
     def __init__(
-            self, name: str = 'LLAMACompletionsModel', *args, **kwargs):
+            self, name: str = "LLAMACompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header
         self.token_manager.auth_header = "Bearer"
 
     def format_request_data(self, prompt: str, **request_params):
-        '''
+        """
         Format the request data for the OpenAI API.
-        '''
+        """
         # Caption images if available
         if len(self.image_captions.keys()):
             prompt = replace_prompt_captions(
@@ -728,13 +738,13 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
         request_data.update(request_params)
         return request_data
 
-    def _parse_response(self, response_data: dict, request_data: dict) -> dict:
-        prompt = request_data['input_data']['input_string'][0]
+    def _parse_response(self, response_data: dict, request_data: dict) -> dict:  # type: ignore[override]
+        prompt = request_data["input_data"]["input_string"][0]
 
         # remove prompt text from each response as llama model returns prompt + completion instead of only completion
-        # remove any text after the stop tokens, since llama doesn't support stop token
+        # remove any text after the stop tokens, since llama does not support stop token
         for idx, response in enumerate(response_data["samples"]):
-            response_data["samples"][idx] = response_data["samples"][idx].replace(prompt, '').strip()
+            response_data["samples"][idx] = response_data["samples"][idx].replace(prompt, "").strip()
             for stop_token in self.stop:
                 if stop_token in response_data["samples"][idx]:
                     response_data["samples"][idx] = response_data["samples"][idx].split(stop_token)[0].strip()
@@ -744,7 +754,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
         for choice in response_data:
             if "0" in choice:
                 samples.append(choice["0"])
-                finish_reason.append('Stop')
+                finish_reason.append("Stop")
 
         return {
             "samples": samples,
@@ -756,38 +766,39 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
 # ============== LLAMA ChatCompletionsModel =================
 # ===========================================================
 class LLAMAChatCompletionsModel(LLAMACompletionsModel):
-    '''
+    """
     LLaMa ChatCompletionsModel is a wrapper around LLaMaCompletionsModel that
     formats the prompt for chat completion.
-    This chat completion model should be only used as assistant, and shouldn't be used to simulate user. It is not possible
+    This chat completion model should be only used as assistant, and should not be used to simulate user. It is not possible
      to pass a system prompt do describe how the model would behave, So we only use the model as assistant to reply for questions
      made by GPT simulated users.
-    '''
+    """
 
-    def __init__(self, name='LLAMAChatCompletionsModel', *args, **kwargs):
+    def __init__(self, name="LLAMAChatCompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header
         self.token_manager.auth_header = "Bearer"
 
-    def format_request_data(self, messages: List[dict], **request_params):
+    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
             for message in messages:
-                message['content'] = replace_prompt_captions(
-                    message['content'],
+                message["content"] = replace_prompt_captions(
+                    message["content"],
                     captions=self.image_captions,
                 )
 
-        # For LLaMa we don't pass the prompt (user persona) as a system message since LLama doesn't support system message
-        # LLama only supports user, and assistant messages. The messages sequence has to start with User message/ It can't have two user or
+        # For LLaMa we do not pass the prompt (user persona) as a system message since LLama does not support system message
+        # LLama only supports user, and assistant messages. 
+        # The messages sequence has to start with User message/ It can not have two user or
         # two assistant consecutive messages.
         # so if we set the system meta prompt as a user message, and if we have the first two messages made by user then we
         # combine the two messages in one message.
         for idx, x in enumerate(messages):
-            if x['role'] == 'system':
-                x['role'] = 'user'
-        if len(messages) > 1 and messages[0]['role'] == 'user' and messages[1]['role'] == 'user':
-            messages[0] = {'role': 'user', 'content': messages[0]['content'] + '\n' + messages[1]['content']}
+            if x["role"] == "system":
+                x["role"] = "user"
+        if len(messages) > 1 and messages[0]["role"] == "user" and messages[1]["role"] == "user":
+            messages[0] = {"role": "user", "content": messages[0]["content"] + "\n" + messages[1]["content"]}
             del messages[1]
 
         # request_data = {"messages": messages, **self.get_model_params()}
@@ -808,7 +819,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
             role: str = "assistant",
             **request_params,
     ) -> dict:
-        '''
+        """
         Query the model a single time with a message.
 
         Parameters
@@ -817,7 +828,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         session: aiohttp RetryClient object to query the model with.
         role: Not used for this model, since it is a chat model.
         request_params: Additional parameters to pass to the model.
-        '''
+        """
 
         request_data = self.format_request_data(
             messages=messages,
@@ -828,14 +839,14 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
             request_data=request_data,
         )
 
-    def _parse_response(self, response_data: dict) -> dict:
+    def _parse_response(self, response_data: dict) -> dict:  # type: ignore[override]
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []
         # for choice in response_data:
-        if 'output' in response_data:
-            samples.append(response_data['output'])
-            finish_reason.append('Stop')
+        if "output" in response_data:
+            samples.append(response_data["output"])
+            finish_reason.append("Stop")
 
         return {
             "samples": samples,

@@ -45,7 +45,7 @@ def build_retrieve_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,7 +85,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -128,7 +128,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -168,7 +168,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -209,7 +209,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -239,7 +239,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,9 +282,9 @@ class VirtualNetworksOperations:
 
     @distributed_trace
     def retrieve(self, resource_group_name: str, virtual_network_name: str, **kwargs: Any) -> _models.VirtualNetwork:
-        """Gets the virtual network.
+        """Gets the specified virtual network resource.
 
-        Gets the Hybrid AKS virtual network.
+        Gets the specified virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -427,16 +427,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource definition. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -465,16 +465,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource definition. Required.
         :type virtual_networks: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -501,16 +501,17 @@ class VirtualNetworksOperations:
         virtual_networks: Union[_models.VirtualNetwork, IO],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Puts the virtual network.
+        """Creates or updates the virtual network resource.
 
-        Puts the Hybrid AKS virtual network.
+        Creates or updates the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Is either a VirtualNetwork type or a IO type. Required.
+        :param virtual_networks: Virtual Network resource definition. Is either a VirtualNetwork type
+         or a IO type. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetwork or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -632,9 +633,9 @@ class VirtualNetworksOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, virtual_network_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes the virtual network.
+        """Deletes the specified virtual network resource.
 
-        Deletes the Hybrid AKS virtual network.
+        Deletes the specified virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -756,15 +757,11 @@ class VirtualNetworksOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
-        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("VirtualNetwork", pipeline_response)
 
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
@@ -782,16 +779,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource patch definition. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -820,16 +817,16 @@ class VirtualNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Required.
+        :param virtual_networks: Virtual Network resource patch definition. Required.
         :type virtual_networks: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -856,16 +853,17 @@ class VirtualNetworksOperations:
         virtual_networks: Union[_models.VirtualNetworksPatch, IO],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualNetwork]:
-        """Patches the virtual network.
+        """Patches the virtual network resource.
 
-        Patches the Hybrid AKS virtual network.
+        Patches the virtual network resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param virtual_network_name: Parameter for the name of the virtual network. Required.
         :type virtual_network_name: str
-        :param virtual_networks: Is either a VirtualNetworksPatch type or a IO type. Required.
+        :param virtual_networks: Virtual Network resource patch definition. Is either a
+         VirtualNetworksPatch type or a IO type. Required.
         :type virtual_networks: ~azure.mgmt.hybridcontainerservice.models.VirtualNetworksPatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -935,9 +933,9 @@ class VirtualNetworksOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.VirtualNetwork"]:
-        """List virtual networks by resource group.
+        """Lists the virtual networks in the specified resource group.
 
-        Lists the Hybrid AKS virtual networks by resource group.
+        Lists the virtual networks in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1024,9 +1022,9 @@ class VirtualNetworksOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.VirtualNetwork"]:
-        """List virtual networks by subscription.
+        """Lists the virtual networks in the specified subscription.
 
-        Lists the Hybrid AKS virtual networks by subscription.
+        Lists the virtual networks in the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)

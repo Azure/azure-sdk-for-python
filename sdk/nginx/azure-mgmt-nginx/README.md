@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Nginx Management Client Library.
-This package has been tested with Python 3.7+.
+This package has been tested with Python 3.8+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_
@@ -12,7 +12,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.7+ is required to use this package.
+- Python 3.8+ is required to use this package.
 - [Azure subscription](https://azure.microsoft.com/free/)
 
 ### Install the package
@@ -48,7 +48,7 @@ client = NginxManagementClient(credential=DefaultAzureCredential(), subscription
 Code samples for this package can be found at:
 - [Search Nginx Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
 - [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
-- [Other Nginx Management doc](https://github.com/nginxinc/nginxaas-for-azure-snippets/tree/main/snippets/sdk/python)
+- [Other Nginx Management doc](https://github.com/nginxinc/nginxaas-for-azure-snippets/tree/main/sdk/python)
 
 
 ## Troubleshooting

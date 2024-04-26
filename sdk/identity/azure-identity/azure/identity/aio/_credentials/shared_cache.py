@@ -30,7 +30,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SharedTokenCacheCredential":
         if self._client:
             await self._client.__aenter__()  # type: ignore
         return self
@@ -58,7 +58,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

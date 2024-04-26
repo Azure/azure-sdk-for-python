@@ -44,11 +44,11 @@ extends:
       safeName: azurecommunicationsms
     - name: azure-communication-phonenumbers
       safeName: azurecommunicationphonenumbers
-    - name: azure-communication-networktraversal
-      safeName: azurecommunicationnetworktraversal
     - name: azure-communication-rooms
       safeName: azurecommunicationrooms
     - name: azure-communication-jobrouter
       safeName: azurecommunicationjobrouter
     - name: azure-communication-callautomation
       safeName: azurecommunicationcallautomation
+    - name: azure-communication-messages
+      safeName: azurecommunicationmessages

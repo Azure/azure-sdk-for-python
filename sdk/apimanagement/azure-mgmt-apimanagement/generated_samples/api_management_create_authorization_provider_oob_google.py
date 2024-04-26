@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -40,8 +43,8 @@ def main():
                 "oauth2": {
                     "grantTypes": {
                         "authorizationCode": {
-                            "clientId": "508791967882-5qv6o2i99a75un7329vlegtk78kr766h.apps.googleusercontent.com",
-                            "clientSecret": "qDN0VyVFjU1OsOyT5Kz8ce",
+                            "clientId": "99999999-xxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
+                            "clientSecret": "XXXXXXXXXXXXXXXXXXXX",
                             "scopes": "openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
                         }
                     },

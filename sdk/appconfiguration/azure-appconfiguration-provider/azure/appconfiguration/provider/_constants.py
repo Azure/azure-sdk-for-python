@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-FEATURE_MANAGEMENT_KEY = "FeatureManagementFeatureFlags"
+FEATURE_MANAGEMENT_KEY = "feature_management"
+FEATURE_FLAG_KEY = "feature_flags"
 FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
 
 EMPTY_LABEL = "\0"

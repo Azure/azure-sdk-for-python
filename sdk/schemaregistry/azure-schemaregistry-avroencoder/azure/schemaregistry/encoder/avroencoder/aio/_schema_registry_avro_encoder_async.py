@@ -227,6 +227,7 @@ class AvroEncoder(object):
         """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
             1) A object of subtype of the MessageType protocol.
             2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
+
         Content must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 

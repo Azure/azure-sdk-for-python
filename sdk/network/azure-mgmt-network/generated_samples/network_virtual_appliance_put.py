@@ -48,6 +48,11 @@ def main():
                 "cloudInitConfigurationBlobs": [
                     "https://csrncvhdstorage1.blob.core.windows.net/csrncvhdstoragecont/csrcloudinitconfig"
                 ],
+                "internetIngressPublicIps": [
+                    {
+                        "id": "/subscriptions/{{subscriptionId}}/resourceGroups/{{rg}}/providers/Microsoft.Network/publicIPAddresses/slbip"
+                    }
+                ],
                 "nvaSku": {"bundledScaleUnit": "1", "marketPlaceVersion": "12.1", "vendor": "Cisco SDWAN"},
                 "virtualApplianceAsn": 10000,
                 "virtualHub": {
@@ -60,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-05-01/examples/NetworkVirtualAppliancePut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-09-01/examples/NetworkVirtualAppliancePut.json
 if __name__ == "__main__":
     main()

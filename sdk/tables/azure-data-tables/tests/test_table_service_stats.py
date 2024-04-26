@@ -9,6 +9,7 @@ from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
+
 # --Test Class -----------------------------------------------------------------
 class TestTableServiceStats(AzureRecordedTestCase, TableTestCase):
     # --Test cases per service ---------------------------------------

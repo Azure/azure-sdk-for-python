@@ -4,7 +4,7 @@
 
 # pylint: disable=R0902,protected-access,no-member
 
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationModels
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -19,7 +19,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import TrainingSettings as RestTrainingSettings
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
@@ -87,13 +86,12 @@ class TrainingSettings(RestTranslatableMixin):
         self.blocked_training_algorithms = blocked_training_algorithms
         self.training_mode = training_mode
 
-    @experimental
     @property
     def training_mode(self) -> Optional[TabularTrainingMode]:
         return self._training_mode
 
     @training_mode.setter
-    def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]):
+    def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]) -> None:
         if value is None or value is TabularTrainingMode:
             self._training_mode = value
         elif hasattr(TabularTrainingMode, camel_to_snake(value).upper()):
@@ -115,9 +113,17 @@ class TrainingSettings(RestTranslatableMixin):
     def allowed_training_algorithms(self) -> Optional[List[str]]:
         return self._allowed_training_algorithms
 
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, value: Optional[List[str]]) -> None:
+        self._allowed_training_algorithms = value
+
     @property
     def blocked_training_algorithms(self) -> Optional[List[str]]:
         return self._blocked_training_algorithms
+
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, value: Optional[List[str]]) -> None:
+        self._blocked_training_algorithms = value
 
     def _to_rest_object(self) -> RestTrainingSettings:
         return RestTrainingSettings(
@@ -126,9 +132,9 @@ class TrainingSettings(RestTranslatableMixin):
             enable_model_explainability=self.enable_model_explainability,
             enable_stack_ensemble=self.enable_stack_ensemble,
             enable_vote_ensemble=self.enable_vote_ensemble,
-            stack_ensemble_settings=self.stack_ensemble_settings._to_rest_object()
-            if self.stack_ensemble_settings
-            else None,
+            stack_ensemble_settings=(
+                self.stack_ensemble_settings._to_rest_object() if self.stack_ensemble_settings else None
+            ),
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             training_mode=self.training_mode,
         )
@@ -169,34 +175,34 @@ class TrainingSettings(RestTranslatableMixin):
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    @blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, value):
-        self._blocked_training_algorithms = value
-
-    @allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, value):
-        self._allowed_training_algorithms = value
-
 
 class ClassificationTrainingSettings(TrainingSettings):
     """Classification TrainingSettings class for Azure Machine Learning."""
 
     def __init__(
         self,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(**kwargs)
 
-    @TrainingSettings.allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ClassificationModels]]):
+    @property
+    def allowed_training_algorithms(self) -> Optional[List]:
+        return self._allowed_training_algorithms
+
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ClassificationModels]]) -> None:
         self._allowed_training_algorithms = (
             None
             if allowed_model_list is None
             else [ClassificationModels[camel_to_snake(o)] for o in allowed_model_list]
         )
 
-    @TrainingSettings.blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ClassificationModels]]):
+    @property
+    def blocked_training_algorithms(self) -> Optional[List]:
+        return self._blocked_training_algorithms
+
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ClassificationModels]]) -> None:
         self._blocked_training_algorithms = (
             None
             if blocked_model_list is None
@@ -238,18 +244,26 @@ class ForecastingTrainingSettings(TrainingSettings):
 
     def __init__(
         self,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(**kwargs)
 
-    @TrainingSettings.allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]):
+    @property
+    def allowed_training_algorithms(self) -> Optional[List]:
+        return self._allowed_training_algorithms
+
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]) -> None:
         self._allowed_training_algorithms = (
             None if allowed_model_list is None else [ForecastingModels[camel_to_snake(o)] for o in allowed_model_list]
         )
 
-    @TrainingSettings.blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]):
+    @property
+    def blocked_training_algorithms(self) -> Optional[List]:
+        return self._blocked_training_algorithms
+
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]) -> None:
         self._blocked_training_algorithms = (
             None if blocked_model_list is None else [ForecastingModels[camel_to_snake(o)] for o in blocked_model_list]
         )
@@ -289,18 +303,26 @@ class RegressionTrainingSettings(TrainingSettings):
 
     def __init__(
         self,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(**kwargs)
 
-    @TrainingSettings.allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]):
+    @property
+    def allowed_training_algorithms(self) -> Optional[List]:
+        return self._allowed_training_algorithms
+
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]) -> None:
         self._allowed_training_algorithms = (
             None if allowed_model_list is None else [RegressionModels[camel_to_snake(o)] for o in allowed_model_list]
         )
 
-    @TrainingSettings.blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]):
+    @property
+    def blocked_training_algorithms(self) -> Optional[List]:
+        return self._blocked_training_algorithms
+
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]) -> None:
         self._blocked_training_algorithms = (
             None if blocked_model_list is None else [RegressionModels[camel_to_snake(o)] for o in blocked_model_list]
         )

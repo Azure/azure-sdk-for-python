@@ -30,7 +30,7 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
-    async def test_classify_document(self, documentintelligence_training_data_classifier, **kwargs):
+    async def test_classify_document(self, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
@@ -49,17 +49,17 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-A/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-B/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-B/train"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-C/train"
+                        container_url=documentintelligence_training_data_classifier_sas_url, prefix="IRS-1040-C/train"
                     )
                 ),
             },

@@ -61,6 +61,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Gets all projects for a user.
 
         See
@@ -104,6 +105,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -117,9 +119,10 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_list_projects_request(
+                _request = build_authoring_list_projects_request(
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -129,7 +132,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -141,7 +144,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -149,9 +152,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -161,11 +164,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -181,6 +184,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def get_project_details(self, project_name: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Get the requested project metadata.
 
         See
@@ -230,7 +234,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_authoring_get_project_details_request(
+        _request = build_authoring_get_project_details_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -239,11 +243,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -260,14 +264,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def create_project(
         self, project_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Create or update a project.
 
         See
@@ -326,8 +331,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @overload
     async def create_project(
-        self, project_name: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Create or update a project.
 
         See
@@ -337,7 +343,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param options: Parameters needed to create the project. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -371,7 +377,8 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         """
 
     @distributed_trace_async
-    async def create_project(self, project_name: str, options: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_project(self, project_name: str, options: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Create or update a project.
 
         See
@@ -380,12 +387,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param options: Parameters needed to create the project. Is either a JSON type or a IO type.
-         Required.
-        :type options: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param options: Parameters needed to create the project. Is either a JSON type or a IO[bytes]
+         type. Required.
+        :type options: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -450,7 +454,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             _json = options
 
-        request = build_authoring_create_project_request(
+        _request = build_authoring_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -462,11 +466,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -510,7 +514,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_authoring_delete_project_request(
+        _request = build_authoring_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -519,11 +523,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -538,7 +542,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -550,13 +554,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -576,7 +573,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -592,13 +589,13 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _export_initial(
         self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
@@ -616,7 +613,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_authoring_export_request(
+        _request = build_authoring_export_request(
             project_name=project_name,
             file_format=file_format,
             asset_kind=asset_kind,
@@ -627,11 +624,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -656,14 +653,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_export(
         self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Export project metadata and assets.
 
         See
@@ -678,13 +676,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -779,18 +770,18 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _import_assets_initial(
         self,
         project_name: str,
-        options: Optional[Union[JSON, IO]] = None,
+        options: Optional[Union[JSON, IO[bytes]]] = None,
         *,
         file_format: str = "json",
         asset_kind: Optional[str] = None,
@@ -821,7 +812,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             else:
                 _json = None
 
-        request = build_authoring_import_assets_request(
+        _request = build_authoring_import_assets_request(
             project_name=project_name,
             file_format=file_format,
             asset_kind=asset_kind,
@@ -835,11 +826,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -864,9 +855,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_import_assets(
@@ -879,6 +870,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Import project assets.
 
         See
@@ -898,13 +890,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1091,13 +1076,14 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
     async def begin_import_assets(
         self,
         project_name: str,
-        options: Optional[IO] = None,
+        options: Optional[IO[bytes]] = None,
         *,
         file_format: str = "json",
         asset_kind: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Import project assets.
 
         See
@@ -1107,7 +1093,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param options: Project assets the needs to be imported. Default value is None.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
          and "excel". Default value is "json".
         :paramtype file_format: str
@@ -1117,13 +1103,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1178,12 +1157,13 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
     async def begin_import_assets(
         self,
         project_name: str,
-        options: Optional[Union[JSON, IO]] = None,
+        options: Optional[Union[JSON, IO[bytes]]] = None,
         *,
         file_format: str = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Import project assets.
 
         See
@@ -1192,25 +1172,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param options: Project assets the needs to be imported. Is either a JSON type or a IO type.
-         Default value is None.
-        :type options: JSON or IO
+        :param options: Project assets the needs to be imported. Is either a JSON type or a IO[bytes]
+         type. Default value is None.
+        :type options: JSON or IO[bytes]
         :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
          and "excel". Default value is "json".
         :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1438,13 +1408,13 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _deploy_project_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -1460,7 +1430,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_authoring_deploy_project_request(
+        _request = build_authoring_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -1470,11 +1440,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1499,9 +1469,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_deploy_project(
@@ -1517,13 +1487,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1580,13 +1543,13 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_deployments(
@@ -1623,6 +1586,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1636,10 +1600,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_list_deployments_request(
+                _request = build_authoring_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1649,7 +1614,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1661,7 +1626,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1669,9 +1634,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1681,11 +1646,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1734,6 +1699,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1747,10 +1713,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_list_synonyms_request(
+                _request = build_authoring_list_synonyms_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1760,7 +1727,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1772,7 +1739,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1780,9 +1747,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1792,11 +1759,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1849,7 +1816,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @overload
     async def update_synonyms(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, synonyms: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, synonyms: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -1860,7 +1827,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param synonyms: All the synonyms of a project. Required.
-        :type synonyms: IO
+        :type synonyms: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1871,7 +1838,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def update_synonyms(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, synonyms: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, synonyms: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -1881,11 +1848,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param synonyms: All the synonyms of a project. Is either a JSON type or a IO type. Required.
-        :type synonyms: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param synonyms: All the synonyms of a project. Is either a JSON type or a IO[bytes] type.
+         Required.
+        :type synonyms: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1927,7 +1892,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             _json = synonyms
 
-        request = build_authoring_update_synonyms_request(
+        _request = build_authoring_update_synonyms_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1939,11 +1904,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1955,12 +1920,13 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_sources(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Gets all the sources of a project.
 
         See
@@ -1999,6 +1965,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2012,10 +1979,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_list_sources_request(
+                _request = build_authoring_list_sources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2025,7 +1993,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2037,7 +2005,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -2045,9 +2013,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -2057,11 +2025,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2076,7 +2044,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     async def _update_sources_initial(
-        self, project_name: str, sources: Union[List[JSON], IO], **kwargs: Any
+        self, project_name: str, sources: Union[List[JSON], IO[bytes]], **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -2100,7 +2068,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             _json = sources
 
-        request = build_authoring_update_sources_request(
+        _request = build_authoring_update_sources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2112,11 +2080,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2141,14 +2109,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_sources(
         self, project_name: str, sources: List[JSON], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the sources of a project.
 
         See
@@ -2162,13 +2131,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2216,8 +2178,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @overload
     async def begin_update_sources(
-        self, project_name: str, sources: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, sources: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the sources of a project.
 
         See
@@ -2227,17 +2190,10 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param sources: Update sources parameters of a project. Required.
-        :type sources: IO
+        :type sources: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2262,8 +2218,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def begin_update_sources(
-        self, project_name: str, sources: Union[List[JSON], IO], **kwargs: Any
+        self, project_name: str, sources: Union[List[JSON], IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the sources of a project.
 
         See
@@ -2272,19 +2229,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param sources: Update sources parameters of a project. Is either a [JSON] type or a IO type.
-         Required.
-        :type sources: list[JSON] or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param sources: Update sources parameters of a project. Is either a [JSON] type or a IO[bytes]
+         type. Required.
+        :type sources: list[JSON] or IO[bytes]
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2331,7 +2278,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_update_sources_request(
+                _request = build_authoring_update_sources_request(
                     project_name=project_name,
                     content_type=content_type,
                     api_version=self._config.api_version,
@@ -2345,7 +2292,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2357,7 +2304,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -2365,9 +2312,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -2377,11 +2324,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2430,13 +2377,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[AsyncIterable[JSON]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[AsyncIterable[JSON]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_qnas(
@@ -2448,6 +2397,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         skip: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Gets all the QnAs of a project.
 
         See
@@ -2565,6 +2515,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2578,11 +2529,12 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_list_qnas_request(
+                _request = build_authoring_list_qnas_request(
                     project_name=project_name,
                     source=source,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2592,7 +2544,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2604,7 +2556,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -2612,9 +2564,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -2624,11 +2576,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2643,7 +2595,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     async def _update_qnas_initial(
-        self, project_name: str, qnas: Union[List[JSON], IO], **kwargs: Any
+        self, project_name: str, qnas: Union[List[JSON], IO[bytes]], **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -2667,7 +2619,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             _json = qnas
 
-        request = build_authoring_update_qnas_request(
+        _request = build_authoring_update_qnas_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2679,11 +2631,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2708,14 +2660,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_qnas(
         self, project_name: str, qnas: List[JSON], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the QnAs of a project.
 
         See
@@ -2729,13 +2682,6 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2897,8 +2843,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @overload
     async def begin_update_qnas(
-        self, project_name: str, qnas: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, qnas: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the QnAs of a project.
 
         See
@@ -2908,17 +2855,10 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param qnas: Update QnAs parameters of a project. Required.
-        :type qnas: IO
+        :type qnas: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3020,8 +2960,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def begin_update_qnas(
-        self, project_name: str, qnas: Union[List[JSON], IO], **kwargs: Any
+        self, project_name: str, qnas: Union[List[JSON], IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
+        # pylint: disable=line-too-long
         """Updates the QnAs of a project.
 
         See
@@ -3030,19 +2971,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param qnas: Update QnAs parameters of a project. Is either a [JSON] type or a IO type.
+        :param qnas: Update QnAs parameters of a project. Is either a [JSON] type or a IO[bytes] type.
          Required.
-        :type qnas: list[JSON] or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :type qnas: list[JSON] or IO[bytes]
         :return: An instance of LROPoller that returns an iterator like instance of JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3166,7 +3097,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_authoring_update_qnas_request(
+                _request = build_authoring_update_qnas_request(
                     project_name=project_name,
                     content_type=content_type,
                     api_version=self._config.api_version,
@@ -3180,7 +3111,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3192,7 +3123,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -3200,9 +3131,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -3212,11 +3143,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3265,13 +3196,15 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[AsyncIterable[JSON]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[AsyncIterable[JSON]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     async def add_feedback(  # pylint: disable=inconsistent-return-statements
@@ -3312,7 +3245,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @overload
     async def add_feedback(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, feedback: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, feedback: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update Active Learning feedback.
 
@@ -3323,7 +3256,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param feedback: Feedback for Active Learning. Required.
-        :type feedback: IO
+        :type feedback: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3334,7 +3267,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def add_feedback(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, feedback: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, feedback: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Update Active Learning feedback.
 
@@ -3344,11 +3277,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param feedback: Feedback for Active Learning. Is either a JSON type or a IO type. Required.
-        :type feedback: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param feedback: Feedback for Active Learning. Is either a JSON type or a IO[bytes] type.
+         Required.
+        :type feedback: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3390,7 +3321,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         else:
             _json = feedback
 
-        request = build_authoring_add_feedback_request(
+        _request = build_authoring_add_feedback_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3402,11 +3333,11 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3418,4 +3349,4 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore

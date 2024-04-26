@@ -49,7 +49,7 @@ def _create_image_job(
     :return: An AutoML Image Job
     :rtype: TImageJob
     """
-    image_job = job_cls(primary_metric=primary_metric, **kwargs)
+    image_job = job_cls(primary_metric=primary_metric, **kwargs)  # type: ignore[operator]
     image_job.set_data(
         training_data=training_data,
         target_column_name=target_column_name,
@@ -96,8 +96,6 @@ def image_classification(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageClassificationJob
@@ -111,7 +109,7 @@ def image_classification(
                 :dedent: 8
                 :caption: creating an automl image classification job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageClassificationJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -158,8 +156,6 @@ def image_classification_multilabel(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageClassificationMultilabelJob
@@ -173,7 +169,7 @@ def image_classification_multilabel(
                 :dedent: 8
                 :caption: creating an automl image multilabel classification job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageClassificationMultilabelJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -219,8 +215,6 @@ def image_object_detection(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image object detection job object that can be submitted to an Azure ML compute for execution.
     :rtype: ~azure.ai.ml.automl.ImageObjectDetectionJob
@@ -234,7 +228,7 @@ def image_object_detection(
                 :dedent: 8
                 :caption: creating an automl image object detection job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageObjectDetectionJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -280,8 +274,6 @@ def image_instance_segmentation(
 
             Defaults to .2
     :paramtype validation_data_size: float
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     :return: Image instance segmentation job
     :rtype: ~azure.ai.ml.automl.ImageInstanceSegmentationJob
@@ -295,7 +287,7 @@ def image_instance_segmentation(
                 :dedent: 8
                 :caption: creating an automl image instance segmentation job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageInstanceSegmentationJob,
         training_data=training_data,
         target_column_name=target_column_name,

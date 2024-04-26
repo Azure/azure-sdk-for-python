@@ -207,7 +207,9 @@ def data_index_incremental_update_acs(
     from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
     from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
-    crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
+    crack_and_chunk_and_embed_component = get_component_obj(
+        ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED
+    )
     update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
@@ -225,13 +227,13 @@ def data_index_incremental_update_acs(
         embeddings_model: str,
         acs_config: str,
         acs_connection_id: str,
+        embeddings_container: Input,
         chunk_size: int = 768,
-        chunk_overlap: int = 0,
-        input_glob: str = "**/*",
-        citation_url: str = None,
-        citation_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        chunk_overlap: Optional[int] = 0,
+        input_glob: Optional[str] = "**/*",
+        citation_url: Optional[str] = None,
+        citation_replacement_regex: Optional[str] = None,
+        aoai_connection_id: str = None,  # type: ignore[assignment]
     ):
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
@@ -244,11 +246,11 @@ def data_index_incremental_update_acs(
         :type acs_config: str
         :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
         :type acs_connection_id: str
-        :param chunk_size: The size of the chunks to break the input data into.
+        :param chunk_size: The size of the chunks to break the input data into. Defaults to 768.
         :type chunk_size: int
-        :param chunk_overlap: The number of tokens to overlap between chunks.
+        :param chunk_overlap: The number of tokens to overlap between chunks. Defaults to 0.
         :type chunk_overlap: int
-        :param input_glob: The glob pattern to use when searching for input data.
+        :param input_glob: The glob pattern to use when searching for input data. Defaults to "**/*".
         :type input_glob: str
         :param citation_url: The URL to use when generating citations for the input data.
         :type citation_url: str
@@ -261,6 +263,13 @@ def data_index_incremental_update_acs(
         :return: The URI of the generated Azure Cognitive Search index.
         :rtype: str.
         """
+        if input_glob is None:
+            input_glob = "**/*"
+        if chunk_size is None:
+            chunk_size = 768
+        if chunk_overlap is None:
+            chunk_overlap = 0
+
         crack_and_chunk_and_embed = crack_and_chunk_and_embed_component(
             input_data=input_data,
             input_glob=input_glob,
@@ -318,7 +327,7 @@ def data_index_incremental_update_acs(
     component = data_index_acs_pipeline(
         input_data=input_data,
         input_glob=data_index.source.input_glob,
-        chunk_size=data_index.source.chunk_size,
+        chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
         chunk_overlap=data_index.source.chunk_overlap,
         citation_url=data_index.source.citation_url,
         citation_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
@@ -326,7 +335,9 @@ def data_index_incremental_update_acs(
         else None,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
         acs_config=json.dumps(acs_config),
         acs_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
     )
@@ -359,7 +370,7 @@ def data_index_faiss(
     input_data_override: Optional[Input] = None,
 ):
     from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources._indexx._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)
@@ -378,12 +389,12 @@ def data_index_faiss(
     def data_index_faiss_pipeline(
         input_data: Input,
         embeddings_model: str,
+        embeddings_container: Input,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: str = None,  # type: ignore[assignment]
+        data_source_url: str = None,  # type: ignore[assignment]
+        document_path_replacement_regex: str = None,  # type: ignore[assignment]
+        aoai_connection_id: str = None,  # type: ignore[assignment]
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -392,7 +403,7 @@ def data_index_faiss(
         :type input_data: Input
         :param embeddings_model: The embedding model to use when processing source data chunks.
         :type embeddings_model: str
-        :param chunk_size: The size of the chunks to break the input data into.
+        :param chunk_size: The size of the chunks to break the input data into. Defaults to 1024.
         :type chunk_size: int
         :param data_source_glob: The glob pattern to use when searching for input data.
         :type data_source_glob: str
@@ -407,6 +418,9 @@ def data_index_faiss(
         :return: The URI of the generated Faiss index.
         :rtype: str.
         """
+        if chunk_size is None:
+            chunk_size = 1024
+
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
             input_glob=data_source_glob,
@@ -462,14 +476,16 @@ def data_index_faiss(
     component = data_index_faiss_pipeline(
         input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
-        chunk_size=data_index.source.chunk_size,
-        data_source_glob=data_index.source.input_glob,
-        data_source_url=data_index.source.citation_url,
-        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+        chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
+        data_source_glob=data_index.source.input_glob,  # type: ignore[arg-type]
+        data_source_url=data_index.source.citation_url,  # type: ignore[arg-type]
+        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())  # type: ignore[arg-type]
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -518,13 +534,13 @@ def data_index_acs(
         embeddings_model: str,
         acs_config: str,
         acs_connection_id: str,
-        chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
-    ):
+        embeddings_container: Input,
+        chunk_size: Optional[int] = 1024,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
 
@@ -536,7 +552,7 @@ def data_index_acs(
         :type acs_config: str
         :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
         :type acs_connection_id: str
-        :param chunk_size: The size of the chunks to break the input data into.
+        :param chunk_size: The size of the chunks to break the input data into. Defaults to 1024.
         :type chunk_size: int
         :param data_source_glob: The glob pattern to use when searching for input data.
         :type data_source_glob: str
@@ -549,8 +565,11 @@ def data_index_acs(
         :param embeddings_container: The container to use when caching embeddings.
         :type embeddings_container: Input
         :return: The URI of the generated Azure Cognitive Search index.
-        :rtype: str.
+        :rtype: Dict[str, Any]
         """
+        if chunk_size is None:
+            chunk_size = 1024
+
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
             input_glob=data_source_glob,
@@ -624,7 +643,9 @@ def data_index_acs(
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -705,9 +726,9 @@ def get_component_obj(ml_client, component_uri):
     return component_obj
 
 
-def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceConnection]] = None) -> Optional[str]:
+def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceConnection]] = None) -> str:
     if connection is None:
-        return None
+        return ""
 
     if isinstance(connection, str):
         short_form = re.match(r"azureml:(?P<connection_name>[^/]*)", connection)

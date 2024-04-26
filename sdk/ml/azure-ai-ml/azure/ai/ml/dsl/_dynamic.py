@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Callable, Dict, Sequence
+from typing import Any, Callable, Dict, Sequence, cast
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -26,7 +26,9 @@ class KwParameter(Parameter):
     :type _optional: bool
     """
 
-    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
+    def __init__(
+        self, name: str, default: Any, annotation: Any = Parameter.empty, _type: str = "str", _optional: bool = False
+    ) -> None:
         super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
         self._type = _type
         self._optional = _optional
@@ -54,23 +56,25 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
         else:
             # Before python<3.8, replace is not available, we can only initialize the code as following.
             # https://github.com/python/cpython/blob/v3.7.8/Objects/codeobject.c#L97
-            code = types.CodeType(
+
+            # Bug Item number: 2881688
+            code = types.CodeType(  # type: ignore
                 code_template.co_argcount,
                 code_template.co_kwonlyargcount,
                 code_template.co_nlocals,
                 code_template.co_stacksize,
                 code_template.co_flags,
-                code_template.co_code,
-                code_template.co_consts,
+                code_template.co_code,  # type: ignore
+                code_template.co_consts,  # type: ignore
                 code_template.co_names,
                 code_template.co_varnames,
-                code_template.co_filename,
+                code_template.co_filename,  # type: ignore
                 new_name,  # Use the new name for the new code object.
-                code_template.co_firstlineno,
-                code_template.co_lnotab,
+                code_template.co_firstlineno,  # type: ignore
+                code_template.co_lnotab,  # type: ignore
                 # The following two values are required for closures.
-                code_template.co_freevars,
-                code_template.co_cellvars,
+                code_template.co_freevars,  # type: ignore
+                code_template.co_cellvars,  # type: ignore
             )
         # Initialize a new function with the code object and the new name, see the following ref for more details.
         # https://github.com/python/cpython/blob/4901fe274bc82b95dc89bcb3de8802a3dfedab32/Objects/clinic/funcobject.c.h#L30
@@ -82,14 +86,14 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
             # Closure must be set to make sure free variables work.
             closure=func.__closure__,
         )
-    except BaseException:  # pylint: disable=broad-except
+    except BaseException:  # pylint: disable=W0718
         # If the dynamic replacing failed in corner cases, simply set the two fields.
         func.__name__ = func.__qualname__ = new_name
         return func
 
 
 # pylint: disable-next=docstring-missing-param
-def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
+def _assert_arg_valid(kwargs: dict, keys: list, func_name: str) -> None:
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access
     # validate component input names
@@ -114,7 +118,7 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
 
 
-def _update_dct_if_not_exist(dst: Dict, src: Dict):
+def _update_dct_if_not_exist(dst: Dict, src: Dict) -> None:
     """Computes the union of `src` and `dst`, in-place within `dst`
 
     If a key exists in `dst` and `src` the value in `dst` is preserved
@@ -162,7 +166,7 @@ def create_kw_function_from_parameters(
         )
     default_kwargs = {p.name: p.default for p in parameters}
 
-    def f(**kwargs):
+    def f(**kwargs: Any) -> Any:
         # We need to make sure all keys of kwargs are valid.
         # Merge valid group keys with original keys.
         _assert_arg_valid(kwargs, [*list(default_kwargs.keys()), *flattened_group_keys], func_name=func_name)
@@ -170,9 +174,10 @@ def create_kw_function_from_parameters(
         _update_dct_if_not_exist(kwargs, default_kwargs)
         return func(**kwargs)
 
-    f = _replace_function_name(f, func_name)
+    f = _replace_function_name(cast(types.FunctionType, f), func_name)
     # Set the signature so jupyter notebook could have param hint by calling inspect.signature()
-    f.__signature__ = Signature(parameters)
+    # Bug Item number: 2883223
+    f.__signature__ = Signature(parameters)  # type: ignore
     # Set doc/name/module to make sure help(f) shows following expected result.
     # Expected help(f):
     #
@@ -183,5 +188,5 @@ def create_kw_function_from_parameters(
     f.__doc__ = documentation  # Set documentation to update FUNC_DOC in help.
     # Set module = None to avoid showing the sentence `in module 'azure.ai.ml.component._dynamic' in help.`
     # See https://github.com/python/cpython/blob/2145c8c9724287a310bc77a2760d4f1c0ca9eb0c/Lib/pydoc.py#L1757
-    f.__module__ = None
+    f.__module__ = None  # type: ignore
     return f

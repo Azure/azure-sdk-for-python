@@ -19,7 +19,7 @@ class CertificateCredential(ClientCredentialBase):
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256. See
     `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform>`_
+    <https://learn.microsoft.com/entra/identity-platform/certificate-credentials#register-your-certificate-with-microsoft-identity-platform>`__
     for more information on configuring certificate authentication.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.

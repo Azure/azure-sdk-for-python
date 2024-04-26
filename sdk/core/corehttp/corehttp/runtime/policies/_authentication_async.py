@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from __future__ import annotations
-import asyncio
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
@@ -14,6 +13,7 @@ from ..pipeline._tools_async import await_result
 from ._base_async import AsyncHTTPPolicy
 from ._authentication import _BearerTokenCredentialPolicyBase
 from ...rest import AsyncHttpResponse, HttpRequest
+from ...utils._utils import get_running_async_lock
 
 if TYPE_CHECKING:
     from ...credentials import AsyncTokenCredential
@@ -36,9 +36,15 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     ) -> None:
         super().__init__()
         self._credential = credential
-        self._lock = asyncio.Lock()
+        self._lock_instance = None
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
+
+    @property
+    def _lock(self):
+        if self._lock_instance is None:
+            self._lock_instance = get_running_async_lock()
+        return self._lock_instance
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -85,8 +91,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         except Exception:  # pylint:disable=broad-except
             await await_result(self.on_exception, request)
             raise
-        else:
-            await await_result(self.on_response, request, response)
+        await await_result(self.on_response, request, response)
 
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
@@ -98,8 +103,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     except Exception:  # pylint:disable=broad-except
                         await await_result(self.on_exception, request)
                         raise
-                    else:
-                        await await_result(self.on_response, request, response)
+                    await await_result(self.on_response, request, response)
 
         return response
 

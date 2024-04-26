@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetContainer,
@@ -65,19 +65,19 @@ class FeatureSet(Artifact):
         name: str,
         version: str,
         entities: List[str],
-        specification: FeatureSetSpecification,
+        specification: Optional[FeatureSetSpecification],
         stage: Optional[str] = "Development",
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
         tags: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             name=name,
             version=version,
             description=description,
             tags=tags,
-            path=specification.path,
+            path=specification.path if specification is not None else None,
             **kwargs,
         )
         if stage and stage not in ["Development", "Production", "Archived"]:
@@ -101,16 +101,16 @@ class FeatureSet(Artifact):
             properties=self.properties,
             tags=self.tags,
             entities=self.entities,
-            materialization_settings=self.materialization_settings._to_rest_object()
-            if self.materialization_settings
-            else None,
-            specification=self.specification._to_rest_object(),
+            materialization_settings=(
+                self.materialization_settings._to_rest_object() if self.materialization_settings else None
+            ),
+            specification=self.specification._to_rest_object() if self.specification is not None else None,
             stage=self.stage,
         )
         return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
 
     @classmethod
-    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "FeatureSet":
+    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> Optional["FeatureSet"]:
         if not featureset_rest_object:
             return None
         featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
@@ -152,7 +152,7 @@ class FeatureSet(Artifact):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureSet":
         data = data or {}
         params_override = params_override or []
@@ -167,7 +167,7 @@ class FeatureSet(Artifact):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return dict(FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # if datastore_arm_id is null, capture the full_storage_path
@@ -182,17 +182,17 @@ class FeatureSet(Artifact):
                 aml_datastore_id.asset_name,
                 asset_artifact.relative_path,
             )
-            self.specification.path = self.path
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+            if self.specification is not None:
+                self.specification.path = self.path
+
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the asset content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -202,16 +202,20 @@ class FeatureSet(Artifact):
 
         from azure.ai.ml._utils.utils import is_url
 
-        origin_spec_path = self.specification.path
-        if isinstance(dest, (PathLike, str)) and not is_url(self.specification.path):
+        origin_spec_path = self.specification.path if self.specification is not None else None
+        if isinstance(dest, (PathLike, str)) and self.specification is not None and not is_url(self.specification.path):
             if os.path.exists(dest):
                 raise FileExistsError(f"File {dest} already exists.")
-            relative_path = os.path.basename(self.specification.path)
-            src_spec_path = str(Path(self._base_path, self.specification.path))
+            relative_path = os.path.basename(cast(PathLike, self.specification.path))
+            src_spec_path = (
+                str(Path(self._base_path, self.specification.path)) if self.specification.path is not None else ""
+            )
             dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
             if os.path.exists(dest_spec_path):
                 shutil.rmtree(dest_spec_path)
             shutil.copytree(src=src_spec_path, dst=dest_spec_path)
             self.specification.path = str(Path("./", relative_path))
         super().dump(dest=dest, **kwargs)
-        self.specification.path = origin_spec_path
+
+        if self.specification is not None:
+            self.specification.path = origin_spec_path

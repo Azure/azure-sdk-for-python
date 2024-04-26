@@ -5,7 +5,7 @@ import logging
 import re
 import uuid
 from abc import ABC
-from typing import Dict, Union  # pylint: disable=unused-import
+from typing import Any, Dict, Union, cast  # pylint: disable=unused-import
 
 from marshmallow import ValidationError
 
@@ -13,7 +13,7 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import ComponentSource, ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .._util import convert_ordered_dict_to_dict
@@ -32,7 +32,7 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
     :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         # TODO(1979547): refactor this
         _source = kwargs.pop("_source", None)
         self._source = _source if _source else ComponentSource.DSL
@@ -46,7 +46,7 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
             self._register_in_current_pipeline_component_builder()
 
     @property
-    def type(self):
+    def type(self) -> Any:
         """Get the type of the control flow node.
 
         :return: The type of the control flow node.
@@ -55,9 +55,9 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         return self._type
 
     def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
+        return dict(self._dump_for_validation())
 
-    def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
+    def _to_rest_object(self, **kwargs: Any) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call.
 
         :return: The rest object
@@ -65,16 +65,16 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
-        return convert_ordered_dict_to_dict(rest_obj)
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
-    def _register_in_current_pipeline_component_builder(self):
+    def _register_in_current_pipeline_component_builder(self) -> None:
         """Register this node in current pipeline component builder by adding self to a global stack."""
         from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
-        _add_component_to_current_definition_builder(self)
+        _add_component_to_current_definition_builder(self)  # type: ignore[arg-type]
 
     @classmethod
-    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -93,14 +93,14 @@ class LoopNode(ControlFlowNode, ABC):
     :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, *, body: BaseNode, **kwargs) -> None:
+    def __init__(self, *, body: BaseNode, **kwargs: Any) -> None:
         self._body = body
         super(LoopNode, self).__init__(**kwargs)
         # always set the referenced control flow node instance id to the body.
         self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
 
     @property
-    def body(self):
+    def body(self) -> BaseNode:
         """Get the body of the loop node.
 
         :return: The body of the loop node.
@@ -134,7 +134,7 @@ class LoopNode(ControlFlowNode, ABC):
             )
         return pipeline_jobs[body_name]
 
-    def _validate_body(self):
+    def _validate_body(self) -> MutableValidationResult:
         # pylint: disable=protected-access
         validation_result = self._create_empty_validation_result()
 
@@ -143,22 +143,22 @@ class LoopNode(ControlFlowNode, ABC):
             validation_result.append_error("body", "The body of loop node cannot be promoted as another loop again.")
         return validation_result
 
-    def _get_body_binding_str(self):
+    def _get_body_binding_str(self) -> str:
         return "${{parent.jobs.%s}}" % self.body.name
 
     @staticmethod
     def _get_data_binding_expression_value(expression: str, regex: str) -> str:
         try:
             if is_data_binding_expression(expression):
-                return re.findall(regex, expression)[0]
+                return str(re.findall(regex, expression)[0])
 
             return expression
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             module_logger.warning("Cannot get the value from data binding expression %s.", expression)
             return expression
 
     @staticmethod
-    def _is_loop_node_dict(obj):
+    def _is_loop_node_dict(obj: Any) -> bool:
         return obj.get(CommonYamlFields.TYPE, None) in [ControlFlowType.DO_WHILE, ControlFlowType.PARALLEL_FOR]
 
     @classmethod
@@ -167,4 +167,4 @@ class LoopNode(ControlFlowNode, ABC):
 
         node_type = obj.get(CommonYamlFields.TYPE, None)
         load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(_type=node_type)
-        return load_from_rest_obj_func(obj, pipeline_jobs)
+        return load_from_rest_obj_func(obj, pipeline_jobs)  # type: ignore

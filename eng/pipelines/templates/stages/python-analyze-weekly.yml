@@ -13,17 +13,21 @@ stages:
 - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
+    variables:
+      - template: /eng/pipelines/templates/variables/image.yml
     dependsOn: []
     jobs:
       - job: 'Analyze'
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.8'
+          - name: PythonVersion
+            value: '3.8' 
 
         pool:
-          name: azsdk-pool-mms-ubuntu-2004-general
-          vmImage: MMSUbuntu20.04
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
 
         steps:
           - task: UsePythonVersion@0
@@ -84,5 +88,27 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="ruff"
                 --disablecov
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
+
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.11 for docs generation'
+            inputs:
+              versionSpec: '3.11'
+
+          - script: |
+              python -m pip install setuptools==58.3.0
+              python -m pip install -r eng/ci_tools.txt
+            displayName: 'Prep Environment'
+
+          - task: PythonScript@0
+            displayName: 'Generate Docs'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              arguments: >-
+                ${{ parameters.BuildTargetingString }}
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="strict-sphinx"
             env:
               GH_TOKEN: $(azuresdk-github-pat)

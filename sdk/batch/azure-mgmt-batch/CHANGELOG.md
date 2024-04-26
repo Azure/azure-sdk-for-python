@@ -1,5 +1,24 @@
 # Release History
 
+## 17.3.0 (2024-03-19)
+
+### Features Added
+
+  - Model Pool has a new parameter upgrade_policy
+  - Model SupportedSku has a new parameter batch_support_end_of_life
+
+## 17.2.0 (2023-12-18)
+
+### Features Added
+
+  - Model OSDisk has a new parameter caching
+  - Model OSDisk has a new parameter disk_size_gb
+  - Model OSDisk has a new parameter managed_disk
+  - Model OSDisk has a new parameter write_accelerator_enabled
+  - Model Pool has a new parameter resource_tags
+  - Model VirtualMachineConfiguration has a new parameter security_profile
+  - Model VirtualMachineConfiguration has a new parameter service_artifact_reference
+
 ## 17.1.0 (2023-07-21)
 
 ### Features Added

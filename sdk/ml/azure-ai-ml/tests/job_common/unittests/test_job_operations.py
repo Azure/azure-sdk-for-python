@@ -37,11 +37,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -107,6 +109,7 @@ def mock_job_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_02_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
     mock_aml_services_2023_08_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
@@ -125,6 +128,7 @@ def mock_job_operation(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
+        service_client_01_2024_preview=mock_aml_services_2024_01_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),

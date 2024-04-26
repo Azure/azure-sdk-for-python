@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -32,14 +32,14 @@ class SparkComponent(
     :keyword entry: The file or class entry point.
     :paramtype entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
     :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps. Defaults to None.
-    :paramtype py_files: Optional[list[str]]
+    :paramtype py_files: Optional[List[str]]
     :keyword jars: The list of .JAR files to include on the driver and executor classpaths. Defaults to None.
-    :paramtype jars: Optional[list[str]]
+    :paramtype jars: Optional[List[str]]
     :keyword files: The list of files to be placed in the working directory of each executor. Defaults to None.
-    :paramtype files: Optional[list[str]]
+    :paramtype files: Optional[List[str]]
     :keyword archives: The list of archives to be extracted into the working directory of each executor.
         Defaults to None.
-    :paramtype archives: Optional[list[str]]
+    :paramtype archives: Optional[List[str]]
     :keyword driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :paramtype driver_cores: Optional[int]
     :keyword driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
@@ -93,26 +93,26 @@ class SparkComponent(
     def __init__(
         self,
         *,
-        code: Union[str, os.PathLike] = ".",
+        code: Optional[Union[str, os.PathLike]] = ".",
         entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
-        driver_cores: Optional[int] = None,
+        driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
+        executor_cores: Optional[Union[int, str]] = None,
         executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
+        executor_instances: Optional[Union[int, str]] = None,
+        dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
+        dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
+        dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
         conf: Optional[Dict[str, str]] = None,
         environment: Optional[Union[str, Environment]] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         args: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -125,7 +125,7 @@ class SparkComponent(
             **kwargs,
         )
 
-        self.code: Union[str, os.PathLike] = code
+        self.code: Optional[Union[str, os.PathLike]] = code
         self.entry = entry
         self.py_files = py_files
         self.jars = jars
@@ -155,7 +155,7 @@ class SparkComponent(
         )
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return SparkComponentSchema(context=context)
 
     @classmethod
@@ -171,7 +171,11 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        # TODO: Bug Item number: 2897665
+        res: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(SparkComponent, self)._to_dict()}
+        )
+        return res
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.
@@ -180,7 +184,7 @@ class SparkComponent(
         :rtype: Dict
         """
 
-        obj = super()._to_ordered_dict_for_yaml_dump()
+        obj: dict = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
         if self.code and isinstance(self.code, str):
             obj["code"] = self.code
@@ -190,11 +194,14 @@ class SparkComponent(
         # Return environment id of environment
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
-            return self.environment.id
+            res: Optional[str] = self.environment.id
+            return res
         return self.environment
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(SparkComponent, self).__str__()
+            toYaml: str = self._to_yaml()
+            return toYaml
+        except BaseException:  # pylint: disable=W0718
+            toStr: str = super(SparkComponent, self).__str__()
+            return toStr

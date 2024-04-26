@@ -7,7 +7,7 @@
 from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
@@ -46,16 +46,16 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
-        tags: Optional[dict] = None,
-        **kwargs,
+        tags: Optional[Dict] = None,
+        **kwargs: Any,
     ) -> None:
-        self._type = kwargs.pop("type", None)
+        self._type: Optional[str] = kwargs.pop("type", None)
         if self._type:
             self._type = self._type.lower()
 
-        self._created_on = kwargs.pop("created_on", None)
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
-        self._provisioning_errors = kwargs.pop("provisioning_errors", None)
+        self._created_on: Optional[str] = kwargs.pop("created_on", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
+        self._provisioning_errors: Optional[str] = kwargs.pop("provisioning_errors", None)
 
         super().__init__(name=name, description=description, **kwargs)
         self.resource_id = resource_id
@@ -121,10 +121,14 @@ class Compute(Resource, RestTranslatableMixin):
         }
         compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
 
-        class_type = mapping.get(compute_type, None)
+        class_type = cast(
+            Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
+            mapping.get(compute_type, None),
+        )
         if class_type:
             return class_type._load_from_rest(obj)
-        return UnsupportedCompute._load_from_rest(obj)
+        _unsupported_from_rest: Compute = UnsupportedCompute._load_from_rest(obj)
+        return _unsupported_from_rest
 
     @classmethod
     @abstractmethod
@@ -134,7 +138,7 @@ class Compute(Resource, RestTranslatableMixin):
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         pass
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the compute content into a file in yaml format.
 
         :param dest: The destination to receive this compute's content.
@@ -151,7 +155,8 @@ class Compute(Resource, RestTranslatableMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _load(
@@ -159,7 +164,7 @@ class Compute(Resource, RestTranslatableMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Compute":
         data = data or {}
         params_override = params_override or []
@@ -179,15 +184,20 @@ class Compute(Resource, RestTranslatableMixin):
         compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
         if compute_type:
             if compute_type.lower() == ComputeType.VIRTUALMACHINE:
-                return VirtualMachineCompute._load_from_dict(data, context, **kwargs)
+                _vm_load_from_dict: Compute = VirtualMachineCompute._load_from_dict(data, context, **kwargs)
+                return _vm_load_from_dict
             if compute_type.lower() == ComputeType.AMLCOMPUTE:
-                return AmlCompute._load_from_dict(data, context, **kwargs)
+                _aml_load_from_dict: Compute = AmlCompute._load_from_dict(data, context, **kwargs)
+                return _aml_load_from_dict
             if compute_type.lower() == ComputeType.COMPUTEINSTANCE:
-                return ComputeInstance._load_from_dict(data, context, **kwargs)
+                _compute_instance_load_from_dict: Compute = ComputeInstance._load_from_dict(data, context, **kwargs)
+                return _compute_instance_load_from_dict
             if compute_type.lower() == ComputeType.KUBERNETES:
-                return KubernetesCompute._load_from_dict(data, context, **kwargs)
+                _kub_load_from_dict: Compute = KubernetesCompute._load_from_dict(data, context, **kwargs)
+                return _kub_load_from_dict
             if compute_type.lower() == ComputeType.SYNAPSESPARK:
-                return SynapseSparkCompute._load_from_dict(data, context, **kwargs)
+                _synapse_spark_load_from_dict: Compute = SynapseSparkCompute._load_from_dict(data, context, **kwargs)
+                return _synapse_spark_load_from_dict
         msg = f"Unknown compute type: {compute_type}"
         raise ValidationException(
             message=msg,
@@ -198,17 +208,18 @@ class Compute(Resource, RestTranslatableMixin):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "Compute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "Compute":
         pass
 
 
 class NetworkSettings:
-    """Network settings for a compute resource.
+    """Network settings for a compute resource. If the workspace and VNet are in different resource groups,
+    please provide the full URI for subnet and leave vnet_name as None.
 
     :param vnet_name: The virtual network name.
-    :type vnet_name: str
+    :type vnet_name: Optional[str]
     :param subnet: The subnet name.
-    :type subnet: str
+    :type subnet: Optional[str]
 
     .. admonition:: Example:
 
@@ -225,12 +236,12 @@ class NetworkSettings:
         *,
         vnet_name: Optional[str] = None,
         subnet: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.vnet_name = vnet_name
         self.subnet = subnet
-        self._public_ip_address = kwargs.pop("public_ip_address", None)
-        self._private_ip_address = kwargs.pop("private_ip_address", None)
+        self._public_ip_address: str = kwargs.pop("public_ip_address", None)
+        self._private_ip_address: str = kwargs.pop("private_ip_address", None)
 
     @property
     def public_ip_address(self) -> str:

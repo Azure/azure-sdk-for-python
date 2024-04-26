@@ -72,15 +72,17 @@ class NlpSearchSpace(RestTranslatableMixin):
         if isinstance(learning_rate_scheduler, NlpLearningRateScheduler):
             learning_rate_scheduler = camel_to_snake(learning_rate_scheduler.value)
         elif isinstance(learning_rate_scheduler, Choice):
-            learning_rate_scheduler.values = [
-                camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
-                for item in learning_rate_scheduler.values
-            ]
+            if learning_rate_scheduler.values is not None:
+                learning_rate_scheduler.values = [
+                    camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
+                    for item in learning_rate_scheduler.values
+                ]
 
         if isinstance(model_name, NlpModels):
             model_name = model_name.value
         elif isinstance(model_name, Choice):
-            model_name.values = [item.value if isinstance(item, NlpModels) else item for item in model_name.values]
+            if model_name.values is not None:
+                model_name.values = [item.value if isinstance(item, NlpModels) else item for item in model_name.values]
 
         self.gradient_accumulation_steps = gradient_accumulation_steps
         self.learning_rate = learning_rate

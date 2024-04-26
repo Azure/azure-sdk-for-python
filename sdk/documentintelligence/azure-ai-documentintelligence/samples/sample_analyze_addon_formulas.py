@@ -13,12 +13,11 @@ DESCRIPTION:
     This sample demonstrates how to extract all identified formulas, such as mathematical
     equations, using the add-on 'FORMULAS' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
     The following capabilities are free:
     - BARCODES
@@ -28,6 +27,7 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
@@ -53,41 +53,42 @@ def analyze_formulas():
     # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Specify which add-on capabilities to enable
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.FORMULAS],
             content_type="application/octet-stream",
         )
-    result = poller.result()
+    result: AnalyzeResult = poller.result()
 
     # Iterate over extracted formulas on each page and print inline and display formulas
     # separately.
     for page in result.pages:
         print(f"----Formulas detected from page #{page.page_number}----")
-        inline_formulas = [f for f in page.formulas if f.kind == "inline"]
-        display_formulas = [f for f in page.formulas if f.kind == "display"]
+        if page.formulas:
+            inline_formulas = [f for f in page.formulas if f.kind == "inline"]
+            display_formulas = [f for f in page.formulas if f.kind == "display"]
 
-        print(f"Detected {len(inline_formulas)} inline formulas.")
-        for formula_idx, formula in enumerate(inline_formulas):
-            print(f"- Inline #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
+            print(f"Detected {len(inline_formulas)} inline formulas.")
+            for formula_idx, formula in enumerate(inline_formulas):
+                print(f"- Inline #{formula_idx}: {formula.value}")
+                print(f"  Confidence: {formula.confidence}")
+                print(f"  Bounding regions: {formula.polygon}")
 
-        print(f"\nDetected {len(display_formulas)} display formulas.")
-        for formula_idx, formula in enumerate(display_formulas):
-            print(f"- Display #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
+            print(f"\nDetected {len(display_formulas)} display formulas.")
+            for formula_idx, formula in enumerate(display_formulas):
+                print(f"- Display #{formula_idx}: {formula.value}")
+                print(f"  Confidence: {formula.confidence}")
+                print(f"  Bounding regions: {formula.polygon}")
 
     print("----------------------------------------")
     # [END analyze_formulas]
@@ -101,10 +102,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_formulas()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

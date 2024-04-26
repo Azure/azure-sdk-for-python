@@ -91,18 +91,18 @@ class InternalInput(Input):
         if self._lower_type in [_INPUT_TYPE_ENUM, _INPUT_TYPE_FLOAT]:
             return self._lower_type
         if self._is_primitive_type:
-            return IOConstants.PRIMITIVE_STR_2_TYPE[self._lower_type].__name__
+            return IOConstants.PRIMITIVE_STR_2_TYPE[self._lower_type].__name__  # type: ignore[index]
+            # TODO: Bug 2881900
         return super()._get_python_builtin_type_str()
 
     @overload
     @classmethod
-    def _from_base(cls, _input: None) -> None:
+    def _from_base(cls, _input: None) -> None:  # type: ignore[misc]
         ...
 
     @overload
     @classmethod
-    def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput":
-        ...
+    def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput": ...
 
     @classmethod
     def _from_base(cls, _input: Optional[Union[Input, Dict]]) -> Optional["InternalInput"]:
@@ -125,7 +125,7 @@ class InternalInput(Input):
             # do force cast directly as there is no new field added in InternalInput
             # need to change the logic if new field is added
             _input.__class__ = InternalInput
-            return _input
+            return _input  # type: ignore[return-value]
         return InternalInput(**_input)
 
 
@@ -180,7 +180,7 @@ class InternalOutput(Output):
             # do force cast directly as there is no new field added in InternalInput
             # need to change the logic if new field is added
             _output.__class__ = InternalOutput
-            return _output
+            return _output  # type: ignore[return-value]
         return InternalOutput(**_output)
 
     def map_pipeline_output_type(self) -> str:
