@@ -117,7 +117,7 @@ class LocalAdministratorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Owners of Dev Boxes in the pool are not local administrators on the Dev Boxes."""
 
 
-class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
     NOT_STARTED = "NotStarted"

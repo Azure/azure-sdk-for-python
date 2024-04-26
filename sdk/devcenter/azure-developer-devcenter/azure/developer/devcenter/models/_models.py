@@ -703,7 +703,7 @@ class OperationDetails(_model_base.Model):
     :vartype name: str
     :ivar status: Provisioning state of the resource. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
-    :vartype status: str or ~azure.developer.devcenter.models.OperationState
+    :vartype status: str or ~azure.developer.devcenter.models.OperationStatus
     :ivar resource_id: The id of the resource.
     :vartype resource_id: str
     :ivar start_time: The start time of the operation.
@@ -722,7 +722,7 @@ class OperationDetails(_model_base.Model):
     """Fully qualified ID for the operation status. Required."""
     name: str = rest_field(visibility=["read"])
     """The operation id name. Required."""
-    status: Union[str, "_models.OperationState"] = rest_field()
+    status: Union[str, "_models.OperationStatus"] = rest_field()
     """Provisioning state of the resource. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
     resource_id: Optional[str] = rest_field(name="resourceId")
@@ -742,7 +742,7 @@ class OperationDetails(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationState"],
+        status: Union[str, "_models.OperationStatus"],
         resource_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
