@@ -5,18 +5,18 @@
 # -------------------------------------------------------------------------
 import logging
 import json
+import time
+import random
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple, Union
+from typing import Tuple, Union, Dict
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
-    SecretReferenceConfigurationSetting,
 )
-from ._keyvault_reference import resolve_keyvault_reference
-from ._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY, FEATURE_FLAG_PREFIX
+from ._constants import FEATURE_FLAG_PREFIX
 
 
 @dataclass
@@ -92,9 +92,7 @@ class ReplicaClient:
                 raise e
         return False, None
 
-    def _load_configuration_settings(
-        self, selects, refresh_on, **kwargs
-    ):
+    def _load_configuration_settings(self, selects, refresh_on, **kwargs):
         configuration_settings = []
         sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
         for select in selects:
@@ -131,13 +129,7 @@ class ReplicaClient:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys
 
-    def refresh_configuration_settings(
-        self,
-        selects,
-        refresh_on,
-        headers,
-        **kwargs
-    ) -> bool:
+    def refresh_configuration_settings(self, selects, refresh_on, headers, **kwargs) -> bool:
         need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
         for (key, label), etag in updated_sentinel_keys.items():
@@ -153,9 +145,7 @@ class ReplicaClient:
             configuration_settings, sentinel_keys = self._load_configuration_settings(selects, refresh_on, **kwargs)
         return need_refresh, sentinel_keys, configuration_settings
 
-    def refresh_feature_flags(
-        self, refresh_on, feature_flag_selectors, headers, **kwargs
-    ) -> bool:
+    def refresh_feature_flags(self, refresh_on, feature_flag_selectors, headers, **kwargs) -> bool:
         feature_flag_sentinel_keys = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
@@ -167,21 +157,39 @@ class ReplicaClient:
         return False, None, None
 
 
-class ReplicaClientBuilder:
-    def __init__(self, origin_endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs):
-        self._origin_endpoint = origin_endpoint
-        self._credential = credential
-        self._user_agent = user_agent
-        self._retry_total = retry_total
-        self._retry_backoff_max = retry_backoff_max
-        self._kwargs = kwargs
+class ReplicaClientManager:
+    def __init__(self, replica_clients: Dict[str, ReplicaClient], min_backoff: int, max_backoff: int):
+        self._replica_clients = replica_clients
+        self._min_backoff = min_backoff
+        self._max_backoff = max_backoff
 
-    def build_with_endpoint(self, endpoint):
-        return ReplicaClient(
-            endpoint, self._credential, self._user_agent, self._retry_total, self._retry_backoff_max, **self._kwargs
-        )
+    def get_active_clients(self):
+        active_clients = []
+        for client in self._replica_clients:
+            if client.backoff_end_time <= time.time():
+                active_clients.append(client)
+        return active_clients
 
-    def build_with_connection_string(self, connection_string):
-        return ReplicaClient(
-            connection_string, self._user_agent, self._retry_total, self._retry_backoff_max, **self._kwargs
+    def backoff(self, client: ReplicaClient):
+        client.failed_attempts += 1
+        backoff_time = client._calculate_backoff(client.failed_attempts)
+        client.backoff_end_time = time.time() + backoff_time
+
+    def _calculate_backoff(self, attempts) -> float:
+        max_attempts = 63
+        millisecond = 1000  # 1 Second in milliseconds
+
+        min_backoff_milliseconds = self._min_backoff * millisecond
+        max_backoff_milliseconds = self._max_backoff * millisecond
+
+        if self._max_backoff <= self._min_backoff:
+            return min_backoff_milliseconds
+
+        calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(attempts, max_attempts))
+
+        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
+            calculated_milliseconds = max_backoff_milliseconds
+
+        return min_backoff_milliseconds + (
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
         )

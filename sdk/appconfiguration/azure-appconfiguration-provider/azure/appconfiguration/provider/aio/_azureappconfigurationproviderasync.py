@@ -606,7 +606,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         return self._dict.values()
 
     @overload
-    def get(self, key: str, default: None = None) -> Union[str, JSON, None]: ...
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
 
     @overload
     def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs

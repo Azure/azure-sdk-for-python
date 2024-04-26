@@ -27,11 +27,11 @@ class SRVRecord:
 
 def find_auto_failover_endpoints(endpoint):
     known_domain = _get_known_domains(endpoint)
-    if not known_domain:
+    if known_domain is None:
         return [endpoint]
 
     origin = _find_origin(endpoint)
-    if not origin or not _validate(known_domain, origin.target):
+    if origin is None or not _validate(known_domain, origin.target):
         return [endpoint]
 
     srv_records = [origin] + _find_replicas(origin.target)
@@ -75,9 +75,9 @@ def _request_record(request):
 
 
 def _validate(known_domain, endpoint):
-    if isinstance(known_domain, str) or known_domain == "":
+    if not isinstance(known_domain, str) or known_domain == "":
         return False
-    if isinstance(endpoint, str) or endpoint == "":
+    if not isinstance(endpoint, str) or endpoint == "":
         return False
     return endpoint.endswith(known_domain)
 
