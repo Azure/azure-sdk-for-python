@@ -529,4 +529,44 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             await blob.download_blob()
         assert stream_reader_read_mock.call_count == count[0] == 4
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_retry_on_time_out_from_copy_source_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        """Test that retry on timeout (408) if surfaced from x-ms-copy-source-status-code."""
+        # Arrange
+        container_name = self.get_resource_name('utcontainer')
+        retry = LinearRetry(backoff=1, retry_total=3)
+        retry_counter = RetryCounter()
+        service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            retry_policy=retry)
+
+        # Force the create call to 'timeout' with a 408
+        def response_handler(raw_response):
+            raw_response.http_response.status_code = 408
+            raw_response.http_response.headers['x-ms-copy-source-status-code'] = '408'
+
+        def assert_exception_is_present_on_retry_context(**kwargs):
+            assert kwargs.get('response') is not None
+            assert kwargs['response'].status_code == 408
+            assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '408'
+            retry_counter.simple_count(retry)
+
+        # Act
+        try:
+            # The initial create will be forced to return with timeout error (408), but we overwrite it and retry.
+            # The retry will still receive timeout error (408) as we modified the status code.
+            with pytest.raises(HttpResponseError):
+                await service.create_container(
+                    container_name, raw_response_hook=response_handler,
+                    retry_hook=assert_exception_is_present_on_retry_context)
+            assert retry_counter.count == 3
+        finally:
+            await service.delete_container(container_name)
+
 # ------------------------------------------------------------------------------
