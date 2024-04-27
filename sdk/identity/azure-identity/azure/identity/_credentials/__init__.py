@@ -20,12 +20,14 @@ from .user_password import UsernamePasswordCredential
 from .vscode import VisualStudioCodeCredential
 from .client_assertion import ClientAssertionCredential
 from .workload_identity import WorkloadIdentityCredential
+from .azure_pipelines import AzurePipelinesCredential
 
 
 __all__ = [
     "AuthorizationCodeCredential",
     "AzureCliCredential",
     "AzureDeveloperCliCredential",
+    "AzurePipelinesCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",

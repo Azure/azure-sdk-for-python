@@ -349,3 +349,27 @@ async def create_workload_identity_credential_async():
     #   - AZURE_FEDERATED_TOKEN_FILE
     credential = WorkloadIdentityCredential()
     # [END workload_identity_credential_async]
+
+
+def create_azure_pipelines_credential():
+    # [START create_azure_pipelines_credential]
+    from azure.identity import AzurePipelinesCredential
+
+    credential = AzurePipelinesCredential(
+        tenant_id="<tenant_id>",
+        client_id="<client_id>",
+        service_connection_id="<service_connection_id>",
+    )
+    # [END create_azure_pipelines_credential]
+
+
+async def create_azure_pipelines_credential_async():
+    # [START create_azure_pipelines_credential_async]
+    from azure.identity.aio import AzurePipelinesCredential
+
+    credential = AzurePipelinesCredential(
+        tenant_id="<tenant_id>",
+        client_id="<client_id>",
+        service_connection_id="<service_connection_id>",
+    )
+    # [END create_azure_pipelines_credential_async]

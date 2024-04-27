@@ -53,7 +53,7 @@ class ClientAssertionCredential(GetTokenMixin):
             additionally_allowed_tenants=additionally_allowed_tenants,
             **kwargs
         )
-        super(ClientAssertionCredential, self).__init__(**kwargs)
+        super().__init__()
 
     def __enter__(self) -> "ClientAssertionCredential":
         self._client.__enter__()
