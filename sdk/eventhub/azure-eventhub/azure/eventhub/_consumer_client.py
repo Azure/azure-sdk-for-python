@@ -375,9 +375,12 @@ class EventHubConsumerClient(
     ) -> None:
         ...
 
-    def _receive(
+    def _receive( # pylint:disable=unused-argument
         self,
-        on_event: Callable[["PartitionContext", Union["EventData", None, List["EventData"]]], None],
+        on_event: Union[
+            Callable[["PartitionContext", Optional["EventData"]], None],
+            Callable[["PartitionContext", List["EventData"]], None]
+        ],
         *,
         batch: bool = False,
         max_wait_time: Optional[float] = None,
@@ -398,7 +401,8 @@ class EventHubConsumerClient(
         ] = None,
         on_partition_close: Optional[
             Callable[["PartitionContext", "CloseReason"], None]
-        ] = None
+        ] = None,
+        **kwargs: Any
     ) -> None:
         with self._lock:
             error: Optional[str] = None

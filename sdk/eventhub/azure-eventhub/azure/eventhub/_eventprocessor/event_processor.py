@@ -57,7 +57,10 @@ class EventProcessor(
         self,
         eventhub_client: EventHubConsumerClient,
         consumer_group: str,
-        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
+        on_event: Union[
+            Callable[["PartitionContext", Optional["EventData"]], None],
+            Callable[["PartitionContext", List["EventData"]], None]
+        ],
         *,
         batch: bool = False,
         max_batch_size: int = 300,
@@ -252,9 +255,9 @@ class EventProcessor(
                 self._last_received_time = time.time_ns()
 
             with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
-                self._event_handler(partition_context, event)
+                self._event_handler(partition_context, event) # type: ignore
         else:
-            self._event_handler(partition_context, event)
+            self._event_handler(partition_context, event) # type: ignore
 
     def _load_balancing(self) -> None:
         """Start the EventProcessor.
