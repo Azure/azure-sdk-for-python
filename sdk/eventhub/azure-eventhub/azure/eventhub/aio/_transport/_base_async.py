@@ -147,12 +147,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         *,
         endpoint: str,
         auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
-        container_id: str,
+        container_id: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: int,
+        idle_timeout: float,
         properties: Dict[bytes, Any],
-        remote_idle_timeout_empty_frame_send_ratio: int,
+        remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
         debug: bool,
         encoding: str,
@@ -165,9 +165,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.
-        :keyword int idle_timeout: Required.
+        :keyword float idle_timeout: Required.
         :keyword dict properties: Required.
-        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+        :keyword float remote_idle_timeout_empty_frame_send_ratio: Required.
         :keyword error_policy: Required.
         :keyword bool debug: Required.
         :keyword str encoding: Required.
