@@ -67,9 +67,9 @@ class EventProcessor(
         on_partition_initialize: Optional[Callable[[PartitionContext], None]] = None,
         on_partition_close: Optional[Callable[[PartitionContext, CloseReason], None]] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
-        initial_event_position: Optional[Union[str, int, datetime, Dict[str, Any]]] = "@latest",
-        initial_event_position_inclusive: Optional[Union[bool, Dict[str, bool]]] = False,
-        load_balancing_interval: Optional[float] = 30.0,
+        initial_event_position: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]] = "@latest",
+        initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        load_balancing_interval: float = 30.0,
         load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
         partition_ownership_expiration_interval: Optional[float] = None,
         owner_level: Optional[int] = None,
@@ -92,8 +92,8 @@ class EventProcessor(
         self._partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = on_partition_initialize
         self._partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = on_partition_close
         self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
-        self._initial_event_position: Optional[Union[str, int, datetime, Dict[str, Any]]] = initial_event_position
-        self._initial_event_position_inclusive: Optional[Union[bool, Dict[str, bool]]] = initial_event_position_inclusive
+        self._initial_event_position: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]] = initial_event_position
+        self._initial_event_position_inclusive: Union[bool, Dict[str, bool]] = initial_event_position_inclusive
 
         self._load_balancing_interval: float = load_balancing_interval
         self._load_balancing_strategy = load_balancing_strategy
