@@ -92,8 +92,8 @@ class EventProcessor(
         self._partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = on_partition_initialize
         self._partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = on_partition_close
         self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
-        self._initial_event_position: Union[str, int, datetime, Dict[str, Any]] = initial_event_position
-        self._initial_event_position_inclusive: Union[bool, Dict[str, bool]] = initial_event_position_inclusive
+        self._initial_event_position: Optional[Union[str, int, datetime, Dict[str, Any]]] = initial_event_position
+        self._initial_event_position_inclusive: Optional[Union[bool, Dict[str, bool]]] = initial_event_position_inclusive
 
         self._load_balancing_interval: float = load_balancing_interval
         self._load_balancing_strategy = load_balancing_strategy

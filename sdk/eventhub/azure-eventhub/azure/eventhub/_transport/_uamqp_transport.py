@@ -282,9 +282,8 @@ if uamqp_installed:
         @staticmethod
         def create_connection(# pylint:disable=unused-argument
             *,
-            host: str,
-            auth: authentication.JWTTokenAuth,
             endpoint: str,
+            auth: authentication.JWTTokenAuth,
             container_id: str,
             max_frame_size: int,
             channel_max: int,
@@ -298,9 +297,8 @@ if uamqp_installed:
         ) -> Connection:
             """
             Creates and returns the uamqp Connection object.
-            :keyword str host: The hostname, used by uamqp.
-            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
+            :keyword ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
             :keyword int channel_max: Required.
@@ -316,7 +314,7 @@ if uamqp_installed:
 
             """
             return Connection(
-                host,
+                endpoint,
                 auth,
                 container_id=container_id,
                 max_frame_size=max_frame_size,

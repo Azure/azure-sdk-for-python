@@ -54,9 +54,8 @@ if uamqp_installed:
         @staticmethod
         async def create_connection_async( # pylint:disable=unused-argument
             *,
-            host: str,
-            auth: authentication.JWTTokenAuth,
             endpoint: str,
+            auth: authentication.JWTTokenAuth,
             container_id: str,
             max_frame_size: int,
             channel_max: int,
@@ -70,9 +69,8 @@ if uamqp_installed:
         ) -> ConnectionAsync:
             """
             Creates and returns the uamqp async Connection object.
-            :keyword str host: The hostname, used by uamqp.
-            :keyword ~uamqp.authentication.JWTTokenAsync auth: The auth, used by uamqp.
             :keyword str endpoint: The endpoint, used by pyamqp.
+            :keyword ~uamqp.authentication.JWTTokenAsync auth: The auth, used by uamqp.
             :keyword str container_id: Required.
             :keyword int max_frame_size: Required.
             :keyword int channel_max: Required.
@@ -87,7 +85,7 @@ if uamqp_installed:
             :rtype: ~uamqp.async_ops.ConnectionAsync
             """
             return ConnectionAsync(
-                host,
+                endpoint,
                 auth,
                 container_id=container_id,
                 max_frame_size=max_frame_size,

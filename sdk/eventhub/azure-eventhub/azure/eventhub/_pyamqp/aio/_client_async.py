@@ -10,7 +10,7 @@ import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Callable, Coroutine, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -24,7 +24,7 @@ from ..client import (
     SendClient as SendClientSync,
     Outcomes
 )
-from ..message import _MessageDelivery
+from ..message import _MessageDelivery, Message
 from ..constants import (
     MessageDeliveryState,
     SEND_DISPOSITION_ACCEPT,
@@ -355,8 +355,8 @@ class AMQPClientAsync(AMQPClientSync):
             self,
             message,
             *,
-            operation: Optional[str] = None,
-            operation_type: Optional[str] = None,
+            operation: Optional[Union[bytes, str]] = None,
+            operation_type: Optional[Union[bytes, str]] = None,
             node: str = "$management",
             timeout: float = 0,
             **kwargs
@@ -790,7 +790,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
         receiving = True
-        batch = []
+        batch: List[Message] = []
         await self.open_async()
         while len(batch) < max_batch_size:
             try:

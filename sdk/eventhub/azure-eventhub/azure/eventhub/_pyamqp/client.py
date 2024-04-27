@@ -15,12 +15,12 @@ import queue
 import time
 import uuid
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, overload, cast
 import certifi
 from typing_extensions import Literal
 
 from ._connection import Connection
-from .message import _MessageDelivery
+from .message import _MessageDelivery, Message
 from .error import (
     AMQPException,
     ErrorCondition,
@@ -430,8 +430,8 @@ class AMQPClient(
             self,
             message,
             *,
-            operation: Optional[str] = None,
-            operation_type: Optional[str] = None,
+            operation: Optional[Union[str, bytes]] = None,
+            operation_type: Optional[Union[str, bytes]] = None,
             node: str = "$management",
             timeout: float = 0,
             **kwargs
@@ -895,7 +895,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True
-        batch = []
+        batch: List[Message] = []
         self.open()
         while len(batch) < max_batch_size:
             try:

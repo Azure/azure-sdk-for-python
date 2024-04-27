@@ -30,9 +30,8 @@ if TYPE_CHECKING:
         async def get_connection(
             self,
             *,
-            host: Optional[str] = None,
+            endpoint: str,
             auth: Optional[Union[uamqp_JWTTokenAuthAsync, JWTTokenAuthAsync]] = None,
-            endpoint: Optional[str] = None,
         ) -> Union[ConnectionAsync, uamqp_ConnectionAsync]:
             pass
 
@@ -66,16 +65,14 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
     async def get_connection(
         self,
         *,
-        host: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuthAsync, uamqp_JWTTokenAuthAsync]] = None,
-        endpoint: Optional[str] = None,
     ) -> Union[ConnectionAsync, uamqp_ConnectionAsync]:
         async with self._lock:
             if self._conn is None:
                 self._conn = self._amqp_transport.create_connection_async(
-                    host=host,
-                    auth=auth,
                     endpoint=endpoint,
+                    auth=auth,
                     custom_endpoint_address=self._custom_endpoint_address,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
@@ -110,9 +107,8 @@ class _SeparateConnectionManager:
     async def get_connection(
         self,
         *,
-        host: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuthAsync, uamqp_JWTTokenAuthAsync]] = None,
-        endpoint: Optional[str] = None,
     ) -> None:
         pass  # return None
 

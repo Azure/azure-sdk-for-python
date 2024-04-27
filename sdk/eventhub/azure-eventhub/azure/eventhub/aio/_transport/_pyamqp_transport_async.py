@@ -38,9 +38,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     async def create_connection_async(# pylint:disable=unused-argument
         *,
-        host: str,
-        auth: JWTTokenAuthAsync,
         endpoint: str,
+        auth: JWTTokenAuthAsync,
         container_id: str,
         max_frame_size: int,
         channel_max: int,
@@ -54,9 +53,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
-        :keyword str host: The hostname, used by pyamqp.
-        :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: The auth, used by pyamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: The auth, used by pyamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.

@@ -145,9 +145,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @abstractmethod
     async def create_connection_async(
         *,
-        host: str,
-        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
         endpoint: str,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
         container_id: str,
         max_frame_size: int,
         channel_max: int,
@@ -161,9 +160,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ) -> Union[uamqp_Connection, pyamqp_Connection]:
         """
         Creates and returns the uamqp async Connection object.
-        :keyword str host: The hostname, used by uamqp.
-        :keyword JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.

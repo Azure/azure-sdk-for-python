@@ -236,9 +236,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_connection(# pylint:disable=unused-argument
         *,
-        host: str,
-        auth: JWTTokenAuth,
         endpoint: str,
+        auth: JWTTokenAuth,
         container_id: str,
         max_frame_size: int,
         channel_max: int,
@@ -252,9 +251,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> Connection:
         """
         Creates and returns the uamqp Connection object.
-        :keyword str host: The hostname, used by uamqp.
-        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.

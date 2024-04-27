@@ -203,7 +203,7 @@ class EventHubConsumer(
             auth = self._client._create_auth()
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)

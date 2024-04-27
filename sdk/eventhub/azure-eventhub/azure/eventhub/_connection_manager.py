@@ -30,9 +30,8 @@ if TYPE_CHECKING:
         def get_connection(
             self,
             *,
-            host: Optional[str] = None,
+            endpoint: str,
             auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
-            endpoint: Optional[str] = None,
         ) -> Union[Connection, uamqp_Connection]:
             pass
 
@@ -70,16 +69,14 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
     def get_connection(
         self,
         *,
-        host: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
-        endpoint: Optional[str] = None,
     ) -> Union[Connection, uamqp_Connection]:
         with self._lock:
             if self._conn is None:
                 self._conn = self._amqp_transport.create_connection(
-                    host=host,
-                    auth=auth,
                     endpoint=endpoint,
+                    auth=auth,
                     custom_endpoint_address=self._custom_endpoint_address,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
@@ -113,9 +110,8 @@ class _SeparateConnectionManager:
     def get_connection(  # pylint:disable=unused-argument
         self,
         *,
-        host: Optional[str] = None,
-        auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
         endpoint: Optional[str] = None,
+        auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
     ) -> None:
         return None
 
