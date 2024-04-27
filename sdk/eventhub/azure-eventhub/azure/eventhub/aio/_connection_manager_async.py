@@ -50,7 +50,7 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
             custom_endpoint_address: Optional[str] = None,
             debug: bool = False,
             error_policy: Optional[Any] = None,
-            properties: Dict[bytes, Any],
+            properties: Optional[Dict[str, Any]] = None,
             encoding: str = "UTF-8",
             transport_type: TransportType = TransportType.Amqp,
             http_proxy: Optional[str] = None,

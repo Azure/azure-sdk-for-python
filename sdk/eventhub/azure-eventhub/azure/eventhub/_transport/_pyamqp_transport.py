@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Callable, Dict, Optional, Union, Any, Tuple, cast
+from typing import Callable, Dict, List, Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -242,7 +242,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         max_frame_size: int,
         channel_max: int,
         idle_timeout: float,
-        properties: Dict[bytes, Any],
+        properties: Optional[Dict[str, Any]] = None,
         remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
         debug: bool,
@@ -257,7 +257,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.
         :keyword float idle_timeout: Required.
-        :keyword Dict properties: Required.
+        :keyword dict[str, Any] or None properties: Required.
         :keyword float remote_idle_timeout_empty_frame_send_ratio: Required.
         :keyword error_policy: Required.
         :keyword bool debug: Required.
@@ -453,10 +453,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         retry_policy: Any,
         client_name: str,
         link_properties: Dict[bytes, Any],
-        properties: Dict[bytes, Any],
+        properties: Optional[Dict[str, Any]] = None,
         link_credit: int,
         keep_alive_interval: int,
-        desired_capabilities: str,
+        desired_capabilities: Optional[List[bytes]] = None,
         streaming_receive: bool,
         message_received_callback: Callable,
         timeout: float,
@@ -476,10 +476,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword properties: Required.
         :keyword link_credit: Required. The prefetch.
         :keyword keep_alive_interval: Required. Missing in pyamqp.
-        :keyword desired_capabilities: Required.
+        :keyword list[bytes] or None desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword message_received_callback: Required.
-        :keyword timeout: Required.
+        :keyword float timeout: Required.
 
         :return: The receive client.
         :rtype: ~pyamqp.ReceiveClient

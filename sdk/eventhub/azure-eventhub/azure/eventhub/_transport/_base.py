@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable
+from typing import List, Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -160,7 +160,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         max_frame_size: int,
         channel_max: int,
         idle_timeout: float,
-        properties: Dict[bytes, Any],
+        properties: Optional[Dict[str, Any]],
         remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
         debug: bool,
@@ -175,7 +175,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.
         :keyword float idle_timeout: Required.
-        :keyword dict properties: Required.
+        :keyword dict[str, Any] or None properties: Required.
         :keyword float remote_idle_timeout_empty_frame_send_ratio: Required.
         :keyword error_policy: Required.
         :keyword bool debug: Required.
@@ -299,10 +299,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         retry_policy: Any,
         client_name: str,
         link_properties: Dict[bytes, Any],
-        properties: Dict[bytes, Any],
+        properties: Optional[Dict[str, Any]],
         link_credit: int,
         keep_alive_interval: int,
-        desired_capabilities: str,
+        desired_capabilities: Optional[List[bytes]],
         streaming_receive: bool,
         message_received_callback: Callable,
         timeout: float,
@@ -319,10 +319,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword retry_policy: Required.
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
-        :keyword properties: Required.
+        :keyword dict[str, Any] or None properties: Required.
         :keyword link_credit: Required. The prefetch.
         :keyword keep_alive_interval: Required. Missing in pyamqp.
-        :keyword desired_capabilities: Required.
+        :keyword list[bytes] or None desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
