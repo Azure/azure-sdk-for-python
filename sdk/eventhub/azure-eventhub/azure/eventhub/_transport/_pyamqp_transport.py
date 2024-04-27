@@ -446,7 +446,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def create_receive_client(
         *,
         config,
-        source: str,
+        source: Source,
         auth: JWTTokenAuth,
         idle_timeout: int,
         network_trace: bool,
@@ -466,7 +466,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :keyword str source: Required. The source.
+        :keyword Source source: Required. The source.
         :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.

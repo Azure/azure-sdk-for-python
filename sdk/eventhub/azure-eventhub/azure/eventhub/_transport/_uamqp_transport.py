@@ -490,7 +490,7 @@ if uamqp_installed:
         def create_receive_client( # pylint: disable=unused-argument
             *,
             config,
-            source: str,
+            source: Source,
             auth: authentication.JWTTokenAuth,
             idle_timeout: int,
             network_trace: bool,
@@ -510,7 +510,7 @@ if uamqp_installed:
             Creates and returns the receive client.
             :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-            :keyword str source: Required. The source.
+            :keyword Source source: Required. The source.
             :keyword ~uamqp.authentication.JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
             :keyword network_trace: Required.

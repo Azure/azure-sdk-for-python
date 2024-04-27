@@ -13,6 +13,7 @@ from ..._pyamqp import constants, error as errors
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
+from ..._pyamqp.endpoints import Source
 
 from ._base_async import AmqpTransportAsync
 from ..._transport._pyamqp_transport import PyamqpTransport
@@ -166,7 +167,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     def create_receive_client(
         *,
         config,
-        source: str,
+        source: Source,
         auth: JWTTokenAuthAsync,
         idle_timeout: int,
         network_trace: bool,
@@ -186,7 +187,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :keyword str source: Required. The source.
+        :keyword Source source: Required. The source.
         :keyword ~pyamqp.aio._authentication_async.JWTTokenAuthAsync auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
