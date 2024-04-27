@@ -118,8 +118,8 @@ if uamqp_installed:
             retry_policy: Any,
             keep_alive_interval: int,
             client_name: str,
-            link_properties: Dict[bytes, Any],
-            properties: Dict[bytes, Any],
+            link_properties: Optional[Dict[str, Any]] = None,
+            properties: Optional[Dict[str, Any]] = None,
             **kwargs: Any
         ):
             """
@@ -134,7 +134,7 @@ if uamqp_installed:
             :keyword keep_alive_interval: Required.
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
-            :keyword properties: Required.
+            :keyword dict[str, Any] or None properties: Required.
 
             :return: The send client.
             :rtype: ~uamqp.SendClientAsync

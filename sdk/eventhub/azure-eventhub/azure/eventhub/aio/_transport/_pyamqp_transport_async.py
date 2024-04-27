@@ -95,14 +95,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         *,
         config,
         target: str,
-        auth: JWTTokenAuthAsync,
+        auth: JWTTokenAuthAsync, # type: ignore
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,
         keep_alive_interval: int,
         client_name: str,
-        link_properties: Dict[bytes, Any],
-        properties: Dict[bytes, Any],
+        link_properties: Optional[Dict[str, Any]],
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ):
         """
@@ -117,7 +117,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword keep_alive_interval: Required.
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
-        :keyword properties: Required.
+        :keyword dict[str, Any] or None properties: Required.
 
         :return: The created SendClientAsync.
         :rtype: ~pyamqp.aio.SendClientAsync
@@ -168,7 +168,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         *,
         config,
         source: Source,
-        auth: JWTTokenAuthAsync,
+        auth: JWTTokenAuthAsync, # type: ignore
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,

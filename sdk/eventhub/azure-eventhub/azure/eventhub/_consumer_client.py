@@ -377,9 +377,7 @@ class EventHubConsumerClient(
 
     def _receive(
         self,
-        on_event: Callable[
-            ["PartitionContext", Optional["EventData"]], None
-        ],
+        on_event: Callable[["PartitionContext", Union["EventData", None, List["EventData"]]], None],
         *,
         batch: bool = False,
         max_wait_time: Optional[float] = None,

@@ -214,8 +214,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         retry_policy: Any,
         keep_alive_interval: int,
         client_name: str,
-        link_properties: Dict[bytes, Any],
-        properties: Dict[bytes, Any],
+        link_properties: Optional[Dict[str, Any]],
+        properties: Optional[Dict[str, Any]],
         **kwargs: Any
     ):
         """
@@ -229,7 +229,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword retry_policy: Required.
         :keyword keep_alive_interval: Required.
         :keyword str client_name: Required.
-        :keyword dict link_properties: Required.
+        :keyword dict[str, Any] or None link_properties: Required.
         :keyword properties: Required.
         """
 
