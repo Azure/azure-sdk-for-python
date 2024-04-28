@@ -2869,7 +2869,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             async with receiver:
-                assert await receiver_peek.delete_messages() == 0
+                assert await receiver.delete_messages() == 0
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
