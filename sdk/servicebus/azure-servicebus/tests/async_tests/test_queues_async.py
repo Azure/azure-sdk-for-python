@@ -2847,7 +2847,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            batch_message = sender.create_message_batch()
+            batch_message = await sender.create_message_batch()
             for _ in range(10):
                 try:
                     batch_message.add_message(ServiceBusMessage("Message inside a ServiceBusMessageBatch"))
