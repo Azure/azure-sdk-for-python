@@ -10,6 +10,11 @@ sudo npm install -g n
 sudo n 18.19.0
 export PATH=/usr/local/n/versions/node/18.19.0/bin:$PATH
 
+
+# install tsp-client globally (local install may interfere with tooling)
+echo Install tsp-client
+npm install -g @azure-tools/typespec-client-generator-cli
+
 TEMP_FILE="$TMPDIR/venv-sdk/auto_temp.json"
 # generate code
 python -m packaging_tools.sdk_generator "$1" "$TEMP_FILE" 2>&1
