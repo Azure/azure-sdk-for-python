@@ -17,7 +17,7 @@ python scripts/dev_setup.py -p azure-core
 
 # install tsp-client globally (local install may interfere with tooling)
 echo Install tsp-client
-npm install -g @azure-tools/typespec-client-generator-cli
+sudo npm install -g @azure-tools/typespec-client-generator-cli
 
 echo "{}" >> $2
 echo "[Generate] init success!!!"
