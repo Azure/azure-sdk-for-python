@@ -1213,10 +1213,11 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_session_delete_messages_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+    async def test_session_delete_messages_async(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 logging_enable=False, uamqp_transport=uamqp_transport

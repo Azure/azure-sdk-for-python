@@ -1372,7 +1372,8 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_session_delete_messages(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
