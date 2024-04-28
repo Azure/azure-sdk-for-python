@@ -223,6 +223,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype spark_configuration: dict[str, str]
         :keyword data_status: Specifies the data status that you want to backfill.
         :paramtype data_status: list[str or ~azure.ai.ml.entities.DataAvailabilityStatus]
+        :keyword job_id: The job id.
+        :paramtype job_id: str
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
@@ -345,11 +347,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name: This is case-sensitive.
+        :keyword feature_name: The feature name. This argument is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
-            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
-        :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
         """
@@ -436,7 +435,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                     datastore_operations=self._datastore_operation,
                 )
                 featureset_spec_path = None
-            except Exception as ex:  # pylint: disable=broad-except
+            except Exception as ex:  # pylint: disable=W0718
                 module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
                 raise ex
             return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)

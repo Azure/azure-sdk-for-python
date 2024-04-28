@@ -55,6 +55,7 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
+    Index,
     Job,
     Model,
     ModelBatchDeployment,
@@ -75,6 +76,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    IndexOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -617,6 +619,18 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
+        self._indexes = IndexOperations(
+            operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
+            credential=self._credential,
+            all_operations=self._operation_container,
+            datastore_operations=self._datastores,
+            _service_client_kwargs=kwargs,
+            requests_pipeline=self._requests_pipeline,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.INDEX, self._indexes)
+
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
@@ -684,7 +698,8 @@ class MLClient:
             }
 
         Then, you can use this method to load the same workspace in different Python notebooks or projects without
-        retyping the workspace ARM properties.
+        retyping the workspace ARM properties. Note that `from_config` accepts the same kwargs as the main
+        `~azure.ai.ml.MLClient` constructor such as `cloud`.
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
@@ -694,8 +709,6 @@ class MLClient:
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
         :paramtype file_name: Optional[str]
-        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -971,6 +984,15 @@ class MLClient:
         return self._schedules
 
     @property
+    def indexes(self) -> IndexOperations:
+        """A collection of index related operations.
+
+        :return: Index operations.
+        :rtype: ~azure.ai.ml.operations.IndexOperations
+        """
+        return self._indexes
+
+    @property
     def subscription_id(self) -> str:
         """Get the subscription ID of an MLClient object.
 
@@ -1176,6 +1198,12 @@ def _(entity: Component, operations, **kwargs):
 def _(entity: Datastore, operations):
     module_logger.debug("Creating or updating datastores")
     return operations[AzureMLResourceType.DATASTORE].create_or_update(entity)
+
+
+@_create_or_update.register(Index)
+def _(entity: Index, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating indexes")
+    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
 
 
 @singledispatch

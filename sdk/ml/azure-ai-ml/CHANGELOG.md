@@ -8,6 +8,8 @@
 - Added Project entity class and YAML support.
 - Project and Hub operations supported by workspace operations.
 - workspace list operation supports type filtering.
+- Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
+- Add experimental support for working with indexes: `ml_client.indexes`
 
 ### Bugs Fixed
 
