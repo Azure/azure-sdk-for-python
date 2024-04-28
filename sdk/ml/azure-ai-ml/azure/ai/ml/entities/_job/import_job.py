@@ -22,6 +22,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import MlException
 
 from .job import Job
 
@@ -180,11 +181,13 @@ class ImportJob(Job, JobIOMixin):
     def _to_rest_object(self) -> JobBaseData:
         # TODO: Remove in PuP
         if not is_private_preview_enabled():
-            raise Exception(JobType.IMPORT + " job not supported.")
+            msg = JobType.IMPORT + " job not supported."
+            raise MlException(message=msg, no_personal_data_message=msg)
 
         _inputs = self.source._to_job_inputs() if self.source is not None else None  # pylint: disable=protected-access
         if self.compute is None:
-            raise Exception("compute cannot be None.")
+            msg = "compute cannot be None."
+            raise MlException(message=msg, no_personal_data_message=msg)
 
         properties = RestCommandJob(
             display_name=self.display_name,
@@ -238,7 +241,6 @@ class ImportJob(Job, JobIOMixin):
 
         :param context: Context of import job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated import component.
         :rtype: ImportComponent
         """
@@ -266,7 +268,6 @@ class ImportJob(Job, JobIOMixin):
 
         :param context: Context of import job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated import node.
         :rtype: Import
         """
