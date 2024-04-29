@@ -767,7 +767,7 @@ class WebSocketTransport(_AbstractTransport):
         :return: The data read.
         :rtype: bytearray
         """
-        from websocket import WebSocketTimeoutException
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))
@@ -790,6 +790,8 @@ class WebSocketTransport(_AbstractTransport):
                 raise IOError("Websocket connection has already been closed.") from None
             except WebSocketTimeoutException as wte:
                 raise TimeoutError('Websocket receive timed out (%s)' % wte) from wte
+            except (WebSocketConnectionClosedException, SSLError) as e:
+                raise ConnectionError('Websocket disconnected: %r' % e) from e
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
