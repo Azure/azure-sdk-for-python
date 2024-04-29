@@ -134,7 +134,6 @@ class EventHubProducer(
                 amqp_transport=self._amqp_transport,
             ),
             msg_timeout=self._timeout * self._amqp_transport.TIMEOUT_FACTOR,
-            use_tls=self._client._config.use_tls, # pylint: disable=protected-access
         )
 
     async def _open_with_retry(self) -> Any:

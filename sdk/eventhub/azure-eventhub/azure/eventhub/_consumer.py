@@ -171,7 +171,6 @@ class EventHubConsumer(
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
             message_received_callback=self._message_received,
-            use_tls=self._client._config.use_tls, # pylint:disable=protected-access
         )
 
     def _open_with_retry(self) -> None:
