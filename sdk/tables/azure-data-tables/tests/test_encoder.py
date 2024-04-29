@@ -1049,13 +1049,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
-                "123": 456,
+                123: 456,
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as old encoded result is {..., 123: 456}
+            _check_backcompat(test_entity, expected_entity) # this will fail, as old encoded result is {..., 123: 456}
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
                     test_entity,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
+                    # verify_payload=expected_entity, # this will fail as the request body is: {"123": 456, "PartitionKey": "PK", "RowKey": "RK"}
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
@@ -1064,7 +1064,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Test enums
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
-            # Q: not sure if the expected_entity is correct?
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "One",
@@ -1083,7 +1082,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
-            # Q: not sure if the expected_entity is correct?
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "EnumStrOptions.ONE",
