@@ -628,7 +628,7 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
-### Private Preview - Vector Embeddings and Vector Indexes
+### Public Preview - Vector Embeddings and Vector Indexes
 We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
 search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
 before you can use them.
