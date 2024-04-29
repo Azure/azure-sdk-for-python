@@ -46,12 +46,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/azure_open_ai_api.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_api.yaml")
         wps_connection.name = wps_connection_name
-        wps_connection.open_ai_resource_id = None # Not dealing with finding a valid ID for this test
-         # Not sure what this is, some sort of scrubbed/injected value
+        wps_connection.open_ai_resource_id = None  # Not dealing with finding a valid ID for this test
+        # Not sure what this is, some sort of scrubbed/injected value
         assert wps_connection.credentials.key == "12344"
 
         try:
@@ -60,7 +58,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
                 connection=wps_connection, populate_secrets=True
             )
             created_conn_no_key = client.connections.create_or_update(connection=wps_connection)
-            sleep(5) # Give a little time before we start searching for a newly created connection
+            sleep(5)  # Give a little time before we start searching for a newly created connection
             assert created_conn_with_key.credentials.key == expected_key
             assert created_conn_no_key.credentials.key == None
 
@@ -130,9 +128,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/snowflake_user_pwd.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/snowflake_user_pwd.yaml")
 
         wps_connection.name = wps_connection_name
 
@@ -172,9 +168,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/s3_access_key.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/s3_access_key.yaml")
 
         wps_connection.name = wps_connection_name
 
@@ -212,9 +206,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/content_safety_with_key.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_key.yaml")
         wps_connection.name = wps_connection_name
 
         wps_connection = client.connections.create_or_update(connection=wps_connection)
@@ -235,9 +227,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/speech_with_key.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/speech_with_key.yaml")
         wps_connection.name = wps_connection_name
 
         wps_connection = client.connections.create_or_update(connection=wps_connection)
@@ -258,9 +248,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/search_with_key.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/search_with_key.yaml")
         wps_connection.name = wps_connection_name
 
         wps_connection = client.connections.create_or_update(connection=wps_connection)
@@ -489,9 +477,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/one_lake_with_name.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/one_lake_with_name.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -507,9 +493,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/one_lake_with_id.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/one_lake_with_id.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -518,7 +502,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE)
         assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
-        assert created_connection.target == "https://www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
+        assert (
+            created_connection.target
+            == "https://www.endpoint.com/the_workspace_name/1234567-1234-1234-1234-123456789012"
+        )
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -529,14 +516,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/azure_open_ai_api.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_api.yaml")
         local_connection.name = wps_connection_name
-        local_connection.open_ai_resource_id = None # Not dealing with finding a valid ID for this test 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        local_connection.open_ai_resource_id = None  # Not dealing with finding a valid ID for this test
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureOpenAIConnection)
@@ -554,14 +537,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/azure_open_ai_entra.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/azure_open_ai_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureOpenAIConnection)
@@ -576,23 +555,22 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    @pytest.mark.skipif(condition=True, reason="Backend validation requires valid input data, which I don't want to surface here, or learn to scrub from a recording.")
+    @pytest.mark.skipif(
+        condition=True,
+        reason="Backend validation requires valid input data, which I don't want to surface here, or learn to scrub from a recording.",
+    )
     def test_azure_ai_services_crud(
         self,
         client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/ai_services_with_key.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_key.yaml")
         local_connection.name = wps_connection_name
-        #local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/"
-        #local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"
-        #local_connection.api_key ="<valid-key>"
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        # local_connection._target = "https://<ai-services-name>.cognitiveservices.azure.com/"
+        # local_connection.ai_services_resource_id = "/subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.CognitiveServices/accounts/<ai-services name>"
+        # local_connection.api_key ="<valid-key>"
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
         assert isinstance(created_connection, AzureAIServiceConnection)
         assert created_connection.name == wps_connection_name
@@ -603,14 +581,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/ai_services_with_entra.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_entra.yaml")
         local_connection.name = wps_connection_name
         # Need similar value injection as before
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAIServiceConnection)
@@ -620,20 +594,17 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
+
     def test_content_safety_crud(
         self,
         client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/content_safety_with_key.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureContentSafetyConnection)
@@ -646,14 +617,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/content_safety_with_entra.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/content_safety_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureContentSafetyConnection)
@@ -671,14 +638,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/speech_with_key.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/speech_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureSpeechServicesConnection)
@@ -691,14 +654,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/speech_with_entra.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/speech_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureSpeechServicesConnection)
@@ -716,14 +675,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name1')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/search_with_key.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/search_with_key.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAISearchConnection)
@@ -736,14 +691,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_conn_name2')}"
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/search_with_entra.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/search_with_entra.yaml")
         local_connection.name = wps_connection_name
 
-        created_connection = client.connections.create_or_update(
-            connection=local_connection, populate_secrets=True
-        )
+        created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
         assert isinstance(created_connection, AzureAISearchConnection)
@@ -762,9 +713,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/api_key_conn.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/api_key_conn.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -808,9 +757,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/not_azure_open_ai.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/not_azure_open_ai.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -854,9 +801,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/git_no_cred.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/git_no_cred.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -878,9 +823,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_connection(
-            source="./tests/test_configs/connection/python_feed_pat.yaml"
-        )
+        wps_connection = load_connection(source="./tests/test_configs/connection/python_feed_pat.yaml")
 
         wps_connection.name = wps_connection_name
 
@@ -964,9 +907,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        local_connection = load_connection(
-            source="./tests/test_configs/connection/serverless_api.yaml"
-        )
+        local_connection = load_connection(source="./tests/test_configs/connection/serverless_api.yaml")
         local_connection.name = wps_connection_name
 
         created_connection = client.connections.create_or_update(connection=local_connection)
@@ -976,7 +917,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionCategory.SERVERLESS)
-        assert created_connection.target == "serverless_endpoint"  
+        assert created_connection.target == "serverless_endpoint"
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)

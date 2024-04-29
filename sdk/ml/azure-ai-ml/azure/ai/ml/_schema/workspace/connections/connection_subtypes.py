@@ -16,9 +16,9 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     ServicePrincipalConfigurationSchema,
     AccountKeyConfigurationSchema,
 )
-from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities import AadCredentialConfiguration
 from .connection import ConnectionSchema
+
 
 # pylint: disable-next=name-too-long
 class AzureBlobStoreConnectionSchema(ConnectionSchema):
@@ -32,7 +32,7 @@ class AzureBlobStoreConnectionSchema(ConnectionSchema):
             NestedField(AccountKeyConfigurationSchema),
         ],
         required=False,
-        load_default=AadCredentialConfiguration()
+        load_default=AadCredentialConfiguration(),
     )
 
     url = fields.Str()
@@ -45,6 +45,7 @@ class AzureBlobStoreConnectionSchema(ConnectionSchema):
         from azure.ai.ml.entities import AzureBlobStoreConnection
 
         return AzureBlobStoreConnection(**data)
+
 
 # pylint: disable-next=name-too-long
 class MicrosoftOneLakeConnectionSchema(ConnectionSchema):

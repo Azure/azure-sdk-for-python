@@ -72,6 +72,9 @@ class ConnectionSchema(ResourceSchema):
         from azure.ai.ml.entities import Connection
 
         # Replace ALDS gen 2 empty default with AAD over None
-        if data.get("type", None) ==  ConnectionTypes.AZURE_DATA_LAKE_GEN_2 and data.get("credentials", None) == NoneCredentialConfiguration():
+        if (
+            data.get("type", None) == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
+            and data.get("credentials", None) == NoneCredentialConfiguration()
+        ):
             data["credentials"] = AadCredentialConfiguration()
         return Connection(**data)

@@ -50,15 +50,24 @@ from azure.ai.ml.entities._util import load_from_dict
 
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
     ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
-    ConnectionTypes.AZURE_DATA_LAKE_GEN_2: [ServicePrincipalConfiguration, AadCredentialConfiguration, ManagedIdentityConfiguration],
+    ConnectionTypes.AZURE_DATA_LAKE_GEN_2: [
+        ServicePrincipalConfiguration,
+        AadCredentialConfiguration,
+        ManagedIdentityConfiguration,
+    ],
     ConnectionCategory.GIT: [PatTokenConfiguration, NoneCredentialConfiguration, UsernamePasswordConfiguration],
     ConnectionCategory.PYTHON_FEED: [UsernamePasswordConfiguration, PatTokenConfiguration, NoneCredentialConfiguration],
     ConnectionCategory.CONTAINER_REGISTRY: [ManagedIdentityConfiguration, UsernamePasswordConfiguration],
 }
 
-DATASTORE_CONNECTIONS = {ConnectionCategory.AZURE_BLOB, ConnectionTypes.AZURE_DATA_LAKE_GEN_2, ConnectionCategory.AZURE_ONE_LAKE}
+DATASTORE_CONNECTIONS = {
+    ConnectionCategory.AZURE_BLOB,
+    ConnectionTypes.AZURE_DATA_LAKE_GEN_2,
+    ConnectionCategory.AZURE_ONE_LAKE,
+}
 
 CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoint", "endpoint"]
+
 
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
@@ -167,7 +176,9 @@ class Connection(Resource):
         # which actually list them as aad. This IS distinct from regular none credentials, or so I've been told,
         # so I will endeavor to smooth over that inconsistency here.
         converted_type = _snake_to_camel(self.type).lower()
-        if self._credentials == NoneCredentialConfiguration() and any(converted_type == _snake_to_camel(item).lower() for item in DATASTORE_CONNECTIONS):
+        if self._credentials == NoneCredentialConfiguration() and any(
+            converted_type == _snake_to_camel(item).lower() for item in DATASTORE_CONNECTIONS
+        ):
             self._credentials = AadCredentialConfiguration()
 
         if self.type in CONNECTION_CATEGORY_TO_CREDENTIAL_MAP:
@@ -206,11 +217,11 @@ class Connection(Resource):
         self._type: Optional[str] = camel_to_snake(value)
 
     @property
-    def target(self) -> str:
+    def target(self) -> Optional[str]:
         """Target url for the connection.
 
         :return: Target of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._target
 
@@ -477,8 +488,8 @@ class Connection(Resource):
 
         credentials_class = _BaseIdentityConfiguration._get_credential_class_from_rest_type(properties.auth_type)
         # None and AAD auth types have a property bag class, but no credentials inside that.
-        # Thankfully they're both inputless.
-        
+        # Thankfully they both have no inputs.
+
         if credentials_class is AadCredentialConfiguration:
             credentials = AadCredentialConfiguration()
         elif credentials_class is not NoneCredentialConfiguration:
@@ -545,12 +556,8 @@ class Connection(Resource):
             ConnectionCategory.OPEN_AI.lower(): OpenAIConnection,
             ConnectionCategory.SERP.lower(): SerpConnection,
             ConnectionCategory.SERVERLESS.lower(): ServerlessConnection,
-            _snake_to_camel(
-                ConnectionTypes.AZURE_CONTENT_SAFETY
-            ).lower(): AzureContentSafetyConnection,
-            _snake_to_camel(
-                ConnectionTypes.AZURE_SPEECH_SERVICES
-            ).lower(): AzureSpeechServicesConnection,
+            _snake_to_camel(ConnectionTypes.AZURE_CONTENT_SAFETY).lower(): AzureContentSafetyConnection,
+            _snake_to_camel(ConnectionTypes.AZURE_SPEECH_SERVICES).lower(): AzureSpeechServicesConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
             _snake_to_camel(ConnectionTypes.AZURE_SEARCH).lower(): AzureAISearchConnection,
             _snake_to_camel(ConnectionTypes.AZURE_AI_SERVICES).lower(): AzureAIServiceConnection,

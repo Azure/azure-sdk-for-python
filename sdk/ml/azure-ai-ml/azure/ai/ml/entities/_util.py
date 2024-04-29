@@ -37,7 +37,7 @@ from .._schema.job import CommandJobSchema, ParallelJobSchema
 from .._schema.pipeline.pipeline_job import PipelineJobSchema
 from .._schema.schedule.schedule import JobScheduleSchema
 from .._schema.workspace import WorkspaceSchema
-from .._utils.utils import is_internal_component_data, snake_to_camel, try_enable_internal_components
+from .._utils.utils import is_internal_component_data, try_enable_internal_components
 from ..constants._common import (
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,

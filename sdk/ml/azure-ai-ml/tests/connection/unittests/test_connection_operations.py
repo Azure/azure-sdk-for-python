@@ -70,9 +70,7 @@ class TestWorkspaceConnectionsOperation:
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
         )
-        workspace_connection = load_connection(
-            source="./tests/test_configs/connection/python_feed_pat.yaml"
-        )
+        workspace_connection = load_connection(source="./tests/test_configs/connection/python_feed_pat.yaml")
 
         mock_workspace_connection_operation.create_or_update(connection=workspace_connection)
         mock_workspace_connection_operation._operation.create.assert_called_once()

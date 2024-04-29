@@ -50,9 +50,7 @@ class WorkspaceConfigurationOptions(object):
         # [START load_workspace_connection]
         from azure.ai.ml import load_connection
 
-        wps_connection = load_connection(
-            source="../tests/test_configs/connection/snowflake_user_pwd.yaml"
-        )
+        wps_connection = load_connection(source="../tests/test_configs/connection/snowflake_user_pwd.yaml")
         # [END load_workspace_connection]
 
         # [START customermanagedkey]

@@ -45,6 +45,7 @@ from .connection import Connection
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 
+
 @experimental
 class AzureBlobStoreConnection(Connection):
     """A connection to an Azure Blob Store.
@@ -381,7 +382,7 @@ class AzureOpenAIConnection(ApiOrAadConnection):
 
     @property
     def open_ai_resource_id(self) -> Optional[str]:
-        """The fully qualified ID of the Azure Open AI resource this connects to. 
+        """The fully qualified ID of the Azure Open AI resource this connects to.
 
         :return: The fully qualified ID of the Azure Open AI resource this connects to.
         :rtype: Optional[str]
@@ -445,7 +446,7 @@ class AzureAIServiceConnection(ApiOrAadConnection):
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
         return [CONNECTION_RESOURCE_ID_KEY]
-    
+
     @property
     def ai_services_resource_id(self) -> Optional[str]:
         """The resource id of the ai service being connected to.
@@ -467,7 +468,7 @@ class AzureAIServiceConnection(ApiOrAadConnection):
         """
         if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
-        self.tags[CONNECTION_RESOURCE_ID_KEY] = value 
+        self.tags[CONNECTION_RESOURCE_ID_KEY] = value
 
 
 @experimental

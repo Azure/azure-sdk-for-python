@@ -10,6 +10,7 @@ from typing import Any
 # If/when that comes to pass, we can worry about adding polymorphism to these classes.
 # For now, this is a one-off that's needed to help match the object structure that PF uses.
 
+
 # Why is this not called a "LakeHouseArtifact"?  Because despite the under-the-hood type,
 # users expect this variety to be called "OneLake".
 class OneLakeConnectionArtifact:
