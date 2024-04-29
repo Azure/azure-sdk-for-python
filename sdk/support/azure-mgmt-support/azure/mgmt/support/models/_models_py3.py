@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Literal, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -227,45 +227,12 @@ class CheckNameAvailabilityOutput(_serialization.Model):
         self.message = None
 
 
-class ClassificationService(_serialization.Model):
-    """Service Classification result object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar service_id: Azure resource Id of the service.
-    :vartype service_id: str
-    :ivar display_name: Localized name of the azure service.
-    :vartype display_name: str
-    :ivar resource_types: List of applicable ARM resource types for this service.
-    :vartype resource_types: list[str]
-    """
-
-    _validation = {
-        "service_id": {"readonly": True},
-        "display_name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "service_id": {"key": "serviceId", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-        "resource_types": {"key": "resourceTypes", "type": "[str]"},
-    }
-
-    def __init__(self, *, resource_types: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword resource_types: List of applicable ARM resource types for this service.
-        :paramtype resource_types: list[str]
-        """
-        super().__init__(**kwargs)
-        self.service_id = None
-        self.display_name = None
-        self.resource_types = resource_types
-
-
 class CommunicationDetails(_serialization.Model):
     """Object that represents a Communication resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the resource.
     :vartype id: str
@@ -281,9 +248,9 @@ class CommunicationDetails(_serialization.Model):
     :ivar sender: Email address of the sender. This property is required if called by a service
      principal.
     :vartype sender: str
-    :ivar subject: Subject of the communication.
+    :ivar subject: Subject of the communication. Required.
     :vartype subject: str
-    :ivar body: Body of the communication.
+    :ivar body: Body of the communication. Required.
     :vartype body: str
     :ivar created_date: Time in UTC (ISO 8601 format) when the communication was created.
     :vartype created_date: ~datetime.datetime
@@ -295,6 +262,8 @@ class CommunicationDetails(_serialization.Model):
         "type": {"readonly": True},
         "communication_type": {"readonly": True},
         "communication_direction": {"readonly": True},
+        "subject": {"required": True},
+        "body": {"required": True},
         "created_date": {"readonly": True},
     }
 
@@ -310,16 +279,14 @@ class CommunicationDetails(_serialization.Model):
         "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
     }
 
-    def __init__(
-        self, *, sender: Optional[str] = None, subject: Optional[str] = None, body: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, subject: str, body: str, sender: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword sender: Email address of the sender. This property is required if called by a service
          principal.
         :paramtype sender: str
-        :keyword subject: Subject of the communication.
+        :keyword subject: Subject of the communication. Required.
         :paramtype subject: str
-        :keyword body: Body of the communication.
+        :keyword body: Body of the communication. Required.
         :paramtype body: str
         """
         super().__init__(**kwargs)
@@ -589,11 +556,14 @@ class FileDetails(ProxyResource):
     :vartype system_data: ~azure.mgmt.support.models.SystemData
     :ivar created_on: Time in UTC (ISO 8601 format) when file workspace was created.
     :vartype created_on: ~datetime.datetime
-    :ivar chunk_size: Size of each chunk.
+    :ivar chunk_size: Size of each chunk. The size of each chunk should be provided in bytes and
+     must not exceed 2.5 megabytes (MB).
     :vartype chunk_size: int
-    :ivar file_size: Size of the file to be uploaded.
+    :ivar file_size: Size of the file to be uploaded. The file size must not exceed 5 MB and should
+     be provided in bytes.
     :vartype file_size: int
-    :ivar number_of_chunks: Number of chunks to be uploaded.
+    :ivar number_of_chunks: Number of chunks to be uploaded. The maximum number of allowed chunks
+     is 2.
     :vartype number_of_chunks: int
     """
 
@@ -625,11 +595,14 @@ class FileDetails(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword chunk_size: Size of each chunk.
+        :keyword chunk_size: Size of each chunk. The size of each chunk should be provided in bytes and
+         must not exceed 2.5 megabytes (MB).
         :paramtype chunk_size: int
-        :keyword file_size: Size of the file to be uploaded.
+        :keyword file_size: Size of the file to be uploaded. The file size must not exceed 5 MB and
+         should be provided in bytes.
         :paramtype file_size: int
-        :keyword number_of_chunks: Number of chunks to be uploaded.
+        :keyword number_of_chunks: Number of chunks to be uploaded. The maximum number of allowed
+         chunks is 2.
         :paramtype number_of_chunks: int
         """
         super().__init__(**kwargs)
@@ -714,66 +687,10 @@ class FileWorkspaceDetails(ProxyResource):
         self.expiration_time = None
 
 
-class LookUpResourceIdRequest(_serialization.Model):
-    """The look up resource Id request body.
-
-    :ivar identifier: The System generated Id that is unique. Use supportTicketId property for
-     Microsoft.Support/supportTickets resource type.
-    :vartype identifier: str
-    :ivar type: The type of resource. Default value is "Microsoft.Support/supportTickets".
-    :vartype type: str
-    """
-
-    _attribute_map = {
-        "identifier": {"key": "identifier", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        identifier: Optional[str] = None,
-        type: Optional[Literal["Microsoft.Support/supportTickets"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword identifier: The System generated Id that is unique. Use supportTicketId property for
-         Microsoft.Support/supportTickets resource type.
-        :paramtype identifier: str
-        :keyword type: The type of resource. Default value is "Microsoft.Support/supportTickets".
-        :paramtype type: str
-        """
-        super().__init__(**kwargs)
-        self.identifier = identifier
-        self.type = type
-
-
-class LookUpResourceIdResponse(_serialization.Model):
-    """The look up resource id response.
-
-    :ivar resource_id: The resource Id of support resource type.
-    :vartype resource_id: str
-    """
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-    }
-
-    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resource_id: The resource Id of support resource type.
-        :paramtype resource_id: str
-        """
-        super().__init__(**kwargs)
-        self.resource_id = resource_id
-
-
 class MessageProperties(_serialization.Model):
     """Describes the properties of a Message Details resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar content_type: Content type.
     :vartype content_type: str or ~azure.mgmt.support.models.TranscriptContentType
@@ -782,7 +699,7 @@ class MessageProperties(_serialization.Model):
     :vartype communication_direction: str or ~azure.mgmt.support.models.CommunicationDirection
     :ivar sender: Name of the sender.
     :vartype sender: str
-    :ivar body: Body of the communication. Required.
+    :ivar body: Body of the communication.
     :vartype body: str
     :ivar created_date: Time in UTC (ISO 8601 format) when the communication was created.
     :vartype created_date: ~datetime.datetime
@@ -791,7 +708,6 @@ class MessageProperties(_serialization.Model):
     _validation = {
         "content_type": {"readonly": True},
         "communication_direction": {"readonly": True},
-        "body": {"required": True},
         "created_date": {"readonly": True},
     }
 
@@ -803,11 +719,11 @@ class MessageProperties(_serialization.Model):
         "created_date": {"key": "createdDate", "type": "iso-8601"},
     }
 
-    def __init__(self, *, body: str, sender: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, sender: Optional[str] = None, body: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword sender: Name of the sender.
         :paramtype sender: str
-        :keyword body: Body of the communication. Required.
+        :keyword body: Body of the communication.
         :paramtype body: str
         """
         super().__init__(**kwargs)
@@ -922,18 +838,12 @@ class ProblemClassification(_serialization.Model):
     :ivar secondary_consent_enabled: This property indicates whether secondary consent is present
      for problem classification.
     :vartype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
-    :ivar metadata: String-to-string dictionary for additional metadata.
-    :vartype metadata: dict[str, str]
-    :ivar parent_problem_classification: Reference to the parent problem classification which has
-     same structure as problem classification.
-    :vartype parent_problem_classification: ~azure.mgmt.support.models.ProblemClassification
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "metadata": {"readonly": True},
     }
 
     _attribute_map = {
@@ -942,11 +852,6 @@ class ProblemClassification(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "secondary_consent_enabled": {"key": "properties.secondaryConsentEnabled", "type": "[SecondaryConsentEnabled]"},
-        "metadata": {"key": "properties.metadata", "type": "{str}"},
-        "parent_problem_classification": {
-            "key": "properties.parentProblemClassification",
-            "type": "ProblemClassification",
-        },
     }
 
     def __init__(
@@ -954,7 +859,6 @@ class ProblemClassification(_serialization.Model):
         *,
         display_name: Optional[str] = None,
         secondary_consent_enabled: Optional[List["_models.SecondaryConsentEnabled"]] = None,
-        parent_problem_classification: Optional["_models.ProblemClassification"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -963,9 +867,6 @@ class ProblemClassification(_serialization.Model):
         :keyword secondary_consent_enabled: This property indicates whether secondary consent is
          present for problem classification.
         :paramtype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
-        :keyword parent_problem_classification: Reference to the parent problem classification which
-         has same structure as problem classification.
-        :paramtype parent_problem_classification: ~azure.mgmt.support.models.ProblemClassification
         """
         super().__init__(**kwargs)
         self.id = None
@@ -973,130 +874,6 @@ class ProblemClassification(_serialization.Model):
         self.type = None
         self.display_name = display_name
         self.secondary_consent_enabled = secondary_consent_enabled
-        self.metadata = None
-        self.parent_problem_classification = parent_problem_classification
-
-
-class ProblemClassificationsClassificationInput(_serialization.Model):  # pylint: disable=name-too-long
-    """Input to problem classification Classification API.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar issue_summary: Natural language description of the customer’s issue. Required.
-    :vartype issue_summary: str
-    :ivar resource_id: ARM resource Id of the resource that is having the issue.
-    :vartype resource_id: str
-    """
-
-    _validation = {
-        "issue_summary": {"required": True},
-    }
-
-    _attribute_map = {
-        "issue_summary": {"key": "issueSummary", "type": "str"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-    }
-
-    def __init__(self, *, issue_summary: str, resource_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword issue_summary: Natural language description of the customer’s issue. Required.
-        :paramtype issue_summary: str
-        :keyword resource_id: ARM resource Id of the resource that is having the issue.
-        :paramtype resource_id: str
-        """
-        super().__init__(**kwargs)
-        self.issue_summary = issue_summary
-        self.resource_id = resource_id
-
-
-class ProblemClassificationsClassificationOutput(_serialization.Model):  # pylint: disable=name-too-long
-    """Output of the problem classification Classification API.
-
-    :ivar problem_classification_results: Set of problem classification objects classified.
-    :vartype problem_classification_results:
-     list[~azure.mgmt.support.models.ProblemClassificationsClassificationResult]
-    """
-
-    _attribute_map = {
-        "problem_classification_results": {
-            "key": "problemClassificationResults",
-            "type": "[ProblemClassificationsClassificationResult]",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        problem_classification_results: Optional[List["_models.ProblemClassificationsClassificationResult"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword problem_classification_results: Set of problem classification objects classified.
-        :paramtype problem_classification_results:
-         list[~azure.mgmt.support.models.ProblemClassificationsClassificationResult]
-        """
-        super().__init__(**kwargs)
-        self.problem_classification_results = problem_classification_results
-
-
-class ProblemClassificationsClassificationResult(_serialization.Model):  # pylint: disable=name-too-long
-    """ProblemClassification Classification result object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar problem_id: Identifier that may be used for solution discovery or some other purposes.
-    :vartype problem_id: str
-    :ivar title: Title of the problem classification result.
-    :vartype title: str
-    :ivar description: Description of the problem classification result.
-    :vartype description: str
-    :ivar service_id: Identifier of the service associated with this problem classification result.
-    :vartype service_id: str
-    :ivar problem_classification_id: Identifier that may be used for support ticket creation.
-    :vartype problem_classification_id: str
-    :ivar service_id_related_service_id: Azure resource Id of the service.
-    :vartype service_id_related_service_id: str
-    :ivar display_name: Localized name of the azure service.
-    :vartype display_name: str
-    :ivar resource_types: List of applicable ARM resource types for this service.
-    :vartype resource_types: list[str]
-    """
-
-    _validation = {
-        "problem_id": {"readonly": True},
-        "title": {"readonly": True},
-        "description": {"readonly": True},
-        "service_id": {"readonly": True},
-        "problem_classification_id": {"readonly": True},
-        "service_id_related_service_id": {"readonly": True},
-        "display_name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "problem_id": {"key": "problemId", "type": "str"},
-        "title": {"key": "title", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "service_id": {"key": "serviceId", "type": "str"},
-        "problem_classification_id": {"key": "problemClassificationId", "type": "str"},
-        "service_id_related_service_id": {"key": "relatedService.serviceId", "type": "str"},
-        "display_name": {"key": "relatedService.displayName", "type": "str"},
-        "resource_types": {"key": "relatedService.resourceTypes", "type": "[str]"},
-    }
-
-    def __init__(self, *, resource_types: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword resource_types: List of applicable ARM resource types for this service.
-        :paramtype resource_types: list[str]
-        """
-        super().__init__(**kwargs)
-        self.problem_id = None
-        self.title = None
-        self.description = None
-        self.service_id = None
-        self.problem_classification_id = None
-        self.service_id_related_service_id = None
-        self.display_name = None
-        self.resource_types = resource_types
 
 
 class ProblemClassificationsListResult(_serialization.Model):
@@ -1265,15 +1042,12 @@ class Service(_serialization.Model):
     :vartype display_name: str
     :ivar resource_types: ARM Resource types.
     :vartype resource_types: list[str]
-    :ivar metadata: Metadata about the service, only visible for 1P clients.
-    :vartype metadata: dict[str, str]
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "metadata": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1282,7 +1056,6 @@ class Service(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "resource_types": {"key": "properties.resourceTypes", "type": "[str]"},
-        "metadata": {"key": "properties.metadata", "type": "{str}"},
     }
 
     def __init__(
@@ -1300,120 +1073,6 @@ class Service(_serialization.Model):
         self.type = None
         self.display_name = display_name
         self.resource_types = resource_types
-        self.metadata = None
-
-
-class ServiceClassificationAnswer(ClassificationService):
-    """Service Classification result object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar service_id: Azure resource Id of the service.
-    :vartype service_id: str
-    :ivar display_name: Localized name of the azure service.
-    :vartype display_name: str
-    :ivar resource_types: List of applicable ARM resource types for this service.
-    :vartype resource_types: list[str]
-    :ivar child_service: Child service.
-    :vartype child_service: ~azure.mgmt.support.models.ClassificationService
-    """
-
-    _validation = {
-        "service_id": {"readonly": True},
-        "display_name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "service_id": {"key": "serviceId", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-        "resource_types": {"key": "resourceTypes", "type": "[str]"},
-        "child_service": {"key": "childService", "type": "ClassificationService"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_types: Optional[List[str]] = None,
-        child_service: Optional["_models.ClassificationService"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_types: List of applicable ARM resource types for this service.
-        :paramtype resource_types: list[str]
-        :keyword child_service: Child service.
-        :paramtype child_service: ~azure.mgmt.support.models.ClassificationService
-        """
-        super().__init__(resource_types=resource_types, **kwargs)
-        self.child_service = child_service
-
-
-class ServiceClassificationOutput(_serialization.Model):
-    """Output of the service classification API.
-
-    :ivar service_classification_results: Set of problem classification objects classified.
-    :vartype service_classification_results:
-     list[~azure.mgmt.support.models.ServiceClassificationAnswer]
-    """
-
-    _attribute_map = {
-        "service_classification_results": {
-            "key": "serviceClassificationResults",
-            "type": "[ServiceClassificationAnswer]",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        service_classification_results: Optional[List["_models.ServiceClassificationAnswer"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword service_classification_results: Set of problem classification objects classified.
-        :paramtype service_classification_results:
-         list[~azure.mgmt.support.models.ServiceClassificationAnswer]
-        """
-        super().__init__(**kwargs)
-        self.service_classification_results = service_classification_results
-
-
-class ServiceClassificationRequest(_serialization.Model):
-    """Input to problem classification Classification API.
-
-    :ivar issue_summary: Natural language description of the customer’s issue.
-    :vartype issue_summary: str
-    :ivar resource_id: ARM resource Id of the resource that is having the issue.
-    :vartype resource_id: str
-    :ivar additional_context: Additional information in the form of a string.
-    :vartype additional_context: str
-    """
-
-    _attribute_map = {
-        "issue_summary": {"key": "issueSummary", "type": "str"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "additional_context": {"key": "additionalContext", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        issue_summary: Optional[str] = None,
-        resource_id: Optional[str] = None,
-        additional_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword issue_summary: Natural language description of the customer’s issue.
-        :paramtype issue_summary: str
-        :keyword resource_id: ARM resource Id of the resource that is having the issue.
-        :paramtype resource_id: str
-        :keyword additional_context: Additional information in the form of a string.
-        :paramtype additional_context: str
-        """
-        super().__init__(**kwargs)
-        self.issue_summary = issue_summary
-        self.resource_id = resource_id
-        self.additional_context = additional_context
 
 
 class ServiceLevelAgreement(_serialization.Model):
@@ -1498,6 +1157,8 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to server.
+
     :ivar id: Id of the resource.
     :vartype id: str
     :ivar name: Name of the resource.
@@ -1506,32 +1167,33 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     :vartype type: str
     :ivar support_ticket_id: System generated support ticket Id that is unique.
     :vartype support_ticket_id: str
-    :ivar description: Detailed description of the question or issue.
+    :ivar description: Detailed description of the question or issue. Required.
     :vartype description: str
     :ivar problem_classification_id: Each Azure service has its own set of issue categories, also
      known as problem classification. This parameter is the unique Id for the type of problem you
-     are experiencing.
+     are experiencing. Required.
     :vartype problem_classification_id: str
     :ivar problem_classification_display_name: Localized name of problem classification.
     :vartype problem_classification_display_name: str
     :ivar severity: A value that indicates the urgency of the case, which in turn determines the
      response time according to the service level agreement of the technical support plan you have
      with Azure. Note: 'Highest critical impact', also known as the 'Emergency - Severe impact'
-     level in the Azure portal is reserved only for our Premium customers. Known values are:
-     "minimal", "moderate", "critical", and "highestcriticalimpact".
+     level in the Azure portal is reserved only for our Premium customers. Required. Known values
+     are: "minimal", "moderate", "critical", and "highestcriticalimpact".
     :vartype severity: str or ~azure.mgmt.support.models.SeverityLevel
     :ivar enrollment_id: Enrollment Id associated with the support ticket.
     :vartype enrollment_id: str
     :ivar require24_x7_response: Indicates if this requires a 24x7 response from Azure.
     :vartype require24_x7_response: bool
     :ivar advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
-     ticket. Known values are: "Yes" and "No".
+     ticket. Required. Known values are: "Yes" and "No".
     :vartype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
     :ivar problem_scoping_questions: Problem scoping questions associated with the support ticket.
     :vartype problem_scoping_questions: str
     :ivar support_plan_id: Support plan id associated with the support ticket.
     :vartype support_plan_id: str
     :ivar contact_details: Contact information of the user requesting to create a support ticket.
+     Required.
     :vartype contact_details: ~azure.mgmt.support.models.ContactProfile
     :ivar service_level_agreement: Service Level Agreement information for this support ticket.
     :vartype service_level_agreement: ~azure.mgmt.support.models.ServiceLevelAgreement
@@ -1541,12 +1203,12 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     :vartype support_plan_type: str
     :ivar support_plan_display_name: Support plan type associated with the support ticket.
     :vartype support_plan_display_name: str
-    :ivar title: Title of the support ticket.
+    :ivar title: Title of the support ticket. Required.
     :vartype title: str
     :ivar problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
     :vartype problem_start_time: ~datetime.datetime
     :ivar service_id: This is the resource Id of the Azure service resource associated with the
-     support ticket.
+     support ticket. Required.
     :vartype service_id: str
     :ivar service_display_name: Localized name of the Azure service.
     :vartype service_display_name: str
@@ -1575,9 +1237,16 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "description": {"required": True},
+        "problem_classification_id": {"required": True},
         "problem_classification_display_name": {"readonly": True},
+        "severity": {"required": True},
+        "advanced_diagnostic_consent": {"required": True},
+        "contact_details": {"required": True},
         "support_plan_type": {"readonly": True},
         "support_plan_display_name": {"readonly": True},
+        "title": {"required": True},
+        "service_id": {"required": True},
         "service_display_name": {"readonly": True},
         "status": {"readonly": True},
         "created_date": {"readonly": True},
@@ -1621,21 +1290,21 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
+        description: str,
+        problem_classification_id: str,
+        severity: Union[str, "_models.SeverityLevel"],
+        advanced_diagnostic_consent: Union[str, "_models.Consent"],
+        contact_details: "_models.ContactProfile",
+        title: str,
+        service_id: str,
         support_ticket_id: Optional[str] = None,
-        description: Optional[str] = None,
-        problem_classification_id: Optional[str] = None,
-        severity: Optional[Union[str, "_models.SeverityLevel"]] = None,
         enrollment_id: Optional[str] = None,
         require24_x7_response: Optional[bool] = None,
-        advanced_diagnostic_consent: Optional[Union[str, "_models.Consent"]] = None,
         problem_scoping_questions: Optional[str] = None,
         support_plan_id: Optional[str] = None,
-        contact_details: Optional["_models.ContactProfile"] = None,
         service_level_agreement: Optional["_models.ServiceLevelAgreement"] = None,
         support_engineer: Optional["_models.SupportEngineer"] = None,
-        title: Optional[str] = None,
         problem_start_time: Optional[datetime.datetime] = None,
-        service_id: Optional[str] = None,
         file_workspace_name: Optional[str] = None,
         technical_ticket_details: Optional["_models.TechnicalTicketDetails"] = None,
         quota_ticket_details: Optional["_models.QuotaTicketDetails"] = None,
@@ -1645,24 +1314,24 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         """
         :keyword support_ticket_id: System generated support ticket Id that is unique.
         :paramtype support_ticket_id: str
-        :keyword description: Detailed description of the question or issue.
+        :keyword description: Detailed description of the question or issue. Required.
         :paramtype description: str
         :keyword problem_classification_id: Each Azure service has its own set of issue categories,
          also known as problem classification. This parameter is the unique Id for the type of problem
-         you are experiencing.
+         you are experiencing. Required.
         :paramtype problem_classification_id: str
         :keyword severity: A value that indicates the urgency of the case, which in turn determines the
          response time according to the service level agreement of the technical support plan you have
          with Azure. Note: 'Highest critical impact', also known as the 'Emergency - Severe impact'
-         level in the Azure portal is reserved only for our Premium customers. Known values are:
-         "minimal", "moderate", "critical", and "highestcriticalimpact".
+         level in the Azure portal is reserved only for our Premium customers. Required. Known values
+         are: "minimal", "moderate", "critical", and "highestcriticalimpact".
         :paramtype severity: str or ~azure.mgmt.support.models.SeverityLevel
         :keyword enrollment_id: Enrollment Id associated with the support ticket.
         :paramtype enrollment_id: str
         :keyword require24_x7_response: Indicates if this requires a 24x7 response from Azure.
         :paramtype require24_x7_response: bool
         :keyword advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
-         ticket. Known values are: "Yes" and "No".
+         ticket. Required. Known values are: "Yes" and "No".
         :paramtype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
         :keyword problem_scoping_questions: Problem scoping questions associated with the support
          ticket.
@@ -1670,19 +1339,19 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         :keyword support_plan_id: Support plan id associated with the support ticket.
         :paramtype support_plan_id: str
         :keyword contact_details: Contact information of the user requesting to create a support
-         ticket.
+         ticket. Required.
         :paramtype contact_details: ~azure.mgmt.support.models.ContactProfile
         :keyword service_level_agreement: Service Level Agreement information for this support ticket.
         :paramtype service_level_agreement: ~azure.mgmt.support.models.ServiceLevelAgreement
         :keyword support_engineer: Information about the support engineer working on this support
          ticket.
         :paramtype support_engineer: ~azure.mgmt.support.models.SupportEngineer
-        :keyword title: Title of the support ticket.
+        :keyword title: Title of the support ticket. Required.
         :paramtype title: str
         :keyword problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
         :paramtype problem_start_time: ~datetime.datetime
         :keyword service_id: This is the resource Id of the Azure service resource associated with the
-         support ticket.
+         support ticket. Required.
         :paramtype service_id: str
         :keyword file_workspace_name: File workspace name.
         :paramtype file_workspace_name: str
@@ -1947,7 +1616,8 @@ class UpdateContactProfile(_serialization.Model):
 
 
 class UpdateSupportTicket(_serialization.Model):
-    """Updates severity, ticket status, and contact details in the support ticket.
+    """Updates severity, ticket status, contact details, advanced diagnostic consent and secondary
+    consent in the support ticket.
 
     :ivar severity: Severity level. Known values are: "minimal", "moderate", "critical", and
      "highestcriticalimpact".

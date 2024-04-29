@@ -309,7 +309,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         :param context: Context of spark job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: SparkComponent
         """
@@ -351,7 +350,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         :param context: Context of spark job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         :rtype: Spark
         """

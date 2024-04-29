@@ -37,7 +37,7 @@ class PatchedSchemaMeta(SchemaMeta):
     We use a metaclass to inject a Meta class into all our Schema classes.
     """
 
-    def __new__(cls, name, bases, dct):
+    def __new__(mcs, name, bases, dct):
         meta = dct.get("Meta")
         if meta is None:
             dct["Meta"] = PatchedMeta
@@ -49,5 +49,5 @@ class PatchedSchemaMeta(SchemaMeta):
 
         if PatchedBaseSchema not in bases:
             bases = bases + (PatchedBaseSchema,)
-        klass = super().__new__(cls, name, bases, dct)
+        klass = super().__new__(mcs, name, bases, dct)
         return klass

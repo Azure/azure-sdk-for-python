@@ -3,9 +3,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import sys
+import asyncio
 import logging
-from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict
+from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict, Literal
 import json
 import math
 import threading
@@ -20,10 +22,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _LOGGER = logging.getLogger(__name__)
@@ -110,7 +108,7 @@ class SendEventMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         event: str,
         ack_id: Optional[int] = None,
@@ -144,12 +142,10 @@ class JoinGroupData(_model_base.Model):
         type: Literal["joinGroup"] = "joinGroup",  # pylint: disable=redefined-builtin
         group: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -177,12 +173,10 @@ class LeaveGroupData(_model_base.Model):
         type: Literal["leaveGroup"] = "leaveGroup",  # pylint: disable=redefined-builtin
         group: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -214,16 +208,14 @@ class SendEventData(_model_base.Model):
         self,
         *,
         type: Literal["event"] = "event",  # pylint: disable=redefined-builtin
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         event: str,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -259,16 +251,14 @@ class SendToGroupData(_model_base.Model):
         *,
         type: Literal["sendToGroup"] = "sendToGroup",  # pylint: disable=redefined-builtin
         group: str,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         no_echo: bool,
         ack_id: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -292,12 +282,10 @@ class SequenceAckData(_model_base.Model):
         *,
         type: Literal["sequenceAck"] = "sequenceAck",  # pylint: disable=redefined-builtin
         sequence_id: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
+    def __init__(self, mapping: Mapping[str, Any]): ...
 
     def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
@@ -371,7 +359,7 @@ class GroupDataMessage:
     def __init__(
         self,
         *,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         from_user_id: Optional[str] = None,
@@ -398,7 +386,7 @@ class ServerDataMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         sequence_id: Optional[int] = None,
     ) -> None:
@@ -425,7 +413,7 @@ class SendToGroupMessage:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         no_echo: bool,
@@ -451,6 +439,14 @@ WebPubSubMessage = TypeVar(
     SendEventMessage,
     SequenceAckMessage,
     AckMessage,
+)
+
+SendMessageType = TypeVar(
+    "SendMessageType",
+    SendToGroupMessage,
+    SendEventMessage,
+    JoinGroupMessage,
+    LeaveGroupMessage,
 )
 
 
@@ -516,7 +512,14 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None,]:
+    ) -> Union[
+        ConnectedMessage,
+        DisconnectedMessage,
+        GroupDataMessage,
+        ServerDataMessage,
+        AckMessage,
+        None,
+    ]:
         """Parse messages from raw message
 
         :param raw_message: The raw message. Required.
@@ -566,9 +569,9 @@ class WebPubSubClientProtocol:
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
-                error=AckMessageError(name=error["name"], message=error["message"])
-                if isinstance(error, dict)
-                else None,
+                error=(
+                    AckMessageError(name=error["name"], message=error["message"]) if isinstance(error, dict) else None
+                ),
             )
         _LOGGER.error("wrong message type: %s", message["type"])
         return None
@@ -632,7 +635,7 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
         self.name = "json.reliable.webpubsub.azure.v1"
 
 
-class SendMessageErrorOptions:
+class _SendMessageErrorOptions:
     """Options for send message error
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
@@ -647,7 +650,40 @@ class SendMessageErrorOptions:
     ) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
+
+
+class SendMessageErrorOptions(_SendMessageErrorOptions):
+    """Options for send message error
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
+    """
+
+    def __init__(
+        self,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
+    ) -> None:
+        super().__init__(ack_id, error_detail)
         self.cv = threading.Condition()
+
+
+class SendMessageErrorOptionsAsync(_SendMessageErrorOptions):
+    """Async Options for send message error
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
+    """
+
+    def __init__(
+        self,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
+    ) -> None:
+        super().__init__(ack_id, error_detail)
+        self.event = asyncio.Event()
 
 
 class SendMessageError(AzureError):
@@ -691,7 +727,7 @@ class OnGroupDataMessageArgs:
     def __init__(
         self,
         *,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         group: str,
         from_user_id: Optional[str] = None,
@@ -717,7 +753,7 @@ class OnServerDataMessageArgs:
 
     def __init__(
         self,
-        data_type: Union[WebPubSubDataType, str],
+        data_type: WebPubSubDataType,
         data: Any,
         sequence_id: Optional[int] = None,
     ) -> None:
@@ -936,5 +972,57 @@ class AckMap:
             self.ack_map.clear()
 
 
+class AckMapAsync:
+    """Async Ack map"""
+
+    def __init__(self) -> None:
+        self.ack_map: Dict[int, SendMessageErrorOptionsAsync] = {}
+
+    def add(self, ack_id: int, options: SendMessageErrorOptionsAsync) -> None:
+        """Add ack id to ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :param options: The options. Required.
+        :type options: SendMessageErrorOptions
+        """
+        self.ack_map[ack_id] = options
+
+    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+        """Pop ack id from ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
+        """
+        return self.ack_map.pop(ack_id, None)
+
+    def get(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+        """Get ack id from ack map
+
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
+        """
+        return self.ack_map.get(ack_id)
+
+    def clear(self) -> None:
+        """Clear ack map"""
+        for key, value in self.ack_map.items():
+            _LOGGER.debug("clear ack map with ack id: %s", key)
+            value.event.set()
+        self.ack_map.clear()
+
+
 class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""
+
+
+class ReconnectError(AzureError):
+    """Exception raised when fail to reconnect"""
+
+
+class RecoverError(AzureError):
+    """Exception raised when fail to reconnect or recover the client"""

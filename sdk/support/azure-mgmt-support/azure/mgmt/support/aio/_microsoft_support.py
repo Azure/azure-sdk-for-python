@@ -26,12 +26,8 @@ from .operations import (
     FileWorkspacesOperations,
     FilesNoSubscriptionOperations,
     FilesOperations,
-    LookUpResourceIdOperations,
     Operations,
-    ProblemClassificationsNoSubscriptionOperations,
     ProblemClassificationsOperations,
-    ServiceClassificationsNoSubscriptionOperations,
-    ServiceClassificationsOperations,
     ServicesOperations,
     SupportTicketsNoSubscriptionOperations,
     SupportTicketsOperations,
@@ -49,17 +45,6 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype operations: azure.mgmt.support.aio.operations.Operations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.support.aio.operations.ServicesOperations
-    :ivar service_classifications_no_subscription: ServiceClassificationsNoSubscriptionOperations
-     operations
-    :vartype service_classifications_no_subscription:
-     azure.mgmt.support.aio.operations.ServiceClassificationsNoSubscriptionOperations
-    :ivar service_classifications: ServiceClassificationsOperations operations
-    :vartype service_classifications:
-     azure.mgmt.support.aio.operations.ServiceClassificationsOperations
-    :ivar problem_classifications_no_subscription: ProblemClassificationsNoSubscriptionOperations
-     operations
-    :vartype problem_classifications_no_subscription:
-     azure.mgmt.support.aio.operations.ProblemClassificationsNoSubscriptionOperations
     :ivar problem_classifications: ProblemClassificationsOperations operations
     :vartype problem_classifications:
      azure.mgmt.support.aio.operations.ProblemClassificationsOperations
@@ -87,16 +72,14 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype files: azure.mgmt.support.aio.operations.FilesOperations
     :ivar files_no_subscription: FilesNoSubscriptionOperations operations
     :vartype files_no_subscription: azure.mgmt.support.aio.operations.FilesNoSubscriptionOperations
-    :ivar look_up_resource_id: LookUpResourceIdOperations operations
-    :vartype look_up_resource_id: azure.mgmt.support.aio.operations.LookUpResourceIdOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -136,15 +119,6 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword,to
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_classifications_no_subscription = ServiceClassificationsNoSubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.service_classifications = ServiceClassificationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.problem_classifications_no_subscription = ProblemClassificationsNoSubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.problem_classifications = ProblemClassificationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -168,9 +142,6 @@ class MicrosoftSupport:  # pylint: disable=client-accepts-api-version-keyword,to
         )
         self.files = FilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.files_no_subscription = FilesNoSubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.look_up_resource_id = LookUpResourceIdOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

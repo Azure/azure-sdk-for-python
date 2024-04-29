@@ -93,10 +93,17 @@ discovered_roots = []
 def get_target_version(repo_root: str) -> str:
     """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
-    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location = os.path.relpath("eng/target_proxy_version.txt")
 
-    with open(version_file_location_from_root, "r") as f:
-        target_version = f.read().strip()
+    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location_from_root = os.path.abspath(os.path.join(repo_root, override_version_file_location))
+
+    if os.path.exists(override_version_file_location_from_root):
+        with open(override_version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
+    else:
+        with open(version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
 
     return target_version
 
