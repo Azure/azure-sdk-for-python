@@ -391,7 +391,7 @@ class EventHubProducerClient(
             idle_timeout=self._idle_timeout,
             amqp_transport = self._amqp_transport,
             keep_alive = self._keep_alive,
-            **self._internal_kwargs,
+            **self._internal_kwargs
         )
         return handler
 
