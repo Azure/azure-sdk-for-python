@@ -891,7 +891,6 @@ class ServiceBusReceiver(
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
-        start_time = time.time_ns()
         deleted = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
         )
@@ -929,7 +928,6 @@ class ServiceBusReceiver(
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
-        start_time = time.time_ns()
 
         batch_count = 0
         deleted = None
