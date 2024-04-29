@@ -160,7 +160,7 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
 
 
 MarketplaceSubscription.__doc__ = _MarketplaceSubscription.__doc__.strip() + """
-    :ivar system_data: System data of the endpoint.
+    :ivar system_data: System data of the marketplace subscription.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
 """
 
