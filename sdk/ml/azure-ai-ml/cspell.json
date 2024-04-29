@@ -57,7 +57,12 @@
         "dets",
         "llms",
         "Hnsw",
-        "hnsw"
+        "hnsw",
+        "aadtoken",
+        "alds",
+        "entra",
+        "restclient",
+        "SERP"
     ],
     "ignorePaths": [
         "./azure/ai/ml/entities/_indexes/utils/encodings/*"
