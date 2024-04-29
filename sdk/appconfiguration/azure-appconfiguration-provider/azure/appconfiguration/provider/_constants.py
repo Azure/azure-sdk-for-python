@@ -16,3 +16,9 @@ AzureWebAppEnvironmentVariable = "WEBSITE_SITE_NAME"
 ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
 KubernetesEnvironmentVariable = "KUBERNETES_PORT"
 ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
+
+TELEMETRY_KEY = "telemetry"
+METADATA_KEY = "metadata"
+ETAG_KEY = "etag"
+FEATURE_FLAG_REFERENCE_KEY = "feature_flag_reference"
+FEATURE_FLAG_ID_KEY = "feature_flag_id"

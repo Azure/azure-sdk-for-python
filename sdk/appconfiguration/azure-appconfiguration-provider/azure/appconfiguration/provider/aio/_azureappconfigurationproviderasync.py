@@ -45,6 +45,11 @@ from .._constants import (
     FEATURE_FLAG_KEY,
     FEATURE_FLAG_PREFIX,
     EMPTY_LABEL,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
 )
 from .._azureappconfigurationprovider import (
     _is_json_content_type,
@@ -526,7 +531,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def _calculate_feature_id(key, label):
         basic_value = f"{key}\n"
         if label:
-            basic_value = basic_value + f"\n{label}"
+            basic_value += f"{label}"
         feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
         encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
         encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
@@ -544,15 +549,19 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             )
             async for feature_flag in feature_flags:
                 feature_flag_value = json.loads(feature_flag.value)
-                if "telemetry" in feature_flag_value:
-                    if "metadata" not in feature_flag_value["telemetry"]:
-                        feature_flag_value["telemetry"]["metadata"] = {}
-                    feature_flag_value["telemetry"]["metadata"]["etag"] = feature_flag.etag
-                    feature_flag_reference = f"{endpoint}/kv/{feature_flag.key}"
+                if TELEMETRY_KEY in feature_flag_value:
+                    if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                        feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+                    if not endpoint.endswith("/"):
+                        endpoint += "/"
+                    
+                    feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
                     if feature_flag.label:
                         feature_flag_reference += f"?label={feature_flag.label}"
-                    feature_flag_value["telemetry"]["metadata"]["feature_flag_reference"] = feature_flag_reference
-                    feature_flag_value["telemetry"]["metadata"]["feature_flag_id"] = self._calculate_feature_id(
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
                         feature_flag.key, feature_flag.label
                     )
                 loaded_feature_flags.append(feature_flag_value)

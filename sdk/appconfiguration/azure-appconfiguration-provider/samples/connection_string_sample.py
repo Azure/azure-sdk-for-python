@@ -14,8 +14,6 @@ connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 # Connecting to Azure App Configuration using connection string
 config = load(connection_string=connection_string, feature_flag_enabled=True, **kwargs)
 
-breakpoint()
-
 print(config["message"])
 print(config["my_json"]["key"])
 

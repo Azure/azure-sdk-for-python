@@ -74,7 +74,7 @@ setup(
     install_requires=[
         "msrest>=0.6.21",
         "azure-core>=1.28.0",
-        "azure-appconfiguration==1.6.0b2",
+        "azure-appconfiguration>=1.6.0",
         "azure-keyvault-secrets>=4.3.0",
     ],
 )
