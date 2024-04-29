@@ -487,8 +487,6 @@ class ServiceBusReceiver(
     ) -> None:
         # pylint: disable=protected-access
         try:
-            # if self._amqp_transport
-            # TODO: If uamqp --- raise the error still, else 
             if not message._is_deferred_message:
                 try:
                     self._amqp_transport.settle_message_via_receiver_link(
