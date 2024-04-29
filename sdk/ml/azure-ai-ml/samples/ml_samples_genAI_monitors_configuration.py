@@ -81,9 +81,11 @@ ml_client.schedules.begin_create_or_update(model_monitor)
 # token_statistics_metrics = GenerationTokenStatisticsMonitorMetricThreshold(
 #    totaltoken={"total_token_count": 0, "total_token_count_per_group": 0}
 # )
+# [START token_statistics_signal]
 token_statistics_signal = (
     GenerationTokenStatisticsSignal()
 )  # metric_thresholds=token_statistics_metrics, sampling_rate=0.1)
+
 
 # Thresholds for GSQ signal
 generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(  # need to confirm which one is used, current understanding only one of them is used
@@ -138,7 +140,6 @@ monitor_settings = MonitorDefinition(
 model_monitor = MonitorSchedule(
     name="monitor-name-2", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
 )
+# [END token_statistics_signal]
 
 ml_client.schedules.begin_create_or_update(model_monitor)
-
-###TODO

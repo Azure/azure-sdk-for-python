@@ -1170,27 +1170,28 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
 class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     """Generation token statistics signal definition.
 
-    All required parameters must be populated in order to send to Azure.
+    :ivar type: The type of the signal. Set to generation_token_statistics" for this class.
+    :vartype type: str
+    :keyword production_data: input dataset for monitoring.
+    :paramtype input_dataset: Optional[~azure.ai.ml.entities.LlmData]
+    :keyword metric_thresholds: Metrics to calculate and their associated thresholds. Defaults to App Traces
+    :paramtype metric_thresholds: Optional[~azure.ai.ml.entities.GenerationTokenStatisticsMonitorMetricThreshold]
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :paramtype alert_enabled: bool
+    :keyword properties: The properties of the signal
+    :paramtype properties: Optional[Dict[str, str]]
+    :keyword sampling_rate: The sample rate of the target data, should be greater
+        than 0 and at most 1.
+    :paramtype sampling_rate: float
 
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar properties: Property dictionary. Properties can be added, but not removed or altered.
-    :vartype properties: dict[str, str]
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance", "GenerationSafetyQuality",
-     "GenerationTokenStatistics".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar metric_thresholds: Required. [Required] Gets or sets the metrics to calculate and the
-     corresponding thresholds.
-    :vartype metric_thresholds:
-     list[~azure.mgmt.machinelearningservices.models.GenerationTokenStatisticsMonitorMetricThreshold]
-    :ivar production_data: Gets or sets the target data for computing metrics.
-    :vartype production_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputDataBase
-    :ivar sampling_rate: Required. [Required] The sample rate of the target data, should be greater
-     than 0 and at most 1.
-    :vartype sampling_rate: float
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_genAI_monitors_configuration.py
+                :start-after: [START token_statistics_signal]
+                :end-before: [END token_statistics_signal]
+                :language: python
+                :dedent: 8
+                :caption: Get the workspace hub by name.
     """
 
     def __init__(
