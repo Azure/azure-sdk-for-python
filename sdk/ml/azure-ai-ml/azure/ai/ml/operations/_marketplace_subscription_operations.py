@@ -60,7 +60,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(ops_logger, "MarketplaceSubscription.List", ActivityType.PUBLICAPI)
-    def list(self, **kwargs,) -> Iterable[MarketplaceSubscription]:
+    def list(self, **kwargs) -> Iterable[MarketplaceSubscription]:
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,

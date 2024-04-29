@@ -70,3 +70,8 @@ class SystemData(RestTranslatableMixin):
             last_modified_by_type=self.last_modified_by_type,
             last_modified_at=self.last_modified_at,
         )
+
+    def _to_dict(self) -> dict:
+        from azure.ai.ml._schema.job.creation_context import CreationContextSchema
+
+        return CreationContextSchema().dump(self)

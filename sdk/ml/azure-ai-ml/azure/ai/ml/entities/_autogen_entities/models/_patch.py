@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import json
 from typing import Any, Dict, List, Optional
 
 from azure.ai.ml.entities._system_data import SystemData
@@ -112,6 +113,11 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             system_data=SystemData._from_rest_object(obj.system_data),
         )
 
+    def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+        d = super().as_dict(exclude_readonly=exclude_readonly)
+        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))
+        return d
+
 
 ServerlessEndpoint.__doc__ += _ServerlessEndpoint.__doc__.strip() + """
     :ivar system_data: System data of the endpoint.
@@ -144,6 +150,11 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
             provisioning_state=camel_to_snake(properties.provisioning_state),
             system_data=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
+
+    def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+        d = super().as_dict(exclude_readonly=exclude_readonly)
+        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))
+        return d
 
 
 MarketplaceSubscription.__doc__ = _MarketplaceSubscription.__doc__.strip() + """
