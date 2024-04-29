@@ -302,7 +302,7 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
-        # import pdb; pdb.set_trace()
+
         if not rest_obj:
             return None
         customer_managed_key = (
