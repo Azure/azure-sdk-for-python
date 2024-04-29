@@ -37,12 +37,11 @@ from azure.ai.ml.constants import MonitorTargetTasks, MonitorDatasetContext
 # Authentication package
 from azure.identity import DefaultAzureCredential
 
-
 credential = DefaultAzureCredential()
 
-subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-resource_group_name = "INSERT_YOUR_RESOURCE_GROUP_NAME"
-workspace_name = "INSERT_YOUR_PROJECT_NAME"
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+resource_group = os.environ["RESOURCE_GROUP_NAME"]
+workspace_name = "test-ws1"
 aoai_deployment_name = "INSERT_YOUR_AOAI_DEPLOYMENT_NAME"
 endpoint_name = "INSERT_YOUR_ENDPOINT_NAME"
 deployment_name = "INSERT_YOUR_DEPLOYMENT_NAME"
@@ -53,89 +52,89 @@ app_trace_Version = "1"
 ml_client = MLClient(
     credential=credential,
     subscription_id=subscription_id,
-    resource_group_name=resource_group_name,
+    resource_group_name=resource_group,
     workspace_name=workspace_name,
 )
 
-# This is the compute to run the job on
-spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
 
-# This is the deployment to monitor
-monitoring_target = MonitoringTarget(
-    ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
-    endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
-)
+class GenAIMonitoringSamples(object):
+    def ml_gen_ai_monitor_default(self):
+        # [START default_monitoring]
+        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
+        monitoring_target = MonitoringTarget(
+            ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
+            endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
+        )
+        monitoring_target = MonitoringTarget(
+            ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
+            endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
+        )
+        monitor_settings = MonitorDefinition(compute=spark_compute, monitoring_target=monitoring_target)
+        model_monitor = MonitorSchedule(
+            name="qa_model_monitor", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
+        )
+        ml_client.schedules.begin_create_or_update(model_monitor)
+        # [END default_monitoring]
 
-# These are the monitoring settings
-monitor_settings = MonitorDefinition(compute=spark_compute, monitoring_target=monitoring_target)
+    def ml_gen_ai_monitor_advance(self):
+        # [START advance_monitoring]
+        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
+        monitoring_target = MonitoringTarget(
+            ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
+            endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
+        )
+        token_statistics_signal = GenerationTokenStatisticsSignal()
+        generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(
+            fluency={"acceptable_fluency_score_per_instance": 4, "aggregated_fluency_pass_rate": 0.5},
+            coherence={"acceptable_coherence_score_per_instance": 4, "aggregated_coherence_pass_rate": 0.5},
+            groundedness={"aggregated_groundedness_pass_rate": 4, "acceptable_groundedness_score_per_instance": 0.5},
+            relevance={"acceptable_relevance_score_per_instance": 4, "aggregated_relevance_pass_rate": 0.5},
+        )
+        input_data = Input(
+            type="uri_folder",
+            path=f"{endpoint_name}-{deployment_name}-{app_trace_name}:{app_trace_Version}",
+        )
+        data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D")
+        production_data = LlmData(
+            data_column_names={"prompt_column": "question", "completion_column": "answer"},
+            input_data=input_data,
+            data_window=data_window,
+        )
 
-# This is the monitor schedule configuration
-model_monitor = MonitorSchedule(
-    name="qa_model_monitor", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
-)
+        generation_quality_signal = GenerationSafetyQualitySignal(
+            workspace_connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/Default_AzureOpenAI",
+            metric_thresholds=generation_quality_thresholds,
+            production_data=[production_data],
+            sampling_rate=1.0,
+            properties={
+                "aoai_deployment_name": aoai_deployment_name,
+                "enable_action_analyzer": "false",
+                "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":4}},{"metricName":"average_coherence","threshold":{"value":4}}]',
+            },
+        )
 
-ml_client.schedules.begin_create_or_update(model_monitor)
-# End of default monitor enabling with minimal configuration
+        monitoring_signals = {
+            "token_statistics_signal": token_statistics_signal,
+            "generation_quality_signal": generation_quality_signal,
+        }
+
+        alert_notification = AlertNotification(emails=["test@example.com", "def@example.com"])
+
+        monitor_settings = MonitorDefinition(
+            compute=spark_compute,
+            monitoring_target=monitoring_target,
+            monitoring_signals=monitoring_signals,
+            alert_notification=alert_notification,
+        )
+
+        model_monitor = MonitorSchedule(
+            name="monitor-name-2", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
+        )
+
+        ml_client.schedules.begin_create_or_update(model_monitor)
 
 
-# token_statistics_metrics = GenerationTokenStatisticsMonitorMetricThreshold(
-#    totaltoken={"total_token_count": 0, "total_token_count_per_group": 0}
-# )
-# [START token_statistics_signal]
-token_statistics_signal = GenerationTokenStatisticsSignal()
-# [END token_statistics_signal]
-
-# Thresholds for GSQ signal
-generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(
-    fluency={"acceptable_fluency_score_per_instance": 4, "aggregated_fluency_pass_rate": 0.5},
-    coherence={"acceptable_coherence_score_per_instance": 4, "aggregated_coherence_pass_rate": 0.5},
-    groundedness={"aggregated_groundedness_pass_rate": 4, "acceptable_groundedness_score_per_instance": 0.5},
-    relevance={"acceptable_relevance_score_per_instance": 4, "aggregated_relevance_pass_rate": 0.5},
-)
-
-input_data = Input(
-    type="uri_folder",
-    path=f"{endpoint_name}-{deployment_name}-{app_trace_name}:{app_trace_Version}",
-)
-data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offset="P0D")
-
-
-production_data = LlmData(
-    data_column_names={"prompt_column": "question", "completion_column": "answer"},
-    input_data=input_data,
-    data_window=data_window,
-)
-
-# GSQ signal configuration
-generation_quality_signal = GenerationSafetyQualitySignal(
-    workspace_connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/Default_AzureOpenAI",
-    metric_thresholds=generation_quality_thresholds,
-    production_data=[production_data],
-    sampling_rate=1.0,
-    properties={
-        "aoai_deployment_name": aoai_deployment_name,
-        "enable_action_analyzer": "false",
-        "azureml.modelmonitor.gsq_thresholds": '[{"metricName":"average_fluency","threshold":{"value":4}},{"metricName":"average_coherence","threshold":{"value":4}}]',
-    },
-)
-
-monitoring_signals = {
-    "token_statistics_signal": token_statistics_signal,
-    "generation_quality_signal": generation_quality_signal,
-}
-
-# Emails to send alerts to
-alert_notification = AlertNotification(emails=["test@example.com", "def@example.com"])
-
-monitor_settings = MonitorDefinition(
-    compute=spark_compute,
-    monitoring_target=monitoring_target,
-    monitoring_signals=monitoring_signals,
-    alert_notification=alert_notification,
-)
-
-model_monitor = MonitorSchedule(
-    name="monitor-name-2", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
-)
-
-ml_client.schedules.begin_create_or_update(model_monitor)
+if __name__ == "__main__":
+    sample = GenAIMonitoringSamples()
+    sample.ml_gen_ai_monitor_default()
+    sample.ml_gen_ai_monitor_advance()

@@ -1227,8 +1227,8 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_genAI_monitors_configuration.py
-                :start-after: [START token_statistics_signal]
-                :end-before: [END token_statistics_signal]
+                :start-after: [START default_monitoring]
+                :end-before: [END default_monitoring]
                 :language: python
                 :dedent: 8
                 :caption: Set Token Statistics Monitor.
