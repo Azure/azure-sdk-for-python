@@ -12,12 +12,7 @@ from typing import Callable, Optional, Union
 from azure.ai.ml.entities._indexes.utils.logging import get_logger, packages_versions_for_compatibility
 from azure.ai.ml.entities._indexes.utils.requests import create_session_with_retry, send_post_request
 
-try:
-    from azure.ai.ml import MLClient
-    from azure.ai.ml.entities import WorkspaceConnection
-except Exception:
-    MLClient = None
-    WorkspaceConnection = None
+from azure.ai.ml.entities import WorkspaceConnection
 
 with contextlib.suppress(Exception):
     from azure.core.credentials import TokenCredential
@@ -254,7 +249,8 @@ def get_connection_by_id_v2(
 
     logger.info(f"Using auth: {type(credential)}")
 
-    if client == "sdk" and MLClient is not None and packages_versions_for_compatibility["azure-ai-ml"] >= "1.10.0":
+    from azure.ai.ml import MLClient
+    if client == "sdk" and MLClient is not None:
         logger.info("Getting workspace connection via MLClient")
         ml_client = MLClient(
             credential=credential,

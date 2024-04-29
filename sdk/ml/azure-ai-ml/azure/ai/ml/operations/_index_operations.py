@@ -277,9 +277,6 @@ class IndexOperations(_ScopeDependentOperations):
         """
         from azure.ai.ml.entities._indexes.embeddings import EmbeddingsContainer
 
-        if not embeddings_model_config.model_name:
-            raise ValueError("Please specify embeddings_model_config.model_name")
-
         if isinstance(input_source, AISearchSource):
             from azure.ai.ml.entities._indexes.utils.connections import get_connection_by_id_v2, get_target_from_connection
 
@@ -289,9 +286,12 @@ class IndexOperations(_ScopeDependentOperations):
                 "connection_type": "workspace_connection", 
                 "connection": {"id": build_connection_id(embeddings_model_config.connection_name, self._operation_scope)}
             }
-            mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
-                build_open_ai_protocol(embeddings_model_config.model_name), **connection_args
-            ).get_metadata()  # Bug 2922096
+            if embeddings_model_config.connection_type == "serverless":
+                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(None, credential=None, **connection_args).get_metadata()
+            else:
+                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
+                    build_open_ai_protocol(embeddings_model_config.model_name), **connection_args
+                ).get_metadata()  # Bug 2922096
             mlindex_config["index"] = {
                 "kind": "acs",
                 "connection_type": "workspace_connection",
@@ -317,7 +317,7 @@ class IndexOperations(_ScopeDependentOperations):
                 with open(temp_file, "w") as f:
                     yaml.dump(mlindex_config, f)
 
-                mlindex = Index(name=name, path=temp_dir)
+                mlindex = Index(name=name, path=temp_dir, stage="Development", version="1")
                 # Register it
                 return self.create_or_update(mlindex)
 
