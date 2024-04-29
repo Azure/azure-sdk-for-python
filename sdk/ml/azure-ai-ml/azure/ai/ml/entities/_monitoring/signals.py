@@ -1210,7 +1210,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
 class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     """Generation token statistics signal definition.
 
-    :ivar type: The type of the signal. Set to generation_token_statistics" for this class.
+    :ivar type: The type of the signal. Set to "generationtokenstatisticssignal" for this class.
     :vartype type: str
     :keyword production_data: input dataset for monitoring.
     :paramtype input_dataset: Optional[~azure.ai.ml.entities.LlmData]
@@ -1231,7 +1231,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
                 :end-before: [END token_statistics_signal]
                 :language: python
                 :dedent: 8
-                :caption: Get the workspace hub by name.
+                :caption: Set Token Statistics Monitor.
     """
 
     def __init__(

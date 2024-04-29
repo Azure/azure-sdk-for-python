@@ -84,11 +84,11 @@ ml_client.schedules.begin_create_or_update(model_monitor)
 # [START token_statistics_signal]
 token_statistics_signal = (
     GenerationTokenStatisticsSignal()
-)  # metric_thresholds=token_statistics_metrics, sampling_rate=0.1)
-
+)
+# [END token_statistics_signal]
 
 # Thresholds for GSQ signal
-generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(  # need to confirm which one is used, current understanding only one of them is used
+generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(
     fluency={"acceptable_fluency_score_per_instance": 4, "aggregated_fluency_pass_rate": 0.5},
     coherence={"acceptable_coherence_score_per_instance": 4, "aggregated_coherence_pass_rate": 0.5},
     groundedness={"aggregated_groundedness_pass_rate": 4, "acceptable_groundedness_score_per_instance": 0.5},
@@ -103,14 +103,13 @@ data_window = BaselineDataRange(lookback_window_size="P7D", lookback_window_offs
 
 
 production_data = LlmData(
-    data_column_names={"prompt_column": "question", "completion_column": "answer"},  # data column needs to be provided
+    data_column_names={"prompt_column": "question", "completion_column": "answer"},
     input_data=input_data,
     data_window=data_window,
 )
 
 # GSQ signal configuration
 generation_quality_signal = GenerationSafetyQualitySignal(
-    # open question - how customer can grab this?
     workspace_connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/Default_AzureOpenAI",
     metric_thresholds=generation_quality_thresholds,
     production_data=[production_data],
@@ -140,6 +139,5 @@ monitor_settings = MonitorDefinition(
 model_monitor = MonitorSchedule(
     name="monitor-name-2", trigger=CronTrigger(expression="15 10 * * *"), create_monitor=monitor_settings
 )
-# [END token_statistics_signal]
 
 ml_client.schedules.begin_create_or_update(model_monitor)
