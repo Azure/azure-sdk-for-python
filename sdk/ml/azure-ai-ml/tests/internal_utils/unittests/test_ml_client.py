@@ -21,7 +21,7 @@ from azure.ai.ml import (
     load_online_endpoint,
     load_registry,
     load_workspace,
-    load_workspace_connection,
+    load_connection,
 )
 from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_cloud_name
 from azure.ai.ml._scope_dependent_operations import OperationScope

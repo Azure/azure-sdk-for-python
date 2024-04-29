@@ -62,6 +62,7 @@ jobs:
           # install autorest
           sudo npm init -f
           sudo npm install -g autorest --save
+          sudo npm install -g @azure-tools/typespec-client-generator-cli
 
           mkdir temp_folder
 

@@ -69,6 +69,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -194,13 +195,21 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
-from ._workspace.connections.workspace_connection_subtypes import (
-    AzureAISearchWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
-    AzureBlobStoreWorkspaceConnection,
-    AzureOpenAIWorkspaceConnection,
+from ._workspace.connections.connection import Connection
+from ._workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnection,
+    MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServicesConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
 )
+from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -279,11 +288,18 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "WorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
-    "AzureBlobStoreWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
-    "AzureAIServiceWorkspaceConnection",
+    "Connection",
+    "AzureBlobStoreConnection",
+    "MicrosoftOneLakeConnection",
+    "AzureOpenAIConnection",
+    "AzureAIServicesConnection",
+    "AzureAISearchConnection",
+    "AzureContentSafetyConnection",
+    "AzureSpeechServicesConnection",
+    "APIKeyConnection",
+    "OpenAIConnection",
+    "SerpConnection",
+    "ServerlessConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -307,6 +323,7 @@ __all__ = [
     "AzureFileDatastore",
     "OneLakeDatastore",
     "OneLakeArtifact",
+    "OneLakeConnectionArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -457,6 +474,8 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "AccountKeyConfiguration",
+    "AadCredentialConfiguration",
     "Index",
     "AzureOpenAIDeployment",
 ]

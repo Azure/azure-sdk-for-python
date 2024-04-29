@@ -44,7 +44,7 @@ from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-from azure.ai.ml.exceptions import ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
@@ -116,7 +116,7 @@ def get_datastore_info(
         else:
             try:
                 datastore_info["credential"] = credential.sas_token
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 if not hasattr(credential, "sas_token"):
                     datastore_info["credential"] = operations._credential
                 else:
@@ -127,10 +127,11 @@ def get_datastore_info(
     elif datastore.type == DatastoreType.AZURE_DATA_LAKE_GEN2:
         datastore_info["container_name"] = str(datastore.filesystem)
     else:
-        raise Exception(
+        msg = (
             f"Datastore type {datastore.type} is not supported for uploads. "
             f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
         )
+        raise MlException(message=msg, no_personal_data_message=msg)
 
     for override_param_name, value in kwargs.items():
         if override_param_name in datastore_info:
@@ -162,7 +163,8 @@ def list_logs_in_datastore(
         DatastoreType.AZURE_BLOB,
         DatastoreType.AZURE_DATA_LAKE_GEN2,
     ]:
-        raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
+        msg = "Only Blob and Azure DataLake Storage Gen2 datastores are supported."
+        raise MlException(message=msg, no_personal_data_message=msg)
 
     storage_client = get_storage_client(
         credential=ds_info["credential"],
