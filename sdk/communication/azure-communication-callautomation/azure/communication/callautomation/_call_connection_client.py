@@ -1007,8 +1007,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
+        :keyword play_source: A PlaySource representing the source to play.
+        :paramtype play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource
         :keyword operation_context: Value that can be used to track this call and its associated events.
