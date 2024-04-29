@@ -3,7 +3,7 @@
 ### 4.6.1 (Unreleased)
 
 #### Features Added
-* Adds vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
+* Adds **preview** support for vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
 * Added support for using the start time option for change feed query API. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 
 #### Breaking Changes
