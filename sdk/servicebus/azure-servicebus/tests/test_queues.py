@@ -3294,7 +3294,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             with receiver:
-                assert receiver_peek.delete_messages() == 0
+                assert receiver.delete_messages() == 0
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
