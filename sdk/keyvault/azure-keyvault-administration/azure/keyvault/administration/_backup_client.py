@@ -247,3 +247,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             polling=polling,
             **kwargs,
         )
+
+    def __enter__(self) -> "KeyVaultBackupClient":
+        self._client.__enter__()
+        return self

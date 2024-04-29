@@ -241,7 +241,7 @@ def trace_message(
     return message
 
 
-def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessageTypes]]) -> List[Link]:
+def get_receive_links(messages: Union[ServiceBusReceivedMessage, Iterable[ServiceBusReceivedMessage]]) -> List[Link]:
     if not is_tracing_enabled():
         return []
 
@@ -268,7 +268,8 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
                 if tracestate:
                     headers["tracestate"] = cast(str, tracestate)
 
-            enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)
+            enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY) \
+                if message.raw_amqp_message.annotations else None
             attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
             links.append(Link(headers, attributes=attributes))
     except AttributeError:

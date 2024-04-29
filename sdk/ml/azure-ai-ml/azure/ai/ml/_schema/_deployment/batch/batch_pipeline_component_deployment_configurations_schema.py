@@ -22,6 +22,7 @@ from azure.ai.ml.constants._job.job import JobType
 
 module_logger = logging.getLogger(__name__)
 
+
 # pylint: disable-next=name-too-long
 class BatchPipelineComponentDeploymentConfiguarationsSchema(metaclass=PatchedSchemaMeta):
     component_id = fields.Str()

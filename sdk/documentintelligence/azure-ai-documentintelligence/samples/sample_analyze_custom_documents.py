@@ -29,6 +29,7 @@ USAGE:
 
 import os
 
+
 def print_table(header_names, table_data):
     """Print a two-dimensional array like a table.
 
@@ -41,7 +42,7 @@ def print_table(header_names, table_data):
         It's will print the string like table in output window. e.g.
          Name    Gender    Age
          Mike    M         25
-         John    M         19     
+         John    M         19
          Lily    F         23
     """
     max_len_list = []
@@ -117,8 +118,7 @@ def analyze_custom_documents(custom_model_id):
                                 value_obj = obj[KEY_OF_VALUE_OBJECT]
                                 extract_value_by_col_name = lambda key: (
                                     value_obj[key].get(KEY_OF_CELL_CONTENT)
-                                    if key in value_obj
-                                    and KEY_OF_CELL_CONTENT in value_obj[key]
+                                    if key in value_obj and KEY_OF_CELL_CONTENT in value_obj[key]
                                     else "None"
                                 )
                                 row_data = list(map(extract_value_by_col_name, col_names))

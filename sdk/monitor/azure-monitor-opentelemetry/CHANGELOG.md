@@ -1,5 +1,12 @@
 # Release History
 
+## 1.4.1 (2024-04-25)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
 ## 1.4.0 (2024-04-09)
 
 ### Features Added

@@ -566,9 +566,11 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
             metric=snake_to_camel(self.metric_name),
-            threshold=MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
-            if self.normalized_discounted_cumulative_gain
-            else None,
+            threshold=(
+                MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
+                if self.normalized_discounted_cumulative_gain
+                else None
+            ),
         )
 
     @classmethod
