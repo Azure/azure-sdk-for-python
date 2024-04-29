@@ -163,9 +163,9 @@ class Connection(Resource):
         self._target = target
         self._credentials = credentials
         self._is_shared = is_shared
-        self.validate_cred_for_conn_cat()
+        self._validate_cred_for_conn_cat()
 
-    def validate_cred_for_conn_cat(self) -> None:
+    def _validate_cred_for_conn_cat(self) -> None:
         """Given a connection type, ensure that the given credentials are valid for that connection type.
         Does not validate the actual data of the inputted credential, just that they are of the right class
         type.
@@ -532,7 +532,7 @@ class Connection(Resource):
             AzureBlobStoreConnection,
             MicrosoftOneLakeConnection,
             AzureOpenAIConnection,
-            AzureAIServiceConnection,
+            AzureAIServicesConnection,
             AzureAISearchConnection,
             AzureContentSafetyConnection,
             AzureSpeechServicesConnection,
@@ -560,8 +560,8 @@ class Connection(Resource):
             _snake_to_camel(ConnectionTypes.AZURE_SPEECH_SERVICES).lower(): AzureSpeechServicesConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
             _snake_to_camel(ConnectionTypes.AZURE_SEARCH).lower(): AzureAISearchConnection,
-            _snake_to_camel(ConnectionTypes.AZURE_AI_SERVICES).lower(): AzureAIServiceConnection,
-            ConnectionTypes.AI_SERVICES_REST_PLACEHOLDER.lower(): AzureAIServiceConnection,
+            _snake_to_camel(ConnectionTypes.AZURE_AI_SERVICES).lower(): AzureAIServicesConnection,
+            ConnectionTypes.AI_SERVICES_REST_PLACEHOLDER.lower(): AzureAIServicesConnection,
         }
         return CONNECTION_CATEGORY_TO_SUBCLASS_MAP.get(conn_type, Connection)
 

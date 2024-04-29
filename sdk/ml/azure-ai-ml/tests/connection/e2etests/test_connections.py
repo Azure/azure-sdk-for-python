@@ -20,7 +20,7 @@ from azure.ai.ml.entities import (
     AzureBlobStoreConnection,
     MicrosoftOneLakeConnection,
     AzureOpenAIConnection,
-    AzureAIServiceConnection,
+    AzureAIServicesConnection,
     AzureAISearchConnection,
     AzureContentSafetyConnection,
     AzureSpeechServicesConnection,
@@ -572,7 +572,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         # local_connection.api_key ="<valid-key>"
         created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
-        assert isinstance(created_connection, AzureAIServiceConnection)
+        assert isinstance(created_connection, AzureAIServicesConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == ConnectionTypes.AZURE_AI_SERVICES
@@ -587,7 +587,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         created_connection = client.connections.create_or_update(connection=local_connection, populate_secrets=True)
         client.connections.delete(name=wps_connection_name)
 
-        assert isinstance(created_connection, AzureAIServiceConnection)
+        assert isinstance(created_connection, AzureAIServicesConnection)
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
         assert created_connection.type == ConnectionTypes.AZURE_AI_SERVICES

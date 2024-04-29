@@ -26,7 +26,7 @@ from azure.ai.ml.entities import (
     AzureBlobStoreConnection,
     MicrosoftOneLakeConnection,
     AzureOpenAIConnection,
-    AzureAIServiceConnection,
+    AzureAIServicesConnection,
     AzureAISearchConnection,
     AzureContentSafetyConnection,
     AzureSpeechServicesConnection,
@@ -202,7 +202,7 @@ class TestWorkspaceConnectionEntity:
 
     def test_ai_services(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_key.yaml")
-        assert type(ws_connection) == AzureAIServiceConnection
+        assert type(ws_connection) == AzureAIServicesConnection
         assert ws_connection.type == ConnectionTypes.AZURE_AI_SERVICES
         assert ws_connection.api_key == "2222"
         assert ws_connection.name == "ai_services_conn_api"
@@ -211,7 +211,7 @@ class TestWorkspaceConnectionEntity:
         self.check_rest_conversion_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/ai_services_with_entra.yaml")
-        assert type(ws_connection) == AzureAIServiceConnection
+        assert type(ws_connection) == AzureAIServicesConnection
         assert ws_connection.type == ConnectionTypes.AZURE_AI_SERVICES
         assert ws_connection.name == "ai_services_conn_entra"
         assert ws_connection.target == "my_endpoint"

@@ -87,7 +87,7 @@ class AzureOpenAIConnectionSchema(ConnectionSchema):
 
 
 # pylint: disable-next=name-too-long
-class AzureAIServiceConnectionSchema(ConnectionSchema):
+class AzureAIServicesConnectionSchema(ConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionTypes.AZURE_AI_SERVICES, casing_transform=camel_to_snake, required=True
@@ -98,9 +98,9 @@ class AzureAIServiceConnectionSchema(ConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import AzureAIServiceConnection
+        from azure.ai.ml.entities import AzureAIServicesConnection
 
-        return AzureAIServiceConnection(**data)
+        return AzureAIServicesConnection(**data)
 
 
 # pylint: disable-next=name-too-long

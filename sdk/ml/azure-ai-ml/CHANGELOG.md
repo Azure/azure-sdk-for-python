@@ -10,7 +10,7 @@
   - `AzureBlobStoreConnection`
   - `MicrosoftOneLakeConnection`
   - `AzureOpenAIConnection`
-  - `AzureAIServiceConnection`
+  - `AzureAIServicesConnection`
   - `AzureAISearchConnection`
   - `AzureContentSafetyConnection`
   - `AzureSpeechServicesConnection`

@@ -29,7 +29,7 @@ from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
     AzureBlobStoreConnectionSchema,
     MicrosoftOneLakeConnectionSchema,
     AzureOpenAIConnectionSchema,
-    AzureAIServiceConnectionSchema,
+    AzureAIServicesConnectionSchema,
     AzureAISearchConnectionSchema,
     AzureContentSafetyConnectionSchema,
     AzureSpeechServicesConnectionSchema,
@@ -407,7 +407,7 @@ class AzureOpenAIConnection(ApiOrAadConnection):
         self.tags[CONNECTION_RESOURCE_ID_KEY] = value
 
 
-class AzureAIServiceConnection(ApiOrAadConnection):
+class AzureAIServicesConnection(ApiOrAadConnection):
     """A Connection geared towards Azure AI services.
 
     :param name: Name of the connection.
@@ -441,7 +441,7 @@ class AzureAIServiceConnection(ApiOrAadConnection):
 
     @classmethod
     def _get_schema_class(cls) -> Type:
-        return AzureAIServiceConnectionSchema
+        return AzureAIServicesConnectionSchema
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
