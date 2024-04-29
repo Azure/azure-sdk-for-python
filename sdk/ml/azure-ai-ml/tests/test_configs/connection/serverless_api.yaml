@@ -1,0 +1,4 @@
+name: serverless_with_api
+type: serverless
+api_key: "1029"
+endpoint: "serverless_endpoint"

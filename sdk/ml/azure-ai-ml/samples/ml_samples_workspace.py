@@ -48,11 +48,9 @@ class WorkspaceConfigurationOptions(object):
         # [END load_hub]
 
         # [START load_workspace_connection]
-        from azure.ai.ml import load_workspace_connection
+        from azure.ai.ml import load_connection
 
-        wps_connection = load_workspace_connection(
-            source="../tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
-        )
+        wps_connection = load_connection(source="../tests/test_configs/connection/snowflake_user_pwd.yaml")
         # [END load_workspace_connection]
 
         # [START customermanagedkey]
@@ -215,17 +213,17 @@ class WorkspaceConfigurationOptions(object):
 
         # [START create_or_update_connection]
         from azure.ai.ml import MLClient
-        from azure.ai.ml.entities import WorkspaceConnection
+        from azure.ai.ml.entities import Connection
         from azure.ai.ml.entities import UsernamePasswordConfiguration
 
         ml_client_ws = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws")
-        wps_connection = WorkspaceConnection(
+        wps_connection = Connection(
             name="connection-1",
             type="snowflake",
             target="jdbc:snowflake://<myaccount>.snowflakecomputing.com/?db=<mydb>&warehouse=<mywarehouse>&role=<myrole>",  # cspell:disable-line
             credentials=UsernamePasswordConfiguration(username="XXXXX", password="XXXXXX"),
         )
-        connection = ml_client_ws.connections.create_or_update(workspace_connection=wps_connection)
+        connection = ml_client_ws.connections.create_or_update(connection=wps_connection)
         # [END create_or_update_connection]
 
         # [START delete_connection]
