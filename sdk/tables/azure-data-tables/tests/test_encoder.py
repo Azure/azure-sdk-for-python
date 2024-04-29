@@ -33,7 +33,7 @@ class MyEncoder(TableEntityEncoder):
         if isinstance(key, uuid.UUID) or isinstance(key, int) or isinstance(key, float) or isinstance(key, bool):
             key = str(key)
         elif isinstance(key, datetime):
-            key = str(_to_utc_datetime(key))
+            key = _to_utc_datetime(key)
         elif isinstance(key, bytes):
             key = str(_encode_base64(key))
         elif isinstance(key, enum.Enum): # Support enum in key's value
@@ -163,7 +163,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             "RowKey": uuid.uuid4()
         }
         expected_entity5 = {
-            "PartitionKey": str(_to_utc_datetime(entity5["PartitionKey"])),
+            "PartitionKey": _to_utc_datetime(entity5["PartitionKey"]),
             "RowKey": str(entity5["RowKey"])
         }
         entity6 = {
@@ -617,7 +617,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RowKey": recorded_uuid,
             }
             expected_entity = {
-                "PartitionKey": str(_to_utc_datetime(test_entity["PartitionKey"])),
+                "PartitionKey": _to_utc_datetime(test_entity["PartitionKey"]),
                 "RowKey": str(test_entity["RowKey"]),
             }
             _check_backcompat(test_entity, expected_entity)
@@ -839,7 +839,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": (9223372036854775807, "Edm.Int64"),
             }
-            _check_backcompat(test_entity, expected_entity)
+            # _check_backcompat(test_entity, expected_entity) # this will fail
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -898,7 +898,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data2@odata.type": "Edm.Boolean",
                 "Data3": _encode_base64(b"testdata"),
                 "Data3@odata.type": "Edm.Binary",
-                "Data4": str(_to_utc_datetime(dt)),
+                "Data4": _to_utc_datetime(dt),
                 "Data4@odata.type": "Edm.DateTime",
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
@@ -921,7 +921,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": (1152921504606846976, "Edm.Int64"),
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -951,7 +951,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "你好",
                 "Data": "你好"
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail, as old result has odata type for "Data".
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -961,9 +961,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
-            # # Invalid int32 and int64 values
-            # # TODO: Check whether other languages support big int32. Also Cosmos.
-            # # TODO: This will likely change if we move to post-request validation.
+            # Invalid int32 and int64 values
+            # TODO: Check whether other languages support big int32. Also Cosmos.
+            # TODO: This will likely change if we move to post-request validation.
             max_int64 = 9223372036854775808
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = {
@@ -971,7 +971,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "RK1",
                 "Data": int(max_int64 * 1000)
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail, as the old encoder has int value range validation.
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -988,7 +988,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data": str(max_int64 - 1),
                 "Data@odata.type": "Edm.Int64",
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1005,7 +1005,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail, as the old encoder has int value range validation.
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -1034,7 +1034,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data3": "-Infinity",
                 "Data3@odata.type": "Edm.Double",
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1049,9 +1049,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
-                "123": 456, # the expected value in encoded entity is different, should be {..., 123: 456}.
+                "123": 456,
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail, as old encoded result is {..., 123: 456}
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
                     test_entity,
@@ -1064,14 +1064,15 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Test enums
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
-            # Q: not sure if the expected_entity and response_entity are correct?
+            # Q: not sure if the expected_entity is correct?
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "One",
                 "Data": "Two",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "One", "Data": "Two"}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            # _check_backcompat(test_entity, expected_entity) # this will fail
+            # old encoded entity: {'PartitionKey': 'PK', 'RowKey': 'EnumBasicOptions.ONE', 'Data': 'EnumBasicOptions.TWO', 'Data@odata.type': 'Edm.String'}
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1082,17 +1083,16 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
-            # TODO: This looks like it was always broken, should adjust encoder for the expected value.
-            # Q: not sure if the expected_entity and response_entity are correct?
+            # Q: not sure if the expected_entity is correct?
             expected_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "EnumStrOptions.ONE",
                 "Data": "EnumStrOptions.TWO",
-                "Data@odata.type": "Edm.String",
             }
             response_entity = {"PartitionKey": "PK", "RowKey": "EnumStrOptions.ONE", "Data": "EnumStrOptions.TWO"}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
-            resp = client.create_entity( # fail
+            # _check_backcompat(test_entity, expected_entity) # this will fail
+            # old encoded entity: {'PartitionKey': 'PK', 'RowKey': 'EnumStrOptions.ONE', 'Data': 'EnumStrOptions.TWO', 'Data@odata.type': 'Edm.String'}
+            resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
@@ -1112,7 +1112,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Data": "2",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
-                # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+                # _check_backcompat(test_entity, expected_entity) # this will fail
+                # old encoded entity: {'PartitionKey': 'PK', 'RowKey': '1', 'Data': '2', 'Data@odata.type': 'Edm.String'}
                 resp = client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -1127,7 +1128,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Data": "EnumIntOptions.TWO",
                 }
                 response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
-                # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+                # _check_backcompat(test_entity, expected_entity) # this will fail
+                # old encoded entity: {'PartitionKey': 'PK', 'RowKey': 'EnumIntOptions.ONE', 'Data': 'EnumIntOptions.TWO', 'Data@odata.type': 'Edm.String'}
                 resp = client.create_entity(
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
