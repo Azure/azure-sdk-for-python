@@ -15,7 +15,7 @@ from azure.mgmt.eventgrid import EventGridManagementClient
     pip install azure-identity
     pip install azure-mgmt-eventgrid
 # USAGE
-    python partner_topic_event_subscriptions_list_by_partner_topic.py
+    python namespace_topic_event_subscriptions_get_full_url.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,15 @@ def main():
         subscription_id="8f6b6269-84f2-4d09-9e31-1127efcd1e40",
     )
 
-    response = client.partner_topic_event_subscriptions.list_by_partner_topic(
+    response = client.namespace_topic_event_subscriptions.get_full_url(
         resource_group_name="examplerg",
-        partner_topic_name="examplePartnerTopic1",
+        namespace_name="exampleNamespaceName1",
+        topic_name="exampleDomainTopic1",
+        event_subscription_name="examplesubscription1",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2024-06-01-preview/examples/PartnerTopicEventSubscriptions_ListByPartnerTopic.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2024-06-01-preview/examples/NamespaceTopicEventSubscriptions_GetFullUrl.json
 if __name__ == "__main__":
     main()
