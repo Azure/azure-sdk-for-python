@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed pyright error for `MsalCredential` ([#35184](https://github.com/Azure/azure-sdk-for-python/pull/35184))
+
 ### Other Changes
 
 ## 1.16.0 (2024-04-09)
