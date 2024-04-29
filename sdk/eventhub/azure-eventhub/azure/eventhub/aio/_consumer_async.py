@@ -171,7 +171,7 @@ class EventHubConsumer(
             message_received_callback=partial(
                 self._amqp_transport.message_received_async, self
             ),
-            use_tls=self._client._config.use_tls,
+            use_tls=self._client._config.use_tls, # pylint:disable=protected-access
         )
 
     async def _open_with_retry(self) -> None:

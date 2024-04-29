@@ -138,12 +138,12 @@ def _parse_conn_str(
 
     emulator = use_emulator=="true"
     if emulator and not _is_local_endpoint(host):
-            raise ValueError(
-                "Invalid endpoint on the connection string. "
-                "For development connection strings, should be in the format: "
-                "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
-                "UseDevelopmentEmulator=true;"
-            )
+        raise ValueError(
+            "Invalid endpoint on the connection string. "
+            "For development connection strings, should be in the format: "
+            "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
+            "UseDevelopmentEmulator=true;"
+        )
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
