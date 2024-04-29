@@ -283,7 +283,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
-        result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
+        result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace_async
@@ -426,7 +426,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             feed_options["maxItemCount"] = max_item_count
 
         result = self.client_connection.QueryDatabases(
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs)
         if response_hook:

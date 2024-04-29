@@ -53,8 +53,7 @@ class TableEntity(dict):
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
-    Used by :class:`~.EntityProperty` to represent the type of the entity property
-    to be stored by the Table service.
+    Represent the type of the entity property to be stored by the Table service.
     """
 
     BINARY = "Edm.Binary"
@@ -83,18 +82,20 @@ class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Union[str, EdmType])])
-"""
-An entity property. Used to explicitly set :class:`~EdmType` when necessary.
+"""An entity property. Used to explicitly set :class:`~azure.data.Tables.EdmType` when necessary.
 
 Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
 may be explicitly create as EntityProperty objects but need not be. For example,
-the below with both create STRING typed properties on the entity::
+the below with both create STRING typed properties on the entity:
+
+.. code-block:: python
+
     entity = TableEntity()
     entity.a = 'b'
     entity.x = EntityProperty('y', EdmType.STRING)
 
-:param value:
+:param value: The entity property value.
 :type value: Any
-:param edm_type: Type of the value
+:param edm_type: The Edm type of the entity property value.
 :type edm_type: str or ~azure.data.tables.EdmType
 """

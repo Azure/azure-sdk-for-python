@@ -51,7 +51,7 @@ async def test_iter_with_error(client):
 
     request = HttpRequest("GET", "http://doesNotExist")
     with pytest.raises(ServiceRequestError):
-        async with (await client.send_request(request, stream=True)):
+        async with await client.send_request(request, stream=True):
             raise ValueError("Should error before entering")
     assert response.is_closed
 

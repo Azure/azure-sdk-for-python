@@ -1,5 +1,24 @@
 # Release History
 
+## 2.0.0b3 (2024-04-22)
+
+### Features Added
+
+  - Added operation SolutionOperations.warm_up
+  - Added operation group DiscoverySolutionNLPSubscriptionScopeOperations
+  - Added operation group DiscoverySolutionNLPTenantScopeOperations
+  - Added operation group SimplifiedSolutionsOperations
+  - Added operation group SolutionSelfHelpOperations
+  - Model AutomatedCheckResult has a new parameter status
+  - Model AutomatedCheckResult has a new parameter version
+  - Model ResponseValidationProperties has a new parameter validation_scope
+  - Model SolutionsDiagnostic has a new parameter estimated_completion_time
+  - Model StepInput has a new parameter question_title
+
+### Breaking Changes
+
+  - Operation DiscoverySolutionOperations.list no longer has parameter scope
+
 ## 2.0.0b2 (2023-12-18)
 
 ### Features Added

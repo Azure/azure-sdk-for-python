@@ -56,6 +56,11 @@ PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
+AAD_TOKEN = "aadtoken"
+AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
+EMPTY_CREDENTIALS_ERROR = (
+    "Credentials unavailable. Initialize credentials using 'MLClient' for SDK or 'az login' for CLI."
+)
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
@@ -134,7 +139,6 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
     "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
     "To specify a conda file via command-line argument, please use --conda-file/-c argument."
 )
-API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
@@ -188,6 +192,21 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+
+
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
 
 
 class DefaultOpenEncoding:
@@ -246,8 +265,12 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
-    WORKSPACE_HUB = "workspace_hub"
-    """WorkspaceHub resource type."""
+    HUB = "hub"
+    """Hub resource type."""
+    PROJECT = "project"
+    """Project resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -258,7 +281,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:
@@ -390,6 +413,7 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+    KIND = "kind"
 
 
 class SchemaUrl:
@@ -490,7 +514,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
-    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
+    HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -910,3 +934,12 @@ class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_GREATER_THAN = "created_greater_than"
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
+
+
+class WorkspaceKind:
+    """Enum of workspace categories."""
+
+    DEFAULT = "default"
+    HUB = "hub"
+    PROJECT = "project"
+    FEATURE_STORE = "featurestore"

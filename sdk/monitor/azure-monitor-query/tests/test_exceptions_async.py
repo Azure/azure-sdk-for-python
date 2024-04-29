@@ -9,7 +9,7 @@ import pytest
 
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsBatchQuery, LogsQueryError,LogsQueryResult, LogsQueryPartialResult
+from azure.monitor.query import LogsBatchQuery, LogsQueryError,LogsQueryResult, LogsQueryPartialResult, LogsQueryStatus
 from azure.monitor.query.aio import LogsQueryClient
 
 from base_testcase import AzureMonitorQueryLogsTestCase
@@ -35,6 +35,7 @@ class TestQueryExceptionsAsync(AzureMonitorQueryLogsTestCase):
             | summarize percentilesw(x, Weight * 100, 50)"""
             response = await client.query_workspace(monitor_info['workspace_id'], query, timespan=timedelta(days=1))
             assert response.__class__ == LogsQueryPartialResult
+            assert response.status == LogsQueryStatus.PARTIAL
             assert response.partial_error is not None
             assert response.partial_error.code == 'PartialError'
             assert response.partial_error.__class__ == LogsQueryError
