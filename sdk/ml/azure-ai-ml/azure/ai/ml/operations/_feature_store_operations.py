@@ -22,7 +22,7 @@ from azure.ai.ml.entities import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     ManagedNetworkProvisionStatus,
-    WorkspaceConnection,
+    Connection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -403,7 +403,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_offline_store_connection:
                     offline_store_connection_name_new = f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    offline_store_connection = WorkspaceConnection(
+                    offline_store_connection = Connection(
                         name=offline_store_connection_name_new,
                         type=offline_store.type,
                         target=offline_store.target,
@@ -429,7 +429,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             if materialization_identity:
                 if update_online_store_connection:
                     online_store_connection_name_new = f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
-                    online_store_connection = WorkspaceConnection(
+                    online_store_connection = Connection(
                         name=online_store_connection_name_new,
                         type=online_store.type,
                         target=online_store.target,
