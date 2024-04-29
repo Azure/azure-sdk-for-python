@@ -89,10 +89,10 @@ def _generate_delete_blobs_subrequest_options(
          - "include": Deletes the blob along with all snapshots.
     :param lease_access_conditions:
         The access conditions associated with the lease.
-    :paramtype lease_access_conditions: Optional[LeaseAccessConditions]
+    :type lease_access_conditions: Optional[LeaseAccessConditions]
     :param modified_access_conditions:
         The modified access conditions associated with the lease.
-    :paramtype modified_access_conditions: Optional[LeaseAccessConditions]
+    :type modified_access_conditions: Optional[LeaseAccessConditions]
     :returns: A dictionary containing the delete blobs sub-request options.
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     """
@@ -193,7 +193,7 @@ def _generate_delete_blobs_options(
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-    :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
+    :type blobs: Union[str, Dict[str, Any], BlobProperties]
     :returns: A tuple containing the list of HttpRequests and the delete blobs options.
     :rtype: Tuple[List[HttpRequest], Dict[str, Any]]
     """
@@ -265,7 +265,7 @@ def _generate_set_tiers_subrequest_options(
         The generated Blob Storage client.
     :param tier:
         Indicates the tier to be set on the blobs.
-    :paramtype tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
+    :type tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
     :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param Optional[str] version_id:
@@ -274,7 +274,7 @@ def _generate_set_tiers_subrequest_options(
         Indicates the priority with which to rehydrate an archived blob.
     :param lease_access_conditions:
         The access conditions associated with the lease.
-    :paramtype lease_access_conditions: Optional[LeaseAccessConditions]
+    :type lease_access_conditions: Optional[LeaseAccessConditions]
     :returns: A dictionary containing the set tiers sub-request options.
     :rtype: Dict[str, Any]
     """
@@ -329,7 +329,7 @@ def _generate_set_tiers_options(
         The name of the container.
     :param blob_tier:
         Indicates the tier to be set on the blobs.
-    :paramtype blob_tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
+    :type blob_tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
     :param AzureBlobStorage client:
         The generated Blob Storage client.
     :param blobs:
@@ -360,7 +360,7 @@ def _generate_set_tiers_options(
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-    :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
+    :type blobs: Union[str, Dict[str, Any], BlobProperties]
     :returns: A tuple containing the list of HttpRequests and the set tiers options.
     :rtype: Tuple[List[HttpRequest], Dict[str, Any]]
     """

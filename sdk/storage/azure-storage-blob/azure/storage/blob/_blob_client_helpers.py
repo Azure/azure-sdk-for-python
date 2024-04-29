@@ -148,7 +148,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
 
     :param data:
         The blob data to be uploaded.
-    :paramtype data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
+    :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
     :param Union[str, BlobType] blob_type:
         The type of the blob. This can be either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
     :param Optional[int] length:
@@ -586,7 +586,7 @@ def _create_page_blob_options(
         ContentSettings object used to set blob properties. Used to set content type, encoding,
         language, disposition, md5, and cache control.
     :param metadata: Name-value pairs associated with the blob as metadata.
-    :paramtype metadata: Optional[Dict[str, str]]
+    :type metadata: Optional[Dict[str, str]]
     :param PremiumPageBlobTier premium_page_blob_tier:
         A page blob tier value to set the blob to. The tier correlates to the size of the
         blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -659,7 +659,7 @@ def _create_append_blob_options(
         ContentSettings object used to set blob properties. Used to set content type, encoding,
         language, disposition, md5, and cache control.
     :param metadata: Name-value pairs associated with the blob as metadata.
-    :paramtype metadata: Optional[Dict[str, str]]
+    :type metadata: Optional[Dict[str, str]]
     :returns: A dictionary containing the options for a create append blob operation.
     :rtype: Dict[str, Any]
     """
@@ -710,7 +710,7 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
     """Creates a dictionary containing the options for creating a blob snapshot.
 
     :param metadata: Name-value pairs associated with the blob as metadata.
-    :paramtype metadata: Optional[Dict[str, str]]
+    :type metadata: Optional[Dict[str, str]]
     :returns: A dictionary containing the options for creating a blob snapshot.
     :rtype: Dict[str, Any]
     """
@@ -751,7 +751,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         or must be authenticated via a shared access signature. If the source
         is public, no authentication is required.
     :param metadata: Name-value pairs associated with the blob as metadata.
-    :paramtype metadata: Optional[Dict[str, str]]
+    :type metadata: Optional[Dict[str, str]]
     :param bool incremental_copy:
         Copies the snapshot of the source page blob to a destination page blob.
         The snapshot is copied such that only the differential changes between
@@ -842,7 +842,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
 
     :param copy_id:
         The copy operation to abort. This can be either an ID string, or an instance of BlobProperties.
-    :paramtype copy_id: Union[str, Dict[str, Any], BlobProperties]
+    :type copy_id: Union[str, Dict[str, Any], BlobProperties]
     :returns: A dictionary containing the options for an abort copy operation.
     :rtype: Dict[str, Any]
     """
@@ -996,7 +996,7 @@ def _commit_block_list_options(
         ContentSettings object used to set blob properties. Used to set content type, encoding,
         language, disposition, md5, and cache control.
     :param metadata: Name-value pairs associated with the blob as metadata.
-    :paramtype metadata: Optional[Dict[str, str]]
+    :type metadata: Optional[Dict[str, str]]
     :returns: A dictionary containing the options for a commit block list operation.
     :rtype: Dict[str, Any]
     """
@@ -1074,7 +1074,7 @@ def _set_blob_tags_options(
         and tag values must be between 0 and 256 characters.
         Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
         space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-    :paramtype tags: Optional[Dict[str, str]]
+    :type tags: Optional[Dict[str, str]]
     :returns: A dictionary containing the options for a set blob tags operation.
     :rtype: Dict[str, Any]
     """
@@ -1142,7 +1142,7 @@ def _get_page_ranges_options( # type: ignore
         The snapshot diff parameter that contains an opaque DateTime value that
         specifies a previous blob snapshot to be compared against a more recent snapshot
         or the current blob.
-    :paramtype previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]]
+    :type previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]]
     :returns: A dictionary containing the options for a get page ranges operation.
     :rtype: Dict[str, Any]
     """

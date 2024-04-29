@@ -34,7 +34,6 @@ from ._shared.uploads import (
 )
 
 if TYPE_CHECKING:
-    from ._generated import AzureBlobStorage
     from ._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
     from ._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
@@ -328,7 +327,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 headers=headers,
                 **kwargs))
         except HttpResponseError as error:
-            if error.response.status_code != 404:  # type: ignore
+            if error.response.status_code != 404:  # type: ignore [union-attr]
                 raise
             # rewind the request body if it is a stream
             if hasattr(stream, 'read'):

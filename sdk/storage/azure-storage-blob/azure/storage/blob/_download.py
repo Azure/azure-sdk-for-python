@@ -257,7 +257,7 @@ class _ChunkIterator(object):
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks: Optional[Generator[int, None, None]] = None
-        self._complete = (size == 0)
+        self._complete = size == 0
 
     def __len__(self) -> int:
         return self.size
