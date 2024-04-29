@@ -154,6 +154,8 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
     """Scoring uri of the endpoint."""
     id: Optional[str] = rest_field(visibility=["read"])
     """ARM resource id of the endpoint."""
+    headers: Optional[Dict[str, str]] = rest_field(visibility=["read"])
+    """Headers required to hit the endpoint."""
 
     @overload
     def __init__(

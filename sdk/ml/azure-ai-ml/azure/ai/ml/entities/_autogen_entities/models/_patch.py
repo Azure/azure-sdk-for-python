@@ -109,8 +109,9 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             auth_mode=obj.properties.auth_mode,
             provisioning_state=camel_to_snake(obj.properties.provisioning_state),
             model_id=obj.properties.model_settings.model_id,
-            scoring_uri=obj.properties.inference_endpoint,
+            scoring_uri=obj.properties.inference_endpoint.uri,
             system_data=SystemData._from_rest_object(obj.system_data),
+            headers=obj.properties.inference_endpoint.headers,
         )
 
     def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
@@ -153,7 +154,8 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
 
     def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
         d = super().as_dict(exclude_readonly=exclude_readonly)
-        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))
+        if self.system_data:
+            d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))
         return d
 
 
