@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -62,7 +62,8 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.RestoreRequestResource, IO],
+        parameters: Union[_models.RestoreRequestResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -88,7 +89,7 @@ class RestoresOperations:
         else:
             _json = self._serialize.body(parameters, "RestoreRequestResource")
 
-        request = build_trigger_request(
+        _request = build_trigger_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -96,20 +97,20 @@ class RestoresOperations:
             protected_item_name=protected_item_name,
             recovery_point_id=recovery_point_id,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -119,11 +120,7 @@ class RestoresOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _trigger_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/restore"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_trigger(
@@ -135,6 +132,7 @@ class RestoresOperations:
         protected_item_name: str,
         recovery_point_id: str,
         parameters: _models.RestoreRequestResource,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -159,17 +157,11 @@ class RestoresOperations:
         :type recovery_point_id: str
         :param parameters: resource restore request. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.RestoreRequestResource
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -184,7 +176,8 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: IO,
+        parameters: IO[bytes],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -208,18 +201,12 @@ class RestoresOperations:
          Required.
         :type recovery_point_id: str
         :param parameters: resource restore request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -234,7 +221,8 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.RestoreRequestResource, IO],
+        parameters: Union[_models.RestoreRequestResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores the specified backed up data. This is an asynchronous operation. To know the status of
@@ -255,21 +243,12 @@ class RestoresOperations:
         :param recovery_point_id: Recovery point ID which represents the backed up data to be restored.
          Required.
         :type recovery_point_id: str
-        :param parameters: resource restore request. Is either a RestoreRequestResource type or a IO
-         type. Required.
+        :param parameters: resource restore request. Is either a RestoreRequestResource type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.RestoreRequestResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -292,6 +271,7 @@ class RestoresOperations:
                 protected_item_name=protected_item_name,
                 recovery_point_id=recovery_point_id,
                 parameters=parameters,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -303,7 +283,7 @@ class RestoresOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -312,14 +292,10 @@ class RestoresOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_trigger.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/restore"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

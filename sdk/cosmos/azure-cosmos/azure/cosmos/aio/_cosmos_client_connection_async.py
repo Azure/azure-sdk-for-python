@@ -2335,9 +2335,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all users in a database.
 
-        :params str database_link:
+        :param str database_link:
             The link to the database.
-        :params dict options:
+        :param dict[str, Any] options:
             The request options for the request.
         :return:
             Query iterable of Users.
