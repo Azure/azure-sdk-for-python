@@ -130,6 +130,8 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype scoring_uri: str
     :ivar id: ARM resource id of the endpoint.
     :vartype id: str
+    :ivar headers: Headers required to hit the endpoint.
+    :vartype id: dict[str, str]
     """
 
     name: str = rest_field()
