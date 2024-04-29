@@ -82,9 +82,7 @@ ml_client.schedules.begin_create_or_update(model_monitor)
 #    totaltoken={"total_token_count": 0, "total_token_count_per_group": 0}
 # )
 # [START token_statistics_signal]
-token_statistics_signal = (
-    GenerationTokenStatisticsSignal()
-)
+token_statistics_signal = GenerationTokenStatisticsSignal()
 # [END token_statistics_signal]
 
 # Thresholds for GSQ signal

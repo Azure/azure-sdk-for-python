@@ -1253,12 +1253,16 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestGenerationTokenStatisticsSignal:
         data_window_size = kwargs.get("default_data_window_size")
         return RestGenerationTokenStatisticsSignal(
-            production_data=self.production_data._to_rest_object(default=data_window_size)
-            if self.production_data is not None
-            else None,
-            metric_thresholds=self.metric_thresholds._to_rest_object()
-            if self.metric_thresholds
-            else GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds()._to_rest_object(),  # pylint: disable=line-too-long
+            production_data=(
+                self.production_data._to_rest_object(default=data_window_size)
+                if self.production_data is not None
+                else None
+            ),
+            metric_thresholds=(
+                self.metric_thresholds._to_rest_object()
+                if self.metric_thresholds
+                else GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds()._to_rest_object()
+            ),  # pylint: disable=line-too-long
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
             sampling_rate=self.sampling_rate if self.sampling_rate else 0.1,
@@ -1269,9 +1273,11 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
         return cls(
             production_data=LlmData._from_rest_object(obj.production_data),
             metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=False
-            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-            else MonitoringNotificationMode.ENABLED,
+            alert_enabled=(
+                False
+                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+                else MonitoringNotificationMode.ENABLED
+            ),
             properties=obj.properties,
             sampling_rate=obj.sampling_rate,
         )
