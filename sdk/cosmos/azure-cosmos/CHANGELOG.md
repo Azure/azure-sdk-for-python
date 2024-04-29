@@ -10,7 +10,7 @@
 #### Bugs Fixed
 * Fixed a bug where change feed query in Async client was not returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090)
 * Fixed a bug when a retryable exception occurs in the first page of a query execution causing query to return 0 results. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
-* Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unncessary container reads. See [PR35293](https://github.com/Azure/azure-sdk-for-python/pull/35293/files)
+* Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR35293](https://github.com/Azure/azure-sdk-for-python/pull/35293/files)
 
 
 #### Other Changes
