@@ -485,7 +485,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 return component.version, component._to_rest_object()
         except ResourceNotFoundError as e:
             logger.info("Failed to get component version, %s", e)
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=W0718
             logger.error("Failed to compare client_component_hash, %s", e)
 
         return current_version, rest_component_resource
@@ -1083,8 +1083,6 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
         :type resolver: _AssetResolver
-        :keyword resolve_inputs: Whether to resolve inputs.
-        :paramtype resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return

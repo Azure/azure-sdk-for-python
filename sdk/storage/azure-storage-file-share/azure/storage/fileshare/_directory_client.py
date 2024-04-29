@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import functools
 import sys
@@ -73,6 +73,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword token_intent:
         Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
         Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
@@ -171,7 +176,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential:
-            Optional[Union[str, dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.

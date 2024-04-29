@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0b4 (2024-04-22)
+
+### Features Added
+
+  - Added operation LedgerOperations.begin_backup
+  - Added operation LedgerOperations.begin_restore
+  - Added operation ManagedCCFOperations.begin_backup
+  - Added operation ManagedCCFOperations.begin_restore
+  - Model LedgerProperties has a new parameter ledger_sku
+  - Model ManagedCCFProperties has a new parameter running_state
+
 ## 2.0.0b3 (2023-05-17)
 
 ### Other Changes

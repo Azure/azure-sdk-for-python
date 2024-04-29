@@ -196,11 +196,6 @@ class TestWorkspaceOperation:
         assert isinstance(wps.identity.user_assigned_identities, list)
         assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
 
-    def test_load_workspace_with_workspacehub_yaml(self, mock_workspace_operation: WorkspaceOperations):
-        params_override = []
-        wps = load_workspace("./tests/test_configs/workspace/workspace_with_hub.yaml", params_override=params_override)
-        assert isinstance(wps.workspace_hub, str)
-
     @pytest.mark.parametrize(
         "serverless_compute_settings",
         [

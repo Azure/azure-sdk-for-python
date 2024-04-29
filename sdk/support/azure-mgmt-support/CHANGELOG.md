@@ -1,5 +1,39 @@
 # Release History
 
+## 7.0.0 (2024-04-22)
+
+### Features Added
+
+  - Added operation group ChatTranscriptsNoSubscriptionOperations
+  - Added operation group ChatTranscriptsOperations
+  - Added operation group CommunicationsNoSubscriptionOperations
+  - Added operation group FileWorkspacesNoSubscriptionOperations
+  - Added operation group FileWorkspacesOperations
+  - Added operation group FilesNoSubscriptionOperations
+  - Added operation group FilesOperations
+  - Added operation group SupportTicketsNoSubscriptionOperations
+  - Model ProblemClassification has a new parameter secondary_consent_enabled
+  - Model SupportTicketDetails has a new parameter file_workspace_name
+  - Model SupportTicketDetails has a new parameter is_temporary_ticket
+  - Model SupportTicketDetails has a new parameter problem_scoping_questions
+  - Model SupportTicketDetails has a new parameter secondary_consent
+  - Model SupportTicketDetails has a new parameter support_plan_display_name
+  - Model SupportTicketDetails has a new parameter support_plan_id
+  - Model UpdateSupportTicket has a new parameter advanced_diagnostic_consent
+  - Model UpdateSupportTicket has a new parameter secondary_consent
+
+### Breaking Changes
+
+  - Model SupportTicketDetails has a new required parameter advanced_diagnostic_consent
+  - Parameter body of model CommunicationDetails is now required
+  - Parameter contact_details of model SupportTicketDetails is now required
+  - Parameter description of model SupportTicketDetails is now required
+  - Parameter problem_classification_id of model SupportTicketDetails is now required
+  - Parameter service_id of model SupportTicketDetails is now required
+  - Parameter severity of model SupportTicketDetails is now required
+  - Parameter subject of model CommunicationDetails is now required
+  - Parameter title of model SupportTicketDetails is now required
+
 ## 6.1.0b3 (2024-03-18)
 
 ### Features Added

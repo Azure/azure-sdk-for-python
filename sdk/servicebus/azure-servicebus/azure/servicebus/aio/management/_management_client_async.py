@@ -404,7 +404,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :returns: Returns the properties of the queue.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
@@ -662,7 +662,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          and Service Bus API version "2021-05" or higher.
          The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
         :paramtype max_message_size_in_kilobytes: int
-
+        :return: Returns the properties of the topic.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
 
@@ -913,6 +913,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
         :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :return: Returns the properties of the topic subscription that was created.
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         # pylint:disable=protected-access
@@ -1137,7 +1138,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
-
+        :return: Returns the rules of the topic subscription.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)

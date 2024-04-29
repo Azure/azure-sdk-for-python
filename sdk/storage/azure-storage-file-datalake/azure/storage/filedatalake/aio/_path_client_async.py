@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
+# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
@@ -48,6 +49,11 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -325,7 +331,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict (Etag and last modified).
+        :returns: dict containing access control options after setting modifications (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
@@ -377,7 +384,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword: response dict.
+        :returns: response dict containing access control options (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
@@ -668,6 +676,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: response dict containing information about the renamed path.
+        :rtype: dict[str, Any]
         """
         options = self._rename_path_options(
             rename_source,
@@ -722,6 +732,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns:
+            Information including user-defined metadata, standard HTTP properties,
+            and system properties for the file or directory.
         :rtype: DirectoryProperties or FileProperties
         """
         upn = kwargs.pop('upn', None)
@@ -792,6 +805,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
