@@ -6,9 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AzureOpenAIDeployment
 from ._models import ServerlessEndpoint
-from ._models import SystemData
 from ._models import MarketplaceSubscription
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

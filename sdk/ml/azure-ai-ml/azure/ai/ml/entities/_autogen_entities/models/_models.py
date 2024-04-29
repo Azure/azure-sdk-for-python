@@ -17,58 +17,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AzureOpenAIDeployment(_model_base.Model):
-    """Azure OpenAI Deployment Information.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The deployment name. Required.
-    :vartype name: str
-    :ivar model_name: The name of the model to deploy. Required.
-    :vartype model_name: str
-    :ivar model_version: The model version to deploy. Required.
-    :vartype model_version: str
-    :ivar connection_name: The name of the connection to deploy to. Required.
-    :vartype connection_name: str
-    :ivar id: The ARM resource id of the deployment.
-    :vartype id: str
-    """
-
-    name: str = rest_field()
-    """The deployment name. Required."""
-    model_name: str = rest_field()
-    """The name of the model to deploy. Required."""
-    model_version: str = rest_field()
-    """The model version to deploy. Required."""
-    connection_name: str = rest_field()
-    """The name of the connection to deploy to. Required."""
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The ARM resource id of the deployment."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        model_name: str,
-        model_version: str,
-        connection_name: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class MarketplacePlan(_model_base.Model):
     """Marketplace Subscription Definition.
 
@@ -106,7 +54,7 @@ class MarketplaceSubscription(_model_base.Model):
     :ivar model_id: Model id for which to create marketplace subscription. Required.
     :vartype model_id: str
     :ivar marketplace_plan: The plan associated with the marketplace subscription.
-    :vartype marketplace_plan: ~azure.machinelearningservices.models.MarketplacePlan
+    :vartype marketplace_plan: ~azure.ai.ml.entities.models.MarketplacePlan
     :ivar status: Status of the marketplace subscription. Possible values are:
      "pending_fulfillment_start", "subscribed", "unsubscribed", "suspended".
     :vartype status: str
@@ -115,8 +63,6 @@ class MarketplaceSubscription(_model_base.Model):
     :vartype provisioning_state: str
     :ivar id: ARM resource id of the marketplace subscription.
     :vartype id: str
-    :ivar system_data: System data of the marketplace subscription.
-    :vartype system_data: ~azure.machinelearningservices.models.SystemData
     """
 
     name: str = rest_field()
@@ -182,8 +128,6 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype description: str
     :ivar scoring_uri: Scoring uri of the endpoint.
     :vartype scoring_uri: str
-    :ivar system_data: System data of the endpoint.
-    :vartype system_data: ~azure.machinelearningservices.models.SystemData
     :ivar id: ARM resource id of the endpoint.
     :vartype id: str
     """
@@ -191,10 +135,11 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
     name: str = rest_field()
     """The deployment name. Required."""
     auth_mode: Optional[str] = rest_field()
-    """Authentication mode of the endpoint."""
+    """Authentication mode of the endpoint. Possible values are: \"key\", \"aad\".
+    Defaults to \"key\" if not given."""
     model_id: str = rest_field()
     """The id of the model to deploy. Required."""
-    location: Optional[str] = rest_field()
+    location: Optional[str] = rest_field(visibility=["read"])
     """Location in which to create endpoint."""
     provisioning_state: Optional[str] = rest_field(visibility=["read"])
     """Provisioning state of the endpoint. Possible values are: \"creating\", \"deleting\",
@@ -207,8 +152,6 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
     """Descripton of the endpoint."""
     scoring_uri: Optional[str] = rest_field(visibility=["read"])
     """Scoring uri of the endpoint."""
-    system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
-    """System data of the endpoint."""
     id: Optional[str] = rest_field(visibility=["read"])
     """ARM resource id of the endpoint."""
 
@@ -219,7 +162,6 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
         name: str,
         model_id: str,
         auth_mode: Optional[str] = None,
-        location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
@@ -235,30 +177,3 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class SystemData(_model_base.Model):
-    """System data information.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_by:
-    :vartype created_by: str
-    :ivar created_by_type:
-    :vartype created_by_type: str
-    :ivar created_at:
-    :vartype created_at: str
-    :ivar last_modified_by:
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type:
-    :vartype last_modified_by_type: str
-    :ivar last_modified_at:
-    :vartype last_modified_at: str
-    """
-
-    created_by: Optional[str] = rest_field(visibility=["read"])
-    created_by_type: Optional[str] = rest_field(visibility=["read"])
-    created_at: Optional[str] = rest_field(visibility=["read"])
-    last_modified_by: Optional[str] = rest_field(visibility=["read"])
-    last_modified_by_type: Optional[str] = rest_field(visibility=["read"])
-    last_modified_at: Optional[str] = rest_field(visibility=["read"])

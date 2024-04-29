@@ -6,19 +6,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import inspect
-from typing import List
+from typing import Any, Dict, List, Optional
 
-from ._models import (
-    ServerlessEndpoint as _ServerlessEndpoint,
-    MarketplaceSubscription as _MarketplaceSubscription,
-    MarketplacePlan,
-    SystemData
-)
-
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
-
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ServerlessEndpoint as RestServerlessEndpoint,
     ServerlessEndpointProperties as RestServerlessEndpointProperties,
@@ -28,9 +20,17 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
 )
 
+from ._models import (
+    ServerlessEndpoint as _ServerlessEndpoint,
+    MarketplaceSubscription as _MarketplaceSubscription,
+    MarketplacePlan as _MarketplacePlan,
+)
+from .._model_base import rest_field
+
 __all__: List[str] = [
     "ServerlessEndpoint",
     "MarketplaceSubscription",
+    "MarketplacePlan",
 ]  # Add all objects you want publicly available to users at this package level
 
 _NULL = object()
@@ -78,7 +78,16 @@ class ValidationMixin:
 
 
 @experimental
+class MarketplacePlan(_MarketplacePlan):
+    pass
+
+
+@experimental
 class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
+
+    system_data: Optional[SystemData] = rest_field(visibility=["read"])
+    """System data of the endpoint."""
+
     def _to_rest_object(self) -> RestServerlessEndpoint:
         return RestServerlessEndpoint(
             properties=RestServerlessEndpointProperties(
@@ -91,7 +100,6 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestServerlessEndpoint) -> "ServerlessEndpoint":
-        rest_system_data = obj.system_data
         return cls(
             name=obj.name,
             id=obj.id,
@@ -101,36 +109,28 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             provisioning_state=camel_to_snake(obj.properties.provisioning_state),
             model_id=obj.properties.model_settings.model_id,
             scoring_uri=obj.properties.inference_endpoint,
-            system_data=SystemData(
-                created_by=rest_system_data.created_by,
-                created_at=rest_system_data.created_at,
-                created_by_type=rest_system_data.created_by_type,
-                last_modified_by=rest_system_data.last_modified_by,
-                last_modified_by_type=rest_system_data.last_modified_by_type,
-                last_modified_at=rest_system_data.last_modified_at,
-            ),
+            system_data=SystemData._from_rest_object(obj.system_data),
         )
+
+
+ServerlessEndpoint.__doc__ += _ServerlessEndpoint.__doc__.strip() + """
+    :ivar system_data: System data of the endpoint.
+    :vartype system_data: ~azure.ai.ml.entities.SystemData
+"""
 
 
 @experimental
 class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
+
+    system_data: Optional[SystemData] = rest_field(visibility=["read"])
+    """System data of the endpoint."""
+
     def _to_rest_object(self) -> RestMarketplaceSubscription:
         return RestMarketplaceSubscription(properties=RestMarketplaceSubscriptionProperties(model_id=self.model_id))
 
     @classmethod
     def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "MarketplaceSubscription":
         properties = obj.properties
-        rest_system_data = obj.system_data
-        from_rest_system_data = None
-        if rest_system_data:
-            from_rest_system_data = SystemData(
-                created_by=rest_system_data.created_by,
-                created_at=rest_system_data.created_at,
-                created_by_type=rest_system_data.created_by_type,
-                last_modified_by=rest_system_data.last_modified_by,
-                last_modified_by_type=rest_system_data.last_modified_by_type,
-                last_modified_at=rest_system_data.last_modified_at,
-            )
         return cls(
             name=obj.name,
             id=obj.id,
@@ -142,8 +142,14 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
             ),
             status=camel_to_snake(properties.marketplace_subscription_status),
             provisioning_state=camel_to_snake(properties.provisioning_state),
-            system_data=from_rest_system_data,
+            system_data=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
+
+
+MarketplaceSubscription.__doc__ = _MarketplaceSubscription.__doc__.strip() + """
+    :ivar system_data: System data of the endpoint.
+    :vartype system_data: ~azure.ai.ml.entities.SystemData
+"""
 
 
 def patch_sdk():
