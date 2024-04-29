@@ -86,15 +86,18 @@ class ContainerProxy:
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection.collection_properties_cache[self.container_link] = properties
+            self.client_connection.container_properties_cache[self.container_link] = {
+                "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
+                "partitionKey": properties.get("partitionKey", None)
+            }
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     async def _get_properties(self) -> Dict[str, Any]:
-        if self.container_link not in self.client_connection.collection_properties_cache:
-            self.client_connection.collection_properties_cache[self.container_link] = await self.read()
-        return self.client_connection.collection_properties_cache[self.container_link]
+        if self.container_link not in self.client_connection.container_properties_cache:
+            await self.read()
+        return self.client_connection.container_properties_cache[self.container_link]
 
     @property
     async def is_system_key(self) -> bool:
@@ -168,12 +171,13 @@ class ContainerProxy:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-
-        coll_link = self.container_link
-        self.client_connection.collection_properties_cache[coll_link] = await self.client_connection.ReadContainer(
-            coll_link, options=request_options, **kwargs
-        )
-        return self.client_connection.collection_properties_cache[coll_link]
+        container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self.client_connection.container_properties_cache[self.container_link] = {
+            "_self": container.get("_self", None), "_rid": container.get("_rid", None),
+            "partitionKey": container.get("partitionKey", None)
+        }
+        return container
 
     @distributed_trace_async
     async def create_item(
