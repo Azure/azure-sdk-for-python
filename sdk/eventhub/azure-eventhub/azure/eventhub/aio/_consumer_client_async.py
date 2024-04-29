@@ -189,7 +189,6 @@ class EventHubConsumerClient(
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=network_tracing,
-            use_tls=kwargs.pop("use_tls", True),
             **kwargs,
         )
         self._lock = asyncio.Lock(**self._internal_kwargs)
