@@ -63,8 +63,5 @@
         "entra",
         "restclient",
         "SERP"
-    ],
-    "ignorePaths": [
-        "./azure/ai/ml/entities/_indexes/utils/encodings/*"
     ]
 }

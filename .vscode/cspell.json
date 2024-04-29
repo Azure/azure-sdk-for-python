@@ -94,6 +94,7 @@
     "sdk/storage/azure-storage-extensions/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_indexes/utils/encodings/*",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
@@ -691,37 +692,71 @@
     },
     {
       "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": [ "ctxt", "somethingstuid" ]
+      "words": [
+        "ctxt",
+        "somethingstuid"
+      ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [ "conv", "summ" ],
+      "words": [
+        "conv",
+        "summ"
+      ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": [ "undoc" ]
+      "words": [
+        "undoc"
+      ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
+      "words": [
+        "ctxt",
+        "wday",
+        "mday",
+        "astimezone",
+        "unflattened",
+        "JSONify",
+        "deseralize"
+      ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [
+        "qnas",
+        "qnamaker",
+        "ADTO"
+      ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": [ "groovin", "Olufsen" ]
+      "words": [
+        "groovin",
+        "Olufsen"
+      ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
+      "words": [
+        "ctxt",
+        "wday",
+        "mday",
+        "astimezone",
+        "unflattened",
+        "JSONify",
+        "deseralize"
+      ]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": [ "Apim", "cognituve" ]
+      "words": [
+        "Apim",
+        "cognituve"
+      ]
     },
     {
       "filename": "sdk/communication/**",
