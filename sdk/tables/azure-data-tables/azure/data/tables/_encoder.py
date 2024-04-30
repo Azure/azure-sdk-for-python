@@ -26,6 +26,8 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         """
         if isinstance(value, bool):
             return None, value
+        if isinstance(value, enum.Enum):
+            return None, value.value
         if isinstance(value, str):
             return None, value
         if isinstance(value, int):
@@ -50,8 +52,6 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(value)
-        if isinstance(value, enum.Enum):
-            return None, value.value
         if value is None:
             return None, None
         if name:
@@ -61,11 +61,11 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
     def encode_property(self, name: Optional[str], value: Any) -> Tuple[Optional[Union[EdmType, str]], Optional[Union[str, int, float, bool]]]:
         """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
         removing int validation.
-        """        
+        """
         try:
             if isinstance(value, tuple):
                 if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
-                    return EdmType.INT64, value[0]  # TODO: Test what happens if the supplied value exceeds int64
+                    return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
                 edm_type, encoded_value = self.prepare_value(name, value[0])
                 return edm_type or value[1], encoded_value
         except TypeError:
@@ -93,33 +93,21 @@ class TableEntityEncoder(TableEntityEncoderABC[Union[Mapping[str, Any], TableEnt
         We could investigate whether, where and how it would be most effective to check for these.
         """
         encoded = {}
-        for key, value in entity.items():  # TODO: Confirm what to do with None values (before and after encoding).
-            if isinstance(key, str):
-                edm_type, value = self.encode_property(key, value)
+        for key, value in entity.items():
+            edm_type, value = self.encode_property(key, value)
+            try:
                 if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
                     encoded[key] = value
-                    continue
-                # Cast the encoded non-string pk/rk value to string
-                if key == "PartitionKey" or key == "RowKey":
-                    encoded[key] = str(value)
                     continue
                 # The edm type is decided by value
                 # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
                 # the type is string instead of Guid after encoded
                 if edm_type:
                     encoded[key + _ODATA_SUFFIX] = edm_type.value if hasattr(edm_type, "value") else edm_type
-            encoded[key] = str(value) if hasattr(edm_type, "value") and edm_type.value == "Edm.Int64" else value
+            except TypeError as ex:
+                pass
+            encoded[key] = value
         return encoded
     
     def decode_entity(self, entity: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
         return _convert_to_entity(entity)
-
-
-# class TableEntityJSONEncoder(JSONEncoder, TableEntityEncoder):
-#     def __init__(self, **kwargs) -> None:
-#         super().__init__(**kwargs)
-
-#     def iterencode(self, o: Any, _one_shot: bool = ...) -> Iterator[str]:
-#         if isinstance(o, Mapping):
-#             o = self.encode_entity(o)
-#         return super().iterencode(o, _one_shot)
