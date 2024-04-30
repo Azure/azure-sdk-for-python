@@ -37,13 +37,13 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 # Same object, but was renamed starting in v2023_08_01_preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
@@ -56,6 +56,7 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
+    Index,
     Job,
     Model,
     ModelBatchDeployment,
@@ -76,13 +77,13 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    IndexOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    WorkspaceConnectionsOperations,
-    WorkspaceHubOperations,
+    ConnectionsOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -438,6 +439,17 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2024_preview = ServiceClient042024Preview(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_08_2023_preview,
@@ -467,10 +479,10 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
-        self._workspace_connections = WorkspaceConnectionsOperations(
+        self._connections = ConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_08_2023_preview,
+            self._service_client_04_2024_preview,
             self._operation_container,
             self._credential,
         )
@@ -565,7 +577,7 @@ class MLClient:
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2023,
+            self._service_client_01_2024_preview,
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -619,6 +631,18 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
+        self._indexes = IndexOperations(
+            operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
+            credential=self._credential,
+            all_operations=self._operation_container,
+            datastore_operations=self._datastores,
+            _service_client_kwargs=kwargs,
+            requests_pipeline=self._requests_pipeline,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.INDEX, self._indexes)
+
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
@@ -658,15 +682,6 @@ class MLClient:
             **ops_kwargs,  # type: ignore[arg-type]
         )
 
-        self._workspace_hubs = WorkspaceHubOperations(
-            self._operation_scope,
-            self._service_client_08_2023_preview,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
-        )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
-
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
@@ -695,7 +710,8 @@ class MLClient:
             }
 
         Then, you can use this method to load the same workspace in different Python notebooks or projects without
-        retyping the workspace ARM properties.
+        retyping the workspace ARM properties. Note that `from_config` accepts the same kwargs as the main
+        `~azure.ai.ml.MLClient` constructor such as `cloud`.
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
@@ -705,8 +721,6 @@ class MLClient:
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
         :paramtype file_name: Optional[str]
-        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -811,7 +825,8 @@ class MLClient:
 
     @property
     def workspaces(self) -> WorkspaceOperations:
-        """A collection of workspace-related operations.
+        """A collection of workspace-related operations. Also manages workspace
+        sub-classes like projects and hubs.
 
         :return: Workspace operations
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
@@ -855,16 +870,6 @@ class MLClient:
         return self._featuresets
 
     @property
-    @experimental
-    def workspace_hubs(self) -> WorkspaceHubOperations:
-        """A collection of workspace hub-related operations.
-
-        :return: Hub Operations
-        :rtype: HubOperations
-        """
-        return self._workspace_hubs
-
-    @property
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
 
@@ -874,13 +879,13 @@ class MLClient:
         return self._featurestoreentities
 
     @property
-    def connections(self) -> WorkspaceConnectionsOperations:
-        """A collection of workspace connection related operations.
+    def connections(self) -> ConnectionsOperations:
+        """A collection of connection related operations.
 
-        :return: Workspace Connections operations
-        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
+        :return: Connections operations
+        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
         """
-        return self._workspace_connections
+        return self._connections
 
     @property
     def jobs(self) -> JobOperations:
@@ -989,6 +994,15 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ScheduleOperations
         """
         return self._schedules
+
+    @property
+    def indexes(self) -> IndexOperations:
+        """A collection of index related operations.
+
+        :return: Index operations.
+        :rtype: ~azure.ai.ml.operations.IndexOperations
+        """
+        return self._indexes
 
     @property
     def subscription_id(self) -> str:
@@ -1196,6 +1210,12 @@ def _(entity: Component, operations, **kwargs):
 def _(entity: Datastore, operations):
     module_logger.debug("Creating or updating datastores")
     return operations[AzureMLResourceType.DATASTORE].create_or_update(entity)
+
+
+@_create_or_update.register(Index)
+def _(entity: Index, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating indexes")
+    return operations[AzureMLResourceType.INDEX].begin_create_or_update(entity, **kwargs)
 
 
 @singledispatch

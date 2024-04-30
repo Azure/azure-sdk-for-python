@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import Any, Optional, TYPE_CHECKING, Union
 from urllib.parse import parse_qs
@@ -74,9 +75,8 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
+            storage service receives the request. The provided datetime will always
+            be interpreted as UTC.
         :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
@@ -161,15 +161,13 @@ def generate_account_sas(
     :type permission: ~azure.storage.queue.AccountSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Azure will always convert values to UTC. If a date is passed in
-        without timezone info, it is assumed to be UTC.
+        The provided datetime will always be interpreted as UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
@@ -236,9 +234,8 @@ def generate_queue_sas(
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
+        storage service receives the request. The provided datetime will always
+        be interpreted as UTC.
     :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a

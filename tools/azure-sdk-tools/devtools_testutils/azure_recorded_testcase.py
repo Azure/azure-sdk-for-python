@@ -20,6 +20,7 @@ from .azure_testcase import (
     get_resource_name,
     get_qualified_method_name,
 )
+from .fake_credentials import SANITIZED
 from .fake_credentials_async import AsyncFakeCredential
 from .helpers import is_live, trim_kwargs_from_test_function
 from .sanitizers import add_general_string_sanitizer
@@ -93,6 +94,8 @@ class AzureRecordedTestCase(object):
 
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
+        use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
+        use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
         is_async = kwargs.pop("is_async", False)
 
         # Return live credentials only in live mode
@@ -107,7 +110,7 @@ class AzureRecordedTestCase(object):
                 if is_async:
                     from azure.identity.aio import AzurePowerShellCredential
                 return AzurePowerShellCredential()
-            # User-based authentication through Azure CLI, if requested
+            # User-based authentication through Azure CLI (az), if requested
             if use_cli.lower() == "true":
                 _LOGGER.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
                 from azure.identity import AzureCliCredential
@@ -115,6 +118,26 @@ class AzureRecordedTestCase(object):
                 if is_async:
                     from azure.identity.aio import AzureCliCredential
                 return AzureCliCredential()
+            # User-based authentication through Visual Studio Code, if requested
+            if use_vscode.lower() == "true":
+                _LOGGER.info(
+                    "Environment variable AZURE_TEST_USE_VSCODE_AUTH set to 'true'. Using VisualStudioCodeCredential."
+                )
+                from azure.identity import VisualStudioCodeCredential
+
+                if is_async:
+                    from azure.identity.aio import VisualStudioCodeCredential
+                return VisualStudioCodeCredential()
+            # User-based authentication through Azure Developer CLI (azd), if requested
+            if use_azd.lower() == "true":
+                _LOGGER.info(
+                    "Environment variable AZURE_TEST_USE_AZD_AUTH set to 'true'. Using AzureDeveloperCliCredential."
+                )
+                from azure.identity import AzureDeveloperCliCredential
+
+                if is_async:
+                    from azure.identity.aio import AzureDeveloperCliCredential
+                return AzureDeveloperCliCredential()
 
             # Service principal authentication
             if tenant_id and client_id and secret:
@@ -235,12 +258,12 @@ class AzureRecordedTestCase(object):
         :keyword fake_parameters: A dictionary with token parameter names as keys, and the values to sanitize these keys
             with as values. For example: {"sktid": "00000000-0000-0000-0000-000000000000", "sig": "sanitized"}
         :paramtype fake_parameters: Dict[str, str]
-        :keyword str fake_value: The value used to sanitize `sig`. Defaults to "fake_token_value".
+        :keyword str fake_value: The value used to sanitize `sig`. Defaults to "Sanitized".
         """
         sas_func = args[0]
         sas_func_pos_args = args[1:]
 
-        fake_value = kwargs.pop("fake_value", "fake_token_value")
+        fake_value = kwargs.pop("fake_value", SANITIZED)
         fake_parameters = kwargs.pop("fake_parameters", {})
         token = sas_func(*sas_func_pos_args, **kwargs)
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +33,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class BackupResourceEncryptionConfigsOperations:
+class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -63,7 +63,6 @@ class BackupResourceEncryptionConfigsOperations:
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupResourceEncryptionConfigExtendedResource or the result of cls(response)
         :rtype:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupResourceEncryptionConfigExtendedResource
@@ -83,21 +82,20 @@ class BackupResourceEncryptionConfigsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.BackupResourceEncryptionConfigExtendedResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -110,13 +108,9 @@ class BackupResourceEncryptionConfigsOperations:
         deserialized = self._deserialize("BackupResourceEncryptionConfigExtendedResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupEncryptionConfigs/backupResourceEncryptionConfig"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(  # pylint: disable=inconsistent-return-statements
@@ -141,7 +135,6 @@ class BackupResourceEncryptionConfigsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -152,7 +145,7 @@ class BackupResourceEncryptionConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -165,11 +158,10 @@ class BackupResourceEncryptionConfigsOperations:
          present. Required.
         :type resource_group_name: str
         :param parameters: Vault encryption input config request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -180,7 +172,7 @@ class BackupResourceEncryptionConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceEncryptionConfigResource, IO],
+        parameters: Union[_models.BackupResourceEncryptionConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Updates Vault encryption config.
@@ -191,14 +183,10 @@ class BackupResourceEncryptionConfigsOperations:
          present. Required.
         :type resource_group_name: str
         :param parameters: Vault encryption input config request. Is either a
-         BackupResourceEncryptionConfigResource type or a IO type. Required.
+         BackupResourceEncryptionConfigResource type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupResourceEncryptionConfigResource or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -226,7 +214,7 @@ class BackupResourceEncryptionConfigsOperations:
         else:
             _json = self._serialize.body(parameters, "BackupResourceEncryptionConfigResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -234,16 +222,15 @@ class BackupResourceEncryptionConfigsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -254,8 +241,4 @@ class BackupResourceEncryptionConfigsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupEncryptionConfigs/backupResourceEncryptionConfig"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

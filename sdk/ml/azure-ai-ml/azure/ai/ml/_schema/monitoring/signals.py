@@ -248,20 +248,20 @@ class ModelPerformanceSignalSchema(metaclass=PatchedSchemaMeta):
         return ModelPerformanceSignal(**data)
 
 
-class WorkspaceConnectionSchema(metaclass=PatchedSchemaMeta):
+class ConnectionSchema(metaclass=PatchedSchemaMeta):
     environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
     secret_config = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.signals import WorkspaceConnection
+        from azure.ai.ml.entities._monitoring.signals import Connection
 
-        return WorkspaceConnection(**data)
+        return Connection(**data)
 
 
 class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.CUSTOM, required=True)
-    workspace_connection = NestedField(WorkspaceConnectionSchema)
+    connection = NestedField(ConnectionSchema)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
     input_data = fields.Dict(keys=fields.Str(), values=NestedField(ReferenceDataSchema))
@@ -301,7 +301,7 @@ class LlmDataSchema(metaclass=PatchedSchemaMeta):
 class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_SAFETY_QUALITY, required=True)
     production_data = fields.List(NestedField(LlmDataSchema))
-    workspace_connection_id = fields.Str()
+    connection_id = fields.Str()
     metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()
     properties = fields.Dict()

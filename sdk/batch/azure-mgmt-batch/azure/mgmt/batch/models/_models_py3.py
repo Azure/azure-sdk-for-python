@@ -259,6 +259,66 @@ class ApplicationPackageReference(_serialization.Model):
         self.version = version
 
 
+class AutomaticOSUpgradePolicy(_serialization.Model):
+    """The configuration parameters used for performing automatic OS upgrade.
+
+    :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
+    :vartype disable_automatic_rollback: bool
+    :ivar enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
+     applied to scale set instances in a rolling fashion when a newer version of the OS image
+     becomes available. :code:`<br />`:code:`<br />` If this is set to true for Windows based pools,
+     `WindowsConfiguration.enableAutomaticUpdates
+     <https://learn.microsoft.com/en-us/rest/api/batchmanagement/pool/create?tabs=HTTP#windowsconfiguration>`_
+     cannot be set to true.
+    :vartype enable_automatic_os_upgrade: bool
+    :ivar use_rolling_upgrade_policy: Indicates whether rolling upgrade policy should be used
+     during Auto OS Upgrade. Auto OS Upgrade will fallback to the default policy if no policy is
+     defined on the VMSS.
+    :vartype use_rolling_upgrade_policy: bool
+    :ivar os_rolling_upgrade_deferral: Defer OS upgrades on the TVMs if they are running tasks.
+    :vartype os_rolling_upgrade_deferral: bool
+    """
+
+    _attribute_map = {
+        "disable_automatic_rollback": {"key": "disableAutomaticRollback", "type": "bool"},
+        "enable_automatic_os_upgrade": {"key": "enableAutomaticOSUpgrade", "type": "bool"},
+        "use_rolling_upgrade_policy": {"key": "useRollingUpgradePolicy", "type": "bool"},
+        "os_rolling_upgrade_deferral": {"key": "osRollingUpgradeDeferral", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        disable_automatic_rollback: Optional[bool] = None,
+        enable_automatic_os_upgrade: Optional[bool] = None,
+        use_rolling_upgrade_policy: Optional[bool] = None,
+        os_rolling_upgrade_deferral: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
+        :paramtype disable_automatic_rollback: bool
+        :keyword enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
+         applied to scale set instances in a rolling fashion when a newer version of the OS image
+         becomes available. :code:`<br />`:code:`<br />` If this is set to true for Windows based pools,
+         `WindowsConfiguration.enableAutomaticUpdates
+         <https://learn.microsoft.com/en-us/rest/api/batchmanagement/pool/create?tabs=HTTP#windowsconfiguration>`_
+         cannot be set to true.
+        :paramtype enable_automatic_os_upgrade: bool
+        :keyword use_rolling_upgrade_policy: Indicates whether rolling upgrade policy should be used
+         during Auto OS Upgrade. Auto OS Upgrade will fallback to the default policy if no policy is
+         defined on the VMSS.
+        :paramtype use_rolling_upgrade_policy: bool
+        :keyword os_rolling_upgrade_deferral: Defer OS upgrades on the TVMs if they are running tasks.
+        :paramtype os_rolling_upgrade_deferral: bool
+        """
+        super().__init__(**kwargs)
+        self.disable_automatic_rollback = disable_automatic_rollback
+        self.enable_automatic_os_upgrade = enable_automatic_os_upgrade
+        self.use_rolling_upgrade_policy = use_rolling_upgrade_policy
+        self.os_rolling_upgrade_deferral = os_rolling_upgrade_deferral
+
+
 class AutoScaleRun(_serialization.Model):
     """The results and errors from an execution of a pool autoscale formula.
 
@@ -2683,7 +2743,7 @@ class ImageReference(_serialization.Model):
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
         sku: Optional[str] = None,
-        version: str = "latest",
+        version: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
@@ -3907,6 +3967,8 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar current_node_communication_mode: Determines how a pool communicates with the Batch
      service. Known values are: "Default", "Classic", and "Simplified".
     :vartype current_node_communication_mode: str or ~azure.mgmt.batch.models.NodeCommunicationMode
+    :ivar upgrade_policy: Describes an upgrade policy - automatic, manual, or rolling.
+    :vartype upgrade_policy: ~azure.mgmt.batch.models.UpgradePolicy
     :ivar resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
      specified, these tags are propagated to the backing Azure resources associated with the pool.
      This property can only be specified when the Batch account was created with the
@@ -3965,6 +4027,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "mount_configuration": {"key": "properties.mountConfiguration", "type": "[MountConfiguration]"},
         "target_node_communication_mode": {"key": "properties.targetNodeCommunicationMode", "type": "str"},
         "current_node_communication_mode": {"key": "properties.currentNodeCommunicationMode", "type": "str"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
         "resource_tags": {"key": "properties.resourceTags", "type": "{str}"},
     }
 
@@ -3988,6 +4051,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         application_licenses: Optional[List[str]] = None,
         mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
+        upgrade_policy: Optional["_models.UpgradePolicy"] = None,
         resource_tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
@@ -4065,6 +4129,8 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
          are: "Default", "Classic", and "Simplified".
         :paramtype target_node_communication_mode: str or
          ~azure.mgmt.batch.models.NodeCommunicationMode
+        :keyword upgrade_policy: Describes an upgrade policy - automatic, manual, or rolling.
+        :paramtype upgrade_policy: ~azure.mgmt.batch.models.UpgradePolicy
         :keyword resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
          specified, these tags are propagated to the backing Azure resources associated with the pool.
          This property can only be specified when the Batch account was created with the
@@ -4100,6 +4166,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
         self.current_node_communication_mode = None
+        self.upgrade_policy = upgrade_policy
         self.resource_tags = resource_tags
 
 
@@ -4597,6 +4664,127 @@ class ResourceFile(_serialization.Model):
         self.identity_reference = identity_reference
 
 
+class RollingUpgradePolicy(_serialization.Model):
+    """The configuration parameters used while performing a rolling upgrade.
+
+    :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
+     batches. Take into consideration the Update Domain and maxBatchInstancePercent to determine the
+     batch size. If this field is not set, Azure Azure Batch will not set its default value. The
+     value of enableCrossZoneUpgrade on the created VirtualMachineScaleSet will be decided by the
+     default configurations on VirtualMachineScaleSet. This field is able to be set to true or false
+     only when using NodePlacementConfiguration as Zonal.
+    :vartype enable_cross_zone_upgrade: bool
+    :ivar max_batch_instance_percent: The maximum percent of total virtual machine instances that
+     will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
+     unhealthy instances in previous or future batches can cause the percentage of instances in a
+     batch to decrease to ensure higher reliability. The value of this field should be between 5 and
+     100, inclusive. If both maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned
+     with value, the value of maxBatchInstancePercent should not be more than
+     maxUnhealthyInstancePercent.
+    :vartype max_batch_instance_percent: int
+    :ivar max_unhealthy_instance_percent: The maximum percentage of the total virtual machine
+     instances in the scale set that can be simultaneously unhealthy, either as a result of being
+     upgraded, or by being found in an unhealthy state by the virtual machine health checks before
+     the rolling upgrade aborts. This constraint will be checked prior to starting any batch. The
+     value of this field should be between 5 and 100, inclusive. If both maxBatchInstancePercent and
+     maxUnhealthyInstancePercent are assigned with value, the value of maxBatchInstancePercent
+     should not be more than maxUnhealthyInstancePercent.
+    :vartype max_unhealthy_instance_percent: int
+    :ivar max_unhealthy_upgraded_instance_percent: The maximum percentage of upgraded virtual
+     machine instances that can be found to be in an unhealthy state. This check will happen after
+     each batch is upgraded. If this percentage is ever exceeded, the rolling update aborts. The
+     value of this field should be between 0 and 100, inclusive.
+    :vartype max_unhealthy_upgraded_instance_percent: int
+    :ivar pause_time_between_batches: The wait time between completing the update for all virtual
+     machines in one batch and starting the next batch. The time duration should be specified in ISO
+     8601 format.
+    :vartype pause_time_between_batches: str
+    :ivar prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before any
+     healthy instances.
+    :vartype prioritize_unhealthy_instances: bool
+    :ivar rollback_failed_instances_on_policy_breach: Rollback failed instances to previous model
+     if the Rolling Upgrade policy is violated.
+    :vartype rollback_failed_instances_on_policy_breach: bool
+    """
+
+    _validation = {
+        "max_batch_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_instance_percent": {"maximum": 100, "minimum": 5},
+        "max_unhealthy_upgraded_instance_percent": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "enable_cross_zone_upgrade": {"key": "enableCrossZoneUpgrade", "type": "bool"},
+        "max_batch_instance_percent": {"key": "maxBatchInstancePercent", "type": "int"},
+        "max_unhealthy_instance_percent": {"key": "maxUnhealthyInstancePercent", "type": "int"},
+        "max_unhealthy_upgraded_instance_percent": {"key": "maxUnhealthyUpgradedInstancePercent", "type": "int"},
+        "pause_time_between_batches": {"key": "pauseTimeBetweenBatches", "type": "str"},
+        "prioritize_unhealthy_instances": {"key": "prioritizeUnhealthyInstances", "type": "bool"},
+        "rollback_failed_instances_on_policy_breach": {"key": "rollbackFailedInstancesOnPolicyBreach", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_cross_zone_upgrade: Optional[bool] = None,
+        max_batch_instance_percent: Optional[int] = None,
+        max_unhealthy_instance_percent: Optional[int] = None,
+        max_unhealthy_upgraded_instance_percent: Optional[int] = None,
+        pause_time_between_batches: Optional[str] = None,
+        prioritize_unhealthy_instances: Optional[bool] = None,
+        rollback_failed_instances_on_policy_breach: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing
+         upgrade batches. Take into consideration the Update Domain and maxBatchInstancePercent to
+         determine the batch size. If this field is not set, Azure Azure Batch will not set its default
+         value. The value of enableCrossZoneUpgrade on the created VirtualMachineScaleSet will be
+         decided by the default configurations on VirtualMachineScaleSet. This field is able to be set
+         to true or false only when using NodePlacementConfiguration as Zonal.
+        :paramtype enable_cross_zone_upgrade: bool
+        :keyword max_batch_instance_percent: The maximum percent of total virtual machine instances
+         that will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
+         unhealthy instances in previous or future batches can cause the percentage of instances in a
+         batch to decrease to ensure higher reliability. The value of this field should be between 5 and
+         100, inclusive. If both maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned
+         with value, the value of maxBatchInstancePercent should not be more than
+         maxUnhealthyInstancePercent.
+        :paramtype max_batch_instance_percent: int
+        :keyword max_unhealthy_instance_percent: The maximum percentage of the total virtual machine
+         instances in the scale set that can be simultaneously unhealthy, either as a result of being
+         upgraded, or by being found in an unhealthy state by the virtual machine health checks before
+         the rolling upgrade aborts. This constraint will be checked prior to starting any batch. The
+         value of this field should be between 5 and 100, inclusive. If both maxBatchInstancePercent and
+         maxUnhealthyInstancePercent are assigned with value, the value of maxBatchInstancePercent
+         should not be more than maxUnhealthyInstancePercent.
+        :paramtype max_unhealthy_instance_percent: int
+        :keyword max_unhealthy_upgraded_instance_percent: The maximum percentage of upgraded virtual
+         machine instances that can be found to be in an unhealthy state. This check will happen after
+         each batch is upgraded. If this percentage is ever exceeded, the rolling update aborts. The
+         value of this field should be between 0 and 100, inclusive.
+        :paramtype max_unhealthy_upgraded_instance_percent: int
+        :keyword pause_time_between_batches: The wait time between completing the update for all
+         virtual machines in one batch and starting the next batch. The time duration should be
+         specified in ISO 8601 format.
+        :paramtype pause_time_between_batches: str
+        :keyword prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before
+         any healthy instances.
+        :paramtype prioritize_unhealthy_instances: bool
+        :keyword rollback_failed_instances_on_policy_breach: Rollback failed instances to previous
+         model if the Rolling Upgrade policy is violated.
+        :paramtype rollback_failed_instances_on_policy_breach: bool
+        """
+        super().__init__(**kwargs)
+        self.enable_cross_zone_upgrade = enable_cross_zone_upgrade
+        self.max_batch_instance_percent = max_batch_instance_percent
+        self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
+        self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
+        self.pause_time_between_batches = pause_time_between_batches
+        self.prioritize_unhealthy_instances = prioritize_unhealthy_instances
+        self.rollback_failed_instances_on_policy_breach = rollback_failed_instances_on_policy_breach
+
+
 class ScaleSettings(_serialization.Model):
     """Defines the desired size of the pool. This can either be 'fixedScale' where the requested
     targetDedicatedNodes is specified, or 'autoScale' which defines a formula which is periodically
@@ -4865,18 +5053,22 @@ class SupportedSku(_serialization.Model):
     :vartype family_name: str
     :ivar capabilities: A collection of capabilities which this SKU supports.
     :vartype capabilities: list[~azure.mgmt.batch.models.SkuCapability]
+    :ivar batch_support_end_of_life: The time when Azure Batch service will retire this SKU.
+    :vartype batch_support_end_of_life: ~datetime.datetime
     """
 
     _validation = {
         "name": {"readonly": True},
         "family_name": {"readonly": True},
         "capabilities": {"readonly": True},
+        "batch_support_end_of_life": {"readonly": True},
     }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "family_name": {"key": "familyName", "type": "str"},
         "capabilities": {"key": "capabilities", "type": "[SkuCapability]"},
+        "batch_support_end_of_life": {"key": "batchSupportEndOfLife", "type": "iso-8601"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -4885,6 +5077,7 @@ class SupportedSku(_serialization.Model):
         self.name = None
         self.family_name = None
         self.capabilities = None
+        self.batch_support_end_of_life = None
 
 
 class SupportedSkusResult(_serialization.Model):
@@ -5038,6 +5231,67 @@ class UefiSettings(_serialization.Model):
         super().__init__(**kwargs)
         self.secure_boot_enabled = secure_boot_enabled
         self.v_tpm_enabled = v_tpm_enabled
+
+
+class UpgradePolicy(_serialization.Model):
+    """Describes an upgrade policy - automatic, manual, or rolling.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
+     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
+     the application of updates to virtual machines in the scale set. You do this by using the
+     manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
+     scale set are automatically updated at the same time.:code:`<br />`:code:`<br />` **Rolling** -
+     Scale set performs updates in batches with an optional pause time in between. Required. Known
+     values are: "automatic", "manual", and "rolling".
+    :vartype mode: str or ~azure.mgmt.batch.models.UpgradeMode
+    :ivar automatic_os_upgrade_policy: The configuration parameters used for performing automatic
+     OS upgrade.
+    :vartype automatic_os_upgrade_policy: ~azure.mgmt.batch.models.AutomaticOSUpgradePolicy
+    :ivar rolling_upgrade_policy: This property is only supported on Pools with the
+     virtualMachineConfiguration property.
+    :vartype rolling_upgrade_policy: ~azure.mgmt.batch.models.RollingUpgradePolicy
+    """
+
+    _validation = {
+        "mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "automatic_os_upgrade_policy": {"key": "automaticOSUpgradePolicy", "type": "AutomaticOSUpgradePolicy"},
+        "rolling_upgrade_policy": {"key": "rollingUpgradePolicy", "type": "RollingUpgradePolicy"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.UpgradeMode"],
+        automatic_os_upgrade_policy: Optional["_models.AutomaticOSUpgradePolicy"] = None,
+        rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
+         />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
+         the application of updates to virtual machines in the scale set. You do this by using the
+         manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
+         scale set are automatically updated at the same time.:code:`<br />`:code:`<br />` **Rolling** -
+         Scale set performs updates in batches with an optional pause time in between. Required. Known
+         values are: "automatic", "manual", and "rolling".
+        :paramtype mode: str or ~azure.mgmt.batch.models.UpgradeMode
+        :keyword automatic_os_upgrade_policy: The configuration parameters used for performing
+         automatic OS upgrade.
+        :paramtype automatic_os_upgrade_policy: ~azure.mgmt.batch.models.AutomaticOSUpgradePolicy
+        :keyword rolling_upgrade_policy: This property is only supported on Pools with the
+         virtualMachineConfiguration property.
+        :paramtype rolling_upgrade_policy: ~azure.mgmt.batch.models.RollingUpgradePolicy
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.automatic_os_upgrade_policy = automatic_os_upgrade_policy
+        self.rolling_upgrade_policy = rolling_upgrade_policy
 
 
 class UserAccount(_serialization.Model):

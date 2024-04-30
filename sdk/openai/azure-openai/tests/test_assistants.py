@@ -9,15 +9,18 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import ASST_AZURE, ASST_ALL, GPT_4_OPENAI, configure
+from conftest import ASST_AZURE, ASST_AZUREAD, PREVIEW, GPT_4_OPENAI, configure
 
 TIMEOUT = 300
 
 class TestAssistants(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", ASST_ALL)
-    def test_assistants_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(ASST_AZURE, PREVIEW), (ASST_AZUREAD, PREVIEW), (GPT_4_OPENAI, "v1")]
+    )
+    def test_assistants_crud(self, client, api_type, api_version, **kwargs):
 
         try:
             assistant = client.beta.assistants.create(
@@ -37,7 +40,6 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_assistant.created_at == assistant.created_at
             assert retrieved_assistant.description == assistant.description
             assert retrieved_assistant.metadata == assistant.metadata
-            assert retrieved_assistant.file_ids == assistant.file_ids
             assert retrieved_assistant.object == assistant.object
 
             list_assistants = client.beta.assistants.list()
@@ -57,71 +59,8 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_assistant.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_files_crud(self, client, azure_openai_creds, api_type, **kwargs):
-        file_name = f"test{uuid.uuid4()}.txt"
-        with open(file_name, "w") as f:
-            f.write("test")
-
-        path = pathlib.Path(file_name)
-
-        file1 = client.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
-
-        file2 = client.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
-
-        try:
-            assistant = client.beta.assistants.create(
-                name="python test",
-                instructions="You are a personal math tutor. Write and run code to answer math questions.",
-                tools=[{"type": "code_interpreter"}],
-                file_ids=[file1.id],
-                **kwargs
-            )
-            assert assistant.file_ids == [file1.id]
-
-            created_assistant_file = client.beta.assistants.files.create(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-
-            retrieved_assistant_file = client.beta.assistants.files.retrieve(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-            assert retrieved_assistant_file.id == created_assistant_file.id
-            assert retrieved_assistant_file.object == created_assistant_file.object
-            assert retrieved_assistant_file.created_at == created_assistant_file.created_at
-            assert retrieved_assistant_file.assistant_id == created_assistant_file.assistant_id
-
-            list_assistants_files = client.beta.assistants.files.list(
-                assistant_id=assistant.id
-            )
-            for asst_file in list_assistants_files:
-                assert asst_file.id
-
-            delete_assistant_file = client.beta.assistants.files.delete(
-                assistant_id=assistant.id,
-                file_id=file2.id
-            )
-            assert delete_assistant_file.id == retrieved_assistant_file.id
-            assert delete_assistant_file.deleted is True
-        finally:
-            os.remove(path)
-            delete_assistant = client.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
-            assert delete_assistant.id == assistant.id
-            assert delete_assistant.deleted is True
-
-    @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_threads_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    def test_assistants_threads_crud(self, client, api_type, api_version, **kwargs):
         try:
             thread = client.beta.threads.create(
                 messages=[
@@ -153,9 +92,10 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip(reason="AOAI doesn't support assistants v2 yet")
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_messages_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    def test_assistants_messages_crud(self, client, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("test")
@@ -183,7 +123,12 @@ class TestAssistants(AzureRecordedTestCase):
                 role="user",
                 content="what is 2+2?",
                 metadata={"math": "addition"},
-                file_ids=[file.id]
+                attachments=[
+                    {
+                        "file_id": file.id,
+                        "tools": [{"type": "code_interpreter"}]
+                    }
+                ]
             )
             retrieved_message = client.beta.threads.messages.retrieve(
                 thread_id=thread.id,
@@ -197,27 +142,11 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_message.role == message.role
             assert retrieved_message.content == message.content
 
-            retrieved_message_file = client.beta.threads.messages.files.retrieve(
-                thread_id=thread.id,
-                message_id=message.id,
-                file_id=file.id
-            )
-            assert retrieved_message_file.id
-            assert retrieved_message_file.message_id
-            assert retrieved_message_file.created_at
-
             list_messages = client.beta.threads.messages.list(
                 thread_id=thread.id
             )
             for msg in list_messages:
                 assert msg.id
-
-            list_message_files = client.beta.threads.messages.files.list(
-                thread_id=thread.id,
-                message_id=message.id
-            )
-            for msg_file in list_message_files:
-                assert msg_file.id
 
             modify_message = client.beta.threads.messages.update(
                 thread_id=thread.id,
@@ -235,8 +164,8 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_runs_code(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    def test_assistants_runs_code(self, client, api_type, api_version, **kwargs):
         try:
             assistant = client.beta.assistants.create(
                 name="python test",
@@ -301,8 +230,8 @@ class TestAssistants(AzureRecordedTestCase):
 
     @pytest.mark.skip("AOAI does not support retrieval tools yet")
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_runs_retrieval(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    def test_assistants_runs_retrieval(self, client, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
@@ -366,8 +295,8 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
-    def test_assistants_runs_functions(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    def test_assistants_runs_functions(self, client, api_type, api_version, **kwargs):
         try:
             assistant = client.beta.assistants.create(
                 name="python test",

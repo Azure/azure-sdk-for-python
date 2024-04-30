@@ -66,10 +66,19 @@ class ParameterizedSweep:
         :param early_termination: Early termination policy for sweep job.
         :type early_termination: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         :param search_space: Search space for sweep job.
-        :type search_space: Dict[str, Union[~azure.ai.ml.sweep.Choice, ~azure.ai.ml.sweep.LogNormal,
-        ~azure.ai.ml.sweep.LogUniform, ~azure.ai.ml.sweep.Normal, ~azure.ai.ml.sweep.QLogNormal,
-        ~azure.ai.ml.sweep.QLogUniform, ~azure.ai.ml.sweep.QNormal, ~azure.ai.ml.sweep.QUniform,
-        ~azure.ai.ml.sweep.Randint, ~azure.ai.ml.sweep.Uniform]]
+        :type search_space: Dict[str, Union[
+            ~azure.ai.ml.sweep.Choice,
+            ~azure.ai.ml.sweep.LogNormal,
+            ~azure.ai.ml.sweep.LogUniform,
+            ~azure.ai.ml.sweep.Normal,
+            ~azure.ai.ml.sweep.QLogNormal,
+            ~azure.ai.ml.sweep.QLogUniform,
+            ~azure.ai.ml.sweep.QNormal,
+            ~azure.ai.ml.sweep.QUniform,
+            ~azure.ai.ml.sweep.Randint,
+            ~azure.ai.ml.sweep.Uniform
+
+            ]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
         :param resources: Compute Resource configuration for the job.
@@ -145,7 +154,21 @@ class ParameterizedSweep:
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
     ) -> None:
-        """Set resources for Sweep."""
+        """Set resources for Sweep.
+
+        :keyword instance_type: The instance type to use for the job.
+        :paramtype instance_type: Optional[Union[str, List[str]]]
+        :keyword instance_count: The number of instances to use for the job.
+        :paramtype instance_count: Optional[int]
+        :keyword locations: The locations to use for the job.
+        :paramtype locations: Optional[List[str]]
+        :keyword properties: The properties for the job.
+        :paramtype properties: Optional[Dict]
+        :keyword docker_args: The docker arguments for the job.
+        :paramtype docker_args: Optional[str]
+        :keyword shm_size: The shared memory size for the job.
+        :paramtype shm_size: Optional[str]
+        """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 

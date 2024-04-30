@@ -166,7 +166,7 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
         raise ValueError(msg) from err
 
 
-def _build_request(endpoint, content_type, events, *, channel_name=None):
+def _build_request(endpoint, content_type, events, *, channel_name=None, api_version=constants.DEFAULT_API_VERSION):
     serialize = Serializer()
     header_parameters: Dict[str, Any] = {}
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
@@ -175,7 +175,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
         header_parameters['aeg-channel-name'] = channel_name
 
     query_parameters: Dict[str, Any] = {}
-    query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
+    query_parameters['api-version'] = serialize.query("api_version", api_version, 'str')
 
     body = serialize.body(events, '[object]')
     if body is None:

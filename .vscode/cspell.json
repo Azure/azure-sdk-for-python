@@ -454,6 +454,9 @@
     "amltemp",
     "deserializers",
     "dicom",
+    "WINDOWSVMIMAGE",
+    "LINUXVMIMAGE",
+    "MACVMIMAGE"
   ],
   "overrides": [
     {
@@ -571,6 +574,12 @@
       "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
       "words": [
         "wammsa"
+      ]
+    },
+    {
+      "filename": "sdk/identity/azure-identity-broker/tests/*.py",
+      "words": [
+        "signin"
       ]
     },
     {
@@ -987,7 +996,8 @@
         "msecs",
         "mycontainer",
         "semconv",
-        "updown"
+        "updown",
+        "uvicorn"
       ]
     },
     {
@@ -1346,7 +1356,8 @@
         "Ffile",
         "Fsubdir",
         "Fdir",
-        "adal"
+        "adal",
+        "mytestshare"
       ]
     },
     {
@@ -1673,6 +1684,18 @@
       ]
     },
     {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
+      "words": [
+        "kvset"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
+      "words": [
+        "adfsasdfzsd"
+      ]
+    },
+    {
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"
@@ -1689,9 +1712,15 @@
       ]
     },
     {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/_client.py",
       "words": [
         "awps"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/stress/*.py",
+      "words": [
+        "psutil"
       ]
     },
     {

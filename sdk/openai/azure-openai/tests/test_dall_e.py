@@ -6,14 +6,17 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, DALLE_AZURE, OPENAI, DALLE_ALL
+from conftest import configure, DALLE_AZURE, OPENAI, DALLE_AZURE_AD, PREVIEW, GA
 
 
 class TestDallE(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", DALLE_ALL)
-    def test_image_create(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(DALLE_AZURE, GA), (DALLE_AZURE_AD, GA), (DALLE_AZURE, PREVIEW), (DALLE_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_image_create(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             **kwargs,
@@ -24,8 +27,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_n(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_n(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             n=1,
@@ -38,8 +41,8 @@ class TestDallE(AzureRecordedTestCase):
             assert img.revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_size(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_size(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             size="1024x1024",
@@ -51,8 +54,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_response_format(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_response_format(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             response_format="b64_json",
@@ -64,8 +67,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_user(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_user(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             user="krista",
@@ -77,8 +80,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_quality(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_quality(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             quality="standard",
@@ -90,8 +93,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    def test_image_create_style(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_image_create_style(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
             style="vivid",

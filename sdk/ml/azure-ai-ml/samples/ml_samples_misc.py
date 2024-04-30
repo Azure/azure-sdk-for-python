@@ -111,7 +111,16 @@ class MiscConfigurationOptions(object):
             },
             stage="Production",
         )
+        ml_client.models.create_or_update(model)
         # [END model_entity_create]
+
+        # [START model_operations_archive]
+        ml_client.models.archive(name="model1", version="5")
+        # [END model_operations_archive]
+
+        # [START model_operations_restore]
+        ml_client.models.restore(name="model1", version="5")
+        # [END model_operations_restore]
 
         # [START model_batch_deployment_settings_entity_create]
         from azure.ai.ml.entities._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
@@ -297,9 +306,9 @@ class MiscConfigurationOptions(object):
         # [END intellectual_property_configuration]
 
         # [START personal_access_token_configuration]
-        from azure.ai.ml.entities import PatTokenConfiguration, WorkspaceConnection
+        from azure.ai.ml.entities import PatTokenConfiguration, Connection
 
-        ws_connection = WorkspaceConnection(
+        ws_connection = Connection(
             target="my_target",
             type="python_feed",
             credentials=PatTokenConfiguration(pat="abcdefghijklmnopqrstuvwxyz"),

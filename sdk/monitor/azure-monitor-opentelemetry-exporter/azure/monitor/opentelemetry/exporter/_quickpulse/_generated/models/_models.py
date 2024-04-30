@@ -18,24 +18,33 @@ if TYPE_CHECKING:
 
 
 class CollectionConfigurationError(_serialization.Model):
-    """Represents an error while SDK parsing and applying an instance of CollectionConfigurationInfo.
+    """Represents an error while SDK parses and applies an instance of CollectionConfigurationInfo.
 
-    :ivar collection_configuration_error_type: Collection configuration error type reported by SDK.
-     Known values are: "Unknown", "PerformanceCounterParsing", "PerformanceCounterUnexpected",
-     "PerformanceCounterDuplicateIds", "DocumentStreamDuplicateIds",
-     "DocumentStreamFailureToCreate", "DocumentStreamFailureToCreateFilterUnexpected",
-     "MetricDuplicateIds", "MetricTelemetryTypeUnsupported", "MetricFailureToCreate",
+    All required parameters must be populated in order to send to server.
+
+    :ivar collection_configuration_error_type: Error type. Required. Known values are: "Unknown",
+     "PerformanceCounterParsing", "PerformanceCounterUnexpected", "PerformanceCounterDuplicateIds",
+     "DocumentStreamDuplicateIds", "DocumentStreamFailureToCreate",
+     "DocumentStreamFailureToCreateFilterUnexpected", "MetricDuplicateIds",
+     "MetricTelemetryTypeUnsupported", "MetricFailureToCreate",
      "MetricFailureToCreateFilterUnexpected", "FilterFailureToCreateUnexpected", and
      "CollectionConfigurationFailureToCreateUnexpected".
     :vartype collection_configuration_error_type: str or
      ~quickpulse_client.models.CollectionConfigurationErrorType
-    :ivar message: Error message.
+    :ivar message: Error message. Required.
     :vartype message: str
-    :ivar full_exception: Exception that leads to the creation of the configuration error.
+    :ivar full_exception: Exception that led to the creation of the configuration error. Required.
     :vartype full_exception: str
-    :ivar data: Custom properties to add more information to the error.
+    :ivar data: Custom properties to add more information to the error. Required.
     :vartype data: list[~quickpulse_client.models.KeyValuePairString]
     """
+
+    _validation = {
+        "collection_configuration_error_type": {"required": True},
+        "message": {"required": True},
+        "full_exception": {"required": True},
+        "data": {"required": True},
+    }
 
     _attribute_map = {
         "collection_configuration_error_type": {"key": "CollectionConfigurationErrorType", "type": "str"},
@@ -47,15 +56,15 @@ class CollectionConfigurationError(_serialization.Model):
     def __init__(
         self,
         *,
-        collection_configuration_error_type: Optional[Union[str, "_models.CollectionConfigurationErrorType"]] = None,
-        message: Optional[str] = None,
-        full_exception: Optional[str] = None,
-        data: Optional[List["_models.KeyValuePairString"]] = None,
+        collection_configuration_error_type: Union[str, "_models.CollectionConfigurationErrorType"],
+        message: str,
+        full_exception: str,
+        data: List["_models.KeyValuePairString"],
         **kwargs: Any
     ) -> None:
         """
-        :keyword collection_configuration_error_type: Collection configuration error type reported by
-         SDK. Known values are: "Unknown", "PerformanceCounterParsing", "PerformanceCounterUnexpected",
+        :keyword collection_configuration_error_type: Error type. Required. Known values are:
+         "Unknown", "PerformanceCounterParsing", "PerformanceCounterUnexpected",
          "PerformanceCounterDuplicateIds", "DocumentStreamDuplicateIds",
          "DocumentStreamFailureToCreate", "DocumentStreamFailureToCreateFilterUnexpected",
          "MetricDuplicateIds", "MetricTelemetryTypeUnsupported", "MetricFailureToCreate",
@@ -63,11 +72,12 @@ class CollectionConfigurationError(_serialization.Model):
          "CollectionConfigurationFailureToCreateUnexpected".
         :paramtype collection_configuration_error_type: str or
          ~quickpulse_client.models.CollectionConfigurationErrorType
-        :keyword message: Error message.
+        :keyword message: Error message. Required.
         :paramtype message: str
-        :keyword full_exception: Exception that leads to the creation of the configuration error.
+        :keyword full_exception: Exception that led to the creation of the configuration error.
+         Required.
         :paramtype full_exception: str
-        :keyword data: Custom properties to add more information to the error.
+        :keyword data: Custom properties to add more information to the error. Required.
         :paramtype data: list[~quickpulse_client.models.KeyValuePairString]
         """
         super().__init__(**kwargs)
@@ -79,20 +89,29 @@ class CollectionConfigurationError(_serialization.Model):
 
 class CollectionConfigurationInfo(_serialization.Model):
     """Represents the collection configuration - a customizable description of performance counters,
-    metrics, and full telemetry documents to be collected by the SDK.
+    metrics, and full telemetry documents to be collected by the client SDK.
 
-    :ivar etag: An encoded string that indicates whether the collection configuration is changed.
-    :vartype etag: str
-    :ivar metrics: An array of metric configuration info.
+    All required parameters must be populated in order to send to server.
+
+    :ivar e_tag: An encoded string that indicates whether the collection configuration is changed.
+     Required.
+    :vartype e_tag: str
+    :ivar metrics: An array of metric configuration info. Required.
     :vartype metrics: list[~quickpulse_client.models.DerivedMetricInfo]
-    :ivar document_streams: An array of document stream configuration info.
+    :ivar document_streams: An array of document stream configuration info. Required.
     :vartype document_streams: list[~quickpulse_client.models.DocumentStreamInfo]
-    :ivar quota_info: Control document quotas for QuickPulse.
+    :ivar quota_info: Controls document quotas to be sent to Live Metrics.
     :vartype quota_info: ~quickpulse_client.models.QuotaConfigurationInfo
     """
 
+    _validation = {
+        "e_tag": {"required": True},
+        "metrics": {"required": True},
+        "document_streams": {"required": True},
+    }
+
     _attribute_map = {
-        "etag": {"key": "Etag", "type": "str"},
+        "e_tag": {"key": "ETag", "type": "str"},
         "metrics": {"key": "Metrics", "type": "[DerivedMetricInfo]"},
         "document_streams": {"key": "DocumentStreams", "type": "[DocumentStreamInfo]"},
         "quota_info": {"key": "QuotaInfo", "type": "QuotaConfigurationInfo"},
@@ -101,25 +120,25 @@ class CollectionConfigurationInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        etag: Optional[str] = None,
-        metrics: Optional[List["_models.DerivedMetricInfo"]] = None,
-        document_streams: Optional[List["_models.DocumentStreamInfo"]] = None,
+        e_tag: str,
+        metrics: List["_models.DerivedMetricInfo"],
+        document_streams: List["_models.DocumentStreamInfo"],
         quota_info: Optional["_models.QuotaConfigurationInfo"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword etag: An encoded string that indicates whether the collection configuration is
-         changed.
-        :paramtype etag: str
-        :keyword metrics: An array of metric configuration info.
+        :keyword e_tag: An encoded string that indicates whether the collection configuration is
+         changed. Required.
+        :paramtype e_tag: str
+        :keyword metrics: An array of metric configuration info. Required.
         :paramtype metrics: list[~quickpulse_client.models.DerivedMetricInfo]
-        :keyword document_streams: An array of document stream configuration info.
+        :keyword document_streams: An array of document stream configuration info. Required.
         :paramtype document_streams: list[~quickpulse_client.models.DocumentStreamInfo]
-        :keyword quota_info: Control document quotas for QuickPulse.
+        :keyword quota_info: Controls document quotas to be sent to Live Metrics.
         :paramtype quota_info: ~quickpulse_client.models.QuotaConfigurationInfo
         """
         super().__init__(**kwargs)
-        self.etag = etag
+        self.e_tag = e_tag
         self.metrics = metrics
         self.document_streams = document_streams
         self.quota_info = quota_info
@@ -128,18 +147,33 @@ class CollectionConfigurationInfo(_serialization.Model):
 class DerivedMetricInfo(_serialization.Model):
     """A metric configuration set by UX to scope the metrics it's interested in.
 
-    :ivar id: metric configuration identifier.
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: metric configuration identifier. Required.
     :vartype id: str
-    :ivar telemetry_type: Telemetry type.
+    :ivar telemetry_type: Telemetry type. Required.
     :vartype telemetry_type: str
-    :ivar filter_groups: A collection of filters to scope metrics that UX needs.
+    :ivar filter_groups: A collection of filters to scope metrics that UX needs. Required.
     :vartype filter_groups: list[~quickpulse_client.models.FilterConjunctionGroupInfo]
     :ivar projection: Telemetry's metric dimension whose value is to be aggregated. Example values:
-     Duration, Count(),...
+     Duration, Count(),... Required.
     :vartype projection: str
-    :ivar aggregation: Aggregation type. Known values are: "Avg", "Sum", "Min", and "Max".
-    :vartype aggregation: str or ~quickpulse_client.models.DerivedMetricInfoAggregation
+    :ivar aggregation: Aggregation type. This is the aggregation done from everything within a
+     single server. Required. Known values are: "Avg", "Sum", "Min", and "Max".
+    :vartype aggregation: str or ~quickpulse_client.models.AggregationType
+    :ivar back_end_aggregation: Aggregation type. This Aggregation is done across the values for
+     all the servers taken together. Required. Known values are: "Avg", "Sum", "Min", and "Max".
+    :vartype back_end_aggregation: str or ~quickpulse_client.models.AggregationType
     """
+
+    _validation = {
+        "id": {"required": True},
+        "telemetry_type": {"required": True},
+        "filter_groups": {"required": True},
+        "projection": {"required": True},
+        "aggregation": {"required": True},
+        "back_end_aggregation": {"required": True},
+    }
 
     _attribute_map = {
         "id": {"key": "Id", "type": "str"},
@@ -147,30 +181,36 @@ class DerivedMetricInfo(_serialization.Model):
         "filter_groups": {"key": "FilterGroups", "type": "[FilterConjunctionGroupInfo]"},
         "projection": {"key": "Projection", "type": "str"},
         "aggregation": {"key": "Aggregation", "type": "str"},
+        "back_end_aggregation": {"key": "BackEndAggregation", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        telemetry_type: Optional[str] = None,
-        filter_groups: Optional[List["_models.FilterConjunctionGroupInfo"]] = None,
-        projection: Optional[str] = None,
-        aggregation: Optional[Union[str, "_models.DerivedMetricInfoAggregation"]] = None,
+        id: str,  # pylint: disable=redefined-builtin
+        telemetry_type: str,
+        filter_groups: List["_models.FilterConjunctionGroupInfo"],
+        projection: str,
+        aggregation: Union[str, "_models.AggregationType"],
+        back_end_aggregation: Union[str, "_models.AggregationType"],
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: metric configuration identifier.
+        :keyword id: metric configuration identifier. Required.
         :paramtype id: str
-        :keyword telemetry_type: Telemetry type.
+        :keyword telemetry_type: Telemetry type. Required.
         :paramtype telemetry_type: str
-        :keyword filter_groups: A collection of filters to scope metrics that UX needs.
+        :keyword filter_groups: A collection of filters to scope metrics that UX needs. Required.
         :paramtype filter_groups: list[~quickpulse_client.models.FilterConjunctionGroupInfo]
         :keyword projection: Telemetry's metric dimension whose value is to be aggregated. Example
-         values: Duration, Count(),...
+         values: Duration, Count(),... Required.
         :paramtype projection: str
-        :keyword aggregation: Aggregation type. Known values are: "Avg", "Sum", "Min", and "Max".
-        :paramtype aggregation: str or ~quickpulse_client.models.DerivedMetricInfoAggregation
+        :keyword aggregation: Aggregation type. This is the aggregation done from everything within a
+         single server. Required. Known values are: "Avg", "Sum", "Min", and "Max".
+        :paramtype aggregation: str or ~quickpulse_client.models.AggregationType
+        :keyword back_end_aggregation: Aggregation type. This Aggregation is done across the values for
+         all the servers taken together. Required. Known values are: "Avg", "Sum", "Min", and "Max".
+        :paramtype back_end_aggregation: str or ~quickpulse_client.models.AggregationType
         """
         super().__init__(**kwargs)
         self.id = id
@@ -178,18 +218,25 @@ class DerivedMetricInfo(_serialization.Model):
         self.filter_groups = filter_groups
         self.projection = projection
         self.aggregation = aggregation
+        self.back_end_aggregation = back_end_aggregation
 
 
 class DocumentFilterConjunctionGroupInfo(_serialization.Model):
-    """A collection of filters for a specificy telemetry type.
+    """A collection of filters for a specific telemetry type.
 
-    :ivar telemetry_type: Telemetry type. Known values are: "Request", "Dependency", "Exception",
-     "Event", "Metric", "PerformanceCounter", and "Trace".
-    :vartype telemetry_type: str or
-     ~quickpulse_client.models.DocumentFilterConjunctionGroupInfoTelemetryType
-    :ivar filters: An AND-connected group of FilterInfo objects.
+    All required parameters must be populated in order to send to server.
+
+    :ivar telemetry_type: Telemetry type. Required. Known values are: "Request", "Dependency",
+     "Exception", "Event", "Metric", "PerformanceCounter", and "Trace".
+    :vartype telemetry_type: str or ~quickpulse_client.models.TelemetryType
+    :ivar filters: An array of filter groups. Required.
     :vartype filters: ~quickpulse_client.models.FilterConjunctionGroupInfo
     """
+
+    _validation = {
+        "telemetry_type": {"required": True},
+        "filters": {"required": True},
+    }
 
     _attribute_map = {
         "telemetry_type": {"key": "TelemetryType", "type": "str"},
@@ -199,16 +246,15 @@ class DocumentFilterConjunctionGroupInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        telemetry_type: Optional[Union[str, "_models.DocumentFilterConjunctionGroupInfoTelemetryType"]] = None,
-        filters: Optional["_models.FilterConjunctionGroupInfo"] = None,
+        telemetry_type: Union[str, "_models.TelemetryType"],
+        filters: "_models.FilterConjunctionGroupInfo",
         **kwargs: Any
     ) -> None:
         """
-        :keyword telemetry_type: Telemetry type. Known values are: "Request", "Dependency",
+        :keyword telemetry_type: Telemetry type. Required. Known values are: "Request", "Dependency",
          "Exception", "Event", "Metric", "PerformanceCounter", and "Trace".
-        :paramtype telemetry_type: str or
-         ~quickpulse_client.models.DocumentFilterConjunctionGroupInfoTelemetryType
-        :keyword filters: An AND-connected group of FilterInfo objects.
+        :paramtype telemetry_type: str or ~quickpulse_client.models.TelemetryType
+        :keyword filters: An array of filter groups. Required.
         :paramtype filters: ~quickpulse_client.models.FilterConjunctionGroupInfo
         """
         super().__init__(**kwargs)
@@ -226,8 +272,8 @@ class DocumentIngress(_serialization.Model):
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
@@ -278,12 +324,20 @@ class DocumentIngress(_serialization.Model):
 class DocumentStreamInfo(_serialization.Model):
     """Configurations/filters set by UX to scope the document/telemetry it's interested in.
 
-    :ivar id: Identifier of the document stream initiated by a UX.
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Identifier of the document stream initiated by a UX. Required.
     :vartype id: str
     :ivar document_filter_groups: Gets or sets an OR-connected collection of filter groups.
+     Required.
     :vartype document_filter_groups:
      list[~quickpulse_client.models.DocumentFilterConjunctionGroupInfo]
     """
+
+    _validation = {
+        "id": {"required": True},
+        "document_filter_groups": {"required": True},
+    }
 
     _attribute_map = {
         "id": {"key": "Id", "type": "str"},
@@ -293,14 +347,15 @@ class DocumentStreamInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        document_filter_groups: Optional[List["_models.DocumentFilterConjunctionGroupInfo"]] = None,
+        id: str,  # pylint: disable=redefined-builtin
+        document_filter_groups: List["_models.DocumentFilterConjunctionGroupInfo"],
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: Identifier of the document stream initiated by a UX.
+        :keyword id: Identifier of the document stream initiated by a UX. Required.
         :paramtype id: str
         :keyword document_filter_groups: Gets or sets an OR-connected collection of filter groups.
+         Required.
         :paramtype document_filter_groups:
          list[~quickpulse_client.models.DocumentFilterConjunctionGroupInfo]
         """
@@ -310,14 +365,14 @@ class DocumentStreamInfo(_serialization.Model):
 
 
 class Event(DocumentIngress):
-    """Event type document.
+    """Event document type.
 
     All required parameters must be populated in order to send to server.
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
@@ -362,14 +417,14 @@ class Event(DocumentIngress):
 
 
 class Exception(DocumentIngress):
-    """Exception type document.
+    """Exception document type.
 
     All required parameters must be populated in order to send to server.
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
@@ -424,17 +479,23 @@ class Exception(DocumentIngress):
 class FilterConjunctionGroupInfo(_serialization.Model):
     """An AND-connected group of FilterInfo objects.
 
-    :ivar filters:
+    All required parameters must be populated in order to send to server.
+
+    :ivar filters: An array of filters. Required.
     :vartype filters: list[~quickpulse_client.models.FilterInfo]
     """
+
+    _validation = {
+        "filters": {"required": True},
+    }
 
     _attribute_map = {
         "filters": {"key": "Filters", "type": "[FilterInfo]"},
     }
 
-    def __init__(self, *, filters: Optional[List["_models.FilterInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, filters: List["_models.FilterInfo"], **kwargs: Any) -> None:
         """
-        :keyword filters:
+        :keyword filters: An array of filters. Required.
         :paramtype filters: list[~quickpulse_client.models.FilterInfo]
         """
         super().__init__(**kwargs)
@@ -444,14 +505,23 @@ class FilterConjunctionGroupInfo(_serialization.Model):
 class FilterInfo(_serialization.Model):
     """A filter set on UX.
 
-    :ivar field_name: dimension name of the filter.
+    All required parameters must be populated in order to send to server.
+
+    :ivar field_name: dimension name of the filter. Required.
     :vartype field_name: str
-    :ivar predicate: Operator of the filter. Known values are: "Equal", "NotEqual", "LessThan",
-     "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "Contains", and "DoesNotContain".
-    :vartype predicate: str or ~quickpulse_client.models.FilterInfoPredicate
-    :ivar comparand:
+    :ivar predicate: Operator of the filter. Required. Known values are: "Equal", "NotEqual",
+     "LessThan", "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "Contains", and
+     "DoesNotContain".
+    :vartype predicate: str or ~quickpulse_client.models.PredicateType
+    :ivar comparand: Comparand of the filter. Required.
     :vartype comparand: str
     """
+
+    _validation = {
+        "field_name": {"required": True},
+        "predicate": {"required": True},
+        "comparand": {"required": True},
+    }
 
     _attribute_map = {
         "field_name": {"key": "FieldName", "type": "str"},
@@ -460,20 +530,16 @@ class FilterInfo(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        field_name: Optional[str] = None,
-        predicate: Optional[Union[str, "_models.FilterInfoPredicate"]] = None,
-        comparand: Optional[str] = None,
-        **kwargs: Any
+        self, *, field_name: str, predicate: Union[str, "_models.PredicateType"], comparand: str, **kwargs: Any
     ) -> None:
         """
-        :keyword field_name: dimension name of the filter.
+        :keyword field_name: dimension name of the filter. Required.
         :paramtype field_name: str
-        :keyword predicate: Operator of the filter. Known values are: "Equal", "NotEqual", "LessThan",
-         "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "Contains", and "DoesNotContain".
-        :paramtype predicate: str or ~quickpulse_client.models.FilterInfoPredicate
-        :keyword comparand:
+        :keyword predicate: Operator of the filter. Required. Known values are: "Equal", "NotEqual",
+         "LessThan", "GreaterThan", "LessThanOrEqual", "GreaterThanOrEqual", "Contains", and
+         "DoesNotContain".
+        :paramtype predicate: str or ~quickpulse_client.models.PredicateType
+        :keyword comparand: Comparand of the filter. Required.
         :paramtype comparand: str
         """
         super().__init__(**kwargs)
@@ -483,24 +549,31 @@ class FilterInfo(_serialization.Model):
 
 
 class KeyValuePairString(_serialization.Model):
-    """KeyValuePairString.
+    """Key-value pair of string and string.
 
-    :ivar key:
+    All required parameters must be populated in order to send to server.
+
+    :ivar key: Key of the key-value pair. Required.
     :vartype key: str
-    :ivar value:
+    :ivar value: Value of the key-value pair. Required.
     :vartype value: str
     """
+
+    _validation = {
+        "key": {"required": True},
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "key": {"key": "key", "type": "str"},
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, key: str, value: str, **kwargs: Any) -> None:
         """
-        :keyword key:
+        :keyword key: Key of the key-value pair. Required.
         :paramtype key: str
-        :keyword value:
+        :keyword value: Value of the key-value pair. Required.
         :paramtype value: str
         """
         super().__init__(**kwargs)
@@ -511,13 +584,21 @@ class KeyValuePairString(_serialization.Model):
 class MetricPoint(_serialization.Model):
     """Metric data point.
 
-    :ivar name: Metric name.
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Metric name. Required.
     :vartype name: str
-    :ivar value: Metric value.
+    :ivar value: Metric value. Required.
     :vartype value: float
-    :ivar weight: Metric weight.
+    :ivar weight: Metric weight. Required.
     :vartype weight: int
     """
+
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
+        "weight": {"required": True},
+    }
 
     _attribute_map = {
         "name": {"key": "Name", "type": "str"},
@@ -525,15 +606,13 @@ class MetricPoint(_serialization.Model):
         "weight": {"key": "Weight", "type": "int"},
     }
 
-    def __init__(
-        self, *, name: Optional[str] = None, value: Optional[float] = None, weight: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, name: str, value: float, weight: int, **kwargs: Any) -> None:
         """
-        :keyword name: Metric name.
+        :keyword name: Metric name. Required.
         :paramtype name: str
-        :keyword value: Metric value.
+        :keyword value: Metric value. Required.
         :paramtype value: float
-        :keyword weight: Metric weight.
+        :keyword weight: Metric weight. Required.
         :paramtype weight: int
         """
         super().__init__(**kwargs)
@@ -543,42 +622,58 @@ class MetricPoint(_serialization.Model):
 
 
 class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Monitoring data point coming from SDK, which includes metrics, documents and other metadata
-    info.
+    """Monitoring data point coming from the client, which includes metrics, documents and other
+    metadata info.
 
-    :ivar version: AI SDK version.
+    All required parameters must be populated in order to send to server.
+
+    :ivar version: Application Insights SDK version. Required.
     :vartype version: str
     :ivar invariant_version: Version/generation of the data contract (MonitoringDataPoint) between
-     SDK and QuickPulse.
+     SDK and Live Metrics. Required.
     :vartype invariant_version: int
-    :ivar instance: Service instance name where AI SDK lives.
+    :ivar instance: Service instance name where Application Insights SDK lives. Required.
     :vartype instance: str
-    :ivar role_name: Service role name.
+    :ivar role_name: Service role name. Required.
     :vartype role_name: str
-    :ivar machine_name: Computer name where AI SDK lives.
+    :ivar machine_name: Computer name where Application Insights SDK lives. Required.
     :vartype machine_name: str
-    :ivar stream_id: Identifies an AI SDK as a trusted agent to report metrics and documents.
+    :ivar stream_id: Identifies an Application Insights SDK as a trusted agent to report metrics
+     and documents. Required.
     :vartype stream_id: str
     :ivar timestamp: Data point generation timestamp.
     :vartype timestamp: ~datetime.datetime
-    :ivar transmission_time: Timestamp when SDK transmits the metrics and documents to QuickPulse.
-     A 8-byte long type of ticks.
+    :ivar transmission_time: Timestamp when the client transmits the metrics and documents to Live
+     Metrics.
     :vartype transmission_time: ~datetime.datetime
-    :ivar is_web_app: True if the current application is an Azure Web App.
+    :ivar is_web_app: True if the current application is an Azure Web App. Required.
     :vartype is_web_app: bool
     :ivar performance_collection_supported: True if performance counters collection is supported.
+     Required.
     :vartype performance_collection_supported: bool
-    :ivar metrics: An array of meric data points.
+    :ivar metrics: An array of metric data points.
     :vartype metrics: list[~quickpulse_client.models.MetricPoint]
     :ivar documents: An array of documents of a specific type {Request}, {RemoteDependency},
      {Exception}, {Event}, or {Trace}.
     :vartype documents: list[~quickpulse_client.models.DocumentIngress]
     :ivar top_cpu_processes: An array of top cpu consumption data point.
     :vartype top_cpu_processes: list[~quickpulse_client.models.ProcessCpuData]
-    :ivar collection_configuration_errors: An array of error while parsing and applying .
+    :ivar collection_configuration_errors: An array of error while SDK parses and applies the
+     {CollectionConfigurationInfo} provided by Live Metrics.
     :vartype collection_configuration_errors:
      list[~quickpulse_client.models.CollectionConfigurationError]
     """
+
+    _validation = {
+        "version": {"required": True},
+        "invariant_version": {"required": True},
+        "instance": {"required": True},
+        "role_name": {"required": True},
+        "machine_name": {"required": True},
+        "stream_id": {"required": True},
+        "is_web_app": {"required": True},
+        "performance_collection_supported": {"required": True},
+    }
 
     _attribute_map = {
         "version": {"key": "Version", "type": "str"},
@@ -603,16 +698,16 @@ class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-ins
     def __init__(
         self,
         *,
-        version: Optional[str] = None,
-        invariant_version: Optional[int] = None,
-        instance: Optional[str] = None,
-        role_name: Optional[str] = None,
-        machine_name: Optional[str] = None,
-        stream_id: Optional[str] = None,
+        version: str,
+        invariant_version: int,
+        instance: str,
+        role_name: str,
+        machine_name: str,
+        stream_id: str,
+        is_web_app: bool,
+        performance_collection_supported: bool,
         timestamp: Optional[datetime.datetime] = None,
         transmission_time: Optional[datetime.datetime] = None,
-        is_web_app: Optional[bool] = None,
-        performance_collection_supported: Optional[bool] = None,
         metrics: Optional[List["_models.MetricPoint"]] = None,
         documents: Optional[List["_models.DocumentIngress"]] = None,
         top_cpu_processes: Optional[List["_models.ProcessCpuData"]] = None,
@@ -620,37 +715,39 @@ class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-ins
         **kwargs: Any
     ) -> None:
         """
-        :keyword version: AI SDK version.
+        :keyword version: Application Insights SDK version. Required.
         :paramtype version: str
         :keyword invariant_version: Version/generation of the data contract (MonitoringDataPoint)
-         between SDK and QuickPulse.
+         between SDK and Live Metrics. Required.
         :paramtype invariant_version: int
-        :keyword instance: Service instance name where AI SDK lives.
+        :keyword instance: Service instance name where Application Insights SDK lives. Required.
         :paramtype instance: str
-        :keyword role_name: Service role name.
+        :keyword role_name: Service role name. Required.
         :paramtype role_name: str
-        :keyword machine_name: Computer name where AI SDK lives.
+        :keyword machine_name: Computer name where Application Insights SDK lives. Required.
         :paramtype machine_name: str
-        :keyword stream_id: Identifies an AI SDK as a trusted agent to report metrics and documents.
+        :keyword stream_id: Identifies an Application Insights SDK as a trusted agent to report metrics
+         and documents. Required.
         :paramtype stream_id: str
         :keyword timestamp: Data point generation timestamp.
         :paramtype timestamp: ~datetime.datetime
-        :keyword transmission_time: Timestamp when SDK transmits the metrics and documents to
-         QuickPulse. A 8-byte long type of ticks.
+        :keyword transmission_time: Timestamp when the client transmits the metrics and documents to
+         Live Metrics.
         :paramtype transmission_time: ~datetime.datetime
-        :keyword is_web_app: True if the current application is an Azure Web App.
+        :keyword is_web_app: True if the current application is an Azure Web App. Required.
         :paramtype is_web_app: bool
         :keyword performance_collection_supported: True if performance counters collection is
-         supported.
+         supported. Required.
         :paramtype performance_collection_supported: bool
-        :keyword metrics: An array of meric data points.
+        :keyword metrics: An array of metric data points.
         :paramtype metrics: list[~quickpulse_client.models.MetricPoint]
         :keyword documents: An array of documents of a specific type {Request}, {RemoteDependency},
          {Exception}, {Event}, or {Trace}.
         :paramtype documents: list[~quickpulse_client.models.DocumentIngress]
         :keyword top_cpu_processes: An array of top cpu consumption data point.
         :paramtype top_cpu_processes: list[~quickpulse_client.models.ProcessCpuData]
-        :keyword collection_configuration_errors: An array of error while parsing and applying .
+        :keyword collection_configuration_errors: An array of error while SDK parses and applies the
+         {CollectionConfigurationInfo} provided by Live Metrics.
         :paramtype collection_configuration_errors:
          list[~quickpulse_client.models.CollectionConfigurationError]
         """
@@ -674,24 +771,29 @@ class MonitoringDataPoint(_serialization.Model):  # pylint: disable=too-many-ins
 class ProcessCpuData(_serialization.Model):
     """CPU consumption datapoint.
 
-    :ivar process_name: Process name.
+    All required parameters must be populated in order to send to server.
+
+    :ivar process_name: Process name. Required.
     :vartype process_name: str
-    :ivar cpu_percentage: CPU consumption percentage.
+    :ivar cpu_percentage: CPU consumption percentage. Required.
     :vartype cpu_percentage: int
     """
+
+    _validation = {
+        "process_name": {"required": True},
+        "cpu_percentage": {"required": True},
+    }
 
     _attribute_map = {
         "process_name": {"key": "ProcessName", "type": "str"},
         "cpu_percentage": {"key": "CpuPercentage", "type": "int"},
     }
 
-    def __init__(
-        self, *, process_name: Optional[str] = None, cpu_percentage: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, process_name: str, cpu_percentage: int, **kwargs: Any) -> None:
         """
-        :keyword process_name: Process name.
+        :keyword process_name: Process name. Required.
         :paramtype process_name: str
-        :keyword cpu_percentage: CPU consumption percentage.
+        :keyword cpu_percentage: CPU consumption percentage. Required.
         :paramtype cpu_percentage: int
         """
         super().__init__(**kwargs)
@@ -700,7 +802,7 @@ class ProcessCpuData(_serialization.Model):
 
 
 class QuotaConfigurationInfo(_serialization.Model):
-    """Control document quotas for QuickPulse.
+    """Controls document quotas to be sent to Live Metrics.
 
     All required parameters must be populated in order to send to server.
 
@@ -746,14 +848,14 @@ class QuotaConfigurationInfo(_serialization.Model):
 
 
 class RemoteDependency(DocumentIngress):
-    """Dependency type document.
+    """RemoteDependency document type.
 
     All required parameters must be populated in order to send to server.
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
@@ -826,14 +928,14 @@ class RemoteDependency(DocumentIngress):
 
 
 class Request(DocumentIngress):
-    """Request type document.
+    """Request document type.
 
     All required parameters must be populated in order to send to server.
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
@@ -843,7 +945,7 @@ class Request(DocumentIngress):
     :vartype name: str
     :ivar url: Request URL with all query string parameters.
     :vartype url: str
-    :ivar response_code: Result of a request execution. For http requestss, it could be some HTTP
+    :ivar response_code: Result of a request execution. For http requests, it could be some HTTP
      status code.
     :vartype response_code: str
     :ivar duration: Request duration in ISO 8601 duration format, i.e., P[n]Y[n]M[n]DT[n]H[n]M[n]S
@@ -889,8 +991,8 @@ class Request(DocumentIngress):
         :paramtype name: str
         :keyword url: Request URL with all query string parameters.
         :paramtype url: str
-        :keyword response_code: Result of a request execution. For http requestss, it could be some
-         HTTP status code.
+        :keyword response_code: Result of a request execution. For http requests, it could be some HTTP
+         status code.
         :paramtype response_code: str
         :keyword duration: Request duration in ISO 8601 duration format, i.e.,
          P[n]Y[n]M[n]DT[n]H[n]M[n]S or P[n]W.
@@ -905,23 +1007,34 @@ class Request(DocumentIngress):
 
 
 class ServiceError(_serialization.Model):
-    """Optional http response body, whose existance carries additional error descriptions.
+    """Optional http response body, whose existence carries additional error descriptions.
 
-    :ivar request_id: A guid of the request that triggers the service error.
+    All required parameters must be populated in order to send to server.
+
+    :ivar request_id: A globally unique identifier to identify the diagnostic context. It defaults
+     to the empty GUID.
     :vartype request_id: str
-    :ivar response_date_time: Service error response date time.
-    :vartype response_date_time: ~datetime.datetime
-    :ivar code: Error code.
+    :ivar response_date_time: Service error response date time. Required.
+    :vartype response_date_time: str
+    :ivar code: Error code. Required.
     :vartype code: str
-    :ivar message: Error message.
+    :ivar message: Error message. Required.
     :vartype message: str
-    :ivar exception: Message of the exception that triggers the error response.
+    :ivar exception: Message of the exception that triggers the error response. Required.
     :vartype exception: str
     """
 
+    _validation = {
+        "request_id": {"required": True},
+        "response_date_time": {"required": True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "exception": {"required": True},
+    }
+
     _attribute_map = {
         "request_id": {"key": "RequestId", "type": "str"},
-        "response_date_time": {"key": "ResponseDateTime", "type": "iso-8601"},
+        "response_date_time": {"key": "ResponseDateTime", "type": "str"},
         "code": {"key": "Code", "type": "str"},
         "message": {"key": "Message", "type": "str"},
         "exception": {"key": "Exception", "type": "str"},
@@ -930,23 +1043,24 @@ class ServiceError(_serialization.Model):
     def __init__(
         self,
         *,
-        request_id: Optional[str] = None,
-        response_date_time: Optional[datetime.datetime] = None,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        exception: Optional[str] = None,
+        request_id: str = "00000000-0000-0000-0000-000000000000",
+        response_date_time: str,
+        code: str,
+        message: str,
+        exception: str,
         **kwargs: Any
     ) -> None:
         """
-        :keyword request_id: A guid of the request that triggers the service error.
+        :keyword request_id: A globally unique identifier to identify the diagnostic context. It
+         defaults to the empty GUID.
         :paramtype request_id: str
-        :keyword response_date_time: Service error response date time.
-        :paramtype response_date_time: ~datetime.datetime
-        :keyword code: Error code.
+        :keyword response_date_time: Service error response date time. Required.
+        :paramtype response_date_time: str
+        :keyword code: Error code. Required.
         :paramtype code: str
-        :keyword message: Error message.
+        :keyword message: Error message. Required.
         :paramtype message: str
-        :keyword exception: Message of the exception that triggers the error response.
+        :keyword exception: Message of the exception that triggers the error response. Required.
         :paramtype exception: str
         """
         super().__init__(**kwargs)
@@ -958,14 +1072,14 @@ class ServiceError(_serialization.Model):
 
 
 class Trace(DocumentIngress):
-    """Trace type name.
+    """Trace document type.
 
     All required parameters must be populated in order to send to server.
 
     :ivar document_type: Telemetry type. Types not defined in enum will get replaced with a
      'Unknown' type. Required. Known values are: "Request", "RemoteDependency", "Exception",
-     "Event", and "Trace".
-    :vartype document_type: str or ~quickpulse_client.models.DocumentIngressDocumentType
+     "Event", "Trace", and "Unknown".
+    :vartype document_type: str or ~quickpulse_client.models.DocumentType
     :ivar document_stream_ids: An array of document streaming ids. Each id identifies a flow of
      documents customized by UX customers.
     :vartype document_stream_ids: list[str]
