@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed typing errors when certain credentials are used as context managers. ([#35415](https://github.com/Azure/azure-sdk-for-python/pull/35415))
+
 ### Other Changes
 
 ## 1.16.0 (2024-04-09)
