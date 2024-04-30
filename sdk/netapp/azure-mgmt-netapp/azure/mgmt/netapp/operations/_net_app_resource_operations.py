@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,7 +40,7 @@ def build_check_name_availability_request(location: str, subscription_id: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -67,11 +67,13 @@ def build_check_name_availability_request(location: str, subscription_id: str, *
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_check_file_path_availability_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_check_file_path_availability_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -102,7 +104,7 @@ def build_check_quota_availability_request(location: str, subscription_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -133,7 +135,7 @@ def build_query_region_info_request(location: str, subscription_id: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +162,7 @@ def build_query_network_sibling_set_request(location: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -191,7 +193,7 @@ def build_update_network_sibling_set_request(location: str, subscription_id: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -261,7 +263,6 @@ class NetAppResourceOperations:
         :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
         :param resource_group: Resource group name. Required.
         :type resource_group: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -284,22 +285,21 @@ class NetAppResourceOperations:
         _body = _models.ResourceNameAvailabilityRequest(name=name, resource_group=resource_group, type=type)
         _json = self._serialize.body(_body, "ResourceNameAvailabilityRequest")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -312,13 +312,9 @@ class NetAppResourceOperations:
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def check_file_path_availability(
@@ -335,7 +331,6 @@ class NetAppResourceOperations:
         :param subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
          Microsoft.NetApp/volumes. Required.
         :type subnet_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -358,22 +353,21 @@ class NetAppResourceOperations:
         _body = _models.FilePathAvailabilityRequest(name=name, subnet_id=subnet_id)
         _json = self._serialize.body(_body, "FilePathAvailabilityRequest")
 
-        request = build_check_file_path_availability_request(
+        _request = build_check_file_path_availability_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.check_file_path_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -386,13 +380,9 @@ class NetAppResourceOperations:
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_file_path_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/checkFilePathAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def check_quota_availability(
@@ -418,7 +408,6 @@ class NetAppResourceOperations:
         :type type: str or ~azure.mgmt.netapp.models.CheckQuotaNameResourceTypes
         :param resource_group: Resource group name. Required.
         :type resource_group: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,22 +430,21 @@ class NetAppResourceOperations:
         _body = _models.QuotaAvailabilityRequest(name=name, resource_group=resource_group, type=type)
         _json = self._serialize.body(_body, "QuotaAvailabilityRequest")
 
-        request = build_check_quota_availability_request(
+        _request = build_check_quota_availability_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.check_quota_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -469,13 +457,9 @@ class NetAppResourceOperations:
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_quota_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/checkQuotaAvailability"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def query_region_info(self, location: str, **kwargs: Any) -> _models.RegionInfo:
@@ -485,7 +469,6 @@ class NetAppResourceOperations:
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionInfo or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -504,20 +487,19 @@ class NetAppResourceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.RegionInfo] = kwargs.pop("cls", None)
 
-        request = build_query_region_info_request(
+        _request = build_query_region_info_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.query_region_info.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -530,13 +512,9 @@ class NetAppResourceOperations:
         deserialized = self._deserialize("RegionInfo", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_region_info.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/regionInfo"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def query_network_sibling_set(
@@ -556,7 +534,6 @@ class NetAppResourceOperations:
          /subscriptions/subscriptionId/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/testVnet/subnets/{mySubnet}.
          Required.
         :type subnet_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSiblingSet or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.NetworkSiblingSet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -581,22 +558,21 @@ class NetAppResourceOperations:
         )
         _json = self._serialize.body(_body, "QueryNetworkSiblingSetRequest")
 
-        request = build_query_network_sibling_set_request(
+        _request = build_query_network_sibling_set_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.query_network_sibling_set.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -609,13 +585,9 @@ class NetAppResourceOperations:
         deserialized = self._deserialize("NetworkSiblingSet", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_network_sibling_set.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/queryNetworkSiblingSet"
-    }
+        return deserialized  # type: ignore
 
     def _update_network_sibling_set_initial(
         self,
@@ -649,22 +621,21 @@ class NetAppResourceOperations:
         )
         _json = self._serialize.body(_body, "UpdateNetworkSiblingSetRequest")
 
-        request = build_update_network_sibling_set_request(
+        _request = build_update_network_sibling_set_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._update_network_sibling_set_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -683,13 +654,9 @@ class NetAppResourceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_network_sibling_set_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/updateNetworkSiblingSet"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_update_network_sibling_set(
@@ -718,17 +685,9 @@ class NetAppResourceOperations:
         :param network_sibling_set_state_id: Network sibling set state Id identifying the current state
          of the sibling set. Required.
         :type network_sibling_set_state_id: str
-        :param network_features: Network features available to the volume, some such. Known values are:
-         "Basic", "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
+        :param network_features: Network features available to the volume. Known values are: "Basic",
+         "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
         :type network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either NetworkSiblingSet or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetworkSiblingSet]
@@ -762,7 +721,7 @@ class NetAppResourceOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("NetworkSiblingSet", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -774,14 +733,12 @@ class NetAppResourceOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.NetworkSiblingSet].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_network_sibling_set.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/updateNetworkSiblingSet"
-    }
+        return LROPoller[_models.NetworkSiblingSet](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
