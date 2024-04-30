@@ -43,7 +43,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 
 Use the returned token credential to authenticate the client.
 
-<!-- SNIPPET:create_devbox_sample.create_dev_center_client -->
+<!-- SNIPPET:create_client_sample.create_dev_center_client -->
 
 ```python
 import os
@@ -72,7 +72,7 @@ With `DevCenterClient` you can execute operations in [Dev Center, Dev Box and En
 
 ### Create, Connect and Delete a Dev Box
 
-<!-- SNIPPET:create_devbox_sample.dev_box_create_connect_delete -->
+<!-- SNIPPET:dev_box_create_sample.dev_box_create_connect_delete -->
 
 ```python
 import os
@@ -139,7 +139,7 @@ print(f"Completed deletion for the dev box with status {delete_result.status}")
 
 ### Deploy and Delete an Environment
 
-<!-- SNIPPET:create_environment_sample.environment_create_and_delete -->
+<!-- SNIPPET:deployment_environments_sample.environment_create_and_delete -->
 
 ```python
 import os
