@@ -6,15 +6,17 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import Any, Dict, List, Optional
 
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     EndpointDeploymentResourcePropertiesBasicResource,
     OpenAIEndpointDeploymentResourceProperties,
 )
 
-from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment, SystemData
+from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment
+from .._model_base import rest_field
 
 
 __all__: List[str] = [
@@ -26,24 +28,34 @@ _NULL = object()
 
 @experimental
 class AzureOpenAIDeployment(_AzureOpenAIDeployment):
+
+    system_data: Optional[SystemData] = rest_field(visibility=["read"])
+    """System data of the endpoint."""
+
     @classmethod
     def _from_rest_object(cls, obj: EndpointDeploymentResourcePropertiesBasicResource) -> "AzureOpenAIDeployment":
         properties: OpenAIEndpointDeploymentResourceProperties = obj.properties
-        rest_system_data = obj.system_data
         return cls(
             name=obj.name,
             model_name=properties.model.name,
             model_version=properties.model.version,
             id=obj.id,
-            system_data=SystemData(
-                created_by=rest_system_data.created_by,
-                created_at=rest_system_data.created_at,
-                created_by_type=rest_system_data.created_by_type,
-                last_modified_by=rest_system_data.last_modified_by,
-                last_modified_by_type=rest_system_data.last_modified_by_type,
-                last_modified_at=rest_system_data.last_modified_at,
-            ),
+            system_data=SystemData._from_rest_object(obj.system_data),
         )
+
+    def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+        d = super().as_dict(exclude_readonly=exclude_readonly)
+        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))  # type: ignore
+        return d
+
+
+AzureOpenAIDeployment.__doc__ += (
+    _AzureOpenAIDeployment.__doc__.strip()  # type: ignore
+    + """
+    :ivar system_data: System data of the deployment.
+    :vartype system_data: ~azure.ai.ml.entities.SystemData
+"""
+)
 
 
 def patch_sdk():

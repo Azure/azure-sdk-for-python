@@ -56,30 +56,3 @@ class AzureOpenAIDeployment(_model_base.Model):
     """The ARM resource id of the deployment."""
     system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
     """System data of the deployment."""
-
-
-class SystemData(_model_base.Model):
-    """System data information.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_by:
-    :vartype created_by: str
-    :ivar created_by_type:
-    :vartype created_by_type: str
-    :ivar created_at:
-    :vartype created_at: str
-    :ivar last_modified_by:
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type:
-    :vartype last_modified_by_type: str
-    :ivar last_modified_at:
-    :vartype last_modified_at: str
-    """
-
-    created_by: Optional[str] = rest_field(visibility=["read"])
-    created_by_type: Optional[str] = rest_field(visibility=["read"])
-    created_at: Optional[str] = rest_field(visibility=["read"])
-    last_modified_by: Optional[str] = rest_field(visibility=["read"])
-    last_modified_by_type: Optional[str] = rest_field(visibility=["read"])
-    last_modified_at: Optional[str] = rest_field(visibility=["read"])
