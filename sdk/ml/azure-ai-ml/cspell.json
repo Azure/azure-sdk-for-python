@@ -12,6 +12,9 @@
         "faiss",
         "Faiss",
         "LLMRAG",
-        "redef"
+        "redef",
+        "pyarrow",
+        "fsspec",
+        "tiktoken"
     ]
 }
