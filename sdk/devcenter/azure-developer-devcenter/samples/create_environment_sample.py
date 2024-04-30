@@ -49,7 +49,7 @@ def environment_create_and_delete():
     from azure.identity import DefaultAzureCredential
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
@@ -118,16 +118,16 @@ def environment_create_and_delete():
         "environmentDefinitionName": target_environment_definition_name,
     }
 
-    create_response = client.begin_create_or_update_environment(
+    environment_poller = client.begin_create_or_update_environment(
         target_project_name, "me", environment_name, environment
     )
-    environment_result = create_response.result()
+    environment_result = environment_poller.result()
     print(f"Provisioned environment with status {environment_result.provisioning_state}.")
 
     # Tear down the environment when finished
     print(f"Starting to delete environment.")
-    delete_response = client.begin_delete_environment(target_project_name, "me", environment_name)
-    delete_result = delete_response.result()
+    delete_poller = client.begin_delete_environment(target_project_name, "me", environment_name)
+    delete_result = delete_poller.result()
     print(f"Completed deletion for the environment with status {delete_result.status}")
     # [END environment_create_and_delete]
 

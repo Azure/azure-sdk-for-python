@@ -27,19 +27,20 @@
 import os
 
 from azure.developer.devcenter import DevCenterClient
-from azure.developer.devcenter.models import PowerState
 from azure.identity import DefaultAzureCredential
+from datetime import timedelta
 
 """
-FILE: devbox_restart_sample.py
+FILE: devbox_action_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to restart, stop and start a dev box using python DevCenterClient. 
-    For this sample, you must have a running dev box. More details on how to create a dev box 
-    at create_devbox_sample.py sample in this folder
+    This sample demonstrates how to get, delay and skip a dev box action using python DevCenterClient. 
+    For this sample, you must have a running dev box created from a pool with auto-stop enabled. More details  
+    on how to configure auto-stop at https://learn.microsoft.com/azure/dev-box/how-to-configure-stop-schedule
+    and sample on how to create a dev box at create_devbox_sample.py in this folder
 
 USAGE:
-    python devbox_restart_sample.py
+    python dev_box_action_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
@@ -49,7 +50,7 @@ USAGE:
 def main():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
@@ -70,26 +71,23 @@ def main():
     else:
         raise ValueError("Missing Dev Box - please create one before running the example.")
 
-    # Get the target dev box properties
-    project_name = target_dev_box.project_name
-    user = target_dev_box.user
-    dev_box_name = target_dev_box.name
+    # Get the schedule default action. This action should exist for dev boxes created with auto-stop enabled
+    action = client.get_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
+    next_action_time = action.next.scheduled_time
+    print(f"\nAction {action.Name} is schedule to {action.ActionType} at {next_action_time}.")
 
-    # Stop dev box if it's running
-    if target_dev_box.power_state == PowerState.Running:
-        stop_response = client.begin_stop_dev_box(project_name, user, dev_box_name)
-        stop_result = stop_response.result()
-        print(f"Stopping dev box completed with status {stop_result.status}")
+    # Delay the action in 1hr
+    delay_until = next_action_time + timedelta(hours=1)
+    delayed_action = client.delay_dev_box_action(
+        target_dev_box.project_name, "me", target_dev_box.name, action.name, delay_until=delay_until
+    )
+    print(
+        f"\nAction {delayed_action.Name} has been delayed and is now schedule to {delayed_action.ActionType} at {delayed_action.NextAction.ScheduledTime}."
+    )
 
-    # At this point we should have a stopped dev box . Let's start it
-    start_response = client.begin_start_dev_box(project_name, user, dev_box_name)
-    start_result = start_response.result()
-    print(f"Starting dev box completed with status {start_result.status}")
-
-    # Restart the dev box
-    restart_response = client.begin_restart_dev_box(project_name, user, dev_box_name)
-    restart_result = restart_response.result()
-    print(f"Done restarting the dev box with status {start_result.status}")
+    # Skip the default schedule action
+    client.skip_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
+    print(f"\nThe scheduled auto-stop action in dev box {target_dev_box.name} has been skipped")
 
 
 if __name__ == "__main__":
