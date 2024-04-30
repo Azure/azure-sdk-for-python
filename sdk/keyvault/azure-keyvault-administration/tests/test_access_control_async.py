@@ -28,7 +28,7 @@ class TestAccessControl(KeyVaultTestCase):
     def get_service_principal_id(self):
         replay_value = "service-principal-id"
         if self.is_live:
-            value = os.environ["AZURE_CLIENT_ID"]
+            value = os.environ.get("AZURE_CLIENT_ID") or os.environ.get("KEYVAULT_CLIENT_ID")
             return value
         return replay_value
     
