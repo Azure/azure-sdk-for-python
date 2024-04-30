@@ -1,6 +1,6 @@
 # Release History
 
-## 0.2.2 (Unreleased)
+## 0.2.2 (2024-04-30)
 
 - This package is no longer being maintained. Please install the [azure-ai-textanalytics](https://pypi.org/project/azure-ai-textanalytics/) package for the latest features and support.
 
