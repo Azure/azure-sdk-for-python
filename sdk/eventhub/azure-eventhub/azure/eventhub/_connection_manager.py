@@ -127,7 +127,7 @@ class _SeparateConnectionManager:
     def get_connection(  # pylint:disable=unused-argument
         self,
         *,
-        endpoint: Optional[str] = None,
+        endpoint: str,
         auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
     ) -> None:
         return None
