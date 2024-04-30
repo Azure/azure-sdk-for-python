@@ -1020,6 +1020,7 @@ class MLClient:
         return self._indexes
 
     @property
+    @experimental
     def azure_openai_deployments(self) -> AzureOpenAIDeploymentOperations:
         """A collection of Azure OpenAI deployment related operations.
 

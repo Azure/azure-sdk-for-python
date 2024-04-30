@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Optional, TYPE_CHECKING
 
 from .. import _model_base
 from .._model_base import rest_field

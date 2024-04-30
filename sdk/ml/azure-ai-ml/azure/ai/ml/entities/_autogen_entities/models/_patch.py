@@ -8,14 +8,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 
-from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment, SystemData
-
 from azure.ai.ml._utils._experimental import experimental
-
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     EndpointDeploymentResourcePropertiesBasicResource,
     OpenAIEndpointDeploymentResourceProperties,
 )
+
+from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment, SystemData
 
 
 __all__: List[str] = [

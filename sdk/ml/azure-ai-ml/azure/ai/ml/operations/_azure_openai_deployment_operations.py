@@ -7,10 +7,11 @@
 import logging
 from typing import Iterable
 
-from ._connections_operations import ConnectionsOperations
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient2020404Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.entities._autogen_entities.models import AzureOpenAIDeployment
+
+from ._connections_operations import ConnectionsOperations
 
 module_logger = logging.getLogger(__name__)
 
