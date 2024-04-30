@@ -1,19 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-import json
-from typing import Optional, Union
+from typing import Union
 
 from azure.ai.ml import Input
-from azure.ai.ml.constants._common import IndexInputType, DataIndexTypes
-
-from azure.ai.ml.entities import PipelineComponent
-from azure.ai.ml.entities._load_functions import load_component
-from azure.ai.ml.entities._builders.pipeline import Pipeline
-
-from ._index_config import IndexConfig
-from ._ai_search_config import AzureAISearchConfig
+from azure.ai.ml.constants._common import IndexInputType
 
 
 # General todo: need to determine which args are required or optional when parsed out into groups like this.
@@ -31,18 +22,6 @@ class IndexDataSource:
 
     def __init__(self, *, input_type: Union[str, IndexInputType]):
         self.input_type = input_type
-
-    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
-        """Given the general config values, as well as the config values related to the output index, produce
-        and populate a component that creates an index of the specified type from this input config's data source.
-
-        :param index_config: An internal helper object containing all I/O-agnostic variables involved in
-            index creation.
-        :type index_config: ~azure.ai.resources.operations.IndexConfig
-        :param ai_search_index_config: A config object containing all output-related variable for index creation.
-        :type ai_search_index_config:~azure.ai.resources.operations.AzureAISearchConfig
-        """
-        raise NotImplementedError()  # Intended. This base method should never be called.
 
 
 # Field bundle for creating an index from files located in a Git repo.

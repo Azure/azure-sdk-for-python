@@ -7,7 +7,7 @@ import json
 import os
 import tempfile
 from typing import Any, Dict, Iterable, Optional, Union, Callable, List
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 
@@ -230,24 +230,24 @@ class IndexOperations(_ScopeDependentOperations):
         
         :param name: The name of the index to be created.
         :type name: str
-        :param embeddings_model_config: Model config for the embedding model.
-        :type embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
-        :param data_source_citation_url: The URL of the data source.
-        :type data_source_citation_url: Optional[str]
-        :param tokens_per_chunk: The size of chunks to be used for indexing.
-        :type tokens_per_chunk: Optional[int]
-        :param token_overlap_across_chunks: The amount of overlap between chunks.
-        :type token_overlap_across_chunks: Optional[int]
-        :param input_glob: The glob pattern to be used for indexing.
-        :type input_glob: Optional[str]
-        :param document_path_replacement_regex: The regex pattern for replacing document paths.
-        :type document_path_replacement_regex: Optional[str]
-        :param index_config: The configuration for the ACS output.
-        :type index_config: Optional[~azure.ai.ml.entities._indexes.AzureAISearchConfig]
-        :param input_source: The input source for the index.
-        :type input_source: Union[~azure.ai.ml.entities._indexes.IndexDataSource, str]
-        :param input_source_credential: The identity to be used for the index.
-        :type input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        :keyword embeddings_model_config: Model config for the embedding model.
+        :paramtype embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
+        :keyword data_source_citation_url: The URL of the data source.
+        :paramtype data_source_citation_url: Optional[str]
+        :keyword tokens_per_chunk: The size of chunks to be used for indexing.
+        :paramtype tokens_per_chunk: Optional[int]
+        :keyword token_overlap_across_chunks: The amount of overlap between chunks.
+        :paramtype token_overlap_across_chunks: Optional[int]
+        :keyword input_glob: The glob pattern to be used for indexing.
+        :paramtype input_glob: Optional[str]
+        :keyword document_path_replacement_regex: The regex pattern for replacing document paths.
+        :paramtype document_path_replacement_regex: Optional[str]
+        :keyword index_config: The configuration for the ACS output.
+        :paramtype index_config: Optional[~azure.ai.ml.entities._indexes.AzureAISearchConfig]
+        :keyword input_source: The input source for the index.
+        :paramtype input_source: Union[~azure.ai.ml.entities._indexes.IndexDataSource, str]
+        :keyword input_source_credential: The identity to be used for the index.
+        :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :return: If the `source_input` is an AISearchSource, returns an MLIndex object.
             If the `source_input` is a GitSource, returns a created DataIndex Job object.
@@ -275,10 +275,16 @@ class IndexOperations(_ScopeDependentOperations):
             mlindex_config = {}
             connection_args = {
                 "connection_type": "workspace_connection", 
-                "connection": {"id": build_connection_id(embeddings_model_config.connection_name, self._operation_scope)}
+                "connection": {
+                    "id": build_connection_id(
+                        embeddings_model_config.connection_name,
+                        self._operation_scope
+                    )}
             }
             if embeddings_model_config.connection_type == "serverless":
-                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(model_uri=None, credential=None, **connection_args).get_metadata()
+                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(
+                    model_uri=None, credential=None, **connection_args
+                ).get_metadata()
             else:
                 mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
                     build_open_ai_protocol(
@@ -293,7 +299,10 @@ class IndexOperations(_ScopeDependentOperations):
                 "connection": {"id": input_source.ai_search_index_connection_id},
                 "index": input_source.ai_search_index_name,
                 "endpoint": get_target_from_connection(
-                    get_connection_by_id_v2(input_source.ai_search_index_connection_id, credential=self._credential) # TODO: test
+                    get_connection_by_id_v2(
+                        input_source.ai_search_index_connection_id,
+                        credential=self._credential
+                    ) # TODO: test
                 ),
                 "engine": "azure-sdk",
                 "field_mapping": {
@@ -364,7 +373,7 @@ class IndexOperations(_ScopeDependentOperations):
             git_clone_component = ml_registry.components.get("llm_rag_git_clone", label="latest")
 
             # Clone Git Repo and use as input to index_job
-            @pipeline(default_compute="serverless")
+            @pipeline(default_compute="serverless")  # type: ignore[call-overload]
             def git_to_index(
                 git_url,
                 branch_name="",
@@ -405,6 +414,7 @@ class IndexOperations(_ScopeDependentOperations):
             )
 
             return self.index_data(data_index=data_index, identity=input_source_credential)
+
         if isinstance(input_source, str):
             data_index.source.input_data = Data(
                 type="uri_folder",
@@ -412,12 +422,11 @@ class IndexOperations(_ScopeDependentOperations):
             )
 
             return self.index_data(data_index=data_index, identity=input_source_credential)
-        else:
-            raise ValueError(f"Unsupported input source type {type(input_source)}")
+        raise ValueError(f"Unsupported input source type {type(input_source)}")
 
     def index_data(
         self,
-        data_index: "azureml.rag.dataindex.DataIndex",
+        data_index: "azureml.rag.dataindex.DataIndex",  # type: ignore[name-defined]
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
         compute: str = "serverless",
         serverless_instance_type: Optional[str] = None,

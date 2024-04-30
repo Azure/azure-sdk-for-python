@@ -12,29 +12,29 @@ class ModelConfiguration:
     """Configuration for a embedding model.
     
     :param api_base: The base URL for the API.
-    :type api_base: str
+    :type api_base: Optional[str]
     :param api_key: The API key.
-    :type api_key: str
+    :type api_key: Optional[str]
     :param api_version: The API version.
     :type api_version: Optional[str]
     :param model_name: The name of the model.
-    :type model_name: str
+    :type model_name: Optional[str]
     :param model_name: The deployment name of the model.
-    :type model_name: str
+    :type model_name: Optional[str]
     :param connection_name: The name of the workspace connection of this model.
-    :type connection_name: str
+    :type connection_name: Optional[str]
     :param connection_type: The type of the workspace connection of this model.
-    :type connection_type: str
+    :type connection_type: Optional[str]
     :param model_kwargs: Additional keyword arguments for the model.
     :type model_kwargs: Dict[str, Any]
     """
-    api_base: str
-    api_key: str
+    api_base: Optional[str]
+    api_key: Optional[str]
     api_version: Optional[str]
-    connection_name: str
-    connection_type: str
-    model_name: str
-    deployment_name: str
+    connection_name: Optional[str]
+    connection_type: Optional[str]
+    model_name: Optional[str]
+    deployment_name: Optional[str]
     model_kwargs: Dict[str, Any]
 
     @staticmethod
@@ -48,12 +48,12 @@ class ModelConfiguration:
         
         :param connection: The Connection object.
         :type connection: ~azure.ai.ml.entities.Connection
-        :param model_name: The name of the model.
-        :type model_name: str
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
-        :param model_kwargs: Additional keyword arguments for the model.
-        :type model_kwargs: Dict[str, Any]
+        :keyword model_name: The name of the model.
+        :paramtype model_name: str
+        :keyword deployment_name: The name of the deployment.
+        :paramtype deployment_name: str
+        :keyword model_kwargs: Additional keyword arguments for the model.
+        :paramtype model_kwargs: Dict[str, Any]
         :return: The model configuration.
         :rtype: ~azure.ai.ml.entities._indexes.entities.ModelConfiguration
         :raises TypeError: If the connection is not an AzureOpenAIConnection.
@@ -61,10 +61,10 @@ class ModelConfiguration:
         """
         if isinstance(connection, AzureOpenAIConnection) or camel_to_snake(connection.type) == "azure_open_ai":
             connection_type = "azure_open_ai"
-            api_version = connection.api_version
+            api_version = connection.api_version  # type: ignore[attr-defined]
             if not model_name or not deployment_name:
                 raise ValueError("Please specify model_name and deployment_name.")
-        elif connection.type.lower() == "serverless":
+        elif connection.type and connection.type.lower() == "serverless":
             connection_type = "serverless"
             api_version = None
             if not connection.id:
@@ -79,8 +79,8 @@ class ModelConfiguration:
         if isinstance(connection.credentials, AadCredentialConfiguration):
             key = None
         else:
-            key = connection.credentials.get("key")
-            if key is None and connection_type == "azure_open_ai": 
+            key = connection.credentials.get("key")  # type: ignore[union-attr]
+            if key is None and connection_type == "azure_open_ai":
                 import os
                 if "AZURE_OPENAI_API_KEY" in os.environ:
                     key = os.getenv("AZURE_OPENAI_API_KEY")
