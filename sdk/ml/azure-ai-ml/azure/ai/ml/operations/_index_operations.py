@@ -206,12 +206,12 @@ class IndexOperations(_ScopeDependentOperations):
 
         return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls)
 
+    # pylint: disable=too-many-locals
     def build_index(
         self,
         *,
         ######## required args ##########
         name: str,
-        vector_store: str,
         embeddings_model_config: ModelConfiguration,
         ######## chunking information ##########
         data_source_citation_url: Optional[str] = None,
@@ -225,14 +225,13 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-        _dry_run: bool = False,
     ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
         
         :param name: The name of the index to be created.
         :type name: str
-        :param vector_store: The name of the vector store to be used for the index.
-        :type vector_store: str
+        :param embeddings_model_config: Model config for the embedding model.
+        :type embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
         :param data_source_citation_url: The URL of the data source.
         :type data_source_citation_url: Optional[str]
         :param tokens_per_chunk: The size of chunks to be used for indexing.
@@ -241,14 +240,8 @@ class IndexOperations(_ScopeDependentOperations):
         :type token_overlap_across_chunks: Optional[int]
         :param input_glob: The glob pattern to be used for indexing.
         :type input_glob: Optional[str]
-        :param max_sample_files: The maximum number of sample files to be used for indexing.
-        :type max_sample_files: Optional[int]
-        :param chunk_prepend_summary: Whether to prepend a summary to each chunk.
-        :type chunk_prepend_summary: Optional[bool]
         :param document_path_replacement_regex: The regex pattern for replacing document paths.
         :type document_path_replacement_regex: Optional[str]
-        :param embeddings_model_config: The configuration for the embedding model.
-        :type embeddings_model_config: Optional[~azure.ai.ml.entities._indexes.ModelConfiguration]
         :param index_config: The configuration for the ACS output.
         :type index_config: Optional[~azure.ai.ml.entities._indexes.AzureAISearchConfig]
         :param input_source: The input source for the index.
@@ -256,14 +249,13 @@ class IndexOperations(_ScopeDependentOperations):
         :param input_source_credential: The identity to be used for the index.
         :type input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
-        :param _dry_run: Whether to run the operation as a dry run. Defaults to False.
-        :type _dry_run: bool
         :return: If the `source_input` is an AISearchSource, returns an MLIndex object.
             If the `source_input` is a GitSource, returns a created DataIndex Job object.
         :rtype: Union[~azure.ai.ml.entities._indexes.MLIndex, ~azure.ai.ml.entities.Job]
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
+        # pylint: disable = no-name-in-module, import-error
         from azureml.rag.embeddings import EmbeddingsContainer
         from azureml.rag.dataindex import (
             CitationRegex,
@@ -276,6 +268,7 @@ class IndexOperations(_ScopeDependentOperations):
         from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 
         if isinstance(input_source, AISearchSource):
+            # pylint: disable = no-name-in-module, import-error
             from azureml.rag.utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
@@ -316,7 +309,7 @@ class IndexOperations(_ScopeDependentOperations):
 
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_file = os.path.join(temp_dir, "MLIndex")
-                with open(temp_file, "w") as f:
+                with open(temp_file, "w") as f:  # pylint: disable=unspecified-encoding
                     yaml.dump(mlindex_config, f)
 
                 mlindex = Index(name=name, path=temp_dir, stage="Development", version="1")
@@ -364,6 +357,7 @@ class IndexOperations(_ScopeDependentOperations):
         if isinstance(input_source, GitSource):
             from azure.ai.ml.dsl import pipeline
             from azure.ai.ml import MLClient
+            # pylint: disable = no-name-in-module, import-error
             from azureml.rag.dataindex import index_data as index_data_func
 
             ml_registry = MLClient(credential=self._credential, registry_name="azureml")
@@ -411,7 +405,7 @@ class IndexOperations(_ScopeDependentOperations):
             )
 
             return self.index_data(data_index=data_index, identity=input_source_credential)
-        elif isinstance(input_source, str):
+        if isinstance(input_source, str):
             data_index.source.input_data = Data(
                 type="uri_folder",
                 path=input_source,
@@ -456,6 +450,7 @@ class IndexOperations(_ScopeDependentOperations):
             _validate_auto_delete_setting_in_data_output,
             _validate_workspace_managed_datastore,
         )
+        # pylint: disable = no-name-in-module, import-error
         from azureml.rag.dataindex import index_data as index_data_func
 
         default_name = "data_index_" + data_index.name
@@ -508,5 +503,4 @@ class IndexOperations(_ScopeDependentOperations):
             return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
                 job=index_pipeline, skip_validation=True, **kwargs
             )
-
         return index_pipeline
