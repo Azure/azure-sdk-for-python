@@ -646,7 +646,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if not endpoint.endswith("/"):
                         endpoint += "/"
                     feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-                    if feature_flag.label:
+                    if feature_flag.label and not feature_flag.label.isspace():
                         feature_flag_reference += f"?label={feature_flag.label}"
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(

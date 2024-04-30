@@ -530,7 +530,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     @staticmethod
     def _calculate_feature_id(key, label):
         basic_value = f"{key}\n"
-        if label and not label.isspace() and label != "":
+        if label and not label.isspace():
             basic_value += f"{label}"
         feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
         encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
@@ -558,7 +558,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         endpoint += "/"
 
                     feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-                    if feature_flag.label:
+                    if feature_flag.label and not feature_flag.label.isspace():
                         feature_flag_reference += f"?label={feature_flag.label}"
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
