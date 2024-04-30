@@ -335,7 +335,6 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             hostname=self._address.hostname,
             **kwargs,
         )
-        print(self._config.use_tls)
         self._debug = self._config.network_tracing
         kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
         self._conn_manager = get_connection_manager(
