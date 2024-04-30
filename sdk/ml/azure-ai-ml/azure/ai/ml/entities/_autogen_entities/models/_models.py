@@ -79,8 +79,6 @@ class MarketplaceSubscription(_model_base.Model):
      \"deleting\", \"succeeded\", \"failed\", \"updating\", and \"canceled\"."""
     id: Optional[str] = rest_field(visibility=["read"])
     """ARM resource id of the marketplace subscription."""
-    system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
-    """System data of the marketplace subscription."""
 
     @overload
     def __init__(
