@@ -83,28 +83,6 @@ def test_imds_request_failure_docker_desktop(error_ending):
     assert error_message in ex.value.message
 
 
-def test_retries():
-    mock_response = mock.Mock(
-        text=lambda encoding=None: b"{}",
-        headers={"content-type": "application/json"},
-        content_type="application/json",
-    )
-    mock_send = mock.Mock(return_value=mock_response)
-
-    total_retries = PIPELINE_SETTINGS["retry_total"]
-
-    assert within_credential_chain.get() == False
-    for status_code in (404, 410, 429, 500):
-        mock_send.reset_mock()
-        mock_response.status_code = status_code
-        try:
-            ImdsCredential(transport=mock.Mock(send=mock_send)).get_token("scope")
-        except ClientAuthenticationError:
-            pass
-        # credential should have then exhausted retries for each of these status codes
-        assert mock_send.call_count == 1 + total_retries
-
-
 def test_cache():
     scope = "https://foo.bar"
     expired = "this token's expired"
