@@ -376,7 +376,9 @@ class MonitoringSignal(RestTranslatableMixin):
         self.properties = properties
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringSignalBase) -> Optional[  # pylint: disable=too-many-return-statements
+    def _from_rest_object(
+        cls, obj: RestMonitoringSignalBase
+    ) -> Optional[  # pylint: disable=too-many-return-statements
         Union[
             "DataDriftSignal",
             "DataQualitySignal",

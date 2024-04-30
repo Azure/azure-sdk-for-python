@@ -41,7 +41,7 @@ def cast_to_specific_search_space(
         validate_searchspace_args(input.__dict__)
         specific_search_space = class_name._from_search_space_object(input)  # pylint: disable=protected-access
 
-    res: Union["ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"] = (
-        specific_search_space
-    )
+    res: Union[
+        "ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"
+    ] = specific_search_space
     return res

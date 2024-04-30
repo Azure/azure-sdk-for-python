@@ -187,7 +187,7 @@ def load_from_autogen_entity(cls, source: Union[str, PathLike, IO[AnyStr]], **kw
     add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
     entity = cls(loaded_dict)
     try:
-        entity._validate() # pylint: disable=protected-access
+        entity._validate()  # pylint: disable=protected-access
     except ValueError as e:
         validation_result = ValidationResultBuilder.from_single_message(singular_error_message=str(e))
         validation_result.try_raise()
@@ -231,7 +231,7 @@ def load_job(
 def load_serverless_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None, # pylint: disable=unused-argument
+    relative_origin: Optional[str] = None,  # pylint: disable=unused-argument
     **kwargs: Any,
 ) -> ServerlessEndpoint:
     return load_from_autogen_entity(ServerlessEndpoint, source, **kwargs)
@@ -241,7 +241,7 @@ def load_serverless_endpoint(
 def load_marketplace_subscription(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: Optional[str] = None, # pylint: disable=unused-argument
+    relative_origin: Optional[str] = None,  # pylint: disable=unused-argument
     **kwargs: Any,
 ) -> MarketplaceSubscription:
     return load_from_autogen_entity(MarketplaceSubscription, source, **kwargs)

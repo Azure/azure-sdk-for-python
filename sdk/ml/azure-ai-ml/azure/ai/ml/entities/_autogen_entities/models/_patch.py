@@ -123,10 +123,13 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
         return d
 
 
-ServerlessEndpoint.__doc__ += _ServerlessEndpoint.__doc__.strip() + """
+ServerlessEndpoint.__doc__ += (
+    _ServerlessEndpoint.__doc__.strip()
+    + """
     :ivar system_data: System data of the endpoint.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
 """
+)
 
 
 @experimental
@@ -162,10 +165,13 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
         return d
 
 
-MarketplaceSubscription.__doc__ = _MarketplaceSubscription.__doc__.strip() + """
+MarketplaceSubscription.__doc__ = (
+    _MarketplaceSubscription.__doc__.strip()
+    + """
     :ivar system_data: System data of the marketplace subscription.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
 """
+)
 
 
 def patch_sdk():

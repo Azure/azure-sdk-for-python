@@ -29,7 +29,8 @@ class Output(_InputOutputBase):
         mode: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs: Any,
-    ): ...
+    ):
+        ...
 
     @overload
     def __init__(

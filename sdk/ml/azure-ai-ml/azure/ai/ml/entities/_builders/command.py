@@ -958,13 +958,15 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
 
 @overload
-def _resolve_job_services(services: Optional[Dict]): ...
+def _resolve_job_services(services: Optional[Dict]):
+    ...
 
 
 @overload
 def _resolve_job_services(
     services: Dict[str, Union[JobServiceBase, Dict]],
-) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]: ...
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
+    ...
 
 
 def _resolve_job_services(

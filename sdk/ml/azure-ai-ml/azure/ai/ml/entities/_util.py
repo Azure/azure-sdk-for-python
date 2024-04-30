@@ -456,13 +456,15 @@ def extract_label(input_str: str) -> Union[Tuple, List]:
 
 
 @overload
-def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None: ...
+def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None:
+    ...
 
 
 @overload
 def resolve_pipeline_parameters(
     pipeline_parameters: Dict[str, T], remove_empty: bool = False
-) -> Dict[str, Union[T, str, "NodeOutput"]]: ...
+) -> Dict[str, Union[T, str, "NodeOutput"]]:
+    ...
 
 
 def resolve_pipeline_parameters(pipeline_parameters: Optional[Dict], remove_empty: bool = False) -> Optional[Dict]:

@@ -150,11 +150,7 @@ class WorkspaceOperationsBase(ABC):
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        (
-            template,
-            param,
-            resources_being_deployed,
-        ) = self._populate_arm_parameters(
+        (template, param, resources_being_deployed,) = self._populate_arm_parameters(
             workspace,
             endpoint_resource_id=endpoint_resource_id,
             endpoint_kind=endpoint_kind,
