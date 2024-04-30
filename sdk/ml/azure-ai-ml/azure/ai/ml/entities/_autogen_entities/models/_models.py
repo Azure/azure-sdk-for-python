@@ -54,5 +54,3 @@ class AzureOpenAIDeployment(_model_base.Model):
     """The target URL of the AOAI resource for the deployment."""
     id: Optional[str] = rest_field(visibility=["read"])
     """The ARM resource id of the deployment."""
-    system_data: Optional["_models.SystemData"] = rest_field(visibility=["read"])
-    """System data of the deployment."""
