@@ -250,13 +250,10 @@ input-file:
 output-folder: $(python-sdks-folder)/v2024_01_01_preview
 ```
 
-<<<<<<< HEAD
-=======
 ### Tag: v2024-04-01-preview
 
 These settings apply only when `--tag=v2024-04-01-preview` is specified on the command line.
 
->>>>>>> d2e868ceda25d4483e306ea166693af80ef229a0
 ```yaml $(tag) == 'v2024-04-01-preview'
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-04-01-preview/machineLearningServices.json
@@ -267,10 +264,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2024_04_01_preview
 ```
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d2e868ceda25d4483e306ea166693af80ef229a0
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.
