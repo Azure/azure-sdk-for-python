@@ -4,7 +4,7 @@
 ### Features Added
 - Support for Bring Your Own Storage recording option
 - Support for PauseOnStart Recording Option 
-- Support for Recording state change with Recording Kind
+- Support for Recording state change with new Recording Kind's
  
 ### Other Changes
 - Support for MicrosoftTeamsAppIdentifier CommunicationIdentifier
