@@ -48,6 +48,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -66,6 +67,8 @@ from azure.ai.ml.entities import (
     Registry,
     Schedule,
     Workspace,
+    ServerlessEndpoint,
+    MarketplaceSubscription,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -85,6 +88,8 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     ConnectionsOperations,
     WorkspaceOperations,
+    ServerlessEndpointOperations,
+    MarketplaceSubscriptionOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -682,9 +687,22 @@ class MLClient:
             **ops_kwargs,  # type: ignore[arg-type]
         )
 
+        self._serverless_endpoints = ServerlessEndpointOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+            self._operation_container,
+        )
+        self._marketplace_subscriptions = MarketplaceSubscriptionOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+        )
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+        self._operation_container.add(AzureMLResourceType.SERVERLESS_ENDPOINT, self._serverless_endpoints)
+        self._operation_container.add(AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions)
 
     @classmethod
     def from_config(
@@ -996,6 +1014,25 @@ class MLClient:
         return self._schedules
 
     @property
+    @experimental
+    def serverless_endpoints(self) -> ServerlessEndpointOperations:
+        """A collection of serverless endpoint related operations.
+
+        :return: Serverless endpoint operations.
+        :rtype: ~azure.ai.ml.operations.ServerlessEndpointOperations
+        """
+        return self._serverless_endpoints
+
+    @property
+    @experimental
+    def marketplace_subscriptions(self) -> MarketplaceSubscriptionOperations:
+        """A collection of marketplace subscription related operations.
+
+        :return: Marketplace subscription operations.
+        :rtype: ~azure.ai.ml.operations.MarketplaceSubscriptionOperations
+        """
+        return self._marketplace_subscriptions
+
     def indexes(self) -> IndexOperations:
         """A collection of index related operations.
 
@@ -1281,3 +1318,15 @@ def _(entity: PipelineComponentBatchDeployment, operations, *args, **kwargs):
 def _(entity: Schedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(ServerlessEndpoint)
+def _(entity: ServerlessEndpoint, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating serverless endpoints")
+    return operations[AzureMLResourceType.SERVERLESS_ENDPOINT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(MarketplaceSubscription)
+def _(entity: MarketplaceSubscription, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating marketplace subscriptions")
+    return operations[AzureMLResourceType.MARKETPLACE_SUBSCRIPTION].begin_create_or_update(entity, **kwargs)
