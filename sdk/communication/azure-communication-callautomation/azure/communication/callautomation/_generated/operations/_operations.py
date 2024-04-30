@@ -776,6 +776,7 @@ def build_call_recording_resume_recording_request(  # pylint: disable=name-too-l
 class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
     AzureCommunicationCallAutomationServiceMixinABC
 ):
+
     @overload
     def create_call(
         self, create_call_request: _models.CreateCallRequest, *, content_type: str = "application/json", **kwargs: Any

@@ -67,6 +67,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
     AzureCommunicationCallAutomationServiceMixinABC
 ):
+
     @overload
     async def create_call(
         self, create_call_request: _models.CreateCallRequest, *, content_type: str = "application/json", **kwargs: Any
