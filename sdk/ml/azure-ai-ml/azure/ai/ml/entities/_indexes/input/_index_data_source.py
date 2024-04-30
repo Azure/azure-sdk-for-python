@@ -65,56 +65,6 @@ class GitSource(IndexDataSource):
         self.git_connection_id = git_connection_id
         super().__init__(input_type=IndexInputType.GIT)
 
-    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
-        curr_file_path = os.path.dirname(__file__)
-        if ai_search_index_config:
-            ai_search_index_name = ai_search_index_config.ai_search_index_name
-            ai_search_index_import_config = json.dumps({"index_name": ai_search_index_name})
-            git_create_or_update_acs_component = load_component(
-                os.path.join(curr_file_path, "component-configs", "git_create_or_update_acs_index.yml")
-                )
-            rag_job_component: Pipeline =  git_create_or_update_acs_component(
-                embeddings_dataset_name=index_config.output_index_name,
-                git_connection=self.git_connection_id,
-                git_repository=self.git_url,
-                branch_name=self.git_branch_name,
-                data_source_url=index_config.data_source_url,
-                embeddings_model=index_config.embeddings_model,
-                embedding_connection=index_config.aoai_connection_id,
-                chunk_size=index_config.chunk_size,
-                chunk_overlap=index_config.chunk_overlap,
-                input_glob=index_config.input_glob,
-                max_sample_files=index_config.max_sample_files,
-                chunk_prepend_summary=index_config.chunk_prepend_summary,
-                document_path_replacement_regex=index_config.document_path_replacement_regex,
-                embeddings_container=index_config.embeddings_container,
-                acs_connection=ai_search_index_config.ai_search_index_connection_id,
-                acs_config=ai_search_index_import_config
-            )
-            return rag_job_component
-        else:
-            data_to_faiss_component: PipelineComponent = load_component(
-                os.path.join(curr_file_path, "component-configs", "git_to_faiss.yml")
-            )
-            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
-                embeddings_dataset_name=index_config.output_index_name,
-                git_connection=self.git_connection_id,
-                git_repository=self.git_url,
-                branch_name=self.git_branch_name,
-                data_source_url=index_config.data_source_url,
-                embeddings_model=index_config.embeddings_model,
-                embedding_connection=index_config.aoai_connection_id,
-                chunk_size=index_config.chunk_size,
-                chunk_overlap=index_config.chunk_overlap,
-                input_glob=index_config.input_glob,
-                max_sample_files=index_config.max_sample_files,
-                chunk_prepend_summary=index_config.chunk_prepend_summary,
-                document_path_replacement_regex=index_config.document_path_replacement_regex,
-                embeddings_container=index_config.embeddings_container,
-            )
-            rag_job_component.properties["azureml.mlIndexAssetName"] = index_config.output_index_name
-            rag_job_component.properties["azureml.mlIndexAssetKind"] = DataIndexTypes.FAISS
-            return rag_job_component
 
 class AISearchSource(IndexDataSource):
     """Config class for creating an ML index from an OpenAI <thing>.
@@ -153,26 +103,6 @@ class AISearchSource(IndexDataSource):
         self.num_docs_to_import = num_docs_to_import
         super().__init__(input_type=IndexInputType.AOAI)
 
-    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
-        curr_file_path = os.path.dirname(__file__)
-        ai_search_index_import_config = json.dumps({"index_name": self.ai_search_index_name,
-                                        "content_key": self.ai_search_index_content_key,
-                                        "embedding_key": self.ai_search_index_embedding_key,
-                                        "title_key": self.ai_search_index_title_key,
-                                        "metadata_key": self.ai_search_index_metadata_key,
-                                        "embedding_model_uri": index_config.embeddings_model,
-                                        })
-        import_acs_component = load_component(os.path.join(curr_file_path, "component-configs", "import_acs_index.yml"))
-
-        rag_job_component: Pipeline =  import_acs_component(
-            embeddings_dataset_name=index_config.output_index_name,
-            embedding_connection=index_config.aoai_connection_id,
-            num_docs_to_import=self.num_docs_to_import,
-            acs_import_connection=self.ai_search_index_connection_id,
-            acs_import_config=ai_search_index_import_config,
-            data_source_url=index_config.data_source_url
-        )
-        return rag_job_component
 
 class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
@@ -184,51 +114,3 @@ class LocalSource(IndexDataSource):
     def __init__(self, *, input_data: str):  # todo Make sure type of input_data is correct
         self.input_data = Input(type="uri_folder", path=input_data)
         super().__init__(input_type=IndexInputType.LOCAL)
-
-    def _createComponent(self, index_config: IndexConfig, ai_search_index_config: Optional[AzureAISearchConfig] = None) -> Pipeline:
-        curr_file_path = os.path.dirname(__file__)
-        if ai_search_index_config:
-            ai_search_index_name = ai_search_index_config.ai_search_index_name
-            ai_search_index_import_config = json.dumps({"index_name": ai_search_index_name})
-            git_create_or_update_acs_component = load_component(
-                os.path.join(curr_file_path, "component-configs", "dataset_create_or_update_acs_index.yml")
-                )
-            rag_job_component: Pipeline =  git_create_or_update_acs_component(
-                embeddings_dataset_name=index_config.output_index_name,
-                data_source_url=index_config.data_source_url,
-                input_data=self.input_data,
-                embeddings_model=index_config.embeddings_model,
-                embedding_connection=index_config.aoai_connection_id,
-                chunk_size=index_config.chunk_size,
-                chunk_overlap=index_config.chunk_overlap,
-                input_glob=index_config.input_glob,
-                max_sample_files=index_config.max_sample_files,
-                chunk_prepend_summary=index_config.chunk_prepend_summary,
-                document_path_replacement_regex=index_config.document_path_replacement_regex,
-                embeddings_container=index_config.embeddings_container,
-                acs_connection=ai_search_index_config.ai_search_index_connection_id,
-                acs_config=ai_search_index_import_config
-            )
-            return rag_job_component
-        else:
-            data_to_faiss_component: PipelineComponent = load_component(
-                os.path.join(curr_file_path, "component-configs", "data_to_faiss.yml")
-            )
-            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
-                embeddings_dataset_name=index_config.output_index_name,
-                data_source_url=index_config.data_source_url,
-                input_data=self.input_data,
-                embeddings_model=index_config.embeddings_model,
-                embedding_connection=index_config.aoai_connection_id,
-                chunk_size=index_config.chunk_size,
-                chunk_overlap=index_config.chunk_overlap,
-                input_glob=index_config.input_glob,
-                max_sample_files=index_config.max_sample_files,
-                chunk_prepend_summary=index_config.chunk_prepend_summary,
-                document_path_replacement_regex=index_config.document_path_replacement_regex,
-                embeddings_container=index_config.embeddings_container,
-            )
-            rag_job_component.properties["azureml.mlIndexAssetName"] = index_config.output_index_name
-            rag_job_component.properties["azureml.mlIndexAssetKind"] = DataIndexTypes.FAISS
-            rag_job_component.properties['azureml.mlIndexAssetSource'] = 'Dataset'
-            return rag_job_component
