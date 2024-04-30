@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed pyright error for `MsalCredential` ([#35184](https://github.com/Azure/azure-sdk-for-python/pull/35184))
+- Fixed typing errors when certain credentials are used as context managers. ([#35415](https://github.com/Azure/azure-sdk-for-python/pull/35415))
 
 ### Other Changes
 
