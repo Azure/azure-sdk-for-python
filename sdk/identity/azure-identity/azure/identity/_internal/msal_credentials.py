@@ -60,7 +60,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         super(MsalCredential, self).__init__()
 
-    def __enter__(self) -> "Self":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
