@@ -1,7 +1,7 @@
 ## _Disclaimer_
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
-# Azure Cosmos DB SQL API client library for Python
+# Azure Cosmos DB SQL API client library for Python - Feature Branch
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
@@ -175,7 +175,7 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### Using The Async Client as a Workaround to Bulk
-While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][cosmos_concurrency_sample] we have developed as a reference for a possible workaround. 
+While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][concurrency_sample] we have developed as a reference for a possible workaround. 
 >[WARNING]
 > Using the asynchronous client for concurrent operations like shown in this sample will consume a lot of RUs very fast. We **strongly recommend** testing this out against the cosmos emulator first to verify your code works well and avoid incurring charges.
 
@@ -627,6 +627,72 @@ If there is a failure for an operation within the batch, the SDK will raise a `C
 as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
+
+### Private Preview - Vector Embeddings and Vector Indexes
+We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
+search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
+before you can use them.
+
+Each vector embedding should have a path to the relevant vector field in your items being stored, a supported data type
+(float32, int8, uint8), the vector's dimensions (positive int <=1536), and the distance function being used for that embedding.
+A sample vector embedding policy would look like this:
+```python
+vector_embedding_policy = {
+    "vectorEmbeddings": [
+        {
+            "path": "/vector1",
+            "dataType": "float32",
+            "dimensions": 1000,
+            "distanceFunction": "euclidean"
+        },
+        {
+            "path": "/vector2",
+            "dataType": "int8",
+            "dimensions": 200,
+            "distanceFunction": "dotproduct"
+        },
+        {
+            "path": "/vector3",
+            "dataType": "uint8",
+            "dimensions": 400,
+            "distanceFunction": "cosine"
+        }
+    ]
+}
+```
+
+Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
+the path to the relevant field to be used, and the type of index from the possible options (flat, quantizedFlat, or diskANN).
+A sample indexing policy with vector indexes would look like this:
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "compositeIndexes": [
+            [
+                {"path": "/numberField", "order": "ascending"},
+                {"path": "/stringField", "order": "descending"}
+            ]
+        ],
+        "spatialIndexes": [
+            {"path": "/location/*", "types": [
+                "Point",
+                "Polygon"]}
+        ],
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "flat"},
+            {"path": "/vector2", "type": "quantizedFlat"},
+            {"path": "/vector3", "type": "diskANN"}
+        ]
+    }
+```
+You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
+The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
+```python
+database.create_container(id=container_id, partition_key=PartitionKey(path="/id"),
+                          indexing_policy=indexing_policy, vector_embedding_policy=vector_embedding_policy)
+```
+***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
 
 ## Troubleshooting
 
