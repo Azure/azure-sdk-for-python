@@ -61,11 +61,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple[
-        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
-        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
-        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
-        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
-        Optional[Union["uamqp_ConnectionState", pyamqp_ConnectionState]]]
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]]
     TRANSPORT_IDENTIFIER: str
 
     # define symbols
@@ -78,7 +78,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_message(**kwargs: Any) -> Union[uamqp_Message, pyamqp_Message]:
+    def build_message(**kwargs: Any) -> Union["uamqp_Message", "pyamqp_Message"]:
         """
         Creates a uamqp.Message or pyamqp.Message with given arguments.
         :rtype: ~uamqp.Message or ~pyamqp.message.Message
@@ -86,7 +86,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_batch_message(**kwargs: Any) -> Union[uamqp_BatchMessage, pyamqp_BatchMessage]:
+    def build_batch_message(**kwargs: Any) -> Union["uamqp_BatchMessage", "pyamqp_BatchMessage"]:
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
         :rtype: ~uamqp.BatchMessage or ~pyamqp.message.BatchMessage
@@ -94,7 +94,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def to_outgoing_amqp_message(annotated_message: AmqpAnnotatedMessage) -> Union[uamqp_Message, pyamqp_Message]:
+    def to_outgoing_amqp_message(annotated_message: AmqpAnnotatedMessage) -> Union["uamqp_Message", "pyamqp_Message"]:
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
@@ -104,9 +104,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def update_message_app_properties(
-        message: Union[uamqp_Message, pyamqp_Message],
+        message: Union["uamqp_Message", "pyamqp_Message"],
         key: Union[str, bytes], value: str
-    ) -> Union[uamqp_Message, pyamqp_Message]:
+    ) -> Union["uamqp_Message", "pyamqp_Message"]:
         """
         Adds the given key/value to the application properties of the message.
         :param ~uamqp.Message or ~pyamqp.message.Message message: Message.
@@ -117,7 +117,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_message_encoded_size(message: Union[uamqp_Message, pyamqp_Message]) -> int:
+    def get_message_encoded_size(message: Union["uamqp_Message", 'pyamqp_Message']) -> int:
         """
         Gets the message encoded size given an underlying Message.
         :param ~uamqp.Message or ~pyamqp.message.Message message: Message to get encoded size of.
@@ -126,7 +126,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_remote_max_message_size(handler: Union[uamqp_AMQPClient, pyamqp_AMQPClient]) -> int:
+    def get_remote_max_message_size(handler: Union["uamqp_AMQPClient", "pyamqp_AMQPClient"]) -> int:
         """
         Returns max peer message size.
         :param ~pyamqp.AMQPClient or ~uamqp.AMQPClient handler: Client to get remote max message size on link from.
@@ -155,7 +155,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def create_connection(
         *,
         endpoint: str,
-        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
         container_id: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
@@ -166,7 +166,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         debug: bool,
         encoding: str,
         **kwargs: Any
-    ) -> Union[uamqp_Connection, pyamqp_Connection]:
+    ) -> Union["uamqp_Connection", "pyamqp_Connection"]:
         """
         Creates and returns the uamqp Connection object.
         :keyword str endpoint: The endpoint, used by pyamqp.
@@ -184,7 +184,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def close_connection(connection: Union[uamqp_Connection, pyamqp_Connection]):
+    def close_connection(connection: Union["uamqp_Connection", "pyamqp_Connection"]):
         """
         Closes existing connection.
         :param connection: uamqp or pyamqp Connection.
@@ -194,8 +194,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def get_connection_state(
-        connection: Union[uamqp_Connection, pyamqp_Connection]
-    ) -> Union["uamqp_ConnectionState", pyamqp_ConnectionState]:
+        connection: Union["uamqp_Connection", "pyamqp_Connection"]
+    ) -> Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]:
         """
         Gets connection state.
         :param connection: uamqp or pyamqp Connection.
@@ -208,7 +208,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         *,
         config: Configuration,
         target: str,
-        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,
@@ -252,7 +252,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def set_message_partition_key(
-        message: Union[uamqp_Message, pyamqp_Message],
+        message: Union["uamqp_Message", "pyamqp_Message"],
         partition_key: Optional[Union[str, bytes]],
         **kwargs: Any
     ):
@@ -265,7 +265,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def add_batch(
-        event_data_batch: Union[uamqp_BatchMessage, pyamqp_BatchMessage],
+        event_data_batch: Union["uamqp_BatchMessage", "pyamqp_BatchMessage"],
         outgoing_event_data: EventData,
         event_data: EventData
     ):
@@ -278,7 +278,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source: Union[uamqp_Source, pyamqp_Source], offset: int, selector: bytes):
+    def create_source(source: Union["uamqp_Source", "pyamqp_Source"], offset: int, selector: bytes):
         """
         Creates and returns the Source.
 
@@ -292,8 +292,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def create_receive_client(
         *,
         config: Configuration,
-        source: Union[uamqp_Source, pyamqp_Source],
-        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        source: Union["uamqp_Source", "pyamqp_Source"],
+        auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,
@@ -332,9 +332,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @abstractmethod
     def open_receive_client(
         *,
-        handler: Union[uamqp_ReceiveClient, pyamqp_ReceiveClient],
+        handler: Union["uamqp_ReceiveClient", "pyamqp_ReceiveClient"],
         client: EventHubConsumerClient,
-        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]
+        auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]
     ):
         """
         Opens the receive client.
@@ -378,7 +378,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @abstractmethod
     def create_mgmt_client(
         address: _Address,
-        mgmt_auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        mgmt_auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
         config: Configuration
     ):
         """
@@ -390,7 +390,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_updated_token(mgmt_auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]):
+    def get_updated_token(mgmt_auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]):
         """
         Return updated auth token.
         :param ~pyamqp.authentication.JWTTokenAuth or uamqp.authentication.JWTTokenAuth mgmt_auth: Auth.
@@ -399,7 +399,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def mgmt_client_request(
-        mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient],
+        mgmt_client: Union["uamqp_AMQPClient", "pyamqp_AMQPClient"],
         mgmt_msg: str,
         *,
         operation: bytes,
