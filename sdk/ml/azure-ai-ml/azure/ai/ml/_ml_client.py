@@ -37,6 +37,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 # Same object, but was renamed starting in v2023_08_01_preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -85,7 +86,7 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    WorkspaceConnectionsOperations,
+    ConnectionsOperations,
     WorkspaceOperations,
     ServerlessEndpointOperations,
     MarketplaceSubscriptionOperations,
@@ -443,6 +444,17 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2024_preview = ServiceClient042024Preview(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_08_2023_preview,
@@ -472,10 +484,10 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
-        self._workspace_connections = WorkspaceConnectionsOperations(
+        self._connections = ConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_08_2023_preview,
+            self._service_client_04_2024_preview,
             self._operation_container,
             self._credential,
         )
@@ -716,7 +728,8 @@ class MLClient:
             }
 
         Then, you can use this method to load the same workspace in different Python notebooks or projects without
-        retyping the workspace ARM properties.
+        retyping the workspace ARM properties. Note that `from_config` accepts the same kwargs as the main
+        `~azure.ai.ml.MLClient` constructor such as `cloud`.
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
@@ -726,8 +739,6 @@ class MLClient:
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
         :paramtype file_name: Optional[str]
-        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
-        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -886,13 +897,13 @@ class MLClient:
         return self._featurestoreentities
 
     @property
-    def connections(self) -> WorkspaceConnectionsOperations:
-        """A collection of workspace connection related operations.
+    def connections(self) -> ConnectionsOperations:
+        """A collection of connection related operations.
 
-        :return: Workspace Connections operations
-        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
+        :return: Connections operations
+        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
         """
-        return self._workspace_connections
+        return self._connections
 
     @property
     def jobs(self) -> JobOperations:

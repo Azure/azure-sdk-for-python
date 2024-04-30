@@ -36,7 +36,7 @@ from .entities._load_functions import (
     load_serverless_endpoint,
     load_registry,
     load_workspace,
-    load_workspace_connection,
+    load_connection,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ __all__ = [
     "load_online_endpoint",
     "load_workspace",
     "load_registry",
-    "load_workspace_connection",
+    "load_connection",
     "load_model_package",
     "load_marketplace_subscription",
     "load_serverless_endpoint",

@@ -43,6 +43,7 @@ from azure.ai.ml.constants._common import (
     DefaultOpenEncoding,
     WorkspaceDiscoveryUrlKey,
 )
+from azure.ai.ml.exceptions import MlException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -166,8 +167,8 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
 
     :keyword requests_pipeline: Pipeline to base new one off of.
     :paramtype requests_pipeline: HttpPipeline
-    :keyword retry: Number of retries. Defaults to 3
-    :paramtype retry: int
+    :keyword retries: Number of retries. Defaults to 3.
+    :paramtype retries: int
     :return: Pipeline identical to provided one, except with a new retry policy
     :rtype: HttpPipeline
     """
@@ -933,7 +934,7 @@ def retry(
 
     def retry_decorator(f):
         @wraps(f)
-        def func_with_retries(*args, **kwargs):
+        def func_with_retries(*args, **kwargs):  # pylint: disable=inconsistent-return-statements
             tries = max_attempts + 1
             counter = 1
             while tries > 1:
@@ -965,7 +966,8 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
     :rtype: ListViewType
     """
     if include_archived and archived_only:
-        raise Exception("Cannot provide both archived-only and include-archived.")
+        msg = "Cannot provide both archived-only and include-archived."
+        raise MlException(message=msg, no_personal_data_message=msg)
     if include_archived:
         return ListViewType.ALL
     if archived_only:
@@ -1254,9 +1256,8 @@ class DockerProxy:
 
             return getattr(docker, name)
         except ModuleNotFoundError as e:
-            raise Exception(
-                "Please install docker in the current python environment with `pip install docker` and try again."
-            ) from e
+            msg = "Please install docker in the current python environment with `pip install docker` and try again."
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
 
 def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:

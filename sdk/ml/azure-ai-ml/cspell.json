@@ -3,6 +3,10 @@
     "ignoreWords": [
         "kwoa",
         "rslex",
-        "aadtoken"
+        "aadtoken",
+        "alds",
+        "entra",
+        "restclient",
+        "SERP"
     ]
 }
