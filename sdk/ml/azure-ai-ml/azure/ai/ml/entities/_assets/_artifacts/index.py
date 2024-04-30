@@ -127,5 +127,4 @@ class Index(Artifact):
         except ImportError as e:
             print("Cannot import MLIndex")
             raise e
-        
         return InternalMLIndex(str(self.path)).as_langchain_retriever()
