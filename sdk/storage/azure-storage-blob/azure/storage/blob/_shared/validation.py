@@ -60,8 +60,15 @@ def calculate_md5(data: bytes) -> bytes:
     return md5.digest()
 
 
-def calculate_crc64(data: bytes, initial_crc: int) -> bytes:
+def calculate_crc64(data: bytes, initial_crc: int) -> int:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return crc64.compute_crc64(data, initial_crc).to_bytes(CRC64_LENGTH, 'little')
+    return crc64.compute_crc64(data, initial_crc)
+
+
+def calculate_crc64_bytes(data: bytes) -> bytes:
+    # Locally import to avoid error if not installed.
+    from azure.storage.extensions import crc64
+
+    return crc64.compute_crc64(data, 0).to_bytes(CRC64_LENGTH, 'little')

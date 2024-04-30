@@ -17,7 +17,7 @@ from . import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
 from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64, calculate_md5, ChecksumAlgorithm
+from .validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -174,7 +174,7 @@ class ChunkInfo:
         if checksum_algorithm == ChecksumAlgorithm.MD5:
             self.md5 = calculate_md5(self.data)
         if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64(self.data, 0)
+            self.crc64 = calculate_crc64_bytes(self.data)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes

@@ -30,7 +30,7 @@ from ._shared.request_handlers import (
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._shared.validation import (
-    calculate_crc64,
+    calculate_crc64_bytes,
     calculate_md5,
     ChecksumAlgorithm,
     parse_validation_option,
@@ -3568,7 +3568,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if validate_content == ChecksumAlgorithm.MD5:
             content_md5 = calculate_md5(page)
         elif validate_content == ChecksumAlgorithm.CRC64:
-            content_crc64 = calculate_crc64(page, 0)
+            content_crc64 = calculate_crc64_bytes(page)
 
         options = {
             'body': page,

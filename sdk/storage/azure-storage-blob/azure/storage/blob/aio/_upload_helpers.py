@@ -18,7 +18,7 @@ from .._shared.uploads_async import (
     PageBlobChunkUploader,
     AppendBlobChunkUploader
 )
-from .._shared.validation import ChecksumAlgorithm, calculate_crc64, calculate_md5
+from .._shared.validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
 from .._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
@@ -83,7 +83,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 content_md5 = calculate_md5(data)
             content_crc64 = None
             if validate_content == ChecksumAlgorithm.CRC64:
-                content_crc64 = calculate_crc64(data, 0)
+                content_crc64 = calculate_crc64_bytes(data)
 
             response = await client.upload(
                 body=data,

@@ -11,7 +11,7 @@ from enum import auto, Enum, IntFlag
 from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
 from typing import IO, Optional
 
-from azure.storage.extensions import crc64
+from .validation import calculate_crc64
 
 DEFAULT_MESSAGE_VERSION = 1
 DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
@@ -356,8 +356,8 @@ class StructuredMessageEncodeStream(IOBase):
         if StructuredMessageProperties.CRC64 in self.flags:
             if checksum_offset == 0:
                 self._segment_crc64s[self._current_segment_number] = \
-                    crc64.compute_crc64(content, self._segment_crc64s[self._current_segment_number])
-                self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
+                    calculate_crc64(content, self._segment_crc64s[self._current_segment_number])
+                self._message_crc64 = calculate_crc64(content, self._message_crc64)
 
         self._content_offset += read_size
         # Only update the checksum offset if we've read new data
@@ -462,8 +462,8 @@ class StructuredMessageDecodeStream:
 
             # Update the running CRC64 for the segment and message
             if StructuredMessageProperties.CRC64 in self.flags:
-                self._segment_crc64 = crc64.compute_crc64(segment_content, self._segment_crc64)
-                self._message_crc64 = crc64.compute_crc64(segment_content, self._message_crc64)
+                self._segment_crc64 = calculate_crc64(segment_content, self._segment_crc64)
+                self._message_crc64 = calculate_crc64(segment_content, self._message_crc64)
 
             self._segment_content_offset += read_size
             self._message_offset += read_size
