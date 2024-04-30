@@ -4,7 +4,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Literal
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
@@ -26,8 +26,7 @@ from .code_configuration import CodeConfiguration
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 
 
-@experimental
-class ModelBatchDeployment(Deployment):
+class ModelBatchDeployment(BatchDeployment):
     """Job Definition entity.
 
     :param type: Job definition type. Allowed value is: pipeline
@@ -47,6 +46,7 @@ class ModelBatchDeployment(Deployment):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     """
+    type: Literal["model"] = "model"
 
     def __init__(
         self,
@@ -68,9 +68,9 @@ class ModelBatchDeployment(Deployment):
         ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs: Any,  # pylint: disable=unused-argument
     ):
-        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
         super().__init__(
             name=name,
+            _type=self.type,
             endpoint_name=endpoint_name,
             properties=properties,
             code_path=code_path,
@@ -80,27 +80,19 @@ class ModelBatchDeployment(Deployment):
             description=description,
             tags=tags,
             code_configuration=code_configuration,
+            compute=compute,
+            resources=resources,
+            settings=settings
             **kwargs,
         )
-        self.compute = compute
-        self.resources = resources
-        if settings is not None:
-            self.model_deployment_settings = ModelBatchDeploymentSettings(
-                mini_batch_size=settings.mini_batch_size,
-                instance_count=settings.instance_count,
-                max_concurrency_per_instance=settings.max_concurrency_per_instance,
-                output_action=settings.output_action,
-                output_file_name=settings.output_file_name,
-                retry_settings=settings.retry_settings,
-                environment_variables=settings.environment_variables,
-                error_threshold=settings.error_threshold,
-                logging_level=settings.logging_level,
-            )
-            if self.resources is not None:
-                if self.resources.instance_count is None and settings.instance_count is not None:
-                    self.resources.instance_count = settings.instance_count
-            if self.resources is None and settings.instance_count is not None:
-                self.resources = ResourceConfiguration(instance_count=settings.instance_count)
+
+    @property
+    def model_deployment_settings(self) -> ModelBatchDeploymentSettings:
+        return self._settings
+
+    @model_deployment_settings.setter
+    def model_deployment_settings(self, value: ModelBatchDeploymentSettings) -> None:
+        self._settings = value
 
     # pylint: disable=arguments-differ
     def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
@@ -113,7 +105,7 @@ class ModelBatchDeployment(Deployment):
             if self.code_configuration
             else None
         )
-        deployment_settings = self.model_deployment_settings
+        deployment_settings = self._settings
         model = IdAssetReference(asset_id=self.model) if self.model else None
         batch_deployment = RestBatchDeployment(
             description=self.description,
@@ -158,49 +150,6 @@ class ModelBatchDeployment(Deployment):
         }
         res: ModelBatchDeployment = load_from_dict(ModelBatchDeploymentSchema, data, context, **kwargs)
         return res
-
-    @classmethod
-    def _update_params(cls, params_override: Any) -> None:
-        for param in params_override:
-            endpoint_name = param.get("endpoint_name")
-            if isinstance(endpoint_name, str):
-                param["endpoint_name"] = endpoint_name.lower()
-
-    @classmethod
-    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
-        output_switcher = {
-            BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
-            BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
-        }
-        return output_switcher.get(yaml_output_action, yaml_output_action)
-
-    @property
-    def provisioning_state(self) -> Optional[str]:
-        """Batch deployment provisioning state, readonly.
-
-        :return: Batch deployment provisioning state.
-        :rtype: Optional[str]
-        """
-        return self._provisioning_state
-
-    def _validate(self) -> None:
-        self._validate_output_action()
-
-    def _validate_output_action(self) -> None:
-        if (
-            self.model_deployment_settings.output_action
-            and self.model_deployment_settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
-            and self.model_deployment_settings.output_file_name
-        ):
-            msg = "When output_action is set to {}, the output_file_name need not to be specified."
-            msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.BATCH_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
 
     def _to_dict(self) -> Dict:
         res: dict = ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
