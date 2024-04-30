@@ -29,11 +29,13 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
 
     def list(self, connection_name: str, **kwargs) -> Iterable[AzureOpenAIDeployment]:
         connection = self._connections_operations.get(connection_name)
+
         def _from_rest_add_connection_name(obj):
             from_rest_deployment = AzureOpenAIDeployment._from_rest_object(obj)
             from_rest_deployment.connection_name = connection_name
             from_rest_deployment.target_url = connection.target
             return from_rest_deployment
+
         return self._service_client.list_deployments(
             self._resource_group_name,
             self._workspace_name,

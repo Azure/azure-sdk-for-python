@@ -53,5 +53,5 @@ __all__ = [
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
     "IndexOperations",
-    "AzureOpenAIDeploymentOperations"
+    "AzureOpenAIDeploymentOperations",
 ]

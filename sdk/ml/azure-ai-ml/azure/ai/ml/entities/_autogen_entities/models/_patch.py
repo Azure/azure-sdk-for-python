@@ -8,10 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 
-from ._models import (
-    AzureOpenAIDeployment as _AzureOpenAIDeployment,
-    SystemData
-)
+from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment, SystemData
 
 from azure.ai.ml._utils._experimental import experimental
 
@@ -30,7 +27,6 @@ _NULL = object()
 
 @experimental
 class AzureOpenAIDeployment(_AzureOpenAIDeployment):
-
     @classmethod
     def _from_rest_object(cls, obj: EndpointDeploymentResourcePropertiesBasicResource) -> "AzureOpenAIDeployment":
         properties: OpenAIEndpointDeploymentResourceProperties = obj.properties
@@ -47,7 +43,7 @@ class AzureOpenAIDeployment(_AzureOpenAIDeployment):
                 last_modified_by=rest_system_data.last_modified_by,
                 last_modified_by_type=rest_system_data.last_modified_by_type,
                 last_modified_at=rest_system_data.last_modified_at,
-            )
+            ),
         )
 
 
