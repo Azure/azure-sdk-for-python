@@ -59,9 +59,9 @@ def _get_rest_field_type(field):
 class ValidationMixin:
     def _validate(self) -> None:
         # verify types
-        for attr, field in self._attr_to_rest_field.items(): # type: ignore
+        for attr, field in self._attr_to_rest_field.items():  # type: ignore
             try:
-                attr_value = self.__getitem__(attr) # type: ignore
+                attr_value = self.__getitem__(attr)  # type: ignore
                 attr_type = type(attr_value)
             except KeyError as exc:
                 if field._visibility and "read" in field._visibility:
@@ -101,7 +101,7 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestServerlessEndpoint) -> "ServerlessEndpoint":
-        return cls( # type: ignore
+        return cls(  # type: ignore
             name=obj.name,
             id=obj.id,
             tags=obj.tags,
@@ -116,12 +116,12 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
 
     def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
         d = super().as_dict(exclude_readonly=exclude_readonly)
-        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict())) # type: ignore
+        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))  # type: ignore
         return d
 
 
 ServerlessEndpoint.__doc__ += (
-    _ServerlessEndpoint.__doc__.strip() # type: ignore
+    _ServerlessEndpoint.__doc__.strip()  # type: ignore
     + """
     :ivar system_data: System data of the endpoint.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
@@ -141,7 +141,7 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestMarketplaceSubscription) -> "MarketplaceSubscription":
         properties = obj.properties
-        return cls( # type: ignore
+        return cls(  # type: ignore
             name=obj.name,
             id=obj.id,
             model_id=properties.model_id,
@@ -163,7 +163,7 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
 
 
 MarketplaceSubscription.__doc__ = (
-    _MarketplaceSubscription.__doc__.strip() # type: ignore
+    _MarketplaceSubscription.__doc__.strip()  # type: ignore
     + """
     :ivar system_data: System data of the marketplace subscription.
     :vartype system_data: ~azure.ai.ml.entities.SystemData

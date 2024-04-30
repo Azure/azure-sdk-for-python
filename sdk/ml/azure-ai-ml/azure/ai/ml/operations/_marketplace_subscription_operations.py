@@ -42,8 +42,8 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             marketplace_subscription.name,
-            marketplace_subscription._to_rest_object(), # type: ignore
-            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized), # type: ignore
+            marketplace_subscription._to_rest_object(),  # type: ignore
+            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized),  # type: ignore
             **kwargs,
         )
 
@@ -54,7 +54,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized), # type: ignore
+            cls=lambda response, deserialized, headers: MarketplaceSubscription._from_rest_object(deserialized),  # type: ignore
             **kwargs,
         )
 
@@ -64,7 +64,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,
-            cls=lambda objs: [MarketplaceSubscription._from_rest_object(obj) for obj in objs], # type: ignore
+            cls=lambda objs: [MarketplaceSubscription._from_rest_object(obj) for obj in objs],  # type: ignore
             **kwargs,
         )
 

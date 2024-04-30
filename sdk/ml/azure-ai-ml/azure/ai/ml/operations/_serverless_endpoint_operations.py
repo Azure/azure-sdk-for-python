@@ -56,8 +56,8 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             endpoint.name,
-            endpoint._to_rest_object(), # type: ignore
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized), # type: ignore
+            endpoint._to_rest_object(),  # type: ignore
+            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore
             **kwargs,
         )
 
@@ -68,7 +68,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized), # type: ignore
+            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore
             **kwargs,
         )
 
@@ -78,7 +78,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,
-            cls=lambda objs: [ServerlessEndpoint._from_rest_object(obj) for obj in objs], # type: ignore
+            cls=lambda objs: [ServerlessEndpoint._from_rest_object(obj) for obj in objs],  # type: ignore
             **kwargs,
         )
 
