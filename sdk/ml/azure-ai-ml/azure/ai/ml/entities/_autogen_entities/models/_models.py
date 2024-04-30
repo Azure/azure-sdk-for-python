@@ -86,8 +86,7 @@ class MarketplaceSubscription(_model_base.Model):
         *,
         name: str,
         model_id: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -167,8 +166,7 @@ class ServerlessEndpoint(_model_base.Model):  # pylint: disable=too-many-instanc
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

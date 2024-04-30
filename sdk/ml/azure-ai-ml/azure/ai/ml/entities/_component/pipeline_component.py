@@ -350,9 +350,9 @@ class PipelineComponent(Component):
                             and os.path.exists(input_value.path)
                         ):
                             start_time = time.time()
-                            component_interface_dict["jobs"][job_name]["inputs"][input_name][
-                                "content_hash"
-                            ] = get_object_hash(input_value.path)
+                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
+                                get_object_hash(input_value.path)
+                            )
                             module_logger.debug(
                                 "Takes %s seconds to calculate the content hash of local input %s",
                                 time.time() - start_time,
