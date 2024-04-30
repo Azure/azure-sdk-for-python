@@ -72,8 +72,6 @@ class Index(Artifact):
         """
         asset_id = AMLAssetId(asset_id=index_rest_object.id)
 
-        print(index_rest_object)
-
         return Index(
             id=index_rest_object.id,
             name=asset_id.asset_name,
@@ -123,7 +121,7 @@ class Index(Artifact):
 
     def as_langchain_retriever(self):
         try:
-            from azure.ai.ml.entities._indexes.mlindex import MLIndex as InternalMLIndex
+            from azureml.rag.mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
             print("Cannot import MLIndex")
             raise e

@@ -46,26 +46,7 @@ from azure.ai.ml.entities._indexes import (
     GitSource,
     ModelConfiguration,
 )
-# from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
-# from azure.ai.ml.entities._indexes.dataindex.data_index import index_data as index_data_func
-# from azure.ai.ml.entities._indexes import (
-#     AzureAISearchConfig,
-#     IndexDataSource,
-#     AISearchSource,
-#     LocalSource,
-#     GitSource,
-#     ModelConfiguration,
-# )
-# from azure.ai.ml.entities._indexes.dataindex.entities import (
-#     CitationRegex,
-#     Data,
-#     DataIndex,
-#     Embedding,
-#     IndexSource,
-#     IndexStore,
-# )
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
-# pylint: disable=protected-access
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger

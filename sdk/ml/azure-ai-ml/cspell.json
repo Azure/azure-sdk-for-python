@@ -7,6 +7,11 @@
         "alds",
         "entra",
         "restclient",
-        "SERP"
+        "SERP",
+        "FAISS",
+        "faiss",
+        "Faiss",
+        "LLMRAG",
+        "redef"
     ]
 }
