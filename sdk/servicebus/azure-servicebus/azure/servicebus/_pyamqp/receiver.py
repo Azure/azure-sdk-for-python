@@ -81,10 +81,10 @@ class ReceiverLink(Link):
         self._outgoing_flow()
 
     def _incoming_flow(self, frame):
-        drain = frame[7]  # drain
+        drain = frame[8]  # drain
         # If we have sent an outgoing flow frame with drain, wait for the response
-        if self._sent_drain and drain:
-            self._sent_drain = False
+        if self._drain_state and drain:
+            self._drain_state = False
 
 
     def _incoming_transfer(self, frame):
