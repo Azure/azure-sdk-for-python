@@ -1106,8 +1106,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                         receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
                         sent_drain = True
                         time_sent = time.time()
-                    # if drain_receive != receiver._handler._link._drain_state:
-                    #     break
+                    if sent_drain != receiver._handler._link._drain_state:
+                        break
 
                     if time.time() - time_sent > receiver._further_pull_receive_timeout:
                         expired = True
@@ -1135,7 +1135,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         # Before we return batch, if prefetch is set, receive those messages as well.
         sent_drain = False
-        if amqp_receive_client._link.current_link_credit > 0:
+        if receiver._prefetch_count > 0:
             while sent_drain == receiver._handler._link._drain_state:
                 if not sent_drain:
                     receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)

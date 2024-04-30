@@ -483,8 +483,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> List["ServiceBusReceivedMessage"]:
         first_message_received = expired = False
         receiving = True
-        drain_receive = False
-        while receiving and not expired and (drain_receive == receiver._handler._link._drain_state) and len(batch) < max_message_count:
+        sent_drain = False
+        while receiving and not expired and (sent_drain == receiver._handler._link._drain_state) and len(batch) < max_message_count:
             while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
                 if (
                     abs_timeout
@@ -492,12 +492,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     > abs_timeout
                 ):
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
-                    if not drain_receive:
+                    if not sent_drain:
                         await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
-                        drain_receive = True
+                        sent_drain = True
                         time_sent = time.time()
-                    # if drain_receive != receiver._handler._link._drain_state:
-                    #     break
+                    if sent_drain != receiver._handler._link._drain_state:
+                        break
 
                     if time.time() - time_sent > receiver._further_pull_receive_timeout:
                         expired = True
@@ -524,12 +524,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 amqp_receive_client._received_messages.task_done()
 
         # Before we return batch, if prefetch is set, receive those messages as well.
-        drain_receive = False
-        if amqp_receive_client._link.current_link_credit > 0:
-            while drain_receive == receiver._handler._link._drain_state:
-                if not drain_receive:
+        sent_drain = False
+        if receiver._prefetch_count > 0:
+            while sent_drain == receiver._handler._link._drain_state:
+                if not sent_drain:
                     await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
-                    drain_receive = True
+                    sent_drain = True
 
                 # # this prevents us from sending a new Flow frame if we have already sent a Drain frame
                 # if sent_drain != receiver._handler._link._drain_state:
