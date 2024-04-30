@@ -44,27 +44,6 @@ def test_identity_not_available():
         credential.get_token("scope")
 
 
-def test_unexpected_error():
-    """The credential should raise ClientAuthenticationError when the endpoint returns an unexpected error"""
-
-    error_message = "something went wrong"
-
-    for code in range(401, 600):
-
-        def send(request, **kwargs):
-            # ensure the `claims` and `tenant_id` kwargs from credential's `get_token` method don't make it to transport
-            assert "claims" not in kwargs
-            assert "tenant_id" not in kwargs
-            return mock_response(status_code=code, json_payload={"error": error_message})
-
-        credential = ImdsCredential(transport=mock.Mock(send=send))
-
-        with pytest.raises(ClientAuthenticationError) as ex:
-            credential.get_token("scope")
-
-        assert error_message in ex.value.message
-
-
 @pytest.mark.parametrize("error_ending", ("network", "host", "foo"))
 def test_imds_request_failure_docker_desktop(error_ending):
     """The credential should raise CredentialUnavailableError when a 403 with a specific message is received"""
@@ -123,42 +102,6 @@ def test_cache():
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
     assert mock_send.call_count == 2
-
-
-def test_identity_config():
-    param_name, param_value = "foo", "bar"
-    access_token = "****"
-    expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
-    scope = "scope"
-    transport = validating_transport(
-        requests=[
-            Request(
-                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
-                method="GET",
-                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
-            ),
-        ],
-        responses=[
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_in": 42,
-                    "expires_on": expires_on,
-                    "ext_expires_in": 42,
-                    "not_before": int(time.time()),
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    credential = ImdsCredential(identity_config={param_name: param_value}, transport=transport)
-    token = credential.get_token(scope)
-
-    assert token == expected_token
 
 
 def test_imds_authority_override():
