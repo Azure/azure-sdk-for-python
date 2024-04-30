@@ -84,10 +84,10 @@ class ReceiverLink(Link):
         await self._outgoing_flow()
 
     async def _incoming_flow(self, frame):
-        drain = frame[7]  # drain
+        drain = frame[8]  # drain
         # If we have sent an outgoing flow frame with drain, wait for the response
-        if self._sent_drain and drain:
-            self._sent_drain = False
+        if self._drain_state and drain:
+            self._drain_state = False
 
     async def _incoming_transfer(self, frame):
         if self.network_trace:
@@ -167,7 +167,6 @@ class ReceiverLink(Link):
                 sent=True,
             )
             self._pending_receipts.append(delivery)
-
 
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
         self._received_delivery_tags.remove(delivery_tag)

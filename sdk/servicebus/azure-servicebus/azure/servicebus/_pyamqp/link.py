@@ -208,8 +208,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        self._sent_drain = kwargs.get("drain", False)
-        self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+        # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
+        if not self._drain_state:
+            self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+        # Drain State will be True if we sent a flow frame with drain=True, and will return to false when received
+        self._drain_state = kwargs.get("drain", False)
 
     def _incoming_flow(self, frame):
         pass

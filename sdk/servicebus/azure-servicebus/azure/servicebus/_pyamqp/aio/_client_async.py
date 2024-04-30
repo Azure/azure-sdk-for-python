@@ -759,7 +759,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.total_link_credit <= 0 and flow:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -1076,12 +1077,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         )
 
         # Wait for the message to be settled
-        # running = True
-        # while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-        #     # TODO: Confirm if this is the correct way to handle the do_work call
-        #     # calling do_work directly triggers Flow() calls which is not what we want
-        #     running = 
-        await self._connection.listen(wait=False)
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            # TODO: Confirm if this is the correct way to handle the do_work call
+            # calling do_work directly triggers Flow() calls which is not what we want
+            running = await self.do_work_async(flow=False)
+        # await self._connection.listen(wait=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(

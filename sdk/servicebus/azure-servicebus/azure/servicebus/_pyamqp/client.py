@@ -866,7 +866,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.total_link_credit <= 0 and flow:
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -1186,10 +1187,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             on_disposition=on_disposition_received,
         )
 
-        # running = True
-        # while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-        #     running = self.do_work()
-        self._connection.listen(wait=False)
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            running = self.do_work(flow=False)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
