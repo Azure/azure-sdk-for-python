@@ -38,8 +38,6 @@ class AzureOpenAIDeployment(_model_base.Model):
     :vartype properties: dict[str, str]
     :ivar tags: Tags of the deployment.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the deployment.
-    :vartype system_data: ~azure.machinelearningservices.models.SystemData
     """
 
     name: Optional[str] = rest_field(visibility=["read"])
