@@ -14,7 +14,6 @@ from ._configuration import (
     FaceClientConfiguration,
     FaceSessionClientConfiguration,
 )
-from ._model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
