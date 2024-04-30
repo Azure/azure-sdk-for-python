@@ -19,6 +19,8 @@ class ModelConfiguration:
     :type api_version: Optional[str]
     :param model_name: The name of the model.
     :type model_name: str
+    :param model_name: The deployment name of the model.
+    :type model_name: str
     :param connection_name: The name of the workspace connection of this model.
     :type connection_name: str
     :param connection_type: The type of the workspace connection of this model.
@@ -32,11 +34,15 @@ class ModelConfiguration:
     connection_name: str
     connection_type: str
     model_name: str
+    deployment_name: str
     model_kwargs: Dict[str, Any]
 
     @staticmethod
     def from_connection(
-        connection: Connection, model_name: Optional[str] = None, **model_kwargs
+        connection: Connection,
+        model_name: Optional[str] = None,
+        deployment_name: Optional[str] = None,
+        **model_kwargs
     ) -> 'ModelConfiguration':
         """Create an model configuration from a Connection.
         
@@ -56,14 +62,14 @@ class ModelConfiguration:
         if isinstance(connection, AzureOpenAIConnection) or camel_to_snake(connection.type) == "azure_open_ai":
             connection_type = "azure_open_ai"
             api_version = connection.api_version
-            if not model_name:
-                raise ValueError("Please specify model_name.")
-        elif camel_to_snake(connection.type) == "serverless":
+            if not model_name or not deployment_name:
+                raise ValueError("Please specify model_name and deployment_name.")
+        elif connection.type.lower() == "serverless":
             connection_type = "serverless"
             api_version = None
             if not connection.id:
                 raise TypeError(
-                    "Serverless connection object doesn't have connection id."
+                    "The connection id is missing from the serverless connection object."
                 )
         else:
             raise TypeError(
@@ -88,5 +94,6 @@ class ModelConfiguration:
             connection_name=connection.name,
             connection_type=connection_type,
             model_name=model_name,
+            deployment_name=deployment_name,
             model_kwargs=model_kwargs,
         )

@@ -88,13 +88,6 @@ setup(
         "typing-extensions",
         "opencensus-ext-azure",
         "opencensus-ext-logging",
-        "pyarrow",
-        "openai",
-        "mmh3",
-        "cloudpickle",
-        "fsspec",
-        "azureml-fsspec>1",
-        "tiktoken>=0.3,<1",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

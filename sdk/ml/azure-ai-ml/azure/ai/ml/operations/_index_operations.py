@@ -276,7 +276,6 @@ class IndexOperations(_ScopeDependentOperations):
         from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 
         if isinstance(input_source, AISearchSource):
-            # from azure.ai.ml.entities._indexes.utils.connections import get_connection_by_id_v2, get_target_from_connection
             from azureml.rag.utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
@@ -286,10 +285,14 @@ class IndexOperations(_ScopeDependentOperations):
                 "connection": {"id": build_connection_id(embeddings_model_config.connection_name, self._operation_scope)}
             }
             if embeddings_model_config.connection_type == "serverless":
-                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(None, credential=None, **connection_args).get_metadata()
+                mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(model_uri=None, credential=None, **connection_args).get_metadata()
             else:
                 mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
-                    build_open_ai_protocol(embeddings_model_config.model_name), **connection_args
+                    build_open_ai_protocol(
+                        model=embeddings_model_config.model_name,
+                        deployment=embeddings_model_config.deployment_name
+                    ),
+                    **connection_args
                 ).get_metadata()  # Bug 2922096
             mlindex_config["index"] = {
                 "kind": "acs",
@@ -322,6 +325,7 @@ class IndexOperations(_ScopeDependentOperations):
 
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)
+
         data_index = DataIndex(
             name=name,
             source=IndexSource(
@@ -341,7 +345,9 @@ class IndexOperations(_ScopeDependentOperations):
                 else None,
             ),
             embedding=Embedding(
-                model=build_open_ai_protocol(embeddings_model_config.model_name),
+                model=build_open_ai_protocol(
+                    model=embeddings_model_config.model_name,
+                    deployment=embeddings_model_config.deployment_name),
                 connection=build_connection_id(embeddings_model_config.connection_name, self._operation_scope),
             ),
             index=IndexStore(

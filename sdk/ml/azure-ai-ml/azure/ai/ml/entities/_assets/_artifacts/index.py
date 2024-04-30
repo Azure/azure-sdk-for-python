@@ -120,12 +120,12 @@ class Index(Artifact):
         self.path = asset_artifact.full_storage_path
 
     def as_langchain_retriever(self):
+        if not self.path:
+            raise ValueError("Index.path should not be none")
         try:
             from azureml.rag.mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
             print("Cannot import MLIndex")
             raise e
-
-        if not self.path:
-            raise ValueError("Index.path should not be none")
+        
         return InternalMLIndex(str(self.path)).as_langchain_retriever()
