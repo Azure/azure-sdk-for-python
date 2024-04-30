@@ -74,4 +74,4 @@ class SystemData(RestTranslatableMixin):
     def _to_dict(self) -> dict:
         from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 
-        return CreationContextSchema().dump(self)
+        return CreationContextSchema().dump(self) # pylint: disable=no-member

@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# pylint: disable=protected-access
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -42,38 +45,38 @@ func_to_attr_type = {
 }
 
 
-def _get_rest_field_type(rest_field):
-    if hasattr(rest_field, "_type"):
-        if rest_field._type.func.__name__ == "_deserialize_default":
-            return rest_field._type.args[0]
-        if func_to_attr_type.get(rest_field._type.func.__name__):
-            return func_to_attr_type[rest_field._type.func.__name__]
-        return _get_rest_field_type(rest_field._type.args[0])
-    if hasattr(rest_field, "func") and func_to_attr_type.get(rest_field.func.__name__):
-        return func_to_attr_type[rest_field.func.__name__]
-    if hasattr(rest_field, "args"):
-        return _get_rest_field_type(rest_field.args[0])
-    return rest_field
+def _get_rest_field_type(field):
+    if hasattr(field, "_type"):
+        if field._type.func.__name__ == "_deserialize_default":
+            return field._type.args[0]
+        if func_to_attr_type.get(field._type.func.__name__):
+            return func_to_attr_type[field._type.func.__name__]
+        return _get_rest_field_type(field._type.args[0])
+    if hasattr(field, "func") and func_to_attr_type.get(field.func.__name__):
+        return func_to_attr_type[field.func.__name__]
+    if hasattr(field, "args"):
+        return _get_rest_field_type(field.args[0])
+    return field
 
 
 class ValidationMixin:
     def _validate(self) -> None:
         # verify types
-        for attr, rest_field in self._attr_to_rest_field.items():
+        for attr, field in self._attr_to_rest_field.items():
             try:
                 attr_value = self.__getitem__(attr)
                 attr_type = type(attr_value)
-            except KeyError:
-                if rest_field._visibility and "read" in rest_field._visibility:
+            except KeyError as exc:
+                if field._visibility and "read" in field._visibility:
                     # read-only field, no need to validate
                     continue
-                if rest_field._type.func.__name__ != "_deserialize_with_optional":
+                if field._type.func.__name__ != "_deserialize_with_optional":
                     # i'm required
-                    raise ValueError(f"attr {attr} is a required property for {self.__class__.__name__}")
+                    raise ValueError(f"attr {attr} is a required property for {self.__class__.__name__}") from exc
             else:
                 if getattr(attr_value, "_is_model", False):
-                    return attr_value._validate()
-                rest_field_type = _get_rest_field_type(rest_field)
+                    attr_value._validate()
+                rest_field_type = _get_rest_field_type(field)
                 if attr_type != rest_field_type:
                     raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field_type}")
 
