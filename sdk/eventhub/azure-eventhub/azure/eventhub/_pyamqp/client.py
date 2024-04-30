@@ -216,7 +216,6 @@ class AMQPClient(
 
         # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)
-        print(self._use_tls)
 
     def __enter__(self):
         """Run Client in a context manager.

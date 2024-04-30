@@ -186,6 +186,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
+        self._use_tls: bool = kwargs.get("use_tls")
+
     def connect(self):
         try:
             # are we already connected?
@@ -503,7 +505,6 @@ class SSLTransport(_AbstractTransport):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self.sslopts['server_hostname'] = host
         self._read_buffer = BytesIO()
-        self._use_tls = kwargs.get("use_tls")
         super(SSLTransport, self).__init__(
             host, port=port, socket_timeout=socket_timeout, **kwargs
         )
@@ -717,7 +718,6 @@ class WebSocketTransport(_AbstractTransport):
         super().__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
         self.sock = None
         self._http_proxy = kwargs.get("http_proxy", None)
-        self._use_tls = kwargs.get("use_tls")
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
