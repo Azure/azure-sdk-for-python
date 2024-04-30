@@ -37,9 +37,7 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.credentials import TokenCredential
 
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
-from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._indexes.dataindex.data_index import index_data as index_data_func
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
     IndexDataSource,
@@ -48,14 +46,24 @@ from azure.ai.ml.entities._indexes import (
     GitSource,
     ModelConfiguration,
 )
-from azure.ai.ml.entities._indexes.dataindex.entities import (
-    CitationRegex,
-    Data,
-    DataIndex,
-    Embedding,
-    IndexSource,
-    IndexStore,
-)
+# from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
+# from azure.ai.ml.entities._indexes.dataindex.data_index import index_data as index_data_func
+# from azure.ai.ml.entities._indexes import (
+#     AzureAISearchConfig,
+#     IndexDataSource,
+#     AISearchSource,
+#     LocalSource,
+#     GitSource,
+#     ModelConfiguration,
+# )
+# from azure.ai.ml.entities._indexes.dataindex.entities import (
+#     CitationRegex,
+#     Data,
+#     DataIndex,
+#     Embedding,
+#     IndexSource,
+#     IndexStore,
+# )
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 # pylint: disable=protected-access
 
@@ -275,10 +283,20 @@ class IndexOperations(_ScopeDependentOperations):
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
-        from azure.ai.ml.entities._indexes.embeddings import EmbeddingsContainer
+        from azureml.rag.embeddings import EmbeddingsContainer
+        from azureml.rag.dataindex import (
+            CitationRegex,
+            Data,
+            DataIndex,
+            Embedding,
+            IndexSource,
+            IndexStore,
+        )
+        from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
 
         if isinstance(input_source, AISearchSource):
-            from azure.ai.ml.entities._indexes.utils.connections import get_connection_by_id_v2, get_target_from_connection
+            # from azure.ai.ml.entities._indexes.utils.connections import get_connection_by_id_v2, get_target_from_connection
+            from azureml.rag.utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
             mlindex_config = {}
@@ -359,6 +377,7 @@ class IndexOperations(_ScopeDependentOperations):
         if isinstance(input_source, GitSource):
             from azure.ai.ml.dsl import pipeline
             from azure.ai.ml import MLClient
+            from azureml.rag.dataindex import index_data as index_data_func
 
             ml_registry = MLClient(credential=self._credential, registry_name="azureml")
             git_clone_component = ml_registry.components.get("llm_rag_git_clone", label="latest")
@@ -417,7 +436,7 @@ class IndexOperations(_ScopeDependentOperations):
 
     def index_data(
         self,
-        data_index: DataIndex,
+        data_index: "azureml.rag.dataindex.DataIndex",
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
         compute: str = "serverless",
         serverless_instance_type: Optional[str] = None,
@@ -450,6 +469,7 @@ class IndexOperations(_ScopeDependentOperations):
             _validate_auto_delete_setting_in_data_output,
             _validate_workspace_managed_datastore,
         )
+        from azureml.rag.dataindex import index_data as index_data_func
 
         default_name = "data_index_" + data_index.name
         experiment_name = kwargs.pop("experiment_name", None) or default_name

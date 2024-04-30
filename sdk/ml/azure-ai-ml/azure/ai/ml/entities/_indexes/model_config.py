@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnection
+from azure.ai.ml.entities import Connection, AzureOpenAIConnection, AadCredentialConfiguration
 
 
 @dataclass
@@ -36,12 +36,12 @@ class ModelConfiguration:
 
     @staticmethod
     def from_connection(
-        connection: WorkspaceConnection, model_name: Optional[str] = None, **model_kwargs
+        connection: Connection, model_name: Optional[str] = None, **model_kwargs
     ) -> 'ModelConfiguration':
         """Create an model configuration from a Connection.
         
         :param connection: The Connection object.
-        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
+        :type connection: ~azure.ai.ml.entities.Connection
         :param model_name: The name of the model.
         :type model_name: str
         :param deployment_name: The name of the deployment.
@@ -53,7 +53,7 @@ class ModelConfiguration:
         :raises TypeError: If the connection is not an AzureOpenAIConnection.
         :raises ValueError: If the connection does not contain an OpenAI key.
         """
-        if isinstance(connection, AzureOpenAIWorkspaceConnection) or camel_to_snake(connection.type) == "azure_open_ai":
+        if isinstance(connection, AzureOpenAIConnection) or camel_to_snake(connection.type) == "azure_open_ai":
             connection_type = "azure_open_ai"
             api_version = connection.api_version
             if not model_name:
@@ -69,13 +69,17 @@ class ModelConfiguration:
             raise TypeError(
                 "Connection object is not supported."
             )
-        key = connection.credentials.get("key")
-        if key is None and connection_type == "azure_open_ai": 
-            import os
-            if "AZURE_OPENAI_API_KEY" in os.environ:
-                key = os.getenv("AZURE_OPENAI_API_KEY")
-            else:
-                raise ValueError("Unable to retrieve openai key from connection object from env variable.")
+
+        if isinstance(connection.credentials, AadCredentialConfiguration):
+            key = None
+        else:
+            key = connection.credentials.get("key")
+            if key is None and connection_type == "azure_open_ai": 
+                import os
+                if "AZURE_OPENAI_API_KEY" in os.environ:
+                    key = os.getenv("AZURE_OPENAI_API_KEY")
+                else:
+                    raise ValueError("Unable to retrieve openai key from connection object or env variable.")
 
         return ModelConfiguration(
             api_base=connection.target,

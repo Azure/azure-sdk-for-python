@@ -72,6 +72,8 @@ class Index(Artifact):
         """
         asset_id = AMLAssetId(asset_id=index_rest_object.id)
 
+        print(index_rest_object)
+
         return Index(
             id=index_rest_object.id,
             name=asset_id.asset_name,
@@ -118,3 +120,14 @@ class Index(Artifact):
         :param ArtifactStorageInfo asset_artifact: The asset storage info of the artifact
         """
         self.path = asset_artifact.full_storage_path
+
+    def as_langchain_retriever(self):
+        try:
+            from azure.ai.ml.entities._indexes.mlindex import MLIndex as InternalMLIndex
+        except ImportError as e:
+            print("Cannot import MLIndex")
+            raise e
+
+        if not self.path:
+            raise ValueError("Index.path should not be none")
+        return InternalMLIndex(str(self.path)).as_langchain_retriever()
