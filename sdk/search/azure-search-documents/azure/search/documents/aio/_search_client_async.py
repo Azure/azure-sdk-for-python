@@ -297,8 +297,8 @@ class SearchClient(HeadersMixin):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
-        :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
-        :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
