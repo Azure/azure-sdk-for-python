@@ -694,6 +694,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_04_2024_preview,
+            self._connections,
         )
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
