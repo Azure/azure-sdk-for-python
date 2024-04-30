@@ -49,7 +49,7 @@ def create_dev_center_client():
     from azure.identity import DefaultAzureCredential
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
@@ -68,7 +68,7 @@ def dev_box_create_connect_delete():
     from azure.identity import DefaultAzureCredential
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
@@ -102,23 +102,23 @@ def dev_box_create_connect_delete():
         raise ValueError("Missing Pool - please create one before running the example")
 
     # Stand up a new Dev Box
-    print(f"\nStarting to create devbox in project {target_project_name} and pool {target_pool_name}")
+    print(f"\nStarting to create dev box in project {target_project_name} and pool {target_pool_name}")
 
-    create_response = client.begin_create_dev_box(
+    dev_box_poller = client.begin_create_dev_box(
         target_project_name, "me", "Test_DevBox", {"poolName": target_pool_name}
     )
-    devbox = create_response.result()
-    print(f"Provisioned dev box with status {devbox.provisioning_state}.")
+    dev_box = dev_box_poller.result()
+    print(f"Provisioned dev box with status {dev_box.provisioning_state}.")
 
     # Connect to the provisioned Dev Box
-    remote_connection = client.get_remote_connection(target_project_name, "me", devbox.name)
+    remote_connection = client.get_remote_connection(target_project_name, "me", dev_box.name)
     print(f"Connect to the dev box using web URL {remote_connection.web_url}")
 
     # Tear down the Dev Box when finished
     print(f"Starting to delete dev box.")
 
-    delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
-    delete_result = delete_response.result()
+    delete_poller = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
+    delete_result = delete_poller.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
 

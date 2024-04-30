@@ -25,7 +25,7 @@ python -m pip install azure-developer-devcenter
 
 In order to interact with the Dev Center service, you will need to create an instance of a client. An **endpoint** and **credential** are necessary to instantiate the client object.
 
-For the endpoint use the Dev Center URI. It should have the format `https://{tenantId}-{devCenterName}.{devCenterRegion}.devcenter.azure.com`.  Set this value as the environment variable for `DEVCENTER_ENDPOINT`.
+For the endpoint use the Dev Center URI. It should have the format `https://{tenantId}-{devCenterName}.{devCenterRegion}.devcenter.azure.com`.
 
 For the credential use an [Azure Active Directory (AAD) token credential][authenticate_with_token], providing an instance of the desired credential type obtained from the [azure-identity][azure_identity_credentials] library.
 
@@ -52,7 +52,7 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 
 # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-# DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+# DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 try:
     endpoint = os.environ["DEVCENTER_ENDPOINT"]
 except KeyError:
@@ -64,7 +64,7 @@ client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
 <!-- END SNIPPET -->
 
-With `DevCenterClient` you can manipulate operations in [Dev Center, Dev Box and Environments REST operations group](https://learn.microsoft.com/rest/api/devcenter/developer/operation-groups).
+With `DevCenterClient` you can execute operations in [Dev Center, Dev Box and Environments REST operations group](https://learn.microsoft.com/rest/api/devcenter/developer/operation-groups).
 
 ## Examples
 * [Create, Connect and Delete a Dev Box](#create-connect-and-delete-a-dev-box)
@@ -81,7 +81,7 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 
 # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-# DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+# DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 try:
     endpoint = os.environ["DEVCENTER_ENDPOINT"]
 except KeyError:
@@ -115,23 +115,23 @@ else:
     raise ValueError("Missing Pool - please create one before running the example")
 
 # Stand up a new Dev Box
-print(f"\nStarting to create devbox in project {target_project_name} and pool {target_pool_name}")
+print(f"\nStarting to create dev box in project {target_project_name} and pool {target_pool_name}")
 
-create_response = client.begin_create_dev_box(
+dev_box_poller = client.begin_create_dev_box(
     target_project_name, "me", "Test_DevBox", {"poolName": target_pool_name}
 )
-devbox = create_response.result()
-print(f"Provisioned dev box with status {devbox.provisioning_state}.")
+dev_box = dev_box_poller.result()
+print(f"Provisioned dev box with status {dev_box.provisioning_state}.")
 
 # Connect to the provisioned Dev Box
-remote_connection = client.get_remote_connection(target_project_name, "me", devbox.name)
+remote_connection = client.get_remote_connection(target_project_name, "me", dev_box.name)
 print(f"Connect to the dev box using web URL {remote_connection.web_url}")
 
 # Tear down the Dev Box when finished
 print(f"Starting to delete dev box.")
 
-delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
-delete_result = delete_response.result()
+delete_poller = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
+delete_result = delete_poller.result()
 print(f"Completed deletion for the dev box with status {delete_result.status}")
 ```
 
@@ -148,7 +148,7 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 
 # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-# DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+# DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 try:
     endpoint = os.environ["DEVCENTER_ENDPOINT"]
 except KeyError:
@@ -217,16 +217,16 @@ environment = {
     "environmentDefinitionName": target_environment_definition_name,
 }
 
-create_response = client.begin_create_or_update_environment(
+environment_poller = client.begin_create_or_update_environment(
     target_project_name, "me", environment_name, environment
 )
-environment_result = create_response.result()
+environment_result = environment_poller.result()
 print(f"Provisioned environment with status {environment_result.provisioning_state}.")
 
 # Tear down the environment when finished
 print(f"Starting to delete environment.")
-delete_response = client.begin_delete_environment(target_project_name, "me", environment_name)
-delete_result = delete_response.result()
+delete_poller = client.begin_delete_environment(target_project_name, "me", environment_name)
+delete_result = delete_poller.result()
 print(f"Completed deletion for the environment with status {delete_result.status}")
 ```
 
