@@ -230,8 +230,8 @@ class IndexOperations(_ScopeDependentOperations):
         
         :param name: The name of the index to be created.
         :type name: str
-        :keyword embeddings_model_config: Model config for the embedding model.
-        :paramtype embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
+        :param embeddings_model_config: Model config for the embedding model.
+        :type embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
         :keyword data_source_citation_url: The URL of the data source.
         :paramtype data_source_citation_url: Optional[str]
         :keyword tokens_per_chunk: The size of chunks to be used for indexing.
