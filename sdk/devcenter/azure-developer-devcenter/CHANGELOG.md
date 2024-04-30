@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2024-05-02)
 
 This release targets Azure Dev Center 2023-04-01 General Available API, which is the same version as the previous 1.0.0-beta.3 release. The main improvement was the addition of models as Convenience API was enabled for the SDK. 
 
@@ -53,13 +53,23 @@ This release targets Azure Dev Center 2023-04-01 General Available API, which is
 
 ### Breaking Changes
 
-- Removed `filter` and `top` as optional request parameters.
-
+- Removed `filter`  and `top` as optional request parameters from all list operations
+    - list_pools
+    - list_schedules
+    - list_dev_boxes
+    - list_all_dev_boxes
+    - list_all_dev_boxes_by_user
+    - list_projects
+    - list_environments
+    - list_all_environments
+    - list_environment_definitions
+    - list_environment_definitions_by_catalog
+    - list_environment_types
+    - list_catalogs
+    
 ### Other Changes
 
- - Split integration tests
- - Added more samples 
- - Add code snippets to README
+ - Added more samples
 
 ## 1.0.0b3 (2023-11-02)
 
