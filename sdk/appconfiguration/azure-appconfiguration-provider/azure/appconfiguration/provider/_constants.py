@@ -16,3 +16,5 @@ AzureWebAppEnvironmentVariable = "WEBSITE_SITE_NAME"
 ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
 KubernetesEnvironmentVariable = "KUBERNETES_PORT"
 ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
+
+DISABLE_APPCONFIGURATION_DISCOVERY = "AZURE_APP_CONFIGURATION_DISABLE_DISCOVERY"

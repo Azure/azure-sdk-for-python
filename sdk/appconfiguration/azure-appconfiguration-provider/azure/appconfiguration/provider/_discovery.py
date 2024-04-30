@@ -4,10 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import os
 import time
 from dataclasses import dataclass
 import dns.resolver
 from dns.resolver import NXDOMAIN
+from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY
 
 
 @dataclass
@@ -26,6 +28,8 @@ class SRVRecord:
 
 
 def find_auto_failover_endpoints(endpoint):
+    if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY).lower() == "true":
+        return [endpoint]
     known_domain = _get_known_domains(endpoint)
     if known_domain is None:
         return [endpoint]
