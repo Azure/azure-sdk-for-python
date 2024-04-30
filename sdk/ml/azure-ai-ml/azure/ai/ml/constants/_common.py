@@ -4,7 +4,6 @@
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
-from .._version import VERSION
 
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
@@ -193,10 +192,6 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
-DEFAULT_OPEN_AI_CONNECTION_NAME = "Default_AzureOpenAI"
-DEFAULT_CONTENT_SAFETY_CONNECTION_NAME = "Default_AzureAIContentSafety"
-USER_AGENT_HEADER_KEY = "Client-User-Agent"
-USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
 CONNECTION_RESOURCE_ID_KEY = "ResourceId"
 
 
