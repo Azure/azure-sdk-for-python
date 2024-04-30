@@ -22,7 +22,7 @@
   - `azure.search.documents.indexes.models.VectorEncodingFormat`
   - `azure.search.documents.indexes.models.VisionVectorizeSkill`
 - Added `hybrid_search` support for `SearchClient.search` method.
-- Updated default API version to `2024-05-01-Preview`.
+- Updated default API version to `2024-05-01-preview`.
 
 ### Bugs Fixed
 
