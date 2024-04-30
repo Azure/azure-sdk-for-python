@@ -4,7 +4,32 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml.entities import ServerlessComputeSettings, Workspace
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ServerlessComputeSettings
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml.constants._workspace import IsolationMode
+from azure.ai.ml.entities import (
+    FqdnDestination,
+    PrivateEndpointDestination,
+    ServerlessComputeSettings,
+    ServiceTagDestination,
+    Workspace,
+)
 
 
 @pytest.mark.unittest
@@ -14,14 +39,14 @@ class TestWorkspaceEntity:
         "settings",
         [
             None,
-            ServerlessComputeSettings(None, False),
+            ServerlessComputeSettings(custom_subnet=None, no_public_ip=False),
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
-                False,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
+                no_public_ip=False,
             ),
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnetnpip",
-                True,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnetnpip",
+                no_public_ip=True,
             ),
         ],
     )
@@ -36,31 +61,28 @@ class TestWorkspaceEntity:
         else:
             assert ServerlessComputeSettings._from_rest_object(rest_object.serverless_compute_settings) == settings
 
-    @pytest.mark.parametrize("subnet_name", ["just_the_subnet_name", "", None])
-    def test_serverless_compute_settings_subnet_must_be_specified_if_no_public_ip_is_true(
-        self, subnet_name: str
-    ) -> None:
+    def test_serverless_compute_settings_subnet_name_must_be_an_arm_id(self) -> None:
         with pytest.raises(ValidationError):
-            ServerlessComputeSettings(subnet_name, True)
+            ServerlessComputeSettings(custom_subnet="justaname", no_public_ip=True)
 
     @pytest.mark.parametrize(
         "settings",
         [
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
-                True,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
+                no_public_ip=True,
             ),  # Override but using same value
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
-                True,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
+                no_public_ip=True,
             ),
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
-                False,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
+                no_public_ip=False,
             ),
             ServerlessComputeSettings(
-                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
-                False,
+                custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
+                no_public_ip=False,
             ),
         ],
     )

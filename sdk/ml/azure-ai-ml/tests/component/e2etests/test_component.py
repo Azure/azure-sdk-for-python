@@ -1170,8 +1170,60 @@ class TestComponent(AzureRecordedTestCase):
                 created_component._to_dict(), *omit_fields
             )
 
-    def test_load_component_from_flow(self, client: MLClient, randstr):
+    @pytest.mark.parametrize(
+        "params_override,expected_attrs",
+        [
+            pytest.param(
+                {
+                    "version": "2",
+                    "description": "test load component from flow",
+                },
+                {
+                    "version": "2",
+                    "description": "test load component from flow",
+                },
+                id="basic",
+            ),
+            pytest.param(
+                {
+                    "azureml": {
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+                        "is_deterministic": False,
+                    }
+                },
+                {
+                    "environment": "r:.+/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
+                    "is_deterministic": False,
+                },
+                id="with_environment",
+            ),
+        ],
+    )
+    def test_load_component_from_flow(self, client: MLClient, randstr, params_override: dict, expected_attrs: dict):
         target_path: str = "./tests/test_configs/flows/basic/flow.dag.yaml"
+        component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": randstr("component_name"),
+                },
+                params_override,
+            ],
+        )
+
+        created_component = client.components.create_or_update(component)
+
+        for attr, expected_value in expected_attrs.items():
+            if isinstance(expected_value, str) and expected_value.startswith("r:"):
+                expected_regex = re.compile(expected_value[2:])
+                assert expected_regex.match(getattr(created_component, attr)), f"attribute {attr} is not as expected"
+            else:
+                assert getattr(created_component, attr) == expected_value, f"attribute {attr} is not as expected"
+
+        assert component._get_origin_code_value() == created_component._get_origin_code_value()
+
+    def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
+        target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
         component = load_component(
             target_path,
             params_override=[
@@ -1183,9 +1235,10 @@ class TestComponent(AzureRecordedTestCase):
             ],
         )
 
-        created_component = client.components.create_or_update(component, version="2")
+        created_component = registry_client.components.create_or_update(component, version="2")
 
         assert created_component.name == component.name
         assert created_component.version == "2"
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
+        assert component.environment == created_component.task.environment

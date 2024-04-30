@@ -1,12 +1,12 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) ([formerly Azure Active Directory](https://learn.microsoft.com/azure/active-directory/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations, which can be used to construct Azure SDK clients that support Microsoft Entra token authentication.
+The Azure Identity library provides [Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/whatis) ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations, which can be used to construct Azure SDK clients that support Microsoft Entra token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Microsoft Entra ID documentation](https://learn.microsoft.com/azure/active-directory/)
+| [Microsoft Entra ID documentation](https://learn.microsoft.com/entra/identity/)
 
 ## Getting started
 
@@ -20,8 +20,8 @@ pip install azure-identity
 
 ### Prerequisites
 
-- An [Azure subscription](https://azure.microsoft.com/free/)
-- Python 3.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- An [Azure subscription](https://azure.microsoft.com/free/python)
+- Python 3.8 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Authenticate during local development
 
@@ -178,15 +178,15 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 ## Managed identity support
 
-[Managed identity authentication](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure services:
+[Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure services:
 
 - [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
 - [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 - [Azure Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/msi-authorization)
 - [Azure Kubernetes Service](https://learn.microsoft.com/azure/aks/use-managed-identity)
 - [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
-- [Azure Virtual Machines](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
-- [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
+- [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
+- [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
 
 ### Examples
 
@@ -250,19 +250,19 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 |Credential|Usage|Reference
 |-|-|-
-|[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals)
+|[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
 |[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
-|[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals)
+|[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
 
 ### Authenticate users
 
-|Credential|Usage|Reference
-|-|-|-
-|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
-|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code)
-|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
-|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow)
-|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multi-factor authentication). |  [Username + password authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth-ropc)
+|Credential|Usage| Reference | Notes
+|-|-|-|-
+|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)|
+|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-device-code)|
+|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)| `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref].
+|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow)|
+|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multi-factor authentication). | [Username + password authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth-ropc)|
 
 ### Authenticate via development tools
 
@@ -318,6 +318,10 @@ Token caching is a feature provided by the Azure Identity library that allows ap
 
 The Azure Identity library offers both in-memory and persistent disk caching. For more details, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
 
+## Brokered authentication
+
+An authentication broker is an application that runs on a user’s machine and manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows Web Account Manager (WAM) is supported. To enable support, use the [`azure-identity-broker`][azure_identity_broker] package. For details on authenticating using WAM, see the [broker plugin documentation][azure_identity_broker_readme].
+
 ## Troubleshooting
 
 See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
@@ -329,7 +333,7 @@ Credentials raise `CredentialUnavailableError` when they're unable to attempt au
 
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail to authenticate. `ClientAuthenticationError` has a `message` attribute, which describes why authentication failed. When raised by `DefaultAzureCredential` or `ChainedTokenCredential`, the message collects error messages from each credential in the chain.
 
-For more information on handling specific Microsoft Entra ID errors, see the Microsoft Entra ID [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-error-codes).
+For more information on handling specific Microsoft Entra ID errors, see the Microsoft Entra ID [error code documentation](https://learn.microsoft.com/entra/identity-platform/reference-error-codes).
 
 ### Logging
 
@@ -373,11 +377,13 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_developer_cli]:https://aka.ms/azure-dev
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
+[azure_identity_broker]: https://pypi.org/project/azure-identity-broker
+[azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
 [azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
-[cae]: https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
+[cae]: https://learn.microsoft.com/entra/identity/conditional-access/concept-continuous-access-evaluation
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential

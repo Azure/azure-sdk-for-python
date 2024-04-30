@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 import asyncio
 
+
 async def analyze_image_async():
     # [START analyze_image_async]
 
     import os
     from azure.ai.contentsafety.aio import ContentSafetyClient
+    from azure.ai.contentsafety.models import ImageCategory
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
     from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
@@ -20,7 +22,7 @@ async def analyze_image_async():
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
     image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
 
-    # Create an Content Safety client
+    # Create a Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     async with client:
@@ -40,19 +42,26 @@ async def analyze_image_async():
             print(e)
             raise
 
-    if response.hate_result:
-        print(f"Hate severity: {response.hate_result.severity}")
-    if response.self_harm_result:
-        print(f"SelfHarm severity: {response.self_harm_result.severity}")
-    if response.sexual_result:
-        print(f"Sexual severity: {response.sexual_result.severity}")
-    if response.violence_result:
-        print(f"Violence severity: {response.violence_result.severity}")
+    hate_result = next(item for item in response.categories_analysis if item.category == ImageCategory.HATE)
+    self_harm_result = next(item for item in response.categories_analysis if item.category == ImageCategory.SELF_HARM)
+    sexual_result = next(item for item in response.categories_analysis if item.category == ImageCategory.SEXUAL)
+    violence_result = next(item for item in response.categories_analysis if item.category == ImageCategory.VIOLENCE)
+
+    if hate_result:
+        print(f"Hate severity: {hate_result.severity}")
+    if self_harm_result:
+        print(f"SelfHarm severity: {self_harm_result.severity}")
+    if sexual_result:
+        print(f"Sexual severity: {sexual_result.severity}")
+    if violence_result:
+        print(f"Violence severity: {violence_result.severity}")
 
     # [END analyze_image_async]
 
+
 async def main():
     await analyze_image_async()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

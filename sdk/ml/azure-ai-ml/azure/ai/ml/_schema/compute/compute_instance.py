@@ -71,3 +71,13 @@ class ComputeInstanceSchema(ComputeSchema):
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}
     )
+    enable_sso = fields.Bool(metadata={"description": "Enable or disable single sign-on for the compute instance."})
+    enable_root_access = fields.Bool(
+        metadata={"description": "Enable or disable root access for the compute instance."}
+    )
+    release_quota_on_stop = fields.Bool(
+        metadata={"description": "Release quota on stop for the compute instance. Defaults to False."}
+    )
+    enable_os_patching = fields.Bool(
+        metadata={"description": "Enable or disable OS patching for the compute instance. Defaults to False."}
+    )

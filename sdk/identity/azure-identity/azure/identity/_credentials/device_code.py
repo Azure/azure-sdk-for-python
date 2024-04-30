@@ -39,6 +39,7 @@ class DeviceCodeCredential(InteractiveCredential):
         - ``verification_uri`` (str) the URL the user must visit
         - ``user_code`` (str) the code the user must enter there
         - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
+
         If this argument isn't provided, the credential will print instructions to stdout.
     :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`

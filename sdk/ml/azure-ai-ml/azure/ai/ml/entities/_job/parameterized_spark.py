@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
@@ -21,7 +21,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
 
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: str
+    :type code: Optional[Union[str, os.PathLike]]
     :param entry: The file or class entry point.
     :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
@@ -44,8 +44,8 @@ class ParameterizedSpark(SparkJobEntryMixin):
 
     def __init__(
         self,
-        code: Union[str, os.PathLike] = ".",
-        entry: Union[Dict[str, str], SparkJobEntry, None] = None,
+        code: Optional[Union[str, os.PathLike]] = ".",
+        entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
@@ -53,8 +53,10 @@ class ParameterizedSpark(SparkJobEntryMixin):
         conf: Optional[Dict[str, str]] = None,
         environment: Optional[Union[str, Environment]] = None,
         args: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        self.args = None
+
         super().__init__(**kwargs)
         self.code = code
         self.entry = entry

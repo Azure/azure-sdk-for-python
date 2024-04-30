@@ -33,7 +33,9 @@ create_monitor:
             type: mltable
             path: azureml:Direct:1
         data_context: test
-        data_window_size: "P60D"
+        data_window:
+          lookback_window_size: P60D
+          lookback_window_offset: P0D
       reference_data:
         input_data:
           type: mltable

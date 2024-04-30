@@ -3,39 +3,55 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.identity.broker import (
-    InteractiveBrowserBrokerCredential,
-    UsernamePasswordBrokerCredential,
-)
+import sys
+from unittest.mock import patch, Mock
+
+from azure.core.exceptions import ClientAuthenticationError
+from azure.identity.broker import InteractiveBrowserBrokerCredential
 
 
-@pytest.mark.skip("Not compatible with identity 1.15.0b1")
-def test_interactive_browser_cred_with_broker():
-    cred = InteractiveBrowserBrokerCredential(allow_broker=True)
-    assert cred._allow_broker
-    assert cred._get_app()._enable_broker
-
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+def test_interactive_browser_broker_cred():
     cred = InteractiveBrowserBrokerCredential()
-    assert cred._allow_broker
     assert cred._get_app()._enable_broker
 
 
-def test_interactive_browser_cred_without_broker():
-    cred = InteractiveBrowserBrokerCredential(allow_broker=False)
-    assert not cred._allow_broker
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+def test_interactive_browser_broker_cred_signed_in_account():
+    with patch("msal.broker._signin_silently", Mock(return_value="token")) as mock_signin_silently:
+        try:
+            cred = InteractiveBrowserBrokerCredential(
+                parent_window_handle="window_handle", use_default_broker_account=True
+            )
+            cred.get_token("scope")
+        except Exception:  # msal raises TypeError which is expected. We are not testing msal here.
+            pass
+        assert mock_signin_silently.called
 
 
-@pytest.mark.skip("Not compatible with identity 1.15.0b1")
-def test_username_password_cred_with_broker():
-    cred = UsernamePasswordBrokerCredential("client-id", "username", "password", allow_broker=True)
-    assert cred._allow_broker
-    assert cred._get_app()._enable_broker
+def test_enable_support_logging_default():
+    """The keyword argument for enabling PII in MSAL should be disabled by default."""
 
-    cred = UsernamePasswordBrokerCredential("client-id", "username", "password")
-    assert cred._allow_broker
-    assert cred._get_app()._enable_broker
+    cred = InteractiveBrowserBrokerCredential(parent_window_handle="window_handle")
+    with patch("msal.PublicClientApplication") as mock_client_application:
+        with patch("msal.PublicClientApplication.acquire_token_interactive"):
+            with pytest.raises(ClientAuthenticationError):
+                cred.get_token("scope")
+
+        assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+        _, kwargs = mock_client_application.call_args
+        assert not kwargs["enable_pii_log"]
 
 
-def test_username_password_cred_without_broker():
-    cred = UsernamePasswordBrokerCredential("client-id", "username", "password", allow_broker=False)
-    assert not cred._allow_broker
+def test_enable_support_logging_enabled():
+    """The keyword argument for enabling PII in MSAL should be propagated correctly."""
+
+    cred = InteractiveBrowserBrokerCredential(parent_window_handle="window_handle", enable_support_logging=True)
+    with patch("msal.PublicClientApplication") as mock_client_application:
+        with patch("msal.PublicClientApplication.acquire_token_interactive"):
+            with pytest.raises(ClientAuthenticationError):
+                cred.get_token("scope")
+
+        assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+        _, kwargs = mock_client_application.call_args
+        assert kwargs["enable_pii_log"]

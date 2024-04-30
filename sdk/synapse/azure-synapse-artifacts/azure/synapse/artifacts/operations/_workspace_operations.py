@@ -94,21 +94,20 @@ class WorkspaceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.Workspace] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -121,8 +120,6 @@ class WorkspaceOperations:
         deserialized = self._deserialize("Workspace", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/workspace"}
+        return deserialized  # type: ignore

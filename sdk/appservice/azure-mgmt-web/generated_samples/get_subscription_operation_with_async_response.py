@@ -29,13 +29,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.global_operations.get_subscription_operation_with_async_response(
+    client.global_operations.get_subscription_operation_with_async_response(
         location="West US",
         operation_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab5d5",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/GetSubscriptionOperationWithAsyncResponse.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/GetSubscriptionOperationWithAsyncResponse.json
 if __name__ == "__main__":
     main()

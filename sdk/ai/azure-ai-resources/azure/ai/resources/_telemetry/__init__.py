@@ -7,8 +7,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from azure.ai.ml._telemetry import ActivityType, log_activity, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 
-from .logging_handler import get_appinsights_log_handler, OpsLogger
-from ..constants._common import GEN_AI_INTERNAL_LOGGER_NAMESPACE
+from .logging_handler import get_appinsights_log_handler, ActivityLogger
 
 __all__ = [
     "monitor_with_activity",
@@ -16,7 +15,6 @@ __all__ = [
     "log_activity",
     "ActivityType",
     "get_appinsights_log_handler",
-    "GEN_AI_INTERNAL_LOGGER_NAMESPACE",
-    "OpsLogger",
+    "ActivityLogger",
     "initialize_logger_info",
 ]

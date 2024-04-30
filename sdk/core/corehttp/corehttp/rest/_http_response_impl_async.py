@@ -27,7 +27,7 @@ from typing import Any, AsyncIterator, Optional, Type
 from types import TracebackType
 
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
-from ._http_response_impl import _HttpResponseBaseImpl, _RestHttpClientTransportResponseBase
+from ._http_response_impl import _HttpResponseBaseImpl
 
 
 class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
@@ -112,18 +112,3 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
     def __repr__(self) -> str:
         content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         return "<AsyncHttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
-
-
-class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
-    """Create a Rest HTTPResponse from an http.client response."""
-
-    async def iter_bytes(self, **kwargs):
-        raise TypeError("We do not support iter_bytes for this transport response")
-
-    async def iter_raw(self, **kwargs):
-        raise TypeError("We do not support iter_raw for this transport response")
-
-    async def read(self):
-        if self._content is None:
-            self._content = self._internal_response.read()
-        return self._content

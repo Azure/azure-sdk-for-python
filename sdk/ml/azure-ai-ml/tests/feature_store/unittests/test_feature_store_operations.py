@@ -31,13 +31,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_feature_store_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_06_01_preview: Mock,
+    mock_aml_services_2023_08_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> FeatureStoreOperations:
     yield FeatureStoreOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2023_06_01_preview,
+        service_client=mock_aml_services_2023_08_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -278,7 +278,7 @@ class TestFeatureStoreOperation:
             return_value=None,
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_connections_operations.WorkspaceConnectionsOperations.get",
+            "azure.ai.ml.operations._connections_operations.ConnectionsOperations.get",
             return_value=None,
         )
 

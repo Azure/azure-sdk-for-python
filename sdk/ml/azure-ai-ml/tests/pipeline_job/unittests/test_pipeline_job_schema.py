@@ -28,6 +28,7 @@ from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, 
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
@@ -648,6 +649,11 @@ class TestPipelineJobSchema:
         hello_world_component = job.jobs["hello_world_inline_paralleljob"]
         component_dict = load_yaml("./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
         self.assert_inline_component(hello_world_component, component_dict)
+
+    def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
+        job = load_job(test_path)
+        assert isinstance(job.jobs["hello_world_inline_paralleljob"].identity, UserIdentityConfiguration)
 
     @classmethod
     def assert_settings_field(
@@ -1834,6 +1840,25 @@ class TestPipelineJobSchema:
         assert "component" not in job_dict
         assert "jobs" in job_dict
         assert "component_a_job" in job_dict["jobs"]
+
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"path": "azureml://datastores/mock/paths/my_output_file.txt", "type": "uri_file"},
+        }
+
+        # Assert the output_path:None not override original component output value
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides2.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"type": "uri_folder"},  # uri_folder from component output
+        }
 
     def test_invalid_pipeline_component_job(self):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"

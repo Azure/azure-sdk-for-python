@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservice import ContainerServiceClient
 
 """
@@ -26,7 +29,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.managed_clusters.begin_create_or_update(
@@ -36,7 +39,7 @@ def main():
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/subid1/resourceGroups/rgName1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgName1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
                 },
             },
             "location": "location1",
@@ -64,7 +67,7 @@ def main():
                     "scan-interval": "20s",
                     "skip-nodes-with-system-pods": "false",
                 },
-                "diskEncryptionSetID": "/subscriptions/subid1/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
                 "enablePodSecurityPolicy": True,
                 "enableRBAC": True,
@@ -86,6 +89,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-08-01/examples/ManagedClustersCreate_DualStackNetworking.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-02-01/examples/ManagedClustersCreate_DualStackNetworking.json
 if __name__ == "__main__":
     main()

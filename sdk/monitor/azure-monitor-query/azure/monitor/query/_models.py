@@ -8,7 +8,7 @@
 import uuid
 from datetime import datetime, timedelta
 import sys
-from typing import Any, Optional, List, Union, Tuple, Dict, Iterator
+from typing import Any, Optional, List, Union, Tuple, Dict, Iterator, Literal
 
 from ._enums import LogsQueryStatus, MetricAggregationType, MetricClass, MetricNamespaceClassification, MetricUnit
 from ._exceptions import LogsQueryError
@@ -345,8 +345,8 @@ class LogsBatchQuery:
         headers = {"Prefer": prefer}
         timespan_iso = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
-        self.id = str(uuid.uuid4())
-        self.body = {
+        self.id: str = str(uuid.uuid4())
+        self.body: Dict[str, Any] = {
             "query": query,
             "timespan": timespan_iso,
             "workspaces": additional_workspaces,
@@ -376,7 +376,7 @@ class LogsQueryResult:
     visualization: Optional[JSON] = None
     """This will include a visualization property in the response that specifies the type of visualization selected
     by the query and any properties for that visualization."""
-    status: LogsQueryStatus
+    status: Literal[LogsQueryStatus.SUCCESS]
     """The status of the result. Always 'Success' for an instance of a LogsQueryResult."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -554,7 +554,7 @@ class LogsQueryPartialResult:
     selected by the query and any properties for that visualization."""
     partial_error: Optional[LogsQueryError] = None
     """The partial error info."""
-    status: LogsQueryStatus
+    status: Literal[LogsQueryStatus.PARTIAL]
     """The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult."""
 
     def __init__(self, **kwargs: Any) -> None:

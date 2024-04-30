@@ -29,14 +29,14 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.galleryimages.update(
+    response = client.gallery_images.begin_update(
         resource_group_name="test-rg",
-        galleryimages_name="test-gallery-image",
-        galleryimages={"tags": {"additionalProperties": "sample"}},
-    )
+        gallery_image_name="test-gallery-image",
+        gallery_images={"tags": {"additionalProperties": "sample"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/UpdateGalleryImage.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/UpdateGalleryImage.json
 if __name__ == "__main__":
     main()

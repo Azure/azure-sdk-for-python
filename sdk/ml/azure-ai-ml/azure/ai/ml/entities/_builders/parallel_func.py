@@ -2,11 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
@@ -39,9 +43,9 @@ def parallel_run_function(
     instance_type: Optional[str] = None,
     docker_args: Optional[str] = None,
     shm_size: Optional[str] = None,
-    identity: Optional[Union[ManagedIdentity, AmlToken]] = None,
+    identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     is_deterministic: bool = True,
-    **kwargs,
+    **kwargs: Any,
 ) -> Parallel:
     """Create a Parallel object which can be used inside dsl.pipeline as a function and can also be created as a
     standalone parallel job.
@@ -49,7 +53,7 @@ def parallel_run_function(
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
 
-    .. remarks::
+    .. note::
 
         To use parallel_run_function:
 
@@ -174,10 +178,11 @@ def parallel_run_function(
                      This should be in the format of (number)(unit) where number as to be greater than 0
                      and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :paramtype shm_size: str
-    :keyword identity: Identity that training job will use while running on compute.
-    :paramtype identity: Union[
-                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.ManagedIdentity,
-                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.AmlToken]
+    :keyword identity: Identity that PRS job will use while running on compute.
+    :paramtype identity: Optional[Union[
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        ~azure.ai.ml.entities.AmlTokenConfiguration,
+        ~azure.ai.ml.entities.UserIdentityConfiguration]]
     :keyword is_deterministic: Specify whether the parallel will return same output given same input.
                              If a parallel (component) is deterministic, when use it as a node/step in a pipeline,
                              it will reuse results from a previous submitted job in current workspace
@@ -200,30 +205,55 @@ def parallel_run_function(
     component = kwargs.pop("component", None)
 
     if component is None:
-        component = ParallelComponent(
-            base_path=os.getcwd(),  # base path should be current folder
-            name=name,
-            tags=tags,
-            code=task.code,
-            display_name=display_name,
-            description=description,
-            inputs=component_inputs,
-            outputs=component_outputs,
-            retry_settings=retry_settings,
-            logging_level=logging_level,
-            max_concurrency_per_instance=max_concurrency_per_instance,
-            error_threshold=error_threshold,
-            mini_batch_error_threshold=mini_batch_error_threshold,
-            task=task,
-            mini_batch_size=mini_batch_size,
-            partition_keys=partition_keys,
-            input_data=input_data,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            **kwargs,
-        )
+        if task is None:
+            component = ParallelComponent(
+                base_path=os.getcwd(),  # base path should be current folder
+                name=name,
+                tags=tags,
+                code=None,
+                display_name=display_name,
+                description=description,
+                inputs=component_inputs,
+                outputs=component_outputs,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
+                logging_level=logging_level,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                error_threshold=error_threshold,
+                mini_batch_error_threshold=mini_batch_error_threshold,
+                task=task,
+                mini_batch_size=mini_batch_size,
+                partition_keys=partition_keys,
+                input_data=input_data,
+                _source=ComponentSource.BUILDER,
+                is_deterministic=is_deterministic,
+                **kwargs,
+            )
+        else:
+            component = ParallelComponent(
+                base_path=os.getcwd(),  # base path should be current folder
+                name=name,
+                tags=tags,
+                code=task.code,
+                display_name=display_name,
+                description=description,
+                inputs=component_inputs,
+                outputs=component_outputs,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
+                logging_level=logging_level,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                error_threshold=error_threshold,
+                mini_batch_error_threshold=mini_batch_error_threshold,
+                task=task,
+                mini_batch_size=mini_batch_size,
+                partition_keys=partition_keys,
+                input_data=input_data,
+                _source=ComponentSource.BUILDER,
+                is_deterministic=is_deterministic,
+                **kwargs,
+            )
 
-    parallel_obj = Parallel(  # pylint: disable=abstract-class-instantiated
+    # pylint: disable=abstract-class-instantiated
+    parallel_obj = Parallel(
         component=component,
         name=name,
         description=description,
@@ -236,7 +266,7 @@ def parallel_run_function(
         outputs=job_outputs,
         identity=identity,
         environment_variables=environment_variables,
-        retry_settings=retry_settings,
+        retry_settings=retry_settings,  # type: ignore[arg-type]
         logging_level=logging_level,
         max_concurrency_per_instance=max_concurrency_per_instance,
         error_threshold=error_threshold,

@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,7 +45,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,7 +63,7 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -80,7 +80,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +98,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -115,7 +115,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -134,7 +134,7 @@ def build_create_or_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -153,7 +153,7 @@ def build_update_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -172,7 +172,7 @@ def build_update_tags_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -189,7 +189,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -200,7 +200,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -215,7 +215,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,7 +230,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -672,20 +672,20 @@ class MobileNetworksOperations:
         self,
         resource_group_name: str,
         mobile_network_name: str,
-        parameters: _models.TagsObject,
+        parameters: _models.IdentityAndTagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Required.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Required.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.IdentityAndTagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -705,14 +705,14 @@ class MobileNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Required.
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -728,19 +728,19 @@ class MobileNetworksOperations:
         self,
         resource_group_name: str,
         mobile_network_name: str,
-        parameters: Union[_models.TagsObject, IO],
+        parameters: Union[_models.IdentityAndTagsObject, IO],
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Is either a TagsObject
-         type or a IO type. Required.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject or IO
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Is either
+         a IdentityAndTagsObject type or a IO type. Required.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.IdentityAndTagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -770,7 +770,7 @@ class MobileNetworksOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "TagsObject")
+            _json = self._serialize.body(parameters, "IdentityAndTagsObject")
 
         request = build_update_tags_request(
             resource_group_name=resource_group_name,

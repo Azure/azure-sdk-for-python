@@ -62,8 +62,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         credential: CommunicationTokenCredential,
         **kwargs: Any
     ) -> None:
-        # type: (...) -> None
-
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -81,7 +79,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._endpoint,
+            endpoint=self._endpoint,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -91,8 +89,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             self, thread_id: str,
             **kwargs: Any
     ) -> ChatThreadClient:
-
-        # type: (...) -> ChatThreadClient
         """
         Get ChatThreadClient by providing a thread_id.
 
@@ -126,9 +122,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self, topic: str,
         **kwargs
     ) -> CreateChatThreadResult:
-
-        # type: (...) -> CreateChatThreadResult
-
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -136,11 +129,11 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         :keyword thread_participants: Optional. Participants to be added to the thread.
         :paramtype thread_participants: List[~azure.communication.chat.ChatParticipant]
         :keyword idempotency_token: Optional. If specified, the client directs that the request is
-         repeatable; that is, the client can make the request multiple times with the same
-         Idempotency_Token and get back an appropriate response without the server executing the
-         request multiple times. The value of the Idempotency_Token is an opaque string
-         representing a client-generated, globally unique for all time, identifier for the request. If not
-         specified, a new unique id would be generated.
+            repeatable; that is, the client can make the request multiple times with the same
+            Idempotency_Token and get back an appropriate response without the server executing the
+            request multiple times. The value of the Idempotency_Token is an opaque string
+            representing a client-generated, globally unique for all time, identifier for the request. If not
+            specified, a new unique id would be generated.
         :paramtype idempotency_token: str
         :return: CreateChatThreadResult
         :rtype: ~azure.communication.chat.CreateChatThreadResult
@@ -152,7 +145,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
                 :start-after: [START create_thread]
                 :end-before: [END create_thread]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Creating a new chat thread.
         """
         if not topic:
@@ -176,10 +169,9 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs)
 
         errors = None
-        if hasattr(create_chat_thread_result, 'errors') and \
-                create_chat_thread_result.errors is not None:
-            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=[thread_participants],
+        if hasattr(create_chat_thread_result, 'invalid_participants'):
+            errors = CommunicationErrorResponseConverter.convert(
+                participants=thread_participants or [],
                 chat_errors=create_chat_thread_result.invalid_participants
             )
 
@@ -198,7 +190,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
+    ) -> AsyncItemPaged[ChatThreadItem]:
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
@@ -213,7 +205,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
                 :start-after: [START list_threads]
                 :end-before: [END list_threads]
                 :language: python
-                :dedent: 12
+                :dedent: 4
                 :caption: Listing chat threads.
         """
         results_per_page = kwargs.pop("results_per_page", None)
@@ -244,7 +236,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
                 :start-after: [START delete_thread]
                 :end-before: [END delete_thread]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Deleting a chat thread.
         """
         if not thread_id:

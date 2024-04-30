@@ -45,6 +45,7 @@ from .._generated.aio._client import AzureSchemaRegistry
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.rest import AsyncHttpResponse
+    from .._schema_registry_client import SchemaPropertiesDict
 
 
 class SchemaRegistryClient(object):
@@ -56,7 +57,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 
@@ -83,11 +84,11 @@ class SchemaRegistryClient(object):
             **kwargs,
         )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SchemaRegistryClient":
         await self._generated_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._generated_client.__aexit__(*args)
 
     async def close(self) -> None:
@@ -141,7 +142,8 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)
 
     @overload
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -225,9 +227,10 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         await http_response.read()
+        properties = cast("SchemaPropertiesDict", schema_properties)
         return Schema(
             definition=http_response.text(),
-            properties=SchemaProperties(**schema_properties),
+            properties=SchemaProperties(**properties),
         )
 
     @distributed_trace_async
@@ -275,4 +278,5 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         )
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)

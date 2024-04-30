@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.support import MicrosoftSupport
 
 """
@@ -26,7 +29,7 @@ from azure.mgmt.support import MicrosoftSupport
 def main():
     client = MicrosoftSupport(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="132d901f-189d-4381-9214-fe68e27e05a1",
     )
 
     response = client.files.create(
@@ -37,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2022-09-01-preview/examples/CreateFileForSubscription.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/stable/2024-04-01/examples/CreateFileForSubscription.json
 if __name__ == "__main__":
     main()

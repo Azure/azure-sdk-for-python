@@ -21,6 +21,7 @@ USAGE:
 """
 
 import os
+import sys
 
 
 class QueueServiceSamples(object):
@@ -28,6 +29,10 @@ class QueueServiceSamples(object):
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def queue_service_properties(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
@@ -69,6 +74,10 @@ class QueueServiceSamples(object):
         # [END get_queue_service_properties]
 
     def queues_in_account(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
@@ -96,6 +105,10 @@ class QueueServiceSamples(object):
             # [END qsc_delete_queue]
 
     def get_queue_client(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient, QueueClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)

@@ -72,7 +72,7 @@ class EventHubProducer(
      Default value is `True`.
     """
 
-    def __init__(self, client: EventHubProducerClient, target: str, **kwargs) -> None:
+    def __init__(self, client: EventHubProducerClient, target: str, **kwargs: Any) -> None:
         super().__init__()
         self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
@@ -103,13 +103,13 @@ class EventHubProducer(
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
-        self._unsent_events = []  # type: List[Any]
+        self._unsent_events: List[Any] = []
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
-        self._handler: Optional[Union[uamqp_SendClientAsync, SendClientAsync]] = None
-        self._outcome: Optional[uamqp_MessageSendResult] = None
+        self._handler: Optional[Union["uamqp_SendClientAsync", SendClientAsync]] = None
+        self._outcome: Optional["uamqp_MessageSendResult"] = None
         self._condition: Optional[Exception] = None
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = self._amqp_transport.create_link_properties(
@@ -117,7 +117,7 @@ class EventHubProducer(
         )
 
     def _create_handler(
-        self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]
+        self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
@@ -157,7 +157,7 @@ class EventHubProducer(
         await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(
-        self, outcome: uamqp_MessageSendResult, condition: Optional[Exception]
+        self, outcome: "uamqp_MessageSendResult", condition: Optional[Exception]
     ) -> None:
         """
         ONLY USED FOR uamqp_transport=True. Called when the outcome is received for a delivery.

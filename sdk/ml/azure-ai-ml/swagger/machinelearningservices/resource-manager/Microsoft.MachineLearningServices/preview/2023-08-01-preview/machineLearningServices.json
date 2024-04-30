@@ -2117,6 +2117,20 @@
           "description": "Enable Auto OS Patching. Possible values are: true, false.",
           "x-nullable": true
         },
+        "enableRootAccess": {
+          "type": "boolean",
+          "default": true,
+          "title": "Enable root access.",
+          "description": "Enable root access. Possible values are: true, false.",
+          "x-nullable": true
+        },
+        "enableSSO": {
+          "type": "boolean",
+          "default": true,
+          "title": "Enable SSO (single sign on).",
+          "description": "Enable SSO (single sign on). Possible values are: true, false.",
+          "x-nullable": true
+        },
         "releaseQuotaOnStop": {
           "type": "boolean",
           "default": false,
@@ -2978,6 +2992,10 @@
             "source",
             "target"
           ]
+        },
+        "kernel": {
+          "description": "Describes the jupyter kernel settings for the image if its a custom environment",
+          "$ref": "#/definitions/JupyterKernelConfig"
         }
       },
       "additionalProperties": true
@@ -2993,7 +3011,7 @@
           ],
           "type": "string",
           "title": "Type of the image",
-          "description": "Type of the image. Possible values are: docker - For docker images. azureml - For AzureML images",
+          "description": "Type of the image. Possible values are: docker - For docker images. azureml - For AzureML Environment images (custom and curated)",
           "x-ms-enum": {
             "name": "ImageType",
             "modelAsString": true
@@ -3001,7 +3019,11 @@
         },
         "reference": {
           "type": "string",
-          "description": "Image reference URL"
+          "description": "Image reference URL if type is docker. Environment name if type is azureml"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of image being used. If latest then skip this field"
         }
       },
       "additionalProperties": true
@@ -3171,6 +3193,28 @@
           "format": "int32",
           "type": "integer",
           "description": "Mention the Tmpfs size"
+        }
+      }
+    },
+    "JupyterKernelConfig": {
+      "type": "object",
+      "description": "Jupyter kernel configuration.",
+      "properties": {
+        "argv": {
+          "type": "array",
+          "description": "Argument to the the runtime",
+          "items": {
+            "type": "string",
+            "description": "argument values"
+          }
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the kernel"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language of the kernel [Example value: python]"
         }
       }
     },
@@ -3381,7 +3425,7 @@
         },
         "triggerType": {
           "description": "[Required] The schedule trigger type.",
-          "$ref": "./mfe.json#/definitions/TriggerType"
+          "$ref": "#/definitions/ComputeTriggerType"
         },
         "recurrence": {
           "description": "Required if triggerType is Recurrence.",
@@ -3396,6 +3440,26 @@
           "$ref": "#/definitions/ScheduleBase"
         }
       }
+    },
+    "ComputeTriggerType": {
+      "enum": [
+        "Recurrence",
+        "Cron"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ComputeTriggerType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Recurrence"
+          },
+          {
+            "value": "Cron"
+          }
+        ]
+      },
+      "additionalProperties": false
     },
     "ScheduleBase": {
       "type": "object",
@@ -3478,7 +3542,7 @@
       "properties": {
         "frequency": {
           "description": "[Required] The frequency to trigger schedule.",
-          "$ref": "./mfe.json#/definitions/RecurrenceFrequency"
+          "$ref": "#/definitions/ComputeRecurrenceFrequency"
         },
         "interval": {
           "description": "[Required] Specifies schedule interval in conjunction with frequency",
@@ -3497,9 +3561,138 @@
         },
         "schedule": {
           "description": "[Required] The recurrence schedule.",
-          "$ref": "./mfe.json#/definitions/RecurrenceSchedule"
+          "$ref": "#/definitions/ComputeRecurrenceSchedule"
         }
       }
+    },
+    "ComputeRecurrenceFrequency": {
+      "description": "Enum to describe the frequency of a compute recurrence schedule",
+      "enum": [
+        "Minute",
+        "Hour",
+        "Day",
+        "Week",
+        "Month"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ComputeRecurrenceFrequency",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Minute",
+            "description": "Minute frequency"
+          },
+          {
+            "value": "Hour",
+            "description": "Hour frequency"
+          },
+          {
+            "value": "Day",
+            "description": "Day frequency"
+          },
+          {
+            "value": "Week",
+            "description": "Week frequency"
+          },
+          {
+            "value": "Month",
+            "description": "Month frequency"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ComputeRecurrenceSchedule": {
+      "required": [
+        "hours",
+        "minutes"
+      ],
+      "type": "object",
+      "properties": {
+        "hours": {
+          "description": "[Required] List of hours for the schedule.",
+          "type": "array",
+          "items": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "minutes": {
+          "description": "[Required] List of minutes for the schedule.",
+          "type": "array",
+          "items": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "monthDays": {
+          "description": "List of month days for the schedule",
+          "type": "array",
+          "items": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "x-nullable": true
+        },
+        "weekDays": {
+          "description": "List of days for the schedule.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComputeWeekDay"
+          },
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ComputeWeekDay": {
+      "description": "Enum of weekday",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ComputeWeekDay",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Monday",
+            "description": "Monday weekday"
+          },
+          {
+            "value": "Tuesday",
+            "description": "Tuesday weekday"
+          },
+          {
+            "value": "Wednesday",
+            "description": "Wednesday weekday"
+          },
+          {
+            "value": "Thursday",
+            "description": "Thursday weekday"
+          },
+          {
+            "value": "Friday",
+            "description": "Friday weekday"
+          },
+          {
+            "value": "Saturday",
+            "description": "Saturday weekday"
+          },
+          {
+            "value": "Sunday",
+            "description": "Sunday weekday"
+          }
+        ]
+      },
+      "additionalProperties": false
     },
     "Cron": {
       "type": "object",

@@ -13,18 +13,16 @@ import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
-    EncryptionAlgorithm,
+    EncryptionAlgorithm,  # Shouldn't be imported from aio namespace, but do so to test backwards compatibility
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
-from azure.keyvault.keys._generated_models import KeySignParameters
-from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
-from azure.mgmt.keyvault.models import KeyPermissions, Permissions
+from azure.keyvault.keys._generated.models import KeySignParameters
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -33,13 +31,10 @@ from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
 from _keys_test_case import KeysTestCase
 
-# without keys/get, a CryptographyClient created with a key ID performs all ops remotely
-NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_vault_latest = get_decorator(only_vault=True, is_async=True, api_versions=[DEFAULT_VERSION])
-no_get = get_decorator(is_async=True, permissions=NO_GET)
+only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 
 
 class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
@@ -174,7 +169,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",no_get)
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
@@ -183,6 +178,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         result = await crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         assert result.key_id == imported_key.id
@@ -193,7 +189,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert self.plaintext == result.plaintext
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",no_get)
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_sign_and_verify(self, key_client, is_hsm, **kwargs):
@@ -205,6 +201,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         result = await crypto_client.sign(SignatureAlgorithm.rs256, digest)
         assert result.key_id == imported_key.id
@@ -215,7 +212,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert verified.is_valid
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",no_get)
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
@@ -225,6 +222,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         created_key = await self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
         assert created_key is not None
         crypto_client = self.create_crypto_client(created_key.id, is_async=True, api_version=key_client.api_version)
+        crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
@@ -544,13 +542,14 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             assert result.is_valid
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",no_get)
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_local_validity_period_enforcement(self, key_client, is_hsm, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
         async def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
             crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
+            crypto_client._keys_get_forbidden = True  # Prevent caching key material locally, to force remote ops
             for algorithm in encrypt_algorithms:
                 with pytest.raises(ValueError) as ex:
                     await crypto_client.encrypt(algorithm, self.plaintext)
@@ -594,7 +593,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_send_request(self, key_client, is_hsm, **kwargs):

@@ -26,7 +26,7 @@
                 "jobInputType": "mltable",
                 "uri": "Direct:1",
                 "windowSize": "P60D",
-                "windowOffset": "P60D"
+                "windowOffset": "P0D"
               },
               "referenceData": {
                 "dataContext": "test",

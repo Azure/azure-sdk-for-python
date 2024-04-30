@@ -81,7 +81,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
@@ -110,7 +110,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Model":
         params_override = params_override or []
         data = data or {}
@@ -118,10 +118,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ModelSchema, data, context, **kwargs)
+        res: Model = load_from_dict(ModelSchema, data, context, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
-        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
@@ -144,9 +145,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
-            if rest_model_version.intellectual_property
-            else None,
+            intellectual_property=(
+                IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+                if rest_model_version.intellectual_property
+                else None
+            ),
         )
         return model
 
@@ -171,9 +174,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            flavors={key: FlavorData(data=dict(value)) for key, value in self.flavors.items()}
-            if self.flavors
-            else None,  # flatten OrderedDict to dict
+            flavors=(
+                {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+            ),  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
             stage=self.stage,
@@ -197,7 +200,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 asset_artifact.relative_path,
             )
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

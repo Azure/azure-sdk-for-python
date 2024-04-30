@@ -8,9 +8,10 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import NestedField
-from azure.ai.ml._schema.core.schema import YamlFileSchema, PatchedSchemaMeta
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, YamlFileSchema
 
-from .source_metadata_schema import SourceMetadataSchema
+from .source_process_code_metadata_schema import SourceProcessCodeSchema
+from .timestamp_column_metadata_schema import TimestampColumnMetadataSchema
 
 
 # pylint: disable-next=name-too-long
@@ -37,8 +38,17 @@ class ColumnPropertiesSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(data_key="DataType")
 
 
+class SourcePropertiesSchema(metaclass=PatchedSchemaMeta):
+    type = fields.Str(required=True)
+    path = fields.Str(required=False)
+    timestamp_column = fields.Nested(TimestampColumnMetadataSchema, data_key="timestampColumn")
+    source_delay = fields.Nested(DelayMetadataPropertiesSchema, data_key="sourceDelay")
+    source_process_code = fields.Nested(SourceProcessCodeSchema)
+    dict = fields.Dict(keys=fields.Str(), values=fields.Str(), data_key="kwargs")
+
+
 class FeaturesetSpecPropertiesSchema(YamlFileSchema):
-    source = fields.Nested(SourceMetadataSchema, data_key="source")
+    source = fields.Nested(SourcePropertiesSchema, data_key="source")
     feature_transformation_code = fields.Nested(
         FeatureTransformationCodePropertiesSchema, data_key="featureTransformationCode"
     )

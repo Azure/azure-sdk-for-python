@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, cast
 
 from typing_extensions import Literal
 
@@ -53,7 +53,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         **kwargs: Dict,
     ) -> None:
         self.endpoint = endpoint
-        self.type = type
+        self.type: Any = type
         self.nodes = nodes
         self.status = status
         self.port = port
@@ -61,7 +61,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         self._validate_nodes()
         self._validate_type_name()
 
-    def _validate_nodes(self):
+    def _validate_nodes(self) -> None:
         if not self.nodes in ["all", None]:
             msg = f"nodes should be either 'all' or None, but received '{self.nodes}'."
             raise ValidationException(
@@ -72,7 +72,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _validate_type_name(self):
+    def _validate_type_name(self) -> None:
         if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST:
             msg = (
                 f"type should be one of " f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
@@ -85,7 +85,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _to_rest_job_service(self, updated_properties: Dict[str, str] = None) -> RestJobService:
+    def _to_rest_job_service(self, updated_properties: Optional[Dict[str, str]] = None) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None,
@@ -98,21 +98,22 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     @classmethod
     def _to_rest_job_services(
         cls,
-        services: Dict[
-            str,
-            Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"],
-        ],
-    ) -> Dict[str, RestJobService]:
+        services: Optional[Dict],
+    ) -> Optional[Dict[str, RestJobService]]:
         if services is None:
             return None
 
         return {name: service._to_rest_object() for name, service in services.items()}
 
     @classmethod
-    def _from_rest_job_service_object(cls, obj: RestJobService):
+    def _from_rest_job_service_object(cls, obj: RestJobService) -> "JobServiceBase":
         return cls(
             endpoint=obj.endpoint,
-            type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None) if obj.job_service_type else None,
+            type=(
+                JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)  # type: ignore[arg-type]
+                if obj.job_service_type
+                else None
+            ),
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
@@ -121,16 +122,12 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_job_services(
-        cls, services: Dict[str, RestJobService]
-    ) -> Dict[
-        str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]
-    ]:
+    def _from_rest_job_services(cls, services: Dict[str, RestJobService]) -> Dict:
         # """Resolve Dict[str, RestJobService] to Dict[str, Specific JobService]"""
         if services is None:
             return None
 
-        result = {}
+        result: dict = {}
         for name, service in services.items():
             if service.job_service_type == JobServiceTypeNames.RestNames.JUPYTER_LAB:
                 result[name] = JupyterLabJobService._from_rest_object(service)
@@ -168,7 +165,7 @@ class JobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
-        return cls._from_rest_job_service_object(obj)
+        return cast(JobService, cls._from_rest_job_service_object(obj))
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -213,7 +210,7 @@ class SshJobService(JobServiceBase):
         port: Optional[int] = None,
         ssh_public_keys: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -228,7 +225,7 @@ class SshJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "SshJobService":
-        ssh_job_service = cls._from_rest_job_service_object(obj)
+        ssh_job_service = cast(SshJobService, cls._from_rest_job_service_object(obj))
         ssh_job_service.ssh_public_keys = _get_property(obj.properties, "sshPublicKeys")
         return ssh_job_service
 
@@ -276,7 +273,7 @@ class TensorBoardJobService(JobServiceBase):
         port: Optional[int] = None,
         log_dir: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -291,7 +288,7 @@ class TensorBoardJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "TensorBoardJobService":
-        tensorboard_job_Service = cls._from_rest_job_service_object(obj)
+        tensorboard_job_Service = cast(TensorBoardJobService, cls._from_rest_job_service_object(obj))
         tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")
         return tensorboard_job_Service
 
@@ -336,7 +333,7 @@ class JupyterLabJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -350,7 +347,7 @@ class JupyterLabJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JupyterLabJobService":
-        return cls._from_rest_job_service_object(obj)
+        return cast(JupyterLabJobService, cls._from_rest_job_service_object(obj))
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -392,7 +389,7 @@ class VsCodeJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -406,20 +403,22 @@ class VsCodeJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "VsCodeJobService":
-        return cls._from_rest_job_service_object(obj)
+        return cast(VsCodeJobService, cls._from_rest_job_service_object(obj))
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
 
 
-def _append_or_update_properties(properties: Dict[str, str], key: str, value: str) -> Dict[str, str]:
+def _append_or_update_properties(
+    properties: Optional[Dict[str, str]], key: str, value: Optional[str]
+) -> Dict[str, str]:
     if value and not properties:
         properties = {key: value}
 
     if value and properties:
         properties.update({key: value})
-    return properties
+    return properties if properties is not None else {}
 
 
-def _get_property(properties: Dict[str, str], key: str) -> str:
+def _get_property(properties: Dict[str, str], key: str) -> Optional[str]:
     return properties.get(key, None) if properties else None

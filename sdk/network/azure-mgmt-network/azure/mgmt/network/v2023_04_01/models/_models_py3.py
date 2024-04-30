@@ -24491,9 +24491,6 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
      list[~azure.mgmt.network.v2023_04_01.models.VirtualApplianceAdditionalNicProperties]
     :ivar virtual_appliance_sites: List of references to VirtualApplianceSite.
     :vartype virtual_appliance_sites: list[~azure.mgmt.network.v2023_04_01.models.SubResource]
-    :ivar virtual_appliance_connections: List of references to VirtualApplianceConnections.
-    :vartype virtual_appliance_connections:
-     list[~azure.mgmt.network.v2023_04_01.models.SubResource]
     :ivar inbound_security_rules: List of references to InboundSecurityRules.
     :vartype inbound_security_rules: list[~azure.mgmt.network.v2023_04_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
@@ -24516,7 +24513,6 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         "virtual_appliance_asn": {"maximum": 4294967295, "minimum": 0},
         "virtual_appliance_nics": {"readonly": True},
         "virtual_appliance_sites": {"readonly": True},
-        "virtual_appliance_connections": {"readonly": True},
         "inbound_security_rules": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "deployment_type": {"readonly": True},
@@ -24541,7 +24537,6 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         "virtual_appliance_nics": {"key": "properties.virtualApplianceNics", "type": "[VirtualApplianceNicProperties]"},
         "additional_nics": {"key": "properties.additionalNics", "type": "[VirtualApplianceAdditionalNicProperties]"},
         "virtual_appliance_sites": {"key": "properties.virtualApplianceSites", "type": "[SubResource]"},
-        "virtual_appliance_connections": {"key": "properties.virtualApplianceConnections", "type": "[SubResource]"},
         "inbound_security_rules": {"key": "properties.inboundSecurityRules", "type": "[SubResource]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "deployment_type": {"key": "properties.deploymentType", "type": "str"},
@@ -24552,7 +24547,7 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         },
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -24618,134 +24613,11 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         self.virtual_appliance_nics = None
         self.additional_nics = additional_nics
         self.virtual_appliance_sites = None
-        self.virtual_appliance_connections = None
         self.inbound_security_rules = None
         self.provisioning_state = None
         self.deployment_type = None
         self.delegation = delegation
         self.partner_managed_resource = partner_managed_resource
-
-
-class NetworkVirtualApplianceConnection(SubResource):
-    """NetworkVirtualApplianceConnection resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar name_properties_name: The name of the resource.
-    :vartype name_properties_name: str
-    :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.v2023_04_01.models.ProvisioningState
-    :ivar asn: Network Virtual Appliance ASN.
-    :vartype asn: int
-    :ivar tunnel_identifier: Unique identifier for the connection.
-    :vartype tunnel_identifier: int
-    :ivar bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
-    :vartype bgp_peer_address: list[str]
-    :ivar enable_internet_security: Enable internet security.
-    :vartype enable_internet_security: bool
-    :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
-     route tables on this connection.
-    :vartype routing_configuration: ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfv
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-        "asn": {"maximum": 4294967295, "minimum": 0},
-        "tunnel_identifier": {"maximum": 4294967295, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "name_properties_name": {"key": "properties.name", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "asn": {"key": "properties.asn", "type": "int"},
-        "tunnel_identifier": {"key": "properties.tunnelIdentifier", "type": "int"},
-        "bgp_peer_address": {"key": "properties.bgpPeerAddress", "type": "[str]"},
-        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
-        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfigurationNfv"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        name_properties_name: Optional[str] = None,
-        asn: Optional[int] = None,
-        tunnel_identifier: Optional[int] = None,
-        bgp_peer_address: Optional[List[str]] = None,
-        enable_internet_security: Optional[bool] = None,
-        routing_configuration: Optional["_models.RoutingConfigurationNfv"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        :keyword name: The name of the resource.
-        :paramtype name: str
-        :keyword name_properties_name: The name of the resource.
-        :paramtype name_properties_name: str
-        :keyword asn: Network Virtual Appliance ASN.
-        :paramtype asn: int
-        :keyword tunnel_identifier: Unique identifier for the connection.
-        :paramtype tunnel_identifier: int
-        :keyword bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
-        :paramtype bgp_peer_address: list[str]
-        :keyword enable_internet_security: Enable internet security.
-        :paramtype enable_internet_security: bool
-        :keyword routing_configuration: The Routing Configuration indicating the associated and
-         propagated route tables on this connection.
-        :paramtype routing_configuration:
-         ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfv
-        """
-        super().__init__(id=id, **kwargs)
-        self.name = name
-        self.name_properties_name = name_properties_name
-        self.provisioning_state = None
-        self.asn = asn
-        self.tunnel_identifier = tunnel_identifier
-        self.bgp_peer_address = bgp_peer_address
-        self.enable_internet_security = enable_internet_security
-        self.routing_configuration = routing_configuration
-
-
-class NetworkVirtualApplianceConnectionList(_serialization.Model):
-    """NetworkVirtualApplianceConnection list.
-
-    :ivar value: The list of NetworkVirtualAppliance connections.
-    :vartype value: list[~azure.mgmt.network.v2023_04_01.models.NetworkVirtualApplianceConnection]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NetworkVirtualApplianceConnection]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NetworkVirtualApplianceConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of NetworkVirtualAppliance connections.
-        :paramtype value:
-         list[~azure.mgmt.network.v2023_04_01.models.NetworkVirtualApplianceConnection]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class NetworkVirtualApplianceListResult(_serialization.Model):
@@ -28301,38 +28173,6 @@ class PropagatedRouteTable(_serialization.Model):
         self.ids = ids
 
 
-class PropagatedRouteTableNfv(_serialization.Model):
-    """Nfv version of the list of RouteTables to advertise the routes to.
-
-    :ivar labels: The list of labels.
-    :vartype labels: list[str]
-    :ivar ids: The list of resource ids of all the RouteTables.
-    :vartype ids: list[~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource]
-    """
-
-    _attribute_map = {
-        "labels": {"key": "labels", "type": "[str]"},
-        "ids": {"key": "ids", "type": "[RoutingConfigurationNfvSubResource]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        labels: Optional[List[str]] = None,
-        ids: Optional[List["_models.RoutingConfigurationNfvSubResource"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword labels: The list of labels.
-        :paramtype labels: list[str]
-        :keyword ids: The list of resource ids of all the RouteTables.
-        :paramtype ids: list[~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource]
-        """
-        super().__init__(**kwargs)
-        self.labels = labels
-        self.ids = ids
-
-
 class ProtocolConfiguration(_serialization.Model):
     """Configuration of the protocol.
 
@@ -30057,87 +29897,6 @@ class RoutingConfiguration(_serialization.Model):
         self.vnet_routes = vnet_routes
         self.inbound_route_map = inbound_route_map
         self.outbound_route_map = outbound_route_map
-
-
-class RoutingConfigurationNfv(_serialization.Model):
-    """NFV version of Routing Configuration indicating the associated and propagated route tables for
-    this connection.
-
-    :ivar associated_route_table: The resource id RouteTable associated with this
-     RoutingConfiguration.
-    :vartype associated_route_table:
-     ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-    :ivar propagated_route_tables: The list of RouteTables to advertise the routes to.
-    :vartype propagated_route_tables:
-     ~azure.mgmt.network.v2023_04_01.models.PropagatedRouteTableNfv
-    :ivar inbound_route_map: The resource id of the RouteMap associated with this
-     RoutingConfiguration for inbound learned routes.
-    :vartype inbound_route_map:
-     ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-    :ivar outbound_route_map: The resource id of the RouteMap associated with this
-     RoutingConfiguration for outbound advertised routes.
-    :vartype outbound_route_map:
-     ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-    """
-
-    _attribute_map = {
-        "associated_route_table": {"key": "associatedRouteTable", "type": "RoutingConfigurationNfvSubResource"},
-        "propagated_route_tables": {"key": "propagatedRouteTables", "type": "PropagatedRouteTableNfv"},
-        "inbound_route_map": {"key": "inboundRouteMap", "type": "RoutingConfigurationNfvSubResource"},
-        "outbound_route_map": {"key": "outboundRouteMap", "type": "RoutingConfigurationNfvSubResource"},
-    }
-
-    def __init__(
-        self,
-        *,
-        associated_route_table: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        propagated_route_tables: Optional["_models.PropagatedRouteTableNfv"] = None,
-        inbound_route_map: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        outbound_route_map: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword associated_route_table: The resource id RouteTable associated with this
-         RoutingConfiguration.
-        :paramtype associated_route_table:
-         ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-        :keyword propagated_route_tables: The list of RouteTables to advertise the routes to.
-        :paramtype propagated_route_tables:
-         ~azure.mgmt.network.v2023_04_01.models.PropagatedRouteTableNfv
-        :keyword inbound_route_map: The resource id of the RouteMap associated with this
-         RoutingConfiguration for inbound learned routes.
-        :paramtype inbound_route_map:
-         ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-        :keyword outbound_route_map: The resource id of the RouteMap associated with this
-         RoutingConfiguration for outbound advertised routes.
-        :paramtype outbound_route_map:
-         ~azure.mgmt.network.v2023_04_01.models.RoutingConfigurationNfvSubResource
-        """
-        super().__init__(**kwargs)
-        self.associated_route_table = associated_route_table
-        self.propagated_route_tables = propagated_route_tables
-        self.inbound_route_map = inbound_route_map
-        self.outbound_route_map = outbound_route_map
-
-
-class RoutingConfigurationNfvSubResource(_serialization.Model):
-    """Reference to RouteTableV3 associated with the connection.
-
-    :ivar resource_uri: Resource ID.
-    :vartype resource_uri: str
-    """
-
-    _attribute_map = {
-        "resource_uri": {"key": "resourceUri", "type": "str"},
-    }
-
-    def __init__(self, *, resource_uri: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resource_uri: Resource ID.
-        :paramtype resource_uri: str
-        """
-        super().__init__(**kwargs)
-        self.resource_uri = resource_uri
 
 
 class RoutingIntent(SubResource):

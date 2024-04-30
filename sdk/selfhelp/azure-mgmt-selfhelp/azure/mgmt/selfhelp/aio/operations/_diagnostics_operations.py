@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,7 +57,7 @@ class DiagnosticsOperations:
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO]] = None,
+        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DiagnosticResource:
         error_map = {
@@ -86,23 +86,22 @@ class DiagnosticsOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        _request = build_create_request(
             scope=scope,
             diagnostics_resource_name=diagnostics_resource_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -123,8 +122,6 @@ class DiagnosticsOperations:
 
         return deserialized  # type: ignore
 
-    _create_initial.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
-
     @overload
     async def begin_create(
         self,
@@ -135,15 +132,14 @@ class DiagnosticsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
-        Discovery solutions response must be passed via ‘additionalParameters’ as an input to
-        Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
@@ -153,14 +149,6 @@ class DiagnosticsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -172,37 +160,28 @@ class DiagnosticsOperations:
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[IO] = None,
+        diagnostic_resource_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
-        Discovery solutions response must be passed via ‘additionalParameters’ as an input to
-        Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
         :param diagnostic_resource_request: The required request body for this insightResource
          invocation. Default value is None.
-        :type diagnostic_resource_request: IO
+        :type diagnostic_resource_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -214,35 +193,23 @@ class DiagnosticsOperations:
         self,
         scope: str,
         diagnostics_resource_name: str,
-        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO]] = None,
+        diagnostic_resource_request: Optional[Union[_models.DiagnosticResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiagnosticResource]:
-        """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
-        Discovery solutions response must be passed via ‘additionalParameters’ as an input to
-        Diagnostics API.
+        """Creates a diagnostic for the specific resource using solutionId from discovery solutions.
+        :code:`<br/>`Diagnostics are powerful solutions that access product resources or other relevant
+        data and provide the root cause of the issue and the steps to address the
+        issue.:code:`<br/>`:code:`<br/>`.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
         :param diagnostic_resource_request: The required request body for this insightResource
-         invocation. Is either a DiagnosticResource type or a IO type. Default value is None.
-        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         invocation. Is either a DiagnosticResource type or a IO[bytes] type. Default value is None.
+        :type diagnostic_resource_request: ~azure.mgmt.selfhelp.models.DiagnosticResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DiagnosticResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.selfhelp.models.DiagnosticResource]
@@ -274,7 +241,7 @@ class DiagnosticsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DiagnosticResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -287,27 +254,27 @@ class DiagnosticsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DiagnosticResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
+        return AsyncLROPoller[_models.DiagnosticResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get(self, scope: str, diagnostics_resource_name: str, **kwargs: Any) -> _models.DiagnosticResource:
         """Get the diagnostics using the 'diagnosticsResourceName' you chose while creating the
         diagnostic.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.DiagnosticResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -326,20 +293,19 @@ class DiagnosticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DiagnosticResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             scope=scope,
             diagnostics_resource_name=diagnostics_resource_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -352,8 +318,6 @@ class DiagnosticsOperations:
         deserialized = self._deserialize("DiagnosticResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Help/diagnostics/{diagnosticsResourceName}"}
+        return deserialized  # type: ignore

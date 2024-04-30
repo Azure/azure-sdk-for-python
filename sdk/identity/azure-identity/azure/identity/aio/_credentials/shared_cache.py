@@ -30,7 +30,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SharedTokenCacheCredential":
         if self._client:
             await self._client.__aenter__()  # type: ignore
         return self
@@ -43,7 +43,12 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -53,7 +58,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
@@ -74,7 +79,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = bool(kwargs.get("enable_cae", False))
+        is_cae = enable_cae
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.

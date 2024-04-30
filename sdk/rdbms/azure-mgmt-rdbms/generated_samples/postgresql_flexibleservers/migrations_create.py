@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClient
 
 """
@@ -38,6 +41,7 @@ def main():
             "location": "westus",
             "properties": {
                 "dbsToMigrate": ["db1", "db2", "db3", "db4"],
+                "migrationInstanceResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBForPostgreSql/flexibleServers/testsourcemigration",
                 "migrationMode": "Offline",
                 "overwriteDbsInTarget": "True",
                 "secretParameters": {
@@ -50,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-03-01-preview/examples/Migrations_Create.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/Migrations_Create.json
 if __name__ == "__main__":
     main()

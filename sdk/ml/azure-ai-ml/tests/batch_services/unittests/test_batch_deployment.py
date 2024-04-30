@@ -41,11 +41,14 @@ def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
     mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -58,7 +61,7 @@ def mock_local_endpoint_helper() -> Mock:
 def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
     mock_aml_services_2023_02_01_preview: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
@@ -72,7 +75,7 @@ def mock_batch_deployment_operations(
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_05_2022=mock_aml_services_2022_05_01,
+        service_client_01_2024_preview=mock_aml_services_2024_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         **kwargs,
@@ -122,11 +125,11 @@ class TestBatchDeploymentOperations:
     def test_delete_batch_endpoint(
         self,
         mock_batch_deployment_operations: BatchDeploymentOperations,
-        mock_aml_services_2022_05_01: Mock,
+        mock_aml_services_2024_01_01_preview: Mock,
         mocker: MockFixture,
         mock_delete_poller: LROPoller,
     ) -> None:
         random_name = "random_name"
-        mock_aml_services_2022_05_01.batch_deployments.begin_delete.return_value = mock_delete_poller
+        mock_aml_services_2024_01_01_preview.batch_deployments.begin_delete.return_value = mock_delete_poller
         mock_batch_deployment_operations.begin_delete(endpoint_name="batch-ept", name=random_name)
         mock_batch_deployment_operations._batch_deployment.begin_delete.assert_called_once()

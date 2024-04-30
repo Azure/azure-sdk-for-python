@@ -1,7 +1,7 @@
-from .mgmt_testcase import AzureMgmtTestCase, AzureMgmtPreparer
+from .mgmt_testcase import AzureMgmtPreparer
 from .mgmt_recorded_testcase import AzureMgmtRecordedTestCase
 from .azure_recorded_testcase import AzureRecordedTestCase
-from .azure_testcase import AzureTestCase, is_live, get_region_override
+from .azure_testcase import is_live, get_region_override
 from .resource_testcase import (
     FakeResource,
     ResourceGroupPreparer,
@@ -17,13 +17,13 @@ from .storage_testcase import (
 
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
-
-PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
+from .exceptions import AzureTestError, ReservedResourceNameError
 from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
     add_api_version_transform,
+    add_batch_sanitizers,
     add_body_key_sanitizer,
     add_body_regex_sanitizer,
     add_body_string_sanitizer,
@@ -41,6 +41,7 @@ from .sanitizers import (
     add_uri_string_sanitizer,
     add_uri_subscription_id_sanitizer,
     PemCertificate,
+    Sanitizer,
     set_bodiless_matcher,
     set_custom_default_matcher,
     set_default_function_settings,
@@ -50,11 +51,14 @@ from .sanitizers import (
     set_session_recording_options,
 )
 from .cert import create_combined_bundle
-from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording
+from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, trim_kwargs_from_test_function
 from .fake_credentials import FakeTokenCredential
+
+PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
 
 __all__ = [
     "add_api_version_transform",
+    "add_batch_sanitizers",
     "add_body_key_sanitizer",
     "add_body_regex_sanitizer",
     "add_body_string_sanitizer",
@@ -71,17 +75,18 @@ __all__ = [
     "add_uri_regex_sanitizer",
     "add_uri_string_sanitizer",
     "add_uri_subscription_id_sanitizer",
-    "AzureMgmtTestCase",
     "AzureMgmtPreparer",
     "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",
+    "AzureTestError",
     "FakeResource",
+    "ReservedResourceNameError",
     "ResourceGroupPreparer",
+    "Sanitizer",
     "StorageAccountPreparer",
     "BlobAccountPreparer",
     "CachedStorageAccountPreparer",
     "FakeStorageAccount",
-    "AzureTestCase",
     "is_live",
     "get_region_override",
     "RandomNameResourceGroupPreparer",
@@ -93,6 +98,7 @@ __all__ = [
     "recorded_by_proxy",
     "recorded_test",
     "test_proxy",
+    "trim_kwargs_from_test_function",
     "set_bodiless_matcher",
     "set_custom_default_matcher",
     "set_default_function_settings",

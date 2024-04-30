@@ -1,12 +1,13 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Any, List, Optional, MutableMapping
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
-from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -23,48 +24,68 @@ from .._generated.models import (
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
+    CognitiveServicesAccount,
+    SearchIndexerKnowledgeStore,
+    SearchIndexerIndexProjections,
 )
-
 
 DELIMITER = "|"
 
 
-class SearchIndexerSkillset(_SearchIndexerSkillset):
+class SearchIndexerSkillset:
     """A list of skills.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the skillset.
-    :paramtype name: str
-    :keyword description: The description of the skillset.
-    :paramtype description: str
-    :keyword skills: Required. A list of skills in the skillset.
-    :paramtype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
-    :keyword cognitive_services_account: Details about cognitive services to be used when running
+    :ivar name: The name of the skillset. Required.
+    :vartype name: str
+    :ivar description: The description of the skillset.
+    :vartype description: str
+    :ivar skills: A list of skills in the skillset. Required.
+    :vartype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
+    :ivar cognitive_services_account: Details about the Azure AI service to be used when running
      skills.
-    :paramtype cognitive_services_account:
-     ~azure.search.documents.indexes.models.CognitiveServicesAccount
-    :keyword knowledge_store: Definition of additional projections to azure blob, table, or files, of
+    :vartype cognitive_services_account: ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
-    :paramtype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :keyword index_projections: Definition of additional projections to secondary search index(es).
-    :paramtype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
-    :keyword e_tag: The ETag of the skillset.
-    :paramtype e_tag: str
-    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :ivar index_projections: Definition of additional projections to secondary search index(es).
+    :vartype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
+    :ivar e_tag: The ETag of the skillset.
+    :vartype e_tag: str
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
-     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
-     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
-     this property to null. You can change this property as needed if you want to rotate your
-     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
-     keys is not available for free search services, and is only available for paid services created
-     on or after January 1, 2019.
-    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+     skillset definition. Once you have encrypted your skillset definition, it will always remain
+     encrypted. The search service will ignore attempts to set this property to null. You can change
+     this property as needed if you want to rotate your encryption key; Your skillset definition
+     will be unaffected. Encryption with customer-managed keys is not available for free search
+     services, and is only available for paid services created on or after January 1, 2019.
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(self, **kwargs):
-        super(SearchIndexerSkillset, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        name: str,
+        skills: List["SearchIndexerSkill"],
+        description: Optional[str] = None,
+        cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
+        knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
+        index_projections: Optional["SearchIndexerIndexProjections"] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        **kwargs: Any
+    ) -> None:
+        # pylint:disable=unused-argument
+        self.name = name
+        self.description = description
+        self.skills = skills
+        self.cognitive_services_account = cognitive_services_account
+        self.knowledge_store = knowledge_store
+        self.index_projections = index_projections
+        self.e_tag = e_tag
+        self.encryption_key = encryption_key
 
     def _to_generated(self):
         generated_skills = []
@@ -101,14 +122,83 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerSkillset":
+        """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerSkillset instance
+        :rtype: SearchIndexerSkillset
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerSkillset":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerSkillset instance
+        :rtype: SearchIndexerSkillset
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
+    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
     #: Use Entity Recognition skill V3.
     V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
     #: Use latest version of Entity Recognition skill.
-    LATEST = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+    LATEST = V3
 
 
 class EntityRecognitionSkill(SearchIndexerSkill):
@@ -116,48 +206,48 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :paramtype odata_type: str
-    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :paramtype name: str
-    :keyword description: The description of the skill which describes the inputs, outputs, and usage
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
-    :paramtype description: str
-    :keyword context: Represents the level at which operations take place, such as the document root
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
-    :paramtype context: str
-    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or the
+    :vartype context: str
+    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :keyword outputs: Required. The output of a skill is either a field in a search index, or a value
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :keyword categories: A list of entity categories that should be extracted.
-    :paramtype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
-    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar categories: A list of entity categories that should be extracted.
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
-    :paramtype default_language_code: str or
+    :vartype default_language_code: str or
      ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
-    :keyword include_typeless_entities: Determines whether or not to include entities which are well
+    :ivar include_typeless_entities: Determines whether or not to include entities which are well
      known but don't conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined types will not
      be surfaced. Only valid for skill version 1.
-    :paramtype include_typeless_entities: bool
-    :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :vartype include_typeless_entities: bool
+    :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
-    :paramtype minimum_precision: float
-    :keyword model_version: The version of the model to use when calling the Text Analytics service.
+    :vartype minimum_precision: float
+    :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary. Only valid from skill version 3.
-    :paramtype model_version: str
-    :keyword skill_version: The version of the skill to use when calling the Text Analytics service.
+    :vartype model_version: str
+    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
-    :paramtype skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
+    :vartype skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
 
     _validation = {
@@ -204,6 +294,8 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 inputs=self.inputs,
                 outputs=self.outputs,
                 name=self.name,
+                description=self.description,
+                context=self.context,
                 odata_type=self.odata_type,
                 categories=self.categories,
                 default_language_code=self.default_language_code,
@@ -225,10 +317,11 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Sentiment Skill version to use."""
 
+    V1 = "#Microsoft.Skills.Text.SentimentSkill"
     #: Use Sentiment skill V3.
     V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
     #: Use latest version of Sentiment skill.
-    LATEST = "#Microsoft.Skills.Text.V3.SentimentSkill"
+    LATEST = V3
 
 
 class SentimentSkill(SearchIndexerSkill):
@@ -240,41 +333,41 @@ class SentimentSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :paramtype odata_type: str
-    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :paramtype name: str
-    :keyword description: The description of the skill which describes the inputs, outputs, and usage
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
-    :paramtype description: str
-    :keyword context: Represents the level at which operations take place, such as the document root
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
-    :paramtype context: str
-    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or the
+    :vartype context: str
+    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
-    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :keyword outputs: Required. The output of a skill is either a field in a search index, or a value
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
-    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
      "ru", "es", "sv", "tr".
-    :paramtype default_language_code: str or
+    :vartype default_language_code: str or
      ~azure.search.documents.indexes.models.SentimentSkillLanguage
-    :keyword include_opinion_mining: If set to true, the skill output will include information from
+    :ivar include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false.
-    :paramtype include_opinion_mining: bool
-    :keyword model_version: The version of the model to use when calling the Text Analytics service.
+    :vartype include_opinion_mining: bool
+    :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary.
-    :paramtype model_version: str
-    :keyword skill_version: The version of the skill to use when calling the Text Analytics service.
+    :vartype model_version: str
+    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
-    :paramtype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
+    :vartype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
 
     _validation = {
@@ -316,6 +409,8 @@ class SentimentSkill(SearchIndexerSkill):
                 inputs=self.inputs,
                 outputs=self.outputs,
                 name=self.name,
+                description=self.description,
+                context=self.context,
                 odata_type=self.odata_type,
                 default_language_code=self.default_language_code,
                 include_opinion_mining=self.include_opinion_mining,
@@ -333,14 +428,14 @@ class SentimentSkill(SearchIndexerSkill):
         return None
 
 
-class AnalyzeTextOptions(_serialization.Model):
+class AnalyzeTextOptions:
     """Specifies some text and analysis components used to break that text into tokens.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword text: Required. The text to break into tokens.
-    :paramtype text: str
-    :keyword analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
+    :ivar text: Required. The text to break into tokens.
+    :vartype text: str
+    :ivar analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
      not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
      mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
      "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
@@ -359,39 +454,22 @@ class AnalyzeTextOptions(_serialization.Model):
      "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
-    :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :keyword tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
+    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
      is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
      are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
      "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
      "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
-    :paramtype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :keyword normalizer_name: The name of the normalizer to use to normalize the given text. Possible
-     values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :paramtype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :keyword token_filters: An optional list of token filters to use when breaking the given text.
+    :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :ivar token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
-    :paramtype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :keyword char_filters: An optional list of character filters to use when breaking the given text.
+    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :ivar char_filters: An optional list of character filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
-    :paramtype char_filters: list[str]
+    :vartype char_filters: list[str]
     """
 
-    _validation = {
-        "text": {"required": True},
-    }
-
-    _attribute_map = {
-        "text": {"key": "text", "type": "str"},
-        "analyzer_name": {"key": "analyzerName", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
-
     def __init__(self, **kwargs):
-        super(AnalyzeTextOptions, self).__init__(**kwargs)
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
@@ -409,6 +487,85 @@ class AnalyzeTextOptions(_serialization.Model):
             char_filters=self.char_filters,
         )
 
+    @classmethod
+    def _from_analyze_request(cls, analyze_request) -> "AnalyzeTextOptions":
+        return cls(
+            text=analyze_request.text,
+            analyzer_name=analyze_request.analyzer,
+            tokenizer_name=analyze_request.tokenizer,
+            normalizer_name=analyze_request.normalizer,
+            token_filters=analyze_request.token_filters,
+            char_filters=analyze_request.char_filters,
+        )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "AnalyzeTextOptions":
+        """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A AnalyzeTextOptions instance
+        :rtype: AnalyzeTextOptions
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "AnalyzeTextOptions":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A AnalyzeTextOptions instance
+        :rtype: AnalyzeTextOptions
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class CustomAnalyzer(LexicalAnalyzer):
     """Allows you to take control over the process of converting text into indexable/searchable tokens.
@@ -418,27 +575,27 @@ class CustomAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :ivar odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :paramtype odata_type: str
-    :keyword name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+    :vartype odata_type: str
+    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
-    :paramtype name: str
-    :keyword tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
+    :vartype name: str
+    :ivar tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
      sequence of tokens, such as breaking a sentence into words. Possible values include: "classic",
      "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
      "standard_v2", "uax_url_email", "whitespace".
-    :paramtype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :keyword token_filters: A list of token filters used to filter out or modify the tokens generated
+    :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
-    :paramtype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :keyword char_filters: A list of character filters used to prepare input text before it is
+    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :ivar char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
-    :paramtype char_filters: list[str]
+    :vartype char_filters: list[str]
     """
 
     _validation = {
@@ -490,21 +647,21 @@ class PatternAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
-    :paramtype name: str
-    :keyword lower_case_terms: A value indicating whether terms should be lower-cased. Default is
+    :vartype name: str
+    :ivar lower_case_terms: A value indicating whether terms should be lower-cased. Default is
      true.
-    :paramtype lower_case_terms: bool
-    :keyword pattern: A regular expression to match token separators. Default is an
+    :vartype lower_case_terms: bool
+    :ivar pattern: A regular expression to match token separators. Default is an
      expression that matches one or more white space characters.
-    :paramtype pattern: str
-    :keyword flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
+    :vartype pattern: str
+    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :paramtype flags: list[str] or list[~search_service_client.models.RegexFlags]
-    :keyword stopwords: A list of stopwords.
-    :paramtype stopwords: list[str]
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
+    :ivar stopwords: A list of stopwords.
+    :vartype stopwords: list[str]
     """
 
     _validation = {"odata_type": {"required": True}, "name": {"required": True}}
@@ -562,20 +719,20 @@ class PatternTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
+    :ivar name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
-    :paramtype name: str
-    :keyword pattern: A regular expression to match token separators. Default is an
+    :vartype name: str
+    :ivar pattern: A regular expression to match token separators. Default is an
      expression that matches one or more white space characters.
-    :paramtype pattern: str
-    :keyword flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
+    :vartype pattern: str
+    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :paramtype flags: list[str] or list[~search_service_client.models.RegexFlags]
-    :keyword group: The zero-based ordinal of the matching group in the regular expression to
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
+    :ivar group: The zero-based ordinal of the matching group in the regular expression to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
-    :paramtype group: int
+    :vartype group: int
     """
 
     _validation = {"odata_type": {"required": True}, "name": {"required": True}}
@@ -623,46 +780,31 @@ class PatternTokenizer(LexicalTokenizer):
         )
 
 
-class SearchResourceEncryptionKey(_serialization.Model):
+class SearchResourceEncryptionKey:
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
+    :ivar key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
      at rest.
-    :paramtype key_name: str
-    :keyword key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+    :vartype key_name: str
+    :ivar key_version: Required. The version of your Azure Key Vault key to be used to encrypt
      your data at rest.
-    :paramtype key_version: str
-    :keyword vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
+    :vartype key_version: str
+    :ivar vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
      contains the key to be used to encrypt your data at rest. An example URI might be https://my-
      keyvault-name.vault.azure.net.
-    :paramtype vault_uri: str
-    :keyword application_id: Required. An AAD Application ID that was granted the required access
+    :vartype vault_uri: str
+    :ivar application_id: Required. An AAD Application ID that was granted the required access
      permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
      Application ID should not be confused with the Object ID for your AAD Application.
-    :paramtype application_id: str
-    :keyword application_secret: The authentication key of the specified AAD application.
-    :paramtype application_secret: str
+    :vartype application_id: str
+    :ivar application_secret: The authentication key of the specified AAD application.
+    :vartype application_secret: str
     """
 
-    _validation = {
-        "key_name": {"required": True},
-        "key_version": {"required": True},
-        "vault_uri": {"required": True},
-    }
-
-    _attribute_map = {
-        "key_name": {"key": "keyVaultKeyName", "type": "str"},
-        "key_version": {"key": "keyVaultKeyVersion", "type": "str"},
-        "vault_uri": {"key": "keyVaultUri", "type": "str"},
-        "application_id": {"key": "applicationId", "type": "str"},
-        "application_secret": {"key": "applicationSecret", "type": "str"},
-    }
-
     def __init__(self, **kwargs):
-        super(SearchResourceEncryptionKey, self).__init__(**kwargs)
         self.key_name = kwargs["key_name"]
         self.key_version = kwargs["key_version"]
         self.vault_uri = kwargs["vault_uri"]
@@ -685,7 +827,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key):
+    def _from_generated(cls, search_resource_encryption_key) -> Optional["SearchResourceEncryptionKey"]:
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
@@ -702,23 +844,92 @@ class SearchResourceEncryptionKey(_serialization.Model):
             application_secret=application_secret,
         )
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
-class SynonymMap(_serialization.Model):
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchResourceEncryptionKey"]:
+        """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchResourceEncryptionKey instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(  # type: ignore
+            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
+        )
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> Optional["SearchResourceEncryptionKey"]:
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchResourceEncryptionKey instance
+        :rtype: SearchResourceEncryptionKey
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
+
+class SynonymMap:
     """Represents a synonym map definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the synonym map.
-    :paramtype name: str
+    :ivar name: Required. The name of the synonym map.
+    :vartype name: str
     :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
      supported. Default value: "solr".
     :vartype format: str
-    :keyword synonyms: Required. A series of synonym rules in the specified synonym map format. The
+    :ivar synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
-    :paramtype synonyms: list[str]
-    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :vartype synonyms: list[str]
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
      Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
@@ -726,32 +937,14 @@ class SynonymMap(_serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :keyword e_tag: The ETag of the synonym map.
-    :paramtype e_tag: str
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :ivar e_tag: The ETag of the synonym map.
+    :vartype e_tag: str
     """
-
-    _validation = {
-        "name": {"required": True},
-        "format": {"required": True, "constant": True},
-        "synonyms": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "format": {"key": "format", "type": "str"},
-        "synonyms": {"key": "synonyms", "type": "[str]"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-    }
 
     format = "solr"
 
     def __init__(self, **kwargs):
-        super(SynonymMap, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.synonyms = kwargs["synonyms"]
         self.encryption_key = kwargs.get("encryption_key", None)
@@ -777,36 +970,99 @@ class SynonymMap(_serialization.Model):
             e_tag=synonym_map.e_tag,
         )
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
-class SearchIndexerDataSourceConnection(_serialization.Model):
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SynonymMap":
+        """Parse a str using the RestAPI syntax and return a SynonymMap instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SynonymMap instance
+        :rtype: SynonymMap
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SynonymMap":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SynonymMap instance
+        :rtype: SynonymMap
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
+
+class SearchIndexerDataSourceConnection:
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the datasource connection.
-    :paramtype name: str
-    :keyword description: The description of the datasource connection.
-    :paramtype description: str
-    :keyword type: Required. The type of the datasource connection. Possible values include: "azuresql",
+    :ivar name: Required. The name of the datasource connection.
+    :vartype name: str
+    :ivar description: The description of the datasource connection.
+    :vartype description: str
+    :ivar type: Required. The type of the datasource connection. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
-    :paramtype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
-    :keyword connection_string: The connection string for the datasource connection.
-    :paramtype connection_string: str
-    :keyword container: Required. The data container for the datasource connection.
-    :paramtype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
-    :keyword data_change_detection_policy: The data change detection policy for the datasource connection.
-    :paramtype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
-    :keyword data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
-    :paramtype data_deletion_detection_policy:
+    :vartype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
+    :ivar connection_string: The connection string for the datasource connection.
+    :vartype connection_string: str
+    :ivar container: Required. The data container for the datasource connection.
+    :vartype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
+    :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
+    :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
+    :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
+    :vartype data_deletion_detection_policy:
      ~azure.search.documents.models.DataDeletionDetectionPolicy
-    :keyword e_tag: The ETag of the data source.
-    :paramtype e_tag: str
-    :keyword identity: An explicit managed identity to use for this datasource. If not specified and
-     the connection string is a managed identity, the system-assigned managed identity is used. If
-     not specified, the value remains unchanged. If "none" is specified, the value of this property
-     is cleared.
-    :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :ivar e_tag: The ETag of the data source.
+    :vartype e_tag: str
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your datasource
      definition when you want full assurance that no one, not even Microsoft, can decrypt your data
      source definition in Azure Cognitive Search. Once you have encrypted your data source
@@ -815,40 +1071,10 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
      encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
-    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    _validation = {
-        "name": {"required": True},
-        "type": {"required": True},
-        "connection_string": {"required": True},
-        "container": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "connection_string": {"key": "connectionString", "type": "str"},
-        "container": {"key": "container", "type": "SearchIndexerDataContainer"},
-        "data_change_detection_policy": {
-            "key": "dataChangeDetectionPolicy",
-            "type": "DataChangeDetectionPolicy",
-        },
-        "data_deletion_detection_policy": {
-            "key": "dataDeletionDetectionPolicy",
-            "type": "DataDeletionDetectionPolicy",
-        },
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
-    }
-
     def __init__(self, **kwargs):
-        super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.description = kwargs.get("description", None)
         self.type = kwargs["type"]
@@ -896,6 +1122,74 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             encryption_key=search_indexer_data_source.encryption_key,
             identity=search_indexer_data_source.identity,
         )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerDataSourceConnection":
+        """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerDataSourceConnection instance
+        :rtype: SearchIndexerDataSourceConnection
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerDataSourceConnection":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerDataSourceConnection instance
+        :rtype: SearchIndexerDataSourceConnection
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 def pack_analyzer(analyzer):

@@ -10,13 +10,13 @@ import re
 import sys
 import types
 from pathlib import Path
-from typing import Iterable, Optional, Union
+from typing import Generator, Optional, Union
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
 
 
-def _normalize_identifier_name(name):
+def _normalize_identifier_name(name: str) -> str:
     normalized_name = name.lower()
     normalized_name = re.sub(r"[\W_]", " ", normalized_name)  # No non-word characters
     normalized_name = re.sub(" +", " ", normalized_name).strip()  # No double spaces, leading or trailing spaces
@@ -25,7 +25,7 @@ def _normalize_identifier_name(name):
     return normalized_name
 
 
-def _sanitize_python_variable_name(name: str):
+def _sanitize_python_variable_name(name: str) -> str:
     return _normalize_identifier_name(name).replace(" ", "_")
 
 
@@ -68,8 +68,8 @@ def _resolve_source_file() -> Optional[Path]:
                 pattern, last_frame.frame
             ):
                 module = inspect.getmodule(last_frame.frame)
-                return Path(module.__file__).absolute() if module else None
-    except Exception:  # pylint: disable=broad-except
+                return Path(str(module.__file__)).absolute() if module else None
+    except Exception:  # pylint: disable=W0718
         pass
     return None
 
@@ -123,7 +123,7 @@ def _relative_to(
 
 
 @contextlib.contextmanager
-def inject_sys_path(path):
+def inject_sys_path(path: object) -> Generator:
     original_sys_path = sys.path.copy()
     sys.path.insert(0, str(path))
     try:
@@ -132,19 +132,19 @@ def inject_sys_path(path):
         sys.path = original_sys_path
 
 
-def _force_reload_module(module):
+def _force_reload_module(module: types.ModuleType) -> types.ModuleType:
     # Reload the module except the case that module.__spec__ is None.
     # In the case module.__spec__ is None (E.g. module is __main__), reload will raise exception.
     if module.__spec__ is None:
         return module
-    path = Path(module.__spec__.loader.path).parent
+    path = Path(module.__spec__.loader.path).parent  # type: ignore
     with inject_sys_path(path):
         return importlib.reload(module)
 
 
 @contextlib.contextmanager
 # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Iterable[None]:
+def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Generator:
     """Context manager for changing the current working directory.
 
     :param path: The path to change to
@@ -163,7 +163,9 @@ def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> It
         os.chdir(saved_path)
 
 
-def _import_component_with_working_dir(module_name, working_dir=None, force_reload=False):
+def _import_component_with_working_dir(
+    module_name: str, working_dir: Optional[str] = None, force_reload: bool = False
+) -> types.ModuleType:
     if working_dir is None:
         working_dir = os.getcwd()
     working_dir = str(Path(working_dir).resolve().absolute())
@@ -188,7 +190,7 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
             ) from e
-        loaded_module_file = Path(py_module.__file__).resolve().absolute().as_posix()
+        loaded_module_file = Path(str(py_module.__file__)).resolve().absolute().as_posix()
         posix_working_dir = Path(working_dir).absolute().as_posix()
         if _relative_to(loaded_module_file, posix_working_dir) is None:
             if force_reload:
@@ -204,7 +206,7 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
 
 
 @contextlib.contextmanager
-def environment_variable_overwrite(key, val):
+def environment_variable_overwrite(key: str, val: str) -> Generator:
     if key in os.environ:
         backup_value = os.environ[key]
     else:

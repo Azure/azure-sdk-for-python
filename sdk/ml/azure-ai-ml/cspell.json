@@ -1,6 +1,12 @@
 {
     "version": "0.2",
     "ignoreWords": [
-        "kwoa"
+        "kwoa",
+        "rslex",
+        "aadtoken",
+        "alds",
+        "entra",
+        "restclient",
+        "SERP"
     ]
 }

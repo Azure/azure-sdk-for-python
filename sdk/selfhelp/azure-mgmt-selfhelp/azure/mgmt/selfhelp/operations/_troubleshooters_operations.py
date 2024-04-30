@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +39,7 @@ def build_create_request(scope: str, troubleshooter_name: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -74,7 +74,7 @@ def build_get_request(scope: str, troubleshooter_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +106,7 @@ def build_continue_method_request(scope: str, troubleshooter_name: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -141,7 +141,7 @@ def build_end_request(scope: str, troubleshooter_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -173,7 +173,7 @@ def build_restart_request(scope: str, troubleshooter_name: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,19 +231,18 @@ class TroubleshootersOperations:
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -253,7 +252,6 @@ class TroubleshootersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TroubleshooterResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.TroubleshooterResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -264,35 +262,33 @@ class TroubleshootersOperations:
         self,
         scope: str,
         troubleshooter_name: str,
-        create_troubleshooter_request_body: Optional[IO] = None,
+        create_troubleshooter_request_body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
         :param create_troubleshooter_request_body: The required request body for this Troubleshooter
          resource creation. Default value is None.
-        :type create_troubleshooter_request_body: IO
+        :type create_troubleshooter_request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TroubleshooterResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.TroubleshooterResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -303,34 +299,30 @@ class TroubleshootersOperations:
         self,
         scope: str,
         troubleshooter_name: str,
-        create_troubleshooter_request_body: Optional[Union[_models.TroubleshooterResource, IO]] = None,
+        create_troubleshooter_request_body: Optional[Union[_models.TroubleshooterResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.TroubleshooterResource:
         """Creates the specific troubleshooter action under a resource or subscription using the
-        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Troubleshooters are
-        step-by-step interactive guidance that scope the problem by collecting additional inputs from
-        you in each stage while troubleshooting an Azure issue. You will be guided down decision tree
-        style workflow and the best possible solution will be presented at the end of the workflow.
-        :code:`<br/>` Create API creates the Troubleshooter API using ‘parameters’ and ‘solutionId’
-        :code:`<br/>` After creating the Troubleshooter instance, the following APIs can be
-        used::code:`<br/>` CONTINUE API: to move to the next step in the flow :code:`<br/>`GET API: to
-        identify the next step after executing the CONTINUE API.   :code:`<br/>`:code:`<br/>`
-        :code:`<b>Note:</b>` ‘requiredParameters’ from solutions response must be passed via
-        ‘properties. parameters’ in the request body of Troubleshooters API.
+        ‘solutionId’ and  ‘properties.parameters’ as the trigger. :code:`<br/>` Azure Troubleshooters
+        help with hard to classify issues, reducing the gap between customer observed problems and
+        solutions by guiding the user effortlessly through the troubleshooting process. Each
+        Troubleshooter flow represents a problem area within Azure and has a complex tree-like
+        structure that addresses many root causes. These flows are prepared with the help of Subject
+        Matter experts and customer support engineers by carefully considering previous support
+        requests raised by customers. Troubleshooters terminate at a well curated solution based off of
+        resource backend signals and customer manual selections.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
         :param create_troubleshooter_request_body: The required request body for this Troubleshooter
-         resource creation. Is either a TroubleshooterResource type or a IO type. Default value is None.
+         resource creation. Is either a TroubleshooterResource type or a IO[bytes] type. Default value
+         is None.
         :type create_troubleshooter_request_body: ~azure.mgmt.selfhelp.models.TroubleshooterResource or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: TroubleshooterResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.TroubleshooterResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -361,23 +353,22 @@ class TroubleshootersOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        _request = build_create_request(
             scope=scope,
             troubleshooter_name=troubleshooter_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -398,8 +389,6 @@ class TroubleshootersOperations:
 
         return deserialized  # type: ignore
 
-    create.metadata = {"url": "/{scope}/providers/Microsoft.Help/troubleshooters/{troubleshooterName}"}
-
     @distributed_trace
     def get(self, scope: str, troubleshooter_name: str, **kwargs: Any) -> _models.TroubleshooterResource:
         """Gets troubleshooter instance result which includes the step status/result of the troubleshooter
@@ -408,12 +397,12 @@ class TroubleshootersOperations:
         Troubleshooter workflow. This API requires the Troubleshooter resource name that was created
         using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TroubleshooterResource or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.TroubleshooterResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -432,20 +421,19 @@ class TroubleshootersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.TroubleshooterResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             scope=scope,
             troubleshooter_name=troubleshooter_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -458,11 +446,9 @@ class TroubleshootersOperations:
         deserialized = self._deserialize("TroubleshooterResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Help/troubleshooters/{troubleshooterName}"}
+        return deserialized  # type: ignore
 
     @overload
     def continue_method(  # pylint: disable=inconsistent-return-statements
@@ -479,8 +465,9 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
@@ -490,7 +477,6 @@ class TroubleshootersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -501,7 +487,7 @@ class TroubleshootersOperations:
         self,
         scope: str,
         troubleshooter_name: str,
-        continue_request_body: Optional[IO] = None,
+        continue_request_body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -511,18 +497,18 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
         :param continue_request_body: The required request body for going to next step in
          Troubleshooter resource. Default value is None.
-        :type continue_request_body: IO
+        :type continue_request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -533,7 +519,7 @@ class TroubleshootersOperations:
         self,
         scope: str,
         troubleshooter_name: str,
-        continue_request_body: Optional[Union[_models.ContinueRequestBody, IO]] = None,
+        continue_request_body: Optional[Union[_models.ContinueRequestBody, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Uses ‘stepId’ and ‘responses’ as the trigger to continue the troubleshooting steps for the
@@ -541,19 +527,16 @@ class TroubleshootersOperations:
         that are required for the specific troubleshooter to progress into the next step in the
         process. This API is used after the Troubleshooter has been created using the Create API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
         :param continue_request_body: The required request body for going to next step in
-         Troubleshooter resource. Is either a ContinueRequestBody type or a IO type. Default value is
-         None.
-        :type continue_request_body: ~azure.mgmt.selfhelp.models.ContinueRequestBody or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         Troubleshooter resource. Is either a ContinueRequestBody type or a IO[bytes] type. Default
+         value is None.
+        :type continue_request_body: ~azure.mgmt.selfhelp.models.ContinueRequestBody or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -584,23 +567,22 @@ class TroubleshootersOperations:
             else:
                 _json = None
 
-        request = build_continue_method_request(
+        _request = build_continue_method_request(
             scope=scope,
             troubleshooter_name=troubleshooter_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.continue_method.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -614,11 +596,7 @@ class TroubleshootersOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    continue_method.metadata = {
-        "url": "/{scope}/providers/Microsoft.Help/troubleshooters/{troubleshooterName}/continue"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def end(  # pylint: disable=inconsistent-return-statements
@@ -626,12 +604,12 @@ class TroubleshootersOperations:
     ) -> None:
         """Ends the troubleshooter action.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -650,20 +628,19 @@ class TroubleshootersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_end_request(
+        _request = build_end_request(
             scope=scope,
             troubleshooter_name=troubleshooter_name,
             api_version=api_version,
-            template_url=self.end.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -677,9 +654,7 @@ class TroubleshootersOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    end.metadata = {"url": "/{scope}/providers/Microsoft.Help/troubleshooters/{troubleshooterName}/end"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def restart(self, scope: str, troubleshooter_name: str, **kwargs: Any) -> _models.RestartTroubleshooterResponse:
@@ -687,12 +662,12 @@ class TroubleshootersOperations:
         input.:code:`<br/>` It returns new resource name which should be used in subsequent request.
         The old resource name is obsolete after this API is invoked.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param troubleshooter_name: Troubleshooter resource Name. Required.
         :type troubleshooter_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestartTroubleshooterResponse or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.RestartTroubleshooterResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -711,20 +686,19 @@ class TroubleshootersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.RestartTroubleshooterResponse] = kwargs.pop("cls", None)
 
-        request = build_restart_request(
+        _request = build_restart_request(
             scope=scope,
             troubleshooter_name=troubleshooter_name,
             api_version=api_version,
-            template_url=self.restart.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -740,8 +714,6 @@ class TroubleshootersOperations:
         deserialized = self._deserialize("RestartTroubleshooterResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    restart.metadata = {"url": "/{scope}/providers/Microsoft.Help/troubleshooters/{troubleshooterName}/restart"}
+        return deserialized  # type: ignore

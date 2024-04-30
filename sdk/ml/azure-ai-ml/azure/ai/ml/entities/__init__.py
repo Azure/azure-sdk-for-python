@@ -9,6 +9,9 @@ and run output/logging etc.
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
+import logging
+from typing import Any, Optional
+
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
@@ -30,6 +33,7 @@ from ._assets._artifacts._package.model_package import (
 )
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.feature_set import FeatureSet
+from ._assets._artifacts.index import Index
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
@@ -64,6 +68,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -80,6 +85,7 @@ from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
 from ._deployment.code_configuration import CodeConfiguration
 from ._deployment.container_resource_settings import ResourceSettings
+from ._deployment.data_asset import DataAsset
 from ._deployment.data_collector import DataCollector
 from ._deployment.deployment_collection import DeploymentCollection
 from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
@@ -110,6 +116,7 @@ from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetada
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_set.feature_set_specification import FeatureSetSpecification
+from ._feature_set.feature_window import FeatureWindow
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
@@ -137,18 +144,6 @@ from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
 from ._job.spark_job_entry import SparkJobEntry, SparkJobEntryType
 from ._job.spark_resource_configuration import SparkResourceConfiguration
-from ._job.sweep.search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
-)
 from ._monitoring.alert_notification import AlertNotification
 from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
@@ -164,6 +159,7 @@ from ._monitoring.signals import (
     FeatureAttributionDriftSignal,
     GenerationSafetyQualitySignal,
     LlmData,
+    ModelPerformanceSignal,
     MonitorFeatureFilter,
     PredictionDriftSignal,
     ProductionData,
@@ -179,6 +175,9 @@ from ._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
+    ModelPerformanceClassificationThresholds,
+    ModelPerformanceMetricThreshold,
+    ModelPerformanceRegressionThresholds,
     NumericalDriftMetrics,
     PredictionDriftMetricThreshold,
 )
@@ -190,17 +189,26 @@ from ._registry.registry_support_classes import (
     SystemCreatedStorageAccount,
 )
 from ._resource import Resource
-from ._schedule.schedule import JobSchedule, Schedule
+from ._schedule.schedule import JobSchedule, Schedule, ScheduleTriggerResult
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
-from ._workspace.connections.workspace_connection_subtypes import (
-    AzureOpenAIWorkspaceConnection,
-    AzureAISearchWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
+from ._workspace.connections.connection import Connection
+from ._workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnection,
+    MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServicesConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
 )
+from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -222,8 +230,9 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
+from ._workspace._ai_workspaces.hub import Hub
+from ._workspace._ai_workspaces.project import Project
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
 
 __all__ = [
     "Resource",
@@ -278,10 +287,18 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "WorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
-    "AzureAIServiceWorkspaceConnection",
+    "Connection",
+    "AzureBlobStoreConnection",
+    "MicrosoftOneLakeConnection",
+    "AzureOpenAIConnection",
+    "AzureAIServicesConnection",
+    "AzureAISearchConnection",
+    "AzureContentSafetyConnection",
+    "AzureSpeechServicesConnection",
+    "APIKeyConnection",
+    "OpenAIConnection",
+    "SerpConnection",
+    "ServerlessConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -305,6 +322,7 @@ __all__ = [
     "AzureFileDatastore",
     "OneLakeDatastore",
     "OneLakeArtifact",
+    "OneLakeConnectionArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -318,16 +336,6 @@ __all__ = [
     "ParallelComponent",
     "CommandComponent",
     "SparkComponent",
-    "Choice",
-    "Normal",
-    "LogNormal",
-    "QNormal",
-    "QLogNormal",
-    "Randint",
-    "Uniform",
-    "QUniform",
-    "LogUniform",
-    "QLogUniform",
     "ResourceRequirementsSettings",
     "ResourceSettings",
     "AssignedUserConfiguration",
@@ -342,6 +350,7 @@ __all__ = [
     "JobSchedule",
     "ImportDataSchedule",
     "Schedule",
+    "ScheduleTriggerResult",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",
@@ -366,8 +375,8 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
-    "WorkspaceHub",
-    "WorkspaceHubConfig",
+    "Hub",
+    "Project",
     "Feature",
     "FeatureSet",
     "FeatureSetBackfillRequest",
@@ -378,6 +387,7 @@ __all__ = [
     "DataColumnType",
     "FeatureSetSpecification",
     "MaterializationComputeResource",
+    "FeatureWindow",
     "MaterializationSettings",
     "MaterializationType",
     "FeatureStore",
@@ -432,6 +442,7 @@ __all__ = [
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
     "GenerationSafetyQualitySignal",
+    "ModelPerformanceSignal",
     "MonitorFeatureFilter",
     "DataSegment",
     "FADProductionData",
@@ -453,9 +464,75 @@ __all__ = [
     "NumericalDriftMetrics",
     "DataQualityMetricsNumerical",
     "DataQualityMetricsCategorical",
+    "ModelPerformanceMetricThreshold",
+    "ModelPerformanceClassificationThresholds",
+    "ModelPerformanceRegressionThresholds",
     "DataCollector",
     "IntellectualProperty",
+    "DataAsset",
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "AccountKeyConfiguration",
+    "AadCredentialConfiguration",
+    "Index",
 ]
+
+# Allow importing these types for backwards compatibility
+
+
+def __getattr__(name: str):
+    requested: Optional[Any] = None
+
+    if name == "Choice":
+        from ..sweep import Choice
+
+        requested = Choice
+    if name == "LogNormal":
+        from ..sweep import LogNormal
+
+        requested = LogNormal
+    if name == "LogUniform":
+        from ..sweep import LogUniform
+
+        requested = LogUniform
+    if name == "Normal":
+        from ..sweep import Normal
+
+        requested = Normal
+    if name == "QLogNormal":
+        from ..sweep import QLogNormal
+
+        requested = QLogNormal
+    if name == "QLogUniform":
+        from ..sweep import QLogUniform
+
+        requested = QLogUniform
+    if name == "QNormal":
+        from ..sweep import QNormal
+
+        requested = QNormal
+    if name == "QUniform":
+        from ..sweep import QUniform
+
+        requested = QUniform
+    if name == "Randint":
+        from ..sweep import Randint
+
+        requested = Randint
+    if name == "Uniform":
+        from ..sweep import Uniform
+
+        requested = Uniform
+
+    if requested:
+        if not getattr(__getattr__, "warning_issued", False):
+            logging.warning(
+                " %s will be removed from the azure.ai.ml.entities namespace in a future release."
+                " Please import from the azure.ai.ml.sweep namespace instead.",
+                name,
+            )
+            __getattr__.warning_issued = True  # type: ignore[attr-defined]
+        return requested
+
+    raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")

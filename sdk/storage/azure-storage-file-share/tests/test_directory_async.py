@@ -222,6 +222,30 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_create_subdirectory_in_root(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        await share_client.create_directory('dir1')
+
+        # Act
+        rooted_directory = share_client.get_directory_client()
+        sub_dir_client = rooted_directory.get_subdirectory_client('dir2')
+        await sub_dir_client.create_directory()
+
+        list_dir = []
+        async for d in rooted_directory.list_directories_and_files():
+            list_dir.append(d)
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'dir1'
+        assert list_dir[1]['name'] == 'dir2'
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_in_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

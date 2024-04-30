@@ -11,6 +11,7 @@ from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
@@ -44,7 +45,7 @@ class AzureCommunicationCallAutomationService(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2023-01-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-10-03-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -54,7 +55,24 @@ class AzureCommunicationCallAutomationService(
         self._config = AzureCommunicationCallAutomationServiceConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
         )
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
         client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
@@ -66,7 +84,9 @@ class AzureCommunicationCallAutomationService(
         self.call_dialog = CallDialogOperations(self._client, self._config, self._serialize, self._deserialize)
         self.call_recording = CallRecordingOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -90,7 +110,7 @@ class AzureCommunicationCallAutomationService(
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

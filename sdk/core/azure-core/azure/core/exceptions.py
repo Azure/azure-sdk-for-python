@@ -80,7 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> NoReturn:
+def raise_with_traceback(exception: Callable, *args: Any, message: str = "", **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -90,7 +90,6 @@ def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> NoRe
     :param any args: Any additional args to be included with exception.
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
-    message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside an "except", exc_type will be None. Assume it will not happen
     if exc_type is None:
@@ -113,15 +112,12 @@ class _HttpResponseCommonAPI(Protocol):
     """
 
     @property
-    def reason(self) -> Optional[str]:
-        ...
+    def reason(self) -> Optional[str]: ...
 
     @property
-    def status_code(self) -> Optional[int]:
-        ...
+    def status_code(self) -> Optional[int]: ...
 
-    def text(self) -> str:
-        ...
+    def text(self) -> str: ...
 
     @property
     def request(self) -> object:  # object as type, since all we need is str() on it

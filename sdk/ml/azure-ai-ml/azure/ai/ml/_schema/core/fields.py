@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access
+# pylint: disable=unused-argument,protected-access,too-many-lines
 
 import copy
 import logging
@@ -40,7 +40,7 @@ from ...constants._common import (
     DefaultOpenEncoding,
 )
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
-from ...exceptions import ValidationException
+from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
@@ -648,7 +648,7 @@ class TypeSensitiveUnionField(UnionField):
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
                 with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             pass
         return value
 
@@ -663,8 +663,6 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
     :return: The compute field
     :rtype: Field
     """
@@ -682,8 +680,6 @@ def ComputeField(**kwargs) -> Field:
 
 def CodeField(**kwargs) -> Field:
     """
-    :keyword required: if set to True, it is not possible to pass None
-    :paramtype required: bool
     :return: The code field
     :rtype: Field
     """
@@ -705,7 +701,7 @@ def CodeField(**kwargs) -> Field:
 def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
     """Function to return a union field for environment.
 
-    :param extra_fields: extra fields to be added to the union field
+    :keyword extra_fields: Extra fields to be added to the union field
     :paramtype extra_fields: List[Field]
     :return: The environment field
     :rtype: Field
@@ -796,7 +792,39 @@ class VersionField(Field):
             return value
         if isinstance(value, (int, float)):
             return str(value)
-        raise Exception(f"Type {type(value)} is not supported for version.")
+        msg = f"Type {type(value)} is not supported for version."
+        raise MlException(message=msg, no_personal_data_message=msg)
+
+
+class NumberVersionField(VersionField):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
+    default_error_messages = {
+        "max_version": "Version {input} is greater than or equal to upper bound {bound}.",
+        "min_version": "Version {input} is smaller than lower bound {bound}.",
+        "invalid": "Number version must be integers concatenated by '.', like 1.0.1.",
+    }
+
+    def __init__(self, *args, upper_bound: Optional[str] = None, lower_bound: Optional[str] = None, **kwargs) -> None:
+        self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
+        self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
+        super().__init__(*args, **kwargs)
+
+    def _version_to_tuple(self, value: str):
+        try:
+            return tuple(int(v) for v in str(value).split("."))
+        except ValueError as e:
+            raise self.make_error("invalid") from e
+
+    def _validate(self, value):
+        super()._validate(value)
+        value_tuple = self._version_to_tuple(value)
+        if self._upper is not None and value_tuple >= self._upper:
+            raise self.make_error("max_version", input=value, bound=self._upper)
+        if self._lower is not None and value_tuple < self._lower:
+            raise self.make_error("min_version", input=value, bound=self._lower)
 
 
 class DumpableIntegerField(fields.Integer):

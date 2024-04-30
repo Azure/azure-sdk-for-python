@@ -72,7 +72,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: Resource name to verify. Required.
         :type name: str
@@ -128,7 +128,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -149,7 +150,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: File path to verify. Required.
         :type name: str
@@ -201,7 +202,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -227,7 +229,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: Name of the resource to verify. Required.
         :type name: str
@@ -283,7 +285,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckAvailabilityResponse", pipeline_response)
 
@@ -302,7 +305,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionInfo or the result of cls(response)
@@ -343,7 +346,8 @@ class NetAppResourceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RegionInfo", pipeline_response)
 
@@ -364,7 +368,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
          resources in a subnet. Required.
@@ -523,7 +527,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
          resources in a subnet. Required.

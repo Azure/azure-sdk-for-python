@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, NoReturn, Optional, Union
+from typing import Any, Dict, NoReturn, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -16,6 +16,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE,
 from azure.ai.ml.constants._component import DataTransferTaskType, ExternalDataType, NodeType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
+from azure.ai.ml.entities._validation.core import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
@@ -41,10 +42,10 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
     def __init__(
         self,
         *,
-        task: str = None,
+        task: Optional[str] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -66,7 +67,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return {}
 
     @property
-    def task(self) -> str:
+    def task(self) -> Optional[str]:
         """Task type of the component.
 
         :return: Task type of the component.
@@ -75,16 +76,23 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
+        return cast(
+            dict,
+            convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()}),
+        )
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(DataTransferComponent, self).__str__()
+            _toYaml: str = self._to_yaml()
+            return _toYaml
+        except BaseException:  # pylint: disable=W0718
+            _toStr: str = super(DataTransferComponent, self).__str__()
+            return _toStr
 
     @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]):
+    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]) -> Union[Database, FileSystem]:
+        component_io: Union[Database, FileSystem] = Database()
+
         if isinstance(io_dict, Database):
             component_io = Database()
         elif isinstance(io_dict, FileSystem):
@@ -145,10 +153,10 @@ class DataTransferCopyComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        data_copy_mode: str = None,
+        data_copy_mode: Optional[str] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(
@@ -160,11 +168,11 @@ class DataTransferCopyComponent(DataTransferComponent):
         self._data_copy_mode = data_copy_mode
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return DataTransferCopyComponentSchema(context=context)
 
     @property
-    def data_copy_mode(self) -> str:
+    def data_copy_mode(self) -> Optional[str]:
         """Data copy mode of the component.
 
         :return: Data copy mode of the component.
@@ -172,12 +180,12 @@ class DataTransferCopyComponent(DataTransferComponent):
         """
         return self._data_copy_mode
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(DataTransferCopyComponent, self)._customized_validate()
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
-    def _validate_input_output_mapping(self):
+    def _validate_input_output_mapping(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         inputs_count = len(self.inputs)
         outputs_count = len(self.outputs)
@@ -242,7 +250,7 @@ class DataTransferImportComponent(DataTransferComponent):
         *,
         source: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         kwargs["task"] = DataTransferTaskType.IMPORT_DATA
@@ -255,11 +263,11 @@ class DataTransferImportComponent(DataTransferComponent):
         self.source = self._build_source_sink(source)
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> NoReturn:
+    def __call__(self, *args: Any, **kwargs: Any) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for import task."
@@ -289,7 +297,7 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         *,
         inputs: Optional[Dict] = None,
         sink: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(
@@ -301,11 +309,11 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         self.sink = self._build_source_sink(sink)
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> NoReturn:
+    def __call__(self, *args: Any, **kwargs: Any) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for export task."

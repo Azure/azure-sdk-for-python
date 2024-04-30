@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from abc import ABC
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace
@@ -40,9 +40,10 @@ class SweepDistribution(ABC, RestTranslatableMixin):
             SearchSpace.QLOGUNIFORM: QLogUniform,
         }
 
-        ss_class = mapping.get(obj[0], None)
+        ss_class: Any = mapping.get(obj[0], None)
         if ss_class:
-            return ss_class._from_rest_object(obj)
+            res: SweepDistribution = ss_class._from_rest_object(obj)
+            return res
 
         msg = f"Unknown search space type: {obj[0]}"
         raise JobException(
@@ -55,7 +56,8 @@ class SweepDistribution(ABC, RestTranslatableMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SweepDistribution):
             return NotImplemented
-        return self._to_rest_object() == other._to_rest_object()
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class Choice(SweepDistribution):
@@ -74,24 +76,25 @@ class Choice(SweepDistribution):
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
 
     def _to_rest_object(self) -> List:
-        items = []
-        for value in self.values:
-            if isinstance(value, dict):
-                rest_dict = {}
-                for k, v in value.items():
-                    if isinstance(v, SweepDistribution):
-                        rest_dict[k] = v._to_rest_object()
-                    else:
-                        rest_dict[k] = v
-                items.append(rest_dict)
-            else:
-                items.append(value)
+        items: List = []
+        if self.values is not None:
+            for value in self.values:
+                if isinstance(value, dict):
+                    rest_dict = {}
+                    for k, v in value.items():
+                        if isinstance(v, SweepDistribution):
+                            rest_dict[k] = v._to_rest_object()
+                        else:
+                            rest_dict[k] = v
+                    items.append(rest_dict)
+                else:
+                    items.append(value)
         return [self.type, [items]]
 
     @classmethod
@@ -106,14 +109,14 @@ class Choice(SweepDistribution):
                         # first assume that any dictionary value is a valid distribution (i.e. normal, uniform, etc)
                         # and try to deserialize it into a the correct SDK distribution object
                         from_rest_dict[k] = SweepDistribution._from_rest_object(v)
-                    except Exception:  # pylint: disable=broad-except
+                    except Exception:  # pylint: disable=W0718
                         # if an exception is raised, assume that the value was not a valid distribution and use the
                         # value as it is for deserialization
                         from_rest_dict[k] = v
                 from_rest_values.append(from_rest_dict)
             else:
                 from_rest_values.append(rest_value)
-        return Choice(values=from_rest_values)
+        return Choice(values=from_rest_values)  # type: ignore[arg-type]
 
 
 class Normal(SweepDistribution):
@@ -134,7 +137,7 @@ class Normal(SweepDistribution):
             :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -166,7 +169,7 @@ class LogNormal(Normal):
             :caption: Configuring LogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -192,7 +195,7 @@ class QNormal(Normal):
     """
 
     def __init__(
-        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs: Any
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
@@ -215,6 +218,7 @@ class QLogNormal(QNormal):
     :type sigma: Optional[float]
     :param q: Quantization factor.
     :type q: Optional[int]
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
@@ -226,7 +230,7 @@ class QLogNormal(QNormal):
     """
 
     def __init__(
-        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs: Any
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
@@ -248,7 +252,7 @@ class Randint(SweepDistribution):
             :caption: Configuring Randint distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, upper: Optional[int] = None, **kwargs) -> None:
+    def __init__(self, upper: Optional[int] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
         self.upper = upper
@@ -262,7 +266,9 @@ class Randint(SweepDistribution):
 
 
 class Uniform(SweepDistribution):
-    """Uniform distribution configuration.
+    """
+
+    Uniform distribution configuration.
 
     :param min_value: Minimum value of the distribution.
     :type min_value: float
@@ -280,7 +286,7 @@ class Uniform(SweepDistribution):
                 during a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
@@ -312,7 +318,7 @@ class LogUniform(Uniform):
             :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
@@ -342,7 +348,7 @@ class QUniform(Uniform):
         min_value: Optional[Union[int, float]] = None,
         max_value: Optional[Union[int, float]] = None,
         q: Optional[int] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
@@ -377,7 +383,11 @@ class QLogUniform(QUniform):
     """
 
     def __init__(
-        self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
+        q: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)

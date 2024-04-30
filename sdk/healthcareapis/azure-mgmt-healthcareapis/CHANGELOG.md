@@ -1,5 +1,35 @@
 # Release History
 
+## 2.1.0 (2024-04-22)
+
+### Features Added
+
+  - Model DicomService has a new parameter enable_data_partitions
+  - Model DicomService has a new parameter storage_configuration
+  - Model FhirServiceAuthenticationConfiguration has a new parameter smart_identity_providers
+
+## 2.0.0 (2023-12-18)
+
+### Features Added
+
+  - Model DicomService has a new parameter cors_configuration
+  - Model DicomService has a new parameter encryption
+  - Model DicomService has a new parameter event_state
+  - Model FhirService has a new parameter encryption
+  - Model FhirService has a new parameter implementation_guides_configuration
+  - Model FhirService has a new parameter import_configuration
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter is_internal
+  - Model MetricSpecification has a new parameter metric_filter_pattern
+  - Model MetricSpecification has a new parameter resource_id_dimension_name_override
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model ServiceCosmosDbConfigurationInfo has a new parameter cross_tenant_cmk_application_id
+  - Model ServicesProperties has a new parameter import_configuration
+
+### Breaking Changes
+
+  - Model FhirService no longer has parameter access_policies
+
 ## 1.2.0b1 (2022-11-22)
 
 ### Features Added

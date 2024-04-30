@@ -4,18 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 import pickle
+from unittest import mock
+from itertools import product
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 import requests
 import pytest
-
 from corehttp.exceptions import DecodeError, BaseError
+from corehttp.rest import HttpRequest
 from corehttp.runtime.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
-
 from corehttp.runtime.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
@@ -23,15 +20,9 @@ from corehttp.runtime.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
-from utils import (
-    HTTP_REQUESTS,
-    create_http_request,
-    HTTP_RESPONSES,
-    REQUESTS_TRANSPORT_RESPONSES,
-    create_http_response,
-    create_transport_response,
-    request_and_responses_product,
-)
+from corehttp.rest._requests_basic import RestRequestsTransportResponse
+
+from utils import HTTP_RESPONSES, create_http_response, create_transport_response
 
 
 def test_pipeline_context():
@@ -62,30 +53,26 @@ def test_pipeline_context():
     assert len(revived_context) == 1
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_request_history(http_request):
+def test_request_history():
     class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
-    body = Non_deep_copyable()
-    request = create_http_request(http_request, "GET", "http://localhost/", {"user-agent": "test_request_history"})
-    request.body = body
+    request = HttpRequest("GET", "http://localhost/", headers={"user-agent": "test_request_history"})
+    request._data = Non_deep_copyable()
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_request_history_type_error(http_request):
+def test_request_history_type_error():
     class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 
-    body = Non_deep_copyable()
-    request = create_http_request(http_request, "GET", "http://localhost/", {"user-agent": "test_request_history"})
-    request.body = body
+    request = HttpRequest("GET", "http://localhost/", headers={"user-agent": "test_request_history"})
+    request._data = Non_deep_copyable()
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
@@ -93,9 +80,9 @@ def test_request_history_type_error(http_request):
 
 
 @mock.patch("corehttp.runtime.policies._universal._LOGGER")
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_no_log(mock_http_logger, http_request, http_response):
-    universal_request = http_request("GET", "http://localhost/")
+@pytest.mark.parametrize("http_response", HTTP_RESPONSES)
+def test_no_log(mock_http_logger, http_response):
+    universal_request = HttpRequest("GET", "http://localhost/")
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
     response = PipelineResponse(request, create_http_response(http_response, universal_request, None), request.context)
@@ -160,8 +147,7 @@ def test_no_log(mock_http_logger, http_request, http_response):
     assert second_count == first_count * 2
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_retry_without_http_response(http_request):
+def test_retry_without_http_response():
     class NaughtyPolicy(HTTPPolicy):
         def send(*args):
             raise BaseError("boo")
@@ -169,17 +155,14 @@ def test_retry_without_http_response(http_request):
     policies = [RetryPolicy(), NaughtyPolicy()]
     pipeline = Pipeline(policies=policies, transport=None)
     with pytest.raises(BaseError):
-        pipeline.run(http_request("GET", url="https://foo.bar"))
+        pipeline.run(HttpRequest("GET", url="https://foo.bar"))
 
 
-@pytest.mark.parametrize(
-    "http_request,http_response,requests_transport_response",
-    request_and_responses_product(HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES),
-)
-def test_raw_deserializer(http_request, http_response, requests_transport_response):
+@pytest.mark.parametrize("http_response,", HTTP_RESPONSES)
+def test_raw_deserializer(http_response):
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
-    universal_request = http_request("GET", "http://localhost/")
+    universal_request = HttpRequest("GET", "http://localhost/")
     request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):
@@ -288,7 +271,7 @@ def test_raw_deserializer(http_request, http_response, requests_transport_respon
     req_response._content_consumed = True
     response = PipelineResponse(
         None,
-        create_transport_response(requests_transport_response, None, req_response),
+        create_transport_response(RestRequestsTransportResponse, None, req_response),
         PipelineContext(None, stream=False),
     )
 

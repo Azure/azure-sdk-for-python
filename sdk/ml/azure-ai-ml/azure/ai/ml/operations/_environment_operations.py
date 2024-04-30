@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 from contextlib import contextmanager
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Generator, Iterable, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -42,7 +42,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -87,8 +87,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, environment: Environment) -> Environment:
+    @monitor_with_activity(ops_logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
+    def create_or_update(self, environment: Environment) -> Environment:  # type: ignore
         """Returns created or updated environment asset.
 
         :param environment: Environment object
@@ -129,7 +129,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-except
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -196,9 +196,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
+                env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
@@ -239,7 +239,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
@@ -290,7 +290,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         return Environment._from_rest_object(env_version_resource)
 
-    @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -317,48 +317,55 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 :caption: List example.
         """
         if name:
-            return (
-                self._version_operations.list(
-                    name=name,
+            return cast(
+                Iterable[Environment],
+                (
+                    self._version_operations.list(
+                        name=name,
+                        registry_name=self._registry_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                    if self._registry_name
+                    else self._version_operations.list(
+                        name=name,
+                        workspace_name=self._workspace_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                ),
+            )
+        return cast(
+            Iterable[Environment],
+            (
+                self._containers_operations.list(
                     registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
                 if self._registry_name
-                else self._version_operations.list(
-                    name=name,
+                else self._containers_operations.list(
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
-        return (
-            self._containers_operations.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
-            if self._registry_name
-            else self._containers_operations.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
+            ),
         )
 
-    @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -389,13 +396,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived environment version.
 
@@ -446,7 +454,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
         return Environment._from_rest_object(result)
 
-    @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self,
@@ -501,7 +509,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.

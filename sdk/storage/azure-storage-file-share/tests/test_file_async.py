@@ -8,8 +8,7 @@ import asyncio
 import base64
 import os
 import tempfile
-import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
@@ -245,6 +244,27 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        async with ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key) as file_client:
+
+            # Act / Assert
+            assert not await file_client.exists()
+
+            await file_client.create_file(1024)
+            assert await file_client.exists()
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -822,6 +842,39 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert properties.last_write_time is not None
         assert properties.creation_time is not None
         assert properties.permission_key is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_set_datetime_all_ms_precision(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = await self._create_file(storage_account_name, storage_account_key)
+
+        date_times = [
+            datetime(3005, 5, 11, 12, 24, 7),
+            datetime(3005, 5, 11, 12, 24, 7, 0),
+            datetime(3005, 5, 11, 12, 24, 7, 1),
+            datetime(3005, 5, 11, 12, 24, 7, 12),
+            datetime(3005, 5, 11, 12, 24, 7, 123),
+            datetime(3005, 5, 11, 12, 24, 7, 1234),
+            datetime(3005, 5, 11, 12, 24, 7, 12345),
+            datetime(3005, 5, 11, 12, 24, 7, 123456),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=7))),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=8))),
+        ]
+
+        # Act / Assert
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        for date1, date2 in zip(date_times[::2], date_times[1::2]):
+            await file_client.set_http_headers(
+                content_settings=content_settings,
+                file_creation_time=date1,
+                file_last_write_time=date2
+            )
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -1472,7 +1525,10 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
-            source_file_client.credential.account_key)
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
@@ -1995,6 +2051,46 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert cleared2[0]['end'] == 1023
 
         assert props.name == file_name + '.'
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges_diff_support_rename(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        await file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        data = self.get_random_bytes(1536)
+        data2 = self.get_random_bytes(512)
+        await file_client.upload_range(data, offset=0, length=1536)
+        previous_snapshot = await share_client.create_snapshot()
+        await file_client.clear_range(offset=512, length=512)
+        await file_client.upload_range(data2, offset=512, length=512)
+        file_client = await file_client.rename_file(file_name + 'renamed')
+
+        # Assert
+        with pytest.raises(ResourceExistsError):
+            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot)
+        with pytest.raises(ResourceExistsError):
+            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=False)
+        ranges, cleared = await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=True)
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 1
+        assert isinstance(cleared, list)
+        assert len(cleared) == 0
+        assert ranges[0]['start'] == 512
+        assert ranges[0]['end'] == 1023
 
     @FileSharePreparer()
     @recorded_by_proxy_async

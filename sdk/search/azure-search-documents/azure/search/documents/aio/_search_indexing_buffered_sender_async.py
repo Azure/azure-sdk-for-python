@@ -45,8 +45,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
-     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
-     will be assumed.
+        audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+        will be assumed.
     """
 
     _client: SearchIndexClient
@@ -109,7 +109,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
     @distributed_trace_async
     async def close(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
+        """Close the session.
         :return: None
         :rtype: None
         """
@@ -262,7 +262,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type batch: IndexDocumentsBatch
         :return: Indexing result for each action in the batch.
         :rtype:  list[IndexingResult]
-        :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
+
+        :raises ~azure.search.documents.RequestEntityTooLargeError
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 

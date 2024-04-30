@@ -504,10 +504,7 @@
       "name": "[concat(parameters('testStorageAccountName'), '/default/', parameters('testBlobContainerName'))]",
       "dependsOn": [
           "[resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName'))]"
-      ],
-      "properties": {
-          "publicAccess": "Blob"
-      }
+      ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
@@ -921,10 +918,7 @@
         "userAssignedIdentities": "[if(equals(parameters('identityType'), 'userAssigned'), variables('userAssignedIdentities'), json('null'))]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-        "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-        "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
       ],
       "tags": "[parameters('tagValues')]",
       "properties": {

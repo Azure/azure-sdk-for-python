@@ -5,7 +5,7 @@ Project: sdk/eventhub/azure-eventhub
 PrimaryPackage: azure-eventhub
 
 PackageVersions:
-- azure-core: 1.26.1
+- azure-core: 1.26.2
   azure-eventhub: 5.11.3
 - azure-core: source
   azure-eventhub: source

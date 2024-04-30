@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservice import ContainerServiceClient
 
 """
@@ -26,7 +29,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.agent_pools.begin_create_or_update(
@@ -38,7 +41,7 @@ def main():
                 "count": 3,
                 "orchestratorVersion": "",
                 "osType": "Linux",
-                "proximityPlacementGroupID": "/subscriptions/subid1/resourcegroups/rg1/providers/Microsoft.Compute/proximityPlacementGroups/ppg1",
+                "proximityPlacementGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/proximityPlacementGroups/ppg1",
                 "vmSize": "Standard_DS2_v2",
             }
         },
@@ -46,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-08-01/examples/AgentPoolsCreate_PPG.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-02-01/examples/AgentPoolsCreate_PPG.json
 if __name__ == "__main__":
     main()

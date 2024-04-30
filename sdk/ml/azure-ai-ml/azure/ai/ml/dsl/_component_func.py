@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Callable, Mapping
+from typing import Any, Callable, List, Mapping
 
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
@@ -12,7 +12,7 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
 
 
-def get_dynamic_input_parameter(inputs: Mapping):
+def get_dynamic_input_parameter(inputs: Mapping) -> List:
     """Return the dynamic parameter of the definition's input ports.
 
     :param inputs: The mapping of input names to input objects.
@@ -31,7 +31,7 @@ def get_dynamic_input_parameter(inputs: Mapping):
     ]
 
 
-def get_dynamic_source_parameter(source):
+def get_dynamic_source_parameter(source: Any) -> List:
     """Return the dynamic parameter of the definition's source port.
 
     :param source: The source object.
@@ -49,7 +49,7 @@ def get_dynamic_source_parameter(source):
     ]
 
 
-def to_component_func(entity: ComponentEntity, component_creation_func) -> Callable[..., Command]:
+def to_component_func(entity: ComponentEntity, component_creation_func: Callable) -> Callable[..., Command]:
     """Convert a ComponentEntity to a callable component function.
 
     :param entity: The ComponentEntity to convert.
@@ -83,7 +83,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     try:
         yaml_str = entity._yaml_str if entity._yaml_str else entity._to_yaml()
         doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(doc_string, yaml_str)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=W0718
         pass
 
     params_assignment_str = ", ".join([f"{param.name}=xxx" for param in all_params])
@@ -91,12 +91,13 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
 
     dynamic_func = create_kw_function_from_parameters(
         component_creation_func,
-        documentation=doc_string,
+        documentation=str(doc_string),
         parameters=all_params,
         func_name=func_name,
         flattened_group_keys=flattened_group_keys,
     )
 
-    dynamic_func._func_calling_example = example
-    dynamic_func._has_parameters = bool(all_params)
+    # Bug Item number: 2883188
+    dynamic_func._func_calling_example = example  # type: ignore
+    dynamic_func._has_parameters = bool(all_params)  # type: ignore
     return dynamic_func

@@ -4,10 +4,10 @@
 
 import logging
 from abc import ABC
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -24,12 +24,13 @@ class JobLimits(RestTranslatableMixin, ABC):
     def __init__(
         self,
     ) -> None:
-        self.type = None
+        self.type: Any = None
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, JobLimits):
             return NotImplemented
-        return self._to_rest_object() == other._to_rest_object()
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class CommandJobLimits(JobLimits):
@@ -100,7 +101,7 @@ class SweepJobLimits(JobLimits):
         max_concurrent_trials: Optional[int] = None,
         max_total_trials: Optional[int] = None,
         timeout: Optional[int] = None,
-        trial_timeout: Optional[int] = None,
+        trial_timeout: Optional[Union[int, str]] = None,
     ) -> None:
         super().__init__()
         self.type = JobType.SWEEP
@@ -110,7 +111,7 @@ class SweepJobLimits(JobLimits):
         self._trial_timeout = _get_floored_timeout(trial_timeout)
 
     @property
-    def timeout(self) -> int:
+    def timeout(self) -> Optional[Union[int, str]]:
         """The maximum run duration, in seconds, after which the job will be cancelled.
 
         :return: The maximum run duration, in seconds, after which the job will be cancelled.
@@ -128,7 +129,7 @@ class SweepJobLimits(JobLimits):
         self._timeout = _get_floored_timeout(value)
 
     @property
-    def trial_timeout(self) -> int:
+    def trial_timeout(self) -> Optional[Union[int, str]]:
         """The timeout value, in seconds, for each Sweep Job trial.
 
         :return: The timeout value, in seconds, for each Sweep Job trial.
@@ -154,7 +155,7 @@ class SweepJobLimits(JobLimits):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSweepJobLimits) -> "SweepJobLimits":
+    def _from_rest_object(cls, obj: RestSweepJobLimits) -> Optional["SweepJobLimits"]:
         if not obj:
             return None
 
@@ -166,10 +167,13 @@ class SweepJobLimits(JobLimits):
         )
 
 
-def _get_floored_timeout(value: int) -> int:
+def _get_floored_timeout(value: Optional[Union[int, str]]) -> Optional[Union[int, str]]:
     # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
     # If duration is non-0 and less than 60, set to 60.
-    return value if not value or value > 60 else 60
+    if isinstance(value, int):
+        return value if not value or value > 60 else 60
+
+    return None
 
 
 class DoWhileJobLimits(JobLimits):
@@ -180,16 +184,16 @@ class DoWhileJobLimits(JobLimits):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         max_iteration_count: Optional[int] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__()
         self._max_iteration_count = max_iteration_count
 
     @property
-    def max_iteration_count(self) -> int:
+    def max_iteration_count(self) -> Optional[int]:
         """The maximum number of iterations for the DoWhile Job.
 
         :rtype: int

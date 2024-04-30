@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.apps.begin_delete(
+    client.apps.begin_delete(
         resource_group_name="myResourceGroup",
         service_name="myservice",
         app_name="myapp",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Apps_Delete.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Apps_Delete.json
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ import re
 # your package.
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 3.8. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-communication-identity"
 PACKAGE_PPRINT_NAME = "Communication Identity Service"
@@ -45,12 +45,15 @@ setup(
     license="MIT License",
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -65,8 +68,8 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
     },
-    python_requires=">=3.7",
-    install_requires=["msrest>=0.7.1", "azure-core<2.0.0,>=1.24.0"],
+    python_requires=">=3.8",
+    install_requires=["msrest>=0.7.1", "azure-core>=1.24.0"],
     extras_require={":python_version<'3.8'": ["typing-extensions"]},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

@@ -43,9 +43,7 @@ async def main():
     print("")
 
     print("Get configuration setting")
-    # [START get_config_setting]
     fetched_config_setting = await client.get_configuration_setting(key="MyKey")
-    # [END get_config_setting]
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")

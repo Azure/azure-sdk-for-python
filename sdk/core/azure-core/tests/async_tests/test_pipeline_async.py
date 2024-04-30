@@ -24,12 +24,15 @@
 #
 # --------------------------------------------------------------------------
 import sys
+from unittest.mock import Mock
 
+from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     DistributedTracingPolicy,
+    AsyncBearerTokenCredentialPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
@@ -220,6 +223,27 @@ def test_conf_async_trio_requests(port, http_request):
 
     response = trio.run(do)
     assert isinstance(response.http_response.status_code, int)
+
+
+@pytest.mark.trio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_conf_async_trio_auth_policy_concurrent(port, http_request):
+
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+
+    async def get_token(*_, **__):
+        await trio.sleep(1)
+        return AccessToken("token", 2524608000)
+
+    async def run(p):
+        response = await p.run(request, enforce_https=False)
+        assert isinstance(response.http_response.status_code, int)
+
+    fake_credential = Mock(get_token=get_token)
+    policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope")]
+    async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline, trio.open_nursery() as nursery:
+        nursery.start_soon(run, pipeline)
+        nursery.start_soon(run, pipeline)
 
 
 @pytest.mark.asyncio

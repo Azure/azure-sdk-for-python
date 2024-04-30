@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
@@ -44,7 +44,7 @@ class ForecastingJob(AutoMLTabular):
         *,
         primary_metric: Optional[str] = None,
         forecasting_settings: Optional[ForecastingSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a new AutoML Forecasting task."""
         # Extract any task specific settings
@@ -90,7 +90,7 @@ class ForecastingJob(AutoMLTabular):
             else ForecastingPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @property
+    @property  # type: ignore
     def training(self) -> ForecastingTrainingSettings:
         """
         Return the forecast training settings.
@@ -100,8 +100,12 @@ class ForecastingJob(AutoMLTabular):
         """
         return self._training or ForecastingTrainingSettings()
 
+    @training.setter
+    def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
+        ...
+
     @property
-    def forecasting_settings(self) -> ForecastingSettings:
+    def forecasting_settings(self) -> Optional[ForecastingSettings]:
         """
         Return the forecast settings.
 
@@ -148,8 +152,8 @@ class ForecastingJob(AutoMLTabular):
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
             will be automatically created for your data set.
         :paramtype time_series_id_column_names: Optional[Union[str, List[str]]]
-        :keyword target_lags:
-            The number of past periods to lag from the target column. By default the lags are turned off.
+        :keyword target_lags: The number of past periods to lag from the target column. By default the lags are turned
+            off.
 
             When forecasting, this parameter represents the number of rows to lag the target values based
             on the frequency of the data. This is represented as a list or single integer. Lag should be used
@@ -183,8 +187,8 @@ class ForecastingJob(AutoMLTabular):
         :type target_lags: Optional[Union[str, int, List[int]]]
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
         :paramtype feature_lags: Optional[str]
-        :keyword target_rolling_window_size:
-            The number of past periods used to create a rolling window average of the target column.
+        :keyword target_rolling_window_size: The number of past periods used to create a rolling window average of the
+            target column.
 
             When forecasting, this parameter represents `n` historical periods to use to generate forecasted values,
             <= training set size. If omitted, `n` is the full training set size. Specify this parameter
@@ -196,12 +200,12 @@ class ForecastingJob(AutoMLTabular):
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
         :paramtype country_or_region_for_holidays: Optional[str]
         :keyword use_stl: Configure STL Decomposition of the time-series target column.
-                    use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
-                    season component and season_trend - generate both season and trend components.
+            use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
+            season component and season_trend - generate both season and trend components.
         :type use_stl: Optional[str]
         :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
-                    If seasonality is set to 'auto', it will be inferred.
-                    If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
+            If seasonality is set to 'auto', it will be inferred.
+            If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
         :paramtype seasonality: Optional[Union[int, str]
         :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
@@ -209,7 +213,7 @@ class ForecastingJob(AutoMLTabular):
             Possible values: 'auto' (default), 'pad', 'drop' and None.
 
             * **auto** short series will be padded if there are no long series,
-            otherwise short series will be dropped.
+                otherwise short series will be dropped.
             * **pad** all the short series will be padded.
             * **drop**  all the short series will be dropped".
             * **None** the short series will not be modified.
@@ -281,10 +285,10 @@ class ForecastingJob(AutoMLTabular):
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
         :type frequency: Optional[str]
         :keyword target_aggregate_function: The function to be used to aggregate the time series target
-                                            column to conform to a user specified frequency. If the
-                                            target_aggregation_function is set, but the freq parameter
-                                            is not set, the error is raised. The possible target
-                                            aggregation functions are: "sum", "max", "min" and "mean".
+            column to conform to a user specified frequency. If the target_aggregation_function is set,
+            but the freq parameter is not set, the error is raised. The possible target aggregation
+            functions are: "sum", "max", "min" and "mean".
+
                 * The target column values are aggregated based on the specified operation.
                   Typically, sum is appropriate for most scenarios.
                 * Numerical predictor columns in your data are aggregated by sum, mean, minimum value,
@@ -336,16 +340,13 @@ class ForecastingJob(AutoMLTabular):
                 +----------------+-------------------------------+--------------------------------------+
 
         :type target_aggregate_function: Optional[str]
-        :keyword cv_step_size:
-            Number of periods between the origin_time of one CV fold and the next fold. For
-            example, if `n_step` = 3 for daily data, the origin time for each fold will be
-            three days apart.
+        :keyword cv_step_size: Number of periods between the origin_time of one CV fold and the next fold.
+            For example, if `n_step` = 3 for daily data, the origin time for each fold will be three days apart.
         :paramtype cv_step_size: Optional[int]
-        :keyword features_unknown_at_forecast_time:
-            The feature columns that are available for training but unknown at the time of forecast/inference.
-            If features_unknown_at_forecast_time is set to an empty list, it is assumed that
-            all the feature columns in the dataset are known at inference time. If this parameter is not set
-            the support for future features is not enabled.
+        :keyword features_unknown_at_forecast_time: The feature columns that are available for training but
+            unknown at the time of forecast/inference. If features_unknown_at_forecast_time is set to an empty
+            list, it is assumed that all the feature columns in the dataset are known at inference time. If this
+            parameter is not set the support for future features is not enabled.
         :paramtype features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
@@ -495,26 +496,46 @@ class ForecastingJob(AutoMLTabular):
 
         # Disable stack ensemble by default, since it is currently not supported for forecasting tasks
         if enable_stack_ensemble is None:
-            self._training.enable_stack_ensemble = False
+            if self._training is not None:
+                self._training.enable_stack_ensemble = False
 
     def _to_rest_object(self) -> JobBase:
-        forecasting_task = RestForecasting(
-            target_column_name=self.target_column_name,
-            training_data=self.training_data,
-            validation_data=self.validation_data,
-            validation_data_size=self.validation_data_size,
-            weight_column_name=self.weight_column_name,
-            cv_split_column_names=self.cv_split_column_names,
-            n_cross_validations=self.n_cross_validations,
-            test_data=self.test_data,
-            test_data_size=self.test_data_size,
-            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
-            limit_settings=self._limits._to_rest_object() if self._limits else None,
-            training_settings=self._training._to_rest_object() if self._training else None,
-            primary_metric=self.primary_metric,
-            log_verbosity=self.log_verbosity,
-            forecasting_settings=self._forecasting_settings._to_rest_object(),
-        )
+        if self._forecasting_settings is not None:
+            forecasting_task = RestForecasting(
+                target_column_name=self.target_column_name,
+                training_data=self.training_data,
+                validation_data=self.validation_data,
+                validation_data_size=self.validation_data_size,
+                weight_column_name=self.weight_column_name,
+                cv_split_column_names=self.cv_split_column_names,
+                n_cross_validations=self.n_cross_validations,
+                test_data=self.test_data,
+                test_data_size=self.test_data_size,
+                featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+                limit_settings=self._limits._to_rest_object() if self._limits else None,
+                training_settings=self._training._to_rest_object() if self._training else None,
+                primary_metric=self.primary_metric,
+                log_verbosity=self.log_verbosity,
+                forecasting_settings=self._forecasting_settings._to_rest_object(),
+            )
+        else:
+            forecasting_task = RestForecasting(
+                target_column_name=self.target_column_name,
+                training_data=self.training_data,
+                validation_data=self.validation_data,
+                validation_data_size=self.validation_data_size,
+                weight_column_name=self.weight_column_name,
+                cv_split_column_names=self.cv_split_column_names,
+                n_cross_validations=self.n_cross_validations,
+                test_data=self.test_data,
+                test_data_size=self.test_data_size,
+                featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+                limit_settings=self._limits._to_rest_object() if self._limits else None,
+                training_settings=self._training._to_rest_object() if self._training else None,
+                primary_metric=self.primary_metric,
+                log_verbosity=self.log_verbosity,
+                forecasting_settings=None,
+            )
 
         self._resolve_data_inputs(forecasting_task)
         self._validation_data_to_rest(forecasting_task)
@@ -559,9 +580,9 @@ class ForecastingJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            "identity": (
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             "queue_settings": properties.queue_settings,
         }
 
@@ -575,19 +596,27 @@ class ForecastingJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
-            if task_details.featurization_settings
-            else None,
-            limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
-            if task_details.limit_settings
-            else None,
-            training=ForecastingTrainingSettings._from_rest_object(task_details.training_settings)
-            if task_details.training_settings
-            else None,
+            featurization=(
+                TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+                if task_details.featurization_settings
+                else None
+            ),
+            limits=(
+                TabularLimitSettings._from_rest_object(task_details.limit_settings)
+                if task_details.limit_settings
+                else None
+            ),
+            training=(
+                ForecastingTrainingSettings._from_rest_object(task_details.training_settings)
+                if task_details.training_settings
+                else None
+            ),
             primary_metric=task_details.primary_metric,
-            forecasting_settings=ForecastingSettings._from_rest_object(task_details.forecasting_settings)
-            if task_details.forecasting_settings
-            else None,
+            forecasting_settings=(
+                ForecastingSettings._from_rest_object(task_details.forecasting_settings)
+                if task_details.forecasting_settings
+                else None
+            ),
             log_verbosity=task_details.log_verbosity,
             **job_args_dict,
         )
@@ -603,7 +632,7 @@ class ForecastingJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ForecastingJob":
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
@@ -633,17 +662,18 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = AutoMLForecastingNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
             schema_dict = AutoMLForecastingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return schema_dict
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ForecastingJob):
             return NotImplemented
 
@@ -652,5 +682,5 @@ class ForecastingJob(AutoMLTabular):
 
         return self.primary_metric == other.primary_metric and self._forecasting_settings == other._forecasting_settings
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

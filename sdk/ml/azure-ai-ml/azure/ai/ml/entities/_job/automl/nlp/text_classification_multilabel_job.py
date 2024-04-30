@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
@@ -25,6 +25,10 @@ from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSett
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._component.component import Component
+
 
 class TextClassificationMultilabelJob(AutoMLNLPJob):
     """Configuration for AutoML Text Classification Multilabel Job.
@@ -42,12 +46,12 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
-            :start-after: [START automl.text_classification_multilabel_job]
-            :end-before: [END automl.text_classification_multilabel_job]
-            :language: python
-            :dedent: 8
-            :caption: creating an automl text classification multilabel job
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_classification_multilabel_job]
+                :end-before: [END automl.text_classification_multilabel_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text classification multilabel job
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.ACCURACY
@@ -60,7 +64,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         validation_data: Optional[Input] = None,
         primary_metric: Optional[str] = None,
         log_verbosity: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ):
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION_MULTILABEL,
@@ -72,8 +76,12 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             **kwargs,
         )
 
-    @AutoMLNLPJob.primary_metric.setter
-    def primary_metric(self, value: Union[str, ClassificationMultilabelPrimaryMetrics]):
+    @property
+    def primary_metric(self) -> Union[str, ClassificationMultilabelPrimaryMetrics]:
+        return self._primary_metric
+
+    @primary_metric.setter
+    def primary_metric(self, value: Union[str, ClassificationMultilabelPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -171,9 +179,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             training_parameters=training_parameters,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
             queue_settings=properties.queue_settings,
         )
 
@@ -181,12 +189,12 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
         return text_classification_multilabel_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "Component":
         raise NotImplementedError()
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
     ) -> "TextClassificationMultilabelJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
@@ -218,18 +226,20 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationMultilabelJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
         if inside_pipeline:
-            return AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            res_autoML: dict = AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            return res_autoML
 
-        return TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, TextClassificationMultilabelJob):
             return NotImplemented
 
@@ -238,5 +248,5 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

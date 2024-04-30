@@ -6,15 +6,14 @@ import json
 import os
 from itertools import product
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Optional, Dict, Union
 
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._common import LOCAL_PATH
 
 def find_config_file_path(
     path: Optional[Union[os.PathLike, str]] = None,
-    file_name: str = None,
+    file_name: Optional[str] = None,
 ) -> str:
     path = Path(".") if path is None else Path(path)
 
@@ -54,9 +53,9 @@ def find_config_file_path(
                 error_category=ErrorCategory.USER_ERROR,
             )
     
-    return config_file_path
+    return config_file_path  # type: ignore[return-value]
 
-def get_config_info(config_file_path: Optional[Path]) -> Tuple[str, str, str]:
+def get_config_info(config_file_path: Union[str, os.PathLike]) -> Dict[str, str]:
     with open(config_file_path, encoding="utf-8-sig") as config_file:
         config = json.load(config_file)
 

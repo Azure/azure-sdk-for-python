@@ -8,7 +8,7 @@ import pytest
 from datetime import timedelta
 from azure.communication.identity import CommunicationTokenScope
 from devtools_testutils import is_live, recorded_by_proxy
-from utils import is_token_expiration_within_allowed_deviation
+from utils import is_token_expiration_within_allowed_deviation, token_scope_scenarios
 from acs_identity_test_case import ACSIdentityTestCase
 from azure.communication.identity import CommunicationIdentityClient
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -57,11 +57,7 @@ class TestClient(ACSIdentityTestCase):
 
     @pytest.mark.parametrize(
         "_, value",
-        [
-            ("chat", [CommunicationTokenScope.CHAT]),
-            ("voip", [CommunicationTokenScope.VOIP]),
-            ("chat&voip", [CommunicationTokenScope.VOIP, CommunicationTokenScope.CHAT]),
-        ],
+        token_scope_scenarios,
     )
     @ArgumentPasser()
     @recorded_by_proxy
@@ -114,11 +110,7 @@ class TestClient(ACSIdentityTestCase):
 
     @pytest.mark.parametrize(
         "_, value",
-        [
-            ("chat", [CommunicationTokenScope.CHAT]),
-            ("voip", [CommunicationTokenScope.VOIP]),
-            ("chat&voip", [CommunicationTokenScope.VOIP, CommunicationTokenScope.CHAT]),
-        ],
+        token_scope_scenarios,
     )
     @ArgumentPasser()
     @recorded_by_proxy

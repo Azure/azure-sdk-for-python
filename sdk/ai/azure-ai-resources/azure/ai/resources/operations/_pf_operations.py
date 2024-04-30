@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import uuid
-from typing import Any
+from typing import Any, Dict, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -11,18 +11,23 @@ from azure.ai.resources._project_scope import OperationScope
 
 from azure.ai.ml import MLClient
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class PFOperations():
-    """PFOperations.
+    """Operations class for promptflow resources
 
     You should not instantiate this class directly. Instead, you should
     create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param service_client: The Azure Machine Learning client
+    :type service_client: ~azure.ai.ml.MLClient
+    :param scope: The scope of the operation
+    :type scope: ~azure.ai.resources._project_scope.OperationScope
     """
 
     def __init__(self,
@@ -38,7 +43,22 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_activity(logger, "PF.BatchRun", ActivityType.PUBLICAPI)
-    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: dict = None):
+    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: Optional[Dict] = None) -> Dict:
+        """Run a batch flow
+        
+        :param flow: The flow to run
+        :type flow: str
+        :param data: The data to use
+        :type data: str
+        :param inputs_mapping: The input mappings
+        :type inputs_mapping: Dict
+        :param runtime: The runtime to use
+        :type runtime: str
+        :param connections: The connections to use
+        :type connections: Optional[Dict]
+        :return: The batch run details
+        :rtype: Dict
+        """
         from promptflow.sdk.entities import Run
 
         run_data = {
@@ -60,7 +80,14 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "PF.GetRunDetails", ActivityType.PUBLICAPI)
-    def get_run_details(self, run_name: str):
+    def get_run_details(self, run_name: str) -> "DataFrame":  # type: ignore[name-defined]
+        """Get the details of a run
+        
+        :param run_name: The name of the run
+        :type run_name: str
+        :return: The run details
+        :rtype: pandas.DataFrame
+        """
         return self._get_pf_client().runs.get_details(run_name)
     
     def _get_pf_client(self):

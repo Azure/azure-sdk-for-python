@@ -7,7 +7,7 @@
 # Attribute on customized group class to mark a value type as a group of inputs/outputs.
 import _thread
 import functools
-from typing import Any, Callable, Dict, List, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
@@ -145,12 +145,12 @@ def group(_cls: Type[T]) -> Type[T]:
 
     def _create_fn(
         name: str,
-        args: List[str],
-        body: List[str],
+        args: Union[List, str],
+        body: Union[List, str],
         *,
-        globals: Dict[str, Any] = None,
-        locals: Dict[str, Any] = None,
-        return_type: Type[T2],
+        globals: Optional[Dict[str, Any]] = None,
+        locals: Optional[Dict[str, Any]] = None,
+        return_type: Optional[Type[T2]],
     ) -> Callable[..., T2]:
         """To generate function in class.
 
@@ -188,9 +188,10 @@ def group(_cls: Type[T]) -> Type[T]:
         txt = f" def {name}({args}){return_annotation}:\n{body}"
         local_vars = ", ".join(locals.keys())
         txt = f"def __create_fn__({local_vars}):\n{txt}\n return {name}"
-        ns = {}
+        ns: Dict = {}
         exec(txt, globals, ns)  # pylint: disable=exec-used # nosec
-        return ns["__create_fn__"](**locals)
+        res: Callable = ns["__create_fn__"](**locals)
+        return res
 
     def _create_init_fn(  # pylint: disable=unused-argument
         cls: Type[T], fields: Dict[str, Union[Annotation, Input, Output]]
@@ -207,7 +208,7 @@ def group(_cls: Type[T]) -> Type[T]:
 
         # Reference code link:
         # https://github.com/python/cpython/blob/17b16e13bb444001534ed6fccb459084596c8bcf/Lib/dataclasses.py#L523
-        def _get_data_type_from_annotation(anno: Input):
+        def _get_data_type_from_annotation(anno: Any) -> Any:
             if isinstance(anno, GroupInput):
                 return anno._group_class
             # keep original annotation for Outputs
@@ -220,10 +221,10 @@ def group(_cls: Type[T]) -> Type[T]:
                 # otherwise, keep original annotation
                 return anno
 
-        def _get_default(key):
+        def _get_default(key: str) -> Any:
             # will set None as default value when default not exist so won't need to reorder the init params
             val = fields[key]
-            if hasattr(val, "default"):
+            if val is not None and hasattr(val, "default"):
                 return val.default
             return None
 
@@ -254,20 +255,22 @@ def group(_cls: Type[T]) -> Type[T]:
         # https://github.com/python/cpython/blob/17b16e13bb444001534ed6fccb459084596c8bcf/Lib/dataclasses.py#L582
         fn = _create_fn(
             "__repr__",
-            ("self",),
+            [
+                "self",
+            ],
             ['return self.__class__.__qualname__ + f"(' + ", ".join([f"{k}={{self.{k}!r}}" for k in fields]) + ')"'],
             return_type=str,
         )
 
         # This function's logic is copied from "recursive_repr" function in
         # reprlib module to avoid dependency.
-        def _recursive_repr(user_function):
+        def _recursive_repr(user_function: Any) -> Any:
             # Decorator to make a repr function return "..." for a recursive
             # call.
             repr_running = set()
 
             @functools.wraps(user_function)
-            def wrapper(self):
+            def wrapper(self: Any) -> Any:
                 key = id(self), _thread.get_ident()
                 if key in repr_running:
                     return "..."
@@ -280,7 +283,8 @@ def group(_cls: Type[T]) -> Type[T]:
 
             return wrapper
 
-        return _recursive_repr(fn)
+        res: Callable = _recursive_repr(fn)
+        return res
 
     def _process_class(cls: Type[T], all_fields: Dict[str, Union[Annotation, Input, Output]]) -> Type[T]:
         setattr(cls, "__init__", _create_init_fn(cls, all_fields))

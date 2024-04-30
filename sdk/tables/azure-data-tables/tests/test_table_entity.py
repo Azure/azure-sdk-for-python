@@ -375,7 +375,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             # Act
             resp = self.table.create_entity(
                 entity=entity,
-                headers={"Accept": "application/json;odata=fullmetadata"},
+                headers=headers,
             )
             received_entity = self.table.get_entity(
                 row_key=entity["RowKey"], partition_key=entity["PartitionKey"], headers=headers

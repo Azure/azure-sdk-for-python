@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +39,7 @@ def build_post_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -93,8 +93,9 @@ class CheckNameAvailabilityOperations:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Default
          value is None.
@@ -102,7 +103,6 @@ class CheckNameAvailabilityOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -112,7 +112,7 @@ class CheckNameAvailabilityOperations:
     def post(
         self,
         scope: str,
-        check_name_availability_request: Optional[IO] = None,
+        check_name_availability_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -120,16 +120,16 @@ class CheckNameAvailabilityOperations:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Default
          value is None.
-        :type check_name_availability_request: IO
+        :type check_name_availability_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -139,23 +139,20 @@ class CheckNameAvailabilityOperations:
     def post(
         self,
         scope: str,
-        check_name_availability_request: Optional[Union[_models.CheckNameAvailabilityRequest, IO]] = None,
+        check_name_availability_request: Optional[Union[_models.CheckNameAvailabilityRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Is
-         either a CheckNameAvailabilityRequest type or a IO type. Default value is None.
+         either a CheckNameAvailabilityRequest type or a IO[bytes] type. Default value is None.
         :type check_name_availability_request: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or IO[bytes]
         :return: CheckNameAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.selfhelp.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -186,22 +183,21 @@ class CheckNameAvailabilityOperations:
             else:
                 _json = None
 
-        request = build_post_request(
+        _request = build_post_request(
             scope=scope,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.post.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -214,8 +210,6 @@ class CheckNameAvailabilityOperations:
         deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    post.metadata = {"url": "/{scope}/providers/Microsoft.Help/checkNameAvailability"}
+        return deserialized  # type: ignore

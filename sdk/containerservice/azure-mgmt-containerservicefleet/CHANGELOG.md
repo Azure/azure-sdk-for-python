@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0 (2024-04-03)
+
+### Features Added
+
+  - Added operation UpdateRunsOperations.begin_skip
+  - Model Fleet has a new parameter hub_profile
+
+## 1.0.0 (2023-10-27)
+
+### Breaking Changes
+
+  - Model Fleet no longer has parameter hub_profile
+
 ## 1.0.0b3 (2023-10-23)
 
 ### Features Added

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 from functools import partial
 from io import BytesIO
@@ -237,7 +237,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -326,7 +330,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
@@ -449,7 +457,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
-            kwargs['data'] = data
         elif blob_type == BlobType.PageBlob:
             if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
                 raise ValueError("Encryption version 2.0 does not currently support page blobs.")
@@ -602,6 +609,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response from creating a new block blob for a given URL.
+        :rtype: Dict[str, Any]
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -613,7 +622,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def upload_blob(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
             metadata: Optional[Dict[str, str]] = None,
@@ -622,6 +631,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
@@ -1025,7 +1035,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
 
             .. note::
-            "ParquetDialect" is in preview, so some features may not work as intended.
+                "ParquetDialect" is in preview, so some features may not work as intended.
 
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
             or ~azure.storage.blob.QuickQueryDialect or str
@@ -1532,6 +1542,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
@@ -2515,6 +2526,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
+        :type data: Union[Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -3284,7 +3296,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         .. versionadded:: 12.2.0
             This operation was introduced in API version '2019-07-07'.
 
-        :param previous_snapshot_url:
+        :param str previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
             The response will only contain pages that were changed between the target blob and
             its previous snapshot.
@@ -3812,6 +3824,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response after uploading pages from specified URL.
+        :rtype: Dict[str, Any]
         """
         options = self._upload_pages_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -4240,6 +4254,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Result after appending a new block.
+        :rtype: Dict[str, Union[str, datetime, int]]
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),

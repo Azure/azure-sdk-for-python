@@ -9,10 +9,13 @@
 from ._models_py3 import AutomatedCheckResult
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import ClassificationService
 from ._models_py3 import ContinueRequestBody
 from ._models_py3 import Diagnostic
 from ._models_py3 import DiagnosticInvocation
 from ._models_py3 import DiagnosticResource
+from ._models_py3 import DiscoveryNlpRequest
+from ._models_py3 import DiscoveryNlpResponse
 from ._models_py3 import DiscoveryResponse
 from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
@@ -27,17 +30,22 @@ from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
 from ._models_py3 import ReplacementMaps
+from ._models_py3 import ReplacementMapsSelfHelp
 from ._models_py3 import Resource
 from ._models_py3 import ResponseOption
 from ._models_py3 import ResponseValidationProperties
 from ._models_py3 import RestartTroubleshooterResponse
 from ._models_py3 import SearchResult
 from ._models_py3 import Section
+from ._models_py3 import SectionSelfHelp
+from ._models_py3 import SimplifiedSolutionsResource
 from ._models_py3 import SolutionMetadataProperties
 from ._models_py3 import SolutionMetadataResource
+from ._models_py3 import SolutionNlpMetadataResource
 from ._models_py3 import SolutionPatchRequestBody
 from ._models_py3 import SolutionResource
-from ._models_py3 import SolutionResourceProperties
+from ._models_py3 import SolutionResourceSelfHelp
+from ._models_py3 import SolutionWarmUpRequestBody
 from ._models_py3 import SolutionsDiagnostic
 from ._models_py3 import SolutionsTroubleshooters
 from ._models_py3 import Step
@@ -69,6 +77,7 @@ from ._self_help_mgmt_client_enums import SolutionType
 from ._self_help_mgmt_client_enums import Status
 from ._self_help_mgmt_client_enums import TroubleshooterProvisioningState
 from ._self_help_mgmt_client_enums import Type
+from ._self_help_mgmt_client_enums import ValidationScope
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -77,10 +86,13 @@ __all__ = [
     "AutomatedCheckResult",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
+    "ClassificationService",
     "ContinueRequestBody",
     "Diagnostic",
     "DiagnosticInvocation",
     "DiagnosticResource",
+    "DiscoveryNlpRequest",
+    "DiscoveryNlpResponse",
     "DiscoveryResponse",
     "Error",
     "ErrorAdditionalInfo",
@@ -95,17 +107,22 @@ __all__ = [
     "OperationListResult",
     "ProxyResource",
     "ReplacementMaps",
+    "ReplacementMapsSelfHelp",
     "Resource",
     "ResponseOption",
     "ResponseValidationProperties",
     "RestartTroubleshooterResponse",
     "SearchResult",
     "Section",
+    "SectionSelfHelp",
+    "SimplifiedSolutionsResource",
     "SolutionMetadataProperties",
     "SolutionMetadataResource",
+    "SolutionNlpMetadataResource",
     "SolutionPatchRequestBody",
     "SolutionResource",
-    "SolutionResourceProperties",
+    "SolutionResourceSelfHelp",
+    "SolutionWarmUpRequestBody",
     "SolutionsDiagnostic",
     "SolutionsTroubleshooters",
     "Step",
@@ -136,6 +153,7 @@ __all__ = [
     "Status",
     "TroubleshooterProvisioningState",
     "Type",
+    "ValidationScope",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -115,7 +115,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
     @overload
     def get_answers(
         self,
-        options: IO,
+        options: IO[bytes],
         *,
         project_name: str,
         deployment_name: str,
@@ -127,7 +127,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         Answers the specified question using your knowledge base.
 
         :param options: Post body of the request. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword project_name: The name of the project to use. Required.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use. Required.
@@ -142,22 +142,24 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
 
     @distributed_trace
     def get_answers(
-        self, options: Union[_models.AnswersOptions, IO], *, project_name: str, deployment_name: str, **kwargs: Any
+        self,
+        options: Union[_models.AnswersOptions, IO[bytes]],
+        *,
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any,
     ) -> _models.AnswersResult:
         """Answers the specified question using your knowledge base.
 
         Answers the specified question using your knowledge base.
 
-        :param options: Post body of the request. Is either a AnswersOptions type or a IO type.
+        :param options: Post body of the request. Is either a AnswersOptions type or a IO[bytes] type.
          Required.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions or IO
+        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions or IO[bytes]
         :keyword project_name: The name of the project to use. Required.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use. Required.
         :paramtype deployment_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: AnswersResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -184,7 +186,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         else:
             _json = self._serialize.body(options, "AnswersOptions")
 
-        request = build_question_answering_get_answers_request(
+        _request = build_question_answering_get_answers_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -197,11 +199,11 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,9 +218,9 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         deserialized = self._deserialize("AnswersResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def get_answers_from_text(
@@ -240,14 +242,14 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
 
     @overload
     def get_answers_from_text(
-        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
         Answers the specified question using the provided text in the body.
 
         :param options: Post body of the request. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -258,18 +260,15 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
 
     @distributed_trace
     def get_answers_from_text(
-        self, options: Union[_models.AnswersFromTextOptions, IO], **kwargs: Any
+        self, options: Union[_models.AnswersFromTextOptions, IO[bytes]], **kwargs: Any
     ) -> _models.AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
         Answers the specified question using the provided text in the body.
 
-        :param options: Post body of the request. Is either a AnswersFromTextOptions type or a IO type.
-         Required.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param options: Post body of the request. Is either a AnswersFromTextOptions type or a
+         IO[bytes] type. Required.
+        :type options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions or IO[bytes]
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -296,7 +295,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         else:
             _json = self._serialize.body(options, "AnswersFromTextOptions")
 
-        request = build_question_answering_get_answers_from_text_request(
+        _request = build_question_answering_get_answers_from_text_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -307,11 +306,11 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -326,6 +325,6 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         deserialized = self._deserialize("AnswersFromTextResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore

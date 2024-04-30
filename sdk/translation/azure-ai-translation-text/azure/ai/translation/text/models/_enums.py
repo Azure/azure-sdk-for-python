@@ -28,5 +28,5 @@ class ProfanityMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translation text type."""
 
-    PLAIN = "plain"
-    HTML = "html"
+    PLAIN = "Plain"
+    HTML = "Html"

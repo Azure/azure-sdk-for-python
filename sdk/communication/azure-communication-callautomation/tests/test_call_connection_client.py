@@ -10,9 +10,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
     CommunicationUserIdentifier,
     CallConnectionClient,
-    CallParticipant,
     TransferCallResult
 )
+from azure.core.paging import ItemPaged
+
 from azure.communication.callautomation._generated.models import (
     AddParticipantRequest,
 )
@@ -28,7 +29,8 @@ class TestCallConnectionClient(unittest.TestCase):
     operation_context = "operationContext"
     call_participant = {
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
-        "isMuted": False
+        "isMuted": False,
+        "isOnHold": False
     }
     invitation_id = "invitationId"
 
@@ -118,9 +120,7 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
 
         response = call_connection.list_participants()
-        participants = [p for p in response]
-        for p in participants:
-            assert isinstance(p, CallParticipant)
+        assert isinstance(response, ItemPaged)
 
     def test_get_participants(self):
         def mock_send(_, **kwargs):
@@ -213,12 +213,12 @@ class TestCallConnectionClient(unittest.TestCase):
         response = call_connection.remove_participant(user)
         self.assertEqual(self.operation_context, response.operation_context)
 
-    def test_mute_participants(self):
+    def test_mute_participant(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=202, json_payload={
+            return mock_response(status_code=200, json_payload={
                 "operationContext": self.operation_context})
 
         call_connection = CallConnectionClient(
@@ -226,9 +226,8 @@ class TestCallConnectionClient(unittest.TestCase):
             credential=AzureKeyCredential("fakeCredential=="),
             call_connection_id=self.call_connection_id,
             transport=Mock(send=mock_send))
-
         user = CommunicationUserIdentifier(self.communication_user_id)
-        response = call_connection.mute_participants(user)
+        response = call_connection.mute_participant(user)
         self.assertEqual(self.operation_context, response.operation_context)
 
     def test_cancel_add_participant(self):
@@ -245,6 +244,6 @@ class TestCallConnectionClient(unittest.TestCase):
             credential=AzureKeyCredential("fakeCredential=="),
             call_connection_id=self.call_connection_id,
             transport=Mock(send=mock_send))
-        response = call_connection.cancel_add_participant(self.invitation_id)
+        response = call_connection.cancel_add_participant_operation(self.invitation_id)
         self.assertEqual(self.invitation_id, response.invitation_id)
         self.assertEqual(self.operation_context, response.operation_context)

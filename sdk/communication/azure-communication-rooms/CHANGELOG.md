@@ -1,14 +1,13 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0 (2024-04-15)
+- General Availability version of PSTN dial-out capability feature.
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ### Other Changes
+- The `MicrosoftBotIdentifier` and `MicrosoftBotProperties` have been deprecated.
 
 ## 1.1.0b1 (2023-10-31)
 

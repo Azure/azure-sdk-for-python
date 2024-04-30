@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-09-15/examples/CosmosDBPrivateEndpointConnectionUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-02-15-preview/examples/CosmosDBPrivateEndpointConnectionUpdate.json
 if __name__ == "__main__":
     main()

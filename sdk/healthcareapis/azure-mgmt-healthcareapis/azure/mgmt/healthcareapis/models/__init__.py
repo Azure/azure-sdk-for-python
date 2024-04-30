@@ -12,11 +12,12 @@ from ._models_py3 import DicomService
 from ._models_py3 import DicomServiceAuthenticationConfiguration
 from ._models_py3 import DicomServiceCollection
 from ._models_py3 import DicomServicePatchResource
+from ._models_py3 import Encryption
+from ._models_py3 import EncryptionCustomerManagedKeyEncryption
 from ._models_py3 import Error
 from ._models_py3 import ErrorDetails
 from ._models_py3 import ErrorDetailsInternal
 from ._models_py3 import FhirService
-from ._models_py3 import FhirServiceAccessPolicyEntry
 from ._models_py3 import FhirServiceAcrConfiguration
 from ._models_py3 import FhirServiceAuthenticationConfiguration
 from ._models_py3 import FhirServiceCollection
@@ -24,6 +25,7 @@ from ._models_py3 import FhirServiceCorsConfiguration
 from ._models_py3 import FhirServiceExportConfiguration
 from ._models_py3 import FhirServiceImportConfiguration
 from ._models_py3 import FhirServicePatchResource
+from ._models_py3 import ImplementationGuidesConfiguration
 from ._models_py3 import IotConnector
 from ._models_py3 import IotConnectorCollection
 from ._models_py3 import IotConnectorPatchResource
@@ -73,6 +75,9 @@ from ._models_py3 import ServicesPatchDescription
 from ._models_py3 import ServicesProperties
 from ._models_py3 import ServicesResource
 from ._models_py3 import ServicesResourceIdentity
+from ._models_py3 import SmartIdentityProviderApplication
+from ._models_py3 import SmartIdentityProviderConfiguration
+from ._models_py3 import StorageConfiguration
 from ._models_py3 import SystemData
 from ._models_py3 import TaggedResource
 from ._models_py3 import UserAssignedIdentity
@@ -96,6 +101,7 @@ from ._healthcare_apis_management_client_enums import PublicNetworkAccess
 from ._healthcare_apis_management_client_enums import ServiceEventState
 from ._healthcare_apis_management_client_enums import ServiceManagedIdentityType
 from ._healthcare_apis_management_client_enums import ServiceNameUnavailabilityReason
+from ._healthcare_apis_management_client_enums import SmartDataActions
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -107,11 +113,12 @@ __all__ = [
     "DicomServiceAuthenticationConfiguration",
     "DicomServiceCollection",
     "DicomServicePatchResource",
+    "Encryption",
+    "EncryptionCustomerManagedKeyEncryption",
     "Error",
     "ErrorDetails",
     "ErrorDetailsInternal",
     "FhirService",
-    "FhirServiceAccessPolicyEntry",
     "FhirServiceAcrConfiguration",
     "FhirServiceAuthenticationConfiguration",
     "FhirServiceCollection",
@@ -119,6 +126,7 @@ __all__ = [
     "FhirServiceExportConfiguration",
     "FhirServiceImportConfiguration",
     "FhirServicePatchResource",
+    "ImplementationGuidesConfiguration",
     "IotConnector",
     "IotConnectorCollection",
     "IotConnectorPatchResource",
@@ -168,6 +176,9 @@ __all__ = [
     "ServicesProperties",
     "ServicesResource",
     "ServicesResourceIdentity",
+    "SmartIdentityProviderApplication",
+    "SmartIdentityProviderConfiguration",
+    "StorageConfiguration",
     "SystemData",
     "TaggedResource",
     "UserAssignedIdentity",
@@ -190,6 +201,7 @@ __all__ = [
     "ServiceEventState",
     "ServiceManagedIdentityType",
     "ServiceNameUnavailabilityReason",
+    "SmartDataActions",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

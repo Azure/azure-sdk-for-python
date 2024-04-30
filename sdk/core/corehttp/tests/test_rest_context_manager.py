@@ -8,7 +8,7 @@ from corehttp.rest import HttpRequest
 from corehttp.exceptions import ResponseNotReadError
 
 
-def test_normal_call(client, port):
+def test_normal_call(client):
     def _raise_and_get_text(response):
         response.raise_for_status()
         assert response.text() == "Hello, world!"

@@ -4,10 +4,10 @@
 
 import datetime
 import os
-from typing import Union
+from typing import Union, Optional
 import uuid
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources.entities.models import Model
 
@@ -17,6 +17,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
+from inspect import iscoroutinefunction
 import sys
 from azureml.contrib.services.aml_request import AMLRequest, rawhttp
 from azureml.contrib.services.aml_response import AMLResponse
@@ -37,7 +38,7 @@ def init():
     # It is the path to the model folder (./azureml-models/$MODEL_NAME/$VERSION)
     # Please provide your model's folder name if there is one
     print(os.getenv("AZUREML_MODEL_DIR"))
-    resolved_path = str(Path(os.getenv("AZUREML_MODEL_DIR")).resolve())
+    resolved_path = str(Path(os.getenv("AZUREML_MODEL_DIR")).resolve() / "{}")
     sys.path.append(resolved_path)
 
 @rawhttp
@@ -48,14 +49,39 @@ def run(raw_data: AMLRequest):
     method and return the result back
     """
     raw_data = json.loads(raw_data.data)
-    stream = raw_data["stream"]
+    messages = raw_data["messages"]
+    messages = [
+        {{
+            "role": message["role"],
+            "content": message["content"], 
+        }} 
+        for message in messages if message.get("kind", "text") == "text"
+    ]
+    stream = raw_data.get("stream", False)
+    session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
+    context = raw_data.get("context", {{}})
     from {} import chat_completion
-    response = asyncio.run(chat_completion(**raw_data))
+    if iscoroutinefunction(chat_completion):
+        response = asyncio.run(
+            chat_completion(
+                messages,
+                stream,
+                session_state,
+                context,
+            )
+        )
+    else:
+        response = chat_completion(
+            messages,
+            stream,
+            session_state,
+            context,
+        )
     if stream:
         aml_response = AMLResponse(response_to_dict(response), 200)
-        aml_response.headers["Content-Type"] = "text/event-stream"
+        aml_response.headers["Content-Type"] = "application/jsonl"
         return aml_response
-    return json.dumps(response)
+    return json.loads(json.dumps(response))
 
 '''
 
@@ -63,10 +89,11 @@ def run(raw_data: AMLRequest):
 def create_chat_scoring_script(
     directory: Union[str, os.PathLike],
     chat_module: str,
+    model_dir_name: Optional[str] = None,
 ) -> None:
     score_file_path = f"{str(directory)}/score.py"
     with open(score_file_path, "w+") as f:
-        f.write(CHAT_SCORING_SCRIPT_TEMPLATE.format(chat_module))
+        f.write(CHAT_SCORING_SCRIPT_TEMPLATE.format(model_dir_name if model_dir_name else "", chat_module))
 
 
 def create_mlmodel_file(model: Model):

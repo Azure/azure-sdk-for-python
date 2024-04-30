@@ -3,14 +3,14 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
+from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 
 
 @experimental
@@ -34,7 +34,7 @@ class DataCollector:
         rolling_rate: Optional[str] = None,
         sampling_rate: Optional[float] = None,
         request_logging: Optional[RequestLogging] = None,
-        **kwargs,
+        **kwargs: Any,
     ):  # pylint: disable=unused-argument
         self.collections = collections
         self.rolling_rate = rolling_rate
@@ -47,7 +47,8 @@ class DataCollector:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
@@ -61,18 +62,14 @@ class DataCollector:
         return DataCollector(
             collections=collections,
             rolling_rate=rest_obj.rolling_rate,
-            request_logging=RequestLogging._from_rest_object(rest_obj.request_logging)
-            if rest_obj.request_logging
-            else None,
+            request_logging=(
+                RequestLogging._from_rest_object(rest_obj.request_logging) if rest_obj.request_logging else None
+            ),
             sampling_rate=sampling_rate,
         )
 
-    def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
-        return DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-
     def _to_rest_object(self) -> RestDataCollector:
-        rest_collections = {}
+        rest_collections: dict = {}
         for collection in self.collections.values():
             collection.sampling_rate = self.sampling_rate
         delattr(self, "sampling_rate")

@@ -1,7 +1,7 @@
 trigger: none
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       Clouds: 'Cosmos_Public'
       CloudConfig:
@@ -9,6 +9,6 @@ stages:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-cosmos-azure-cloud-test-resources)
-      MaxParallel: 1
+      MaxParallel: 6
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos

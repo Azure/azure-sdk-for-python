@@ -21,7 +21,7 @@
 
 """Synchronized request in the Azure Cosmos database service.
 """
-
+import copy
 import json
 import time
 
@@ -76,7 +76,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
         Pipeline client to process the request
-    :param azure.core.HttpRequest request:
+    :param azure.core.pipeline.transport.HttpRequest request:
         The request object to send through the pipeline
     :return: tuple of (result, headers)
     :rtype: tuple of (dict, dict)
@@ -139,7 +139,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         )
 
     response = response.http_response
-    headers = dict(response.headers)
+    headers = copy.copy(response.headers)
 
     data = response.body()
     if data:

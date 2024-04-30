@@ -22,9 +22,7 @@ import time
 
 
 class RouterJobSamples(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
@@ -44,9 +42,9 @@ class RouterJobSamples(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
-        dist_policy = router_admin_client.create_distribution_policy(
-            id=distribution_policy_id,
-            distribution_policy=DistributionPolicy(
+        dist_policy = router_admin_client.upsert_distribution_policy(
+            distribution_policy_id,
+            DistributionPolicy(
                 offer_expires_after_seconds=10 * 60,
                 mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
             ),
@@ -60,8 +58,8 @@ class RouterJobSamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        job_queue: RouterQueue = router_admin_client.create_queue(
-            id=queue_id, queue=RouterQueue(distribution_policy_id=self._distribution_policy_id)
+        job_queue: RouterQueue = router_admin_client.upsert_queue(
+            queue_id, RouterQueue(distribution_policy_id=self._distribution_policy_id)
         )
 
     def setup_classification_policy(self):
@@ -82,11 +80,11 @@ class RouterJobSamples(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
-        classification_policy = router_admin_client.create_classification_policy(
-            id=classification_policy_id,
-            classification_policy=ClassificationPolicy(
+        classification_policy = router_admin_client.upsert_classification_policy(
+            classification_policy_id,
+            ClassificationPolicy(
                 prioritization_rule=StaticRouterRule(value=10),
-                queue_selectors=[
+                queue_selector_attachments=[
                     StaticQueueSelectorAttachment(
                         queue_selector=RouterQueueSelector(
                             key="Id", label_operator=LabelOperator.EQUAL, value=self._queue_id
@@ -102,16 +100,16 @@ class RouterJobSamples(object):
         queue_id = self._queue_id
 
         from azure.communication.jobrouter import JobRouterClient
-        from azure.communication.jobrouter.models import ChannelConfiguration, RouterWorker
+        from azure.communication.jobrouter.models import RouterChannel, RouterWorker
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
-        router_worker = router_client.create_worker(
-            worker_id=worker_id,
-            router_worker=RouterWorker(
-                total_capacity=100,
+        router_worker = router_client.upsert_worker(
+            worker_id,
+            RouterWorker(
+                capacity=100,
                 available_for_offers=True,
-                channel_configurations={"general": ChannelConfiguration(capacity_cost_per_job=1)},
-                queue_assignments={queue_id: {}},
+                channels=[RouterChannel(channel_id="general", capacity_cost_per_job=0)],
+                queues=[queue_id],
             ),
         )
 
@@ -133,18 +131,18 @@ class RouterJobSamples(object):
         print("JobRouterAdministrationClient created successfully!")
 
         # We need to create a distribution policy + queue as a pre-requisite to start creating job
-        router_job = router_client.create_job(
-            id=job_id,
-            router_job=RouterJob(channel_id="general", queue_id=queue_id, priority=10, channel_reference="12345"),
+        router_job = router_client.upsert_job(
+            job_id,
+            RouterJob(channel_id="general", queue_id=queue_id, priority=10, channel_reference="12345"),
         )
 
         print(f"Job has been successfully created with status: {router_job.status}")
 
         # Alternatively, a job can also be created while specifying a classification policy
         # As a pre-requisite, we would need to create a classification policy first
-        router_job_with_cp = router_client.create_job(
-            id=job_w_cp_id,
-            router_job=RouterJob(
+        router_job_with_cp = router_client.upsert_job(
+            job_w_cp_id,
+            RouterJob(
                 channel_id="general", classification_policy_id=classification_policy_id, channel_reference="12345"
             ),
         )
@@ -152,9 +150,9 @@ class RouterJobSamples(object):
 
         # Additionally, any job can be created as a scheduled job
         # by simply specifying a scheduled_time_utc and setting unavailable_for_matching to true
-        router_scheduled_job = router_client.create_job(
-            id=scheduled_job_id,
-            router_job=RouterJob(
+        router_scheduled_job = router_client.upsert_job(
+            scheduled_job_id,
+            RouterJob(
                 channel_id="general",
                 queue_id=queue_id,
                 priority=10,
@@ -178,7 +176,7 @@ class RouterJobSamples(object):
         router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
-        update_job = router_client.update_job(id=job_id, channel_reference="45678")
+        update_job = router_client.upsert_job(job_id, channel_reference="45678")
 
         print(f"Job has been successfully update with channel reference: {update_job.channel_reference}")
         # [END update_job]
@@ -191,7 +189,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_job = router_client.get_job(id=job_id)
+        router_job = router_client.get_job(job_id)
 
         print(f"Successfully fetched router worker with id: {router_job.id}")
         # [END get_job]
@@ -204,7 +202,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_job_position = router_client.get_queue_position(id=job_id)
+        router_job_position = router_client.get_queue_position(job_id)
 
         print(f"Successfully fetched router job position: {router_job_position.position}")
         # [END get_job_position]
@@ -217,7 +215,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_client.reclassify_job(id=job_id)
+        router_client.reclassify_job(job_id)
 
         print(f"Successfully re-classified job")
         # [END reclassify_job]
@@ -231,7 +229,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        unassign_job_result = router_client.unassign_job(id=job_id, assignment_id=assignment_id)
+        unassign_job_result = router_client.unassign_job(job_id, assignment_id)
 
         print(f"Successfully unassigned job")
         # [END unassign_job]
@@ -258,7 +256,7 @@ class RouterJobSamples(object):
 
         queried_worker = router_client.get_worker(worker_id=worker_id)
         issued_offer: RouterJobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
-        offer_id = issued_offer.id
+        offer_id = issued_offer.offer_id
 
         # [START accept_job_offer]
         from azure.communication.jobrouter.models import RouterJob, AcceptJobOfferResult
@@ -267,7 +265,7 @@ class RouterJobSamples(object):
             worker_id=worker_id, offer_id=offer_id
         )
 
-        queried_job: RouterJob = router_client.get_job(job_id=job_id)
+        queried_job: RouterJob = router_client.get_job(job_id)
 
         print(f"Job has been successfully assigned to worker. Current job status: {queried_job.status}")
         print(
@@ -278,10 +276,15 @@ class RouterJobSamples(object):
 
         try:
             # [START decline_job_offer]
+            from datetime import datetime, timedelta
+            from azure.communication.jobrouter.models import DeclineJobOfferOptions
+
             router_client.decline_job_offer(
-                worker_id=worker_id,
-                offer_id=offer_id,
-                reoffer_time_utc=datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
+                worker_id,
+                offer_id,
+                DeclineJobOfferOptions(
+                    retry_offer_at=datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
+                ),
             )
             # [END decline_job_offer]
         except Exception:
@@ -293,25 +296,30 @@ class RouterJobSamples(object):
 
         # [START complete_job]
         from azure.communication.jobrouter import JobRouterClient
-        from azure.communication.jobrouter.models import RouterJob
+        from azure.communication.jobrouter.models import (
+            RouterJob,
+            CompleteJobOptions,
+        )
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        queried_job: RouterJob = router_client.get_job(id=job_id)
+        queried_job: RouterJob = router_client.get_job(job_id)
 
         assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-        router_client.complete_job(id=job_id, assignment_id=assignment_id)
+        router_client.complete_job(job_id, assignment_id, CompleteJobOptions(note="Complete job"))
 
-        queried_job: RouterJob = router_client.get_job(id=job_id)
+        queried_job: RouterJob = router_client.get_job(job_id)
 
         print(f"Job has been successfully completed. Current status: {queried_job.status}")
         # [END complete_job]
 
         # [START close_job]
-        router_client.close_job(id=job_id, assignment_id=assignment_id)
+        from azure.communication.jobrouter.models import RouterJob, CloseJobOptions
 
-        queried_job: RouterJob = router_client.get_job(id=job_id)
+        router_client.close_job(job_id, assignment_id, CloseJobOptions(note="Close job"))
+
+        queried_job: RouterJob = router_client.get_job(job_id)
 
         print(f"Job has been successfully closed. Current status: {queried_job.status}")
 
@@ -327,7 +335,7 @@ class RouterJobSamples(object):
         router_job_iterator = router_client.list_jobs()
 
         for j in router_job_iterator:
-            print(f"Retrieved job with id: {j.job.id}")
+            print(f"Retrieved job with id: {j.id}")
 
         print(f"Successfully completed fetching jobs")
         # [END list_jobs]
@@ -346,7 +354,7 @@ class RouterJobSamples(object):
             print(f"Retrieved {len(jobs_in_page)} jobs in current page")
 
             for j in jobs_in_page:
-                print(f"Retrieved job with id: {j.job.id}")
+                print(f"Retrieved job with id: {j.id}")
 
         print(f"Successfully completed fetching jobs")
         # [END list_jobs_batched]
@@ -368,7 +376,7 @@ class RouterJobSamples(object):
             print(f"Retrieved {len(jobs_in_page)} jobs in current page")
 
             for j in jobs_in_page:
-                print(f"Retrieved job with id: {j.job.id}")
+                print(f"Retrieved job with id: {j.id}")
 
         print(f"Successfully completed fetching scheduled jobs")
         # [END list_scheduled_jobs]
@@ -382,7 +390,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_client.delete_job(id=job_id)
+        router_client.cancel_job(job_id)
 
         # [END cancel_job]
 
@@ -395,9 +403,21 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_client.delete_job(id=job_id)
+        router_client.delete_job(job_id)
 
         # [END delete_job]
+        router_client.cancel_job(self._job_w_cp_id)
+        router_client.delete_job(self._job_w_cp_id)
+        router_client.cancel_job(self._job_scheduled_id)
+        router_client.delete_job(self._job_scheduled_id)
+        router_client.delete_worker(self._worker_id)
+
+        from azure.communication.jobrouter import JobRouterAdministrationClient
+
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
+        router_admin_client.delete_classification_policy(self._classification_policy_id)
+        router_admin_client.delete_queue(self._queue_id)
+        router_admin_client.delete_distribution_policy(self._distribution_policy_id)
 
 
 if __name__ == "__main__":
@@ -410,8 +430,8 @@ if __name__ == "__main__":
     sample.get_job()
     sample.update_job()
     sample.reclassify_job()
-    sample.accept_job_offer()
     sample.get_job_position()
+    sample.accept_job_offer()
     sample.complete_and_close_job()
     sample.list_jobs()
     sample.list_jobs_batched()

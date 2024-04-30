@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .._producer_client import EventHubProducerClient
 
 
-class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
+class OwnershipManager:  # pylint:disable=too-many-instance-attributes
     """Increases or decreases the number of partitions owned by an EventProcessor
     so the number of owned partitions are balanced among multiple EventProcessors
 
@@ -38,8 +38,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         load_balancing_strategy: LoadBalancingStrategy,
         partition_id: Optional[str]
     ):
-        self.cached_parition_ids = []  # type: List[str]
-        self.owned_partitions = []  # type: Iterable[Dict[str, Any]]
+        self.cached_parition_ids: List[str] = []
+        self.owned_partitions: Iterable[Dict[str, Any]] = []
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = (
             eventhub_client._address.hostname  # pylint: disable=protected-access
@@ -144,9 +144,9 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         claimable_partition_ids = unclaimed_partition_ids + released_partition_ids
 
         active_ownership = [o for o in ownership_list if o not in released_partitions]
-        active_ownership_by_owner = defaultdict(
+        active_ownership_by_owner: Dict[str, List[Dict[str, Any]]] = defaultdict(
             list
-        )  # type: Dict[str, List[Dict[str, Any]]]
+        )
         for ownership in active_ownership:
             active_ownership_by_owner[ownership["owner_id"]].append(ownership)
         active_ownership_self = active_ownership_by_owner[self.owner_id]

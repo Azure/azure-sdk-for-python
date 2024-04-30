@@ -1,8 +1,13 @@
+from __openai_patcher import TestProxyConfig, TestProxyHttpxClient # isort: split
+import asyncio
 import base64
 import os
 from typing import Dict
 
 import pytest
+from azure.ai.generative.synthetic.qa import QADataGenerator
+
+from packaging import version
 from devtools_testutils import (
     FakeTokenCredential,
     add_body_key_sanitizer,
@@ -12,6 +17,8 @@ from devtools_testutils import (
     is_live,
     set_custom_default_matcher,
 )
+from devtools_testutils.config import PROXY_URL
+from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_fixtures import EnvironmentVariableSanitizer
 
 from azure.ai.resources.client import AIClient
@@ -19,6 +26,18 @@ from azure.ai.ml import MLClient
 from azure.core.credentials import TokenCredential
 from azure.identity import AzureCliCredential, ClientSecretCredential
 
+
+@pytest.fixture()
+def recorded_test(recorded_test):
+    """Route requests from the openai package to the test proxy."""
+
+    config = TestProxyConfig(
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+    )
+
+
+    with TestProxyHttpxClient.record_with_proxy(config):
+        yield recorded_test
 
 @pytest.fixture()
 def ai_client(
@@ -118,10 +137,18 @@ def sanitized_environment_variables(
             "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
             "AI_RESOURCE_GROUP": "00000",
             "AI_WORKSPACE_NAME": "00000",
+            "AI_PROJECT_NAME": "00000",
+            "AI_TEAM_NAME": "00000",
             "AI_FEATURE_STORE_NAME": "00000",
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
             "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
+            "OPENAI_API_BASE": "fake_openai_api_base",
+            "OPENAI_API_KEY": "fake_openai_api_key",
+            "AZURE_OPENAI_ENDPOINT": "fake_openai_api_base",
+            "AZURE_OPENAI_KEY": "fake_openai_api_key",
+            "AI_OPENAI_COMPLETION_DEPLOYMENT_NAME": "fake_completion_deployment_name",
+            "AI_OPENAI_COMPLETION_MODEL_NAME": "fake_completion_model_name"
         }
     )
 
@@ -149,6 +176,27 @@ def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the project name to use for end-to-end tests"""
     return sanitized_environment_variables["AI_PROJECT_NAME"]
 
+@pytest.fixture()
+def e2e_openai_api_base(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Base to use for end-to-end tests"""
+    import openai
+    return sanitized_environment_variables["OPENAI_API_BASE"] if version.parse(openai.version.VERSION) >= version.parse("1.0.0") else sanitized_environment_variables["AZURE_OPENAI_ENDPOINT"]
+
+@pytest.fixture()
+def e2e_openai_api_key(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    import openai
+    return sanitized_environment_variables["OPENAI_API_KEY"] if version.parse(openai.version.VERSION) >= version.parse("1.0.0") else sanitized_environment_variables["AZURE_OPENAI_KEY"]
+
+@pytest.fixture()
+def e2e_openai_completion_deployment_name(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"]
+
+@pytest.fixture()
+def e2e_openai_completion_model_name(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_COMPLETION_MODEL_NAME"]
 
 @pytest.fixture()
 def credential() -> TokenCredential:
@@ -161,3 +209,22 @@ def credential() -> TokenCredential:
         return ClientSecretCredential(tenant_id, sp_id, sp_secret)
 
     return FakeTokenCredential()
+
+# Fixtures for QADataGenerator (synthectic QA data generation)
+@pytest.fixture
+def qa_generator(
+    e2e_openai_api_base: str,
+    e2e_openai_api_key: str,
+    e2e_openai_completion_deployment_name: str,
+    e2e_openai_completion_model_name: str
+):
+    model_config = dict(
+        api_base=e2e_openai_api_base,
+        api_key=e2e_openai_api_key,
+        api_version="2023-03-15-preview",
+        deployment=e2e_openai_completion_deployment_name,
+        model=e2e_openai_completion_model_name,
+        max_tokens=2000,
+    )
+    qa_generator = QADataGenerator(model_config)
+    return qa_generator

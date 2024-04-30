@@ -8,11 +8,14 @@ from corehttp.rest import HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.exceptions import IncompleteReadError
 
+from utils import ASYNC_TRANSPORTS
+
 
 @pytest.mark.asyncio
-async def test_aio_transport_short_read_download_stream(port):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_aio_transport_short_read_download_stream(port, transport):
     url = "http://localhost:{}/errors/short-data".format(port)
-    client = AsyncPipelineClient(url)
+    client = AsyncPipelineClient(url, transport=transport())
     with pytest.raises(IncompleteReadError):
         async with client:
             request = HttpRequest("GET", url)

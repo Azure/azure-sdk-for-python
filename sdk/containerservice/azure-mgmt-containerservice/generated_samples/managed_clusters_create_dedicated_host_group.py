@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerservice import ContainerServiceClient
 
 """
@@ -26,7 +29,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.managed_clusters.begin_create_or_update(
@@ -40,7 +43,7 @@ def main():
                     {
                         "count": 3,
                         "enableNodePublicIP": True,
-                        "hostGroupID": "/subscriptions/subid1/resourcegroups/rg/providers/Microsoft.Compute/hostGroups/hostgroup1",
+                        "hostGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg/providers/Microsoft.Compute/hostGroups/hostgroup1",
                         "name": "nodepool1",
                         "osType": "Linux",
                         "type": "VirtualMachineScaleSets",
@@ -48,7 +51,7 @@ def main():
                     }
                 ],
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "diskEncryptionSetID": "/subscriptions/subid1/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
                 "enablePodSecurityPolicy": False,
                 "enableRBAC": True,
@@ -69,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-08-01/examples/ManagedClustersCreate_DedicatedHostGroup.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-02-01/examples/ManagedClustersCreate_DedicatedHostGroup.json
 if __name__ == "__main__":
     main()

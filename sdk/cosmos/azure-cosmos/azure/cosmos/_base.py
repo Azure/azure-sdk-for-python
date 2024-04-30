@@ -26,20 +26,25 @@ import base64
 from email.utils import formatdate
 import json
 import uuid
+import re
 import binascii
-from typing import Dict, Any, Union
+from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
-from . import auth
+
 from . import documents
-from . import partition_key
 from . import http_constants
 from . import _runtime_constants
+from .auth import _get_authorization_header
 from .offer import ThroughputProperties
+from .partition_key import _Empty, _Undefined
 
-# pylint: disable=protected-access
+if TYPE_CHECKING:
+    from ._cosmos_client_connection import CosmosClientConnection
+    from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -54,12 +59,18 @@ _COMMON_OPTIONS = {
     'content_type': 'contentType',
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion'
+    'query_version': 'queryVersion',
+    'priority': 'priorityLevel'
 }
 
+# Cosmos resource ID validation regex breakdown:
+# ^ Match start of string.
+# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
+# $ End of string
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
 
-def _get_match_headers(kwargs):
-    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
+
+def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
@@ -83,13 +94,11 @@ def _get_match_headers(kwargs):
     return if_match, if_none_match
 
 
-def build_options(kwargs):
-    # type: (Dict[str, Any]) -> Dict[str, Any]
+def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
@@ -99,15 +108,15 @@ def build_options(kwargs):
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-        cosmos_client_connection,
-        default_headers,
-        verb,
-        path,
-        resource_id,
-        resource_type,
-        options,
-        partition_key_range_id=None,
-):
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+        default_headers: Mapping[str, Any],
+        verb: str,
+        path: str,
+        resource_id: Optional[str],
+        resource_type: str,
+        options: Mapping[str, Any],
+        partition_key_range_id: Optional[str] = None,
+) -> Dict[str, Any]:
     """Gets HTTP request headers.
 
     :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
@@ -124,7 +133,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers = dict(default_headers)
     options = options or {}
 
-    if cosmos_client_connection._useMultipleWriteLocations:
+    if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
     pre_trigger_include = options.get("preTriggerInclude")
@@ -176,7 +185,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
-            if default_client_consistency_level == documents.ConsistencyLevel.Session:
+            if default_client_consistency_level == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
                 # populate session token from the client's session container
                 headers[http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
                     path
@@ -208,10 +218,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if options.get("partitionKey") is partition_key._Undefined:
+        if isinstance(options["partitionKey"], _Undefined):
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif options.get("partitionKey") is partition_key._Empty:
+        elif isinstance(options["partitionKey"], _Empty):
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
@@ -228,17 +238,23 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateQueryMetrics"):
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
+    if options.get("populateIndexMetrics"):
+        headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options["populateIndexMetrics"]
+
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
             "responseContinuationTokenLimitInKb"]
 
+    if options.get("priorityLevel"):
+        headers[http_constants.HttpHeaders.PriorityLevel] = options["priorityLevel"]
+
     if cosmos_client_connection.master_key:
-        # formatedate guarantees RFC 1123 date format regardless of current locale
+        # formatdate guarantees RFC 1123 date format regardless of current locale
         headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
         resource_type = _internal_resourcetype(resource_type)
-        authorization = auth._get_authorization_header(
+        authorization = _get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -275,8 +291,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             if_none_match_value = options["continuation"]
         elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
+        elif options.get("startTime"):
+            start_time = options.get("startTime")
+            headers[http_constants.HttpHeaders.IfModified_since] = start_time
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
+
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
     else:
         if options.get("continuation"):
@@ -302,7 +322,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link):
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -338,7 +358,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     return None
 
 
-def GenerateGuidId():
+def GenerateGuidId() -> str:
     """Gets a random GUID.
 
     Note that here we use python's UUID generation library. Basically UUID
@@ -351,7 +371,7 @@ def GenerateGuidId():
     return str(uuid.uuid4())
 
 
-def GetPathFromLink(resource_link, resource_type=""):
+def GetPathFromLink(resource_link: str, resource_type: str = "") -> str:
     """Gets path from resource link with optional resource type
 
     :param str resource_link:
@@ -374,7 +394,7 @@ def GetPathFromLink(resource_link, resource_type=""):
     return "/" + resource_link + "/"
 
 
-def IsNameBased(link):
+def IsNameBased(link: Optional[str]) -> bool:
     """Finds whether the link is name based or not
 
     :param str link:
@@ -411,7 +431,7 @@ def IsNameBased(link):
     return not IsValidBase64String(str(databaseID))
 
 
-def IsMasterResource(resourceType):
+def IsMasterResource(resourceType: str) -> bool:
     return resourceType in (
         http_constants.ResourceType.Offer,
         http_constants.ResourceType.Database,
@@ -424,7 +444,7 @@ def IsMasterResource(resourceType):
     )
 
 
-def IsDatabaseLink(link):
+def IsDatabaseLink(link: str) -> bool:
     """Finds whether the link is a database Self Link or a database ID based link
 
     :param str link: Link to analyze
@@ -454,7 +474,7 @@ def IsDatabaseLink(link):
     return True
 
 
-def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
+def IsItemContainerLink(link: str) -> bool:  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
     :param str link: Link to analyze
@@ -492,7 +512,7 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     return True
 
 
-def GetItemContainerInfo(self_link, alt_content_path, resource_id):
+def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str) -> Tuple[str, str]:
     """Given the self link and alt_content_path from the response header and
     result extract the collection name and collection id.
 
@@ -535,7 +555,7 @@ def GetItemContainerInfo(self_link, alt_content_path, resource_id):
     raise ValueError("Unable to parse document collection link from " + self_link)
 
 
-def GetItemContainerLink(link):
+def GetItemContainerLink(link: str) -> str:
     """Gets the document collection link.
 
     :param str link: Resource link
@@ -551,11 +571,11 @@ def GetItemContainerLink(link):
     raise ValueError("Unable to parse document collection link from " + link)
 
 
-def IndexOfNth(s, value, n):
+def IndexOfNth(s: str, value: str, n: int) -> int:
     """Gets the index of Nth occurrence of a given character in a string.
 
     :param str s: Input string
-    :param char value: Input char to be searched.
+    :param str value: Input char to be searched.
     :param int n: Nth occurrence of char to be searched.
     :return: Index of the Nth occurrence in the string.
     :rtype: int
@@ -569,7 +589,7 @@ def IndexOfNth(s, value, n):
     return -1
 
 
-def IsValidBase64String(string_to_validate):
+def IsValidBase64String(string_to_validate: str) -> bool:
     """Verifies if a string is a valid Base64 encoded string, after
     replacing '-' with '/'
 
@@ -590,7 +610,7 @@ def IsValidBase64String(string_to_validate):
     return True
 
 
-def TrimBeginningAndEndingSlashes(path):
+def TrimBeginningAndEndingSlashes(path: str) -> str:
     """Trims beginning and ending slashes
 
     :param str path:
@@ -611,7 +631,7 @@ def TrimBeginningAndEndingSlashes(path):
 
 
 # Parses the paths into a list of token each representing a property
-def ParsePaths(paths):
+def ParsePaths(paths: List[str]) -> List[str]:
     segmentSeparator = "/"
     tokens = []
     for path in paths:
@@ -619,7 +639,7 @@ def ParsePaths(paths):
 
         while currentIndex < len(path):
             if path[currentIndex] != segmentSeparator:
-                raise ValueError("Invalid path character at index " + currentIndex)
+                raise ValueError(f"Invalid path character at index {currentIndex}")
 
             currentIndex += 1
             if currentIndex == len(path):
@@ -634,7 +654,7 @@ def ParsePaths(paths):
                 while True:
                     newIndex = path.find(quote, newIndex)
                     if newIndex == -1:
-                        raise ValueError("Invalid path character at index " + currentIndex)
+                        raise ValueError(f"Invalid path character at index {currentIndex}")
 
                     # check if the quote itself is escaped by a preceding \ in which case it's part of the token
                     if path[newIndex - 1] != "\\":
@@ -663,32 +683,47 @@ def ParsePaths(paths):
     return tokens
 
 
-def create_scope_from_url(url):
+def create_scope_from_url(url: str) -> str:
     parsed_url = urlsplit(url)
+    if not parsed_url.scheme or not parsed_url.hostname:
+        raise ValueError(f"Invalid URL scheme or hostname: {parsed_url!r}")
     return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
-def validate_cache_staleness_value(max_integrated_cache_staleness):
+def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
 
 
-def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
-    auto_scale_params = None
+def _validate_resource(resource: Mapping[str, Any]) -> None:
+    id_: Optional[str] = resource.get("id")
+    if id_:
+        try:
+            if _VALID_COSMOS_RESOURCE.match(id_) is None:
+                raise ValueError("Id contains illegal chars.")
+            if id_[-1] in [" ", "\n"]:
+                raise ValueError("Id ends with a space or newline.")
+        except TypeError as e:
+            raise TypeError("Id type must be a string.") from e
+
+
+def _stringify_auto_scale(offer: ThroughputProperties) -> str:
+    auto_scale_params: Optional[Dict[str, Union[None, int, Dict[str, Any]]]] = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
     auto_scale_params = {"maxThroughput": max_throughput}
     if increment_percent is not None:
         auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
     auto_scale_settings = json.dumps(auto_scale_params)
-
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> Any:
-    if offer is not None:
+def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
+    if isinstance(offer, int):
+        request_options["offerThroughput"] = offer
+    elif offer is not None:
         try:
             max_throughput = offer.auto_scale_max_throughput
             increment_percent = offer.auto_scale_increment_percent
@@ -700,50 +735,47 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
                                  "conjunction with auto_scale_increment_percent")
             if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
-
         except AttributeError as e:
-            if isinstance(offer, int):
-                request_options["offerThroughput"] = offer
-            else:
-                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
+            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
-def _deserialize_throughput(throughput: list) -> Any:
-    throughput_properties = throughput
-    if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
-            throughput_properties[0]['content']['offerAutopilotSettings']:
-        return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
-            throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
-                                    auto_scale_increment_percent=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                        'incrementPercent'])
+def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
+    properties = throughput[0]
+    offer_autopilot: Optional[Dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
+    if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
+        return ThroughputProperties(
+            properties=properties,
+            auto_scale_max_throughput=offer_autopilot['maxThroughput'],
+            auto_scale_increment_percent=offer_autopilot['autoUpgradePolicy']['throughputPolicy']['incrementPercent']
+        )
+    if offer_autopilot:
+        return ThroughputProperties(
+            properties=properties,
+            auto_scale_max_throughput=offer_autopilot['maxThroughput']
+        )
+    return ThroughputProperties(
+        offer_throughput=properties["content"]["offerThroughput"],
+        properties=properties
+    )
 
-    if 'offerAutopilotSettings' in throughput_properties[0]['content']:
-        return ThroughputProperties(properties=throughput_properties[0],
-                                    auto_scale_max_throughput=throughput_properties[0]['content'][
-                                        'offerAutopilotSettings']['maxThroughput'])
 
-    return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                properties=throughput_properties[0])
-
-
-def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throughput_properties: list):
-    try:
-        max_throughput = throughput.auto_scale_max_throughput
-        increment_percent = throughput.auto_scale_increment_percent
-        if max_throughput is not None:
-            new_throughput_properties['content']['offerAutopilotSettings'][
-                'maxThroughput'] = max_throughput
-            if increment_percent:
-                new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                    'incrementPercent'] = increment_percent
-            if throughput.offer_throughput:
-                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
-
-    except AttributeError as e:
-        if isinstance(throughput, int):
-            new_throughput_properties["content"]["offerThroughput"] = throughput
-        else:
+def _replace_throughput(
+    throughput: Union[int, ThroughputProperties],
+    new_throughput_properties: Dict[str, Any]
+) -> None:
+    if isinstance(throughput, int):
+        new_throughput_properties["content"]["offerThroughput"] = throughput
+    else:
+        try:
+            max_throughput = throughput.auto_scale_max_throughput
+            increment_percent = throughput.auto_scale_increment_percent
+            if max_throughput is not None:
+                new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
+                if increment_percent:
+                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
+                if throughput.offer_throughput:
+                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+        except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
@@ -758,3 +790,66 @@ def _internal_resourcetype(resource_type: str) -> str:
     if resource_type.lower() == "partitionkey":
         return "colls"
     return resource_type
+
+
+def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
+    current_headers[http_constants.HttpHeaders.IsBatchRequest] = True
+    current_headers[http_constants.HttpHeaders.IsBatchAtomic] = True
+    current_headers[http_constants.HttpHeaders.ShouldBatchContinueOnError] = False
+
+
+def _format_batch_operations(
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+) -> List[Dict[str, Any]]:
+    final_operations = []
+    for index, batch_operation in enumerate(operations):
+        try:
+            operation_type = batch_operation[0]
+            args = batch_operation[1]
+        except IndexError as e:
+            raise IndexError(f"Operation {index} in batch is missing a field.") from e
+        try:
+            kwargs = batch_operation[2]  # type: ignore[misc]
+        except IndexError:
+            kwargs = {}
+
+        if len(args) == 1:
+            if operation_type.lower() == "create":
+                operation = {"operationType": "Create",
+                             "resourceBody": args[0]}
+            elif operation_type.lower() == "upsert":
+                operation = {"operationType": "Upsert",
+                             "resourceBody": args[0]}
+            elif operation_type.lower() == "read":
+                operation = {"operationType": "Read",
+                             "id": args[0]}
+            elif operation_type.lower() == "delete":
+                operation = {"operationType": "Delete",
+                             "id": args[0]}
+        elif len(args) == 2:
+            if operation_type.lower() == "replace":
+                operation = {"operationType": "Replace",
+                             "id": args[0],
+                             "resourceBody": args[1]}
+            elif operation_type.lower() == "patch":
+                operation = {"operationType": "Patch",
+                             "id": args[0],
+                             "resourceBody": {"operations": args[1]}}
+                filter_predicate = kwargs.pop("filter_predicate", None)
+                if filter_predicate is not None:
+                    operation["resourceBody"]["condition"] = filter_predicate
+        else:
+            raise AttributeError(
+                f"Operation type or args passed in not recognized for operation with index {index}."
+            )
+
+        if_match_etag = kwargs.pop("if_match_etag", None)
+        if_none_match_etag = kwargs.pop("if_none_match_etag", None)
+        if if_match_etag is not None:
+            operation["ifMatch"] = if_match_etag
+        elif if_none_match_etag is not None:
+            operation["ifNoneMatch"] = if_none_match_etag
+
+        final_operations.append(operation)
+
+    return final_operations

@@ -1,9 +1,0 @@
-name: test_ws_conn_open_ai
-type: azure_open_ai
-target: dummy
-api_version: some_version
-credentials:
-  type: api_key
-  key: "12344"
-tags:
-  hello: world

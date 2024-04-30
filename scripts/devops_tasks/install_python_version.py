@@ -19,7 +19,7 @@ MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/m
 MAX_INSTALLER_RETRY = 3
 CURRENT_UBUNTU_VERSION = "20.04"  # full title is ubuntu-20.04
 MAX_PRECACHED_VERSION = (
-    "3.11.1"  # reference: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#python
+    "3.12.1"  # reference: https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2004-Readme.md#python
 )
 
 UNIX_INSTALL_ARRAY = ["sh", "setup.sh"]

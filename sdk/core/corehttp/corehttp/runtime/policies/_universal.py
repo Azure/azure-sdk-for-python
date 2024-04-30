@@ -35,7 +35,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping, TYPE_CHECKING
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, MutableMapping, TYPE_CHECKING
 
 from ... import __version__ as core_version
 from ...exceptions import DecodeError
@@ -99,10 +99,6 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             request.http_request.headers.update(additional_headers)
 
 
-class _Unset:
-    pass
-
-
 class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 
@@ -112,7 +108,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword str sdk_moniker: If specified, the user agent string will be
-        azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
+        python-[sdk_moniker] Python/[python_version] ([platform_version])
     """
 
     _USERAGENT = "User-Agent"
@@ -176,7 +172,6 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
-
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
@@ -276,19 +271,6 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
                 _LOGGER.debug(log_string)
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
-
-
-class _HiddenClassProperties(type):
-    # Backward compatible for DEFAULT_HEADERS_WHITELIST
-    # https://github.com/Azure/azure-sdk-for-python/issues/26331
-
-    @property
-    def DEFAULT_HEADERS_WHITELIST(cls) -> Set[str]:
-        return cls.DEFAULT_HEADERS_ALLOWLIST
-
-    @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]) -> None:
-        cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -466,12 +448,12 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Dictionary mapping protocol or protocol and host to the URL of the proxy
     to be used on each Request.
 
-    :param dict proxies: Maps protocol or protocol and hostname to the URL
+    :param MutableMapping proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
     """
 
     def __init__(
-        self, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 

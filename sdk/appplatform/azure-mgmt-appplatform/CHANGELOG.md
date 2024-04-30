@@ -1,5 +1,61 @@
 # Release History
 
+## 9.0.0 (2024-01-26)
+
+### Features Added
+
+  - Added operation BuildServiceOperations.begin_create_or_update
+  - Added operation BuildServiceOperations.begin_delete_build
+  - Added operation ConfigurationServicesOperations.begin_validate_resource
+  - Added operation GatewaysOperations.begin_restart
+  - Added operation ServicesOperations.begin_disable_apm_globally
+  - Added operation ServicesOperations.begin_enable_apm_globally
+  - Added operation ServicesOperations.begin_flush_vnet_dns_setting
+  - Added operation ServicesOperations.list_globally_enabled_apms
+  - Added operation ServicesOperations.list_supported_apm_types
+  - Added operation ServicesOperations.list_supported_server_versions
+  - Added operation group ApmsOperations
+  - Added operation group ContainerRegistriesOperations
+  - Added operation group EurekaServersOperations
+  - Model AcceleratorBasicAuthSetting has a new parameter ca_cert_resource_id
+  - Model AcceleratorGitRepository has a new parameter sub_path
+  - Model AcceleratorPublicSetting has a new parameter ca_cert_resource_id
+  - Model ApiPortalProperties has a new parameter api_try_out_enabled_state
+  - Model BuildProperties has a new parameter apms
+  - Model BuildProperties has a new parameter certificates
+  - Model BuildResultProperties has a new parameter image
+  - Model BuildServiceProperties has a new parameter container_registry
+  - Model ConfigurationServiceGitRepository has a new parameter ca_cert_resource_id
+  - Model ConfigurationServiceGitRepository has a new parameter git_implementation
+  - Model ConfigurationServiceProperties has a new parameter generation
+  - Model CustomizedAcceleratorProperties has a new parameter accelerator_type
+  - Model CustomizedAcceleratorProperties has a new parameter imports
+  - Model DeploymentSettings has a new parameter apms
+  - Model DevToolPortalProperties has a new parameter components
+  - Model GatewayCorsProperties has a new parameter allowed_origin_patterns
+  - Model GatewayProperties has a new parameter apms
+  - Model GatewayProperties has a new parameter client_auth
+  - Model KeyVaultCertificateProperties has a new parameter auto_sync
+  - Model ServiceVNetAddons has a new parameter data_plane_public_endpoint
+  - Model TriggeredBuildResult has a new parameter image
+  - Model TriggeredBuildResult has a new parameter last_transition_reason
+  - Model TriggeredBuildResult has a new parameter last_transition_status
+  - Model TriggeredBuildResult has a new parameter last_transition_time
+  - Model TriggeredBuildResult has a new parameter provisioning_state
+  - Operation DeploymentsOperations.list_for_cluster has a new optional parameter expand
+
+### Breaking Changes
+
+  - Model AppResourceProperties no longer has parameter secrets
+  - Model ClusterResourceProperties no longer has parameter infra_resource_group
+  - Model ClusterResourceProperties no longer has parameter managed_environment_id
+  - Model DeploymentSettings no longer has parameter scale
+  - Model DevToolPortalProperties no longer has parameter instances
+  - Model DevToolPortalProperties no longer has parameter resource_requests
+  - Model GatewayProperties no longer has parameter apm_types
+  - Removed operation GatewaysOperations.begin_update_capacity
+  - Renamed operation CustomizedAcceleratorsOperations.validate to CustomizedAcceleratorsOperations.begin_validate
+
 ## 8.0.0 (2023-04-20)
 
 ### Features Added

@@ -1,6 +1,6 @@
 # Release History
 
-## 7.11.4 (Unreleased)
+## 7.12.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,38 @@
 
 ### Bugs Fixed
 
+- Fixed incorrect dependency on typing-extensions ([34868](https://github.com/Azure/azure-sdk-for-python/issues/34868))
+
 ### Other Changes
+
+## 7.12.1 (2024-03-20)
+
+### Bugs Fixed
+
+- Fixed a bug where the client was not retrying when a connection drop happened ([34786](https://github.com/Azure/azure-sdk-for-python/pull/34786))
+- Fixed a bug where the client would not handle a role instance swap on the service correctly ([34820](https://github.com/Azure/azure-sdk-for-python/pull/34820))
+
+### Other Changes
+
+- Updated the logging to more accurately represent when frames are being sent to prevent a client-side idle timeout ([#34793](https://github.com/Azure/azure-sdk-for-python/pull/34793)).
+
+## 7.12.0 (2024-03-06)
+
+### Features Added
+
+- Updated `max_wait_time` on the ServiceBusReceiver constructor allowing users to change the default server timeout of 65 seconds when accepting a session on a Session-Enabled/Queues/Topics if NEXT_AVAILABLE_SESSION is used.
+
+### Other Changes
+
+- Updated minimum `azure-core` version to 1.28.0.
+- Updated Pure Python AMQP network trace logging to replace `None` values in AMQP connection info with empty strings as per the OpenTelemetry specification ([#32190](https://github.com/Azure/azure-sdk-for-python/issues/32190)).
+- Updated Pure Python AMQP network trace logging error log on connection close to warning (PR #34504, thanks @RichardOberdieck).
+
+## 7.11.4 (2023-11-13)
+
+### Bugs Fixed
+
+- Fixed a bug where a two character count session id was being incorrectly parsed by azure amqp.
 
 ## 7.11.3 (2023-10-11)
 

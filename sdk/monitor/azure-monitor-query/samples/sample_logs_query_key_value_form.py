@@ -33,12 +33,14 @@ query = "AppRequests | take 5"
 
 try:
     response = client.query_workspace(os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1))
-    if response.status == LogsQueryStatus.PARTIAL:
+    if response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    else:
+        # LogsQueryPartialResult - handle error here
         error = response.partial_error
         data = response.partial_data
         print(error)
-    elif response.status == LogsQueryStatus.SUCCESS:
-        data = response.tables
+
     for table in data:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         key_value = df.to_dict(orient="records")

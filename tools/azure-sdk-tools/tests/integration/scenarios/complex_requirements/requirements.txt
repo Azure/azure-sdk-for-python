@@ -1,0 +1,10 @@
+trio
+requests
+aiohttp>=3.0
+opencensus>=0.6.0
+opencensus-ext-azure
+opencensus-ext-threading
+-e ../../../../../../tools/azure-sdk-tools
+a/contained/package
+https://docsupport.blob.core.windows.net/repackaged/azure-core-1.5.0.zip
+./optional-environment-test-1.0.0.zip

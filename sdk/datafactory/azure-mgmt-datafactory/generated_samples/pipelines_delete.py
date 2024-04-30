@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.pipelines.delete(
+    client.pipelines.delete(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         pipeline_name="examplePipeline",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/Pipelines_Delete.json

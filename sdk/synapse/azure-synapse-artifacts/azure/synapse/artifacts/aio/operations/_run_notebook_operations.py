@@ -83,25 +83,24 @@ class RunNotebookOperations:
         else:
             _json = self._serialize.body(run_notebook_request, "RunNotebookRequest")
 
-        request = build_create_run_request(
+        _request = build_create_run_request(
             run_id=run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_run_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -116,11 +115,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_run_initial.metadata = {"url": "/notebooks/runs/{runId}"}
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_run(
@@ -237,7 +234,7 @@ class RunNotebookOperations:
 
             deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -261,8 +258,6 @@ class RunNotebookOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_run.metadata = {"url": "/notebooks/runs/{runId}"}
 
     @distributed_trace_async
     async def get_status(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
@@ -289,22 +284,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookResponse] = kwargs.pop("cls", None)
 
-        request = build_get_status_request(
+        _request = build_get_status_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -316,11 +310,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_status.metadata = {"url": "/notebooks/runs/{runId}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_run(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
@@ -349,22 +341,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookResponse] = kwargs.pop("cls", None)
 
-        request = build_cancel_run_request(
+        _request = build_cancel_run_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.cancel_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -376,11 +367,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    cancel_run.metadata = {"url": "/notebooks/runs/{runId}/cancel"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_snapshot(self, run_id: str, **kwargs: Any) -> _models.RunNotebookSnapshotResponse:
@@ -407,22 +396,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookSnapshotResponse] = kwargs.pop("cls", None)
 
-        request = build_get_snapshot_request(
+        _request = build_get_snapshot_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -434,8 +422,6 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookSnapshotResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_snapshot.metadata = {"url": "/notebooks/runs/{runId}/snapshot"}
+        return deserialized  # type: ignore

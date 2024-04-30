@@ -1,17 +1,18 @@
 import os
 import re
+import json
 import logging
 import time
 import urllib.parse
 from datetime import date, datetime
 from typing import Set, List, Dict
 from random import randint
-
+from pathlib import Path
 from github import Github
 from github.Repository import Repository
 
 from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
-    MULTI_LINK_LABEL, INCONSISTENT_TAG
+    MULTI_LINK_LABEL, INCONSISTENT_TAG, TYPESPEC_LABEL
 
 _LOG = logging.getLogger(__name__)
 
@@ -19,11 +20,11 @@ _LOG = logging.getLogger(__name__)
 _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
-_BOT_NAME = 'azure-sdk'
 _ASSIGNEE_TOKEN = os.getenv('AZURESDK_BOT_TOKEN')
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI", TYPESPEC_LABEL]
 
 
 class IssueProcess:
@@ -44,6 +45,7 @@ class IssueProcess:
     package_name = ''  # target package name
     target_date = ''  # target release date asked by customer
     date_from_target = 0
+    spec_repo = None  # local swagger repo path
     """
 
     def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
@@ -65,6 +67,18 @@ class IssueProcess:
         self.date_from_target = 0
         self.is_open = True
         self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+        self.spec_repo = Path(os.getenv('SPEC_REPO'))
+        self.typespec_json = Path(os.getenv('TYPESPEC_JSON'))
+        self.language_name = "common"
+
+    @property
+    def for_typespec(self) -> bool:
+        with open(str(self.typespec_json), "r") as file:
+            data = json.load(file)
+        return self.package_name in data.get(self.language_name, [])
+
+    def has_label(self, label: str) -> bool:
+        return label in self.issue_package.labels_name
 
     @property
     def created_date_format(self) -> str:
@@ -91,6 +105,16 @@ class IssueProcess:
     def comment(self, message: str) -> None:
         self.issue_package.issue.create_comment(message)
 
+    # get "workloads/resource-manager" from "workloads/resource-manager/Microsoft.Workloads/stable/2023-04-01/operations.json"
+    def get_valid_relative_readme_folder(self, readme_folder: str) -> str:
+        folder = Path(Path(readme_folder).as_posix().strip("/"))
+        while "resource-manager" in str(folder):
+            if Path(self.spec_repo, folder, "readme.md").exists():
+                return folder.as_posix()
+            folder = folder.parent
+
+        return folder.as_posix()
+
     def get_readme_from_pr_link(self, link: str) -> str:
         pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").split('/')[0])
 
@@ -102,10 +126,10 @@ class IssueProcess:
             if '/resource-manager' not in contents_url:
                 continue
             try:
-                pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
+                pk_url_name.add(self.get_valid_relative_readme_folder(contents_url.split('/specification')[1]))
             except Exception as e:
                 continue
-        readme_link = [f'{_SWAGGER_URL}/{item}/resource-manager' for item in pk_url_name]
+        readme_link = [f'{_SWAGGER_URL}/{item}' for item in pk_url_name]
         if len(readme_link) > 1:
             multi_link = ', '.join(readme_link)
             pr = f"{_SWAGGER_PULL}/{pr_number}"
@@ -146,12 +170,19 @@ class IssueProcess:
             # (i.e. https://github.com/Azure/azure-rest-api-specs/tree/main/specification/xxxx)
             self.readme_link = link + '/resource-manager'
         else:
-            self.readme_link = link.split('/resource-manager')[0] + '/resource-manager'
+            relative_readme_folder = self.get_valid_relative_readme_folder(link.split('/specification')[1])
+            self.readme_link = f"{_SWAGGER_URL}/{relative_readme_folder}"
+
+    @property
+    def readme_local(self) -> str:
+        return str(Path(self.spec_repo, self.readme_link.split('specification/')[1]))
+
+    def get_local_file_content(self, name: str = "readme.md") -> str:
+        with open(Path(self.readme_local, name), 'r', encoding='utf-8') as f:
+            return f.read()
 
     def get_default_readme_tag(self) -> None:
-        pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
-        readme_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+        contents = self.get_local_file_content()
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 
@@ -180,8 +211,16 @@ class IssueProcess:
                          f'it is still `{self.default_readme_tag}`, please modify the readme.md or your '
                          f'**Readme Tag** above ')
 
+    def get_package_name(self) -> None:
+        issue_body_list = self.get_issue_body()
+        for line in issue_body_list:
+            if line.strip('\r\n ').startswith('package-name:'):
+                self.package_name = line.split(':')[-1].strip('\r\n ')
+                break
+
     def auto_parse(self) -> None:
-        if AUTO_PARSE_LABEL in self.issue_package.labels_name:
+        if self.has_label(AUTO_PARSE_LABEL):
+            self.get_package_name()
             return
 
         self.add_label(AUTO_PARSE_LABEL)
@@ -202,8 +241,9 @@ class IssueProcess:
         self.edit_issue_body()
 
     def add_label(self, label: str) -> None:
-        self.issue_package.issue.add_to_labels(label)
-        self.issue_package.labels_name.add(label)
+        if not self.has_label(label):
+            self.issue_package.issue.add_to_labels(label)
+            self.issue_package.labels_name.add(label)
 
     def update_assignee(self, assignee_to_del: str, assignee_to_add: str) -> None:
         if assignee_to_del:
@@ -226,7 +266,7 @@ class IssueProcess:
         return assignees[random_idx]
 
     def auto_assign(self) -> None:
-        if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
+        if self.has_label(AUTO_ASSIGN_LABEL):
             self.update_issue_instance()
             return
         # assign averagely
@@ -264,12 +304,12 @@ class IssueProcess:
             self.bot_advice.append('new comment.')
 
     def multi_link_policy(self):
-        if MULTI_LINK_LABEL in self.issue_package.labels_name:
+        if self.has_label(MULTI_LINK_LABEL):
             self.bot_advice.append('multi readme link!')
 
     def inconsistent_tag_policy(self):
-        if INCONSISTENT_TAG in self.issue_package.labels_name:
-            self.bot_advice.append('Attention to inconsistent tag')
+        if self.has_label(INCONSISTENT_TAG):
+            self.bot_advice.append('Attention to inconsistent tag.')
 
     def remind_logic(self) -> bool:
         return abs(self.date_from_target) <= 2
@@ -279,14 +319,25 @@ class IssueProcess:
 
     def date_remind_policy(self):
         if self.remind_logic():
-            self.bot_advice.append('close to release date. ')
+            self.bot_advice.append('close to release date.')
+
+    def hint_policy(self):
+        for item in _HINTS:
+            if self.has_label(item):
+                self.bot_advice.append(f"{item}.")
+
+    def typespec_policy(self):
+        if self.for_typespec:
+            self.add_label(TYPESPEC_LABEL)
 
     def auto_bot_advice(self):
         self.new_issue_policy()
+        self.typespec_policy()
         self.new_comment_policy()
         self.multi_link_policy()
         self.date_remind_policy()
         self.inconsistent_tag_policy()
+        self.hint_policy()
 
     def get_target_date(self):
         body = self.get_issue_body()
@@ -331,6 +382,10 @@ class Common:
 
         for assignee in self.assignee_candidates:
             self.request_repo_dict[assignee] = Github(assignee_token).get_repo(REQUEST_REPO)
+
+    @staticmethod
+    def for_test():
+        return bool(os.getenv("TEST_ISSUE_NUMBER"))
 
     def log_error(self, message: str) -> None:
         _LOG.error(message)

@@ -41,7 +41,6 @@ from ._rest_py3 import (
     HttpResponse as _HttpResponse,
     HttpRequest as _HttpRequest,
 )
-from ..utils._utils import case_insensitive_dict
 
 
 class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
@@ -311,33 +310,3 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
         for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
             yield part
         self.close()
-
-
-class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl):
-    def __init__(self, **kwargs):
-        internal_response = kwargs.pop("internal_response")
-        headers = case_insensitive_dict(internal_response.getheaders())
-        super(_RestHttpClientTransportResponseBase, self).__init__(
-            internal_response=internal_response,
-            status_code=internal_response.status,
-            reason=internal_response.reason,
-            headers=headers,
-            content_type=headers.get("Content-Type"),
-            stream_download_generator=None,
-            **kwargs
-        )
-
-
-class RestHttpClientTransportResponse(_RestHttpClientTransportResponseBase, HttpResponseImpl):
-    """Create a Rest HTTPResponse from an http.client response."""
-
-    def iter_bytes(self, **kwargs):
-        raise TypeError("We do not support iter_bytes for this transport response")
-
-    def iter_raw(self, **kwargs):
-        raise TypeError("We do not support iter_raw for this transport response")
-
-    def read(self):
-        if self._content is None:
-            self._content = self._internal_response.read()
-        return self._content

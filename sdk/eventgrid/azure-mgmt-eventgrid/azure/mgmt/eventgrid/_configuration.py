@@ -8,7 +8,6 @@
 
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EventGridManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class EventGridManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for EventGridManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -30,14 +29,13 @@ class EventGridManagementClientConfiguration(Configuration):  # pylint: disable=
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(EventGridManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
+        api_version: str = kwargs.pop("api_version", "2024-06-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -49,6 +47,7 @@ class EventGridManagementClientConfiguration(Configuration):  # pylint: disable=
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-eventgrid/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -57,9 +56,9 @@ class EventGridManagementClientConfiguration(Configuration):  # pylint: disable=
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or ARMHttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = ARMChallengeAuthenticationPolicy(

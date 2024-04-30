@@ -5,13 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime, timezone
-from dateutil.parser import parse
+from datetime import datetime
+from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from collections import Counter
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+from typing import Any, Dict, List, Union
 
-from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
-from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
+from router_test_constants import SANITIZED, FAKE_FUNCTION_URI
 from azure.communication.jobrouter.models import (
     BestWorkerMode,
     LongestIdleMode,
@@ -23,7 +22,7 @@ from azure.communication.jobrouter.models import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    ChannelConfiguration,
+    RouterChannel,
     RouterWorker,
     RouterWorkerState,
     RouterJob,
@@ -45,7 +44,15 @@ from azure.communication.jobrouter.models import (
     StaticRouterRule,
     RouterQueueSelector,
     ExpressionRouterRule,
-    LabelOperator
+    LabelOperator,
+    RouterJobNote,
+    RouterRuleKind,
+    DistributionModeKind,
+    ExceptionTriggerKind,
+    ExceptionActionKind,
+    QueueSelectorAttachmentKind,
+    WorkerSelectorAttachmentKind,
+    JobMatchingModeKind,
 )
 
 
@@ -64,15 +71,15 @@ class DistributionPolicyValidator(object):
 
     @staticmethod
     def validate_longest_idle_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "longest-idle"
+        assert distribution_policy.mode.kind == DistributionModeKind.LONGEST_IDLE
 
     @staticmethod
     def validate_round_robin_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "round-robin"
+        assert distribution_policy.mode.kind == DistributionModeKind.ROUND_ROBIN
 
     @staticmethod
     def validate_best_worker_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "best-worker"
+        assert distribution_policy.mode.kind == DistributionModeKind.BEST_WORKER
         # TODO: Add more validations for best worker mode
 
     @staticmethod
@@ -93,18 +100,18 @@ class DistributionPolicyValidator(object):
     @staticmethod
     def validate_distribution_policy(distribution_policy, **kwargs):
 
-        if not kwargs.get("identifier", None):
+        if kwargs.get("identifier", None) is not None:
             DistributionPolicyValidator.validate_id(distribution_policy, kwargs.pop("identifier"))
 
-        if not kwargs.get("name", None):
+        if kwargs.get("name", None) is not None:
             DistributionPolicyValidator.validate_name(distribution_policy, kwargs.pop("name"))
 
-        if not kwargs.get("offer_expires_after_seconds", None):
+        if kwargs.get("offer_expires_after_seconds", None) is not None:
             DistributionPolicyValidator.validate_offer_ttl(
                 distribution_policy, kwargs.pop("offer_expires_after_seconds")
             )
 
-        if not kwargs.get("mode", None):
+        if kwargs.get("mode", None) is not None:
             DistributionPolicyValidator.validate_distribution_mode(distribution_policy, kwargs.pop("mode"))
 
 
@@ -252,75 +259,67 @@ class ClassificationPolicyValidator(object):
         assert entity.fallback_queue_id == fallback_queue_id
 
     @staticmethod
-    def validate_queue_selectors(entity, queue_selectors, **kwargs):
-        assert len(entity.queue_selectors) == len(queue_selectors)
+    def validate_queue_selectors(entity, queue_selector_attachments, **kwargs):
+        def validate_static_queue_selector_attachment(
+            actual,  # type: StaticQueueSelectorAttachment
+            expected,  # type: StaticQueueSelectorAttachment
+            **kwargs,
+        ):
+            QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
 
-        for actual, expected in zip(entity.queue_selectors, queue_selectors):
+        def validate_conditional_queue_selector_attachment(
+            actual,  # type: ConditionalQueueSelectorAttachment
+            expected,  # type: ConditionalQueueSelectorAttachment
+            **kwargs,  # type: Any
+        ):
+            RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
+
+            for i, j in zip(actual.queue_selectors, expected.queue_selectors):
+                QueueSelectorValidator.validate_queue_selector(i, j)
+
+        def validate_rule_engine_selector_attachment(
+            actual,  # type: RuleEngineQueueSelectorAttachment
+            expected,  # type: RuleEngineQueueSelectorAttachment
+            **kwargs,  # type: Any
+        ):
+            RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
+
+        def validate_weighted_allocation_selector_attachment(
+            actual,  # type: WeightedAllocationQueueSelectorAttachment
+            expected,  # type: WeightedAllocationQueueSelectorAttachment
+            **kwargs,  # type: Any
+        ):
+            for i, j in zip(actual.allocations, expected.allocations):
+                assert i.weight == j.weight
+                for ac_qs, ex_qs in zip(i.queue_selectors, j.queue_selectors):
+                    QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
+
+        def validate_passthrough_attachment(
+            actual,  # type: PassThroughQueueSelectorAttachment
+            expected,  # type: PassThroughQueueSelectorAttachment
+            **kwargs,  # type: Any
+        ):
+            assert actual.kind == expected.kind
+            assert actual.key == expected.key
+            LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
+
+        assert len(entity.queue_selector_attachments) == len(queue_selector_attachments)
+
+        for actual, expected in zip(entity.queue_selector_attachments, queue_selector_attachments):
             assert type(actual) == type(expected)
 
-        for actual, expected in zip(entity.queue_selectors, queue_selectors):
-            assert type(actual) == type(expected)
-
-            def validate_static_queue_selector_attachment(
-                actual,  # type: StaticQueueSelectorAttachment
-                expected,  # type: StaticQueueSelectorAttachment
-                **kwargs,
-            ):
-                QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
-
-            def validate_conditional_queue_selector_attachment(
-                actual,  # type: ConditionalQueueSelectorAttachment
-                expected,  # type: ConditionalQueueSelectorAttachment
-                **kwargs,  # type: Any
-            ):
-                RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
-
-                for i, j in zip(actual.queue_selectors, expected.queue_selectors):
-                    QueueSelectorValidator.validate_queue_selector(i, j)
-
-            def validate_rule_engine_selector_attachment(
-                actual,  # type: RuleEngineQueueSelectorAttachment
-                expected,  # type: RuleEngineQueueSelectorAttachment
-                **kwargs,  # type: Any
-            ):
-                RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
-
-            def validate_weighted_allocation_selector_attachment(
-                actual,  # type: WeightedAllocationQueueSelectorAttachment
-                expected,  # type: WeightedAllocationQueueSelectorAttachment
-                **kwargs,  # type: Any
-            ):
-                for i, j in zip(actual.allocations, expected.allocations):
-                    assert i.weight == j.weight
-                    for ac_qs, ex_qs in zip(i.queue_selectors, j.queue_selectors):
-                        QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
-
-            def validate_passthrough_attachment(
-                actual,  # type: PassThroughQueueSelectorAttachment
-                expected,  # type: PassThroughQueueSelectorAttachment
-                **kwargs,  # type: Any
-            ):
-                assert actual.kind == expected.kind
-                assert actual.key == expected.key
-                LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
-
-            assert len(entity.queue_selectors) == len(queue_selectors)
-
-            for actual, expected in zip(entity.queue_selectors, queue_selectors):
-                assert type(actual) == type(expected)
-
-                if type(actual) == StaticQueueSelectorAttachment:
-                    validate_static_queue_selector_attachment(actual, expected)
-                elif type(actual) == ConditionalQueueSelectorAttachment:
-                    validate_conditional_queue_selector_attachment(actual, expected)
-                elif type(actual) == WeightedAllocationQueueSelectorAttachment:
-                    validate_weighted_allocation_selector_attachment(actual, expected)
-                elif type(actual) == RuleEngineQueueSelectorAttachment:
-                    validate_rule_engine_selector_attachment(actual, expected)
-                elif type(actual) == PassThroughQueueSelectorAttachment:
-                    validate_passthrough_attachment(actual, expected)
-                else:
-                    assert actual == expected
+            if type(actual) == StaticQueueSelectorAttachment:
+                validate_static_queue_selector_attachment(actual, expected)
+            elif type(actual) == ConditionalQueueSelectorAttachment:
+                validate_conditional_queue_selector_attachment(actual, expected)
+            elif type(actual) == WeightedAllocationQueueSelectorAttachment:
+                validate_weighted_allocation_selector_attachment(actual, expected)
+            elif type(actual) == RuleEngineQueueSelectorAttachment:
+                validate_rule_engine_selector_attachment(actual, expected)
+            elif type(actual) == PassThroughQueueSelectorAttachment:
+                validate_passthrough_attachment(actual, expected)
+            else:
+                assert actual == expected
 
     @staticmethod
     def validate_prioritization_rule(entity, prioritization_rule, **kwargs):
@@ -328,7 +327,7 @@ class ClassificationPolicyValidator(object):
         RouterRuleValidator.validate_router_rule(entity.prioritization_rule, prioritization_rule)
 
     @staticmethod
-    def validate_worker_selectors(entity, worker_selectors, **kwargs):
+    def validate_worker_selectors(entity, worker_selector_attachments, **kwargs):
         def validate_static_worker_selector_attachment(
             actual,  # type: StaticWorkerSelectorAttachment
             expected,  # type: StaticWorkerSelectorAttachment
@@ -372,9 +371,9 @@ class ClassificationPolicyValidator(object):
             assert actual.key == expected.key
             LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
 
-        assert len(entity.worker_selectors) == len(worker_selectors)
+        assert len(entity.worker_selector_attachments) == len(worker_selector_attachments)
 
-        for actual, expected in zip(entity.worker_selectors, worker_selectors):
+        for actual, expected in zip(entity.worker_selector_attachments, worker_selector_attachments):
             assert type(actual) == type(expected)
 
             if type(actual) == StaticWorkerSelectorAttachment:
@@ -403,17 +402,19 @@ class ClassificationPolicyValidator(object):
                 classification_policy, kwargs.pop("fallback_queue_id")
             )
 
-        if "queue_selectors" in kwargs:
-            ClassificationPolicyValidator.validate_queue_selectors(classification_policy, kwargs.pop("queue_selectors"))
+        if "queue_selector_attachments" in kwargs:
+            ClassificationPolicyValidator.validate_queue_selectors(
+                classification_policy, kwargs.pop("queue_selector_attachments")
+            )
 
         if "prioritization_rule" in kwargs:
             ClassificationPolicyValidator.validate_prioritization_rule(
                 classification_policy, kwargs.pop("prioritization_rule")
             )
 
-        if "worker_selectors" in kwargs:
+        if "worker_selector_attachments" in kwargs:
             ClassificationPolicyValidator.validate_worker_selectors(
-                classification_policy, kwargs.pop("worker_selectors")
+                classification_policy, kwargs.pop("worker_selector_attachments")
             )
 
 
@@ -423,8 +424,7 @@ class LabelOperatorValidator(object):
         try:
             assert actual == expected
         except AssertionError:
-            assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(
-                expected.split('.', 1)[1])
+            assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(expected.split(".", 1)[1])
 
 
 class ExceptionPolicyValidator(object):
@@ -468,18 +468,13 @@ class ExceptionPolicyValidator(object):
 
     @staticmethod
     def validate_exception_actions(
-        actual,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
-        expected,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+        actual,  # type: List[Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+        expected,  # type: List[Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
         **kwargs,  # type: Any
     ):
         assert len(actual) == len(expected)
 
-        for a, e in zip(actual.items(), expected.items()):
-            assert a[0] == e[0]
-            assert isinstance(a[1], type(e[1])) is True
-            actual_exception_action = a[1]
-            expected_exception_action = e[1]
-
+        for actual_exception_action, expected_exception_action in zip(actual, expected):
             if isinstance(actual_exception_action, ManualReclassifyExceptionAction):
                 assert actual_exception_action.queue_id == expected_exception_action.queue_id
                 assert actual_exception_action.priority == expected_exception_action.priority
@@ -517,27 +512,19 @@ class ExceptionPolicyValidator(object):
     @staticmethod
     def validate_exception_rules(
         entity,  # type: ExceptionPolicy
-        exception_rules,  # type: Dict[str, ExceptionRule]
+        exception_rules,  # type: List[ExceptionRule]
         **kwargs,
     ):
-        for k, v in exception_rules.items():
-            if k in entity.exception_rules:
-                assert isinstance(entity.exception_rules[k], type(exception_rules[k])) is True
-                actual_rule = entity.exception_rules[k]
-                expected_rule = v
+        for expected_rule, actual_rule in zip(exception_rules, entity.exception_rules):
+            assert isinstance(actual_rule, type(expected_rule)) is True
+            assert isinstance(actual_rule, ExceptionRule) is True
+            assert isinstance(expected_rule, ExceptionRule) is True
 
-                assert isinstance(actual_rule, ExceptionRule) is True
-                assert isinstance(expected_rule, ExceptionRule) is True
+            ExceptionPolicyValidator.validate_exception_trigger(actual_rule.trigger, expected_rule.trigger)
+            assert any(actual_rule.actions) is True
+            assert any(expected_rule.actions) is True
 
-                ExceptionPolicyValidator.validate_exception_trigger(actual_rule.trigger, expected_rule.trigger)
-                assert any(actual_rule.actions) is True
-                assert any(expected_rule.actions) is True
-
-                ExceptionPolicyValidator.validate_exception_actions(actual_rule.actions, expected_rule.actions)
-
-            else:
-                # key is not present in policy hence was set to None for request
-                assert exception_rules[k] is None
+            ExceptionPolicyValidator.validate_exception_actions(actual_rule.actions, expected_rule.actions)
 
     @staticmethod
     def validate_exception_policy(exception_policy, **kwargs):
@@ -558,7 +545,7 @@ class RouterWorkerValidator(object):
 
     @staticmethod
     def validate_total_capacity(entity, total_capacity, **kwargs):
-        assert entity.total_capacity == total_capacity
+        assert entity.capacity == total_capacity
 
     @staticmethod
     def validate_labels(entity, label_collection, **kwargs):
@@ -578,24 +565,22 @@ class RouterWorkerValidator(object):
     @staticmethod
     def validate_queue_assignment(
         entity,
-        queue_assignments,  # type: dict[str, QueueAssignment]
+        queue_assignments,  # type: List[str]
         **kwargs,
     ):
-        assert len(entity.queue_assignments) == len(queue_assignments)
-        for k, v in queue_assignments.items():
-            assert k in entity.queue_assignments
+        assert len(entity.queues) == len(queue_assignments)
+        for k, v in zip(entity.queues, queue_assignments):
+            assert k == v
 
     @staticmethod
     def validate_channel_configurations(
         entity,  # type: RouterWorker
-        channel_configurations,  # type: dict[str, ChannelConfiguration]
+        channel_configurations,  # type: List[RouterChannel]
         **kwargs,
     ):
-        assert len(entity.channel_configurations) == len(channel_configurations)
-        for k, v in channel_configurations.items():
-            assert k in entity.channel_configurations
-            assert entity.channel_configurations[k].max_number_of_jobs == v.max_number_of_jobs
-            assert entity.channel_configurations[k].capacity_cost_per_job == v.capacity_cost_per_job
+        assert len(entity.channels) == len(channel_configurations)
+        for k, v in zip(entity.channels, channel_configurations):
+            assert k == v
 
     @staticmethod
     def validate_worker_availability(
@@ -610,12 +595,16 @@ class RouterWorkerValidator(object):
             assert entity.state == RouterWorkerState.DRAINING or entity.state == RouterWorkerState.INACTIVE
 
     @staticmethod
+    def validate_max_concurrent_offers(entity, max_concurrent_offers, **kwargs):
+        assert entity.max_concurrent_offers == max_concurrent_offers
+
+    @staticmethod
     def validate_worker(worker, **kwargs):
         if "identifier" in kwargs:
             RouterWorkerValidator.validate_id(worker, kwargs.pop("identifier"))
 
-        if "total_capacity" in kwargs:
-            RouterWorkerValidator.validate_total_capacity(worker, kwargs.pop("total_capacity"))
+        if "capacity" in kwargs:
+            RouterWorkerValidator.validate_total_capacity(worker, kwargs.pop("capacity"))
 
         if "labels" in kwargs:
             RouterWorkerValidator.validate_labels(worker, kwargs.pop("labels"))
@@ -623,14 +612,17 @@ class RouterWorkerValidator(object):
         if "tags" in kwargs:
             RouterWorkerValidator.validate_tags(worker, kwargs.pop("tags"))
 
-        if "queue_assignments" in kwargs:
-            RouterWorkerValidator.validate_queue_assignment(worker, kwargs.pop("queue_assignments"))
+        if "queues" in kwargs:
+            RouterWorkerValidator.validate_queue_assignment(worker, kwargs.pop("queues"))
 
-        if "channel_configurations" in kwargs:
-            RouterWorkerValidator.validate_channel_configurations(worker, kwargs.pop("channel_configurations"))
+        if "channels" in kwargs:
+            RouterWorkerValidator.validate_channel_configurations(worker, kwargs.pop("channels"))
 
         if "available_for_offers" in kwargs:
             RouterWorkerValidator.validate_worker_availability(worker, kwargs.pop("available_for_offers"))
+
+        if "max_concurrent_offers" in kwargs:
+            RouterWorkerValidator.validate_max_concurrent_offers(worker, kwargs.pop("max_concurrent_offers"))
 
 
 class RouterJobValidator(object):
@@ -673,24 +665,20 @@ class RouterJobValidator(object):
         assert entity.tags == tag_collection
 
     @staticmethod
-    def validate_notes(entity: RouterJob, note_collection: Dict[str, str], **kwargs):
-        assert isinstance(entity.notes, dict) is True
+    def validate_notes(entity: RouterJob, note_collection: List[RouterJobNote], **kwargs):
+        assert isinstance(entity.notes, list) is True
         assert len(entity.notes) == len(note_collection)
 
-        for k1, k2 in zip([key for key in entity.notes.keys()], [key for key in note_collection.keys()]):
-            # cSpell:ignore tzinfos
-            k1_as_dt: datetime = parse(k1, tzinfos=[timezone.utc])
-            k2_as_dt: datetime = parse(k2, tzinfos=[timezone.utc])
-
-            assert k1_as_dt == k2_as_dt
-            assert entity.notes[k1] == note_collection[k2]
+        for k1, k2 in zip(entity.notes, note_collection):
+            assert k1.message == k2.message
+            assert k1.added_at is not None and k2.added_at is not None
 
     @staticmethod
     def validate_scheduled_time_utc(entity: RouterJob, scheduled_time_utc: Union[str, datetime], **kwargs):
         if isinstance(scheduled_time_utc, datetime):
             assert entity.scheduled_time_utc == scheduled_time_utc
         elif isinstance(scheduled_time_utc, str):
-            scheduled_time_utc_as_dt: datetime = parse(scheduled_time_utc, tzinfos=[timezone.utc])
+            scheduled_time_utc_as_dt: datetime = _convert_str_to_datetime(scheduled_time_utc)
             assert entity.scheduled_time_utc == scheduled_time_utc_as_dt
         else:
             raise AssertionError

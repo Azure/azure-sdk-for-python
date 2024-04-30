@@ -333,8 +333,8 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -377,8 +377,8 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -430,8 +430,8 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -698,8 +698,8 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2020,8 +2020,8 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2511,8 +2511,8 @@ class ProxyResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2872,8 +2872,8 @@ class ReplicationStatus(_serialization.Model):
 
     :ivar healthy: Replication health check.
     :vartype healthy: bool
-    :ivar relationship_status: Status of the mirror relationship. Known values are: "Idle" and
-     "Transferring".
+    :ivar relationship_status: Status of the mirror relationship. Known values are: "Idle",
+     "Transferring", "Failed", and "Unknown".
     :vartype relationship_status: str or ~azure.mgmt.netapp.models.RelationshipStatus
     :ivar mirror_state: The status of the replication. Known values are: "Uninitialized",
      "Mirrored", and "Broken".
@@ -2905,8 +2905,8 @@ class ReplicationStatus(_serialization.Model):
         """
         :keyword healthy: Replication health check.
         :paramtype healthy: bool
-        :keyword relationship_status: Status of the mirror relationship. Known values are: "Idle" and
-         "Transferring".
+        :keyword relationship_status: Status of the mirror relationship. Known values are: "Idle",
+         "Transferring", "Failed", and "Unknown".
         :paramtype relationship_status: str or ~azure.mgmt.netapp.models.RelationshipStatus
         :keyword mirror_state: The status of the replication. Known values are: "Uninitialized",
          "Mirrored", and "Broken".
@@ -3015,7 +3015,7 @@ class RestoreStatus(_serialization.Model):
     :ivar healthy: Restore health status.
     :vartype healthy: bool
     :ivar relationship_status: Status of the restore SnapMirror relationship. Known values are:
-     "Idle" and "Transferring".
+     "Idle", "Transferring", "Failed", and "Unknown".
     :vartype relationship_status: str or ~azure.mgmt.netapp.models.RelationshipStatus
     :ivar mirror_state: The status of the restore. Known values are: "Uninitialized", "Mirrored",
      and "Broken".
@@ -3096,8 +3096,8 @@ class Snapshot(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3183,8 +3183,8 @@ class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3539,8 +3539,8 @@ class SubscriptionQuotaItem(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3606,8 +3606,8 @@ class SubvolumeInfo(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4002,8 +4002,8 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4220,7 +4220,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 63, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 7},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -4728,9 +4728,6 @@ class VolumeGroupMetaData(_serialization.Model):
     :vartype application_identifier: str
     :ivar global_placement_rules: Application specific placement rules for the volume group.
     :vartype global_placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-    :ivar deployment_spec_id: Application specific identifier of deployment rules for the volume
-     group.
-    :vartype deployment_spec_id: str
     :ivar volumes_count: Number of volumes in volume group.
     :vartype volumes_count: int
     """
@@ -4744,7 +4741,6 @@ class VolumeGroupMetaData(_serialization.Model):
         "application_type": {"key": "applicationType", "type": "str"},
         "application_identifier": {"key": "applicationIdentifier", "type": "str"},
         "global_placement_rules": {"key": "globalPlacementRules", "type": "[PlacementKeyValuePairs]"},
-        "deployment_spec_id": {"key": "deploymentSpecId", "type": "str"},
         "volumes_count": {"key": "volumesCount", "type": "int"},
     }
 
@@ -4755,7 +4751,6 @@ class VolumeGroupMetaData(_serialization.Model):
         application_type: Optional[Union[str, "_models.ApplicationType"]] = None,
         application_identifier: Optional[str] = None,
         global_placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
-        deployment_spec_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4767,16 +4762,12 @@ class VolumeGroupMetaData(_serialization.Model):
         :paramtype application_identifier: str
         :keyword global_placement_rules: Application specific placement rules for the volume group.
         :paramtype global_placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-        :keyword deployment_spec_id: Application specific identifier of deployment rules for the volume
-         group.
-        :paramtype deployment_spec_id: str
         """
         super().__init__(**kwargs)
         self.group_description = group_description
         self.application_type = application_type
         self.application_identifier = application_identifier
         self.global_placement_rules = global_placement_rules
-        self.deployment_spec_id = deployment_spec_id
         self.volumes_count = None
 
 
@@ -4992,7 +4983,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 63, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 7},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -5415,7 +5406,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "type": {"readonly": True},
         "usage_threshold": {"maximum": 2638827906662400, "minimum": 107374182400},
         "unix_permissions": {"max_length": 4, "min_length": 4},
-        "coolness_period": {"maximum": 63, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 7},
     }
 
     _attribute_map = {
@@ -5655,8 +5646,8 @@ class VolumeQuotaRule(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str

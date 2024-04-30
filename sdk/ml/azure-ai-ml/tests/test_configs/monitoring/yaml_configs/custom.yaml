@@ -29,7 +29,7 @@ create_monitor:
       type: custom
       component_id: azureml:fake_component:1
       alert_enabled: true
-      workspace_connection:
+      connection:
         environment_variables:
           ENV_VAR_1: value1
           ENV_VAR_2: value2
@@ -48,8 +48,8 @@ create_monitor:
             path: azureml:Direct:1
           data_context: test
           data_window:
-            trailing_window_size: P30D
-            trailing_window_offset: P7D
+            lookback_window_size: P30D
+            lookback_window_offset: P7D
         test_static:
           input_data:
             type: mltable

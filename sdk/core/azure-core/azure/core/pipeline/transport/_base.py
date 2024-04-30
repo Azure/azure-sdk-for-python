@@ -55,6 +55,7 @@ from typing import (
 from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -75,13 +76,14 @@ DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 if TYPE_CHECKING:
     # We need a transport to define a pipeline, this "if" avoid a circular import
     from azure.core.pipeline import Pipeline
+    from azure.core.rest._helpers import FileContent
 
 _LOGGER = logging.getLogger(__name__)
 
 binary_type = str
 
 
-def _format_url_section(template, **kwargs):
+def _format_url_section(template, **kwargs: Dict[str, str]) -> str:
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
     By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
@@ -90,7 +92,6 @@ def _format_url_section(template, **kwargs):
     This is used for API like Storage, where when Swagger has template section not defined as parameter.
 
     :param str template: a string template to fill
-    :keyword dict[str,str] kwargs: Template values as string
     :rtype: str
     :returns: Template completed
     """
@@ -108,6 +109,7 @@ def _format_url_section(template, **kwargs):
                     f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
                 ) from key
             last_template = template
+    return last_template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
@@ -126,7 +128,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     stub_url_path = split_url.pop(0)
     stub_url_query = split_url.pop() if split_url else None
 
-    # Note that _replace is a public API named that way to avoid to avoid conflicts in namedtuple
+    # Note that _replace is a public API named that way to avoid conflicts in namedtuple
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
     parsed_base_url = parsed_base_url._replace(
         path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,
@@ -207,7 +209,7 @@ class HttpRequest:
         self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
         self.files: Optional[Any] = files
         self.data: Optional[DataType] = data
-        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]] = None
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
@@ -248,7 +250,7 @@ class HttpRequest:
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+    def _format_data(data: Union[str, IO]) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -351,7 +353,13 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs: Any) -> None:
+    def set_multipart_mixed(
+        self,
+        *requests: "HttpRequest",
+        policies: Optional[List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]] = None,
+        boundary: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -368,10 +376,11 @@ class HttpRequest:
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
         """
+        policies = policies or []
         self.multipart_mixed_info = (
             requests,
-            kwargs.pop("policies", []),
-            kwargs.pop("boundary", None),
+            policies,
+            boundary,
             kwargs,
         )
 
@@ -414,7 +423,7 @@ class _HttpResponseBase:
 
     def __init__(
         self,
-        request: HttpRequest,
+        request: "HttpRequest",
         internal_response: Any,
         block_size: Optional[int] = None,
     ) -> None:
@@ -669,7 +678,7 @@ class PipelineClientBase:
         headers: Optional[Dict[str, str]] = None,
         content: Any = None,
         form_content: Optional[Dict[str, Any]] = None,
-    ) -> HttpRequest:
+    ) -> "HttpRequest":
         """Create a GET request object.
 
         :param str url: The request URL.
@@ -830,7 +839,14 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
+        self,  # pylint: disable=unused-argument
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        *,
+        content: Optional[Union[bytes, str, Dict[Any, Any]]] = None,
+        form_content: Optional[Dict[Any, Any]] = None,
+        **kwargs: Any,
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
@@ -843,7 +859,5 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        content = kwargs.get("content")
-        form_content = kwargs.get("form_content")
         request = self._request("OPTIONS", url, params, headers, content, form_content, None)
         return request

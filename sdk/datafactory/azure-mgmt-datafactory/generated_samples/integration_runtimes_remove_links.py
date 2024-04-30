@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 """
@@ -29,13 +32,12 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.integration_runtimes.remove_links(
+    client.integration_runtimes.remove_links(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         integration_runtime_name="exampleIntegrationRuntime",
         linked_integration_runtime_request={"factoryName": "exampleFactoryName-linked"},
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/IntegrationRuntimes_RemoveLinks.json

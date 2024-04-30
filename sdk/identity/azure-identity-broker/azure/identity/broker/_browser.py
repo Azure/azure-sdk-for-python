@@ -16,7 +16,10 @@ from ._utils import wrap_exceptions, resolve_tenant
 
 
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
-    """Opens a browser to interactively authenticate a user.
+    """Uses an authentication broker to interactively sign in a user.
+
+    Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported. Users on macOS and Linux
+    will be authenticated through a browser.
 
     :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
@@ -30,26 +33,12 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
-    :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Microsoft
-        Entra ID, for example "http://localhost:8400". This is only required when passing a value for
-        **client_id**, and must match a redirect URI in the application's registration. The credential must be able to
-        bind a socket to this URI.
-    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
-    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
-        :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
-        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
-        the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
-        the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to True.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
-        information about WAM.
-    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
-        and your app opts in to use broker via `allow_broker`, you are required to also provide its window handle,
-        so that the sign in UI window will properly pop up on top of your window.
+    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system, you are required to
+        also provide its window handle so that the sign in UI window will properly pop up on top of your window.
+    :keyword bool use_default_broker_account: Enables automatically using the default broker account for
+        authentication instead of prompting the user with an account picker. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
@@ -59,13 +48,16 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
     :raises ValueError: invalid **redirect_uri**
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._allow_broker = kwargs.pop("allow_broker", True)
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
+        self._use_default_broker_account = kwargs.pop("use_default_broker_account", False)
         super().__init__(**kwargs)
 
     @wrap_exceptions
@@ -75,6 +67,22 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
 
+        if self._use_default_broker_account:
+            try:
+                result = app.acquire_token_interactive(
+                    scopes=scopes,
+                    login_hint=self._login_hint,
+                    claims_challenge=claims,
+                    timeout=self._timeout,
+                    prompt=msal.Prompt.NONE,
+                    port=port,
+                    parent_window_handle=self._parent_window_handle,
+                    enable_msa_passthrough=self._enable_msa_passthrough,
+                )
+                if "access_token" in result:
+                    return result
+            except socket.error:
+                pass
         try:
             result = app.acquire_token_interactive(
                 scopes=scopes,
@@ -109,7 +117,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         capabilities = None
         token_cache = self._cache
 
-        app_class = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
+        app_class = msal.PublicClientApplication
 
         if kwargs.get("enable_cae"):
             client_applications_map = self._cae_client_applications
@@ -129,7 +137,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 token_cache=token_cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker,
+                enable_broker_on_windows=True,
+                enable_pii_log=self._enable_support_logging,
             )
 
         return client_applications_map[tenant_id]

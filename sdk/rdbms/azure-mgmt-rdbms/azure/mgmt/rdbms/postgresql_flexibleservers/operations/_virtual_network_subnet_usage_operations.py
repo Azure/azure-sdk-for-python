@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +39,7 @@ def build_execute_request(location_name: str, subscription_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -49,7 +49,7 @@ def build_execute_request(location_name: str, subscription_id: str, **kwargs: An
         "/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/checkVirtualNetworkSubnetUsage",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "locationName": _SERIALIZER.url("location_name", location_name, "str", min_length=1, pattern=r"^[-\w\._]+$"),
     }
 
@@ -104,7 +104,6 @@ class VirtualNetworkSubnetUsageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -112,18 +111,17 @@ class VirtualNetworkSubnetUsageOperations:
 
     @overload
     def execute(
-        self, location_name: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, location_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageResult:
         """Get virtual network subnet usage for a given vNet resource id.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The required parameters for creating or updating a server. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -131,20 +129,20 @@ class VirtualNetworkSubnetUsageOperations:
 
     @distributed_trace
     def execute(
-        self, location_name: str, parameters: Union[_models.VirtualNetworkSubnetUsageParameter, IO], **kwargs: Any
+        self,
+        location_name: str,
+        parameters: Union[_models.VirtualNetworkSubnetUsageParameter, IO[bytes]],
+        **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageResult:
         """Get virtual network subnet usage for a given vNet resource id.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The required parameters for creating or updating a server. Is either a
-         VirtualNetworkSubnetUsageParameter type or a IO type. Required.
+         VirtualNetworkSubnetUsageParameter type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageParameter or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageParameter or
+         IO[bytes]
         :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -172,23 +170,22 @@ class VirtualNetworkSubnetUsageOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetworkSubnetUsageParameter")
 
-        request = build_execute_request(
+        _request = build_execute_request(
             location_name=location_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.execute.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -201,10 +198,6 @@ class VirtualNetworkSubnetUsageOperations:
         deserialized = self._deserialize("VirtualNetworkSubnetUsageResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/checkVirtualNetworkSubnetUsage"
-    }
+        return deserialized  # type: ignore

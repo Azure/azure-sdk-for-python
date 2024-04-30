@@ -1,5 +1,18 @@
 # Release History
 
+## 1.3.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation BackupInstancesOperations.begin_trigger_cross_region_restore
+  - Added operation BackupInstancesOperations.begin_validate_cross_region_restore
+  - Added operation group FetchCrossRegionRestoreJobOperations
+  - Added operation group FetchCrossRegionRestoreJobsOperations
+  - Added operation group FetchSecondaryRecoveryPointsOperations
+  - Model AzureBackupDiscreteRecoveryPoint has a new parameter recovery_point_state
+  - Model BackupVault has a new parameter replicated_regions
+  - Model JobExtendedInfo has a new parameter warning_details
+
 ## 1.2.0 (2023-07-21)
 
 ### Features Added

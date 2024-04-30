@@ -8,7 +8,10 @@
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageModelDistributionSettingsObjectDetection
-from azure.ai.ml.entities import (
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.sweep import (
     Choice,
     LogNormal,
     LogUniform,
@@ -20,9 +23,6 @@ from azure.ai.ml.entities import (
     Randint,
     Uniform,
 )
-from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
@@ -147,6 +147,15 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
     :param validation_metric_type: Metric computation method to use for validation metrics. Must
         be 'none', 'coco', 'voc', or 'coco_voc'.
     :type validation_metric_type: str or ~azure.ai.ml.entities.SweepDistribution
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_object_detection_search_space]
+            :end-before: [END automl.automl_image_job.image_object_detection_search_space]
+            :language: python
+            :dedent: 8
+            :caption: Defining an automl image object detection or instance segmentation search space
     """
 
     def __init__(
@@ -797,13 +806,13 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
             early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
             early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
             early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
-            enable_onnx_normalization=obj.enable_onnx_normalization
-            if hasattr(obj, "enable_onnx_normalization")
-            else None,
+            enable_onnx_normalization=(
+                obj.enable_onnx_normalization if hasattr(obj, "enable_onnx_normalization") else None
+            ),
             evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
-            gradient_accumulation_step=obj.gradient_accumulation_step
-            if hasattr(obj, "gradient_accumulation_step")
-            else None,
+            gradient_accumulation_step=(
+                obj.gradient_accumulation_step if hasattr(obj, "gradient_accumulation_step") else None
+            ),
             layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
             learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
             learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
@@ -819,9 +828,9 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
             training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
             validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
             warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
-            warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
-            if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
-            else None,
+            warmup_cosine_lr_warmup_epochs=(
+                obj.warmup_cosine_lr_warmup_epochs if hasattr(obj, "warmup_cosine_lr_warmup_epochs") else None
+            ),
             weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
             box_detections_per_image=obj.box_detections_per_image if hasattr(obj, "box_detections_per_image") else None,
             box_score_threshold=obj.box_score_threshold if hasattr(obj, "box_score_threshold") else None,
@@ -833,9 +842,9 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
             nms_iou_threshold=obj.nms_iou_threshold if hasattr(obj, "nms_iou_threshold") else None,
             tile_grid_size=obj.tile_grid_size if hasattr(obj, "tile_grid_size") else None,
             tile_overlap_ratio=obj.tile_overlap_ratio if hasattr(obj, "tile_overlap_ratio") else None,
-            tile_predictions_nms_threshold=obj.tile_predictions_nms_threshold
-            if hasattr(obj, "tile_predictions_nms_threshold")
-            else None,
+            tile_predictions_nms_threshold=(
+                obj.tile_predictions_nms_threshold if hasattr(obj, "tile_predictions_nms_threshold") else None
+            ),
             validation_iou_threshold=obj.validation_iou_threshold if hasattr(obj, "validation_iou_threshold") else None,
             validation_metric_type=obj.validation_metric_type if hasattr(obj, "validation_metric_type") else None,
         )

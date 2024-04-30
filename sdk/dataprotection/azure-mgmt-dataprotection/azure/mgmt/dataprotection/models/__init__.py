@@ -60,6 +60,10 @@ from ._models_py3 import ClientDiscoveryResponse
 from ._models_py3 import ClientDiscoveryValueForSingleApi
 from ._models_py3 import CopyOnExpiryOption
 from ._models_py3 import CopyOption
+from ._models_py3 import CrossRegionRestoreDetails
+from ._models_py3 import CrossRegionRestoreJobRequest
+from ._models_py3 import CrossRegionRestoreJobsRequest
+from ._models_py3 import CrossRegionRestoreRequestObject
 from ._models_py3 import CrossRegionRestoreSettings
 from ._models_py3 import CrossSubscriptionRestoreSettings
 from ._models_py3 import CustomCopyOption
@@ -68,6 +72,7 @@ from ._models_py3 import DataStoreParameters
 from ._models_py3 import Datasource
 from ._models_py3 import DatasourceSet
 from ._models_py3 import Day
+from ._models_py3 import DefaultResourceProperties
 from ._models_py3 import DeleteOption
 from ._models_py3 import DeletedBackupInstance
 from ._models_py3 import DeletedBackupInstanceResource
@@ -85,12 +90,15 @@ from ._models_py3 import DppTrackedResourceList
 from ._models_py3 import DppWorkerRequest
 from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportJobsResult
 from ._models_py3 import FeatureSettings
 from ._models_py3 import FeatureValidationRequest
 from ._models_py3 import FeatureValidationRequestBase
 from ._models_py3 import FeatureValidationResponse
 from ._models_py3 import FeatureValidationResponseBase
+from ._models_py3 import FetchSecondaryRPsRequestParameters
 from ._models_py3 import IdentityDetails
 from ._models_py3 import ImmediateCopyOption
 from ._models_py3 import ImmutabilitySettings
@@ -102,6 +110,7 @@ from ._models_py3 import JobExtendedInfo
 from ._models_py3 import JobSubTask
 from ._models_py3 import KubernetesClusterBackupDatasourceParameters
 from ._models_py3 import KubernetesClusterRestoreCriteria
+from ._models_py3 import KubernetesClusterVaultTierRestoreCriteria
 from ._models_py3 import KubernetesPVRestoreCriteria
 from ._models_py3 import KubernetesStorageClassRestoreCriteria
 from ._models_py3 import MonitoringSettings
@@ -153,6 +162,8 @@ from ._models_py3 import UnlockDeleteRequest
 from ._models_py3 import UnlockDeleteResponse
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserFacingError
+from ._models_py3 import UserFacingWarningDetail
+from ._models_py3 import ValidateCrossRegionRestoreRequestObject
 from ._models_py3 import ValidateForBackupRequest
 from ._models_py3 import ValidateRestoreRequestObject
 
@@ -172,9 +183,11 @@ from ._data_protection_mgmt_client_enums import Month
 from ._data_protection_mgmt_client_enums import PersistentVolumeRestoreMode
 from ._data_protection_mgmt_client_enums import ProvisioningState
 from ._data_protection_mgmt_client_enums import RecoveryOption
+from ._data_protection_mgmt_client_enums import RecoveryPointCompletionState
 from ._data_protection_mgmt_client_enums import RehydrationPriority
 from ._data_protection_mgmt_client_enums import RehydrationStatus
 from ._data_protection_mgmt_client_enums import ResourceMoveState
+from ._data_protection_mgmt_client_enums import ResourcePropertiesObjectType
 from ._data_protection_mgmt_client_enums import RestoreSourceDataStoreType
 from ._data_protection_mgmt_client_enums import RestoreTargetLocationType
 from ._data_protection_mgmt_client_enums import SecretStoreType
@@ -246,6 +259,10 @@ __all__ = [
     "ClientDiscoveryValueForSingleApi",
     "CopyOnExpiryOption",
     "CopyOption",
+    "CrossRegionRestoreDetails",
+    "CrossRegionRestoreJobRequest",
+    "CrossRegionRestoreJobsRequest",
+    "CrossRegionRestoreRequestObject",
     "CrossRegionRestoreSettings",
     "CrossSubscriptionRestoreSettings",
     "CustomCopyOption",
@@ -254,6 +271,7 @@ __all__ = [
     "Datasource",
     "DatasourceSet",
     "Day",
+    "DefaultResourceProperties",
     "DeleteOption",
     "DeletedBackupInstance",
     "DeletedBackupInstanceResource",
@@ -271,12 +289,15 @@ __all__ = [
     "DppWorkerRequest",
     "Error",
     "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExportJobsResult",
     "FeatureSettings",
     "FeatureValidationRequest",
     "FeatureValidationRequestBase",
     "FeatureValidationResponse",
     "FeatureValidationResponseBase",
+    "FetchSecondaryRPsRequestParameters",
     "IdentityDetails",
     "ImmediateCopyOption",
     "ImmutabilitySettings",
@@ -288,6 +309,7 @@ __all__ = [
     "JobSubTask",
     "KubernetesClusterBackupDatasourceParameters",
     "KubernetesClusterRestoreCriteria",
+    "KubernetesClusterVaultTierRestoreCriteria",
     "KubernetesPVRestoreCriteria",
     "KubernetesStorageClassRestoreCriteria",
     "MonitoringSettings",
@@ -339,6 +361,8 @@ __all__ = [
     "UnlockDeleteResponse",
     "UserAssignedIdentity",
     "UserFacingError",
+    "UserFacingWarningDetail",
+    "ValidateCrossRegionRestoreRequestObject",
     "ValidateForBackupRequest",
     "ValidateRestoreRequestObject",
     "AbsoluteMarker",
@@ -357,9 +381,11 @@ __all__ = [
     "PersistentVolumeRestoreMode",
     "ProvisioningState",
     "RecoveryOption",
+    "RecoveryPointCompletionState",
     "RehydrationPriority",
     "RehydrationStatus",
     "ResourceMoveState",
+    "ResourcePropertiesObjectType",
     "RestoreSourceDataStoreType",
     "RestoreTargetLocationType",
     "SecretStoreType",

@@ -5,16 +5,18 @@ import datetime
 import logging
 
 from azure.core.exceptions import HttpResponseError
-from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 from azure.mgmt.resource import ResourceManagementClient
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
 from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights, SBAuthorizationRule
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
 from devtools_testutils import (
-    AzureMgmtPreparer, FakeResource, get_region_override, add_general_regex_sanitizer
+    AzureMgmtPreparer,
+    AzureTestError,
+    FakeResource,
+    get_region_override,
+    add_general_regex_sanitizer,
+    ReservedResourceNameError
 )
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 

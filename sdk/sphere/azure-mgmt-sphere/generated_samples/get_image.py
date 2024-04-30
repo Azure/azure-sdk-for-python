@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sphere import AzureSphereMgmtClient
 
 """
@@ -32,11 +33,11 @@ def main():
     response = client.images.get(
         resource_group_name="MyResourceGroup1",
         catalog_name="MyCatalog1",
-        image_name="myImageId",
+        image_name="00000000-0000-0000-0000-000000000000",
     )
     print(response)
 
 
-# x-ms-original-file: specification/sphere/resource-manager/Microsoft.AzureSphere/preview/2022-09-01-preview/examples/GetImage.json
+# x-ms-original-file: specification/sphere/resource-manager/Microsoft.AzureSphere/stable/2024-04-01/examples/GetImage.json
 if __name__ == "__main__":
     main()

@@ -55,6 +55,6 @@ class SettingSelector:
         self.label_filter = label_filter
 
 
-class SentinelKey(NamedTuple):
+class WatchKey(NamedTuple):
     key: str
     label: str = EMPTY_LABEL

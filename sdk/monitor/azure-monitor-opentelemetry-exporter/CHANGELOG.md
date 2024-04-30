@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b18 (Unreleased)
+## 1.0.0b26 (Unreleased)
 
 ### Features Added
 
@@ -8,12 +8,125 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.0.0b25 (2024-04-19)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
+## 1.0.0b24 (2024-04-05)
+
+### Features Added
+
+- Add live metrics collection of requests/dependencies/exceptions
+    ([#34673](https://github.com/Azure/azure-sdk-for-python/pull/34673))
+- Add live metrics collection of cpu time/process memory
+    ([#34735](https://github.com/Azure/azure-sdk-for-python/pull/34735))
+- Add live metrics collection feature detection to statsbeat
+    ([#34752](https://github.com/Azure/azure-sdk-for-python/pull/34752))
+
+### Breaking Changes
+
+- Rename Statbeat environments variables to use `APPLICATIONINSIGHTS_*`
+    ([#34742](https://github.com/Azure/azure-sdk-for-python/pull/34742))
+
+### Bugs Fixed
+
+- Reduce vm metadata service timeout to 200ms
+    ([#35039](https://github.com/Azure/azure-sdk-for-python/pull/35039))
+
+### Other Changes
+
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Set up branching logic for attach function
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
+
+## 1.0.0b23 (2024-02-28)
+
+### Features Added
+
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
+- Add live metrics exporting functionality
+    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
+- Add application.ver to part A fields
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34463](https://github.com/Azure/azure-sdk-for-python/pull/34463))
+
+### Other Changes
+
+- Add attachType character to sdkVersion prefix
+    ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+- Add AKS scenarios to statsbeat metric and sdkVersion prefix
+    ([#34427](https://github.com/Azure/azure-sdk-for-python/pull/34427))
+
+## 1.0.0b22 (2024-02-01)
+
+### Features Added
+
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
+
+### Bugs Fixed
+
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
+### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
+
+## 1.0.0b21 (2024-01-16)
+
+### Other Changes
+
+- Update to OTel SKD/API 1.21
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+
+## 1.0.0b20 (2024-01-04)
+
+### Other Changes
+
+- Store global instance of `StatsbeatMetric`
+    ([#33432](https://github.com/Azure/azure-sdk-for-python/pull/33432))
+- Shutdown statsbeat on customer getting 400 error code
+    ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
+- Track custom events extension in feature statsbeat
+    ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
+- Readme examples are updated with correct imports
+    ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33768](https://github.com/Azure/azure-sdk-for-python/pull/33768))
+
+## 1.0.0b19 (2023-11-20)
+
+### Bugs Fixed
+
+- Fix deserialization of `TelemetryItem` from local storage
+    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
+
+## 1.0.0b18 (2023-11-06)
+
+### Bugs Fixed
+
 - Default exception type for blank exceptions
     ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
 - Updated django samples with clearly artificial secret key
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
-
-### Other Changes
+- Remove metric namespace
+    ([#32897](https://github.com/Azure/azure-sdk-for-python/pull/32897))
 
 ## 1.0.0b17 (2023-09-12)
 

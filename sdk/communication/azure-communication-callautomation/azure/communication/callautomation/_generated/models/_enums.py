@@ -52,6 +52,7 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
 
 
 class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -80,13 +81,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     D = "d"
     POUND = "pound"
     ASTERISK = "asterisk"
-
-
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
 
 
 class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -176,6 +170,7 @@ class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACS = "acs"
     TEAMS = "teams"
+    TEAMS_COMPLIANCE = "teamsCompliance"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -184,7 +179,7 @@ class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSCRIPTION_STARTED = "transcriptionStarted"
     TRANSCRIPTION_FAILED = "transcriptionFailed"
     TRANSCRIPTION_RESUMED = "transcriptionResumed"
-    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+    TRANSCRIPTION_UPDATED = "transcriptionUpdated"
     TRANSCRIPTION_STOPPED = "transcriptionStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
@@ -201,9 +196,22 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
     SUBSCRIPTION_STOPPED = "subscriptionStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
 
 
 class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of transport to be used for live transcription, eg. Websocket."""
 
     WEBSOCKET = "websocket"
+
+
+class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice kind type."""
+
+    MALE = "male"
+    FEMALE = "female"

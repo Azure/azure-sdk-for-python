@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -171,7 +172,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -551,6 +556,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: A container client to interact with the newly created container.
         :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
@@ -588,7 +594,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :type lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -612,7 +618,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -652,6 +657,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: A container client for the renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         renamed_container = self.get_container_client(new_name)
@@ -776,7 +782,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         try:

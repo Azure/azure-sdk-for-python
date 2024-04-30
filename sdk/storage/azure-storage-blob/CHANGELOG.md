@@ -1,9 +1,43 @@
 # Release History
 
-## 12.19.0 (Unreleased)
+## 12.20.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.20.0b1 (2024-04-16)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
+### Features Added
+- Added support for service version 2024-05-04.
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+
+### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
+- Fixed a typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
+- Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
+- Fixed a couple of issues with `upload_blob` when using Iterators/Generators as the data input.
+
+### Other Changes
+- Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
+`list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
+The `name_starts_with` parameter is the correct parameter to pass for filtering.
+
+## 12.19.1 (2024-03-05)
+
+### Bugs Fixed
+- Fixed an issue where under rare circumstances, full downloads of sparse Page Blobs could result in the
+downloaded content containing up to one "chunk" of extra `\x00` at the end due to an optimization error.
+
+## 12.19.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.19.0b1
 
 ## 12.19.0b1 (2023-10-17)
 
@@ -194,7 +228,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
     - `set_immutability_policy`
 - Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`).
 - Encryption Scope is now supported as a SAS permission.
-- Added support for blob names containing invalid XML characters. 
+- Added support for blob names containing invalid XML characters.
   Previously \uFFFE and \uFFFF would fail if present in blob name.
 - Added support for listing system containers with get_blob_containers().
 - Added support for `find_blobs_by_tags()` on a container.
@@ -245,7 +279,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 **Fixes**
 - Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
-- Duplicate type signature issue has been resolved (#19739) 
+- Duplicate type signature issue has been resolved (#19739)
 
 ## 12.9.0 (2021-09-15)
 **Stable release of preview features**

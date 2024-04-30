@@ -12,7 +12,7 @@ import random
 import platform
 import urllib
 
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 
 
 def is_port_available(port_num):
@@ -77,4 +77,4 @@ def testserver():
 
 @pytest.fixture
 def client(port):
-    return TestRestClient(port)
+    return MockRestClient(port)

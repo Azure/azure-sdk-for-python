@@ -4,11 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the retry policy."""
-try:
-    from io import BytesIO
-except ImportError:
-    from cStringIO import StringIO as BytesIO
-
+from io import BytesIO
 import tempfile
 import os
 import asyncio
@@ -17,6 +13,7 @@ from itertools import product
 from unittest.mock import Mock
 
 import pytest
+from corehttp.rest import HttpRequest
 from corehttp.exceptions import (
     BaseError,
     ServiceRequestError,
@@ -31,7 +28,7 @@ from corehttp.runtime.policies import (
 from corehttp.runtime.pipeline import AsyncPipeline, PipelineResponse, PipelineRequest
 from corehttp.transport import AsyncHttpTransport
 
-from utils import HTTP_REQUESTS, ASYNC_HTTP_RESPONSES, create_http_response, request_and_responses_product
+from utils import ASYNC_HTTP_RESPONSES, create_http_response
 
 
 def test_retry_code_class_variables():
@@ -59,12 +56,12 @@ def test_retry_types():
 
 
 @pytest.mark.parametrize(
-    "retry_after_input,http_request,http_response",
-    product(["0", "800", "1000", "1200"], HTTP_REQUESTS, ASYNC_HTTP_RESPONSES),
+    "retry_after_input,http_response",
+    product(["0", "800", "1000", "1200", "0.9"], ASYNC_HTTP_RESPONSES),
 )
-def test_retry_after(retry_after_input, http_request, http_response):
+def test_retry_after(retry_after_input, http_response):
     retry_policy = AsyncRetryPolicy()
-    request = http_request("GET", "http://localhost")
+    request = HttpRequest("GET", "http://localhost")
     response = create_http_response(http_response, request, None, headers={"Retry-After": retry_after_input})
     pipeline_response = PipelineResponse(request, response, None)
     retry_after = retry_policy.get_retry_after(pipeline_response)
@@ -73,8 +70,8 @@ def test_retry_after(retry_after_input, http_request, http_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
-async def test_retry_on_429(http_request, http_response):
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_retry_on_429(http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0
@@ -93,7 +90,7 @@ async def test_retry_on_429(http_request, http_response):
             response = create_http_response(http_response, request, None, status_code=429)
             return response
 
-    http_request = http_request("GET", "http://localhost/")
+    http_request = HttpRequest("GET", "http://localhost/")
     http_retry = AsyncRetryPolicy(retry_total=1)
     transport = MockTransport()
     pipeline = AsyncPipeline(transport, [http_retry])
@@ -102,8 +99,8 @@ async def test_retry_on_429(http_request, http_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
-async def test_no_retry_on_201(http_request, http_response):
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_no_retry_on_201(http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0
@@ -122,7 +119,7 @@ async def test_no_retry_on_201(http_request, http_response):
             response = create_http_response(http_response, request, None, status_code=201, headers={"Retry-After": "1"})
             return response
 
-    http_request = http_request("GET", "http://localhost/")
+    http_request = HttpRequest("GET", "http://localhost/")
     http_retry = AsyncRetryPolicy(retry_total=1)
     transport = MockTransport()
     pipeline = AsyncPipeline(transport, [http_retry])
@@ -131,8 +128,8 @@ async def test_no_retry_on_201(http_request, http_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
-async def test_retry_seekable_stream(http_request, http_response):
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_retry_seekable_stream(http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._first = True
@@ -157,15 +154,15 @@ async def test_retry_seekable_stream(http_request, http_response):
             return response
 
     data = BytesIO(b"Lots of dataaaa")
-    http_request = http_request("GET", "http://localhost/", content=data)
+    http_request = HttpRequest("GET", "http://localhost/", content=data)
     http_retry = AsyncRetryPolicy(retry_total=1)
     pipeline = AsyncPipeline(MockTransport(), [http_retry])
     await pipeline.run(http_request)
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
-async def test_retry_seekable_file(http_request, http_response):
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_retry_seekable_file(http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._first = True
@@ -204,7 +201,7 @@ async def test_retry_seekable_file(http_request, http_response):
             "fileContent": f,
             "fileName": f.name,
         }
-        http_request = http_request("GET", "http://localhost/", headers=headers, files=form_data_content)
+        http_request = HttpRequest("GET", "http://localhost/", headers=headers, files=form_data_content)
         http_retry = AsyncRetryPolicy(retry_total=1)
         pipeline = AsyncPipeline(MockTransport(), [http_retry])
         await pipeline.run(http_request)
@@ -212,8 +209,7 @@ async def test_retry_seekable_file(http_request, http_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_retry_timeout(http_request):
+async def test_retry_timeout():
     timeout = 1
 
     def send(request, **kwargs):
@@ -229,12 +225,12 @@ async def test_retry_timeout(http_request):
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
-        await pipeline.run(http_request("GET", "http://localhost/"))
+        await pipeline.run(HttpRequest("GET", "http://localhost/"))
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
-async def test_timeout_defaults(http_request, http_response):
+@pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
+async def test_timeout_defaults(http_response):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     async def send(request, **kwargs):
@@ -250,7 +246,7 @@ async def test_timeout_defaults(http_request, http_response):
     )
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy()])
 
-    await pipeline.run(http_request("GET", "http://localhost/"))
+    await pipeline.run(HttpRequest("GET", "http://localhost/"))
     assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"
 
 
@@ -258,11 +254,8 @@ combinations = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceRespo
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "combinations,http_request",
-    product(combinations, HTTP_REQUESTS),
-)
-async def test_does_not_sleep_after_timeout(combinations, http_request):
+@pytest.mark.parametrize("combinations", combinations)
+async def test_does_not_sleep_after_timeout(combinations):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     transport_error, expected_timeout_error = combinations
@@ -276,6 +269,6 @@ async def test_does_not_sleep_after_timeout(combinations, http_request):
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
-        await pipeline.run(http_request("GET", "http://localhost/"))
+        await pipeline.run(HttpRequest("GET", "http://localhost/"))
 
     assert transport.sleep.call_count == 1

@@ -12,27 +12,25 @@ from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.rest._requests_basic import RestRequestsTransportResponse
 from corehttp.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
-from utils import readonly_checks
 
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
+from rest_client import MockRestClient
+from utils import readonly_checks, SYNC_TRANSPORTS
 
 
 @pytest.fixture
-def send_request(client):
-    def _send_request(request):
-        response = client.send_request(request, stream=False, logging_enable=True)
+def send_request(port):
+    def _send_request(request, transport):
+        client = MockRestClient(port, transport=transport)
+        response = client.send_request(request, stream=False)
         response.raise_for_status()
         return response
 
     return _send_request
 
 
-def test_response(send_request, port):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/string"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response(send_request, port, transport):
+    response = send_request(HttpRequest("GET", "/basic/string"), transport())
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "Hello, world!"
@@ -40,19 +38,17 @@ def test_response(send_request, port):
     assert response.request.url == "http://localhost:{}/basic/string".format(port)
 
 
-def test_response_content(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/bytes"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_content(send_request, transport):
+    response = send_request(HttpRequest("GET", "/basic/bytes"), transport())
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "Hello, world!"
 
 
-def test_response_text(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/string"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_text(send_request, transport):
+    response = send_request(HttpRequest("GET", "/basic/string"), transport())
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "Hello, world!"
@@ -61,19 +57,18 @@ def test_response_text(send_request):
     assert response.content_type == "text/plain; charset=utf-8"
 
 
-def test_response_html(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/html"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_html(send_request, transport):
+    response = send_request(HttpRequest("GET", "/basic/html"), transport())
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "<html><body>Hello, world!</html></body>"
 
 
-def test_raise_for_status(client):
-    response = client.send_request(
-        HttpRequest("GET", "/basic/string"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_raise_for_status(port, transport):
+    client = MockRestClient(port, transport=transport())
+    response = client.send_request(HttpRequest("GET", "/basic/string"))
     response.raise_for_status()
 
     response = client.send_request(
@@ -92,134 +87,135 @@ def test_raise_for_status(client):
         response.raise_for_status()
 
 
-def test_response_repr(send_request):
-    response = send_request(request=HttpRequest("GET", "/basic/string"))
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_repr(send_request, transport):
+    response = send_request(HttpRequest("GET", "/basic/string"), transport())
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
 
-def test_response_content_type_encoding(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_content_type_encoding(send_request, transport):
     """
     Use the charset encoding in the Content-Type header if possible.
     """
-    response = send_request(request=HttpRequest("GET", "/encoding/latin-1"))
+    response = send_request(HttpRequest("GET", "/encoding/latin-1"), transport())
     assert response.content_type == "text/plain; charset=latin-1"
     assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
-def test_response_autodetect_encoding(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_autodetect_encoding(send_request, transport):
     """
     Autodetect encoding if there is no Content-Type header.
     """
-    response = send_request(request=HttpRequest("GET", "/encoding/latin-1"))
+    response = send_request(HttpRequest("GET", "/encoding/latin-1"), transport())
 
     assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
-def test_response_fallback_to_autodetect(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_fallback_to_autodetect(send_request, transport):
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
-    response = send_request(request=HttpRequest("GET", "/encoding/invalid-codec-name"))
+    response = send_request(HttpRequest("GET", "/encoding/invalid-codec-name"), transport())
 
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
     assert response.text() == "おはようございます。"
     assert response.encoding is None
 
 
-def test_response_no_charset_with_ascii_content(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_no_charset_with_ascii_content(send_request, transport):
     """
     A response with ascii encoded content should decode correctly,
     even with no charset specified.
     """
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/no-charset"),
-    )
-
+    response = send_request(HttpRequest("GET", "/encoding/no-charset"), transport())
     assert response.headers["Content-Type"] == "text/plain"
     assert response.status_code == 200
     assert response.encoding is None
     assert response.text() == "Hello, world!"
 
 
-def test_response_no_charset_with_iso_8859_1_content(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_response_no_charset_with_iso_8859_1_content(send_request, transport):
     """
     We don't support iso-8859-1 by default following conversations
     about encoding flow
     """
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/iso-8859-1"),
-    )
+    response = send_request(HttpRequest("GET", "/encoding/iso-8859-1"), transport())
     assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
 
-def test_json(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/json"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_json(send_request, transport):
+    response = send_request(HttpRequest("GET", "/basic/json"), transport())
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding is None
 
 
-def test_json_with_specified_encoding(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/json"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_json_with_specified_encoding(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/json"), transport())
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding == "utf-16"
 
 
-def test_emoji(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/emoji"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_emoji(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/emoji"), transport())
     assert response.text() == "👩"
 
 
-def test_emoji_family_with_skin_tone_modifier(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/emoji-family-skin-tone-modifier"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_emoji_family_with_skin_tone_modifier(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/emoji-family-skin-tone-modifier"), transport())
     assert response.text() == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 
-def test_korean_nfc(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/korean"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_korean_nfc(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/korean"), transport())
     assert response.text() == "아가"
 
 
-def test_urlencoded_content(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_urlencoded_content(send_request, transport):
     send_request(
-        request=HttpRequest(
+        HttpRequest(
             "POST", "/urlencoded/pet/add/1", data={"pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42}
         ),
+        transport(),
     )
 
 
-def test_multipart_files_content(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_files_content(send_request, transport):
     request = HttpRequest(
         "POST",
         "/multipart/basic",
         files={"fileContent": io.BytesIO(b"<file content>")},
     )
-    send_request(request)
+    send_request(request, transport())
 
 
-def test_multipart_data_and_files_content(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_data_and_files_content(send_request, transport):
     request = HttpRequest(
         "POST",
         "/multipart/data-and-files",
         data={"message": "Hello, world!"},
         files={"fileContent": io.BytesIO(b"<file content>")},
     )
-    send_request(request)
+    send_request(request, transport())
 
 
-def test_multipart_encode_non_seekable_filelike(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_encode_non_seekable_filelike(send_request, transport):
     """
     Test that special readable but non-seekable filelike objects are supported,
     at the cost of reading them into memory at most once.
@@ -243,15 +239,16 @@ def test_multipart_encode_non_seekable_filelike(send_request):
         "/multipart/non-seekable-filelike",
         files=files,
     )
-    send_request(request)
+    send_request(request, transport())
 
 
-def test_get_xml_basic(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_get_xml_basic(send_request, transport):
     request = HttpRequest(
         "GET",
         "/xml/basic",
     )
-    response = send_request(request)
+    response = send_request(request, transport())
     parsed_xml = ET.fromstring(response.text())
     assert parsed_xml.tag == "slideshow"
     attributes = parsed_xml.attrib
@@ -260,7 +257,8 @@ def test_get_xml_basic(send_request):
     assert attributes["author"] == "Yours Truly"
 
 
-def test_put_xml_basic(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_put_xml_basic(send_request, transport):
 
     basic_body = """<?xml version='1.0' encoding='UTF-8'?>
 <slideshow
@@ -283,13 +281,12 @@ def test_put_xml_basic(send_request):
         "/xml/basic",
         content=ET.fromstring(basic_body),
     )
-    send_request(request)
+    send_request(request, transport())
 
 
-def test_text_and_encoding(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/emoji"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_text_and_encoding(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/emoji"), transport())
     assert response.content == "👩".encode("utf-8")
     assert response.text() == "👩"
 
@@ -302,10 +299,9 @@ def test_text_and_encoding(send_request):
     assert response.encoding == "utf-16"
 
 
-def test_passing_encoding_to_text(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/emoji"),
-    )
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_passing_encoding_to_text(send_request, transport):
+    response = send_request(HttpRequest("GET", "/encoding/emoji"), transport())
     assert response.content == "👩".encode("utf-8")
     assert response.text() == "👩"
 
@@ -322,10 +318,8 @@ def test_initialize_response_abc():
     assert "Can't instantiate abstract class" in str(ex)
 
 
-def test_readonly(send_request):
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_readonly(send_request, transport):
     """Make sure everything that is readonly is readonly"""
-    response = send_request(HttpRequest("GET", "/health"))
-
-    assert isinstance(response, RestRequestsTransportResponse)
-
+    response = send_request(HttpRequest("GET", "/health"), transport())
     readonly_checks(response)

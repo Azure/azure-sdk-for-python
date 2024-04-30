@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-05-01/examples/BatchAccountCreate_SystemAssignedIdentity.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-02-01/examples/BatchAccountCreate_SystemAssignedIdentity.json
 if __name__ == "__main__":
     main()

@@ -9,22 +9,18 @@
 from ._models import AcceptJobOfferResult
 from ._models import BestWorkerMode
 from ._models import CancelExceptionAction
-from ._models import CancelJobRequest
-from ._models import ChannelConfiguration
+from ._models import CancelJobOptions
 from ._models import ClassificationPolicy
-from ._models import ClassificationPolicyItem
-from ._models import CloseJobRequest
-from ._models import CompleteJobRequest
+from ._models import CloseJobOptions
+from ._models import CompleteJobOptions
 from ._models import ConditionalQueueSelectorAttachment
 from ._models import ConditionalWorkerSelectorAttachment
-from ._models import DeclineJobOfferRequest
+from ._models import DeclineJobOfferOptions
 from ._models import DirectMapRouterRule
 from ._models import DistributionMode
 from ._models import DistributionPolicy
-from ._models import DistributionPolicyItem
 from ._models import ExceptionAction
 from ._models import ExceptionPolicy
-from ._models import ExceptionPolicyItem
 from ._models import ExceptionRule
 from ._models import ExceptionTrigger
 from ._models import ExpressionRouterRule
@@ -33,7 +29,7 @@ from ._models import FunctionRouterRuleCredential
 from ._models import JobMatchingMode
 from ._models import LongestIdleMode
 from ._models import ManualReclassifyExceptionAction
-from ._models import Oauth2ClientCredential
+from ._models import OAuth2WebhookClientCredential
 from ._models import PassThroughQueueSelectorAttachment
 from ._models import PassThroughWorkerSelectorAttachment
 from ._models import QueueAndMatchMode
@@ -41,22 +37,19 @@ from ._models import QueueLengthExceptionTrigger
 from ._models import QueueSelectorAttachment
 from ._models import QueueWeightedAllocation
 from ._models import ReclassifyExceptionAction
-from ._models import ReclassifyJobRequest
 from ._models import RoundRobinMode
+from ._models import RouterChannel
 from ._models import RouterJob
 from ._models import RouterJobAssignment
-from ._models import RouterJobItem
+from ._models import RouterJobNote
 from ._models import RouterJobOffer
 from ._models import RouterJobPositionDetails
 from ._models import RouterQueue
-from ._models import RouterQueueAssignment
-from ._models import RouterQueueItem
 from ._models import RouterQueueSelector
 from ._models import RouterQueueStatistics
 from ._models import RouterRule
 from ._models import RouterWorker
 from ._models import RouterWorkerAssignment
-from ._models import RouterWorkerItem
 from ._models import RouterWorkerSelector
 from ._models import RuleEngineQueueSelectorAttachment
 from ._models import RuleEngineWorkerSelectorAttachment
@@ -66,7 +59,7 @@ from ._models import StaticQueueSelectorAttachment
 from ._models import StaticRouterRule
 from ._models import StaticWorkerSelectorAttachment
 from ._models import SuspendMode
-from ._models import UnassignJobRequest
+from ._models import UnassignJobOptions
 from ._models import UnassignJobResult
 from ._models import WaitTimeExceptionTrigger
 from ._models import WebhookRouterRule
@@ -75,14 +68,21 @@ from ._models import WeightedAllocationWorkerSelectorAttachment
 from ._models import WorkerSelectorAttachment
 from ._models import WorkerWeightedAllocation
 
+from ._enums import DistributionModeKind
+from ._enums import ExceptionActionKind
+from ._enums import ExceptionTriggerKind
 from ._enums import ExpressionRouterRuleLanguage
+from ._enums import JobMatchingModeKind
 from ._enums import LabelOperator
+from ._enums import QueueSelectorAttachmentKind
 from ._enums import RouterJobStatus
 from ._enums import RouterJobStatusSelector
+from ._enums import RouterRuleKind
 from ._enums import RouterWorkerSelectorStatus
 from ._enums import RouterWorkerState
 from ._enums import RouterWorkerStateSelector
 from ._enums import ScoringRuleParameterSelector
+from ._enums import WorkerSelectorAttachmentKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -91,22 +91,18 @@ __all__ = [
     "AcceptJobOfferResult",
     "BestWorkerMode",
     "CancelExceptionAction",
-    "CancelJobRequest",
-    "ChannelConfiguration",
+    "CancelJobOptions",
     "ClassificationPolicy",
-    "ClassificationPolicyItem",
-    "CloseJobRequest",
-    "CompleteJobRequest",
+    "CloseJobOptions",
+    "CompleteJobOptions",
     "ConditionalQueueSelectorAttachment",
     "ConditionalWorkerSelectorAttachment",
-    "DeclineJobOfferRequest",
+    "DeclineJobOfferOptions",
     "DirectMapRouterRule",
     "DistributionMode",
     "DistributionPolicy",
-    "DistributionPolicyItem",
     "ExceptionAction",
     "ExceptionPolicy",
-    "ExceptionPolicyItem",
     "ExceptionRule",
     "ExceptionTrigger",
     "ExpressionRouterRule",
@@ -115,7 +111,7 @@ __all__ = [
     "JobMatchingMode",
     "LongestIdleMode",
     "ManualReclassifyExceptionAction",
-    "Oauth2ClientCredential",
+    "OAuth2WebhookClientCredential",
     "PassThroughQueueSelectorAttachment",
     "PassThroughWorkerSelectorAttachment",
     "QueueAndMatchMode",
@@ -123,22 +119,19 @@ __all__ = [
     "QueueSelectorAttachment",
     "QueueWeightedAllocation",
     "ReclassifyExceptionAction",
-    "ReclassifyJobRequest",
     "RoundRobinMode",
+    "RouterChannel",
     "RouterJob",
     "RouterJobAssignment",
-    "RouterJobItem",
+    "RouterJobNote",
     "RouterJobOffer",
     "RouterJobPositionDetails",
     "RouterQueue",
-    "RouterQueueAssignment",
-    "RouterQueueItem",
     "RouterQueueSelector",
     "RouterQueueStatistics",
     "RouterRule",
     "RouterWorker",
     "RouterWorkerAssignment",
-    "RouterWorkerItem",
     "RouterWorkerSelector",
     "RuleEngineQueueSelectorAttachment",
     "RuleEngineWorkerSelectorAttachment",
@@ -148,7 +141,7 @@ __all__ = [
     "StaticRouterRule",
     "StaticWorkerSelectorAttachment",
     "SuspendMode",
-    "UnassignJobRequest",
+    "UnassignJobOptions",
     "UnassignJobResult",
     "WaitTimeExceptionTrigger",
     "WebhookRouterRule",
@@ -156,14 +149,21 @@ __all__ = [
     "WeightedAllocationWorkerSelectorAttachment",
     "WorkerSelectorAttachment",
     "WorkerWeightedAllocation",
+    "DistributionModeKind",
+    "ExceptionActionKind",
+    "ExceptionTriggerKind",
     "ExpressionRouterRuleLanguage",
+    "JobMatchingModeKind",
     "LabelOperator",
+    "QueueSelectorAttachmentKind",
     "RouterJobStatus",
     "RouterJobStatusSelector",
+    "RouterRuleKind",
     "RouterWorkerSelectorStatus",
     "RouterWorkerState",
     "RouterWorkerStateSelector",
     "ScoringRuleParameterSelector",
+    "WorkerSelectorAttachmentKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
