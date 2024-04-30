@@ -461,10 +461,15 @@ class Services(object):
         Access for the `~azure.storage.fileshare.ShareServiceClient`. Default is False.
     """
 
-    def __init__(self, **kwargs):
-        self.blob = kwargs.get('blob', False)
-        self.queue = kwargs.get('queue', False)
-        self.fileshare = kwargs.get('fileshare', False)
+    def __init__(
+        self, *,
+        blob: bool = False,
+        queue: bool = False,
+        fileshare: bool = False
+    ) -> None:
+        self.blob = blob
+        self.queue = queue
+        self.fileshare = fileshare
         self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
                 ('f' if self.fileshare else ''))

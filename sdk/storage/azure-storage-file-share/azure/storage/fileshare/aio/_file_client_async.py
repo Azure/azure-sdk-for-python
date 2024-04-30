@@ -1285,7 +1285,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        allow_renames: Optional[bool] = None,
+        include_renames: Optional[bool] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
@@ -1301,7 +1301,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
-        :keyword Optional[bool] allow_renames:
+        :keyword Optional[bool] include_renames:
             Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
             a file that has been renamed or moved between the target snapshot (or live file) and the previous
             snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
@@ -1325,7 +1325,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
-            support_rename=allow_renames,
+            support_rename=include_renames,
             **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)

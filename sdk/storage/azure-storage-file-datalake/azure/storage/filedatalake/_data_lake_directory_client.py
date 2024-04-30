@@ -292,8 +292,9 @@ class DataLakeDirectoryClient(PathClient):
         :keyword bool upn:
             Optional. Valid only when Hierarchical Namespace is
             enabled for the account. If "True", the user identity values returned
-            in the :attr:`~DirectoryProperties.owner`, :attr:`~DirectoryProperties.group`,
-            and :attr:`~DirectoryProperties.permission` response headers will be
+            in the :attr:`~azure.storage.filedatalake.DirectoryProperties.owner`,
+            `~azure.storage.filedatalake.DirectoryProperties.group`,
+            and ~azure.storage.filedatalake.DirectoryProperties.permission response headers will be
             transformed from Azure Active Directory Object IDs to User Principal
             Names. If "False", the values will be returned as Azure Active
             Directory Object IDs. The default value is false. Note that group and
