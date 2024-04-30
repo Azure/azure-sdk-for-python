@@ -363,9 +363,8 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :keyword bool enable_snapshot_virtual_directory_access:
-            Supported in service version 2023-08-03 and greater. Specifies whether the snapshot
-            virtual directory should be accessible at the root of the share mount point when NFS
-            is enabled. Default value is True.
+            Specifies whether the snapshot virtual directory should be accessible at the root of the share
+            mount point when NFS is enabled. Default value is True.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
 

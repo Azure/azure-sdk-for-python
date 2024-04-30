@@ -342,9 +342,8 @@ class ShareProperties(DictMixin):
     :ivar list(str) protocols:
         Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
     :ivar bool enable_snapshot_virtual_directory_access:
-        Supported in service version 2023-08-03 and greater. Specifies whether the snapshot
-        virtual directory should be accessible at the root of the share mount point when NFS
-        is enabled. if not specified, the default is True.
+        Specifies whether the snapshot virtual directory should be accessible at the root of the share
+        mount point when NFS is enabled. if not specified, the default is True.
     """
 
     def __init__(self, **kwargs):
