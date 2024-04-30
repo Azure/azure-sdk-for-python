@@ -31,13 +31,13 @@ from azure.identity import DefaultAzureCredential
 from datetime import timedelta
 
 """
-FILE: devbox_action_sample.py
+FILE: dev_box_action_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to get, delay and skip a dev box action using python DevCenterClient. 
     For this sample, you must have a running dev box created from a pool with auto-stop enabled. More details  
     on how to configure auto-stop at https://learn.microsoft.com/azure/dev-box/how-to-configure-stop-schedule
-    and sample on how to create a dev box at create_devbox_sample.py in this folder
+    and sample on how to create a dev box at dev_box_create_sample.py in this folder
 
 USAGE:
     python dev_box_action_sample.py
@@ -47,7 +47,7 @@ USAGE:
 """
 
 
-def main():
+def dev_box_action():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
@@ -91,4 +91,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    dev_box_action()

@@ -25,7 +25,7 @@
 #
 # --------------------------------------------------------------------------
 """
-FILE: create_devbox_sample.py
+FILE: dev_box_create_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to create, connect and delete a dev box using python DevCenterClient. For this sample,
@@ -34,31 +34,11 @@ DESCRIPTION:
 
 
 USAGE:
-    python create_devbox_sample.py
+    python dev_box_create_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
-
-
-def create_dev_center_client():
-    # [START create_dev_center_client]
-    import os
-
-    from azure.developer.devcenter import DevCenterClient
-    from azure.identity import DefaultAzureCredential
-
-    # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
-    # DEVCENTER_ENDPOINT, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
-    try:
-        endpoint = os.environ["DEVCENTER_ENDPOINT"]
-    except KeyError:
-        raise ValueError("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
-
-    # Build a client through AAD
-    client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
-    # [END create_dev_center_client]
-
 
 def dev_box_create_connect_delete():
     # [START dev_box_create_connect_delete]
@@ -122,7 +102,5 @@ def dev_box_create_connect_delete():
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
 
-
 if __name__ == "__main__":
-    create_dev_center_client()
     dev_box_create_connect_delete()
