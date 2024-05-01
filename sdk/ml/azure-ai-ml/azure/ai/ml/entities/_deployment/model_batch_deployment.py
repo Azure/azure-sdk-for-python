@@ -77,7 +77,7 @@ class ModelBatchDeployment(BatchDeployment):
             code_configuration=code_configuration,
             compute=compute,
             resources=resources,
-            settings=settings
+            settings=settings,
             **kwargs,
         )
 
