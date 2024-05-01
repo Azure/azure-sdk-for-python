@@ -497,7 +497,6 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
             audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            dsc.list_file_systems()
-            await dsc.create_file_system(file_system_name + '1')
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        dsc.list_file_systems()
+        await dsc.create_file_system(file_system_name + '1')
