@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +78,6 @@ class ServerAzureADAdministratorsOperations:
         :param administrator_name: The name of server active directory administrator. "ActiveDirectory"
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerAzureADAdministrator or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerAzureADAdministrator
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -97,22 +96,21 @@ class ServerAzureADAdministratorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.ServerAzureADAdministrator] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             administrator_name=administrator_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -124,20 +122,16 @@ class ServerAzureADAdministratorsOperations:
         deserialized = self._deserialize("ServerAzureADAdministrator", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ServerAzureADAdministrator, IO],
+        parameters: Union[_models.ServerAzureADAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ServerAzureADAdministrator]:
         error_map = {
@@ -163,7 +157,7 @@ class ServerAzureADAdministratorsOperations:
         else:
             _json = self._serialize.body(parameters, "ServerAzureADAdministrator")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             administrator_name=administrator_name,
@@ -172,16 +166,15 @@ class ServerAzureADAdministratorsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -198,13 +191,9 @@ class ServerAzureADAdministratorsOperations:
             deserialized = self._deserialize("ServerAzureADAdministrator", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_or_update(
@@ -232,14 +221,6 @@ class ServerAzureADAdministratorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerAzureADAdministrator or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
@@ -252,7 +233,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -268,18 +249,10 @@ class ServerAzureADAdministratorsOperations:
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested Azure Active Directory administrator Resource state. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerAzureADAdministrator or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
@@ -292,7 +265,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ServerAzureADAdministrator, IO],
+        parameters: Union[_models.ServerAzureADAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAzureADAdministrator]:
         """Creates or updates an existing Azure Active Directory administrator.
@@ -306,19 +279,8 @@ class ServerAzureADAdministratorsOperations:
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested Azure Active Directory administrator Resource state. Is either
-         a ServerAzureADAdministrator type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a ServerAzureADAdministrator type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ServerAzureADAdministrator or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
@@ -351,7 +313,7 @@ class ServerAzureADAdministratorsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ServerAzureADAdministrator", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -361,17 +323,15 @@ class ServerAzureADAdministratorsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ServerAzureADAdministrator].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}"
-    }
+        return AsyncLROPoller[_models.ServerAzureADAdministrator](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -394,22 +354,21 @@ class ServerAzureADAdministratorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             administrator_name=administrator_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -419,11 +378,7 @@ class ServerAzureADAdministratorsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -443,14 +398,6 @@ class ServerAzureADAdministratorsOperations:
         :param administrator_name: The name of server active directory administrator. "ActiveDirectory"
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -478,7 +425,7 @@ class ServerAzureADAdministratorsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -487,17 +434,13 @@ class ServerAzureADAdministratorsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_server(
@@ -510,7 +453,6 @@ class ServerAzureADAdministratorsOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServerAzureADAdministrator or the result of
          cls(response)
         :rtype:
@@ -534,24 +476,23 @@ class ServerAzureADAdministratorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_server_request(
+                _request = build_list_by_server_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_server.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AdministratorListResult", pipeline_response)
@@ -561,11 +502,11 @@ class ServerAzureADAdministratorsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -576,7 +517,3 @@ class ServerAzureADAdministratorsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators"
-    }

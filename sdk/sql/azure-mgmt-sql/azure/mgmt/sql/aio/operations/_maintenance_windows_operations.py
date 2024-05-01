@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -71,7 +71,6 @@ class MaintenanceWindowsOperations:
         :type database_name: str
         :param maintenance_window_name: Maintenance window name. Required.
         :type maintenance_window_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceWindows or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.MaintenanceWindows
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -90,23 +89,22 @@ class MaintenanceWindowsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.MaintenanceWindows] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             maintenance_window_name=maintenance_window_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -118,13 +116,9 @@ class MaintenanceWindowsOperations:
         deserialized = self._deserialize("MaintenanceWindows", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(  # pylint: disable=inconsistent-return-statements
@@ -154,7 +148,6 @@ class MaintenanceWindowsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -167,7 +160,7 @@ class MaintenanceWindowsOperations:
         server_name: str,
         database_name: str,
         maintenance_window_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -184,11 +177,10 @@ class MaintenanceWindowsOperations:
         :param maintenance_window_name: Maintenance window name. Required.
         :type maintenance_window_name: str
         :param parameters: Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -201,7 +193,7 @@ class MaintenanceWindowsOperations:
         server_name: str,
         database_name: str,
         maintenance_window_name: str,
-        parameters: Union[_models.MaintenanceWindows, IO],
+        parameters: Union[_models.MaintenanceWindows, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Sets maintenance windows settings for a database.
@@ -215,12 +207,8 @@ class MaintenanceWindowsOperations:
         :type database_name: str
         :param maintenance_window_name: Maintenance window name. Required.
         :type maintenance_window_name: str
-        :param parameters: Is either a MaintenanceWindows type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.MaintenanceWindows or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Is either a MaintenanceWindows type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.MaintenanceWindows or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -248,7 +236,7 @@ class MaintenanceWindowsOperations:
         else:
             _json = self._serialize.body(parameters, "MaintenanceWindows")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -258,16 +246,15 @@ class MaintenanceWindowsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -277,8 +264,4 @@ class MaintenanceWindowsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -62,7 +62,6 @@ class SqlAgentOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlAgentConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.SqlAgentConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -81,21 +80,20 @@ class SqlAgentOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.SqlAgentConfiguration] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -107,13 +105,9 @@ class SqlAgentOperations:
         deserialized = self._deserialize("SqlAgentConfiguration", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/sqlAgent/current"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -137,7 +131,6 @@ class SqlAgentOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlAgentConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.SqlAgentConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -148,7 +141,7 @@ class SqlAgentOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -161,11 +154,10 @@ class SqlAgentOperations:
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlAgentConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.SqlAgentConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -176,7 +168,7 @@ class SqlAgentOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.SqlAgentConfiguration, IO],
+        parameters: Union[_models.SqlAgentConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.SqlAgentConfiguration:
         """Puts new sql agent configuration to instance.
@@ -186,12 +178,8 @@ class SqlAgentOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: Is either a SqlAgentConfiguration type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.SqlAgentConfiguration or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Is either a SqlAgentConfiguration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SqlAgentConfiguration or IO[bytes]
         :return: SqlAgentConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.SqlAgentConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -219,7 +207,7 @@ class SqlAgentOperations:
         else:
             _json = self._serialize.body(parameters, "SqlAgentConfiguration")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             subscription_id=self._config.subscription_id,
@@ -227,16 +215,15 @@ class SqlAgentOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -248,10 +235,6 @@ class SqlAgentOperations:
         deserialized = self._deserialize("SqlAgentConfiguration", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/sqlAgent/current"
-    }
+        return deserialized  # type: ignore

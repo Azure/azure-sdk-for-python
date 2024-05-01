@@ -262,6 +262,7 @@ from ._models_py3 import OutboundFirewallRuleListResult
 from ._models_py3 import PartnerInfo
 from ._models_py3 import PartnerRegionInfo
 from ._models_py3 import PerformanceLevelCapability
+from ._models_py3 import PhaseDetails
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateEndpointConnectionProperties
@@ -521,6 +522,7 @@ from ._sql_management_client_enums import OperationMode
 from ._sql_management_client_enums import OperationOrigin
 from ._sql_management_client_enums import PauseDelayTimeUnit
 from ._sql_management_client_enums import PerformanceLevelUnit
+from ._sql_management_client_enums import Phase
 from ._sql_management_client_enums import PrimaryAggregationType
 from ._sql_management_client_enums import PrincipalType
 from ._sql_management_client_enums import PrivateEndpointProvisioningState
@@ -854,6 +856,7 @@ __all__ = [
     "PartnerInfo",
     "PartnerRegionInfo",
     "PerformanceLevelCapability",
+    "PhaseDetails",
     "PrivateEndpointConnection",
     "PrivateEndpointConnectionListResult",
     "PrivateEndpointConnectionProperties",
@@ -1112,6 +1115,7 @@ __all__ = [
     "OperationOrigin",
     "PauseDelayTimeUnit",
     "PerformanceLevelUnit",
+    "Phase",
     "PrimaryAggregationType",
     "PrincipalType",
     "PrivateEndpointProvisioningState",
