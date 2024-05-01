@@ -182,8 +182,11 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             try:
                 return getattr(self._settings, name)
             except AttributeError:
-                pass
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+                try:
+                    return super().__getattribute__(name)
+                except AttributeError:
+                    return None
+        return super().__getattribute__(name)
 
     def __setattr__(self, name, value):
         # Support backwards compatibility with old BatchDeployment properties.
