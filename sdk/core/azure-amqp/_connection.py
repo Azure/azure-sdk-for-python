@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 import socket
 from ssl import SSLError
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
+import threading
 
 from ._transport import Transport
 from .sasl import SASLTransport, SASLWithWebSocket
@@ -192,6 +193,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
+        self._connection_lock = threading.Lock()
 
     def __enter__(self) -> "Connection":
         self.open()
@@ -831,24 +833,25 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :return: A new Session.
         :rtype: ~pyamqp._session.Session
         """
-        assigned_channel = self._get_next_outgoing_channel()
-        kwargs['offered_capabilities'] = offered_capabilities
-        session = Session(
-            self,
-            assigned_channel,
-            name=name,
-            handle_max=handle_max,
-            properties=properties,
-            next_outgoing_id=next_outgoing_id,
-            incoming_window=incoming_window,
-            outgoing_window=outgoing_window,
-            desired_capabilities=desired_capabilities,
-            allow_pipelined_open=allow_pipelined_open or self._allow_pipelined_open,
-            idle_wait_time=idle_wait_time or self._idle_wait_time,
-            network_trace= network_trace or self._network_trace,
-            network_trace_params=dict(self._network_trace_params),
-            **kwargs,
-        )
+        with self._connection_lock:
+            assigned_channel = self._get_next_outgoing_channel()
+            kwargs['offered_capabilities'] = offered_capabilities
+            session = Session(
+                self,
+                assigned_channel,
+                name=name,
+                handle_max=handle_max,
+                properties=properties,
+                next_outgoing_id=next_outgoing_id,
+                incoming_window=incoming_window,
+                outgoing_window=outgoing_window,
+                desired_capabilities=desired_capabilities,
+                allow_pipelined_open=allow_pipelined_open or self._allow_pipelined_open,
+                idle_wait_time=idle_wait_time or self._idle_wait_time,
+                network_trace= network_trace or self._network_trace,
+                network_trace_params=dict(self._network_trace_params),
+                **kwargs,
+            )
         self._outgoing_endpoints[assigned_channel] = session
         return session
 
