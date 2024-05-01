@@ -57,7 +57,7 @@ steps:
       python -m pip freeze --all
       echo "##vso[task.setvariable variable=PATH;]$PATH"
     displayName: 'Prep Environment Linux'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'MacOS')))
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
   - script: |
       python -m venv $(Build.SourcesDirectory)/venv
@@ -69,7 +69,7 @@ steps:
       python -m pip freeze --all
       echo "##vso[task.setvariable variable=PATH;]$PATH"
     displayName: 'Prep Environment'
-    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - template: set-dev-build.yml@self
     parameters:
@@ -105,13 +105,13 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pushd $(Build.SourcesDirectory)/venv/Scripts/
+      pushd $(Build.SourcesDirectory)\venv\Scripts
       activate
       popd
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
-    condition: and(succeededOrFailed(), ne(variables['Agent.OS'], 'Linux'))
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
