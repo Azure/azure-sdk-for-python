@@ -545,8 +545,11 @@ class TableClient(TablesBaseClient):
             entity = args[0]
         mode = kwargs.pop("mode", None)
         if not mode:
-            mode = args[1]
-        encoder = kwargs.pop(encoder, DEFAULT_ENCODER)
+            try:
+                mode = args[1]
+            except IndexError:
+                mode = UpdateMode.MERGE
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
@@ -792,7 +795,10 @@ class TableClient(TablesBaseClient):
             entity = args[0]
         mode = kwargs.pop("mode", None)
         if not mode:
-            mode = args[1]
+            try:
+                mode = args[1]
+            except IndexError:
+                mode = UpdateMode.MERGE
         encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         entity_json = encoder.encode_entity(entity)
         partition_key = entity_json["PartitionKey"]
