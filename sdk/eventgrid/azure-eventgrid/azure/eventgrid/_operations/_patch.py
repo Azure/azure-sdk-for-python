@@ -78,6 +78,8 @@ EVENT_TYPES_STD = Union[
     List[CloudEvent],
     Dict[str, Any],
     List[Dict[str, Any]],
+    "CNCFCloudEvent",
+    List["CNCFCloudEvent"],
 ]
 
 
