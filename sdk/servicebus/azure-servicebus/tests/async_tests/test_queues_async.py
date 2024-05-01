@@ -305,7 +305,10 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     assert len(received_msgs) == 5
                     for msg in received_msgs:
                         assert msg.delivery_count == 0
-                        with pytest.raises(ServiceBusError):
+                        if uamqp_transport:
+                            with pytest.raises(ServiceBusError):
+                                await receiver.complete_message(msg)
+                        else:
                             await receiver.complete_message(msg)
 
                     # re-received message with delivery count increased

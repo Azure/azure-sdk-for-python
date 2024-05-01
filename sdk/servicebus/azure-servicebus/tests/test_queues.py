@@ -392,7 +392,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     for msg in received_msgs:
                         # queue ordering I think
                         assert msg.delivery_count == 0
-                        with pytest.raises(ServiceBusError):
+                        if uamqp_transport:
+                            with pytest.raises(ServiceBusError):
+                                receiver.complete_message(msg)
+                        else:
                             receiver.complete_message(msg)
 
                     # re-received message with delivery count increased
