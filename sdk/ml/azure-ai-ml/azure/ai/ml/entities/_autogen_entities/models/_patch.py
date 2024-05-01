@@ -115,6 +115,7 @@ AzureOpenAIDeployment.__doc__ += (
     _AzureOpenAIDeployment.__doc__.strip()  # type: ignore
     + """
     :ivar system_data: System data of the deployment.
+    :vartype system_data: ~azure.ai.ml.entities.SystemData
 """
 )
 
