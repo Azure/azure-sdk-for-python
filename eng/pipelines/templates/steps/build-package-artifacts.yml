@@ -65,7 +65,9 @@ steps:
       which python
       python -m pip install --force -r eng\ci_tools.txt
       python -m pip freeze --all
-      Write-Host "##vso[task.setvariable variable=PATH]$env:$PATH"
+
+      $path = $env:$PATH
+      Write-Host "##vso[task.setvariable variable=PATH]$path"
     displayName: 'Prep Environment Windows'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
