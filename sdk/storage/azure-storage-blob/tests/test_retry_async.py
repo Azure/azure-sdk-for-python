@@ -20,6 +20,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import LocationMode
 from azure.storage.blob._shared.policies_async import ExponentialRetry, LinearRetry
+from azure.storage.blob._shared.models import StorageErrorCode
 from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils import ResponseCallback, RetryCounter
@@ -547,29 +548,35 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             retry_policy=retry)
 
         def response_handler(raw_response):
-            match retry_counter.count:
-                case 0:
-                    raw_response.http_response.status_code = 408
-                    raw_response.http_response.headers['x-ms-copy-source-status-code'] = '408'
-                case 1:
-                    raw_response.http_response.status_code = 500
-                    raw_response.http_response.headers['x-ms-copy-source-status-code'] = '500'
-                case 2:
-                    raw_response.http_response.status_code = 503
-                    raw_response.http_response.headers['x-ms-copy-source-status-code'] = '503'
+            if retry_counter.count == 0:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '408'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = (
+                    StorageErrorCode.OPERATION_TIMED_OUT)
+            elif retry_counter.count == 1:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '500'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.INTERNAL_ERROR
+            elif retry_counter.count == 2:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '503'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.SERVER_BUSY
 
         def assert_exception_is_present_on_retry_context(**kwargs):
             assert kwargs.get('response') is not None
-            match retry_counter.count:
-                case 0:
-                    assert kwargs['response'].status_code == 408
-                    assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '408'
-                case 1:
-                    assert kwargs['response'].status_code == 500
-                    assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '500'
-                case 2:
-                    assert kwargs['response'].status_code == 503
-                    assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '503'
+            if retry_counter.count == 0:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '408'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == (
+                    StorageErrorCode.OPERATION_TIMED_OUT)
+            elif retry_counter.count == 1:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '500'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.INTERNAL_ERROR
+            elif retry_counter.count == 2:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '503'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.SERVER_BUSY
             retry_counter.simple_count(retry)
 
         # Act
