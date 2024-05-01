@@ -42,7 +42,7 @@ class Index(Artifact):
         *,
         name: str,
         version: str,
-        stage: str,
+        stage: str = "Development",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
