@@ -228,10 +228,10 @@ class IndexOperations(_ScopeDependentOperations):
     ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
         
-        :param name: The name of the index to be created.
-        :type name: str
-        :param embeddings_model_config: Model config for the embedding model.
-        :type embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
+        :keyword name: The name of the index to be created.
+        :paramtype name: str
+        :keyword embeddings_model_config: Model config for the embedding model.
+        :paramtype embeddings_model_config: ~azure.ai.ml.entities._indexes.ModelConfiguration
         :keyword data_source_citation_url: The URL of the data source.
         :paramtype data_source_citation_url: Optional[str]
         :keyword tokens_per_chunk: The size of chunks to be used for indexing.
