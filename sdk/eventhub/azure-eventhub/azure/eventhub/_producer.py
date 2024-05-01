@@ -145,7 +145,7 @@ class EventHubProducer(
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
-            link_properties=self._link_properties,
+            link_properties=self._link_properties, # type: ignore
             properties=create_properties(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
+from pydash import objects
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
@@ -19,6 +20,7 @@ from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._autogen_entities.models import MarketplaceSubscription, ServerlessEndpoint
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -163,6 +165,35 @@ def _load_common_raising_marshmallow_error(
     return res
 
 
+def add_param_overrides(data, param_overrides) -> None:
+    if param_overrides is not None:
+        for override in param_overrides:
+            for param, val in override.items():
+                # Check that none of the intermediary levels are string references (azureml/file)
+                param_tokens = param.split(".")
+                test_layer = data
+                for layer in param_tokens:
+                    if test_layer is None:
+                        continue
+                    if isinstance(test_layer, str):
+                        # pylint: disable=broad-exception-raised
+                        raise Exception(f"Cannot use '--set' on properties defined by reference strings: --set {param}")
+                    test_layer = test_layer.get(layer, None)
+                objects.set_(data, param, val)
+
+
+def load_from_autogen_entity(cls, source: Union[str, PathLike, IO[AnyStr]], **kwargs):
+    loaded_dict = _try_load_yaml_dict(source)
+    add_param_overrides(loaded_dict, param_overrides=kwargs.get("params_override", None))
+    entity = cls(loaded_dict)
+    try:
+        entity._validate()  # pylint: disable=protected-access
+    except ValueError as e:
+        validation_result = ValidationResultBuilder.from_single_message(singular_error_message=str(e))
+        validation_result.try_raise()
+    return entity
+
+
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -198,6 +229,26 @@ def load_job(
             :caption: Loading a Job from a YAML config file.
     """
     return cast(Job, load_common(Job, source, relative_origin, params_override, **kwargs))
+
+
+@experimental
+def load_serverless_endpoint(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,  # pylint: disable=unused-argument
+    **kwargs: Any,
+) -> ServerlessEndpoint:
+    return load_from_autogen_entity(ServerlessEndpoint, source, **kwargs)
+
+
+@experimental
+def load_marketplace_subscription(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,  # pylint: disable=unused-argument
+    **kwargs: Any,
+) -> MarketplaceSubscription:
+    return load_from_autogen_entity(MarketplaceSubscription, source, **kwargs)
 
 
 def load_workspace(
