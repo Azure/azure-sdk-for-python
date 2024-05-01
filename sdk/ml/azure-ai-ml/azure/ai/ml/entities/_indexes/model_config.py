@@ -48,10 +48,10 @@ class ModelConfiguration:
         
         :param connection: The Connection object.
         :type connection: ~azure.ai.ml.entities.Connection
-        :keyword model_name: The name of the model.
-        :paramtype model_name: Optional[str]
-        :keyword deployment_name: The name of the deployment.
-        :paramtype deployment_name: Optional[str]
+        :param model_name: The name of the model.
+        :type model_name: Optional[str]
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: Optional[str]
         :keyword model_kwargs: Additional keyword arguments for the model.
         :paramtype model_kwargs: Dict[str, Any]
         :return: The model configuration.
