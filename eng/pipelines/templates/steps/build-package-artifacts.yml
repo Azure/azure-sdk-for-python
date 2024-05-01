@@ -61,7 +61,9 @@ steps:
 
   - script: |
       python -m venv $(Build.SourcesDirectory)/venv
-      source $(Build.SourcesDirectory)/venv/bin/activate
+      pushd $(Build.SourcesDirectory)/venv/bin/
+      activate
+      popd
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
