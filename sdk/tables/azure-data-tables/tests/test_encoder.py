@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import sys
 import pytest
 import json
 import uuid
@@ -23,7 +22,7 @@ from azure.data.tables._serialize import _add_entity_properties
 
 from _shared.testcase import TableTestCase
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import tables_decorator
 
 DEFAULT_ENCODER = TableEntityEncoder()
@@ -65,10 +64,11 @@ class EncoderVerificationTransport(RequestsTransport):
     def send(self, request, **kwargs):
         if "verify_payload" in kwargs:
             verification = kwargs.pop("verify_payload")
-            sorted_request_body = json.dumps(json.loads(request.body), sort_keys=True)
-            assert (
-                sorted_request_body == verification
-            ), f"Request body:\n'{sorted_request_body}'\ndoes not match expected:\n'{verification}'."
+            if verification is not None:
+                sorted_request_body = json.dumps(json.loads(request.body), sort_keys=True)
+                assert (
+                    sorted_request_body == verification
+                ), f"Request body:\n'{sorted_request_body}'\ndoes not match expected:\n'{verification}'."
         if "verify_url" in kwargs:
             verification = kwargs.pop("verify_url")
             assert request.url.endswith(
@@ -1350,7 +1350,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -1362,7 +1362,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -2228,7 +2228,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
             )
@@ -2237,7 +2237,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "你好"), test_entity),
             )
@@ -2489,11 +2489,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable19")
         url = self.account_url(tables_storage_account_name, "table")
         # Test basic string, int32 and bool data
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
-        client.create_table()
-        try:
+        ) as client:
+            client.create_table()
             client.upsert_entity({"PartitionKey": "foo", "RowKey": "bar"})
             resp = client.delete_entity(
                 "foo",
@@ -2532,20 +2531,25 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert resp is None
 
-            with pytest.raises(TypeError):
+            with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", 1)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity({"PartitionKey": "foo", "RowKey": 1})
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", True)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity({"PartitionKey": "foo", "RowKey": True})
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", 3.14)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-        finally:
             client.delete_table()
 
     @tables_decorator
@@ -2558,22 +2562,28 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable20")
         url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
+        ) as client:
 
-        with pytest.raises(TypeError):
-            client.delete_entity("foo", self.get_datetime())
-        with pytest.raises(TypeError):
-            client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
-        with pytest.raises(TypeError):
-            client.delete_entity("foo", recorded_uuid)
-        with pytest.raises(TypeError):
-            client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
-        with pytest.raises(TypeError):
-            client.delete_entity("foo", b"binarydata")
-        with pytest.raises(TypeError):
-            client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+            with pytest.raises(TypeError) as error:
+                client.delete_entity("foo", self.get_datetime())
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity("foo", recorded_uuid)
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity("foo", b"binarydata")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
@@ -2581,14 +2591,16 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable21")
         url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
+        ) as client:
 
-        with pytest.raises(TypeError):
-            client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
-        with pytest.raises(TypeError):
-            client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
+            with pytest.raises(TypeError) as error:
+                client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
@@ -2599,18 +2611,17 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
         # Test enums in both keys and properties
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
-        client.create_table()
-        try:
+        ) as client:
+            client.create_table()
             # Non-UTF8 characters in both keys and properties
             client.upsert_entity({"PartitionKey": "PK", "RowKey": "你好"})
             resp = client.delete_entity(
                 "PK",
                 "你好",
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
@@ -2619,18 +2630,21 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             resp = client.delete_entity(
                 {"PartitionKey": "PK", "RowKey": "你好"},
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
 
-            with pytest.raises(TypeError):
+            with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", EnumBasicOptions.ONE)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", EnumIntOptions.ONE)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
 
             client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
@@ -2651,7 +2665,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
             )
             assert resp is None
-        finally:
             client.delete_table()
 
     @tables_decorator
@@ -2660,11 +2673,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable23")
         url = self.account_url(tables_storage_account_name, "table")
         # Test basic string, int32 and bool data
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
-        client.create_table()
-        try:
+        ) as client:
+            client.create_table()
             test_entity = {"PartitionKey": "foo", "RowKey": "bar"}
             client.upsert_entity(test_entity)
             resp = client.get_entity(
@@ -2687,14 +2699,16 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert resp == test_entity
 
-            with pytest.raises(TypeError):
+            with pytest.raises(TypeError) as error:
                 client.get_entity("foo", 1)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.get_entity("foo", True)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.get_entity("foo", 3.14)
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
-        finally:
             client.delete_table()
 
     @tables_decorator
@@ -2707,16 +2721,19 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable24")
         url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
+        ) as client:
 
-        with pytest.raises(TypeError):
-            client.get_entity("foo", self.get_datetime())
-        with pytest.raises(TypeError):
-            client.get_entity("foo", recorded_uuid)
-        with pytest.raises(TypeError):
-            client.get_entity("foo", b"binarydata")
+            with pytest.raises(TypeError) as error:
+                client.get_entity("foo", self.get_datetime())
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.get_entity("foo", recorded_uuid)
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.get_entity("foo", b"binarydata")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
@@ -2724,12 +2741,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable25")
         url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
+        ) as client:
 
-        with pytest.raises(TypeError):
-            client.get_entity("foo", EntityProperty("bar", "Edm.String"))
+            with pytest.raises(TypeError) as error:
+                client.get_entity("foo", EntityProperty("bar", "Edm.String"))
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
@@ -2738,11 +2756,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
         # Test enums in both keys and properties
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
-        client.create_table()
-        try:
+        ) as client:
+            client.create_table()
             # Non-UTF8 characters in both keys and properties
             test_entity = {"PartitionKey": "PK", "RowKey": "你好"}
             client.upsert_entity(test_entity)
@@ -2750,15 +2767,17 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "PK",
                 "你好",
                 verify_payload=None,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote("你好")}')",
                 verify_headers={"Accept": "application/json;odata=minimalmetadata"},
             )
             assert resp == test_entity
 
-            with pytest.raises(TypeError):
+            with pytest.raises(TypeError) as error:
                 client.get_entity("foo", EnumBasicOptions.ONE)
-            with pytest.raises(TypeError):
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
                 client.get_entity("foo", EnumIntOptions.ONE)
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "foo", "RowKey": "One"}
             client.upsert_entity(test_entity)
@@ -2770,5 +2789,4 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_headers={"Accept": "application/json;odata=minimalmetadata"},
             )
             assert resp == test_entity
-        finally:
             client.delete_table()
