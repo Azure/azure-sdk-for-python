@@ -109,6 +109,16 @@ class IndexOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Index
         """
 
+        if not index.name:
+            msg = "Must specify a name."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.INDEX,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
+
         if not index.version:
             if not index._auto_increment_version:
                 msg = "Must specify a version."
