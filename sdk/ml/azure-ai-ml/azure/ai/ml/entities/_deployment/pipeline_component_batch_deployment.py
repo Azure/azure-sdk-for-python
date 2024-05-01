@@ -71,7 +71,8 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         self.settings = settings
         self.job_definition = job_definition
 
-    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # type: ignore[override]
         if isinstance(self.component, PipelineComponent):
             id_asset_ref = IdAssetReference(asset_id=self.component.id)
 

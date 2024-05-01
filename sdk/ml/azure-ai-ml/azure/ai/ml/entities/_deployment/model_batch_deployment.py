@@ -61,7 +61,7 @@ class ModelBatchDeployment(BatchDeployment):
         scoring_script: Optional[
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         super().__init__(
             name=name,
@@ -90,7 +90,7 @@ class ModelBatchDeployment(BatchDeployment):
         self._settings = value
 
     # pylint: disable=arguments-differ
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore[override]
         self._validate()
         code_config = (
             RestCodeConfiguration(
