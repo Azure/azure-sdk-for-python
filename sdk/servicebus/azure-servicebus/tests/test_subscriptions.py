@@ -293,7 +293,7 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
                 messages = [ServiceBusMessage("Message") for _ in range(10)]
                 sender.send_messages(messages)
                 # wait for all messages to be sent to queue
-                time.sleep(10)
+                time.sleep(15)
 
                 # receive messages + add to internal buffer should have messages now
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=10)

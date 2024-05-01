@@ -1087,6 +1087,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         max_message_count: int,
         batch: int,
         abs_timeout,
+        timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         
@@ -1109,7 +1110,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     if sent_drain != receiver._handler._link._drain_state:
                         break
 
-                    if time.time() - time_sent > receiver._further_pull_receive_timeout:
+                    if time.time() - time_sent > max(timeout, receiver._further_pull_receive_timeout):
                         expired = True
                         break
                 before = amqp_receive_client._received_messages.qsize()

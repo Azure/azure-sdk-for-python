@@ -328,6 +328,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         max_message_count,
         batch,
         abs_timeout,
+        timeout,
         **kwargs
     ):
         """TODO"""
