@@ -738,7 +738,7 @@ class MLClient:
         :paramtype path: Optional[Union[os.PathLike, str]]
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
-        :paramtype file_name: Optional[str]
+        :paramtype file_name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
