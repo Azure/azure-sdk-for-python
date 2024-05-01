@@ -13,6 +13,7 @@ import enum
 from urllib.parse import quote
 from datetime import datetime, timezone
 from math import isnan
+from copy import copy
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
@@ -96,9 +97,22 @@ class EncoderVerificationTransport(RequestsTransport):
 
 def _check_backcompat(entity, new_encoding):
     old_encoding = _add_entity_properties(entity)
-    old_encoding = {k: v for k, v in old_encoding.items() if not("@odata.type" in k and v in ["Edm.String", "Edm.Int32", "Edm.Boolean"])}
-    new_encoding = {k: v for k, v in new_encoding.items() if v is not None}
-    assert old_encoding == new_encoding, f"Old:\n'{old_encoding}'\ndoes not match new:\n'{new_encoding}'."
+    adjusted_old_encoding = copy(old_encoding)
+    # Filter out odata type added for string value type in old result unless customer specified
+    for k in old_encoding.keys():
+        if "@odata.type" not in k:
+            odata_type = old_encoding.get(k+"@odata.type")
+            if odata_type is not None and odata_type == "Edm.String":
+                if entity.get(k+"@odata.type") is None and not isinstance(entity[k], tuple):
+                    adjusted_old_encoding.pop(k+"@odata.type")
+
+    adjusted_new_encoding = copy(new_encoding)
+    # Filter out kv pair which value is None, and filter out it's odata type if there has
+    none_item_keys = [k for k, v in adjusted_new_encoding.items() if v is None]
+    for k in none_item_keys:
+        adjusted_new_encoding.pop(k, None)
+        adjusted_new_encoding.pop(k+"@odata.type", None)
+    assert adjusted_old_encoding == adjusted_new_encoding, f"Old:\n'{adjusted_old_encoding}'\ndoes not match new:\n'{adjusted_new_encoding}'."
 
 
 class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
@@ -163,7 +177,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
-            expected_entity = {"PartitionKey": "PK", "RowKey": 3.14, "RowKey@odata.type": "Edm.Double"}
+            expected_entity = {
+                "PartitionKey": "PK",
+                "RowKey": 3.14,
+                "RowKey@odata.type": "Edm.Double",
+            }
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
@@ -323,9 +341,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "PartitionKey": "PK1",
                 "RowKey": "RK1",
                 "Data1": 12345,
-                "Data1@odata.type": "Edm.Int32", # diff: this is not in old encoded result
+                "Data1@odata.type": "Edm.Int32",
                 "Data2": False,
-                "Data2@odata.type": "Edm.Boolean", # diff: this is not in old encoded result
+                "Data2@odata.type": "Edm.Boolean",
                 "Data3": _encode_base64(b"testdata"),
                 "Data3@odata.type": "Edm.Binary",
                 "Data4": _to_utc_datetime(test_entity["Data4"][0]),
@@ -333,29 +351,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(test_entity["Data5"][0]),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.String", # diff: this is not in old encoded result
+                "Data6@odata.type": "Edm.String",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "1152921504606846976",
                 "Data8@odata.type": "Edm.Int64",
             }
-            # expected_backcompat_entity = {
-            #     "PartitionKey": "PK1",
-            #     "RowKey": "RK1",
-            #     "Data1": 12345,
-            #     "Data2": False,
-            #     "Data3": _encode_base64(b"testdata"),
-            #     "Data3@odata.type": "Edm.Binary",
-            #     "Data4": _to_utc_datetime(test_entity["Data4"][0]),
-            #     "Data4@odata.type": "Edm.DateTime",
-            #     "Data5": str(test_entity["Data5"][0]),
-            #     "Data5@odata.type": "Edm.Guid",
-            #     "Data6": "Foobar",
-            #     "Data7": 3.14,
-            #     "Data7@odata.type": "Edm.Double",
-            #     "Data8": "1152921504606846976",
-            #     "Data8@odata.type": "Edm.Int64"
-            # }
             response_entity = {
                 "PartitionKey": "PK1",
                 "RowKey": "RK1",
@@ -368,7 +369,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7": 3.14,
                 "Data8": EntityProperty(2**60, EdmType.INT64),
             }
-            # _check_backcompat(test_entity, expected_entity) # will fail
+            _check_backcompat(test_entity, expected_entity)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -594,7 +595,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             max_int64 = 9223372036854775808
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
             expected_entity = test_entity
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as the old encoder has int value range validation.
+            with pytest.raises(TypeError) as error:
+                _check_backcompat(test_entity, expected_entity)
+            assert "is too large to be cast to type Edm.Int32" in str(error.value)
             resp = client.create_entity(
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
@@ -628,7 +631,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as the old encoder has int value range validation.
+            with pytest.raises(TypeError) as error:
+                _check_backcompat(test_entity, expected_entity)
+            assert "is too large to be cast to type Edm.Int64" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -677,11 +682,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             #     "RowKey@odata.type": "Edm.String",
             #     123: 456,
             # }
-            # _check_backcompat(test_entity, expected_entity) # will fail, TypeError: argument of type 'int' is not iterable
+            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
+            with pytest.raises(TypeError) as error:
+                _check_backcompat(test_entity, expected_entity)
+            assert "argument of type 'int' is not iterable" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 client.create_entity(
                     test_entity,
-                    # verify_payload=expected_entity, # this will fail as the request body is: {"123": 456, "PartitionKey": "PK", "RowKey": "RK"}
+                    verify_payload=json.dumps(expected_payload_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 )
@@ -719,20 +727,22 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
-            test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
+            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": "RK",
+                "RowKey": 1,
                 "Data": 2,
             }
-            resp = client.create_entity(
-                test_entity,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            with pytest.raises(HttpResponseError) as error:
+                resp = client.create_entity(
+                    test_entity,
+                    verify_payload=json.dumps(expected_entity, sort_keys=True),
+                    verify_url=f"/{table_name}",
+                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
+                )
+            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
+            assert error.value.response.json()['odata.error']['code'] == "InvalidInput"
             client.delete_table()
 
     @tables_decorator
@@ -746,12 +756,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         ) as client:
             client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
-            expected_entity = {
-                "PartitionKey": "PK",
-                "RowKey": "RK",
-                "Data1": 1,
-                "Data2": True,
-            }
+            expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             resp = client.upsert_entity(
                 test_entity,
@@ -773,10 +778,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
-            expected_entity = {
-                "PartitionKey": "PK",
-                "RowKey": "RK'@*$!%",
-            }
+            expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             resp = client.upsert_entity(
                 test_entity,
@@ -798,54 +800,24 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK", "RowKey": 1}
-            expected_entity = {"PartitionKey": "PK", "RowKey": "1"}
-            expected_backcompat_entity = {"PartitionKey": "PK", "RowKey": 1}
-            response_entity = {"PartitionKey": "PK", "RowKey": 1}
-            _check_backcompat(test_entity, expected_backcompat_entity) # this will fail, as odata type were added for pk and rk
-            client.upsert_entity(test_entity, mode="merge")
-            resp = client.upsert_entity(
-                test_entity,
-                mode="merge",
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            client.upsert_entity(test_entity, mode="replace")
-            resp = client.upsert_entity(
-                test_entity,
-                mode="replace",
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
-                verify_response=(lambda: client.get_entity("PK", "1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            expected_entity = test_entity
+            _check_backcompat(test_entity, expected_entity)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode="merge")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode="replace")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
-            expected_entity = {"PartitionKey": "PK", "RowKey": "True"}
-            _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
-            client.upsert_entity(test_entity, mode="merge")
-            resp = client.upsert_entity(
-                test_entity,
-                mode="merge",
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='True')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
-                verify_response=(lambda: client.get_entity("PK", "True"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            client.upsert_entity(test_entity, mode="replace")
-            resp = client.upsert_entity(
-                test_entity,
-                mode="replace",
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='True')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
-                verify_response=(lambda: client.get_entity("PK", "True"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            expected_entity = test_entity
+            _check_backcompat(test_entity, expected_entity)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode="merge")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode="replace")
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -853,17 +825,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RowKey": 3.14,                          
                 "RowKey@odata.type": "Edm.Double",
             }
-            _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
-            client.upsert_entity(test_entity, mode="merge")
-            resp = client.upsert_entity(
-                test_entity,
-                mode="merge",
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='True')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
-                verify_response=(lambda: client.get_entity("PK", "True"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            _check_backcompat(test_entity, expected_entity)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode="merge")
             assert "PartitionKey or RowKey must be of type string." in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode="replace")
@@ -893,11 +857,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = str(test_entity["RowKey"])
             expected_entity = {
                 "PartitionKey": pk,
+                "PartitionKey@odata.type": "Edm.DateTime",
                 "RowKey": rk,
+                "RowKey@odata.type": "Edm.Guid",
                 "Data": True,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": True}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -928,11 +894,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             rk = test_entity["RowKey"]
             expected_entity = {
                 "PartitionKey": pk,
+                "PartitionKey@odata.type": "Edm.Binary",
                 "RowKey": rk,
                 "Data": 1,
             }
             response_entity = {"PartitionKey": pk, "RowKey": rk, "Data": 1}
-            # _check_backcompat(test_entity, expected_entity) # this will fail, as odata type were added for pk and rk
+            _check_backcompat(test_entity, expected_entity)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1002,7 +969,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data7@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1038,7 +1005,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
-        table_name = self.get_resource_name("uttable10")
+        table_name = self.get_resource_name("uttable10X")
         url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
         client = TableClient(
@@ -1064,7 +1031,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "PartitionKey": "PK1",
                 "RowKey": "RK1",
                 "Data1": 12345,
-                "Data1@odata.type": "Edm.INT32",
+                "Data1@odata.type": "Edm.Int32",
                 "Data2": False,
                 "Data2@odata.type": "Edm.Boolean",
                 "Data3": _encode_base64(b"testdata"),
@@ -1074,7 +1041,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data5": str(guid),
                 "Data5@odata.type": "Edm.Guid",
                 "Data6": "Foobar",
-                "Data6@odata.type": "Edm.STRING",
+                "Data6@odata.type": "Edm.String",
                 "Data7": 3.14,
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "1152921504606846976",
@@ -1093,7 +1060,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data8": (2**60, "Edm.Int64"),
             }
             _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1134,16 +1101,54 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             expected_entity = {
                 "PartitionKey": "PK2",
                 "RowKey": "RK2",
-                "Data1": 12345,
-                "Data1@odata.type": "Edm.INT32",
+                "Data1": "12345", # diff, was encoded to int
+                "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
                 "Data3": None,
-                "Data3@odata.type": "Edm.STRING",
+                "Data3@odata.type": "Edm.String",
                 "Data4": test_entity["Data4"][0],
                 "Data4@odata.type": "Edm.DateTime",
                 "Data5": test_entity["Data5"][0],
                 "Data5@odata.type": "Edm.Guid",
+                "Data6": None,
+                "Data6@odata.type": "Edm.BOOLEAN",
+                "Data7": "3.14",
+                "Data7@odata.type": "Edm.Double",
+                "Data8": "9223372036854775807",
+                "Data8@odata.type": "Edm.Int64",
+            }
+            # expected_backcompat_entity = {
+            #     "PartitionKey": "PK2",
+            #     "RowKey": "RK2",
+            #     "Data1": 12345,
+            #     "Data1@odata.type": "Edm.Int32",
+            #     "Data2": "False",
+            #     "Data2@odata.type": "Edm.Boolean",
+            #     "Data4": test_entity["Data4"][0],
+            #     "Data4@odata.type": "Edm.DateTime",
+            #     "Data5": test_entity["Data5"][0],
+            #     "Data5@odata.type": "Edm.Guid",
+            #     "Data7": "3.14",
+            #     "Data7@odata.type": "Edm.Double",
+            #     "Data8": "9223372036854775807",
+            #     "Data8@odata.type": "Edm.Int64",
+            # }
+            expected_request_body_entity = {
+                "PartitionKey": "PK2",
+                "RowKey": "RK2",
+                "Data1": "12345", # diff, was encoded to int
+                "Data1@odata.type": "Edm.Int32",
+                "Data2": "False",
+                "Data2@odata.type": "Edm.Boolean",
+                "Data3": None,
+                "Data3@odata.type": "Edm.String",
+                "Data4": test_entity["Data4"][0],
+                "Data4@odata.type": "Edm.DateTime",
+                "Data5": test_entity["Data5"][0],
+                "Data5@odata.type": "Edm.Guid",
+                "Data6": None,
+                "Data6@odata.type": "Edm.Boolean",
                 "Data7": "3.14",
                 "Data7@odata.type": "Edm.Double",
                 "Data8": "9223372036854775807",
@@ -1157,10 +1162,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data4": dt,
                 "Data5": guid,
                 "Data7": 3.14,
-                "Data8": (9223372036854775807, "Edm.Int64"),
+                "Data8": EntityProperty(value=9223372036854775807, edm_type="Edm.Int64"),
             }
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            # _check_backcompat(test_entity, expected_entity) # will fail
+            verification = json.dumps(expected_request_body_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1210,7 +1215,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RowKey": "RK",
                 "RowKey@odata.type": "Edm.String",
                 "Data1": "12345",
-                "Data1@odata.type": "Edm.Int32",  # EdmType.INT32,  TODO: Should we fix enums?
+                "Data1@odata.type": "Edm.Int32",
                 "Data2": "False",
                 "Data2@odata.type": "Edm.Boolean",
                 "Data3": _encode_base64(b"testdata"),
@@ -1260,6 +1265,47 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data11": str(guid),
                 "Data11@odata.type": "Edm.Guid",
             }
+            # expected_backcompat_entity = {
+            #     "PartitionKey": "PK",
+            #     "PartitionKey@odata.type": "Edm.String",
+            #     "PartitionKey@odata.type@odata.type": "Edm.String", # this is not correct in old encoder
+            #     "RowKey": "RK",
+            #     "RowKey@odata.type": "Edm.String",
+            #     "RowKey@odata.type@odata.type": "Edm.String",
+            #     "Data1": "12345",
+            #     "Data1@odata.type": "Edm.Int32",
+            #     "Data1@odata.type@odata.type": "Edm.String",
+            #     "Data2": "False",
+            #     "Data2@odata.type": "Edm.Boolean",
+            #     "Data2@odata.type@odata.type": "Edm.String",
+            #     "Data3": _encode_base64(b"testdata"),
+            #     "Data3@odata.type": "Edm.Binary",
+            #     "Data3@odata.type@odata.type": "Edm.String",
+            #     "Data4": _to_utc_datetime(dt),
+            #     "Data4@odata.type": "Edm.DateTime",
+            #     "Data4@odata.type@odata.type": "Edm.String",
+            #     "Data5": str(guid),
+            #     "Data5@odata.type": "Edm.Guid",
+            #     "Data5@odata.type@odata.type": "Edm.String",
+            #     "Data6": "Foobar",
+            #     "Data6@odata.type": "Edm.String",
+            #     "Data6@odata.type@odata.type": "Edm.String",
+            #     "Data7": "3.14",
+            #     "Data7@odata.type": "Edm.Double",
+            #     "Data7@odata.type@odata.type": "Edm.String",
+            #     "Data8": "1152921504606846976",
+            #     "Data8@odata.type": "Edm.Int64",
+            #     "Data8@odata.type@odata.type": "Edm.String",
+            #     "Data9": _encode_base64(b"testdata"),
+            #     "Data9@odata.type": "Edm.Binary",
+            #     "Data9@odata.type@odata.type": "Edm.String",
+            #     "Data10": _to_utc_datetime(dt),
+            #     "Data10@odata.type": "Edm.DateTime",
+            #     "Data10@odata.type@odata.type": "Edm.String",
+            #     "Data11": str(guid),
+            #     "Data11@odata.type": "Edm.Guid",
+            #     "Data11@odata.type@odata.type": "Edm.String",
+            # }
             response_entity = {
                 "PartitionKey": "PK",
                 "RowKey": "RK",
@@ -1275,8 +1321,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data10": dt,
                 "Data11": guid,
             }
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            # _check_backcompat(test_entity, expected_entity) # will fail
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1317,20 +1363,15 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         # Infinite float values
         # Non-string keys
         # Test enums
-        client = TableClient(
+        with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
-        )
-        client.create_table()
-        try:
+        ) as client:
+            client.create_table()
             # Non-UTF8 characters in both keys and properties
             test_entity = {"PartitionKey": "PK", "RowKey": "你好", "Data": "你好"}
-            expected_entity = {
-                "PartitionKey": "PK",
-                "RowKey": "你好",
-                "Data": "你好",
-            }
+            expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1361,39 +1402,34 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # TODO: This will likely change if we move to post-request validation.
             max_int64 = 9223372036854775808
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int(max_int64 * 1000)}
-            expected_entity = {
-                "PartitionKey": "PK1",
-                "RowKey": "RK1",
-                "Data": int(max_int64 * 1000),
-            }
-            with pytest.raises(TypeError):
+            expected_entity = test_entity
+            with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            with pytest.raises(TypeError):
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.MERGE,
-                    verify_payload=json.dumps(expected_entity),
-                    verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-                )
-                assert list(resp.keys()) == ["date", "etag", "version"]
-            with pytest.raises(TypeError):
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity),
-                    verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-                )
-                assert list(resp.keys()) == ["date", "etag", "version"]
+            assert "is too large to be cast to type Edm.Int32" in str(error.value)
+            resp = client.upsert_entity(
+                test_entity,
+                mode=UpdateMode.MERGE,
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
+                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
+                verify_headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
+            )
+            assert list(resp.keys()) == ["date", "etag", "version"]
+            resp = client.upsert_entity(
+                test_entity,
+                mode=UpdateMode.REPLACE,
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
+                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
+                verify_headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
+            )
+            assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 - 1, "Edm.Int64")}
             expected_entity = {
@@ -1406,7 +1442,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                 verify_headers={
                     "Content-Type": "application/json",
@@ -1418,7 +1454,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
-                verify_payload=json.dumps(expected_entity),
+                verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                 verify_headers={
                     "Content-Type": "application/json",
@@ -1435,34 +1471,35 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            with pytest.raises(TypeError):
+            with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            # with pytest.raises(HttpResponseError) as error:
-            with pytest.raises(TypeError) as error:
+            assert "is too large to be cast to type Edm.Int64" in str(error.value)
+            with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity),
+                    verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
                     },
                 )
-            # assert error.value.error_code == "InvalidInput"
-            # with pytest.raises(HttpResponseError) as error:
-            with pytest.raises(TypeError) as error:
+            assert "An error occurred while processing this request" in str(error.value)
+            assert error.value.error_code == "InvalidInput"
+            with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
                     mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity),
+                    verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
                     verify_headers={
                         "Content-Type": "application/json",
                         "Accept": "application/json",
                     },
                 )
-            # assert error.value.error_code == "InvalidInput"
+            assert "An error occurred while processing this request" in str(error.value)
+            assert error.value.error_code == "InvalidInput"
 
             # Infinite float values
             test_entity = {
@@ -1483,7 +1520,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "Data3@odata.type": "Edm.Double",
             }
             _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
@@ -1511,14 +1548,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Non-string keys
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", 123: 456}
-            expected_entity = {
-                "PartitionKey": "PK",
-                "RowKey": "RK",
-                123: 456,
-            }
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
-            # TODO: The code introduced to serialize to support odata types raises a TypeError here. Need to investigate the best approach.
+            expected_entity = test_entity
+            # _check_backcompat(test_entity, expected_entity) # will fail, TypeError: argument of type 'int' is not iterable
+            expected_payload_entity = {"PartitionKey": "PK", "RowKey": "RK", "123": 456}
+            verification = json.dumps(expected_payload_entity, sort_keys=True)
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
@@ -1530,7 +1563,8 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                         "Accept": "application/json",
                     },
                 )
-            assert error.value.error_code == "PropertyNameInvalid"
+            assert "The property name is invalid" in str(error.value)
+            assert error.value.error_code.value == "PropertyNameInvalid"
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
@@ -1542,150 +1576,86 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                         "Accept": "application/json",
                     },
                 )
-            assert error.value.error_code == "PropertyNameInvalid"
+            assert "The property name is invalid" in str(error.value)
+            assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums
+            # Test enums - it is not supported in old encoder
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
-            # TODO: This looks like it was always broken
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": "EnumBasicOptions.ONE",
-                "Data": "EnumBasicOptions.TWO",
+                "RowKey": "One",
+                "Data": "Two",
             }
-            response_entity = {"PartitionKey": "PK", "RowKey": "EnumBasicOptions.ONE", "Data": "EnumBasicOptions.TWO"}
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "EnumBasicOptions.ONE"), response_entity),
+                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "EnumBasicOptions.ONE"), response_entity),
+                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
-            test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
-            # TODO: This looks like it was always broken
+            test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
-                "RowKey": "EnumStrOptions.ONE",
-                "Data": "EnumStrOptions.TWO",
+                "RowKey": "Two",
+                "Data": "Two",
             }
-            response_entity = {"PartitionKey": "PK", "RowKey": "EnumStrOptions.ONE", "Data": "EnumStrOptions.TWO"}
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
+            verification = json.dumps(expected_entity, sort_keys=True)
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "EnumStrOptions.ONE"), response_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
                 test_entity,
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "EnumStrOptions.ONE"), response_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
-            if not is_live() and sys.version_info < (3, 11):
-                pytest.skip("The recording works in python3.11 and later.")
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
-            # TODO: This is a bit weird
-            # TODO: This changes between Python 3.10 and 3.11
-            if sys.version_info >= (3, 11):
-                expected_entity = {
-                    "PartitionKey": "PK",
-                    "RowKey": "1",
-                    "Data": "2",
-                }
-                response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
-                _check_backcompat(test_entity, expected_entity)
-                verification = json.dumps(expected_entity)
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.MERGE,
-                    verify_payload=verification,
-                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity),
-                )
-                assert list(resp.keys()) == ["date", "etag", "version"]
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=verification,
-                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity),
-                )
-            else:
-                expected_entity = {
-                    "PartitionKey": "PK",
-                    "RowKey": "EnumIntOptions.ONE",
-                    "Data": "EnumIntOptions.TWO",
-                }
-                response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
-                _check_backcompat(test_entity, expected_entity)
-                verification = json.dumps(expected_entity)
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.MERGE,
-                    verify_payload=verification,
-                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity),
-                )
-                assert list(resp.keys()) == ["date", "etag", "version"]
-                resp = client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=verification,
-                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity),
-                )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-        finally:
+            expected_entity = {
+                "PartitionKey": "PK",
+                "RowKey": 1,
+                "Data": 2,
+            }
+            verification = json.dumps(expected_entity, sort_keys=True)
+            with pytest.raises(TypeError) as error:
+                resp = client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            with pytest.raises(TypeError) as error:
+                resp = client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
             client.delete_table()
 
     @tables_decorator
