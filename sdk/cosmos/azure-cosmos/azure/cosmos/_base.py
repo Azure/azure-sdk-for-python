@@ -860,4 +860,3 @@ def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, any]:
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None)
     }
-
