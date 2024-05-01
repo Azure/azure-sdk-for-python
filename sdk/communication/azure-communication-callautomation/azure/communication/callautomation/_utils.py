@@ -11,6 +11,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsAppIdentifier,
     UnknownIdentifier,
     CommunicationIdentifierKind
 )
@@ -18,11 +19,35 @@ from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
-    CallLocator
+    CallLocator,
+    ExternalStorage,
+    RecordingStorageKind
 )
 if TYPE_CHECKING:
-    from ._models import ServerCallLocator, GroupCallLocator
+    from ._models import (
+        ServerCallLocator,
+        GroupCallLocator,
+        AzureBlobContainerRecordingStorage,
+        AzureCommunicationsRecordingStorage
+        )
 
+def build_external_storage(
+    recording_storage: Union['AzureCommunicationsRecordingStorage',
+                                      'AzureBlobContainerRecordingStorage'] = None
+) -> Optional[ExternalStorage]:
+    request: Optional[ExternalStorage] = None
+    if recording_storage:
+        if recording_storage.kind == RecordingStorageKind.AZURE_BLOB_STORAGE:
+            if not recording_storage.container_url:
+                raise ValueError(
+                    "Please provide container_url"
+                    "when you set the recording_storage as AzureBlobContainerRecordingStorage"
+                    )
+            request = ExternalStorage(
+                recording_storage_kind=recording_storage.kind,
+                recording_destination_container_url=recording_storage.container_url
+                )
+    return request
 
 def build_call_locator(
     args: List[Union['ServerCallLocator', 'GroupCallLocator']],
@@ -145,8 +170,8 @@ def serialize_communication_user_identifier(
 
 
 def deserialize_identifier(
-    identifier_model:CommunicationIdentifierModel
-)->CommunicationIdentifier:
+    identifier_model: CommunicationIdentifierModel
+) -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -167,6 +192,12 @@ def deserialize_identifier(
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
             cloud=identifier_model.microsoft_teams_user.cloud
+        )
+    if identifier_model.microsoft_teams_app:
+        return MicrosoftTeamsAppIdentifier(
+            app_id=identifier_model.microsoft_teams_app.app_id,
+            raw_id=raw_id,
+            cloud=identifier_model.microsoft_teams_app.cloud
         )
     return UnknownIdentifier(raw_id)
 

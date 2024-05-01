@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -41,23 +42,12 @@ from ...operations._operations import (
     build_call_connection_remove_participant_request,
     build_call_connection_terminate_call_request,
     build_call_connection_transfer_to_participant_request,
-    build_call_connection_unmute_request,
-    build_call_dialog_start_dialog_request,
-    build_call_dialog_stop_dialog_request,
-    build_call_dialog_update_dialog_request,
     build_call_media_cancel_all_media_operations_request,
-    build_call_media_hold_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
     build_call_media_send_dtmf_tones_request,
     build_call_media_start_continuous_dtmf_recognition_request,
-    build_call_media_start_hold_music_request,
-    build_call_media_start_transcription_request,
     build_call_media_stop_continuous_dtmf_recognition_request,
-    build_call_media_stop_hold_music_request,
-    build_call_media_stop_transcription_request,
-    build_call_media_unhold_request,
-    build_call_media_update_transcription_request,
     build_call_recording_get_recording_properties_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
@@ -66,6 +56,10 @@ from ...operations._operations import (
 )
 from .._vendor import AzureCommunicationCallAutomationServiceMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -73,6 +67,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
     AzureCommunicationCallAutomationServiceMixinABC
 ):
+
     @overload
     async def create_call(
         self, create_call_request: _models.CreateCallRequest, *, content_type: str = "application/json", **kwargs: Any
@@ -125,7 +120,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -233,7 +228,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -345,7 +340,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -449,7 +444,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -533,7 +528,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -594,7 +589,7 @@ class CallConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -649,7 +644,7 @@ class CallConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -762,7 +757,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.TransferCallResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -839,7 +834,7 @@ class CallConnectionOperations:
             "cls", None
         )
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -985,7 +980,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1114,7 +1109,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1243,7 +1238,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1294,135 +1289,6 @@ class CallConnectionOperations:
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("MuteParticipantsResult", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: _models.UnmuteParticipantsRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Required.
-        :type unmute_participants_request:
-         ~azure.communication.callautomation.models.UnmuteParticipantsRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Required.
-        :type unmute_participants_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: Union[_models.UnmuteParticipantsRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Is either a
-         UnmuteParticipantsRequest type or a IO[bytes] type. Required.
-        :type unmute_participants_request:
-         ~azure.communication.callautomation.models.UnmuteParticipantsRequest or IO[bytes]
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.UnmuteParticipantsResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(unmute_participants_request, (IOBase, bytes)):
-            _content = unmute_participants_request
-        else:
-            _json = self._serialize.body(unmute_participants_request, "UnmuteParticipantsRequest")
-
-        _request = build_call_connection_unmute_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("UnmuteParticipantsResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1501,7 +1367,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CancelAddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1574,7 +1440,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1702,7 +1568,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1755,256 +1621,6 @@ class CallMediaOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_transcription_request: _models.StartTranscriptionRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Starts transcription in the call.
-
-        Starts transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_transcription_request: Required.
-        :type start_transcription_request:
-         ~azure.communication.callautomation.models.StartTranscriptionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_transcription_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Starts transcription in the call.
-
-        Starts transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_transcription_request: Required.
-        :type start_transcription_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_transcription_request: Union[_models.StartTranscriptionRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Starts transcription in the call.
-
-        Starts transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_transcription_request: Is either a StartTranscriptionRequest type or a IO[bytes]
-         type. Required.
-        :type start_transcription_request:
-         ~azure.communication.callautomation.models.StartTranscriptionRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(start_transcription_request, (IOBase, bytes)):
-            _content = start_transcription_request
-        else:
-            _json = self._serialize.body(start_transcription_request, "StartTranscriptionRequest")
-
-        _request = build_call_media_start_transcription_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_transcription_request: _models.StopTranscriptionRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Stops transcription in the call.
-
-        Stops transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_transcription_request: stop transcription request payload. Required.
-        :type stop_transcription_request:
-         ~azure.communication.callautomation.models.StopTranscriptionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_transcription_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Stops transcription in the call.
-
-        Stops transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_transcription_request: stop transcription request payload. Required.
-        :type stop_transcription_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_transcription_request: Union[_models.StopTranscriptionRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Stops transcription in the call.
-
-        Stops transcription in the call.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_transcription_request: stop transcription request payload. Is either a
-         StopTranscriptionRequest type or a IO[bytes] type. Required.
-        :type stop_transcription_request:
-         ~azure.communication.callautomation.models.StopTranscriptionRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(stop_transcription_request, (IOBase, bytes)):
-            _content = stop_transcription_request
-        else:
-            _json = self._serialize.body(stop_transcription_request, "StopTranscriptionRequest")
-
-        _request = build_call_media_stop_transcription_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
     @distributed_trace_async
     async def cancel_all_media_operations(  # pylint: disable=inconsistent-return-statements
         self, call_connection_id: str, **kwargs: Any
@@ -2019,7 +1635,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2128,7 +1744,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2253,7 +1869,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2378,7 +1994,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2502,7 +2118,7 @@ class CallMediaOperations:
         :rtype: ~azure.communication.callautomation.models.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2558,968 +2174,6 @@ class CallMediaOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        update_transcription_request: _models.UpdateTranscriptionRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """UpdateTranscription Api.
-
-        API to change transcription language.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param update_transcription_request: The UpdateTranscription request. Required.
-        :type update_transcription_request:
-         ~azure.communication.callautomation.models.UpdateTranscriptionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        update_transcription_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """UpdateTranscription Api.
-
-        API to change transcription language.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param update_transcription_request: The UpdateTranscription request. Required.
-        :type update_transcription_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        update_transcription_request: Union[_models.UpdateTranscriptionRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """UpdateTranscription Api.
-
-        API to change transcription language.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param update_transcription_request: The UpdateTranscription request. Is either a
-         UpdateTranscriptionRequest type or a IO[bytes] type. Required.
-        :type update_transcription_request:
-         ~azure.communication.callautomation.models.UpdateTranscriptionRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(update_transcription_request, (IOBase, bytes)):
-            _content = update_transcription_request
-        else:
-            _json = self._serialize.body(update_transcription_request, "UpdateTranscriptionRequest")
-
-        _request = build_call_media_update_transcription_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def hold(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        hold_request: _models.HoldRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param hold_request: The participants to be hold from the call. Required.
-        :type hold_request: ~azure.communication.callautomation.models.HoldRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def hold(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, hold_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param hold_request: The participants to be hold from the call. Required.
-        :type hold_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def hold(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, hold_request: Union[_models.HoldRequest, IO[bytes]], **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param hold_request: The participants to be hold from the call. Is either a HoldRequest type or
-         a IO[bytes] type. Required.
-        :type hold_request: ~azure.communication.callautomation.models.HoldRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(hold_request, (IOBase, bytes)):
-            _content = hold_request
-        else:
-            _json = self._serialize.body(hold_request, "HoldRequest")
-
-        _request = build_call_media_hold_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def unhold(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        unhold_request: _models.UnholdRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unhold_request: The participants to be hold from the call. Required.
-        :type unhold_request: ~azure.communication.callautomation.models.UnholdRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def unhold(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        unhold_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unhold_request: The participants to be hold from the call. Required.
-        :type unhold_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def unhold(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, unhold_request: Union[_models.UnholdRequest, IO[bytes]], **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unhold_request: The participants to be hold from the call. Is either a UnholdRequest
-         type or a IO[bytes] type. Required.
-        :type unhold_request: ~azure.communication.callautomation.models.UnholdRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(unhold_request, (IOBase, bytes)):
-            _content = unhold_request
-        else:
-            _json = self._serialize.body(unhold_request, "UnholdRequest")
-
-        _request = build_call_media_unhold_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def start_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_hold_music_request: _models.StartHoldMusicRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Required.
-        :type start_hold_music_request:
-         ~azure.communication.callautomation.models.StartHoldMusicRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_hold_music_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Required.
-        :type start_hold_music_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def start_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        start_hold_music_request: Union[_models.StartHoldMusicRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Is either a
-         StartHoldMusicRequest type or a IO[bytes] type. Required.
-        :type start_hold_music_request:
-         ~azure.communication.callautomation.models.StartHoldMusicRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(start_hold_music_request, (IOBase, bytes)):
-            _content = start_hold_music_request
-        else:
-            _json = self._serialize.body(start_hold_music_request, "StartHoldMusicRequest")
-
-        _request = build_call_media_start_hold_music_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def stop_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: _models.StopHoldMusicRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Required.
-        :type stop_hold_music_request: ~azure.communication.callautomation.models.StopHoldMusicRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def stop_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Required.
-        :type stop_hold_music_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def stop_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: Union[_models.StopHoldMusicRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Is either a
-         StopHoldMusicRequest type or a IO[bytes] type. Required.
-        :type stop_hold_music_request: ~azure.communication.callautomation.models.StopHoldMusicRequest
-         or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(stop_hold_music_request, (IOBase, bytes)):
-            _content = stop_hold_music_request
-        else:
-            _json = self._serialize.body(stop_hold_music_request, "StopHoldMusicRequest")
-
-        _request = build_call_media_stop_hold_music_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
-class CallDialogOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.communication.callautomation.aio.AzureCommunicationCallAutomationService`'s
-        :attr:`call_dialog` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    async def start_dialog(
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        start_dialog_request: _models.StartDialogRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DialogStateResponse:
-        """Start a dialog targeting a particular participant on the call.
-
-        Start a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param start_dialog_request: The start dialog request. Required.
-        :type start_dialog_request: ~azure.communication.callautomation.models.StartDialogRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DialogStateResponse
-        :rtype: ~azure.communication.callautomation.models.DialogStateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_dialog(
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        start_dialog_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DialogStateResponse:
-        """Start a dialog targeting a particular participant on the call.
-
-        Start a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param start_dialog_request: The start dialog request. Required.
-        :type start_dialog_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DialogStateResponse
-        :rtype: ~azure.communication.callautomation.models.DialogStateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def start_dialog(
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        start_dialog_request: Union[_models.StartDialogRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DialogStateResponse:
-        """Start a dialog targeting a particular participant on the call.
-
-        Start a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param start_dialog_request: The start dialog request. Is either a StartDialogRequest type or a
-         IO[bytes] type. Required.
-        :type start_dialog_request: ~azure.communication.callautomation.models.StartDialogRequest or
-         IO[bytes]
-        :return: DialogStateResponse
-        :rtype: ~azure.communication.callautomation.models.DialogStateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DialogStateResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(start_dialog_request, (IOBase, bytes)):
-            _content = start_dialog_request
-        else:
-            _json = self._serialize.body(start_dialog_request, "StartDialogRequest")
-
-        _request = build_call_dialog_start_dialog_request(
-            call_connection_id=call_connection_id,
-            dialog_id=dialog_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("DialogStateResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def stop_dialog(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, dialog_id: str, *, operation_callback_uri: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """Stop a dialog.
-
-        Stop a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :keyword operation_callback_uri: Operation callback URI. Default value is None.
-        :paramtype operation_callback_uri: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_call_dialog_stop_dialog_request(
-            call_connection_id=call_connection_id,
-            dialog_id=dialog_id,
-            operation_callback_uri=operation_callback_uri,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def update_dialog(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        update_dialog_request: _models.UpdateDialogRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Update an ongoing dialog in a call.
-
-        Update a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param update_dialog_request: The update dialog request. Required.
-        :type update_dialog_request: ~azure.communication.callautomation.models.UpdateDialogRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_dialog(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        update_dialog_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Update an ongoing dialog in a call.
-
-        Update a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param update_dialog_request: The update dialog request. Required.
-        :type update_dialog_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_dialog(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        dialog_id: str,
-        update_dialog_request: Union[_models.UpdateDialogRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Update an ongoing dialog in a call.
-
-        Update a dialog.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param dialog_id: The dialog id. Required.
-        :type dialog_id: str
-        :param update_dialog_request: The update dialog request. Is either a UpdateDialogRequest type
-         or a IO[bytes] type. Required.
-        :type update_dialog_request: ~azure.communication.callautomation.models.UpdateDialogRequest or
-         IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(update_dialog_request, (IOBase, bytes)):
-            _content = update_dialog_request
-        else:
-            _json = self._serialize.body(update_dialog_request, "UpdateDialogRequest")
-
-        _request = build_call_dialog_update_dialog_request(
-            call_connection_id=call_connection_id,
-            dialog_id=dialog_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class CallRecordingOperations:
@@ -3598,7 +2252,7 @@ class CallRecordingOperations:
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3666,7 +2320,7 @@ class CallRecordingOperations:
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3725,7 +2379,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3780,7 +2434,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3835,7 +2489,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
