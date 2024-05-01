@@ -129,9 +129,7 @@ async def test_cannot_read_after_response_closed(port, transport):
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_decompress_plain_no_header(port, transport):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     client = AsyncMockRestClient(port, transport=transport())
     async with client:
         response = await client.send_request(request, stream=True)
@@ -145,9 +143,7 @@ async def test_decompress_plain_no_header(port, transport):
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_compress_plain_no_header(port, transport):
     # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
+    request = HttpRequest("GET", "/streams/string")
     client = AsyncMockRestClient(port, transport=transport())
     async with client:
         response = await client.send_request(request, stream=True)
