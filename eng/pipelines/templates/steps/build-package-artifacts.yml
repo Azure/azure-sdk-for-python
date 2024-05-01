@@ -59,11 +59,9 @@ steps:
     displayName: 'Prep Environment Linux/Mac'
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
-  - script: |
+  - pwsh: |
       python -m venv $(Build.SourcesDirectory)/venv
-      pushd $(Build.SourcesDirectory)\venv\Scripts
-      activate
-      popd
+      ./venv/Scripts/Activate.ps1
       which python
       python -m pip install --force -r eng\ci_tools.txt
       python -m pip freeze --all
@@ -104,10 +102,8 @@ steps:
     env:
       CIBW_BUILD_VERBOSITY: 3
 
-  - script: |
-      pushd $(Build.SourcesDirectory)\venv\Scripts
-      activate
-      popd
+  - pwsh: |
+      ./venv/Scripts/Activate.ps1
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages Windows'
