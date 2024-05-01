@@ -506,12 +506,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
         :keyword bool upn:
-            If "True", the user identity values returned in the x-ms-owner, x-ms-group,
-            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
-            Principal Names in the owner, group, and acl fields of ~azure.storage.filedatalake.PathProperties.
-            If "False", the values will be returned as Azure Active Directory Object IDs.
-            The default value is false. Note that group and application Object IDs are not translate
-            because they do not have unique friendly names.
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
+            Principal Names in the owner, group, and acl fields of
+            :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
+            as Azure Active Directory Object IDs. The default value is False. Note that group and application
+            Object IDs are not translate because they do not have unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
