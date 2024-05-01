@@ -6,7 +6,7 @@
 # mypy: disable-error-code="attr-defined"
 
 import logging
-from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -104,7 +104,7 @@ class AsyncStorageAccountHostsMixin(object):
                 audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(credential, audience)
+            self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(cast(AsyncTokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
