@@ -55,7 +55,7 @@ steps:
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-      echo "##vso[task.setvariable variable=PATH;]$PATH"
+      echo "##vso[task.setvariable variable=PATH]$PATH"
     displayName: 'Prep Environment Linux/Mac'
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
@@ -65,7 +65,7 @@ steps:
       which python
       python -m pip install --force -r eng\ci_tools.txt
       python -m pip freeze --all
-      echo "##vso[task.setvariable variable=PATH;]$PATH"
+      Write-Host "##vso[task.setvariable variable=PATH]$env:$PATH"
     displayName: 'Prep Environment Windows'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
