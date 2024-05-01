@@ -7,14 +7,12 @@ from typing import Any, Dict, Optional, Union
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
 from azure.ai.ml._utils._arm_id_utils import AMLAssetId, AMLNamedArmId
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import LONG_URI_FORMAT
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._system_data import RestSystemData, SystemData
 
 
-@experimental
 class Index(Artifact):
     """Index asset.
 
