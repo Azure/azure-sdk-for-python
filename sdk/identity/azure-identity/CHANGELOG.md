@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added environment variable `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` support for `EnvironmentCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -27,6 +27,9 @@ class EnvironmentCredential(AsyncContextManager):
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+      - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: (optional) If True, the credential will send the public certificate 
+        chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication.
+        Defaults to False.
       - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
@@ -66,6 +69,7 @@ class EnvironmentCredential(AsyncContextManager):
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
+                send_certificate_chain=kwargs.pop(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, False)
                 **kwargs
             )
 
