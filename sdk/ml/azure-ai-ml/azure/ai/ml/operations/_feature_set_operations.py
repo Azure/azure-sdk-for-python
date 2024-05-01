@@ -339,7 +339,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
     def get_feature(
-        self, feature_set_name: str, version: str, *, feature_name: str, tags: str, **kwargs: Dict
+        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
     ) -> Optional["Feature"]:
         """Get Feature
 
@@ -361,7 +361,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
             featureset_name=feature_set_name,
             featureset_version=version,
             feature_name=feature_name,
-            tags=tags,
             **kwargs,
         )
 
