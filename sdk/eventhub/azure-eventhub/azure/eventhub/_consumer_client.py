@@ -453,7 +453,6 @@ class EventHubConsumerClient(
                 on_error=on_error,
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
-                use_tls=self._use_tls,
                 **kwargs
             )
             self._event_processors[
