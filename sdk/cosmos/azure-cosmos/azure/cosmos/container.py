@@ -36,7 +36,8 @@ from ._base import (
     validate_cache_staleness_value,
     _deserialize_throughput,
     _replace_throughput,
-    GenerateGuidId
+    GenerateGuidId,
+    _set_properties_cache
 )
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
@@ -86,10 +87,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection.container_properties_cache[self.container_link] = {
-                "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
-                "partitionKey": properties.get("partitionKey", None)
-            }
+            self.client_connection.container_properties_cache[self.container_link] = _set_properties_cache(properties)
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -179,10 +177,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQuotaInfo"] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection.container_properties_cache[self.container_link] = {
-            "_self": container.get("_self", None), "_rid": container.get("_rid", None),
-            "partitionKey": container.get("partitionKey", None)
-        }
+        self.client_connection.container_properties_cache[self.container_link] = _set_properties_cache(container)
         return container
 
     @distributed_trace
