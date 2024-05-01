@@ -401,7 +401,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _management_request(
+    def _management_request(# pylint:disable=inconsistent-return-statements
         self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
@@ -414,7 +414,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             try:
                 conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
-                    host=self._address.hostname, auth=mgmt_auth
+                    endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
@@ -556,7 +556,7 @@ class ConsumerProducerMixin():
             auth = self._client._create_auth()
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             self._handler.open(connection=conn)
             while not self._handler.client_ready():
@@ -584,7 +584,7 @@ class ConsumerProducerMixin():
             exception, self, is_consumer=is_consumer
         )
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs): # pylint:disable=inconsistent-return-statements
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
