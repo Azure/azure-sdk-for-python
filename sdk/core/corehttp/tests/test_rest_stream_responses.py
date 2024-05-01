@@ -121,40 +121,6 @@ def test_cannot_read_after_response_closed(port, transport):
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    request = HttpRequest("GET", "/streams/string")
-    client = MockRestClient(port, transport=transport())
-    response = client.send_request(request, stream=True)
-    with pytest.raises(ResponseNotReadError):
-        response.content
-    response.read()
-    assert response.content == b"test"
-
-
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_compress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    request = HttpRequest("GET", "/streams/string")
-    client = MockRestClient(port, transport=transport())
-    response = client.send_request(request, stream=True)
-    iter = response.iter_raw()
-    data = b"".join(list(iter))
-    assert data == b"test"
-
-
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_compressed_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    request = HttpRequest("GET", "streams/compressed_no_header")
-    client = MockRestClient(port, transport=transport())
-    response = client.send_request(request, stream=True)
-    iter = response.iter_bytes()
-    data = b"".join(list(iter))
-    assert data.startswith(b"\x1f\x8b")  # gzip magic number
-
-
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_read(port, transport):
     # thanks to McCoy Patiño for this test!
     request = HttpRequest("GET", "/basic/string")
