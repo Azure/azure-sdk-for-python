@@ -6,11 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import TextTranslationClient, TranslatorCredential, TranslatorAADCredential
+from ._patch import TextTranslationClient
 from ._version import VERSION
 
 __version__ = VERSION
 
+
+from ._patch import TranslatorCredential
+from ._patch import TranslatorAADCredential
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

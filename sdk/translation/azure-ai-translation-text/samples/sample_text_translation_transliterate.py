@@ -33,6 +33,7 @@ import sample_text_translation_client
 
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
+
 # -------------------------------------------------------------------------
 # Text translation transliteration
 # -------------------------------------------------------------------------
@@ -40,12 +41,12 @@ def get_text_transliteration():
     # [START get_text_transliteration]
     try:
         language = "zh-Hans"
-        from_script = "Hans"
-        to_script = "Latn"
+        source_language_script = "Hans"
+        target_language_script = "Latn"
         input_text_elements = ["这是个测试。"]
 
         response = text_translator.transliterate(
-            request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+            request_body=input_text_elements, language=language, source_language_script=source_language_script, target_language_script=target_language_script
         )
         transliteration = response[0] if response else None
 

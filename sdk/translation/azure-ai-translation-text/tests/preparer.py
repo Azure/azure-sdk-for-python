@@ -16,5 +16,5 @@ TextTranslationPreparer = functools.partial(
     text_translation_aadClientId="fakeAADClientId",
     text_translation_aadTenantId="fakeAADTenantId",
     text_translation_aadSecret="fakeAADSecret",
-    text_translation_aadResourceId="fakeResourceId"
+    text_translation_aadResourceId="fakeResourceId",
 )

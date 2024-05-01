@@ -25,20 +25,22 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 class AsyncTranslatorAADCredential:
     """Credential for Translator Service when using AAD authentication.
 
-    :param tokenCredential: An object which can provide an access token for the Translator Resource, such as a credential from
+    :param token_credential: An object which can provide an access token for the Translator Resource, such as a credential from
         :mod:`azure.identity`
-    :type tokenCredential: ~azure.core.credentials.TokenCredential
-    :param str resourceId: Azure Resource Id of the Translation Resource.
+    :type token_credential: ~azure.core.credentials.TokenCredential
+    :param str resource_id: Azure Resource Id of the Translation Resource.
     :param str region: Azure Region of the Translation Resource.
     """
 
-    def __init__(self, tokenCredential: AsyncTokenCredential, resourceId: str, region: str) -> None:
-        self.tokenCredential = tokenCredential
-        self.resourceId = resourceId
+    def __init__(self, token_credential: AsyncTokenCredential, resource_id: str, region: str) -> None:
+        self.token_credential = token_credential
+        self.resource_id = resource_id
         self.region = region
+
 
 class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     """Translator AAD Authentication Policy. Adds headers that are required by Translator Service
@@ -50,12 +52,14 @@ class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     :type credential: ~azure.ai.translation.text.AsyncTranslatorAADCredential
     """
 
-    def __init__(self, credential: AsyncTranslatorAADCredential, **kwargs: Any)-> None:
-        super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(credential.tokenCredential, "https://cognitiveservices.azure.com/.default", **kwargs)
+    def __init__(self, credential: AsyncTranslatorAADCredential, **kwargs: Any) -> None:
+        super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(
+            credential.token_credential, "https://cognitiveservices.azure.com/.default", **kwargs
+        )
         self.translatorCredential = credential
 
     async def on_request(self, request: PipelineRequest) -> None:
-        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translatorCredential.resourceId
+        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translatorCredential.resource_id
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.translatorCredential.region
         await super().on_request(request)
 

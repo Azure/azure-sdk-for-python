@@ -92,7 +92,7 @@ Gets the set of languages currently supported by other operations of the Transla
 
 ```python
 try:
-    response = text_translator.get_languages()
+    response = text_translator.get_supported_languages()
 
     print(
         f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
@@ -150,7 +150,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -177,12 +177,12 @@ Converts characters or letters of a source language to the corresponding charact
 ```python
 try:
     language = "zh-Hans"
-    from_script = "Hans"
-    to_script = "Latn"
+    source_language_script = "Hans"
+    target_language_script = "Latn"
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
-        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        request_body=input_text_elements, language=language, source_language_script=source_language_script, target_language_script=target_language_script
     )
     transliteration = response[0] if response else None
 
@@ -224,13 +224,15 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sent_len:
-                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
-                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
+            if translated_text.lengths_of_sentences:
+                print(f"Source Sentence length: {translated_text.lengths_of_sentences.src_lengths_of_sentences}")
+                print(
+                    f"Translated Sentence length: {translated_text.lengths_of_sentences.trans_lengths_of_sentences}"
+                )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -257,7 +259,7 @@ try:
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        request_body=input_text_elements, from_parameter=source_language, to=target_language
+        request_body=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 
@@ -293,7 +295,7 @@ try:
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        content=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 

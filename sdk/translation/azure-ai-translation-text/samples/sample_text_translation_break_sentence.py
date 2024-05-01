@@ -50,10 +50,10 @@ def get_text_sentence_boundaries():
             detected_language = sentence_boundaries.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             print(f"The detected sentence boundaries:")
-            for boundary in sentence_boundaries.sent_len:
+            for boundary in sentence_boundaries.lengths_of_sentences:
                 print(boundary)
 
     except HttpResponseError as exception:
@@ -76,10 +76,10 @@ def get_text_sentence_boundaries_auto():
             detected_language = sentence_boundaries.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             print(f"The detected sentence boundaries:")
-            for boundary in sentence_boundaries.sent_len:
+            for boundary in sentence_boundaries.lengths_of_sentences:
                 print(boundary)
 
     except HttpResponseError as exception:

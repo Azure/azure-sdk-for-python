@@ -33,6 +33,7 @@ import sample_text_translation_client
 
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
+
 # -------------------------------------------------------------------------
 # Dictionary Lookup
 # -------------------------------------------------------------------------
@@ -44,7 +45,7 @@ def get_text_translation_dictionary_lookup():
         input_text_elements = ["fly"]
 
         response = text_translator.lookup_dictionary_entries(
-            request_body=input_text_elements, from_parameter=source_language, to=target_language
+            request_body=input_text_elements, source_language=source_language, to=target_language
         )
         dictionary_entry = response[0] if response else None
 

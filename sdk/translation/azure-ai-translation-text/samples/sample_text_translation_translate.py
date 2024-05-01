@@ -34,6 +34,7 @@ import sample_text_translation_client
 
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
+
 # -------------------------------------------------------------------------
 # Get text translation
 # -------------------------------------------------------------------------
@@ -45,7 +46,7 @@ def get_text_translation():
         input_text_elements = ["This is a test"]
 
         response = text_translator.translate(
-            request_body=input_text_elements, to=target_languages, from_parameter=source_language
+            request_body=input_text_elements, to=target_languages, source_language=source_language
         )
         translation = response[0] if response else None
 
@@ -74,7 +75,7 @@ def get_text_translation_auto():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -90,18 +91,18 @@ def get_text_translation_auto():
 def get_text_translation_with_transliteration():
     # [START get_text_translation_with_transliteration]
     try:
-        from_script = "Latn"
+        source_language_script = "Latn"
         from_language = "ar"
-        to_script = "Latn"
+        target_language_script = "Latn"
         target_languages = ["zh-Hans"]
         input_text_elements = ["hudha akhtabar."]
 
         response = text_translator.translate(
             request_body=input_text_elements,
             to=target_languages,
-            from_script=from_script,
-            from_parameter=from_language,
-            to_script=to_script,
+            source_language_script=source_language_script,
+            source_language=from_language,
+            target_language_script=target_language_script,
         )
         translation = response[0] if response else None
 
@@ -137,7 +138,7 @@ def get_text_translation_multiple_inputs():
 
         for translation in translations:
             print(
-                f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}."
+                f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.confidence if translation.detected_language else None}."
             )
             print(
                 f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'."
@@ -163,7 +164,7 @@ def get_text_translation_multiple_languages():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -189,7 +190,7 @@ def get_text_translation_type():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -212,7 +213,7 @@ def get_text_translation_exclude():
         ]
 
         response = text_translator.translate(
-            request_body=input_text_elements, to=target_languages, from_parameter=source_language, text_type=text_type
+            request_body=input_text_elements, to=target_languages, source_language=source_language, text_type=text_type
         )
         translation = response[0] if response else None
 
@@ -237,7 +238,7 @@ def get_text_translation_entity():
         ]
 
         response = text_translator.translate(
-            request_body=input_text_elements, to=target_languages, from_parameter=source_language
+            request_body=input_text_elements, to=target_languages, source_language=source_language
         )
         translation = response[0] if response else None
 
@@ -272,7 +273,7 @@ def get_text_translation_profanity():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -300,7 +301,7 @@ def get_text_translation_alignment():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -330,13 +331,15 @@ def get_text_translation_sentence_length():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-                if translated_text.sent_len:
-                    print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
-                    print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
+                if translated_text.lengths_of_sentences:
+                    print(f"Source Sentence length: {translated_text.lengths_of_sentences.src_lengths_of_sentences}")
+                    print(
+                        f"Translated Sentence length: {translated_text.lengths_of_sentences.trans_lengths_of_sentences}"
+                    )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -359,7 +362,7 @@ def get_text_translation_custom():
             detected_language = translation.detected_language
             if detected_language:
                 print(
-                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                    f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
                 )
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")

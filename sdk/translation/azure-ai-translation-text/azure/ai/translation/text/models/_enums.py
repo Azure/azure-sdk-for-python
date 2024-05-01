@@ -10,6 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class LanguageDirectionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Language Directionality."""
+
+    LEFT_TO_RIGHT = "ltr"
+    RIGHT_TO_LEFT = "rtl"
+
+
 class ProfanityAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translator profanity actions."""
 

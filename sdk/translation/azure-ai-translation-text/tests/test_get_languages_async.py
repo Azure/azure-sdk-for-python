@@ -15,7 +15,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages()
+            response = await client.get_supported_languages()
 
         assert len(response.translation) > 0
         assert len(response.transliteration) > 0
@@ -27,11 +27,11 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="translation")
+            response = await client.get_supported_languages(scope="translation")
 
         assert len(response.translation) > 0
         translations = response.translation["af"]
-        assert translations.dir is not None
+        assert translations.directionality is not None
         assert translations.name is not None
         assert translations.native_name is not None
 
@@ -41,7 +41,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="transliteration")
+            response = await client.get_supported_languages(scope="transliteration")
 
         assert len(response.transliteration) > 0
         transliterations = response.transliteration["be"]
@@ -53,14 +53,14 @@ class TestGetLanguagesAsync(TextTranslationTest):
         assert transliterations.scripts[0].name is not None
         assert transliterations.scripts[0].native_name is not None
         assert transliterations.scripts[0].code is not None
-        assert transliterations.scripts[0].dir is not None
+        assert transliterations.scripts[0].directionality is not None
         assert transliterations.scripts[0].to_scripts is not None
 
         assert len(transliterations.scripts[0].to_scripts) > 0
         assert transliterations.scripts[0].to_scripts[0].name is not None
         assert transliterations.scripts[0].to_scripts[0].native_name is not None
         assert transliterations.scripts[0].to_scripts[0].code is not None
-        assert transliterations.scripts[0].to_scripts[0].dir is not None
+        assert transliterations.scripts[0].to_scripts[0].directionality is not None
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
@@ -68,7 +68,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="transliteration")
+            response = await client.get_supported_languages(scope="transliteration")
 
         assert len(response.transliteration) > 0
         transliterations = response.transliteration["zh-Hant"]
@@ -86,7 +86,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="dictionary")
+            response = await client.get_supported_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
         dictionaries = response.dictionary["de"]
@@ -95,7 +95,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
 
         assert len(dictionaries.translations) > 0
         assert dictionaries.translations[0].code is not None
-        assert dictionaries.translations[0].dir is not None
+        assert dictionaries.translations[0].directionality is not None
         assert dictionaries.translations[0].name is not None
         assert dictionaries.translations[0].native_name is not None
 
@@ -105,7 +105,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(scope="dictionary")
+            response = await client.get_supported_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
         dictionaries = response.dictionary["en"]
@@ -114,7 +114,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
 
         assert len(dictionaries.translations) > 1
         assert dictionaries.translations[0].code is not None
-        assert dictionaries.translations[0].dir is not None
+        assert dictionaries.translations[0].directionality is not None
         assert dictionaries.translations[0].name is not None
         assert dictionaries.translations[0].native_name is not None
 
@@ -124,12 +124,12 @@ class TestGetLanguagesAsync(TextTranslationTest):
         endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
-            response = await client.get_languages(accept_language="es")
+            response = await client.get_supported_languages(accept_language="es")
 
         assert len(response.translation.items()) > 0
         assert len(response.transliteration.items()) > 0
         assert len(response.dictionary.items()) > 0
         translations = response.translation["en"]
-        assert translations.dir is not None
+        assert translations.directionality is not None
         assert translations.name is not None
         assert translations.native_name is not None

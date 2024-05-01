@@ -11,6 +11,7 @@ from azure.ai.translation.text import TextTranslationClient, TranslatorCredentia
 
 from static_access_token_credential import StaticAccessTokenCredential
 
+
 class TextTranslationTest(AzureRecordedTestCase):
     def create_getlanguage_client(self, endpoint):
         client = TextTranslationClient(endpoint=endpoint, credential=None)
@@ -25,7 +26,7 @@ class TextTranslationTest(AzureRecordedTestCase):
         credential = StaticAccessTokenCredential(apikey, region)
         client = TextTranslationClient(endpoint=endpoint, credential=credential)
         return client
-    
+
     def create_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
         credential = TranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
         text_translator = TextTranslationClient(credential=credential)
@@ -50,9 +51,13 @@ class TextTranslationTest(AzureRecordedTestCase):
 
         client = TextTranslationClientAsync(endpoint=endpoint, credential=credential)
         return client
-    
+
     def create_async_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
-        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync, AsyncTranslatorAADCredential
+        from azure.ai.translation.text.aio import (
+            TextTranslationClient as TextTranslationClientAsync,
+            AsyncTranslatorAADCredential,
+        )
+
         credential = AsyncTranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
         text_translator = TextTranslationClientAsync(credential=credential)
         return text_translator
@@ -65,7 +70,6 @@ class TextTranslationTest(AzureRecordedTestCase):
             if is_async:
                 from azure.identity.aio import ClientSecretCredential
 
-                
             tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
             client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
             secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))

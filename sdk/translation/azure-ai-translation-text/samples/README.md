@@ -66,7 +66,7 @@ This will return language metadata from all supported scopes.
 
 ```python
 try:
-    response = text_translator.get_languages()
+    response = text_translator.get_supported_languages()
 
     print(
         f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
@@ -111,7 +111,7 @@ You can limit the scope of the response of the languages API by providing the op
 ```python
 try:
     scope = "translation"
-    response = text_translator.get_languages(scope=scope)
+    response = text_translator.get_supported_languages(scope=scope)
 
     print(
         f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
@@ -157,7 +157,7 @@ Names are provided in the English language when a target language is not specifi
 ```python
 try:
     accept_language = "es"
-    response = text_translator.get_languages(accept_language=accept_language)
+    response = text_translator.get_supported_languages(accept_language=accept_language)
 
     print(
         f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
@@ -208,7 +208,7 @@ try:
     input_text_elements = ["This is a test"]
 
     response = text_translator.translate(
-        request_body=input_text_elements, to=target_languages, from_parameter=source_language
+        request_body=input_text_elements, to=target_languages, source_language=source_language
     )
     translation = response[0] if response else None
 
@@ -247,7 +247,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -269,18 +269,18 @@ You can combine both Translation and Transliteration in one Translate call. Your
 
 ```python
 try:
-    from_script = "Latn"
+    source_language_script = "Latn"
     from_language = "ar"
-    to_script = "Latn"
+    target_language_script = "Latn"
     target_languages = ["zh-Hans"]
     input_text_elements = ["hudha akhtabar."]
 
     response = text_translator.translate(
         request_body=input_text_elements,
         to=target_languages,
-        from_script=from_script,
-        from_parameter=from_language,
-        to_script=to_script,
+        source_language_script=source_language_script,
+        source_language=from_language,
+        target_language_script=target_language_script,
     )
     translation = response[0] if response else None
 
@@ -322,7 +322,7 @@ try:
 
     for translation in translations:
         print(
-            f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}."
+            f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.confidence if translation.detected_language else None}."
         )
         print(
             f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'."
@@ -354,7 +354,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -386,7 +386,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -415,7 +415,7 @@ try:
     ]
 
     response = text_translator.translate(
-        request_body=input_text_elements, to=target_languages, from_parameter=source_language, text_type=text_type
+        request_body=input_text_elements, to=target_languages, source_language=source_language, text_type=text_type
     )
     translation = response[0] if response else None
 
@@ -448,7 +448,7 @@ try:
     ]
 
     response = text_translator.translate(
-        request_body=input_text_elements, to=target_languages, from_parameter=source_language
+        request_body=input_text_elements, to=target_languages, source_language=source_language
     )
     translation = response[0] if response else None
 
@@ -491,7 +491,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -525,7 +525,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -561,13 +561,15 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sent_len:
-                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
-                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
+            if translated_text.lengths_of_sentences:
+                print(f"Source Sentence length: {translated_text.lengths_of_sentences.src_lengths_of_sentences}")
+                print(
+                    f"Translated Sentence length: {translated_text.lengths_of_sentences.trans_lengths_of_sentences}"
+                )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -600,7 +602,7 @@ try:
         detected_language = translation.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
@@ -624,12 +626,12 @@ Converts characters or letters of a source language to the corresponding charact
 ```python
 try:
     language = "zh-Hans"
-    from_script = "Hans"
-    to_script = "Latn"
+    source_language_script = "Hans"
+    target_language_script = "Latn"
     input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
-        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        request_body=input_text_elements, language=language, source_language_script=source_language_script, target_language_script=target_language_script
     )
     transliteration = response[0] if response else None
 
@@ -670,10 +672,10 @@ try:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sent_len:
+        for boundary in sentence_boundaries.lengths_of_sentences:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -702,10 +704,10 @@ try:
         detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.confidence}."
             )
         print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sent_len:
+        for boundary in sentence_boundaries.lengths_of_sentences:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -731,7 +733,7 @@ try:
     input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
-        request_body=input_text_elements, from_parameter=source_language, to=target_language
+        request_body=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 
@@ -763,7 +765,7 @@ try:
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        content=input_text_elements, source_language=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 

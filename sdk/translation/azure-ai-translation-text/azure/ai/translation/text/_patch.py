@@ -56,20 +56,22 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Ocp-Apim-Subscription-Key"] = self.credential.key
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
 
+
 class TranslatorAADCredential:
     """Credential for Translator Service when using AAD authentication.
 
-    :param tokenCredential: An object which can provide an access token for the Translator Resource, such as a credential from
+    :param token_credential: An object which can provide an access token for the Translator Resource, such as a credential from
         :mod:`azure.identity`
-    :type tokenCredential: ~azure.core.credentials.TokenCredential
-    :param str resourceId: Azure Resource Id of the Translation Resource.
+    :type token_credential: ~azure.core.credentials.TokenCredential
+    :param str resource_id: Azure Resource Id of the Translation Resource.
     :param str region: Azure Region of the Translation Resource.
     """
 
-    def __init__(self, tokenCredential: TokenCredential, resourceId: str, region: str) -> None:
-        self.tokenCredential = tokenCredential
-        self.resourceId = resourceId
+    def __init__(self, token_credential: TokenCredential, resource_id: str, region: str) -> None:
+        self.token_credential = token_credential
+        self.resource_id = resource_id
         self.region = region
+
 
 class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
     """Translator AAD Authentication Policy. Adds headers that are required by Translator Service
@@ -81,14 +83,17 @@ class TranslatorAADAuthenticationPolicy(BearerTokenCredentialPolicy):
     :type credential: ~azure.ai.translation.text.TranslatorAADCredential
     """
 
-    def __init__(self, credential: TranslatorAADCredential, **kwargs: Any)-> None:
-        super(TranslatorAADAuthenticationPolicy, self).__init__(credential.tokenCredential, "https://cognitiveservices.azure.com/.default", **kwargs)
+    def __init__(self, credential: TranslatorAADCredential, **kwargs: Any) -> None:
+        super(TranslatorAADAuthenticationPolicy, self).__init__(
+            credential.token_credential, "https://cognitiveservices.azure.com/.default", **kwargs
+        )
         self.translatorCredential = credential
 
     def on_request(self, request: PipelineRequest) -> None:
-        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translatorCredential.resourceId
+        request.http_request.headers["Ocp-Apim-ResourceId"] = self.translatorCredential.resource_id
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.translatorCredential.region
         super().on_request(request)
+
 
 def get_translation_endpoint(endpoint, api_version):
     if not endpoint:
@@ -167,7 +172,9 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
         self,
         *,
-        credential: Optional[Union[AzureKeyCredential, TokenCredential, TranslatorCredential, TranslatorAADCredential]] = None,
+        credential: Optional[
+            Union[AzureKeyCredential, TokenCredential, TranslatorCredential, TranslatorAADCredential]
+        ] = None,
         endpoint: Optional[str] = None,
         api_version="3.0",
         **kwargs

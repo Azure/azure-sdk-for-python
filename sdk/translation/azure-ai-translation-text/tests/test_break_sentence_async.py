@@ -22,8 +22,8 @@ class TestBreakSentenceAsync(TextTranslationTest):
             response = await client.find_sentence_boundaries(request_body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
-        assert response[0].detected_language.score > 0.9
-        assert response[0].sent_len[0] == 11
+        assert response[0].detected_language.confidence > 0.9
+        assert response[0].lengths_of_sentences[0] == 11
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
@@ -42,7 +42,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
         assert response is not None
         expected_lengths = [78, 41, 110, 46]
         for i, expected_length in enumerate(expected_lengths):
-            assert expected_length == response[0].sent_len[i]
+            assert expected_length == response[0].lengths_of_sentences[i]
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
@@ -59,7 +59,7 @@ class TestBreakSentenceAsync(TextTranslationTest):
                 request_body=input_text_elements, language="zh-Hans", script="Latn"
             )
         assert response is not None
-        assert response[0].sent_len[0] == 18
+        assert response[0].lengths_of_sentences[0] == 18
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
@@ -79,5 +79,5 @@ class TestBreakSentenceAsync(TextTranslationTest):
         assert response is not None
         assert response[0].detected_language.language == "en"
         assert response[1].detected_language.language == "ar"
-        assert response[0].sent_len[0] == 11
-        assert response[1].sent_len[0] == 32
+        assert response[0].lengths_of_sentences[0] == 11
+        assert response[1].lengths_of_sentences[0] == 32
