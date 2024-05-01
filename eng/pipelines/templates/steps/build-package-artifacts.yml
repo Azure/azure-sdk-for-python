@@ -56,7 +56,7 @@ steps:
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
       echo "##vso[task.setvariable variable=PATH;]$PATH"
-    displayName: 'Prep Environment Linux'
+    displayName: 'Prep Environment Linux/Mac'
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
   - script: |
@@ -68,7 +68,7 @@ steps:
       python -m pip install --force -r eng\ci_tools.txt
       python -m pip freeze --all
       echo "##vso[task.setvariable variable=PATH;]$PATH"
-    displayName: 'Prep Environment'
+    displayName: 'Prep Environment Windows'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - template: set-dev-build.yml@self
@@ -98,8 +98,8 @@ steps:
       source $(Build.SourcesDirectory)/venv/bin/activate
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'MacOS')))
+    displayName: 'Generate Packages Linux/Mac'
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
@@ -110,7 +110,7 @@ steps:
       popd
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages'
+    displayName: 'Generate Packages Windows'
     condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
     timeoutInMinutes: 80
     env:
@@ -121,6 +121,7 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 
