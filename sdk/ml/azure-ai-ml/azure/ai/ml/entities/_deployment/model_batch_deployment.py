@@ -8,19 +8,14 @@ from typing import Any, Dict, Optional, Union, Literal
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBatchDeploymentSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
-from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
@@ -51,7 +46,7 @@ class ModelBatchDeployment(BatchDeployment):
     def __init__(
         self,
         *,
-        name: Optional[str],
+        name: str,
         endpoint_name: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
         properties: Optional[Dict[str, str]] = None,

@@ -56,7 +56,7 @@ class ModelBatchDeploymentSettings:
         mini_batch_size: Optional[int],
         instance_count: Optional[int] = None,
         max_concurrency_per_instance: Optional[int] = None,
-        output_action: Optional[BatchDeploymentOutputAction] = None,
+        output_action: Optional[str] = None,
         output_file_name: Optional[str] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         environment_variables: Optional[Dict[str, str]] = None,

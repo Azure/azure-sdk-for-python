@@ -36,7 +36,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     """Batch endpoint deployment entity.
 
     **Warning** This object should not be used directly.
-    Please use of the child implementaions, :class:`~azure.ai.ml.entities.ModelBatchDeployment` or
+    Please use of the child implementations, :class:`~azure.ai.ml.entities.ModelBatchDeployment` or
     :class:`azure.ai.ml.entities.PipelineComponentBatchDeployment`.
 
     :param name: the name of the batch deployment
@@ -89,7 +89,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -107,7 +107,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         output_file_name: Optional[str] = None,
-        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
+        output_action: Optional[str] = None,
         error_threshold: Optional[int] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         logging_level: Optional[str] = None,
@@ -117,9 +117,8 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs: Any,
     ) -> None:
-        _type = kwargs.pop("_type")
-        if _type is None:
-            print("Deprecation warning")
+        # When ready, we should add some kind of deprecation warning if type=None.
+        _type = kwargs.pop("_type", None)
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
         super(BatchDeployment, self).__init__(
             name=name,
@@ -150,11 +149,11 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
                 error_threshold=error_threshold,
                 logging_level=logging_level,
         )
-    
+
         if self.resources is not None:
             if self.resources.instance_count is None and self._settings.instance_count is not None:
                 self.resources.instance_count = self._settings.instance_count
-            elif self.resources.incount is not None and self._settings.instance_count is not None:
+            elif self.resources.instance_count is not None and self._settings.instance_count is not None:
                 msg = "Can't set instance_count when resources.instance_count is provided."
                 raise ValidationException(
                     message=msg,
@@ -168,10 +167,8 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             self.resources = ResourceConfiguration(instance_count=self._settings.instance_count)
 
     def __getattr__(self, name: str) -> Optional[Any]:
-        """Support backwards compatibilty with old BatchDeployment properties.
-        
-        We may want to overwrite this on a per-child class basis.
-        """
+        # Support backwards compatibility with old BatchDeployment properties.
+        # We may want to overwrite this on a per-child class basis.
         if name in [
             "output_action",
             "output_file_name",
@@ -185,17 +182,12 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             try:
                 return getattr(self._settings, name)
             except AttributeError:
-                try:
-                    return super().__getattr__(name)
-                except AttributeError:
-                    return None
-        return super().__getattr__(name)
+                pass
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     def __setattr__(self, name, value):
-        """Support backwards compatibilty with old BatchDeployment properties.
-        
-        We may want to overwrite this on a per-child class basis.
-        """
+        # Support backwards compatibility with old BatchDeployment properties.
+        # We may want to overwrite this on a per-child class basis.
         if name in [
             "output_action",
             "output_file_name",
