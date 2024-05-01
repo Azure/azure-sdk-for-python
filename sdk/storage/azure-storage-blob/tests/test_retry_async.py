@@ -582,7 +582,8 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(HttpResponseError):
             await service.create_container(
-                container_name, raw_response_hook=response_handler,
+                container_name,
+                raw_response_hook=response_handler,
                 retry_hook=assert_exception_is_present_on_retry_context)
 
         # Assert
