@@ -855,7 +855,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
             credential=credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             import uuid
             session_id = str(uuid.uuid4())
-            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(seconds=30)).replace(microsecond=0)
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
                 message_id = uuid.uuid4()
@@ -864,22 +864,19 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 message.scheduled_enqueue_time_utc = enqueue_time
                 await sender.send_messages(message)
 
+            # Wait for message to send
+            asyncio.sleep(30)
+
             messages = []
-            renewer = AutoLockRenewer()
+            
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
-                messages.extend(await receiver.receive_messages(max_wait_time=120))
-                messages.extend(await receiver.receive_messages(max_wait_time=5))
-                if messages:
-                    data = str(messages[0])
-                    assert data == content
-                    assert messages[0].message_id == message_id
-                    assert messages[0].scheduled_enqueue_time_utc == enqueue_time
-                    assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
-                    assert len(messages) == 1
-                else:
-                    raise Exception("Failed to receive schdeduled message.")
-            await renewer.close()
+                messages = await receiver.receive_messages(max_wait_time=10)
+                data = str(messages[0])
+                assert data == content
+                assert messages[0].message_id == message_id
+                assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
+                assert len(messages) == 1
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
