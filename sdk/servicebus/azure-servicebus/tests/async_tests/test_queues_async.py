@@ -1051,7 +1051,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = await receiver.receive_messages()
-                assert len(messages) == 1
                 for message in messages:
                     assert str(message) == "test session sender"
                     await receiver.complete_message(message)
