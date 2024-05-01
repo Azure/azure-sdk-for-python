@@ -851,7 +851,9 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
+def build_get_account_info_request(
+    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -871,9 +873,13 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if request_id_parameter is not None:
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2562,9 +2568,20 @@ class ContainerOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def get_account_info(  # pylint: disable=inconsistent-return-statements
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """Returns the sku name and account kind.
 
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2586,6 +2603,8 @@ class ContainerOperations:
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2616,6 +2635,7 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
         response_headers["x-ms-sku-name"] = self._deserialize("str", response.headers.get("x-ms-sku-name"))
         response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
+        response_headers["x-ms-is-hns-enabled"] = self._deserialize("bool", response.headers.get("x-ms-is-hns-enabled"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
