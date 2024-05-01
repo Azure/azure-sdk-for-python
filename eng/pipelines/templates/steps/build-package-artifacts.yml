@@ -61,7 +61,7 @@ steps:
 
   - script: |
       python -m venv $(Build.SourcesDirectory)/venv
-      pushd $(Build.SourcesDirectory)/venv/bin/
+      pushd $(Build.SourcesDirectory)/venv/Scripts/
       activate
       popd
       which python
@@ -105,7 +105,7 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pushd $(Build.SourcesDirectory)/venv/bin/
+      pushd $(Build.SourcesDirectory)/venv/Scripts/
       activate
       popd
       which python
