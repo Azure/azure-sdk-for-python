@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple, cast
+from typing import Callable, Dict, List, Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -234,18 +234,31 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         }
 
     @staticmethod
-    def create_connection(**kwargs):
+    def create_connection(# pylint:disable=unused-argument
+        *,
+        endpoint: str,
+        auth: JWTTokenAuth,
+        container_id: Optional[str] = None,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: float,
+        properties: Optional[Dict[str, Any]] = None,
+        remote_idle_timeout_empty_frame_send_ratio: float,
+        error_policy: Any,
+        debug: bool,
+        encoding: str,
+        **kwargs: Any
+    ) -> Connection:
         """
         Creates and returns the uamqp Connection object.
-        :keyword str host: The hostname, used by uamqp.
-        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.
-        :keyword int idle_timeout: Required.
-        :keyword Dict properties: Required.
-        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
+        :keyword float idle_timeout: Required.
+        :keyword dict[str, Any] or None properties: Required.
+        :keyword float remote_idle_timeout_empty_frame_send_ratio: Required.
         :keyword error_policy: Required.
         :keyword bool debug: Required.
         :keyword str encoding: Required.
@@ -253,11 +266,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The connection object.
         :rtype: ~pyamqp.Connection
         """
-        endpoint = kwargs.pop("endpoint")
-        host = kwargs.pop("host")  # pylint:disable=unused-variable
-        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
-        network_trace = kwargs.pop("debug")
-        return Connection(endpoint, network_trace=network_trace, **kwargs)
+        network_trace = debug
+        return Connection(
+            endpoint,
+            container_id=container_id,
+            max_frame_size=max_frame_size,
+            channel_max=channel_max,
+            idle_timeout=idle_timeout,
+            properties=properties,
+            idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
+            network_trace=network_trace,
+            **kwargs
+        )
 
     @staticmethod
     def close_connection(connection):
@@ -280,7 +300,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return connection.state
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(# pylint: disable=unused-argument
+        *,
+        config,
+        target: str,
+        auth: JWTTokenAuth,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        keep_alive_interval: int,
+        client_name: str,
+        link_properties: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ):
         """
         Creates and returns the pyamqp SendClient.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -292,15 +325,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword retry_policy: Required.
         :keyword keep_alive_interval: Required.
         :keyword str client_name: Required.
-        :keyword dict link_properties: Required.
+        :keyword dict[str, Any] or None link_properties: Required.
         :keyword properties: Required.
 
         :return: The SendClient.
         :rtype: ~pyamqp.SendClient
         """
-
-        target = kwargs.pop("target")
-        # TODO: not used by pyamqp?
         msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
             "msg_timeout"
         )
@@ -313,6 +343,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            keep_alive_interval=keep_alive_interval,
+            link_properties=link_properties,
+            properties=properties,
+            client_name=client_name,
             **kwargs,
         )
 
@@ -405,14 +443,30 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return source
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs):
+    def create_receive_client(
+        *,
+        config,
+        source: Source,
+        auth: JWTTokenAuth,
+        idle_timeout: int,
+        network_trace: bool,
+        retry_policy: Any,
+        client_name: str,
+        link_properties: Dict[bytes, Any],
+        properties: Optional[Dict[str, Any]] = None,
+        link_credit: int,
+        keep_alive_interval: int,
+        desired_capabilities: Optional[List[bytes]] = None,
+        streaming_receive: bool,
+        message_received_callback: Callable,
+        timeout: float,
+        **kwargs
+    ):
         """
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :keyword str source: Required. The source.
-        :keyword str offset: Required.
-        :keyword str offset_inclusive: Required.
+        :keyword Source source: Required. The source.
         :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
@@ -422,16 +476,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword properties: Required.
         :keyword link_credit: Required. The prefetch.
         :keyword keep_alive_interval: Required. Missing in pyamqp.
-        :keyword desired_capabilities: Required.
+        :keyword list[bytes] or None desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword message_received_callback: Required.
-        :keyword timeout: Required.
+        :keyword float timeout: Required.
 
         :return: The receive client.
         :rtype: ~pyamqp.ReceiveClient
         """
 
-        source = kwargs.pop("source")
         return ReceiveClient(
             config.hostname,
             source,
@@ -441,6 +494,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
             socket_timeout=config.socket_timeout,
+            auth=auth,
+            idle_timeout=idle_timeout,
+            network_trace=network_trace,
+            retry_policy=retry_policy,
+            client_name=client_name,
+            link_properties=link_properties,
+            properties=properties,
+            link_credit=link_credit,
+            desired_capabilities=desired_capabilities,
+            message_received_callback=message_received_callback,
+            keep_alive_interval=keep_alive_interval,
+            streaming_receive=streaming_receive,
+            timeout=timeout,
             **kwargs,
         )
 
@@ -477,7 +543,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
     @staticmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config,
+        *,
+        update_token: bool,
+    ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -492,7 +565,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
@@ -546,7 +618,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return mgmt_auth.get_token().token
 
     @staticmethod
-    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(
+        mgmt_client: AMQPClient,
+        mgmt_msg: str,
+        *,
+        operation: bytes,
+        operation_type: bytes,
+        status_code_field: bytes,
+        description_fields: bytes,
+        **kwargs: Any,
+    ): # pylint:disable=unused-argument
         """
         Send mgmt request.
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
@@ -560,12 +641,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.message.Message
 
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
         return mgmt_client.mgmt_request(
             mgmt_msg,
             operation=operation.decode(),
             operation_type=operation_type.decode(),
+            status_code_field=status_code_field,
+            description_fields=description_fields,
             **kwargs,
         )
 

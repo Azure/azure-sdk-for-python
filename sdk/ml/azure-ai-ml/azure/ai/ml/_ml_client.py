@@ -44,6 +44,7 @@ from azure.ai.ml._restclient.workspace_dataplane import (
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
@@ -58,6 +59,7 @@ from azure.ai.ml.entities import (
     Environment,
     Index,
     Job,
+    MarketplaceSubscription,
     Model,
     ModelBatchDeployment,
     OnlineDeployment,
@@ -65,25 +67,29 @@ from azure.ai.ml.entities import (
     PipelineComponentBatchDeployment,
     Registry,
     Schedule,
+    ServerlessEndpoint,
     Workspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
+    AzureOpenAIDeploymentOperations,
     BatchDeploymentOperations,
     BatchEndpointOperations,
     ComponentOperations,
     ComputeOperations,
+    ConnectionsOperations,
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
     IndexOperations,
     JobOperations,
+    MarketplaceSubscriptionOperations,
     ModelOperations,
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    ConnectionsOperations,
+    ServerlessEndpointOperations,
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -349,6 +355,13 @@ class MLClient:
         )
 
         self._service_client_01_2024_preview = ServiceClient012024Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_04_2024_preview = ServiceClient042024Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -681,10 +694,29 @@ class MLClient:
             self._service_client_10_2023,
             **ops_kwargs,  # type: ignore[arg-type]
         )
+        self._azure_openai_deployments = AzureOpenAIDeploymentOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_04_2024_preview,
+            self._connections,
+        )
 
+        self._serverless_endpoints = ServerlessEndpointOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+            self._operation_container,
+        )
+        self._marketplace_subscriptions = MarketplaceSubscriptionOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+        )
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+        self._operation_container.add(AzureMLResourceType.SERVERLESS_ENDPOINT, self._serverless_endpoints)
+        self._operation_container.add(AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions)
 
     @classmethod
     def from_config(
@@ -996,6 +1028,26 @@ class MLClient:
         return self._schedules
 
     @property
+    @experimental
+    def serverless_endpoints(self) -> ServerlessEndpointOperations:
+        """A collection of serverless endpoint related operations.
+
+        :return: Serverless endpoint operations.
+        :rtype: ~azure.ai.ml.operations.ServerlessEndpointOperations
+        """
+        return self._serverless_endpoints
+
+    @property
+    @experimental
+    def marketplace_subscriptions(self) -> MarketplaceSubscriptionOperations:
+        """A collection of marketplace subscription related operations.
+
+        :return: Marketplace subscription operations.
+        :rtype: ~azure.ai.ml.operations.MarketplaceSubscriptionOperations
+        """
+        return self._marketplace_subscriptions
+
+    @property
     def indexes(self) -> IndexOperations:
         """A collection of index related operations.
 
@@ -1003,6 +1055,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.IndexOperations
         """
         return self._indexes
+
+    @property
+    @experimental
+    def azure_openai_deployments(self) -> AzureOpenAIDeploymentOperations:
+        """A collection of Azure OpenAI deployment related operations.
+
+        :return: Azure OpenAI deployment operations.
+        :rtype: ~azure.ai.ml.operations.AzureOpenAIDeploymentOperations
+        """
+        return self._azure_openai_deployments
 
     @property
     def subscription_id(self) -> str:
@@ -1281,3 +1343,15 @@ def _(entity: PipelineComponentBatchDeployment, operations, *args, **kwargs):
 def _(entity: Schedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(ServerlessEndpoint)
+def _(entity: ServerlessEndpoint, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating serverless endpoints")
+    return operations[AzureMLResourceType.SERVERLESS_ENDPOINT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(MarketplaceSubscription)
+def _(entity: MarketplaceSubscription, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating marketplace subscriptions")
+    return operations[AzureMLResourceType.MARKETPLACE_SUBSCRIPTION].begin_create_or_update(entity, **kwargs)
