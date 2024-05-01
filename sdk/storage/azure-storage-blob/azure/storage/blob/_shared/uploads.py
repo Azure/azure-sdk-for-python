@@ -9,18 +9,60 @@ from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperati
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import Optional, Union
+from typing import AnyStr, IO, Iterable, Optional, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
-from .request_handlers import get_length
+from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
-from .validation import calculate_crc64, calculate_md5, ChecksumAlgorithm
+from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
+from .validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
+
+
+def prepare_upload_data(
+    data: Union[bytes, str, IO[bytes], Iterable[AnyStr]],
+    encoding: str,
+    data_length: Optional[int],
+    validate_content: Union[bool, str, None]
+) -> Tuple[Union[bytes, IO[bytes]], int, int]:
+    # Trim the incoming data per provided length
+    if data_length is not None and isinstance(data, (str, bytes)) and data_length != len(data):
+        data = data[:data_length]
+    # Encode raw string data
+    if isinstance(data, str):
+        data = data.encode(encoding)
+
+    # Attempt to determine length of data if it's not provided
+    if data_length is None:
+        data_length = get_length(data)
+    # If we still can't get the length, read all the data into memory
+    if data_length is None:
+        data_length, data = read_length(data)
+
+    structured_message = validate_content == ChecksumAlgorithm.CRC64
+    if isinstance(data, bytes):
+        # Structured message requires a stream
+        if structured_message:
+            data = BytesIO(data)
+    elif hasattr(data, 'read'):
+        # TODO: Block IO[str] here?
+        pass
+    elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
+        data = IterStreamer(data, encoding=encoding)
+    else:
+        raise TypeError(f"Unsupported data type: {type(data)}")
+
+    content_length = data_length
+    if structured_message:
+        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)
+        content_length = len(data)
+
+    return data, data_length, content_length
 
 
 def _parallel_uploads(executor, uploader, pending, running):
@@ -132,7 +174,7 @@ class ChunkInfo:
         if checksum_algorithm == ChecksumAlgorithm.MD5:
             self.md5 = calculate_md5(self.data)
         if checksum_algorithm == ChecksumAlgorithm.CRC64:
-            self.crc64 = calculate_crc64(self.data, 0)
+            self.crc64 = calculate_crc64_bytes(self.data)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes

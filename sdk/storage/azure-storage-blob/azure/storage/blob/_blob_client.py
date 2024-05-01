@@ -22,15 +22,19 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
-from ._shared.uploads import IterStreamer
+from ._shared.uploads import IterStreamer, prepare_upload_data
 from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
-    read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
-from ._shared.validation import ChecksumAlgorithm, parse_validation_option
+from ._shared.validation import (
+    calculate_crc64_bytes,
+    calculate_md5,
+    ChecksumAlgorithm,
+    parse_validation_option,
+    SM_HEADER_V1_CRC64)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
@@ -2474,26 +2478,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     def _stage_block_options(
-            self, block_id,  # type: str
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        self, block_id: str,
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
-        if isinstance(data, str):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
 
-        validate_content = kwargs.pop('validate_content', False)
+        encoding = kwargs.pop('encoding', 'utf-8')
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
+
+        structured_type, structured_length = None, None
+        if validate_content == ChecksumAlgorithm.CRC64:
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
+
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -2505,14 +2508,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         options = {
             'block_id': block_id,
-            'content_length': length,
+            'content_length': content_length,
             'body': data,
-            'transactional_content_md5': None,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'validate_content': validate_content,
+            'validate_content': True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'structured_body_type': structured_type,
+            'structured_content_length': structured_length,
             'cls': return_response_headers,
         }
         options.update(kwargs)
@@ -2520,12 +2524,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def stage_block(
-            self, block_id,  # type: str
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        self, block_id: str,
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A string value that identifies the block.
@@ -2534,15 +2537,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param data: The blob data.
         :type data: Union[Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -3515,22 +3528,23 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _upload_page_options( # type: ignore
-            self, page,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if isinstance(page, str):
-            page = page.encode(kwargs.pop('encoding', 'UTF-8'))
+    def _upload_page_options(
+        self, page: Union[bytes, str],
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
+
+        if isinstance(page, str):
+            page = page.encode(kwargs.pop('encoding', 'UTF-8'))
+        page = page[:length]
+
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = f'bytes={offset}-{end_range}' # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -3541,7 +3555,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         )
         mod_conditions = get_modify_conditions(kwargs)
         cpk_scope_info = get_cpk_scope_info(kwargs)
-        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -3549,16 +3562,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        content_md5, content_crc64 = None, None
+        if validate_content == ChecksumAlgorithm.MD5:
+            content_md5 = calculate_md5(page)
+        elif validate_content == ChecksumAlgorithm.CRC64:
+            content_crc64 = calculate_crc64_bytes(page)
+
         options = {
-            'body': page[:length],
+            'body': page,
             'content_length': length,
-            'transactional_content_md5': None,
+            'transactional_content_md5': content_md5,
+            'transactional_content_crc64': content_crc64,
             'timeout': kwargs.pop('timeout', None),
             'range': content_range,
             'lease_access_conditions': access_conditions,
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
+            'validate_content': validate_content if validate_content is True else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
@@ -3566,17 +3588,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return options
 
     @distributed_trace
-    def upload_page( # type: ignore
-            self, page,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def upload_page(
+        self, page: Union[bytes, str],
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, "datetime"]]:
         """The Upload Pages operation writes a range of pages to a page blob.
 
-        :param bytes page:
+        :param page:
             Content of the page.
+        :type page: bytes or str
         :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -3591,13 +3613,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -3954,29 +3988,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _append_block_options( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+    def _append_block_options(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if isinstance(data, str):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if length == 0:
-            return {}
-        if isinstance(data, bytes):
-            data = data[:length]
+        encoding = kwargs.pop('encoding', 'utf-8')
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
+
+        structured_type, structured_length = None, None
+        if validate_content == ChecksumAlgorithm.CRC64:
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)
-        validate_content = kwargs.pop('validate_content', False)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -3995,26 +4025,26 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                                encryption_algorithm=cpk.algorithm)
         options = {
             'body': data,
-            'content_length': length,
+            'content_length': content_length,
             'timeout': kwargs.pop('timeout', None),
-            'transactional_content_md5': None,
             'lease_access_conditions': access_conditions,
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
+            'validate_content': True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'structured_body_type': structured_type,
+            'structured_content_length': structured_length,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
 
     @distributed_trace
-    def append_block( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_block(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
@@ -4022,13 +4052,25 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type data: bytes or str or Iterable
         :param int length:
             Size of the block in bytes.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
+                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+                   of https. If using this option, the memory-efficient upload algorithm will not be used.
+            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
+                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
+                      client-side data integrity issues.
+
+                      NOTE: This requires the `azure-storage-extensions` package to be installed.
+            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
