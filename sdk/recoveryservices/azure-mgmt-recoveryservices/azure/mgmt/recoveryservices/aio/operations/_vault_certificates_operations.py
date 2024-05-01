@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -77,7 +77,6 @@ class VaultCertificatesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultCertificateResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -89,7 +88,7 @@ class VaultCertificatesOperations:
         resource_group_name: str,
         vault_name: str,
         certificate_name: str,
-        certificate_request: IO,
+        certificate_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -104,11 +103,10 @@ class VaultCertificatesOperations:
         :param certificate_name: Certificate friendly name. Required.
         :type certificate_name: str
         :param certificate_request: Input parameters for uploading the vault certificate. Required.
-        :type certificate_request: IO
+        :type certificate_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultCertificateResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -120,7 +118,7 @@ class VaultCertificatesOperations:
         resource_group_name: str,
         vault_name: str,
         certificate_name: str,
-        certificate_request: Union[_models.CertificateRequest, IO],
+        certificate_request: Union[_models.CertificateRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultCertificateResponse:
         """Uploads a certificate for a resource.
@@ -133,12 +131,8 @@ class VaultCertificatesOperations:
         :param certificate_name: Certificate friendly name. Required.
         :type certificate_name: str
         :param certificate_request: Input parameters for uploading the vault certificate. Is either a
-         CertificateRequest type or a IO type. Required.
-        :type certificate_request: ~azure.mgmt.recoveryservices.models.CertificateRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         CertificateRequest type or a IO[bytes] type. Required.
+        :type certificate_request: ~azure.mgmt.recoveryservices.models.CertificateRequest or IO[bytes]
         :return: VaultCertificateResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -166,7 +160,7 @@ class VaultCertificatesOperations:
         else:
             _json = self._serialize.body(certificate_request, "CertificateRequest")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             certificate_name=certificate_name,
@@ -175,16 +169,15 @@ class VaultCertificatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -196,10 +189,6 @@ class VaultCertificatesOperations:
         deserialized = self._deserialize("VaultCertificateResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {
-        "url": "/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/certificates/{certificateName}"
-    }
+        return deserialized  # type: ignore

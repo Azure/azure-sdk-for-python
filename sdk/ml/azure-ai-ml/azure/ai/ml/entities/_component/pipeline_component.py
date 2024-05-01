@@ -175,6 +175,8 @@ class PipelineComponent(Component):
             - If _skip_required_compute_missing_validation is True, validation will be skipped.
             - All the rest of cases without compute will add compute not set error to validation result.
 
+        :keyword parent_node_name: The name of the parent node.
+        :type parent_node_name: Optional[str]
         :return: The validation result
         :rtype: MutableValidationResult
         """
@@ -348,9 +350,9 @@ class PipelineComponent(Component):
                             and os.path.exists(input_value.path)
                         ):
                             start_time = time.time()
-                            component_interface_dict["jobs"][job_name]["inputs"][input_name][
-                                "content_hash"
-                            ] = get_object_hash(input_value.path)
+                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
+                                get_object_hash(input_value.path)
+                            )
                             module_logger.debug(
                                 "Takes %s seconds to calculate the content hash of local input %s",
                                 time.time() - start_time,
@@ -455,7 +457,7 @@ class PipelineComponent(Component):
         if jobs:
             try:
                 init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 # Skip parse jobs if error exists.
                 # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
                 module_logger.debug("Parse pipeline component jobs failed with: %s", e)
@@ -521,6 +523,6 @@ class PipelineComponent(Component):
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             toStr: str = super(PipelineComponent, self).__str__()
             return toStr

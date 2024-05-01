@@ -740,12 +740,10 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return self._data_binding()
 
     @overload
-    def _build_data(self, data: Union[Model, Data]) -> Input:
-        ...
+    def _build_data(self, data: Union[Model, Data]) -> Input: ...
 
     @overload
-    def _build_data(self, data: T) -> Any:
-        ...
+    def _build_data(self, data: T) -> Any: ...
 
     def _build_data(self, data: Union[Model, Data, T]) -> Any:
         """Build data according to input type.

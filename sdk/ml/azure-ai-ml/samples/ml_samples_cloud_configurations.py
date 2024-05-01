@@ -31,9 +31,9 @@ class CloudConfigurationOptions(object):
         # This environment variable should be set when running python.  If it is set, and the configured cloud is not
         # one of the default ones in _azure_environments.py, it will follow the url to find the cloud config.  If it
         # does not find it anywhere, it will throw an "Unknown cloud environment" error.
-        os.environ[
-            ArmConstants.METADATA_URL_ENV_NAME
-        ] = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+        os.environ[ArmConstants.METADATA_URL_ENV_NAME] = (
+            "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+        )
         kwargs = {"cloud": "AzureCloud"}
 
         ml_client = MLClient(

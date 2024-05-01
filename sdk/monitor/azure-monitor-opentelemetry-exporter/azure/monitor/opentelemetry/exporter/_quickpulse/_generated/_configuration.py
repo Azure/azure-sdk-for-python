@@ -6,9 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core.pipeline import policies
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 VERSION = "unknown"
 
@@ -19,16 +23,22 @@ class QuickpulseClientConfiguration:  # pylint: disable=too-many-instance-attrib
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param host: QuickPulse endpoint: https://rt.services.visualstudio.com. Default value is
-     "https://rt.services.visualstudio.com".
-    :type host: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2024-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, host: str = "https://rt.services.visualstudio.com", **kwargs: Any) -> None:
-        if host is None:
-            raise ValueError("Parameter 'host' must not be None.")
+    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
+        api_version: str = kwargs.pop("api_version", "2024-04-01-preview")
 
-        self.host = host
+        # if credential is None:
+        #     raise ValueError("Parameter 'credential' must not be None.")
+
+        self.credential = credential
+        self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://monitor.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "quickpulseclient/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -43,3 +53,7 @@ class QuickpulseClientConfiguration:  # pylint: disable=too-many-instance-attrib
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        # if self.credential and not self.authentication_policy:
+        #     self.authentication_policy = policies.BearerTokenCredentialPolicy(
+        #         self.credential, *self.credential_scopes, **kwargs
+        #     )

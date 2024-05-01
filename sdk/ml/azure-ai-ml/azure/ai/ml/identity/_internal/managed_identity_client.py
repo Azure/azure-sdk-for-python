@@ -4,7 +4,7 @@
 
 import abc
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, Union
 
 import isodate
 from msal import TokenCache
@@ -21,7 +21,6 @@ ABC = abc.ABC
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Union
 
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest

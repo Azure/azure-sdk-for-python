@@ -33,11 +33,18 @@ from ._assets._artifacts._package.model_package import (
 )
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.feature_set import FeatureSet
+from ._assets._artifacts.index import Index
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
+from ._autogen_entities.models import (
+    AzureOpenAIDeployment,
+    MarketplaceSubscription,
+    ServerlessEndpoint,
+    MarketplacePlan,
+)
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -67,6 +74,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -192,13 +200,21 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
-from ._workspace.connections.workspace_connection_subtypes import (
-    AzureAISearchWorkspaceConnection,
-    AzureAIServiceWorkspaceConnection,
-    AzureBlobStoreWorkspaceConnection,
-    AzureOpenAIWorkspaceConnection,
+from ._workspace.connections.connection import Connection
+from ._workspace.connections.connection_subtypes import (
+    AzureBlobStoreConnection,
+    MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServicesConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
 )
+from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -220,8 +236,9 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
+from ._workspace._ai_workspaces.hub import Hub
+from ._workspace._ai_workspaces.project import Project
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
 
 __all__ = [
     "Resource",
@@ -276,11 +293,18 @@ __all__ = [
     "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
-    "WorkspaceConnection",
-    "AzureOpenAIWorkspaceConnection",
-    "AzureBlobStoreWorkspaceConnection",
-    "AzureAISearchWorkspaceConnection",
-    "AzureAIServiceWorkspaceConnection",
+    "Connection",
+    "AzureBlobStoreConnection",
+    "MicrosoftOneLakeConnection",
+    "AzureOpenAIConnection",
+    "AzureAIServicesConnection",
+    "AzureAISearchConnection",
+    "AzureContentSafetyConnection",
+    "AzureSpeechServicesConnection",
+    "APIKeyConnection",
+    "OpenAIConnection",
+    "SerpConnection",
+    "ServerlessConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -304,6 +328,7 @@ __all__ = [
     "AzureFileDatastore",
     "OneLakeDatastore",
     "OneLakeArtifact",
+    "OneLakeConnectionArtifact",
     "Compute",
     "VirtualMachineCompute",
     "AmlCompute",
@@ -356,8 +381,8 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
-    "WorkspaceHub",
-    "WorkspaceHubConfig",
+    "Hub",
+    "Project",
     "Feature",
     "FeatureSet",
     "FeatureSetBackfillRequest",
@@ -454,6 +479,13 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "MarketplacePlan",
+    "MarketplaceSubscription",
+    "ServerlessEndpoint",
+    "AccountKeyConfiguration",
+    "AadCredentialConfiguration",
+    "Index",
+    "AzureOpenAIDeployment",
 ]
 
 # Allow importing these types for backwards compatibility

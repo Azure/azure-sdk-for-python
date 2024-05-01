@@ -301,7 +301,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
+        result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
