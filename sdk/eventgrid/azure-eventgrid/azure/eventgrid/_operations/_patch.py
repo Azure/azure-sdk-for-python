@@ -139,7 +139,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param events: The event to send.
+        :param events: The event(s) to send. A single instance of CloudEvent or a list of CloudEvents are accepted.
+         Dictionaries are also accepted, but must be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
@@ -173,7 +174,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
     ) -> None:
         """Send events to the Event Grid Basic Service.
 
-        :param events: The event to send.
+        :param events: The event(s) to send.
         :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
          or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
         :keyword channel_name: The name of the channel to send the event to.
@@ -199,7 +200,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: The name of the topic to send the event to.
         :type topic_name: str
-        :param events: The event to send.
+        :param events: The event(s) to send. A single instance of CloudEvent or a list of CloudEvents are accepted.
+         Dictionaries are also accepted, but must be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
