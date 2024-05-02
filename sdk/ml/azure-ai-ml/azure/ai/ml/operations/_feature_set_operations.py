@@ -349,6 +349,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type version: str
         :keyword feature_name: The feature name. This argument is case-sensitive.
         :paramtype feature_name: str
+        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
+            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
+        :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
         """

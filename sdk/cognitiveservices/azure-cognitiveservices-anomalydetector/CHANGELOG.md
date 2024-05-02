@@ -1,6 +1,6 @@
 # Release History
 
-## 0.3.1 (2024-04-30)
+## 0.3.1 (2024-05-01)
 
 This package is no longer being maintained. Use the [azure-ai-anomalydetector](https://pypi.org/project/azure-ai-anomalydetector/) package instead for latest features and support.
 
