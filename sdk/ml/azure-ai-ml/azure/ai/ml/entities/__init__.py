@@ -41,9 +41,9 @@ from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
-    MarketplacePlan,
     MarketplaceSubscription,
     ServerlessEndpoint,
+    MarketplacePlan,
 )
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
@@ -66,7 +66,6 @@ from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings,
 from ._compute.unsupported_compute import UnsupportedCompute
 from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
 from ._credentials import (
-    AadCredentialConfiguration,
     AccessKeyConfiguration,
     AccountKeyConfiguration,
     AmlTokenConfiguration,
@@ -75,6 +74,7 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
+    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -199,19 +199,17 @@ from ._schedule.schedule import JobSchedule, Schedule, ScheduleTriggerResult
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
-from ._workspace._ai_workspaces.hub import Hub
-from ._workspace._ai_workspaces.project import Project
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.connection import Connection
 from ._workspace.connections.connection_subtypes import (
-    APIKeyConnection,
-    AzureAISearchConnection,
-    AzureAIServicesConnection,
     AzureBlobStoreConnection,
-    AzureContentSafetyConnection,
-    AzureOpenAIConnection,
-    AzureSpeechServicesConnection,
     MicrosoftOneLakeConnection,
+    AzureOpenAIConnection,
+    AzureAIServicesConnection,
+    AzureAISearchConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    APIKeyConnection,
     OpenAIConnection,
     SerpConnection,
     ServerlessConnection,
@@ -238,6 +236,8 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
+from ._workspace._ai_workspaces.hub import Hub
+from ._workspace._ai_workspaces.project import Project
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 
 __all__ = [
@@ -546,3 +546,4 @@ def __getattr__(name: str):
         return requested
 
     raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")
+
