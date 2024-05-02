@@ -247,6 +247,7 @@ class AsyncTransport(
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
+        use_tls: bool = True,
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.connected = False
@@ -260,7 +261,7 @@ class AsyncTransport(
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
-        self._use_tls: bool = kwargs.get("use_tls")
+        self._use_tls = use_tls
 
     async def connect(self):
         try:
@@ -437,6 +438,7 @@ class WebSocketTransportAsync(
         port=WEBSOCKET_PORT,
         socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
+        use_tls: bool =True,
         **kwargs
     ):
         self._read_buffer = BytesIO()
@@ -450,7 +452,7 @@ class WebSocketTransportAsync(
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
         self.network_trace_params = kwargs.get('network_trace_params')
-        self._use_tls: bool = kwargs.get("use_tls")
+        self._use_tls = use_tls
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)

@@ -171,6 +171,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
+        use_tls: bool =True,
         **kwargs
     ):
         self._quick_recv = None
@@ -186,7 +187,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
-        self._use_tls: bool = kwargs.get("use_tls")
+        self._use_tls = use_tls
 
     def connect(self):
         try:

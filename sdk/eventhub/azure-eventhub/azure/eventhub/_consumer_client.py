@@ -453,7 +453,6 @@ class EventHubConsumerClient(
                 on_error=on_error,
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
-                **kwargs
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
