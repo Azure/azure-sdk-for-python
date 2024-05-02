@@ -741,6 +741,7 @@ def load_connection(
     """
     return cast(Connection, load_common(Connection, source, relative_origin, **kwargs))
 
+
 # Unlike other aspects of connections, this wasn't made experimental, and thus couldn't just be replaced
 # During the renaming from 'workspace connection' to just 'connection'.
 def load_workspace_connection(
