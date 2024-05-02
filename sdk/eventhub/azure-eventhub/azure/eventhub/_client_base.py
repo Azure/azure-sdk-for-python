@@ -350,7 +350,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        # Check if emulator is in use, unset tls if it iss
+        # Check if emulator is in use, unset tls if it is
         if emulator:
             kwargs["use_tls"] = False
         if token and token_expiry:
