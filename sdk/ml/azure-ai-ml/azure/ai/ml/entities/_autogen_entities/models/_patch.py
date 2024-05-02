@@ -14,6 +14,10 @@ from typing import Any, Dict, List, Optional
 
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+    EndpointDeploymentResourcePropertiesBasicResource,
+    OpenAIEndpointDeploymentResourceProperties,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ServerlessEndpoint as RestServerlessEndpoint,
@@ -25,6 +29,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 
 from ._models import (
+    AzureOpenAIDeployment as _AzureOpenAIDeployment,
     ServerlessEndpoint as _ServerlessEndpoint,
     MarketplaceSubscription as _MarketplaceSubscription,
     MarketplacePlan as _MarketplacePlan,
@@ -32,12 +37,14 @@ from ._models import (
 from .._model_base import rest_field
 
 __all__: List[str] = [
+    "AzureOpenAIDeployment",
     "ServerlessEndpoint",
     "MarketplaceSubscription",
     "MarketplacePlan",
 ]  # Add all objects you want publicly available to users at this package level
 
 _NULL = object()
+
 
 func_to_attr_type = {
     "_deserialize_dict": dict,
@@ -79,6 +86,38 @@ class ValidationMixin:
                 rest_field_type = _get_rest_field_type(field)
                 if attr_type != rest_field_type:
                     raise ValueError(f"Type of attr {attr} is of type {attr_type}, not {rest_field_type}")
+
+
+@experimental
+class AzureOpenAIDeployment(_AzureOpenAIDeployment):
+
+    system_data: Optional[SystemData] = rest_field(visibility=["read"])
+    """System data of the deployment."""
+
+    @classmethod
+    def _from_rest_object(cls, obj: EndpointDeploymentResourcePropertiesBasicResource) -> "AzureOpenAIDeployment":
+        properties: OpenAIEndpointDeploymentResourceProperties = obj.properties
+        return cls(
+            name=obj.name,
+            model_name=properties.model.name,
+            model_version=properties.model.version,
+            id=obj.id,
+            system_data=SystemData._from_rest_object(obj.system_data),
+        )
+
+    def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+        d = super().as_dict(exclude_readonly=exclude_readonly)
+        d["system_data"] = json.loads(json.dumps(self.system_data._to_dict()))  # type: ignore
+        return d
+
+
+AzureOpenAIDeployment.__doc__ += (
+    _AzureOpenAIDeployment.__doc__.strip()  # type: ignore
+    + """
+    :ivar system_data: System data of the deployment.
+    :vartype system_data: ~azure.ai.ml.entities.SystemData
+"""
+)
 
 
 @experimental

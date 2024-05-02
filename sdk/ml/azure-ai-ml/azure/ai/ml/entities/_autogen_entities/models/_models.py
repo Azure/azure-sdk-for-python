@@ -17,6 +17,43 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AzureOpenAIDeployment(_model_base.Model):
+    """Azure OpenAI Deployment Information.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The deployment name.
+    :vartype name: str
+    :ivar model_name: The name of the model to deploy.
+    :vartype model_name: str
+    :ivar model_version: The model version to deploy.
+    :vartype model_version: str
+    :ivar connection_name: The name of the connection to deploy to.
+    :vartype connection_name: str
+    :ivar target_url: The target URL of the AOAI resource for the deployment.
+    :vartype target_url: str
+    :ivar id: The ARM resource id of the deployment.
+    :vartype id: str
+    :ivar properties: Properties of the deployment.
+    :vartype properties: dict[str, str]
+    :ivar tags: Tags of the deployment.
+    :vartype tags: dict[str, str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The deployment name."""
+    model_name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the model to deploy."""
+    model_version: Optional[str] = rest_field(visibility=["read"])
+    """The model version to deploy."""
+    connection_name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the connection to deploy to."""
+    target_url: Optional[str] = rest_field(visibility=["read"])
+    """The target URL of the AOAI resource for the deployment."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The ARM resource id of the deployment."""
+
+
 class MarketplacePlan(_model_base.Model):
     """Marketplace Subscription Definition.
 
