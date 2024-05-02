@@ -294,7 +294,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
-            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             operation_callback_uri=operation_callback_url,
             custom_calling_context=user_custom_context,
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number)
