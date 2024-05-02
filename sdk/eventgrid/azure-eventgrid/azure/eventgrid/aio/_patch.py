@@ -31,6 +31,7 @@ class EventGridClient(InternalEventGridClient):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+     or ~azure.core.credentials.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value for namespaces is
      "2023-11-01". Default value for basic is "2018-01-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -45,7 +46,7 @@ class EventGridClient(InternalEventGridClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AzureSasCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"],
         *,
         api_version: Optional[str] = None,
         level: Union[str, ClientLevel] = "Standard",
