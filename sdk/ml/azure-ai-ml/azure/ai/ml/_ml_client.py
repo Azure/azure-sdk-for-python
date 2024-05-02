@@ -719,7 +719,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions)
 
     @classmethod
-    def from_config(
+    def from_config(  # pylint: disable=C4758
         cls,
         credential: TokenCredential,
         *,
@@ -752,7 +752,9 @@ class MLClient:
         :paramtype path: Optional[Union[os.PathLike, str]]
         :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
-        :paramtype file_name: str
+        :paramtype file_name: Optional[str]
+        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
+        :paramtype cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
