@@ -285,8 +285,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             if ai_services is not None:
                 try:
                     print(
-                        "Creating connection to AI Services resource. " +
-                        "This requires waiting for the workspace operation to complete..."
+                        "Creating connection to AI Services resource. "
+                        + "This requires waiting for the workspace operation to complete..."
                     )
                     poller.result()
                     from azure.ai.ml import MLClient
