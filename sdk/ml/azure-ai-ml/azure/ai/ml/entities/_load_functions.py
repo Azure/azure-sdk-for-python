@@ -771,7 +771,7 @@ def load_workspace_connection(
     :rtype: Connection
 
     """
-    return cast(Connection, load_common(Connection, source, relative_origin, **kwargs))
+    return load_workspace_connection(source, relative_origin=relative_origin, **kwargs)
 
 
 def load_schedule(
