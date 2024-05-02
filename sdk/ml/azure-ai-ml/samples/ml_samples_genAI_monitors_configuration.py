@@ -42,6 +42,7 @@ credential = DefaultAzureCredential()
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["RESOURCE_GROUP_NAME"]
 workspace_name = "test-ws1"
+aoai_connection_name = "INSERT_YOUR_AOAI_CONNECTION_NAME"
 aoai_deployment_name = "INSERT_YOUR_AOAI_DEPLOYMENT_NAME"
 endpoint_name = "INSERT_YOUR_ENDPOINT_NAME"
 deployment_name = "INSERT_YOUR_DEPLOYMENT_NAME"
@@ -87,8 +88,6 @@ class GenAIMonitoringSamples(object):
         generation_quality_thresholds = GenerationSafetyQualityMonitoringMetricThreshold(
             fluency={"acceptable_fluency_score_per_instance": 4, "aggregated_fluency_pass_rate": 0.5},
             coherence={"acceptable_coherence_score_per_instance": 4, "aggregated_coherence_pass_rate": 0.5},
-            groundedness={"aggregated_groundedness_pass_rate": 4, "acceptable_groundedness_score_per_instance": 0.5},
-            relevance={"acceptable_relevance_score_per_instance": 4, "aggregated_relevance_pass_rate": 0.5},
         )
         input_data = Input(
             type="uri_folder",
@@ -102,7 +101,7 @@ class GenAIMonitoringSamples(object):
         )
 
         generation_quality_signal = GenerationSafetyQualitySignal(
-            workspace_connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/Default_AzureOpenAI",
+            connection_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/connections/{aoai_connection_name}",
             metric_thresholds=generation_quality_thresholds,
             production_data=[production_data],
             sampling_rate=1.0,
@@ -114,8 +113,8 @@ class GenAIMonitoringSamples(object):
         )
 
         monitoring_signals = {
-            "token_statistics_signal": token_statistics_signal,
-            "generation_quality_signal": generation_quality_signal,
+            "token-usage-signal": token_statistics_signal,
+            "gsq-signal": generation_quality_signal,
         }
 
         alert_notification = AlertNotification(emails=["test@example.com", "def@example.com"])
