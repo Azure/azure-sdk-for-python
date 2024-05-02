@@ -546,4 +546,3 @@ def __getattr__(name: str):
         return requested
 
     raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")
-
