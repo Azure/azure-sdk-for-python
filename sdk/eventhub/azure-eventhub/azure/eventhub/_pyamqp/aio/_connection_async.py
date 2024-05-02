@@ -138,6 +138,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             ):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
+                self._port = parsed_url.port or WEBSOCKET_PORT
             self._transport: Union[SASLTransport, SASLWithWebSocket, AsyncTransport] = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],

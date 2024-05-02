@@ -70,7 +70,7 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 def _is_local_endpoint(endpoint: str) -> bool:
-    return re.match("^(127\.[\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None # pylint:disable=anomalous-backslash-in-string
+    return re.match("^(127\\.[\\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None # pylint:disable=anomalous-backslash-in-string
 
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
