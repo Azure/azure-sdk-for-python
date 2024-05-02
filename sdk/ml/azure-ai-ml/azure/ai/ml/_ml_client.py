@@ -913,7 +913,17 @@ class MLClient:
         return self._featurestoreentities
 
     @property
+    @experimental
     def connections(self) -> ConnectionsOperations:
+        """A collection of connection related operations.
+
+        :return: Connections operations
+        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
+        """
+        return self._connections
+
+    @property
+    def workspace_connections(self) -> ConnectionsOperations:
         """A collection of connection related operations.
 
         :return: Connections operations

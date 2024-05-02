@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=too-many-lines
+
 import logging
 import warnings
 from os import PathLike
@@ -771,6 +773,7 @@ def load_batch_endpoint(
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, params_override, **kwargs))
 
 
+@experimental
 def load_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -800,6 +803,7 @@ def load_connection(
 
     """
     return cast(Connection, load_common(Connection, source, relative_origin, params_override, **kwargs))
+
 
 # Unlike other aspects of connections, this wasn't made experimental, and thus couldn't just be replaced
 # During the renaming from 'workspace connection' to just 'connection'.
