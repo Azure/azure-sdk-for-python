@@ -258,6 +258,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
             else:
                 events = args[0]
 
+        if events is None:
+            raise ValueError("events is required.")
+
         if self._level == "Standard" and topic_name is None:
             raise ValueError("Topic name is required for standard level client.")
 
