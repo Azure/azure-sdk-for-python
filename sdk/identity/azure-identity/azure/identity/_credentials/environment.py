@@ -39,8 +39,8 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
       - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
       - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: (optional) If True, the credential will send the public certificate
-        chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication.
-        Defaults to False.
+        chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI)
+        authentication. Defaults to False.
       - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
