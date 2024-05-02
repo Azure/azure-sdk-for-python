@@ -883,17 +883,17 @@ class ServiceBusReceiver(
 
         message_count = max_message_count if max_message_count else 4000
 
-        message = {
+        message_send = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: message_count,
         }
-        start_time = time.time()
+        start_time = time.time_ns()
 
-        self._populate_message_properties(message)
+        self._populate_message_properties(message_send)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
         message, deleted = self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
+            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message_send, handler, timeout=timeout
         )
         links = get_receive_links(message)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
@@ -922,14 +922,14 @@ class ServiceBusReceiver(
             raise ValueError("The timeout must be greater than 0.")
         self._open()
 
-        message = {
+        message_send = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: 4000,
         }
-        start_time = time.time()
+        start_time = time.time_ns()
 
-        self._populate_message_properties(message)
+        self._populate_message_properties(message_send)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
 
         batch_count = 0
@@ -937,7 +937,7 @@ class ServiceBusReceiver(
         messages = []
         while deleted != 0:
             message_received, deleted = self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
+                REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message_send, handler, timeout=timeout
             )
             messages.append(message_received)
             batch_count += deleted
