@@ -4,10 +4,10 @@
 
 import functools
 import inspect
-import logging
 import sys
 from typing import Callable, Type, TypeVar, Union
 
+from knack.log import get_logger
 from typing_extensions import ParamSpec
 
 from azure.ai.ml.constants._common import (
@@ -18,8 +18,11 @@ from azure.ai.ml.constants._common import (
     EXPERIMENTAL_METHOD_MESSAGE,
 )
 
+# knack logger is compatible with Azure CLI's --only-show-errors flag, Python logging library logger is not
+
+
 _warning_cache = set()
-module_logger = logging.getLogger(__name__)
+knack_logger = get_logger(__name__)
 
 TExperimental = TypeVar("TExperimental", bound=Union[Type, Callable])
 P = ParamSpec("P")
@@ -63,7 +66,7 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
         def wrapped(*args, **kwargs):
             message = "Class {0}: {1} {2}".format(cls.__name__, EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
             if not _should_skip_warning() and not _is_warning_cached(message):
-                module_logger.warning(message)
+                knack_logger.warning(message)
             return func(*args, **kwargs)
 
         return wrapped
@@ -96,7 +99,7 @@ def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
         message = "Method {0}: {1} {2}".format(func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
         if not _should_skip_warning() and not _is_warning_cached(message):
-            module_logger.warning(message)
+            knack_logger.warning(message)
         return func(*args, **kwargs)
 
     return wrapped
