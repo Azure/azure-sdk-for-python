@@ -861,14 +861,19 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: message_count,
         }
+        start_time = time.time_ns()
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
-        deleted = await self._mgmt_request_response_with_retry(
+        message, deleted = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
         )
 
-        return deleted
+        links = get_receive_links(message)
+        with receive_trace_context_manager(
+            self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time
+        ):
+            return deleted
 
     async def purge_messages(
         self,
@@ -898,19 +903,26 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 else datetime.datetime.now(datetime.timezone.utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: 4000,
         }
+        start_time = time.time_ns()
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
 
         batch_count = 0
         deleted = None
+        messages = []
         while deleted != 0:
-            deleted = await self._mgmt_request_response_with_retry(
+            message_received, deleted = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
             )
+            messages.append(message_received)
             batch_count += deleted
 
-        return batch_count
+        links = get_receive_links(messages)
+        with receive_trace_context_manager(
+            self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time
+        ):
+            return batch_count
 
     async def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
