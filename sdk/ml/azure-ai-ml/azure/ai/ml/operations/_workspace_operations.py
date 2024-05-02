@@ -232,7 +232,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ, arguments-renamed
     def begin_create(
         self,
         workspace: Workspace,
@@ -284,14 +284,25 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             # ai_services set - try to wait for workspace operation to complete, then make connection.
             if ai_services is not None:
                 try:
-                    print("Creating connection to AI Services resource. This requires waiting for the workspace operation to complete...")
+                    print(
+                        "Creating connection to AI Services resource. " +
+                        "This requires waiting for the workspace operation to complete..."
+                    )
                     poller.result()
                     from azure.ai.ml import MLClient
                     from azure.ai.ml.entities import AzureAIServicesConnection
+
                     ai_services_name = ai_services.split("/")[-1]
                     ai_services_target = f"https://{ai_services_name}.cognitiveservices.azure.com/"
-                    sub_client = MLClient(subscription_id=self._subscription_id, resource_group_name=workspace.resource_group, credential=self._credentials, workspace_name=workspace.name)
-                    conn = AzureAIServicesConnection(name="Default_AIServices", endpoint=ai_services_target, ai_services_resource_id=ai_services)
+                    sub_client = MLClient(
+                        subscription_id=self._subscription_id,
+                        resource_group_name=workspace.resource_group,
+                        credential=self._credentials,
+                        workspace_name=workspace.name,
+                    )
+                    conn = AzureAIServicesConnection(
+                        name="Default_AIServices", endpoint=ai_services_target, ai_services_resource_id=ai_services
+                    )
                     sub_client.connections.create_or_update(connection=conn)
                 except HttpResponseError as e:
                     print(e)
