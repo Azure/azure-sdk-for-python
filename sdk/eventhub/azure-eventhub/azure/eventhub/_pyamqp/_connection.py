@@ -126,6 +126,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._port = PORT
         self.state: Optional[ConnectionState] = None
 
+        # Set the port for AmqpOverWebsocket
+        if transport_type.value == TransportType.AmqpOverWebsocket.value:
+            self._port = WEBSOCKET_PORT
+
         # Custom Endpoint
         custom_endpoint_address = kwargs.get("custom_endpoint_address")
         custom_endpoint = None
@@ -153,7 +157,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
             if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
                 sasl_transport = SASLWithWebSocket
-                self._port = parsed_url.port or WEBSOCKET_PORT
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
