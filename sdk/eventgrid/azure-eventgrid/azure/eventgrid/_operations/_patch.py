@@ -42,7 +42,6 @@ from ..models._models import (
     RejectOptions,
     CloudEvent as InternalCloudEvent,
 )
-from .._validation import api_version_validation
 
 
 from .._legacy import EventGridEvent
@@ -62,26 +61,6 @@ _SERIALIZER.client_side_validation = False
 
 if TYPE_CHECKING:
     from cloudevents.http.event import CloudEvent as CNCFCloudEvent
-
-EVENT_TYPES_BASIC = Union[
-    CloudEvent,
-    List[CloudEvent],
-    Dict[str, Any],
-    List[Dict[str, Any]],
-    EventGridEvent,
-    List[EventGridEvent],
-    "CNCFCloudEvent",
-    List["CNCFCloudEvent"],
-]
-EVENT_TYPES_STD = Union[
-    CloudEvent,
-    List[CloudEvent],
-    Dict[str, Any],
-    List[Dict[str, Any]],
-    "CNCFCloudEvent",
-    List["CNCFCloudEvent"],
-]
-
 
 def use_standard_only(func):
     """Use the standard client only.
@@ -142,33 +121,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
     @overload
     def send(
         self,
-        events: EVENT_TYPES_BASIC,
-        *,
-        channel_name: Optional[str] = None,
-        content_type: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Send events to the Event Grid Basic Service.
-
-        :param events: The event to send.
-        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
-         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
-        :keyword channel_name: The name of the channel to send the event to.
-        :paramtype channel_name: str or None
-        :keyword content_type: The content type of the event. If not specified, the default value is
-         "application/cloudevents+json; charset=utf-8".
-        :paramtype content_type: str or None
-
-        :return: None
-        :rtype: None
-        """
-        ...
-
-    @overload
-    def send(
-        self,
         topic_name: str,
-        events: EVENT_TYPES_STD,
+        events: Union[
+            CloudEvent,
+            List[CloudEvent],
+            Dict[str, Any],
+            List[Dict[str, Any]],
+            "CNCFCloudEvent",
+            List["CNCFCloudEvent"],
+        ],
         *,
         binary_mode: bool = False,
         content_type: Optional[str] = None,
@@ -183,6 +144,40 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword binary_mode: Whether to send the event in binary mode. If not specified, the default
          value is False.
         :paramtype binary_mode: bool
+        :keyword content_type: The content type of the event. If not specified, the default value is
+         "application/cloudevents+json; charset=utf-8".
+        :paramtype content_type: str or None
+
+        :return: None
+        :rtype: None
+        """
+        ...
+
+    @overload
+    def send(
+        self,
+        events: Union[
+            CloudEvent,
+            List[CloudEvent],
+            Dict[str, Any],
+            List[Dict[str, Any]],
+            EventGridEvent,
+            List[EventGridEvent],
+            "CNCFCloudEvent",
+            List["CNCFCloudEvent"],
+        ],
+        *,
+        channel_name: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Send events to the Event Grid Basic Service.
+
+        :param events: The event to send.
+        :type events: CloudEvent or List[CloudEvent] or EventGridEvent or List[EventGridEvent]
+         or Dict[str, Any] or List[Dict[str, Any]] or CNCFCloudEvent or List[CNCFCloudEvent]
+        :keyword channel_name: The name of the channel to send the event to.
+        :paramtype channel_name: str or None
         :keyword content_type: The content type of the event. If not specified, the default value is
          "application/cloudevents+json; charset=utf-8".
         :paramtype content_type: str or None
