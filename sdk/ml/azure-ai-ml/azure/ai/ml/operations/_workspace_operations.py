@@ -237,6 +237,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
+        ai_services: Optional[str] = None,
         **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
@@ -247,6 +248,11 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type workspace: ~azure.ai.ml.entities.Workspace
         :param update_dependent_resources: Whether to update dependent resources, defaults to False.
         :type update_dependent_resources: boolean
+        :param ai_services: The fully qualified ID to an AI Services resource. If provided, the operation will try to
+            create a connection to this resource after the workspace is created. Be aware that setting this will cause
+            the operation to wait for the entire workspace creation to complete, as opposed to returning a poller that
+            has yet to be waited upon yet.
+        :type ai_services: Optional[str]
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
 
@@ -274,7 +280,23 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             except HttpResponseError:
                 module_logger.warning("Failed to get parent hub for project, some values won't be transferred:")
         try:
-            return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+            poller = super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+            # ai_services set - try to wait for workspace operation to complete, then make connection.
+            if ai_services is not None:
+                try:
+                    print("Creating connection to AI Services resource. This requires waiting for the workspace operation to complete...")
+                    poller.result()
+                    from azure.ai.ml import MLClient
+                    from azure.ai.ml.entities import AzureAIServicesConnection
+                    ai_services_name = ai_services.split("/")[-1]
+                    ai_services_target = f"https://{ai_services_name}.cognitiveservices.azure.com/"
+                    sub_client = MLClient(subscription_id=self._subscription_id, resource_group_name=workspace.resource_group, credential=self._credentials, workspace_name=workspace.name)
+                    conn = AzureAIServicesConnection(name="Default_AIServices", endpoint=ai_services_target, ai_services_resource_id=ai_services)
+                    sub_client.connections.create_or_update(connection=conn)
+                except HttpResponseError as e:
+                    print(e)
+                    print("Failed to create connection to AI Services resource. Workspace creation still completed.")
+            return poller
         except HttpResponseError as error:
             if error.status_code == 403 and workspace._kind == WorkspaceKind.PROJECT:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
