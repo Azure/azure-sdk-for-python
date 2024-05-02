@@ -1695,6 +1695,61 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_copy_blob_async_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        source_blob_name = "sourceblob"
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        target_blob_name = "targetblob"
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+
+        sas_token = self.generate_sas(
+            generate_blob_sas,
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            account_key=source_blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            target_blob.start_copy_from_url(blob.url)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "BlobNotFound"
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "404"
+        assert "copysourceerrormessage:The specified blob does not exist." in e.value.message
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        source_blob_name = "sourceblob"
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
+        target_blob_name = "targetblob"
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            target_blob.start_copy_from_url(source_blob.url, requires_sync=True)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
+        assert "copysourceerrormessage:Public access is not permitted on this storage account." in e.value.message
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_snapshot_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

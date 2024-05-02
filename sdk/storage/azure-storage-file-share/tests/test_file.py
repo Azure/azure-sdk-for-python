@@ -1568,6 +1568,30 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_update_range_from_file_url_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        source_file_name = 'testfile'
+        source_file_client = self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+
+        with pytest.raises(HttpResponseError) as e:
+            destination_file_client.upload_range_from_url(
+                source_file_client.url, offset=0, length=512, source_offset=0)
+
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
+        assert ("copysourceerrormessage:Server failed to authenticate the request. Please refer to the information in "
+                "the www-authenticate header.") in e.value.message
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_update_range_from_file_url_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2583,6 +2607,30 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         assert copy_resp['copy_status'] == 'success'
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_copy_file_async_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="targetfile",
+            credential=storage_account_key)
+
+        with pytest.raises(ResourceNotFoundError) as e:
+            file_client.start_copy_from_url("https://error.file.core.windows.net/")
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "400"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "InvalidQueryParameterValue"
+        assert ("copysourceerrormessage:Value for one of the query parameters specified in the "
+                "request URI is invalid.") in e.value.message
 
     @FileSharePreparer()
     @recorded_by_proxy

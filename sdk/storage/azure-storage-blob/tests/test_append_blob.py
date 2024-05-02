@@ -342,6 +342,30 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_append_blob_async_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_page_size=4 * 1024)
+        self._setup(bsc)
+        source_blob = self._create_blob(bsc)
+        dest_blob = self._create_blob(bsc)
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            dest_blob.append_block_from_url(source_blob.url)
+
+        # Assert
+        assert e.value.response.headers["x-ms-copy-source-status-code"] == "409"
+        assert e.value.response.headers["x-ms-copy-source-error-code"] == "PublicAccessNotPermitted"
+        assert "copysourceerrormessage:Public access is not permitted on this storage account." in e.value.message
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_append_block_from_url_and_validate_content_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
