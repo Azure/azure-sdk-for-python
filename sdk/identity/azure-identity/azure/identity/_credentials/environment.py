@@ -82,7 +82,9 @@ class EnvironmentCredential:
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
-                send_certificate_chain=kwargs.pop(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, False),
+                send_certificate_chain=bool(
+                    os.environ.get(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, False)
+                ),
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
