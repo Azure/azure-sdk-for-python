@@ -29,6 +29,7 @@
 - Add experimental support for working with indexes: `ml_client.indexes`
 
 ### Bugs Fixed
+- Fixed issue where experimental class/methods warnings weren't being caught by Azure CLI's `--only-show-errors` flag
 
 ### Breaking Changes
 
