@@ -290,11 +290,11 @@ variables:
 
 |Variable name|Value|Required
 |-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application|Yes
-|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|Yes
-|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|Yes
-|`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|No
-|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False.|No
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application|X
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|X
+|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|X
+|`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
+|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False.|
 
 ### Username and password
 
