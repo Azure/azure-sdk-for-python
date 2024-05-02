@@ -83,6 +83,10 @@ def create_package_and_install(
                 package_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], built_package)
                 if os.path.isfile(package_path):
                     built_pkg_path = package_path
+
+                    # copy this file to the distribution directory just in case we need it later
+                    shutil.copy(built_pkg_path, distribution_directory)
+
                     logging.info("Installing {w} from directory".format(w=built_package))
                 # it does't exist, so we need to error out
                 else:
