@@ -333,9 +333,6 @@ class CallAutomationClient:
          or None
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
-        :source_caller_id_number: The source caller Id, a phone number, that's will be used when
-        inviting a pstn target. Required only when transferring call to PSTN, if this is an incoming voip call.
-        :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:

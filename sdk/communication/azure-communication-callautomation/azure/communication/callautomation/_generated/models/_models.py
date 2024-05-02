@@ -5463,6 +5463,10 @@ class TransferToParticipantRequest(_serialization.Model):
      transferor's(Contoso) caller id when transfering a call a pstn target.
     :vartype source_caller_id_number:
      ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
+    :ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+     transferor's(Contoso) caller id when transfering a call a pstn target.
+    :vartype source_caller_id_number:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _validation = {
@@ -5476,6 +5480,7 @@ class TransferToParticipantRequest(_serialization.Model):
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
+        "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -5486,6 +5491,7 @@ class TransferToParticipantRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         transferee: Optional["_models.CommunicationIdentifierModel"] = None,
         operation_callback_uri: Optional[str] = None,
+        source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
@@ -5507,6 +5513,10 @@ class TransferToParticipantRequest(_serialization.Model):
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as
+         the transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as
          the transferor's(Contoso) caller id when transfering a call a pstn target.
         :paramtype source_caller_id_number:

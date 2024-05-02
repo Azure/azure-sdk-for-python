@@ -275,9 +275,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
-        :source_caller_id_number: The source caller Id, a phone number, that's will be used when
-        inviting a pstn target. Required only when transferring call to PSTN, if this is an incoming voip call.
-        :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+         transferor's(Contoso) caller id when transfering a call a pstn target.
+        :vartype source_caller_id_number:
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -291,7 +291,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             operation_callback_uri=operation_callback_url,
-            custom_calling_context=user_custom_context
+            custom_calling_context=user_custom_context,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number)
         )
         process_repeatability_first_sent(kwargs)
         if transferee:
