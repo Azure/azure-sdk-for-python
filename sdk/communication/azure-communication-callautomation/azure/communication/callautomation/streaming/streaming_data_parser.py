@@ -14,8 +14,8 @@ class StreamingDataParser:
     def parse(packet_data: Union[str, bytes]) -> Union[TranscriptionMetadata, TranscriptionData]:
         """
         Parse the incoming packets.
-        :keyword packet_data: Transcription packet data.
-        :paramtype packet_data: Union[str, bytes]
+        :param packet_data: Transcription packet data.
+        :type packet_data: Union[str, bytes]
         :return: Union[TranscriptionMetadata, TranscriptionData]
         :rType: TranscriptionMetadata, TranscriptionData
         :raises: ValueError
