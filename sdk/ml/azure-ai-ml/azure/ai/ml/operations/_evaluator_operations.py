@@ -336,19 +336,3 @@ class EvaluatorOperations(_ScopeDependentOperations):
             share_with_version=share_with_version,
             registry_name=registry_name,
         )
-
-    @experimental
-    @monitor_with_activity(ops_logger, "Model.Package", ActivityType.PUBLICAPI)
-    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs: Any) -> Environment:
-        """Package a model asset
-
-        :param name: Name of model asset.
-        :type name: str
-        :param version: Version of model asset.
-        :type version: str
-        :param package_request: Model package request.
-        :type package_request: ~azure.ai.ml.entities.ModelPackage
-        :return: Environment object
-        :rtype: ~azure.ai.ml.entities.Environment
-        """
-        return self._model_op.package(name, version, package_request, **kwargs)

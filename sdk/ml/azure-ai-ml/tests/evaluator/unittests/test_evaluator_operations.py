@@ -1,6 +1,5 @@
 from pathlib import Path
-from typing import Iterable
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
