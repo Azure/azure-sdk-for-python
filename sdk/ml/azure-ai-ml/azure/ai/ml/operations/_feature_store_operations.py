@@ -19,10 +19,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope, WorkspaceKind
 from azure.ai.ml.entities import (
+    Connection,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     ManagedNetworkProvisionStatus,
-    Connection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -261,7 +261,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @monitor_with_activity(ops_logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-    def begin_update(
+    def begin_update(  # pylint: disable=C4758
         self,
         feature_store: FeatureStore,
         *,
@@ -284,6 +284,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             deployed inference endpoints this feature store. Only set this argument if you are sure that you want
             to perform this operation. If this argument is not set, the command to update
             Azure Container Registry and Azure Application Insights will fail.
+        :keyword application_insights: Application insights resource for feature store. Defaults to None.
+        :paramtype application_insights: Optional[str]
+        :keyword container_registry: Container registry resource for feature store. Defaults to None.
+        :paramtype container_registry: Optional[str]
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
